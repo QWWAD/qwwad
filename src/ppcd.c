@@ -246,7 +246,9 @@ for(iG=0;iG<N;iG++)
  for(in=0;in<*Nn;in++)
  {
   double re, im;
-  fscanf(Fank,"%lf %lf",&re,&im);
+  int n_read = fscanf(Fank,"%lf %lf",&re,&im);
+  if(n_read != 2)
+    error(EXIT_FAILURE, 0, "Data missing in ank.r");
   ank[iG*(*Nn)+in] = re + I*im;
  }
 

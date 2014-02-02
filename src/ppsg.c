@@ -34,7 +34,8 @@ FILE	*FG;		/* file pointer to wavefunction file		*/
 
 G=read_rlv(&N);
 
-system("cp G.r G.r~");
+if(system("cp G.r G.r~") != EXIT_SUCCESS)
+  error(EXIT_FAILURE, 0, "Could not copy files");
 
 /* Need to repeat N times, to allow G[0] to propogate to G[N] */
 for(i=0;i<N;i++)    

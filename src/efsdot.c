@@ -217,8 +217,10 @@ int	*n;
 
  while(fscanf(Fv,"%le %le",&(fdata->z),&(fdata->V))!=EOF)
  {
-  fscanf(Fm,"%*e %le",&(fdata->mstar));
-  fdata++;
+  int n_read = fscanf(Fm,"%*e %le",&(fdata->mstar));
+
+  if(n_read == 3)
+    fdata++;
  }
 
  fclose(Fm);
@@ -252,7 +254,9 @@ files  *data_start;    /* start address of potential              */
 
  for(i=0;i<n;i++)
  {
-  fscanf(FEg,"%*e %le",&(data_m0Eg+i)->b);
+  int n_read = fscanf(FEg,"%*e %le",&(data_m0Eg+i)->b);
+  if(n_read != 2)
+    error(EXIT_FAILURE, 0, "Data missing on line %d of %s", i, "Eg.r");
   ((data_m0Eg+i)->a)=(data_start+i)->mstar;
  }
 

@@ -1,10 +1,11 @@
 # Makefile.am - Automake input file for QWWAD project (source code)
 
-noinst_HEADERS = bools.h  \
-		 const.h  \
-		 dox.h    \
-		 maths.h  \
-		 ppff.h   \
+noinst_HEADERS = bools.h      \
+		 const.h      \
+		 dox.h        \
+		 ef-helpers.h \
+		 maths.h      \
+		 ppff.h       \
 		 struct.h
 
 bin_PROGRAMS =  csss    \

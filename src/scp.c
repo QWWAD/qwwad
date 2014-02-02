@@ -329,7 +329,9 @@ int	n;
 
  for(i=0;i<n;i++)
  {
-  fscanf(Fv1,"%*f %lf",&v);
+  int n_read = fscanf(Fv1,"%*f %lf",&v);
+  if(n_read != 2)
+    error(EXIT_FAILURE, 0, "Data missing in v.r");
   fprintf(Fv,"%20.17le %20.17le\n",*(z+i),*(V+i)+v);
  }
 

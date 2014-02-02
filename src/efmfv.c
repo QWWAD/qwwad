@@ -140,8 +140,9 @@ while(fscanf(Fv,"%le %le",&((V0+i)->a),&((V0+i)->b))!=EOF)
 {
  /* Note line below assumes magnetic ion in `x' column of `s.r'	*/
 
- fscanf(Fx,"%le %le %*e",&((X0+i)->a),&((X0+i)->b));
- i++;
+ int n_read = fscanf(Fx,"%le %le %*e",&((X0+i)->a),&((X0+i)->b));
+ if(n_read == 3)
+   i++;
 }
 
 fclose(Fv);

@@ -81,14 +81,19 @@ FEk=(FILE **)calloc(Nk,sizeof(FILE));
 
 for(ik=0;ik<Nk;ik++)
 {
- fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z);
+ int n_read = fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z);
+ if (n_read != 3)
+   error(EXIT_FAILURE, 0, "Data missing in k.r");
+
  *(Ek+ik*(nbands+1))=vmod(k);
  sprintf(filename,"Ek%i.r",ik);
  *(FEk+ik)=fopen(filename,"r");		/* open each file in turn	*/
  fseek(*(FEk+ik),n_min*11,0);		/* move file pointer on n_min lines */
  for(in=0;in<nbands;in++)
  {
- fscanf(*(FEk+ik),"%lf",(Ek+ik*(nbands+1)+in+1));
+ int n_read = fscanf(*(FEk+ik),"%lf",(Ek+ik*(nbands+1)+in+1));
+ if (n_read != 1)
+   error(EXIT_FAILURE, 0, "Data missing in k.r");
  }
  fclose(*(FEk+ik));			/* close each individual file	*/
 

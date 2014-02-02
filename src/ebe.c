@@ -549,8 +549,10 @@ int	*n;
 
  while(fscanf(Fwfe,"%le %le",&(ft->z),&(ft->wf[0]))!=EOF)
  {
-  fscanf(Fwfh,"%*e %le",&(ft->wf[1]));
-  ft++;
+  int n_read = fscanf(Fwfh,"%*e %le",&(ft->wf[1]));
+
+  if (n_read == 2)
+    ft++;
  }
 
  fclose(Fwfe);
