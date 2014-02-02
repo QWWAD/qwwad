@@ -132,7 +132,7 @@ int	*nE;
  }
 
  *nE=0;
- while(fscanf(FE,"%*i %*le")!=EOF)
+ while(fscanf(FE,"%*i %*e")!=EOF)
   (*nE)++;
  rewind(FE);
 

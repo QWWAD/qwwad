@@ -121,7 +121,7 @@ if((Fx=fopen("x.r","r"))==NULL)
 /* Count number of lines in potential file */
 
 n=0;
-while(fscanf(Fv,"%*le %*le")!=EOF)
+while(fscanf(Fv,"%*e %*e")!=EOF)
  n++;
 rewind(Fv);
 
@@ -140,7 +140,7 @@ while(fscanf(Fv,"%le %le",&((V0+i)->a),&((V0+i)->b))!=EOF)
 {
  /* Note line below assumes magnetic ion in `x' column of `s.r'	*/
 
- fscanf(Fx,"%le %le %*le",&((X0+i)->a),&((X0+i)->b));
+ fscanf(Fx,"%le %le %*e",&((X0+i)->a),&((X0+i)->b));
  i++;
 }
 

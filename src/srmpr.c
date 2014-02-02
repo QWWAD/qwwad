@@ -238,7 +238,7 @@ char	filename[];	/* filename string				*/
  }
 
  *n=0;
- while(fscanf(Fsr,"%*le %*le")!=EOF)
+ while(fscanf(Fsr,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fsr);
 
@@ -288,7 +288,7 @@ int	*nE;
  }
 
  *nE=0;
- while(fscanf(FEf,"%*i %*le")!=EOF)
+ while(fscanf(FEf,"%*i %*e")!=EOF)
   (*nE)++;
  rewind(FEf);
 

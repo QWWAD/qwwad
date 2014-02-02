@@ -531,7 +531,7 @@ int	*n;
  /* count number of lines in wave function files	*/
 
  *n=0;
- while(fscanf(Fwfe,"%*le %*le")!=EOF)
+ while(fscanf(Fwfe,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fwfe);
 
@@ -549,7 +549,7 @@ int	*n;
 
  while(fscanf(Fwfe,"%le %le",&(ft->z),&(ft->wf[0]))!=EOF)
  {
-  fscanf(Fwfh,"%*le %le",&(ft->wf[1]));
+  fscanf(Fwfh,"%*e %le",&(ft->wf[1]));
   ft++;
  }
 

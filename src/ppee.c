@@ -69,7 +69,7 @@ nbands=n_max-n_min+1;
 Fk=fopen("k.r","r");			/* open k.r file for reading	*/
 
 Nk=0;					/* count number of k points	*/
-while(fscanf(Fk,"%*lf %*lf %*lf")!=EOF)
+while(fscanf(Fk,"%*f %*f %*f")!=EOF)
   (Nk)++;
 rewind(Fk);
 

@@ -226,7 +226,7 @@ if((Fank=fopen("ank.r","r"))==0)
 /* Deduce number of complexes in file and hence number of bands	*/
 
 n=0;
-while(fscanf(Fank,"%*lf %*lf")!=EOF)
+while(fscanf(Fank,"%*f %*f")!=EOF)
  n++;
 rewind(Fank);
 
@@ -277,7 +277,7 @@ int     *N;
  }
 
  *N=0;
- while(fscanf(FG,"%*lf %*lf %*lf")!=EOF)
+ while(fscanf(FG,"%*f %*f %*f")!=EOF)
   (*N)++;
  rewind(FG);
 

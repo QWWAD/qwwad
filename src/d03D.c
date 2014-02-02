@@ -354,7 +354,7 @@ int     *n;
    exit(0);
  }
  *n=0;
- while(fscanf(fp,"%*le %*le")!=EOF)
+ while(fscanf(fp,"%*e %*e")!=EOF)
   (*n)++;
  rewind(fp);
 

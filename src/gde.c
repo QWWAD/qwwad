@@ -357,7 +357,7 @@ int	*n;
   exit(0);
  }
  *n=0;
- while(fscanf(Fx,"%*le %*le %*le")!=EOF)
+ while(fscanf(Fx,"%*e %*e %*e")!=EOF)
   (*n)++;
  rewind(Fx);
 
@@ -371,7 +371,7 @@ int	*n;
 
  /* Ignore the second alloy component data y(z) in input file `x.r'	*/
 
- while(fscanf(Fx,"%le %le %*le", &(dt->z), &(dt->x))!=EOF)
+ while(fscanf(Fx,"%le %le %*e", &(dt->z), &(dt->x))!=EOF)
   dt++;
 
  fclose(Fx);

@@ -147,7 +147,7 @@ int	*n;
  {fprintf(stderr,"Error: Cannot open input file 'T.r'!\n");exit(0);}
 
  *n=0;	
- while(fscanf(FTofE,"%*le %*le")!=EOF)
+ while(fscanf(FTofE,"%*e %*e")!=EOF)
   (*n)++;
  rewind(FTofE);
 

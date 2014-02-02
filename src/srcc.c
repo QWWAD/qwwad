@@ -590,7 +590,7 @@ int	*nE;
  }
 
  *nE=0;
- while(fscanf(FE,"%*i %*le")!=EOF)
+ while(fscanf(FE,"%*i %*e")!=EOF)
   (*nE)++;
  rewind(FE);
 
@@ -718,7 +718,7 @@ char	p;
  {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
 
  *n=0;	
- while(fscanf(Fv,"%*le %*le")!=EOF)
+ while(fscanf(Fv,"%*e %*e")!=EOF)
   (*n)++;
  fclose(Fv);
 
@@ -803,7 +803,7 @@ max=0;
 if((Fv=fopen("v.r","r"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
 
-while(fscanf(Fv,"%*le %le",&v)!=EOF)
+while(fscanf(Fv,"%*e %le",&v)!=EOF)
  if(v>max) max=v;
 
 fclose(Fv);

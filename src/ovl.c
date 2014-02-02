@@ -135,7 +135,7 @@ int        *N;              /* number of lines in data files     */
  }
 
  *N=0;
- while(fscanf(Fwf,"%*le %*le")!=EOF)
+ while(fscanf(Fwf,"%*e %*e")!=EOF)
   (*N)++;
  rewind(Fwf);
 

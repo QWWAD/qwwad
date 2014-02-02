@@ -85,7 +85,7 @@ int	*N;
  }
 
  *N=0;
- while(fscanf(FG,"%*lf %*lf %*lf")!=EOF)
+ while(fscanf(FG,"%*f %*f %*f")!=EOF)
   (*N)++;
  rewind(FG);
 

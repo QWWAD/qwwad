@@ -172,7 +172,7 @@ int	*n;
  {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
 
  *n=0;
- while(fscanf(Fv,"%*le %*le")!=EOF)
+ while(fscanf(Fv,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fv);
 
@@ -183,7 +183,7 @@ int	*n;
 
  while(fscanf(Fv,"%le %le",&(fdata->z),&(fdata->V))!=EOF)
  {
-  fscanf(Fm,"%*le %le",&(fdata->mstar));
+  fscanf(Fm,"%*e %le",&(fdata->mstar));
   fdata++;
  }
 
@@ -218,7 +218,7 @@ files  *data_start;    /* start address of potential              */
 
  for(i=0;i<n;i++)
  {
-  fscanf(FEg,"%*le %le",&(data_m0Eg+i)->b);
+  fscanf(FEg,"%*e %le",&(data_m0Eg+i)->b);
   ((data_m0Eg+i)->a)=(data_start+i)->mstar;
  }
 

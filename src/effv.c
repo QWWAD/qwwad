@@ -78,7 +78,7 @@ if((Fv=fopen("v0.r","r"))==0)
 /* Count number of lines in potential file */
 
 n=0;
-while(fscanf(Fv,"%*le %*le")!=EOF)
+while(fscanf(Fv,"%*e %*e")!=EOF)
  n++;
 rewind(Fv);
 

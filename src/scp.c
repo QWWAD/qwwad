@@ -319,7 +319,7 @@ int	n;
  Fv=fopen("v.r","w");
 
  nv=0;
- while(fscanf(Fv1,"%*lf %*lf")!=EOF)
+ while(fscanf(Fv1,"%*f %*f")!=EOF)
   nv++;
  rewind(Fv1);
 
@@ -329,7 +329,7 @@ int	n;
 
  for(i=0;i<n;i++)
  {
-  fscanf(Fv1,"%*lf %lf",&v);
+  fscanf(Fv1,"%*f %lf",&v);
   fprintf(Fv,"%20.17le %20.17le\n",*(z+i),*(V+i)+v);
  }
 
@@ -362,7 +362,7 @@ int	*s;
  }
 
  *s=0;
- while(fscanf(FE,"%*i %*le")!=EOF)
+ while(fscanf(FE,"%*i %*e")!=EOF)
   (*s)++;
  rewind(FE);
 
@@ -455,7 +455,7 @@ int	n;
    {fprintf(stderr,"Error: Cannot open input file '%s'!\n","d.r");exit(0);}
 
   i=0;			
-  while(fscanf(Fd,"%*le %le",Nda+i)!=EOF)
+  while(fscanf(Fd,"%*e %le",Nda+i)!=EOF)
    i++;
 
  fclose(Fd);			
@@ -494,7 +494,7 @@ char	p;
    {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
 
   i=0;					
-  while(fscanf(Fwf,"%*le %le",wf+i)!=EOF)
+  while(fscanf(Fwf,"%*e %le",wf+i)!=EOF)
    i++;
 
  fclose(Fwf);				
@@ -527,7 +527,7 @@ char	p;
   {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
  
  *n=0;	
- while(fscanf(Fwf,"%*le %*le")!=EOF)
+ while(fscanf(Fwf,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fwf);
 
@@ -539,7 +539,7 @@ char	p;
  /* Read in data 	*/
 
  i=0;						/* Read in each file	*/
- while(fscanf(Fwf,"%le %*le",z+i)!=EOF)
+ while(fscanf(Fwf,"%le %*e",z+i)!=EOF)
   i++;
 
  fclose(Fwf);					/* Close each file	*/
