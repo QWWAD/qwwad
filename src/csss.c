@@ -40,10 +40,10 @@ while((argc>1)&&(argv[1][0]=='-'))
            A0=atof(argv[2]);
            break;
   case 'a':
-           sprintf(anion,argv[2]);
+           sprintf(anion,"%s",argv[2]);
            break;
   case 'c':
-           sprintf(cation,argv[2]);
+           sprintf(cation,"%s",argv[2]);
            break;
   case 'z':
            n_z=atoi(argv[2]);

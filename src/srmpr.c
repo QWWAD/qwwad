@@ -94,7 +94,7 @@ while((argc>1)&&(argv[1][0]=='-'))
            m=atof(argv[2])*m0;
            break;
   case 'M':
-	   sprintf(mode,argv[2]);
+	   sprintf(mode,"%s",argv[2]);
 	   break;
   case 'T':
 	   T=atof(argv[2]);

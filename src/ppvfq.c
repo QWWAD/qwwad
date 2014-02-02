@@ -56,7 +56,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   A0=atof(argv[2])*1e-10;
            break;
   case 'a':
-	   sprintf(type,argv[2]);
+	   sprintf(type,"%s",argv[2]);
 	   break;  
   case 'g':
            G_max=atoi(argv[2]);
