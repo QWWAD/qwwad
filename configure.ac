@@ -4,6 +4,8 @@
 AC_PREREQ([2.63])
 AC_INIT([qwwad], [1.0], [a.valavanis@leeds.ac.uk])
 AC_CONFIG_SRCDIR([src/csss.c])
+AC_CONFIG_AUX_DIR([config])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
 # The number in the options list here refers to the minimum version
@@ -27,5 +29,8 @@ AC_CHECK_HEADER_STDBOOL
 AC_CHECK_FUNCS([floor modf sqrt])
 
 AC_CONFIG_FILES([Makefile
+		 config/Makefile
+		 examples/Makefile
+		 m4/Makefile
 		 src/Makefile])
 AC_OUTPUT

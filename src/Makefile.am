@@ -1,46 +1,12 @@
-#
-# QWWAD code Makefile, written by Paul Harrison, summer 1999
-#
-# You must read ../README before proceeding!
-#
-# Define the directory to put the executables, note you must have write
-# access and make sure there is no `white space' at the end of the line
+# Makefile.am - Automake input file for QWWAD project (source code)
 
-#BIN=/home/ph/bin
-
-# Uncomment the compiler definitions below appropriate for your system
-#
-# HP-UX
-
-#CC=cc
-#CCOPTIONS=-Aa -D_HPUX_SOURCE
-#LIBS=-lm
-#NAGLIB=
-
-# SunOS
-
-#CC=cc
-#CCOPTIONS= -DSUN -Xt
-#LIBS=-lm
-#NAGLIB=
-
-# Linux
-
-#CC=gcc
-#CCOPTIONS=
-#LIBS=-lm
-#NAGLIB=-lnagc -lpthread
-
-# IRIX
-
-#CC=cc 
-#CCOPTIONS=-ansi
-#LIBS=-lm
-#NAGLIB=-lnagc
-
-# There should be no need to alter anything below this line
-
-# The majority of the code can be compiled with a standard command
+noinst_HEADERS = bools.h  \
+		 const.h  \
+		 dox.h    \
+		 io.h     \
+		 maths.h  \
+		 ppff.h   \
+		 struct.h
 
 bin_PROGRAMS =  csss    \
 		cszb    \
@@ -86,4 +52,4 @@ bin_PROGRAMS =  csss    \
 	       	srmpr   \
 	       	srrad   \
 	       	tdb     \
-	       	tsb 
+	       	tsb

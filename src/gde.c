@@ -32,7 +32,7 @@
 #include "bools.h"
 #include "io.h"
 
-#include "dox.c"
+#include "dox.h"
 
 typedef
 struct	{

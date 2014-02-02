@@ -21,7 +21,7 @@
 #include "maths.h"
 #include "const.h"
 
-#include "ppff.c"
+#include "ppff.h"
 
 main(int argc,char *argv[])
 {

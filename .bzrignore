@@ -1,9 +1,9 @@
 src/Makefile.backup
 src/Makefile.in
 Makefile.in
-depcomp
-install-sh
-missing
+config/depcomp
+config/install-sh
+config/missing
 configure
 config.h.in
 aclocal.m4
