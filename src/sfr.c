@@ -43,7 +43,6 @@
 #include "maths.h"
 #include "bools.h"
 #include "const.h"
-#include "io.h"
 
 #define N 1000
 

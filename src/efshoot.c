@@ -23,8 +23,6 @@
 #include "const.h"
 #include "maths.h"
 #include "bools.h"
-#include "io.h"
-
 
 typedef
 struct	{

@@ -3,7 +3,6 @@
 noinst_HEADERS = bools.h  \
 		 const.h  \
 		 dox.h    \
-		 io.h     \
 		 maths.h  \
 		 ppff.h   \
 		 struct.h

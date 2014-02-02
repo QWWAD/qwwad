@@ -39,7 +39,6 @@
 #include "struct.h"
 #include "maths.h"
 #include "bools.h"
-#include "io.h"
 
 main(int argc,char *argv[])
 {

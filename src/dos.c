@@ -26,8 +26,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "io.h"
-
 
 main(int argc,char *argv[])
 {
