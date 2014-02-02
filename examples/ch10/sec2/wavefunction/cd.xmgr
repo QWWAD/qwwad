@@ -1,0 +1,1130 @@
+# ACE/gr parameter file
+#
+@version 40102
+@page layout free
+@ps linewidth begin 1
+@ps linewidth increment 2
+@hardcopy device 1
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp linewidth 1
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 4
+@timestamp char size 1.000000
+@timestamp def "Tue Sep 29 09:13:18 1998"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 20
+@    world ymin 0
+@    world ymax 30
+@    stack world 0, 0, 0, 0 tick 0, 0, 0, 0
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 1
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 1
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "e-lambda.r"
+@    xaxis  tick on
+@    xaxis  tick major 5
+@    xaxis  tick minor 1
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z\0-) axis (\2A\0\s0\N)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel place on ticks
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 10
+@    yaxis  tick minor 5
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "Charge density (arb. units)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 0
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel place on ticks
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 5
+@    zeroxaxis  tick minor 2.5
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 1
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel place on ticks
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 10
+@    zeroyaxis  tick minor 5
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 1
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel place on ticks
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend off
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.8
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.000000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TARGET S0
+@TYPE xy
+               0          4.27711
+           0.025          4.43377
+            0.05          4.36063
+           0.075          4.06183
+             0.1          3.57562
+           0.125          2.96624
+            0.15          2.30987
+           0.175          1.67895
+             0.2          1.12918
+           0.225         0.692616
+            0.25         0.377457
+           0.275         0.173244
+             0.3        0.0585923
+           0.325       0.00872547
+            0.35      0.000922317
+           0.375        0.0172553
+             0.4        0.0450478
+           0.425        0.0759562
+            0.45         0.104585
+           0.475         0.127273
+             0.5         0.141348
+           0.525         0.144895
+            0.55         0.136889
+           0.575         0.117524
+             0.6        0.0886098
+           0.625        0.0541054
+            0.65        0.0210103
+           0.675      0.000968842
+             0.7        0.0128524
+           0.725        0.0862426
+            0.75         0.265082
+           0.775         0.609847
+             0.8          1.19572
+           0.825          2.10399
+            0.85          3.40491
+           0.875          5.13315
+             0.9          7.26075
+           0.925          9.67641
+            0.95          12.1811
+           0.975          14.5071
+               1          16.3611
+           1.025          17.4827
+            1.05          17.7029
+           1.075          16.9841
+             1.1          15.4302
+           1.125           13.262
+            1.15          10.7663
+           1.175          8.23542
+             1.2          5.91261
+           1.225          3.95937
+            1.25           2.4468
+           1.275          1.36881
+             1.3         0.667368
+           1.325         0.260051
+            1.35        0.0623116
+           1.375       0.00111993
+             1.4        0.0203682
+           1.425        0.0804518
+            1.45         0.154949
+           1.475         0.226695
+             1.5         0.284569
+           1.525         0.321417
+            1.55         0.332979
+           1.575         0.317479
+             1.6          0.27564
+           1.625         0.211175
+            1.65         0.132143
+           1.675        0.0537992
+             1.7       0.00341422
+           1.725        0.0269991
+            1.75         0.196652
+           1.775         0.615587
+             1.8          1.41627
+           1.825          2.74657
+            1.85          4.74078
+           1.875          7.47706
+             1.9            10.93
+           1.925           14.933
+            1.95           19.168
+           1.975           23.194
+               2          26.5169
+           2.025          28.6861
+            2.05          29.3917
+           2.075          28.5362
+             2.1          26.2551
+           2.125          22.8832
+            2.15          18.8764
+           2.175           14.714
+             2.2          10.8092
+           2.225          7.45088
+            2.25          4.78367
+           2.275          2.82366
+             2.3          1.49554
+           2.325         0.675908
+            2.35         0.230294
+           2.375        0.0376145
+             2.4        0.0016383
+           2.425        0.0525536
+            2.45         0.143029
+           2.475         0.242406
+             2.5         0.331353
+           2.525         0.397897
+            2.55         0.434897
+           2.575         0.438584
+             2.6         0.407828
+           2.625          0.34415
+            2.65         0.252839
+           2.675         0.145851
+             2.7        0.0470784
+           2.725       2.4796e-08
+            2.75        0.0763663
+           2.775         0.382743
+             2.8           1.0598
+           2.825          2.26876
+            2.85          4.16112
+           2.875          6.83372
+             2.9          10.2777
+           2.925          14.3375
+            2.95          18.6982
+           2.975          22.9136
+               3          26.4759
+           3.025          28.9139
+            3.05          29.8932
+           3.075          29.2896
+             3.1          27.2135
+           3.125          23.9794
+            3.15          20.0315
+           3.175          15.8478
+             3.2          11.8517
+           3.225          8.35081
+            3.25          5.51321
+           3.275          3.37786
+             3.3          1.88763
+           3.325         0.930245
+            3.35         0.375364
+           3.375         0.100607
+             3.4       0.00546049
+           3.425         0.015103
+            3.45        0.0780034
+           3.475         0.160791
+             3.5         0.242837
+           3.525          0.31176
+            3.55         0.360207
+           3.575         0.383763
+             3.6         0.379767
+           3.625         0.346945
+            3.65         0.286038
+           3.675         0.201772
+             3.7         0.106506
+           3.725        0.0255462
+            3.75       0.00320965
+           3.775          0.10755
+             3.8         0.430423
+           3.825          1.07929
+            3.85          2.15831
+           3.875          3.73992
+             3.9          5.83213
+           3.925           8.3516
+            3.95          11.1135
+           3.975          13.8461
+               4          16.2318
+           4.025          17.9659
+            4.05          18.8193
+           4.075          18.6868
+             4.1          17.6068
+           4.125          15.7491
+            4.15          13.3737
+           4.175          10.7746
+             4.2           8.2249
+           4.225           5.9346
+            4.25          4.03125
+           4.275          2.56058
+             4.3          1.50317
+           4.325         0.798301
+            4.35         0.367447
+           4.375         0.132562
+             4.4         0.027016
+           4.425      5.39714e-06
+            4.45          0.01628
+           4.475         0.053388
+             4.5        0.0981452
+           4.525         0.143365
+            4.55          0.18527
+           4.575         0.221626
+             4.6         0.250495
+           4.625         0.269464
+            4.65         0.275384
+           4.675          0.26468
+             4.7         0.234437
+           4.725          0.18435
+            4.75         0.119377
+           4.775        0.0524464
+             4.8       0.00607336
+           4.825         0.011491
+            4.85         0.104214
+           4.875         0.315987
+             4.9          0.66461
+           4.925          1.14457
+            4.95          1.72196
+           4.975          2.33654
+               5          2.91138
+           5.025           3.3683
+            5.05          3.64468
+           5.075          3.70687
+             5.1           3.5562
+           5.125          3.22633
+            5.15          2.77326
+           5.175          2.26162
+             5.2          1.75143
+           5.225           1.2885
+            5.25         0.900268
+           5.275         0.596545
+             5.3          0.37361
+           5.325         0.219599
+            5.35         0.119442
+           5.375        0.0584362
+             5.4        0.0241767
+           5.425       0.00719072
+            5.45      0.000754446
+           5.475      0.000345043
+             5.5       0.00304078
+           5.525       0.00701868
+            5.55         0.011188
+           5.575        0.0149342
+             5.6        0.0179313
+           5.625        0.0199948
+            5.65        0.0209664
+           5.675        0.0206474
+             5.7        0.0188109
+           5.725        0.0153257
+            5.75        0.0104041
+           5.775       0.00493153
+             5.8      0.000750617
+           5.825      0.000713488
+            5.85       0.00831981
+           5.875        0.0268887
+             5.9        0.0584267
+           5.925         0.102565
+            5.95         0.156009
+           5.975         0.212822
+               6         0.265547
+           6.025         0.306859
+            6.05         0.331215
+           6.075         0.335991
+             6.1         0.321807
+           6.125         0.292036
+            6.15         0.251759
+           6.175         0.206557
+             6.2         0.161454
+           6.225         0.120242
+            6.25        0.0852356
+           6.275        0.0573597
+             6.3        0.0364644
+           6.325        0.0217084
+            6.35        0.0119177
+           6.375       0.00586352
+             6.4       0.00243691
+           6.425      0.000736104
+            6.45        8.688e-05
+           6.475      2.19667e-05
+             6.5      0.000240915
+           6.525      0.000565112
+            6.55      0.000896776
+           6.575       0.00118568
+             6.6       0.00140458
+           6.625       0.00153305
+            6.65       0.00154962
+           6.675       0.00143285
+             6.7       0.00117223
+           6.725      0.000788516
+            6.75      0.000359721
+           6.775       4.3534e-05
+             6.8      8.31043e-05
+           6.825      0.000783768
+            6.85         0.002456
+           6.875       0.00533271
+             6.9       0.00948265
+           6.925        0.0147483
+            6.95        0.0207322
+           6.975        0.0268425
+               7        0.0323878
+           7.025        0.0367004
+            7.05         0.039257
+           7.075        0.0397697
+             7.1        0.0382298
+           7.125        0.0348982
+            7.15        0.0302462
+           7.175        0.0248626
+             7.2        0.0193464
+           7.225        0.0142091
+            7.25       0.00980863
+           7.275       0.00632293
+             7.3       0.00376636
+           7.325       0.00203467
+            7.35      0.000960802
+           7.375      0.000364841
+             7.4      8.69987e-05
+           7.425      2.25312e-06
+            7.45      2.08718e-05
+           7.475       8.1695e-05
+             7.5      0.000144239
+           7.525      0.000183188
+            7.55      0.000186072
+           7.575      0.000152854
+             7.6      9.53535e-05
+           7.625      3.52256e-05
+            7.65      9.36771e-07
+           7.675      2.57904e-05
+             7.7      0.000149369
+           7.725      0.000423605
+            7.75      0.000922573
+           7.775       0.00175279
+             7.8       0.00305831
+           7.825       0.00501253
+            7.85       0.00778908
+           7.875        0.0115073
+             7.9        0.0161603
+           7.925         0.021545
+            7.95         0.027227
+           7.975        0.0325673
+               8        0.0368235
+           8.025        0.0393095
+            8.05        0.0395678
+           8.075         0.037498
+             8.1        0.0333934
+           8.125        0.0278728
+            8.15        0.0217254
+           8.175        0.0157263
+             8.2        0.0104803
+           8.225        0.0063341
+            8.25       0.00337551
+           8.275       0.00149337
+             8.3      0.000467536
+           8.325      5.10611e-05
+            8.35      2.38204e-05
+           8.375      0.000214349
+             8.4      0.000497641
+           8.425      0.000782304
+            8.45      0.000998583
+           8.475       0.00109447
+             8.5       0.00104085
+           8.525      0.000841746
+            8.55       0.00054223
+           8.575      0.000228595
+             8.6      2.11374e-05
+           8.625      6.77154e-05
+            8.65      0.000549726
+           8.675       0.00171086
+             8.7       0.00391147
+           8.725       0.00770327
+            8.75        0.0139037
+           8.775        0.0236376
+             8.8        0.0382892
+           8.825        0.0593053
+            8.85        0.0878223
+           8.875         0.124132
+             8.9         0.167133
+           8.925         0.213961
+            8.95         0.260002
+           8.975         0.299478
+               9         0.326493
+           9.025         0.336375
+            9.05         0.326874
+           9.075          0.29885
+             9.1         0.256186
+           9.125          0.20493
+            9.15         0.151894
+           9.175         0.103191
+             9.2         0.063114
+           9.225        0.0336314
+            9.25        0.0145694
+           9.275       0.00425203
+             9.3      0.000321813
+           9.325      0.000439199
+            9.35        0.0027048
+           9.375       0.00578854
+             9.4       0.00885023
+           9.425        0.0113699
+            9.45        0.0129895
+           9.475        0.0134274
+             9.5        0.0124874
+           9.525        0.0101525
+            9.55       0.00672787
+           9.575       0.00299158
+             9.6       0.00032374
+           9.625      0.000833404
+            9.65       0.00753797
+           9.675        0.0246742
+             9.7        0.0581745
+           9.725         0.116267
+            9.75         0.209969
+           9.775         0.353146
+             9.8         0.561572
+           9.825         0.850473
+            9.85          1.23046
+           9.875          1.70198
+             9.9          2.24989
+           9.925          2.83984
+            9.95          3.41863
+           9.975           3.9203
+              10          4.27711
+          10.025          4.43377
+           10.05          4.36063
+          10.075          4.06184
+            10.1          3.57561
+          10.125          2.96624
+           10.15          2.30988
+          10.175          1.67895
+            10.2          1.12919
+          10.225          0.69261
+           10.25         0.377457
+          10.275         0.173247
+            10.3        0.0585917
+          10.325       0.00872565
+           10.35      0.000922423
+          10.375        0.0172553
+            10.4        0.0450473
+          10.425        0.0759564
+           10.45         0.104585
+          10.475         0.127273
+            10.5         0.141348
+          10.525         0.144895
+           10.55         0.136889
+          10.575         0.117524
+            10.6        0.0886093
+          10.625        0.0541054
+           10.65        0.0210107
+          10.675      0.000968785
+            10.7        0.0128522
+          10.725        0.0862442
+           10.75         0.265082
+          10.775         0.609841
+            10.8          1.19573
+          10.825          2.10398
+           10.85          3.40494
+          10.875          5.13315
+            10.9          7.26071
+          10.925          9.67643
+           10.95          12.1811
+          10.975          14.5071
+              11          16.3611
+          11.025          17.4827
+           11.05          17.7029
+          11.075          16.9841
+            11.1          15.4302
+          11.125           13.262
+           11.15          10.7664
+          11.175           8.2354
+            11.2          5.91263
+          11.225          3.95934
+           11.25           2.4468
+          11.275          1.36882
+            11.3         0.667363
+          11.325         0.260054
+           11.35        0.0623099
+          11.375       0.00111993
+            11.4        0.0203676
+          11.425        0.0804525
+           11.45         0.154948
+          11.475         0.226696
+            11.5         0.284569
+          11.525         0.321417
+           11.55         0.332979
+          11.575         0.317479
+            11.6          0.27564
+          11.625         0.211175
+           11.65         0.132144
+          11.675        0.0537985
+            11.7       0.00341444
+          11.725        0.0270003
+           11.75         0.196652
+          11.775         0.615579
+            11.8          1.41628
+          11.825          2.74656
+           11.85          4.74081
+          11.875          7.47706
+            11.9          10.9299
+          11.925          14.9331
+           11.95          19.1679
+          11.975           23.194
+              12          26.5169
+          12.025          28.6861
+           12.05          29.3917
+          12.075          28.5362
+            12.1           26.255
+          12.125          22.8832
+           12.15          18.8765
+          12.175          14.7139
+            12.2          10.8092
+          12.225          7.45082
+           12.25          4.78367
+          12.275          2.82369
+            12.3          1.49553
+          12.325         0.675914
+           12.35         0.230288
+          12.375        0.0376145
+            12.4       0.00163797
+          12.425        0.0525543
+           12.45         0.143028
+          12.475         0.242408
+            12.5         0.331353
+          12.525         0.397896
+           12.55         0.434897
+          12.575         0.438584
+            12.6         0.407827
+          12.625          0.34415
+           12.65         0.252841
+          12.675          0.14585
+            12.7        0.0470792
+          12.725      2.33436e-08
+           12.75        0.0763663
+          12.775         0.382734
+            12.8          1.05981
+          12.825          2.26874
+           12.85          4.16116
+          12.875          6.83372
+            12.9          10.2776
+          12.925          14.3375
+           12.95          18.6982
+          12.975          22.9137
+              13          26.4759
+          13.025          28.9139
+           13.05          29.8932
+          13.075          29.2896
+            13.1          27.2135
+          13.125          23.9794
+           13.15          20.0316
+          13.175          15.8477
+            13.2          11.8517
+          13.225          8.35075
+           13.25          5.51321
+          13.275          3.37789
+            13.3          1.88762
+          13.325         0.930252
+           13.35         0.375356
+          13.375         0.100607
+            13.4        0.0054611
+          13.425        0.0151034
+           13.45        0.0780026
+          13.475         0.160793
+            13.5         0.242837
+          13.525         0.311759
+           13.55         0.360207
+          13.575         0.383763
+            13.6         0.379767
+          13.625         0.346945
+           13.65          0.28604
+          13.675         0.201771
+            13.7         0.106507
+          13.725         0.025545
+           13.75       0.00320965
+          13.775         0.107546
+            13.8         0.430428
+          13.825          1.07928
+           13.85          2.15834
+          13.875          3.73992
+            13.9          5.83209
+          13.925          8.35163
+           13.95          11.1135
+          13.975          13.8461
+              14          16.2318
+          14.025          17.9658
+           14.05          18.8193
+          14.075          18.6868
+            14.1          17.6068
+          14.125          15.7491
+           14.15          13.3737
+          14.175          10.7746
+            14.2           8.2249
+          14.225          5.93456
+           14.25          4.03125
+          14.275           2.5606
+            14.3          1.50317
+          14.325         0.798301
+           14.35         0.367441
+          14.375         0.132562
+            14.4        0.0270172
+          14.425      5.39714e-06
+           14.45          0.01628
+          14.475        0.0533889
+            14.5        0.0981452
+          14.525         0.143364
+           14.55          0.18527
+          14.575         0.221626
+            14.6         0.250495
+          14.625         0.269464
+           14.65         0.275384
+          14.675          0.26468
+            14.7         0.234437
+          14.725         0.184349
+           14.75         0.119377
+          14.775        0.0524476
+            14.8       0.00607336
+          14.825         0.011491
+           14.85         0.104217
+          14.875         0.315987
+            14.9         0.664602
+          14.925          1.14457
+           14.95          1.72196
+          14.975          2.33655
+              15          2.91138
+          15.025          3.36829
+           15.05          3.64468
+          15.075          3.70687
+            15.1           3.5562
+          15.125          3.22633
+           15.15          2.77327
+          15.175          2.26162
+            15.2          1.75143
+          15.225          1.28849
+           15.25         0.900268
+          15.275          0.59655
+            15.3          0.37361
+          15.325         0.219599
+           15.35          0.11944
+          15.375        0.0584362
+            15.4        0.0241772
+          15.425       0.00719072
+           15.45      0.000754446
+          15.475      0.000345072
+            15.5       0.00304078
+          15.525        0.0070186
+           15.55         0.011188
+          15.575        0.0149342
+            15.6        0.0179314
+          15.625        0.0199948
+           15.65        0.0209664
+          15.675        0.0206474
+            15.7        0.0188109
+          15.725        0.0153256
+           15.75        0.0104041
+          15.775       0.00493163
+            15.8      0.000750617
+          15.825      0.000713488
+           15.85       0.00832005
+          15.875        0.0268887
+            15.9         0.058426
+          15.925         0.102565
+           15.95         0.156009
+          15.975         0.212823
+              16         0.265547
+          16.025         0.306858
+           16.05         0.331214
+          16.075         0.335991
+            16.1         0.321807
+          16.125         0.292036
+           16.15          0.25176
+          16.175         0.206559
+            16.2         0.161452
+          16.225         0.120242
+           16.25        0.0852356
+          16.275        0.0573602
+            16.3        0.0364651
+          16.325        0.0217079
+           16.35        0.0119176
+          16.375       0.00586352
+            16.4       0.00243696
+          16.425      0.000736145
+           16.45      8.68688e-05
+          16.475      2.19689e-05
+            16.5      0.000240915
+          16.525      0.000565105
+           16.55      0.000896764
+          16.575       0.00118569
+            16.6       0.00140458
+          16.625       0.00153305
+           16.65       0.00154962
+          16.675       0.00143286
+            16.7       0.00117222
+          16.725      0.000788508
+           16.75      0.000359721
+          16.775      4.35376e-05
+            16.8      8.30923e-05
+          16.825      0.000783812
+           16.85       0.00245605
+          16.875       0.00533271
+            16.9       0.00948256
+          16.925        0.0147481
+           16.95        0.0207325
+          16.975        0.0268426
+              17        0.0323878
+          17.025        0.0367003
+           17.05        0.0392569
+          17.075        0.0397696
+            17.1        0.0382298
+          17.125        0.0348982
+           17.15        0.0302464
+          17.175        0.0248628
+            17.2        0.0193462
+          17.225         0.014209
+           17.25       0.00980863
+          17.275       0.00632298
+            17.3       0.00376644
+          17.325       0.00203462
+           17.35      0.000960786
+          17.375      0.000364841
+            17.4      8.70018e-05
+          17.425      2.25391e-06
+           17.45      2.08736e-05
+          17.475      8.16963e-05
+            17.5      0.000144239
+          17.525      0.000183187
+           17.55      0.000186073
+          17.575      0.000152852
+            17.6      9.53522e-05
+          17.625      3.52256e-05
+           17.65      9.36974e-07
+          17.675      2.57879e-05
+            17.7      0.000149376
+          17.725      0.000423612
+           17.75      0.000922573
+          17.775       0.00175278
+            17.8       0.00305825
+          17.825       0.00501262
+           17.85       0.00778914
+          17.875        0.0115073
+            17.9        0.0161602
+          17.925        0.0215448
+           17.95        0.0272273
+          17.975        0.0325674
+              18        0.0368235
+          18.025        0.0393095
+           18.05        0.0395679
+          18.075        0.0374979
+            18.1        0.0333934
+          18.125        0.0278728
+           18.15        0.0217254
+          18.175        0.0157265
+            18.2        0.0104801
+          18.225        0.0063341
+           18.25       0.00337551
+          18.275       0.00149337
+            18.3      0.000467562
+          18.325      5.10539e-05
+           18.35      2.38204e-05
+          18.375      0.000214349
+            18.4      0.000497641
+          18.425      0.000782294
+           18.45      0.000998589
+          18.475       0.00109447
+            18.5       0.00104085
+          18.525      0.000841746
+           18.55      0.000542242
+          18.575      0.000228584
+            18.6      2.11374e-05
+          18.625      6.77154e-05
+           18.65      0.000549726
+          18.675        0.0017108
+            18.7       0.00391158
+          18.725       0.00770327
+           18.75        0.0139037
+          18.775        0.0236376
+            18.8        0.0382885
+          18.825        0.0593063
+           18.85        0.0878223
+          18.875         0.124132
+            18.9         0.167133
+          18.925         0.213959
+           18.95         0.260004
+          18.975         0.299478
+              19         0.326493
+          19.025         0.336375
+           19.05         0.326874
+          19.075         0.298848
+            19.1         0.256186
+          19.125          0.20493
+           19.15         0.151894
+          19.175         0.103192
+            19.2        0.0631126
+          19.225        0.0336314
+           19.25        0.0145694
+          19.275       0.00425203
+            19.3      0.000321872
+          19.325      0.000439255
+           19.35        0.0027048
+          19.375       0.00578854
+            19.4       0.00885023
+          19.425        0.0113699
+           19.45        0.0129895
+          19.475        0.0134274
+            19.5        0.0124874
+          19.525        0.0101525
+           19.55       0.00672801
+          19.575       0.00299145
+            19.6       0.00032374
+          19.625      0.000833404
+           19.65       0.00753797
+          19.675        0.0246733
+            19.7        0.0581762
+          19.725         0.116267
+           19.75         0.209969
+          19.775         0.353146
+            19.8         0.561562
+          19.825         0.850486
+           19.85          1.23046
+          19.875          1.70198
+            19.9          2.24989
+          19.925          2.83982
+           19.95          3.41866
+          19.975           3.9203
+              20          4.27711
+&

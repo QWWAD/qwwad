@@ -1,0 +1,46 @@
+#!/bin/sh
+# Define output file
+
+OUT=Ee-t.r
+
+# Initialise files
+
+rm -f $OUT
+
+# Create structure definition file
+
+echo 200 0.1 0.0 > s.r
+echo 200 0.0 0.0 >> s.r
+echo 200 0.1 0.0 >> s.r
+
+
+# Run diffusion `simulation' for various times
+
+for t in 0 10 20 50 100 200 500 1000
+do
+{
+ # Re-generate initial alloy concentration (diffusant) profile
+
+ efsx
+
+ # Use the default, `-a 0' option for constant diffusion coefficient
+
+ gde -D 10 -t $t
+ 
+ # Store diffusion profiles
+
+ cp X.r x-t=$t.r
+
+ # Now copy diffused profile to `x.r' and solve for the electron energy
+
+ cp X.r x.r
+ efxv		# convert x data into potential
+ efxm		# convert x data into effective mass
+ efshoot 	# calculate ground state electron energy
+
+ # Save electron energy in file
+
+ echo -n $t >> $OUT
+ nawk '/1 /{printf("\t%e\n",$2)}' Ee.r >> $OUT
+}
+done

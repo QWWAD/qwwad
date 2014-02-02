@@ -1,0 +1,39 @@
+#!/bin/sh
+# 
+# Script to calculate energies and wave functions for each field
+# Field read in as command line argument
+#
+ echo 150 0.15 0.0 > s.r		# Generate s.r file
+ echo 50 0.0 0.0 >> s.r
+ echo 50 0.15 0.0 >> s.r
+ echo 50 0.0 0.0 >> s.r
+ echo 50 0.15 0.0 >> s.r
+ echo 50 0.0 0.0 >> s.r
+ echo 50 0.15 0.0 >> s.r
+ echo 50 0.0 0.0 >> s.r
+ echo 50 0.15 0.0 >> s.r
+ echo 50 0.0 0.0 >> s.r
+ echo 150 0.15 0.0 >> s.r
+ 
+
+for F in $1
+do
+{
+
+ efsx				# Generate x versus z data
+
+ efxv 				# Generate potential file v.r
+ efxm -m 0.067			# Constant effective mass
+ effv -f $F			# Add electric field
+ efshoot -s 5			# Solve Schrodinger equation
+ efwf				# Calculate wave function
+
+ efxv -p h
+ efxm -m 0.62 -p h 
+ effv -f $F -p h
+ efshoot -s 5 -p h -d 0.001	# May need smaller step to resolve miniband
+				#  at larger LW
+ efwf -p h
+
+}
+done

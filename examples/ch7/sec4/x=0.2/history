@@ -1,0 +1,83 @@
+#!/bin/sh
+# Finite square cross-sectional quantum wire calculation
+# Generate 4 lowest energy solutions and collate energy eigenvalues as a
+# function of well width.  Store the cross-sectional charge densities for
+# one well width only.
+#
+# Quantum wire material GaAs, barrier material Ga(0.8)Al(0.2)As
+#
+# Define and initialise output file
+
+OUTPUT=Eyz-L.r
+
+rm -f $OUTPUT
+
+# Calculate barrier mass, MB=0.067+0.083*X
+
+MB=0.0836
+
+# Barrier height, V=0.67*1247*X
+
+V=167.098
+
+# Loop over wire side
+
+for L in 60 # 70 80 90 100 120 140 160 200 240 300
+do
+{
+ # Calculate confinement energy and wave function along y-axis
+ efsqw -a $L -m 0.067 -n $MB -s 2 -V $V
+
+ # Store energies
+ mv Ee.r Ey.r
+ 
+ # Calculate confinement energy and wave function along z-axis
+ efsqw -a $L -m 0.067 -n $MB -s 2 -V $V
+
+ # Store energies
+ mv Ee.r Ez.r
+ 
+ # Collate and store energy eigenvalues as a function of the wire side
+
+ echo -n $L >> $OUTPUT	# Write well width to file
+
+ # Read Ez values into array and then add them in sequence to Ey values
+
+ nawk 'BEGIN{i=0;while("cat Ez.r"|getline){Ez[i]=$2;i++}}{Ey=$2;printf(" %e %e",Ey+Ez[0],Ey+Ez[1])}' Ey.r >> $OUTPUT
+
+ echo -n -e "\n" >> $OUTPUT	# End line
+}
+done
+
+# Now calculate the wavefunctions for the 100A case
+# Initialise files
+
+rm -f wfy1.r wfy2.r wfz1.r wfz2.r cd11.r cd12.r cd21.r cd22.r
+
+# Generate wave function
+
+efsqw -a 100 -b 100 -m 0.067 -n $MB -s 2 -V $V	# y-direction
+
+# `efsqw' produces 1000 points, just keep every 10th point
+
+nawk 'BEGIN{i=1}{if(i%10==0)print $0;i++}' wf_e1.r >> wfy1.r
+nawk 'BEGIN{i=1}{if(i%10==0)print $0;i++}' wf_e2.r >> wfy2.r
+
+# And again for the z-direction
+
+efsqw -a 100 -b 100 -m 0.067 -n $MB -s 2 -V $V	# z-direction
+nawk 'BEGIN{i=1}{if(i%10==0)print $0;i++}' wf_e1.r >> wfz1.r
+nawk 'BEGIN{i=1}{if(i%10==0)print $0;i++}' wf_e2.r >> wfz2.r
+
+rm -f wf_e1.r wf_e2.r		# Delete unwanted data
+
+# Combine the wave functions to form the charge density, in a single data
+# column suitable for plotting
+
+ nawk 'BEGIN{i=0;while("cat wfz1.r"|getline){wfz[i]=$2;i++}}{wfy=$2;for(j=0;j<i;j++)printf("%e\n",wfy*wfy*wfz[j]*wfz[j])}' wfy1.r >> cd11.r
+
+ nawk 'BEGIN{i=0;while("cat wfz2.r"|getline){wfz[i]=$2;i++}}{wfy=$2;for(j=0;j<i;j++)printf("%e\n",wfy*wfy*wfz[j]*wfz[j])}' wfy1.r >> cd12.r
+
+ nawk 'BEGIN{i=0;while("cat wfz1.r"|getline){wfz[i]=$2;i++}}{wfy=$2;for(j=0;j<i;j++)printf("%e\n",wfy*wfy*wfz[j]*wfz[j])}' wfy2.r >> cd21.r
+
+ nawk 'BEGIN{i=0;while("cat wfz2.r"|getline){wfz[i]=$2;i++}}{wfy=$2;for(j=0;j<i;j++)printf("%e\n",wfy*wfy*wfz[j]*wfz[j])}' wfy2.r >> cd22.r

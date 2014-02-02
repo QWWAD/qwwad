@@ -1,0 +1,35 @@
+#!/bin/sh
+# Initialise files
+
+rm -f Ee-k.r
+
+# Read well and barrier width from command line
+
+LW=$1
+LB=$2
+
+# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
+# Use V=0.67*1247*x, keep x=0.4
+
+V=334.1965
+
+# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
+# Use MB=0.067+0.083*x
+
+MB=0.1002
+
+# Loop for carrier momentum
+
+for K in -2.0 -1.9 -1.8 -1.7 -1.6 -1.5 -1.4 -1.3 -1.2 -1.1 -1.0 -0.9 -0.8 -0.7 -0.6 -0.5 -0.4 -0.3 -0.2 -0.1 0.0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.8 1.9 2.0 
+do
+{
+ echo -n -e "$K\t" >> Ee-k.r	# write wave vector to file
+
+# Calculate energies for different wave vectors
+
+ efkpsl -a $LW -b $LB -m 0.067 -n $MB -V $V -k $K -s 1
+ nawk '{printf("%9.3f",$2)}' Ee.r >> Ee-k.r		# send data to file
+ echo -e "\n" >> Ee-k.r		# end line
+}
+done
+

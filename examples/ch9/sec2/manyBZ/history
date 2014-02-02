@@ -1,0 +1,64 @@
+#!/bin/sh
+# Bulk Si calculation
+# Write crystal basis to file `atoms.xyz' in XYZ format
+# Note basis vectors are +/- (1/8,1/8,1/8) and A0=5.43
+# Note also the atom type is defined as `SIcb' this selects the 
+# Cohen and Bergstresser potentials
+
+echo 2	> atoms.xyz
+echo    >> atoms.xyz				# leave blank line
+echo SIcb -0.67875 -0.67875 -0.67875 >> atoms.xyz
+echo SIcb  0.67875  0.67875  0.67875 >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+
+# Define k-vectors, look at multiple Brillouin zones
+
+echo 0.0 0.0 0.0  > k.r		# Gamma
+echo 0.0 0.0 0.1 >> k.r
+echo 0.0 0.0 0.2 >> k.r
+echo 0.0 0.0 0.3 >> k.r
+echo 0.0 0.0 0.4 >> k.r
+echo 0.0 0.0 0.5 >> k.r
+echo 0.0 0.0 0.6 >> k.r
+echo 0.0 0.0 0.7 >> k.r
+echo 0.0 0.0 0.8 >> k.r
+echo 0.0 0.0 0.9 >> k.r
+echo 0.0 0.0 1.0 >> k.r		# X
+echo 0.0 0.0 1.1 >> k.r
+echo 0.0 0.0 1.2 >> k.r
+echo 0.0 0.0 1.3 >> k.r
+echo 0.0 0.0 1.4 >> k.r
+echo 0.0 0.0 1.5 >> k.r
+echo 0.0 0.0 1.6 >> k.r
+echo 0.0 0.0 1.7 >> k.r
+echo 0.0 0.0 1.8 >> k.r
+echo 0.0 0.0 1.9 >> k.r
+echo 0.0 0.0 2.0 >> k.r		# X
+echo 0.0 0.0 2.1 >> k.r
+echo 0.0 0.0 2.2 >> k.r
+echo 0.0 0.0 2.3 >> k.r
+echo 0.0 0.0 2.4 >> k.r
+echo 0.0 0.0 2.5 >> k.r
+echo 0.0 0.0 2.6 >> k.r
+echo 0.0 0.0 2.7 >> k.r
+echo 0.0 0.0 2.8 >> k.r
+echo 0.0 0.0 2.9 >> k.r
+echo 0.0 0.0 3.0 >> k.r
+
+rlv-fcc 
+ 
+# Implement pseudopotential calculation
+
+pplb -A 5.43 -n 1 -m 6
+
+# Gather first 6 eignenvalues together 
+
+ppee -n 1 -m 6
+  
+# Tidy up
+
+rm ank.r Ek?.r Ek??.r

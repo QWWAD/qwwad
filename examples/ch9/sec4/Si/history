@@ -1,0 +1,57 @@
+#!/bin/sh
+# Bulk Si calculation
+# Write crystal basis to file `atoms.xyz' in XYZ format
+# Note basis vectors are +/- (1/8,1/8,1/8) and A0=5.43
+# Note also the atom type is defined as `SIcb' this selects the 
+# Cohen and Bergstresser potentials
+
+echo 2	> atoms.xyz
+echo    >> atoms.xyz				# leave blank line
+echo SIcb -0.67875 -0.67875 -0.67875 >> atoms.xyz
+echo SIcb  0.67875  0.67875  0.67875 >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+
+# Just calculate band structure at zone center (Gamma)
+
+echo 0.0 0.0 0.0 > k.r		# Gamma
+
+# Define basis set
+
+Gmax=4
+
+# create reciprocal lattice vectors
+
+rlv-fcc -g $Gmax
+ 
+# Implement pseudopotential calculation, outputting just the 4 lowest
+# eigenvectors
+
+pplb -A 5.43 -n 1 -m 4 -w
+
+# Rename eigenvectors file for charge density calculation
+
+mv ank0.r ank.r
+
+# Loop over z planes 
+
+for Z in 0 0.125 0.250 0.375 0.5
+do
+{
+ # Implement charge density calculation, use default (-n 1 -m 4) to sum over
+ # the valence band states
+
+ ppcd -A 5.43 -x 0 -X 1 -y 0 -Y 1 -z $Z -Z $Z -N 40
+
+ # Save data in file
+
+ mv cd.r cdz=$Z.r
+}
+done
+
+# Tidy up
+
+rm -f ank.r Ek?.r 

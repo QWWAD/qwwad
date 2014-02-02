@@ -1,0 +1,36 @@
+#!/bin/sh
+# 3D trial wave function donor binding energy calculation
+
+# Define structure
+
+echo '200 0.1 0.0
+60 0.0 0.0
+200 0.1 0.0' > s.r
+
+# Define donor positions
+
+echo '0.0e-10
+2.0e-9
+4.0e-9
+6.0e-9
+8.0e-9
+1.0e-8
+1.2e-8
+1.4e-8 
+1.6e-8 
+1.8e-8 
+2.0e-8 
+2.2e-8
+2.3e-8' > r_d.r
+
+# Generate alloy profile
+
+efsx
+
+# Generate potential profile
+
+efxv -M cdmnte
+
+# Start 3D donor calculation
+
+d03D -e 10.6 -m 0.096 -s 45

@@ -1,0 +1,1590 @@
+# ACE/gr parameter file
+#
+#
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@with string
+@    string on
+@    string loctype view
+@    string 0.649368863955, 0.785
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "29.4meV"
+@with string
+@    string on
+@    string loctype view
+@    string 0.654978962132, 0.383333333333
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "29.5meV"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 400
+@    world ymin -30000
+@    world ymax 20000
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 type xy
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 1
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 3
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "wf_e1.r"
+@    s1 type xy
+@    s1 symbol 0
+@    s1 symbol size 1.000000
+@    s1 symbol fill 1
+@    s1 symbol color 1
+@    s1 symbol linewidth 1
+@    s1 symbol linestyle 1
+@    s1 symbol center false
+@    s1 symbol char 0
+@    s1 skip 0
+@    s1 linestyle 1
+@    s1 linewidth 2
+@    s1 color 1
+@    s1 fill 0
+@    s1 fill with color
+@    s1 fill color 1
+@    s1 fill pattern 0
+@    s1 errorbar type BOTH
+@    s1 errorbar length 1.000000
+@    s1 errorbar linewidth 1
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser on
+@    s1 errorbar riser linewidth 1
+@    s1 errorbar riser linestyle 1
+@    s1 xyz 0.000000, 0.000000
+@    s1 comment "wf_e2.r"
+@    s2 type xy
+@    s2 symbol 0
+@    s2 symbol size 1.000000
+@    s2 symbol fill 1
+@    s2 symbol color 1
+@    s2 symbol linewidth 1
+@    s2 symbol linestyle 1
+@    s2 symbol center false
+@    s2 symbol char 0
+@    s2 skip 0
+@    s2 linestyle 4
+@    s2 linewidth 2
+@    s2 color 1
+@    s2 fill 0
+@    s2 fill with color
+@    s2 fill color 1
+@    s2 fill pattern 0
+@    s2 errorbar type BOTH
+@    s2 errorbar length 1.000000
+@    s2 errorbar linewidth 1
+@    s2 errorbar linestyle 1
+@    s2 errorbar riser on
+@    s2 errorbar riser linewidth 1
+@    s2 errorbar riser linestyle 1
+@    s2 xyz 0.000000, 0.000000
+@    s2 comment "wf_e3.r"
+@    xaxis  tick on
+@    xaxis  tick major 100
+@    xaxis  tick minor 10
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z\0-) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 10000
+@    yaxis  tick minor 5000
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "\8y\0"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 0
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type spec
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type spec
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 100
+@    zeroxaxis  tick minor 50
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 1
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 10000
+@    zeroyaxis  tick minor 5000
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 1
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend off
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.8
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.000000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TYPE xy
+               0                0
+               1         0.269316
+               2         0.539285
+               3         0.810559
+               4           1.0838
+               5          1.35966
+               6          1.63881
+               7          1.92193
+               8          2.20971
+               9          2.50284
+              10          2.80202
+              11          3.10799
+              12          3.42149
+              13          3.74328
+              14          4.07412
+              15          4.41483
+              16          4.76624
+              17          5.12918
+              18          5.50455
+              19          5.89324
+              20           6.2962
+              21          6.71441
+              22          7.14888
+              23          7.60066
+              24          8.07084
+              25          8.56057
+              26          9.07102
+              27          9.60344
+              28          10.1591
+              29          10.7394
+              30          11.3457
+              31          11.9794
+              32          12.6422
+              33          13.3356
+              34          14.0612
+              35          14.8209
+              36          15.6165
+              37          16.4499
+              38          17.3232
+              39          18.2384
+              40          19.1977
+              41          20.2036
+              42          21.2584
+              43          22.3646
+              44           23.525
+              45          24.7424
+              46          26.0196
+              47          27.3599
+              48          28.7665
+              49          30.2426
+              50          31.7921
+              51          33.4185
+              52          35.1258
+              53          36.9182
+              54          38.7999
+              55          40.7757
+              56          42.8501
+              57          45.0284
+              58          47.3156
+              59          49.7174
+              60          52.2397
+              61          54.8884
+              62            57.67
+              63          60.5913
+              64          63.6593
+              65          66.8814
+              66          70.2655
+              67          73.8197
+              68          77.5527
+              69          81.4735
+              70          85.5915
+              71          89.9168
+              72          94.4599
+              73          99.2316
+              74          104.244
+              75          109.508
+              76          115.038
+              77          120.846
+              78          126.947
+              79          133.355
+              80          140.086
+              81          147.157
+              82          154.583
+              83          162.384
+              84          170.578
+              85          179.186
+              86          188.227
+              87          197.724
+              88          207.699
+              89          218.178
+              90          229.185
+              91          240.747
+              92          252.892
+              93          265.649
+              94           279.05
+              95          293.126
+              96          307.912
+              97          323.443
+              98          339.758
+              99          356.896
+             100          374.897
+             101          393.807
+             102           413.67
+             103          434.535
+             104          456.452
+             105          479.474
+             106          503.657
+             107           529.06
+             108          555.744
+             109          583.773
+             110          613.217
+             111          644.145
+             112          676.633
+             113          710.759
+             114          746.606
+             115          784.262
+             116          823.816
+             117          865.365
+             118           909.01
+             119          954.855
+             120          1003.01
+             121           1053.6
+             122          1106.74
+             123          1162.56
+             124          1221.19
+             125          1282.78
+             126          1347.47
+             127          1415.43
+             128          1486.82
+             129          1561.81
+             130          1640.57
+             131          1723.32
+             132          1810.23
+             133          1901.53
+             134          1997.43
+             135          2098.17
+             136          2203.99
+             137          2315.14
+             138           2431.9
+             139          2554.55
+             140          2683.39
+             141          2818.72
+             142          2960.88
+             143          3110.21
+             144          3267.07
+             145          3431.84
+             146          3604.93
+             147          3786.74
+             148          3977.72
+             149          4178.33
+             150          4389.06
+             151          4597.52
+             152           4803.6
+             153           5007.2
+             154          5208.21
+             155          5406.53
+             156          5602.06
+             157          5794.68
+             158          5984.31
+             159          6170.85
+             160           6354.2
+             161          6534.26
+             162          6710.94
+             163          6884.16
+             164          7053.81
+             165          7219.82
+             166          7382.09
+             167          7540.55
+             168          7695.11
+             169          7845.69
+             170          7992.22
+             171          8134.61
+             172           8272.8
+             173          8406.71
+             174          8536.27
+             175          8661.43
+             176           8782.1
+             177          8898.23
+             178          9009.76
+             179          9116.64
+             180           9218.8
+             181          9316.19
+             182          9408.77
+             183          9496.48
+             184          9579.29
+             185          9657.14
+             186             9730
+             187          9797.82
+             188          9860.59
+             189          9918.25
+             190          9970.79
+             191          10018.2
+             192          10060.4
+             193          10097.4
+             194          10129.2
+             195          10155.7
+             196            10177
+             197            10193
+             198          10203.8
+             199          10209.3
+             200          10209.5
+             201          10204.4
+             202          10194.1
+             203          10178.4
+             204          10157.6
+             205          10131.4
+             206          10100.1
+             207          10063.5
+             208          10021.7
+             209          9974.71
+             210          9922.58
+             211          9865.32
+             212          9802.95
+             213          9735.52
+             214          9663.06
+             215           9585.6
+             216          9503.19
+             217          9415.86
+             218          9323.66
+             219          9226.65
+             220          9124.86
+             221          9018.36
+             222          8907.19
+             223          8791.42
+             224           8671.1
+             225           8546.3
+             226          8417.08
+             227          8283.51
+             228          8145.66
+             229          8003.59
+             230          7857.39
+             231          7707.12
+             232          7552.88
+             233          7394.72
+             234          7232.74
+             235          7067.03
+             236          6897.66
+             237          6724.72
+             238          6548.31
+             239          6368.51
+             240          6185.42
+             241          5999.13
+             242          5809.74
+             243          5617.34
+             244          5422.04
+             245          5223.94
+             246          5023.14
+             247          4819.74
+             248          4613.85
+             249          4405.57
+             250          4195.02
+             251          3994.62
+             252           3803.9
+             253          3622.38
+             254          3449.64
+             255          3285.25
+             256          3128.82
+             257          2979.96
+             258          2838.32
+             259          2703.55
+             260          2575.33
+             261          2453.35
+             262           2337.3
+             263          2226.92
+             264          2121.92
+             265          2022.07
+             266          1927.11
+             267          1836.82
+             268          1750.97
+             269          1669.37
+             270          1591.81
+             271           1518.1
+             272          1448.07
+             273          1381.54
+             274          1318.36
+             275          1258.38
+             276          1201.44
+             277           1147.4
+             278          1096.15
+             279          1047.55
+             280          1001.49
+             281          957.854
+             282          916.537
+             283          877.439
+             284          840.465
+             285          805.527
+             286          772.539
+             287          741.422
+             288            712.1
+             289          684.503
+             290          658.563
+             291          634.218
+             292          611.409
+             293           590.08
+             294          570.179
+             295           551.66
+             296          534.476
+             297          518.587
+             298          503.953
+             299           490.54
+             300          478.314
+             301          467.247
+             302          457.311
+             303          448.482
+             304           440.74
+             305          434.064
+             306           428.44
+             307          423.853
+             308          420.292
+             309           417.75
+             310          416.218
+             311          415.695
+             312          416.178
+             313          417.669
+             314          420.171
+             315          423.691
+             316          428.237
+             317          433.819
+             318          440.452
+             319          448.152
+             320          456.937
+             321          466.828
+             322           477.85
+             323          490.028
+             324          503.394
+             325          517.978
+             326          533.817
+             327          550.948
+             328          569.413
+             329          589.257
+             330          610.528
+             331          633.277
+             332           657.56
+             333          683.435
+             334          710.965
+             335          740.216
+             336           771.26
+             337          804.172
+             338           839.03
+             339          875.921
+             340          914.932
+             341          956.159
+             342          999.701
+             343          1045.66
+             344          1094.16
+             345           1145.3
+             346          1199.22
+             347          1256.04
+             348          1315.91
+             349          1378.95
+             350          1445.34
+             351          1515.23
+             352          1588.79
+             353          1666.19
+             354          1747.63
+             355           1833.3
+             356          1923.41
+             357          2018.18
+             358          2117.84
+             359          2222.62
+             360          2332.78
+             361           2448.6
+             362          2570.34
+             363          2698.31
+             364          2832.81
+             365          2974.17
+             366          3122.73
+             367          3278.85
+             368          3442.91
+             369          3615.31
+             370          3796.47
+             371          3986.81
+             372          4186.82
+             373          4396.95
+             374          4617.74
+             375          4849.71
+             376          5093.42
+             377          5349.46
+             378          5618.46
+             379          5901.06
+             380          6197.96
+             381          6509.86
+             382          6837.52
+             383          7181.74
+             384          7543.35
+             385          7923.23
+             386          8322.29
+             387           8741.5
+             388          9181.88
+             389           9644.5
+             390          10130.5
+             391            10641
+             392          11177.2
+             393          11740.6
+             394          12332.3
+             395          12953.9
+             396          13606.9
+             397          14292.9
+             398          15013.4
+             399          15770.3
+&
+@TYPE xy
+               0                0
+               1         0.314953
+               2         0.630668
+               3          0.94791
+               4          1.26745
+               5          1.59005
+               6          1.91651
+               7           2.2476
+               8          2.58414
+               9          2.92693
+              10           3.2768
+              11          3.63461
+              12          4.00122
+              13          4.37752
+              14          4.76441
+              15          5.16284
+              16          5.57376
+              17          5.99818
+              18          6.43712
+              19          6.89164
+              20          7.36285
+              21          7.85188
+              22          8.35992
+              23           8.8882
+              24          9.43799
+              25          10.0106
+              26          10.6075
+              27          11.2301
+              28          11.8798
+              29          12.5583
+              30          13.2672
+              31          14.0082
+              32          14.7832
+              33          15.5939
+              34          16.4424
+              35          17.3307
+              36          18.2609
+              37          19.2353
+              38          20.2563
+              39          21.3264
+              40          22.4481
+              41          23.6241
+              42          24.8573
+              43          26.1507
+              44          27.5074
+              45          28.9307
+              46           30.424
+              47           31.991
+              48          33.6354
+              49          35.3612
+              50          37.1727
+              51          39.0741
+              52          41.0702
+              53          43.1656
+              54          45.3656
+              55          47.6754
+              56          50.1006
+              57          52.6471
+              58           55.321
+              59          58.1289
+              60          61.0775
+              61          64.1739
+              62          67.4257
+              63          70.8408
+              64          74.4273
+              65           78.194
+              66            82.15
+              67          86.3049
+              68          90.6687
+              69           95.252
+              70          100.066
+              71          105.122
+              72          110.433
+              73          116.011
+              74           121.87
+              75          128.023
+              76          134.487
+              77          141.277
+              78          148.408
+              79          155.899
+              80          163.767
+              81          172.031
+              82          180.712
+              83          189.831
+              84          199.409
+              85           209.47
+              86          220.037
+              87          231.138
+              88          242.798
+              89          255.046
+              90          267.911
+              91          281.425
+              92           295.62
+              93          310.531
+              94          326.194
+              95          342.646
+              96          359.928
+              97          378.081
+              98           397.15
+              99           417.18
+             100          438.219
+             101           460.32
+             102          483.535
+             103          507.921
+             104          533.536
+             105          560.443
+             106          588.707
+             107          618.395
+             108          649.581
+             109           682.34
+             110           716.75
+             111          752.895
+             112          790.864
+             113          830.746
+             114           872.64
+             115          916.646
+             116          962.872
+             117          1011.43
+             118          1062.43
+             119          1116.01
+             120          1172.29
+             121          1231.41
+             122           1293.5
+             123          1358.73
+             124          1427.25
+             125          1499.23
+             126          1574.83
+             127          1654.24
+             128          1737.66
+             129          1825.29
+             130          1917.34
+             131          2014.02
+             132          2115.59
+             133          2222.27
+             134          2334.34
+             135          2452.05
+             136           2575.7
+             137          2705.59
+             138          2842.03
+             139          2985.35
+             140          3135.89
+             141          3294.03
+             142          3460.14
+             143          3634.62
+             144          3817.91
+             145          4010.44
+             146          4212.68
+             147          4425.11
+             148          4648.26
+             149          4882.66
+             150          5128.88
+             151          5372.45
+             152          5613.24
+             153          5851.12
+             154          6085.97
+             155          6317.67
+             156          6546.11
+             157          6771.15
+             158          6992.69
+             159          7210.61
+             160           7424.8
+             161          7635.14
+             162          7841.54
+             163          8043.87
+             164          8242.04
+             165          8435.95
+             166          8625.49
+             167          8810.56
+             168          8991.08
+             169          9166.94
+             170          9338.05
+             171          9504.34
+             172           9665.7
+             173          9822.06
+             174          9973.34
+             175          10119.5
+             176          10260.3
+             177          10395.9
+             178          10526.1
+             179          10650.8
+             180            10770
+             181          10883.7
+             182          10991.7
+             183            11094
+             184          11190.6
+             185          11281.4
+             186          11366.4
+             187          11445.4
+             188          11518.6
+             189          11585.8
+             190            11647
+             191          11702.1
+             192          11751.2
+             193          11794.3
+             194          11831.2
+             195            11862
+             196          11886.6
+             197          11905.1
+             198          11917.5
+             199          11923.6
+             200          11923.6
+             201          11917.5
+             202          11905.1
+             203          11886.6
+             204            11862
+             205          11831.2
+             206          11794.3
+             207          11751.2
+             208          11702.1
+             209            11647
+             210          11585.8
+             211          11518.6
+             212          11445.4
+             213          11366.4
+             214          11281.4
+             215          11190.6
+             216            11094
+             217          10991.7
+             218          10883.7
+             219            10770
+             220          10650.8
+             221          10526.1
+             222          10395.9
+             223          10260.3
+             224          10119.5
+             225          9973.34
+             226          9822.06
+             227           9665.7
+             228          9504.34
+             229          9338.05
+             230          9166.94
+             231          8991.08
+             232          8810.56
+             233          8625.49
+             234          8435.95
+             235          8242.04
+             236          8043.87
+             237          7841.54
+             238          7635.14
+             239           7424.8
+             240          7210.61
+             241          6992.69
+             242          6771.15
+             243          6546.11
+             244          6317.67
+             245          6085.97
+             246          5851.12
+             247          5613.24
+             248          5372.45
+             249          5128.88
+             250          4882.66
+             251          4648.26
+             252          4425.11
+             253          4212.68
+             254          4010.44
+             255          3817.91
+             256          3634.62
+             257          3460.14
+             258          3294.03
+             259          3135.89
+             260          2985.35
+             261          2842.03
+             262          2705.59
+             263           2575.7
+             264          2452.05
+             265          2334.34
+             266          2222.27
+             267          2115.59
+             268          2014.02
+             269          1917.34
+             270          1825.29
+             271          1737.66
+             272          1654.24
+             273          1574.83
+             274          1499.23
+             275          1427.25
+             276          1358.73
+             277           1293.5
+             278          1231.41
+             279          1172.29
+             280          1116.01
+             281          1062.43
+             282          1011.43
+             283          962.872
+             284          916.646
+             285           872.64
+             286          830.746
+             287          790.864
+             288          752.895
+             289           716.75
+             290           682.34
+             291          649.581
+             292          618.395
+             293          588.707
+             294          560.443
+             295          533.536
+             296          507.921
+             297          483.535
+             298           460.32
+             299          438.219
+             300           417.18
+             301           397.15
+             302          378.081
+             303          359.928
+             304          342.646
+             305          326.194
+             306          310.531
+             307           295.62
+             308          281.425
+             309          267.911
+             310          255.046
+             311          242.798
+             312          231.138
+             313          220.037
+             314           209.47
+             315          199.409
+             316          189.831
+             317          180.712
+             318          172.031
+             319          163.767
+             320          155.899
+             321          148.408
+             322          141.277
+             323          134.487
+             324          128.023
+             325           121.87
+             326          116.011
+             327          110.433
+             328          105.122
+             329          100.066
+             330           95.252
+             331          90.6687
+             332          86.3049
+             333            82.15
+             334           78.194
+             335          74.4273
+             336          70.8408
+             337          67.4257
+             338          64.1739
+             339          61.0775
+             340          58.1289
+             341           55.321
+             342          52.6471
+             343          50.1006
+             344          47.6754
+             345          45.3656
+             346          43.1656
+             347          41.0702
+             348          39.0741
+             349          37.1727
+             350          35.3612
+             351          33.6354
+             352           31.991
+             353           30.424
+             354          28.9307
+             355          27.5074
+             356          26.1507
+             357          24.8573
+             358          23.6241
+             359          22.4481
+             360          21.3264
+             361          20.2563
+             362          19.2353
+             363          18.2609
+             364          17.3307
+             365          16.4424
+             366          15.5939
+             367          14.7832
+             368          14.0082
+             369          13.2672
+             370          12.5583
+             371          11.8798
+             372          11.2301
+             373          10.6075
+             374          10.0106
+             375          9.43799
+             376          8.88819
+             377          8.35992
+             378          7.85188
+             379          7.36285
+             380          6.89164
+             381          6.43712
+             382          5.99818
+             383          5.57376
+             384          5.16283
+             385          4.76441
+             386          4.37752
+             387          4.00122
+             388          3.63461
+             389           3.2768
+             390          2.92693
+             391          2.58413
+             392           2.2476
+             393           1.9165
+             394          1.59005
+             395          1.26744
+             396         0.947907
+             397         0.630665
+             398          0.31495
+             399      -3.2555e-06
+&
+@TYPE xy
+               0                0
+               1         0.200314
+               2         0.401112
+               3         0.602881
+               4         0.806108
+               5          1.01129
+               6          1.21891
+               7          1.42949
+               8          1.64352
+               9          1.86153
+              10          2.08404
+              11           2.3116
+              12          2.54475
+              13          2.78406
+              14          3.03011
+              15          3.28348
+              16           3.5448
+              17           3.8147
+              18          4.09383
+              19          4.38287
+              20          4.68251
+              21          4.99348
+              22          5.31653
+              23          5.65245
+              24          6.00205
+              25          6.36617
+              26          6.74569
+              27          7.14153
+              28          7.55466
+              29          7.98606
+              30          8.43679
+              31          8.90794
+              32          9.40063
+              33          9.91608
+              34          10.4555
+              35          11.0203
+              36          11.6117
+              37          12.2312
+              38          12.8803
+              39          13.5605
+              40          14.2736
+              41          15.0212
+              42          15.8052
+              43          16.6274
+              44          17.4898
+              45          18.3946
+              46          19.3438
+              47          20.3399
+              48          21.3852
+              49          22.4822
+              50          23.6336
+              51          24.8423
+              52           26.111
+              53          27.4429
+              54          28.8412
+              55          30.3093
+              56          31.8508
+              57          33.4693
+              58          35.1688
+              59          36.9534
+              60          38.8274
+              61          40.7953
+              62           42.862
+              63          45.0324
+              64          47.3117
+              65          49.7056
+              66          52.2197
+              67          54.8601
+              68          57.6333
+              69           60.546
+              70          63.6051
+              71          66.8182
+              72          70.1929
+              73          73.7375
+              74          77.4605
+              75           81.371
+              76          85.4783
+              77          89.7925
+              78          94.3239
+              79          99.0836
+              80          104.083
+              81          109.334
+              82           114.85
+              83          120.644
+              84           126.73
+              85          133.122
+              86          139.836
+              87          146.889
+              88          154.297
+              89          162.079
+              90          170.252
+              91          178.838
+              92          187.857
+              93           197.33
+              94           207.28
+              95          217.732
+              96          228.711
+              97          240.243
+              98          252.357
+              99          265.081
+             100          278.447
+             101          292.486
+             102          307.233
+             103          322.724
+             104          338.995
+             105          356.087
+             106           374.04
+             107          392.898
+             108          412.707
+             109          433.515
+             110          455.372
+             111           478.33
+             112          502.446
+             113          527.778
+             114          554.387
+             115          582.337
+             116          611.696
+             117          642.536
+             118           674.93
+             119          708.957
+             120            744.7
+             121          782.244
+             122          821.682
+             123          863.108
+             124          906.622
+             125           952.33
+             126          1000.34
+             127          1050.77
+             128          1103.75
+             129           1159.4
+             130          1217.85
+             131          1279.25
+             132          1343.74
+             133          1411.48
+             134          1482.64
+             135          1557.39
+             136          1635.91
+             137          1718.38
+             138          1805.02
+             139          1896.02
+             140          1991.61
+             141          2092.01
+             142          2197.48
+             143          2308.27
+             144          2424.64
+             145          2546.88
+             146          2675.28
+             147          2810.15
+             148          2951.83
+             149          3100.65
+             150          3256.97
+             151           3411.6
+             152          3564.46
+             153          3715.47
+             154          3864.55
+             155          4011.63
+             156          4156.63
+             157          4299.47
+             158          4440.08
+             159          4578.39
+             160          4714.32
+             161          4847.81
+             162          4978.78
+             163          5107.17
+             164          5232.91
+             165          5355.93
+             166          5476.18
+             167          5593.59
+             168          5708.09
+             169          5819.63
+             170          5928.16
+             171           6033.6
+             172          6135.92
+             173          6235.06
+             174          6330.96
+             175          6423.58
+             176          6512.86
+             177          6598.77
+             178          6681.25
+             179          6760.27
+             180          6835.77
+             181          6907.74
+             182          6976.12
+             183          7040.88
+             184          7101.99
+             185          7159.41
+             186          7213.12
+             187          7263.09
+             188          7309.29
+             189           7351.7
+             190          7390.29
+             191          7425.05
+             192          7455.96
+             193             7483
+             194          7506.16
+             195          7525.43
+             196          7540.79
+             197          7552.24
+             198          7559.77
+             199          7563.38
+             200          7563.07
+             201          7558.83
+             202          7550.67
+             203          7538.59
+             204          7522.61
+             205          7502.72
+             206          7478.94
+             207          7451.28
+             208          7419.75
+             209          7384.38
+             210          7345.17
+             211          7302.15
+             212          7255.35
+             213          7204.78
+             214          7150.48
+             215          7092.46
+             216          7030.77
+             217          6965.42
+             218          6896.47
+             219          6823.93
+             220          6747.86
+             221          6668.29
+             222          6585.26
+             223          6498.81
+             224          6408.99
+             225          6315.84
+             226          6219.42
+             227          6119.77
+             228          6016.95
+             229             5911
+             230          5801.99
+             231          5689.97
+             232             5575
+             233          5457.14
+             234          5336.44
+             235          5212.98
+             236          5086.81
+             237             4958
+             238          4826.62
+             239          4692.74
+             240          4556.42
+             241          4417.74
+             242          4276.77
+             243          4133.58
+             244          3988.24
+             245          3840.84
+             246          3691.44
+             247          3540.13
+             248          3386.98
+             249          3232.08
+             250          3075.49
+             251          2926.35
+             252          2784.29
+             253          2648.97
+             254          2520.06
+             255          2397.24
+             256          2280.23
+             257          2168.73
+             258          2062.48
+             259          1961.22
+             260          1864.71
+             261          1772.71
+             262             1685
+             263          1601.36
+             264           1521.6
+             265          1445.52
+             266          1372.94
+             267          1303.69
+             268          1237.58
+             269          1174.47
+             270          1114.21
+             271          1056.63
+             272          1001.62
+             273          949.029
+             274          898.735
+             275          850.615
+             276          804.554
+             277          760.439
+             278          718.164
+             279          677.627
+             280           638.73
+             281          601.378
+             282          565.481
+             283          530.953
+             284          497.709
+             285           465.67
+             286          434.757
+             287          404.897
+             288          376.016
+             289          348.045
+             290          320.916
+             291          294.564
+             292          268.924
+             293          243.935
+             294          219.537
+             295           195.67
+             296          172.276
+             297          149.299
+             298          126.683
+             299          104.373
+             300          82.3167
+             301          60.4592
+             302          38.7479
+             303          17.1304
+             304         -4.44564
+             305         -26.0324
+             306         -47.6822
+             307         -69.4474
+             308         -91.3806
+             309         -113.535
+             310         -135.964
+             311         -158.722
+             312         -181.864
+             313         -205.446
+             314         -229.526
+             315          -254.16
+             316          -279.41
+             317         -305.336
+             318             -332
+             319         -359.468
+             320         -387.806
+             321         -417.082
+             322         -447.367
+             323         -478.735
+             324         -511.261
+             325         -545.024
+             326         -580.106
+             327         -616.592
+             328          -654.57
+             329         -694.131
+             330         -735.372
+             331         -778.393
+             332         -823.297
+             333         -870.193
+             334         -919.194
+             335          -970.42
+             336         -1023.99
+             337         -1080.05
+             338         -1138.71
+             339         -1200.13
+             340         -1264.46
+             341         -1331.84
+             342         -1402.45
+             343         -1476.45
+             344         -1554.02
+             345         -1635.35
+             346         -1720.64
+             347          -1810.1
+             348         -1903.93
+             349         -2002.37
+             350         -2105.65
+             351         -2214.04
+             352         -2327.77
+             353         -2447.14
+             354         -2572.43
+             355         -2703.95
+             356         -2842.01
+             357         -2986.95
+             358         -3139.11
+             359         -3298.87
+             360         -3466.61
+             361         -3642.74
+             362         -3827.68
+             363         -4021.89
+             364         -4225.82
+             365         -4439.99
+             366         -4664.89
+             367         -4901.08
+             368         -5149.14
+             369         -5409.65
+             370         -5683.25
+             371          -5970.6
+             372          -6272.4
+             373         -6589.38
+             374          -6922.3
+             375         -7271.97
+             376         -7639.24
+             377         -8024.99
+             378         -8430.16
+             379         -8855.73
+             380         -9302.73
+             381         -9772.24
+             382         -10265.4
+             383         -10783.4
+             384         -11327.5
+             385           -11899
+             386         -12499.2
+             387         -13129.8
+             388         -13792.1
+             389         -14487.7
+             390         -15218.5
+             391           -15986
+             392         -16792.3
+             393         -17639.1
+             394         -18528.7
+             395           -19463
+             396         -20444.5
+             397         -21475.5
+             398         -22558.4
+             399         -23695.9
+&

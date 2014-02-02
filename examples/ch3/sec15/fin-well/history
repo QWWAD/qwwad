@@ -1,0 +1,23 @@
+#!/bin/sh
+# Initialise files
+
+rm -f Dz.Dp-lw.r
+
+# Loop for different well widths
+
+for LW in 20 30 40 50 60 70 80 90 100 120 140 160 180 200 
+do
+{
+ # Calculate ground state energy and wave function as a function 
+ # of well width for GaAs
+
+ efsqw -a $LW
+
+ echo -n -e "$LW\t" >> Dz.Dp-lw.r	# write well width to file
+
+ # Search for line in standard output from hup and write to file 
+
+ hup | nawk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}' >> Dz.Dp-lw.r
+
+}
+done

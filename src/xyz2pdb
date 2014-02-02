@@ -1,0 +1,17 @@
+nawk '
+	BEGIN	{printf("REMARK    Output from xyz2pdb, the XYZ to Brookhaven Protein DataBank converter\n")
+		 printf("REMARK    Note in this implementation the Y co-ordinates are reflected to -Y\n");
+		 printf("REMARK    to produce the familiar x(right)y(up)z(in) axes\n");
+		 printf("AUTHOR    Paul Harrison, 1998\n")
+		 ai=0
+		}
+		{if(NF==4)printf("ATOM  %5i %-10s %15.3f%8.3f%8.3f\n",ai++,$1,$2,-$3,$4)
+		}
+	END	{
+		 printf("COLOUR######GA################   1.000   0.000   0.000\n")
+		 printf("COLOUR######AL################   0.000   0.000   0.000\n")
+		 printf("COLOUR######AS################   1.000   1.000   1.000\n")
+		 printf("COLOUR######SI################   0.000   0.000   0.000\n")
+		 printf("COLOUR######GE################   1.000   1.000   1.000\n")
+		}
+' $1.xyz > $1.pdb

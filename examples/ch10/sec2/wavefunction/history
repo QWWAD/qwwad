@@ -1,0 +1,63 @@
+#!/bin/ksh
+# GaAs/AlAs superlattice calculation with the continuous potentials of 
+# Mader and # Zunger et al. Phys. Rev. B (1994)
+# Note also the atom types are defined as `GAASmz' and `ASGAmz'
+# this selects the Ga in GaAs and As in GaAs potentials
+# Define output file and initialise
+
+OUTPUT=E-Nz.r
+rm -f $OUTPUT
+
+# Define k-vectors
+
+echo 0.0 0.0 0.0 > k.r
+
+# Perform calculation for single period only, to illustrate wavefunction
+
+NZ=10
+
+# Create `single-spiral' unit cell akin to superlattice
+
+csss -a ASGAmz -c GAASmz -z $NZ
+
+# Now create superlattice by swapping atoms
+
+mv atoms.xyz atoms.tmp
+let A=2*NZ+3		# the first atom to be swapped
+let B=4*NZ+2		# the last atom to be swapped
+sed "$A,$B s/GA/AL/" atoms.tmp >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# create reciprocal lattice vectors, note use of default maximum |G|
+
+rlv-ss -z $NZ
+
+# Sort the G vectors into ascending order
+
+ppsg
+
+# Output the valence bands and lowest conduction bands, note
+# a structure with a period of NZ has 4NZ atoms, each of which contributes 
+# two valence levels, hence the uppermost VB level is the 8NZ.
+
+let N=8*NZ	# top valence band
+let M=8*NZ+2	# bottom conduction band
+
+# Implement pseudopotential calculation, note use of default lattice constant
+# and output eigenvectors of all 8*NZ valence band states and the bottom
+# two conduction band states
+
+pplb -n 1 -m $M
+
+# Calculate charge density of uppermost valence band state along the x=y=0
+# axis, note that `ppcd' naturally sums over a number of states, so it is
+# important to specify both the lowest (-n) and highest states (-m)
+
+ppcd -z 0 -Z 20 -N 40 -n $N -m $N
+
+# Tidy up
+
+rm -f Ek?.r Ek??.r

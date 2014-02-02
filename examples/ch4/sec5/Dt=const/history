@@ -1,0 +1,36 @@
+#!/bin/sh
+# Create structure definition file
+
+echo 200 0.1 0.0 > s.r
+echo 200 0.0 0.0 >> s.r
+echo 200 0.1 0.0 >> s.r
+
+# Generate alloy concentration (diffusant) profile
+
+efsx
+
+# Run diffusion `simulation' for various times
+
+for t in 100 1000
+do
+{
+ # Use the default, -a 0 option for constant diffusion coefficient
+
+ gde -D 10 -t $t
+ 
+ # Store diffusion profiles
+
+ mv X.r x-t=$t.r
+}
+done
+
+# Now repeat calculations for different D but equivalent Dt
+
+for D in 100 1000
+do
+{
+ gde -D $D -t 10 -d 0.0001	# Need to reduce time interval
+
+ mv X.r x-D=$D.r
+}
+done

@@ -1,0 +1,33 @@
+#!/bin/sh
+# Calculation of the mean spontaneous radiative emission rate versus
+# subband separation
+
+OUT=rad-E.r
+
+# Initialise files
+
+rm -f $OUT
+
+# Loop over infinite well width
+
+for LW in 100 133 167 200 300 400 500 600
+do
+{
+ # Generate infinitely deep well solutions
+
+ efiw -L $LW -N 300 -s 2
+
+ # Deduce emission wavelength from two subband energies and write to file
+
+ nawk '/1 /{E1=$2};/2 /{E2=$2};END{printf("%20.17e ",E2-E1)}' Ee.r >> $OUT
+
+ # Calculate 2D scattering rate
+
+ srrad -i 2 -f 1    | nawk '/lifetime/{printf("%e ",$3)}' >> $OUT
+
+ # End line in output file
+
+ echo -n -e "\n" >> $OUT
+
+}
+done

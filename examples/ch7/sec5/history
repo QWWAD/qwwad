@@ -1,0 +1,45 @@
+#!/bin/sh
+# Finite height circular cross-section quantum wire calculation
+# Generate 2 lowest energy solutions and collate energy eigenvalues as a
+# function of radius.  
+#
+# Quantum wire material GaAs, barrier material Ga(0.8)Al(0.2)As
+#
+# Define and initialise output file
+
+OUTPUT=Er-R.r
+
+rm -f $OUTPUT
+
+# Define barrier concentration
+
+X=0.2
+
+# Loop over radius
+
+for R in 30 40 50 60 70 80 90 100 120 140 160 200 240 300
+do
+{
+ echo $R 0.0 0.0 > s.r
+ echo 200 $X 0.0 >> s.r	# fixed barrier width
+
+ efsx		# calculate structure
+ efxm -m 0.067	# produce constant effective mass data
+ efxv 		# produce potential data
+
+ # Solve Schrodinger's equation
+
+ efcwire -d 0.1 -s 2
+
+ # Collate energies
+
+ echo -n $R >> $OUTPUT
+ nawk '{printf(" %20.17e",$2)}' Ee.r >> $OUTPUT
+ echo -n -e "\n" >> $OUTPUT	# terminate line
+
+}
+done
+
+# Calculate wave function for final radius
+
+efcwwf

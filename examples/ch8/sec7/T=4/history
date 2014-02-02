@@ -1,0 +1,71 @@
+#!/bin/sh
+# Calculation of the ratio of the emission to absorption e-LO scattering rate
+# averaged over two subband populations, as a function of well width
+# Define output file
+
+OUT=sr-LW.r
+
+# Define temperature
+
+T=4
+
+# Initialise files
+
+rm -f $OUT
+
+# Scattering rate codes (at the moment) are angled towards numerical
+# solutions and require a potential barrier height as an upper
+# for integration, so define an artificial structure
+# making sure it contains the same number of points as below
+
+echo 100 1.0 0.0 > s.r
+echo 100 0.0 0.0 >> s.r
+echo 100 1.0 0.0 >> s.r
+
+# Now convert structure into potential data
+
+efsx
+efxv
+
+# Loop over infinite well width
+
+for LW in 70 80 90 100 110 120 130 140 160 180 200 210 220 230 240 280 320 360
+do
+{
+ # Generate infinitely deep well solutions
+
+ efiw -L $LW -N 300 -s 2
+
+ # Save lowest two energies to file
+
+ nawk '/1 /{E1=$2};/2 /{E2=$2};END{printf("%20.17e ",E2-E1)}' Ee.r >> $OUT
+
+ # Perform scattering rate calculations
+ # Define subband populations in file `N.r'
+ 
+ echo 1 1 > N.r
+ echo 2 1 >> N.r
+
+ # Calculate the distribution functions at 77K
+
+ sbp -T $T
+ 
+ # Define required e-LO phonon rates and calculate 
+
+ echo 2 1 > rrp.r
+ echo 1 2 >> rrp.r
+ srelo -T $T
+
+ # Calculate the mean over the two populations
+
+ srmpr -T $T 
+
+ # Write the 2->1 emission rate to the output file
+
+ nawk '/2 1 /{printf("%e ",$3)}' LOe-if.r >> $OUT
+
+ # Write the 1->2 absorption rate to the output file
+
+ nawk '/1 2 /{printf("%e\n",$3)}' LOa-if.r >> $OUT
+}
+done

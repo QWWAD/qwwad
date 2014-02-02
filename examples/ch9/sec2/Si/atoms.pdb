@@ -1,0 +1,8 @@
+REMARK    Output from xyz2pdb, the XYZ to Brookhaven Protein DataBank converter
+AUTHOR    Paul Harrison, 1998
+ATOM      0 SIcb                -0.679  -0.679  -0.679
+ATOM      1 SIcb                 0.679   0.679   0.679
+COLOUR######GA################   1.000   0.000   0.000
+COLOUR######AS################   0.000   1.000   0.000
+COLOUR######SI################   0.000   0.000   1.000
+COLOUR######GE################   1.000   0.000   1.000

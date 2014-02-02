@@ -1,0 +1,1386 @@
+# ACE/gr parameter file
+#
+#
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@with line
+@    line on
+@    line loctype view
+@    line 0.816269284712, 0.746666666667, 0.816269284712, 0.818333333333
+@    line linewidth 2
+@    line linestyle 1
+@    line color 1
+@    line arrow 2
+@    line arrow size 1.600000
+@    line arrow type 0
+@line def
+@with line
+@    line on
+@    line loctype view
+@    line 0.816269284712, 0.728333333333, 0.817671809257, 0.673333333333
+@    line linewidth 2
+@    line linestyle 1
+@    line color 1
+@    line arrow 2
+@    line arrow size 1.600000
+@    line arrow type 0
+@line def
+@with string
+@    string on
+@    string loctype view
+@    string 0.591865357644, 0.638333333333
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "band edge"
+@with string
+@    string on
+@    string loctype view
+@    string 0.591865357644, 0.576666666667
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "potential/4"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 500
+@    world ymin 0
+@    world ymax 50
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 type xy
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 1
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 1
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "e+e-r_d.xmgr"
+@    s1 type xy
+@    s1 symbol 0
+@    s1 symbol size 1.000000
+@    s1 symbol fill 0
+@    s1 symbol color 1
+@    s1 symbol linewidth 1
+@    s1 symbol linestyle 1
+@    s1 symbol center false
+@    s1 symbol char 0
+@    s1 skip 0
+@    s1 linestyle 4
+@    s1 linewidth 2
+@    s1 color 1
+@    s1 fill 0
+@    s1 fill with color
+@    s1 fill color 1
+@    s1 fill pattern 0
+@    s1 errorbar type BOTH
+@    s1 errorbar length 1.000000
+@    s1 errorbar linewidth 1
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser on
+@    s1 errorbar riser linewidth 1
+@    s1 errorbar riser linestyle 1
+@    s1 xyz 0.000000, 0.000000
+@    s1 comment "e+e-r_d.xmgr"
+@    s2 type xy
+@    s2 symbol 2
+@    s2 symbol size 1.000000
+@    s2 symbol fill 1
+@    s2 symbol color 1
+@    s2 symbol linewidth 1
+@    s2 symbol linestyle 1
+@    s2 symbol center false
+@    s2 symbol char 0
+@    s2 skip 0
+@    s2 linestyle 1
+@    s2 linewidth 2
+@    s2 color 1
+@    s2 fill 0
+@    s2 fill with color
+@    s2 fill color 1
+@    s2 fill pattern 0
+@    s2 errorbar type BOTH
+@    s2 errorbar length 1.000000
+@    s2 errorbar linewidth 1
+@    s2 errorbar linestyle 1
+@    s2 errorbar riser on
+@    s2 errorbar riser linewidth 1
+@    s2 errorbar riser linestyle 1
+@    s2 xyz 0.000000, 0.000000
+@    s2 comment "e+e-r_d.xmgr"
+@    s3 type xy
+@    s3 symbol 2
+@    s3 symbol size 1.000000
+@    s3 symbol fill 0
+@    s3 symbol color 1
+@    s3 symbol linewidth 1
+@    s3 symbol linestyle 1
+@    s3 symbol center false
+@    s3 symbol char 0
+@    s3 skip 0
+@    s3 linestyle 1
+@    s3 linewidth 2
+@    s3 color 1
+@    s3 fill 0
+@    s3 fill with color
+@    s3 fill color 1
+@    s3 fill pattern 0
+@    s3 errorbar type BOTH
+@    s3 errorbar length 1.000000
+@    s3 errorbar linewidth 1
+@    s3 errorbar linestyle 1
+@    s3 errorbar riser on
+@    s3 errorbar riser linewidth 1
+@    s3 errorbar riser linestyle 1
+@    s3 xyz 0.000000, 0.000000
+@    s3 comment "e+e-r_d.xmgr"
+@    xaxis  tick on
+@    xaxis  tick major 100
+@    xaxis  tick minor 10
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z-\0) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 10
+@    yaxis  tick minor 1
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "Energy (meV)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 0
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 100
+@    zeroxaxis  tick minor 50
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 1
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 10
+@    zeroyaxis  tick minor 5
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 1
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend off
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.8
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.000000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TYPE xy
+               0          44.4219
+               1          44.4219
+               2          44.4219
+               3          44.4219
+               4          44.4219
+               5          44.4219
+               6          44.4219
+               7          44.4219
+               8          44.4219
+               9          44.4219
+              10          44.4219
+              11          44.4219
+              12          44.4219
+              13          44.4219
+              14          44.4219
+              15          44.4219
+              16          44.4219
+              17          44.4219
+              18          44.4219
+              19          44.4219
+              20          44.4219
+              21          44.4219
+              22          44.4219
+              23          44.4219
+              24          44.4219
+              25          44.4219
+              26          44.4219
+              27          44.4219
+              28          44.4219
+              29          44.4219
+              30          44.4219
+              31          44.4219
+              32          44.4219
+              33          44.4219
+              34          44.4219
+              35          44.4219
+              36          44.4219
+              37          44.4219
+              38          44.4219
+              39          44.4219
+              40          44.4219
+              41          44.4219
+              42          44.4219
+              43          44.4219
+              44          44.4219
+              45          44.4219
+              46          44.4219
+              47          44.4219
+              48          44.4219
+              49          44.4219
+              50          44.4219
+              51          44.4219
+              52          44.4219
+              53          44.4219
+              54          44.4219
+              55          44.4219
+              56          44.4219
+              57          44.4219
+              58          44.4219
+              59          44.4219
+              60          44.4219
+              61          44.4219
+              62          44.4219
+              63          44.4219
+              64          44.4219
+              65          44.4219
+              66          44.4219
+              67          44.4219
+              68          44.4219
+              69          44.4219
+              70          44.4219
+              71          44.4219
+              72          44.4219
+              73          44.4219
+              74          44.4219
+              75          44.4219
+              76          44.4219
+              77          44.4219
+              78          44.4219
+              79          44.4219
+              80          44.4219
+              81          44.4219
+              82          44.4219
+              83          44.4219
+              84          44.4219
+              85          44.4219
+              86          44.4219
+              87          44.4219
+              88          44.4219
+              89          44.4219
+              90          44.4219
+              91          44.4219
+              92          44.4219
+              93          44.4219
+              94          44.4219
+              95          44.4219
+              96          44.4219
+              97          44.4219
+              98          44.4219
+              99          44.4219
+             100          44.4219
+             101          44.4219
+             102          44.4219
+             103          44.4219
+             104          44.4219
+             105          44.4219
+             106          44.4219
+             107          44.4219
+             108          44.4219
+             109          44.4219
+             110          44.4219
+             111          44.4219
+             112          44.4219
+             113          44.4219
+             114          44.4219
+             115          44.4219
+             116          44.4219
+             117          44.4219
+             118          44.4219
+             119          44.4219
+             120          44.4219
+             121          44.4219
+             122          44.4219
+             123          44.4219
+             124          44.4219
+             125          44.4219
+             126          44.4219
+             127          44.4219
+             128          44.4219
+             129          44.4219
+             130          44.4219
+             131          44.4219
+             132          44.4219
+             133          44.4219
+             134          44.4219
+             135          44.4219
+             136          44.4219
+             137          44.4219
+             138          44.4219
+             139          44.4219
+             140          44.4219
+             141          44.4219
+             142          44.4219
+             143          44.4219
+             144          44.4219
+             145          44.4219
+             146          44.4219
+             147          44.4219
+             148          44.4219
+             149          44.4219
+             150          44.4219
+             151          44.4219
+             152          44.4219
+             153          44.4219
+             154          44.4219
+             155          44.4219
+             156          44.4219
+             157          44.4219
+             158          44.4219
+             159          44.4219
+             160          44.4219
+             161          44.4219
+             162          44.4219
+             163          44.4219
+             164          44.4219
+             165          44.4219
+             166          44.4219
+             167          44.4219
+             168          44.4219
+             169          44.4219
+             170          44.4219
+             171          44.4219
+             172          44.4219
+             173          44.4219
+             174          44.4219
+             175          44.4219
+             176          44.4219
+             177          44.4219
+             178          44.4219
+             179          44.4219
+             180          44.4219
+             181          44.4219
+             182          44.4219
+             183          44.4219
+             184          44.4219
+             185          44.4219
+             186          44.4219
+             187          44.4219
+             188          44.4219
+             189          44.4219
+             190          44.4219
+             191          44.4219
+             192          44.4219
+             193          44.4219
+             194          44.4219
+             195          44.4219
+             196          44.4219
+             197          44.4219
+             198          44.4219
+             199          44.4219
+             200                0
+             201                0
+             202                0
+             203                0
+             204                0
+             205                0
+             206                0
+             207                0
+             208                0
+             209                0
+             210                0
+             211                0
+             212                0
+             213                0
+             214                0
+             215                0
+             216                0
+             217                0
+             218                0
+             219                0
+             220                0
+             221                0
+             222                0
+             223                0
+             224                0
+             225                0
+             226                0
+             227                0
+             228                0
+             229                0
+             230                0
+             231                0
+             232                0
+             233                0
+             234                0
+             235                0
+             236                0
+             237                0
+             238                0
+             239                0
+             240                0
+             241                0
+             242                0
+             243                0
+             244                0
+             245                0
+             246                0
+             247                0
+             248                0
+             249                0
+             250                0
+             251                0
+             252                0
+             253                0
+             254                0
+             255                0
+             256                0
+             257                0
+             258                0
+             259                0
+             260          44.4219
+             261          44.4219
+             262          44.4219
+             263          44.4219
+             264          44.4219
+             265          44.4219
+             266          44.4219
+             267          44.4219
+             268          44.4219
+             269          44.4219
+             270          44.4219
+             271          44.4219
+             272          44.4219
+             273          44.4219
+             274          44.4219
+             275          44.4219
+             276          44.4219
+             277          44.4219
+             278          44.4219
+             279          44.4219
+             280          44.4219
+             281          44.4219
+             282          44.4219
+             283          44.4219
+             284          44.4219
+             285          44.4219
+             286          44.4219
+             287          44.4219
+             288          44.4219
+             289          44.4219
+             290          44.4219
+             291          44.4219
+             292          44.4219
+             293          44.4219
+             294          44.4219
+             295          44.4219
+             296          44.4219
+             297          44.4219
+             298          44.4219
+             299          44.4219
+             300          44.4219
+             301          44.4219
+             302          44.4219
+             303          44.4219
+             304          44.4219
+             305          44.4219
+             306          44.4219
+             307          44.4219
+             308          44.4219
+             309          44.4219
+             310          44.4219
+             311          44.4219
+             312          44.4219
+             313          44.4219
+             314          44.4219
+             315          44.4219
+             316          44.4219
+             317          44.4219
+             318          44.4219
+             319          44.4219
+             320          44.4219
+             321          44.4219
+             322          44.4219
+             323          44.4219
+             324          44.4219
+             325          44.4219
+             326          44.4219
+             327          44.4219
+             328          44.4219
+             329          44.4219
+             330          44.4219
+             331          44.4219
+             332          44.4219
+             333          44.4219
+             334          44.4219
+             335          44.4219
+             336          44.4219
+             337          44.4219
+             338          44.4219
+             339          44.4219
+             340          44.4219
+             341          44.4219
+             342          44.4219
+             343          44.4219
+             344          44.4219
+             345          44.4219
+             346          44.4219
+             347          44.4219
+             348          44.4219
+             349          44.4219
+             350          44.4219
+             351          44.4219
+             352          44.4219
+             353          44.4219
+             354          44.4219
+             355          44.4219
+             356          44.4219
+             357          44.4219
+             358          44.4219
+             359          44.4219
+             360          44.4219
+             361          44.4219
+             362          44.4219
+             363          44.4219
+             364          44.4219
+             365          44.4219
+             366          44.4219
+             367          44.4219
+             368          44.4219
+             369          44.4219
+             370          44.4219
+             371          44.4219
+             372          44.4219
+             373          44.4219
+             374          44.4219
+             375          44.4219
+             376          44.4219
+             377          44.4219
+             378          44.4219
+             379          44.4219
+             380          44.4219
+             381          44.4219
+             382          44.4219
+             383          44.4219
+             384          44.4219
+             385          44.4219
+             386          44.4219
+             387          44.4219
+             388          44.4219
+             389          44.4219
+             390          44.4219
+             391          44.4219
+             392          44.4219
+             393          44.4219
+             394          44.4219
+             395          44.4219
+             396          44.4219
+             397          44.4219
+             398          44.4219
+             399          44.4219
+             400          44.4219
+             401          44.4219
+             402          44.4219
+             403          44.4219
+             404          44.4219
+             405          44.4219
+             406          44.4219
+             407          44.4219
+             408          44.4219
+             409          44.4219
+             410          44.4219
+             411          44.4219
+             412          44.4219
+             413          44.4219
+             414          44.4219
+             415          44.4219
+             416          44.4219
+             417          44.4219
+             418          44.4219
+             419          44.4219
+             420          44.4219
+             421          44.4219
+             422          44.4219
+             423          44.4219
+             424          44.4219
+             425          44.4219
+             426          44.4219
+             427          44.4219
+             428          44.4219
+             429          44.4219
+             430          44.4219
+             431          44.4219
+             432          44.4219
+             433          44.4219
+             434          44.4219
+             435          44.4219
+             436          44.4219
+             437          44.4219
+             438          44.4219
+             439          44.4219
+             440          44.4219
+             441          44.4219
+             442          44.4219
+             443          44.4219
+             444          44.4219
+             445          44.4219
+             446          44.4219
+             447          44.4219
+             448          44.4219
+             449          44.4219
+             450          44.4219
+             451          44.4219
+             452          44.4219
+             453          44.4219
+             454          44.4219
+             455          44.4219
+             456          44.4219
+             457          44.4219
+             458          44.4219
+             459          44.4219
+&
+@TYPE xy
+               0          38.8956
+               1          38.8956
+               2          38.8956
+               3          38.8956
+               4          38.8956
+               5          38.8956
+               6          38.8956
+               7          38.8956
+               8          38.8956
+               9          38.8956
+              10          38.8956
+              11          38.8956
+              12          38.8956
+              13          38.8956
+              14          38.8956
+              15          38.8956
+              16          38.8956
+              17          38.8956
+              18          38.8956
+              19          38.8956
+              20          38.8956
+              21          38.8956
+              22          38.8956
+              23          38.8956
+              24          38.8956
+              25          38.8956
+              26          38.8956
+              27          38.8956
+              28          38.8956
+              29          38.8956
+              30          38.8956
+              31          38.8956
+              32          38.8956
+              33          38.8956
+              34          38.8956
+              35          38.8956
+              36          38.8956
+              37          38.8956
+              38          38.8956
+              39          38.8956
+              40          38.8956
+              41          38.8956
+              42          38.8956
+              43          38.8956
+              44          38.8956
+              45          38.8956
+              46          38.8956
+              47          38.8956
+              48          38.8956
+              49          38.8956
+              50          38.8956
+              51          38.8956
+              52          38.8956
+              53          38.8956
+              54          38.8956
+              55          38.8956
+              56          38.8956
+              57          38.8956
+              58          38.8956
+              59          38.8956
+              60          38.8956
+              61          38.8956
+              62          38.8956
+              63          38.8956
+              64          38.8956
+              65          38.8956
+              66          38.8956
+              67          38.8956
+              68          38.8956
+              69          38.8956
+              70          38.8956
+              71          38.8956
+              72          38.8956
+              73          38.8956
+              74          38.8956
+              75          38.8956
+              76          38.8956
+              77          38.8956
+              78          38.8956
+              79          38.8956
+              80          38.8956
+              81          38.8956
+              82          38.8956
+              83          38.8956
+              84          38.8956
+              85          38.8956
+              86          38.8956
+              87          38.8956
+              88          38.8956
+              89          38.8956
+              90          38.8956
+              91          38.8956
+              92          38.8956
+              93          38.8956
+              94          38.8956
+              95          38.8956
+              96          38.8956
+              97          38.8956
+              98          38.8956
+              99          38.8956
+             100          38.8956
+             101          38.8956
+             102          38.8956
+             103          38.8956
+             104          38.8956
+             105          38.8956
+             106          38.8956
+             107          38.8956
+             108          38.8956
+             109          38.8956
+             110          38.8956
+             111          38.8956
+             112          38.8956
+             113          38.8956
+             114          38.8956
+             115          38.8956
+             116          38.8956
+             117          38.8956
+             118          38.8956
+             119          38.8956
+             120          38.8956
+             121          38.8956
+             122          38.8956
+             123          38.8956
+             124          38.8956
+             125          38.8956
+             126          38.8956
+             127          38.8956
+             128          38.8956
+             129          38.8956
+             130          38.8956
+             131          38.8956
+             132          38.8956
+             133          38.8956
+             134          38.8956
+             135          38.8956
+             136          38.8956
+             137          38.8956
+             138          38.8956
+             139          38.8956
+             140          38.8956
+             141          38.8956
+             142          38.8956
+             143          38.8956
+             144          38.8956
+             145          38.8956
+             146          38.8956
+             147          38.8956
+             148          38.8956
+             149          38.8956
+             150          38.8956
+             151          38.8956
+             152          38.8956
+             153          38.8956
+             154          38.8956
+             155          38.8956
+             156          38.8956
+             157          38.8956
+             158          38.8956
+             159          38.8956
+             160          38.8956
+             161          38.8956
+             162          38.8956
+             163          38.8956
+             164          38.8956
+             165          38.8956
+             166          38.8956
+             167          38.8956
+             168          38.8956
+             169          38.8956
+             170          38.8956
+             171          38.8956
+             172          38.8956
+             173          38.8956
+             174          38.8956
+             175          38.8956
+             176          38.8956
+             177          38.8956
+             178          38.8956
+             179          38.8956
+             180          38.8956
+             181          38.8956
+             182          38.8956
+             183          38.8956
+             184          38.8956
+             185          38.8956
+             186          38.8956
+             187          38.8956
+             188          38.8956
+             189          38.8956
+             190          38.8956
+             191          38.8956
+             192          38.8956
+             193          38.8956
+             194          38.8956
+             195          38.8956
+             196          38.8956
+             197          38.8956
+             198          38.8956
+             199          38.8956
+             200                0
+             201                0
+             202                0
+             203                0
+             204                0
+             205                0
+             206                0
+             207                0
+             208                0
+             209                0
+             210                0
+             211                0
+             212                0
+             213                0
+             214                0
+             215                0
+             216                0
+             217                0
+             218                0
+             219                0
+             220                0
+             221                0
+             222                0
+             223                0
+             224                0
+             225                0
+             226                0
+             227                0
+             228                0
+             229                0
+             230                0
+             231                0
+             232                0
+             233                0
+             234                0
+             235                0
+             236                0
+             237                0
+             238                0
+             239                0
+             240                0
+             241                0
+             242                0
+             243                0
+             244                0
+             245                0
+             246                0
+             247                0
+             248                0
+             249                0
+             250                0
+             251                0
+             252                0
+             253                0
+             254                0
+             255                0
+             256                0
+             257                0
+             258                0
+             259                0
+             260          38.8956
+             261          38.8956
+             262          38.8956
+             263          38.8956
+             264          38.8956
+             265          38.8956
+             266          38.8956
+             267          38.8956
+             268          38.8956
+             269          38.8956
+             270          38.8956
+             271          38.8956
+             272          38.8956
+             273          38.8956
+             274          38.8956
+             275          38.8956
+             276          38.8956
+             277          38.8956
+             278          38.8956
+             279          38.8956
+             280          38.8956
+             281          38.8956
+             282          38.8956
+             283          38.8956
+             284          38.8956
+             285          38.8956
+             286          38.8956
+             287          38.8956
+             288          38.8956
+             289          38.8956
+             290          38.8956
+             291          38.8956
+             292          38.8956
+             293          38.8956
+             294          38.8956
+             295          38.8956
+             296          38.8956
+             297          38.8956
+             298          38.8956
+             299          38.8956
+             300          38.8956
+             301          38.8956
+             302          38.8956
+             303          38.8956
+             304          38.8956
+             305          38.8956
+             306          38.8956
+             307          38.8956
+             308          38.8956
+             309          38.8956
+             310          38.8956
+             311          38.8956
+             312          38.8956
+             313          38.8956
+             314          38.8956
+             315          38.8956
+             316          38.8956
+             317          38.8956
+             318          38.8956
+             319          38.8956
+             320          38.8956
+             321          38.8956
+             322          38.8956
+             323          38.8956
+             324          38.8956
+             325          38.8956
+             326          38.8956
+             327          38.8956
+             328          38.8956
+             329          38.8956
+             330          38.8956
+             331          38.8956
+             332          38.8956
+             333          38.8956
+             334          38.8956
+             335          38.8956
+             336          38.8956
+             337          38.8956
+             338          38.8956
+             339          38.8956
+             340          38.8956
+             341          38.8956
+             342          38.8956
+             343          38.8956
+             344          38.8956
+             345          38.8956
+             346          38.8956
+             347          38.8956
+             348          38.8956
+             349          38.8956
+             350          38.8956
+             351          38.8956
+             352          38.8956
+             353          38.8956
+             354          38.8956
+             355          38.8956
+             356          38.8956
+             357          38.8956
+             358          38.8956
+             359          38.8956
+             360          38.8956
+             361          38.8956
+             362          38.8956
+             363          38.8956
+             364          38.8956
+             365          38.8956
+             366          38.8956
+             367          38.8956
+             368          38.8956
+             369          38.8956
+             370          38.8956
+             371          38.8956
+             372          38.8956
+             373          38.8956
+             374          38.8956
+             375          38.8956
+             376          38.8956
+             377          38.8956
+             378          38.8956
+             379          38.8956
+             380          38.8956
+             381          38.8956
+             382          38.8956
+             383          38.8956
+             384          38.8956
+             385          38.8956
+             386          38.8956
+             387          38.8956
+             388          38.8956
+             389          38.8956
+             390          38.8956
+             391          38.8956
+             392          38.8956
+             393          38.8956
+             394          38.8956
+             395          38.8956
+             396          38.8956
+             397          38.8956
+             398          38.8956
+             399          38.8956
+             400          38.8956
+             401          38.8956
+             402          38.8956
+             403          38.8956
+             404          38.8956
+             405          38.8956
+             406          38.8956
+             407          38.8956
+             408          38.8956
+             409          38.8956
+             410          38.8956
+             411          38.8956
+             412          38.8956
+             413          38.8956
+             414          38.8956
+             415          38.8956
+             416          38.8956
+             417          38.8956
+             418          38.8956
+             419          38.8956
+             420          38.8956
+             421          38.8956
+             422          38.8956
+             423          38.8956
+             424          38.8956
+             425          38.8956
+             426          38.8956
+             427          38.8956
+             428          38.8956
+             429          38.8956
+             430          38.8956
+             431          38.8956
+             432          38.8956
+             433          38.8956
+             434          38.8956
+             435          38.8956
+             436          38.8956
+             437          38.8956
+             438          38.8956
+             439          38.8956
+             440          38.8956
+             441          38.8956
+             442          38.8956
+             443          38.8956
+             444          38.8956
+             445          38.8956
+             446          38.8956
+             447          38.8956
+             448          38.8956
+             449          38.8956
+             450          38.8956
+             451          38.8956
+             452          38.8956
+             453          38.8956
+             454          38.8956
+             455          38.8956
+             456          38.8956
+             457          38.8956
+             458          38.8956
+             459          38.8956
+&
+@TYPE xy
+               0          43.1634
+              20          42.8868
+              40          42.5618
+              60          42.1736
+              80          41.7005
+             100           41.109
+             120          40.3432
+             140          39.3026
+             160          37.7792
+             180          35.2704
+             200          30.5461
+             220          24.7326
+             230           23.836
+&
+@TYPE xy
+               0          40.8738
+              20          40.5968
+              40          40.2712
+              60          39.8822
+              80          39.4078
+             100           38.814
+             120          38.0441
+             140          36.9952
+             160          35.4543
+             180          32.9136
+             200          28.2158
+             220          22.6561
+             230          21.8137
+&

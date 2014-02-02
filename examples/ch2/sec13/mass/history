@@ -1,0 +1,52 @@
+#!/bin/sh
+# Define output file
+
+OUT=Ee-k-LW.r
+
+# Initialise files
+
+rm -f $OUT mstar-LW.r
+
+# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
+# Use V=0.67*1247*x, keep x=0.4
+
+V=334.1965
+
+# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
+# Use MB=0.067+0.083*x
+
+MB=0.1002
+
+# Define number of states
+
+S=1
+
+# Loop for well and barrier widths
+
+for LW in 20 25 30 35 40 45 50 55 60 70 80 90 100 120 140 160 180 200
+do
+{
+ # Loop for carrier momentum at centre and edge of Brillouin zone only
+
+ echo -n -e "$LW\t" >> $OUT	# write well width to file
+
+ # calculate E(k) at points for 2nd derivative
+
+ for K in -0.01 0.0 0.01 	
+ do
+ {
+ # Calculate energies for different wave vectors
+
+  efkpsl -a $LW -b $LW -m 0.067 -n $MB -V $V -k $K -s $S
+  nawk '{printf("%22.17f",$2)}' Ee.r >> $OUT	# send data to file
+
+ }
+ done	# done loop over k
+
+echo -n -e "\n" >> $OUT				# end line
+
+} done	# loop over LW
+
+# Now calculate the effective mass along growth (z-) axis
+
+nawk -f mstar.awk $OUT >> mstar-LW.r

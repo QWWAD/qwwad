@@ -1,0 +1,51 @@
+#!/bin/sh
+# Define output file
+
+OUT=E-LW.r
+
+# Initialise files
+
+rm -f Ee-LAMBDA*
+rm -f v-LAMBDA*
+rm -f $OUT
+
+# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
+# Use V=0.67*1247*x, keep x=0.75
+
+V=626.6175
+
+# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
+# Use MB=0.067+0.083*x, keep x=0.2
+
+MB=0.12925
+
+# Loop over well width
+
+for LW in 20 40 60 80 100 120 160 200
+do
+{
+ # Calculate lowest 2 levels with analytical form
+ efsqw -a $LW -n $MB -s 2 -V $V
+ 
+ echo -n $LW >> $OUT
+
+ # Save lowest two energies to file
+
+ nawk '/1 /||/2 /{printf("\t%f",$2)}' Ee.r >> $OUT	
+
+ # Now perform numerical solution
+ #
+ # First generate structure definition `s.r' file
+ echo 200 0.75 0.0 > s.r
+ echo $LW 0.0 0.0 >> s.r
+ echo 200 0.75 0.0 >> s.r
+
+ efsx			# generate alloy concentration as a function of z
+ efxm 			# generate mass versus z data
+ efxv			# generate potential data
+
+ efshoot -s 2		# calculate 2 lowest energy levels
+ nawk '/1 /||/2 /{printf("\t%f",$2)}' Ee.r >> $OUT	
+ echo -n -e "\n" >> $OUT
+}
+done

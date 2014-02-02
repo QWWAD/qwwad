@@ -1,0 +1,1587 @@
+# ACE/gr parameter file
+#
+@version 40102
+@page layout free
+@ps linewidth begin 1
+@ps linewidth increment 2
+@hardcopy device 1
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp linewidth 1
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 4
+@timestamp char size 1.000000
+@timestamp def "Tue Feb 23 08:30:37 1999"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 400
+@    world ymin -100
+@    world ymax 300
+@    stack world 0, 0, 0, 0 tick 0, 0, 0, 0
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 0
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 4
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "wf_e2.r"
+@    s1 symbol 0
+@    s1 symbol size 1.000000
+@    s1 symbol fill 1
+@    s1 symbol color 1
+@    s1 symbol linewidth 1
+@    s1 symbol linestyle 1
+@    s1 symbol center false
+@    s1 symbol char 0
+@    s1 skip 0
+@    s1 linestyle 1
+@    s1 linewidth 2
+@    s1 color 1
+@    s1 fill 0
+@    s1 fill with color
+@    s1 fill color 1
+@    s1 fill pattern 0
+@    s1 errorbar type BOTH
+@    s1 errorbar length 1.000000
+@    s1 errorbar linewidth 1
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser on
+@    s1 errorbar riser linewidth 1
+@    s1 errorbar riser linestyle 1
+@    s1 xyz 0.000000, 0.000000
+@    s1 comment "e-lambda.r"
+@    s2 symbol 0
+@    s2 symbol size 1.000000
+@    s2 symbol fill 0
+@    s2 symbol color 1
+@    s2 symbol linewidth 1
+@    s2 symbol linestyle 1
+@    s2 symbol center false
+@    s2 symbol char 0
+@    s2 skip 0
+@    s2 linestyle 1
+@    s2 linewidth 4
+@    s2 color 1
+@    s2 fill 0
+@    s2 fill with color
+@    s2 fill color 1
+@    s2 fill pattern 0
+@    s2 errorbar type BOTH
+@    s2 errorbar length 1.000000
+@    s2 errorbar linewidth 1
+@    s2 errorbar linestyle 1
+@    s2 errorbar riser on
+@    s2 errorbar riser linewidth 1
+@    s2 errorbar riser linestyle 1
+@    s2 xyz 0.000000, 0.000000
+@    s2 comment "/usr/people/eenph/wrk/bkex/chsr/sec14/v.r"
+@    xaxis  tick on
+@    xaxis  tick major 100
+@    xaxis  tick minor 20
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z\0-) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel place on ticks
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 100
+@    yaxis  tick minor 20
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "Energy (meV)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 0
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel place on ticks
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 100
+@    zeroxaxis  tick minor 50
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 9
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel place on ticks
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 100
+@    zeroyaxis  tick minor 50
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 1
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel place on ticks
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend on
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.6
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.500000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    legend string 0 "|2>"
+@    legend string 1 "|1>"
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TARGET S0
+@TYPE xy
+               0          39.5584
+               1          39.5605
+               2          39.5625
+               3          39.5647
+               4          39.5668
+               5           39.569
+               6          39.5712
+               7          39.5735
+               8          39.5759
+               9          39.5784
+              10          39.5809
+              11          39.5836
+              12          39.5864
+              13          39.5893
+              14          39.5924
+              15          39.5957
+              16          39.5991
+              17          39.6027
+              18          39.6065
+              19          39.6106
+              20          39.6149
+              21          39.6195
+              22          39.6244
+              23          39.6296
+              24          39.6351
+              25           39.641
+              26          39.6473
+              27           39.654
+              28          39.6611
+              29          39.6687
+              30          39.6769
+              31          39.6856
+              32          39.6948
+              33          39.7048
+              34          39.7154
+              35          39.7267
+              36          39.7388
+              37          39.7517
+              38          39.7655
+              39          39.7802
+              40           39.796
+              41          39.8129
+              42          39.8309
+              43          39.8501
+              44          39.8706
+              45          39.8926
+              46           39.916
+              47          39.9411
+              48          39.9679
+              49          39.9965
+              50           40.027
+              51          40.0597
+              52          40.0945
+              53          40.1317
+              54          40.1715
+              55          40.2139
+              56          40.2592
+              57          40.3076
+              58          40.3592
+              59          40.4144
+              60          40.4732
+              61           40.536
+              62          40.6031
+              63          40.6746
+              64          40.7509
+              65          40.8323
+              66          40.9192
+              67          41.0119
+              68          41.1107
+              69          41.2162
+              70          41.3286
+              71          41.4486
+              72          41.5764
+              73          41.7128
+              74          41.8582
+              75          42.0131
+              76          42.1783
+              77          42.3544
+              78          42.5421
+              79           42.742
+              80          42.9551
+              81          43.1822
+              82          43.4241
+              83          43.6818
+              84          43.9564
+              85          44.2488
+              86          44.5602
+              87          44.8918
+              88           45.245
+              89           45.621
+              90          46.0214
+              91          46.4476
+              92          46.9013
+              93          47.3841
+              94          47.8981
+              95           48.445
+              96           49.027
+              97          49.6462
+              98           50.305
+              99          51.0059
+             100          51.6773
+             101           52.277
+             102          52.8788
+             103          53.4828
+             104          54.0889
+             105          54.6971
+             106          55.3073
+             107          55.9195
+             108          56.5337
+             109          57.1497
+             110          57.7674
+             111          58.3869
+             112          59.0078
+             113          59.6302
+             114           60.254
+             115          60.8788
+             116          61.5047
+             117          62.1314
+             118          62.7588
+             119          63.3867
+             120          64.0149
+             121          64.6432
+             122          65.2713
+             123           65.899
+             124          66.5262
+             125          67.1525
+             126          67.7777
+             127          68.4015
+             128          69.0236
+             129          69.6437
+             130          70.2615
+             131          70.8768
+             132          71.4891
+             133          72.0982
+             134          72.7036
+             135          73.3051
+             136          73.9023
+             137          74.4947
+             138          75.0821
+             139          75.6639
+             140          76.2398
+             141          76.8094
+             142          77.3723
+             143          77.9279
+             144          78.4759
+             145          79.0159
+             146          79.5473
+             147          80.0697
+             148          80.5826
+             149          81.0855
+             150           81.578
+             151          82.0596
+             152          82.5297
+             153          82.9879
+             154          83.4336
+             155          83.8664
+             156          84.2856
+             157          84.6909
+             158          85.0816
+             159          85.4573
+             160          85.8174
+             161          86.1613
+             162          86.4887
+             163          86.7988
+             164          87.0913
+             165          87.3655
+             166           87.621
+             167          87.8572
+             168          88.0736
+             169          88.2696
+             170          88.4449
+             171          88.5988
+             172          88.7309
+             173          88.8407
+             174          88.9277
+             175          88.9914
+             176          89.0314
+             177          89.0472
+             178          89.0384
+             179          89.0044
+             180           88.945
+             181          88.8598
+             182          88.7482
+             183            88.61
+             184          88.4447
+             185          88.2522
+             186          88.0319
+             187          87.7837
+             188          87.5073
+             189          87.2023
+             190          86.8686
+             191           86.506
+             192          86.1142
+             193          85.6931
+             194          85.2425
+             195          84.7623
+             196          84.2525
+             197           83.713
+             198          83.1437
+             199          82.5447
+             200           81.916
+             201          81.2576
+             202          80.5697
+             203          79.8523
+             204          79.1057
+             205          78.3299
+             206          77.5254
+             207          76.6922
+             208          75.8308
+             209          74.9415
+             210          74.0245
+             211          73.0804
+             212          72.1096
+             213          71.1126
+             214          70.0899
+             215           69.042
+             216          67.9696
+             217          66.8734
+             218          65.7539
+             219          64.6119
+             220          63.4483
+             221          62.2637
+             222           61.059
+             223          59.8351
+             224          58.5929
+             225          57.3333
+             226          56.0574
+             227          54.7662
+             228          53.4608
+             229          52.1421
+             230          50.8115
+             231            49.47
+             232          48.1189
+             233          46.7594
+             234          45.3927
+             235          44.0202
+             236          42.6432
+             237          41.2631
+             238          39.8813
+             239          38.4991
+             240           37.118
+             241          35.7394
+             242          34.3649
+             243           32.996
+             244          31.6342
+             245          30.2809
+             246          28.9379
+             247          27.6065
+             248          26.2885
+             249          24.9853
+             250          23.6987
+             251          22.4301
+             252          21.1812
+             253          19.9535
+             254          18.7487
+             255          17.5684
+             256          16.4141
+             257          15.2873
+             258          14.1898
+             259          13.1229
+             260          12.0883
+             261          11.0873
+             262          10.1216
+             263          9.19254
+             264          8.30155
+             265          7.45003
+             266          6.63934
+             267          5.87079
+             268          5.14567
+             269          4.46522
+             270          3.83063
+             271          3.24303
+             272          2.70353
+             273          2.21316
+             274          1.77291
+             275          1.38369
+             276          1.04636
+             277         0.761738
+             278         0.530538
+             279         0.353425
+             280         0.230989
+             281         0.163748
+             282         0.152141
+             283         0.196531
+             284         0.297203
+             285         0.454356
+             286         0.668109
+             287         0.938494
+             288          1.26546
+             289          1.64886
+             290          2.08846
+             291          2.58394
+             292           3.1349
+             293          3.74081
+             294          4.40109
+             295          5.11503
+             296          5.88186
+             297          6.70069
+             298          7.57054
+             299          8.49036
+             300          9.57895
+             301          10.7367
+             302          11.8459
+             303          12.9087
+             304          13.9271
+             305          14.9033
+             306          15.8389
+             307          16.7359
+             308           17.596
+             309          18.4207
+             310          19.2117
+             311          19.9704
+             312          20.6982
+             313          21.3966
+             314          22.0667
+             315          22.7099
+             316          23.3272
+             317          23.9199
+             318           24.489
+             319          25.0355
+             320          25.5604
+             321          26.0646
+             322           26.549
+             323          27.0146
+             324           27.462
+             325          27.8921
+             326          28.3056
+             327          28.7032
+             328          29.0856
+             329          29.4535
+             330          29.8075
+             331          30.1481
+             332           30.476
+             333          30.7917
+             334          31.0956
+             335          31.3884
+             336          31.6705
+             337          31.9423
+             338          32.2043
+             339          32.4568
+             340          32.7004
+             341          32.9353
+             342           33.162
+             343          33.3808
+             344          33.5921
+             345           33.796
+             346          33.9931
+             347          34.1835
+             348          34.3676
+             349          34.5456
+             350          34.7179
+             351          34.8845
+             352          35.0459
+             353          35.2021
+             354          35.3536
+             355          35.5003
+             356          35.6427
+             357          35.7808
+             358          35.9148
+             359           36.045
+             360          36.1716
+             361          36.2946
+             362          36.4142
+             363          36.5307
+             364          36.6441
+             365          36.7546
+             366          36.8624
+             367          36.9675
+             368          37.0702
+             369          37.1705
+             370          37.2685
+             371          37.3645
+             372          37.4584
+             373          37.5504
+             374          37.6406
+             375          37.7291
+             376           37.816
+             377          37.9015
+             378          37.9855
+             379          38.0682
+             380          38.1496
+             381          38.2299
+             382          38.3091
+             383          38.3874
+             384          38.4647
+             385          38.5412
+             386          38.6169
+             387          38.6918
+             388          38.7662
+             389          38.8399
+             390          38.9132
+             391           38.986
+             392          39.0584
+             393          39.1304
+             394          39.2022
+             395          39.2737
+             396           39.345
+             397          39.4162
+             398          39.4873
+             399          39.5584
+&
+@TARGET S1
+@TYPE xy
+               0         -4.03929
+               1         -4.03912
+               2         -4.03894
+               3         -4.03876
+               4         -4.03857
+               5         -4.03839
+               6         -4.03819
+               7         -4.03799
+               8         -4.03779
+               9         -4.03757
+              10         -4.03735
+              11         -4.03711
+              12         -4.03686
+              13         -4.03659
+              14         -4.03631
+              15         -4.03602
+              16          -4.0357
+              17         -4.03536
+              18         -4.03501
+              19         -4.03462
+              20         -4.03421
+              21         -4.03377
+              22          -4.0333
+              23         -4.03279
+              24         -4.03225
+              25         -4.03167
+              26         -4.03104
+              27         -4.03037
+              28         -4.02965
+              29         -4.02887
+              30         -4.02803
+              31         -4.02713
+              32         -4.02617
+              33         -4.02513
+              34         -4.02401
+              35          -4.0228
+              36         -4.02151
+              37         -4.02011
+              38         -4.01861
+              39         -4.01699
+              40         -4.01525
+              41         -4.01338
+              42         -4.01137
+              43          -4.0092
+              44         -4.00687
+              45         -4.00436
+              46         -4.00166
+              47         -3.99876
+              48         -3.99564
+              49         -3.99228
+              50         -3.98866
+              51         -3.98478
+              52         -3.98059
+              53          -3.9761
+              54         -3.97126
+              55         -3.96606
+              56         -3.96047
+              57         -3.95446
+              58           -3.948
+              59         -3.94106
+              60         -3.93359
+              61         -3.92556
+              62         -3.91694
+              63         -3.90767
+              64         -3.89771
+              65         -3.88701
+              66         -3.87551
+              67         -3.86316
+              68         -3.84988
+              69         -3.83563
+              70         -3.82032
+              71         -3.80387
+              72         -3.78621
+              73         -3.76724
+              74         -3.74688
+              75         -3.72501
+              76         -3.70154
+              77         -3.67634
+              78         -3.64928
+              79         -3.62025
+              80         -3.58908
+              81         -3.55564
+              82         -3.51975
+              83         -3.48124
+              84         -3.43992
+              85         -3.39559
+              86         -3.34803
+              87         -3.29702
+              88         -3.24231
+              89         -3.18362
+              90         -3.12069
+              91          -3.0532
+              92         -2.98084
+              93         -2.90325
+              94         -2.82007
+              95         -2.73091
+              96         -2.63532
+              97         -2.53287
+              98         -2.42308
+              99         -2.30541
+             100         -2.19183
+             101         -2.08903
+             102          -1.9844
+             103         -1.87787
+             104         -1.76934
+             105         -1.65875
+             106         -1.54601
+             107         -1.43105
+             108         -1.31378
+             109         -1.19412
+             110           -1.072
+             111        -0.947325
+             112        -0.820029
+             113        -0.690028
+             114        -0.557242
+             115         -0.42159
+             116        -0.282994
+             117        -0.141373
+             118       0.00335212
+             119         0.151262
+             120         0.302435
+             121         0.456951
+             122          0.61489
+             123         0.776332
+             124         0.941354
+             125          1.11004
+             126          1.28246
+             127           1.4587
+             128          1.63883
+             129          1.82294
+             130           2.0111
+             131          2.20338
+             132          2.39987
+             133          2.60064
+             134          2.80576
+             135          3.01531
+             136          3.22936
+             137          3.44798
+             138          3.67126
+             139          3.89924
+             140          4.13202
+             141          4.36965
+             142          4.61221
+             143          4.85975
+             144          5.11235
+             145          5.37006
+             146          5.63295
+             147          5.90107
+             148          6.17449
+             149          6.45326
+             150          6.73744
+             151          7.02707
+             152          7.32221
+             153           7.6229
+             154          7.92918
+             155           8.2411
+             156          8.55871
+             157          8.88202
+             158          9.21108
+             159          9.54592
+             160          9.88656
+             161           10.233
+             162          10.5853
+             163          10.9435
+             164          11.3075
+             165          11.6775
+             166          12.0533
+             167           12.435
+             168          12.8225
+             169           13.216
+             170          13.6153
+             171          14.0204
+             172          14.4313
+             173           14.848
+             174          15.2705
+             175          15.6986
+             176          16.1325
+             177          16.5719
+             178          17.0168
+             179          17.4672
+             180          17.9231
+             181          18.3842
+             182          18.8506
+             183          19.3222
+             184          19.7988
+             185          20.2803
+             186          20.7667
+             187          21.2577
+             188          21.7534
+             189          22.2535
+             190          22.7578
+             191          23.2664
+             192          23.7789
+             193          24.2952
+             194          24.8151
+             195          25.3385
+             196          25.8652
+             197          26.3949
+             198          26.9274
+             199          27.4625
+             200               28
+             201          28.5396
+             202          29.0811
+             203          29.6243
+             204          30.1688
+             205          30.7144
+             206          31.2607
+             207          31.8076
+             208          32.3546
+             209          32.9015
+             210           33.448
+             211          33.9936
+             212          34.5381
+             213          35.0811
+             214          35.6222
+             215          36.1611
+             216          36.6974
+             217          37.2306
+             218          37.7605
+             219          38.2865
+             220          38.8082
+             221          39.3253
+             222          39.8373
+             223          40.3437
+             224           40.844
+             225          41.3379
+             226          41.8249
+             227          42.3044
+             228           42.776
+             229          43.2392
+             230          43.6935
+             231          44.1384
+             232          44.5733
+             233          44.9978
+             234          45.4114
+             235          45.8135
+             236          46.2035
+             237           46.581
+             238          46.9454
+             239          47.2962
+             240          47.6328
+             241          47.9546
+             242          48.2612
+             243          48.5519
+             244          48.8263
+             245          49.0837
+             246          49.3237
+             247          49.5456
+             248           49.749
+             249          49.9332
+             250          50.0978
+             251          50.2422
+             252          50.3658
+             253          50.4682
+             254          50.5489
+             255          50.6072
+             256          50.6428
+             257          50.6551
+             258          50.6437
+             259          50.6079
+             260          50.5475
+             261          50.4619
+             262          50.3508
+             263          50.2135
+             264          50.0499
+             265          49.8594
+             266          49.6417
+             267          49.3965
+             268          49.1233
+             269          48.8219
+             270          48.4919
+             271          48.1331
+             272          47.7452
+             273          47.3279
+             274          46.8812
+             275          46.4046
+             276          45.8982
+             277          45.3618
+             278          44.7951
+             279          44.1983
+             280          43.5711
+             281          42.9137
+             282          42.2259
+             283          41.5078
+             284          40.7596
+             285          39.9812
+             286          39.1729
+             287          38.3348
+             288          37.4671
+             289            36.57
+             290          35.6439
+             291           34.689
+             292          33.7057
+             293          32.6944
+             294          31.6554
+             295          30.5894
+             296          29.4968
+             297           28.378
+             298          27.2338
+             299          26.0648
+             300          24.7237
+             301           23.311
+             302          21.9707
+             303          20.6987
+             304          19.4916
+             305          18.3458
+             306          17.2582
+             307          16.2257
+             308          15.2453
+             309          14.3145
+             310          13.4305
+             311          12.5909
+             312          11.7934
+             313          11.0359
+             314          10.3161
+             315          9.63229
+             316          8.98246
+             317          8.36488
+             318           7.7779
+             319          7.21992
+             320          6.68946
+             321          6.18511
+             322          5.70552
+             323          5.24942
+             324          4.81563
+             325          4.40298
+             326          4.01042
+             327          3.63691
+             328          3.28149
+             329          2.94324
+             330          2.62129
+             331          2.31482
+             332          2.02303
+             333           1.7452
+             334          1.48062
+             335          1.22863
+             336         0.988579
+             337         0.759882
+             338         0.541967
+             339         0.334295
+             340         0.136352
+             341       -0.0523478
+             342        -0.232265
+             343        -0.403838
+             344        -0.567483
+             345        -0.723595
+             346        -0.872549
+             347          -1.0147
+             348         -1.15039
+             349         -1.27994
+             350         -1.40365
+             351         -1.52182
+             352         -1.63471
+             353          -1.7426
+             354         -1.84574
+             355         -1.94435
+             356         -2.03868
+             357         -2.12892
+             358         -2.21529
+             359         -2.29799
+             360         -2.37719
+             361         -2.45308
+             362         -2.52582
+             363         -2.59558
+             364          -2.6625
+             365         -2.72674
+             366         -2.78844
+             367         -2.84772
+             368         -2.90472
+             369         -2.95955
+             370         -3.01234
+             371         -3.06319
+             372         -3.11222
+             373         -3.15951
+             374         -3.20518
+             375         -3.24932
+             376           -3.292
+             377         -3.33333
+             378         -3.37338
+             379         -3.41224
+             380         -3.44997
+             381         -3.48666
+             382         -3.52238
+             383         -3.55719
+             384         -3.59116
+             385         -3.62435
+             386         -3.65683
+             387         -3.68866
+             388         -3.71989
+             389         -3.75058
+             390         -3.78079
+             391         -3.81056
+             392         -3.83996
+             393         -3.86903
+             394         -3.89783
+             395         -3.92639
+             396         -3.95477
+             397         -3.98302
+             398         -4.01118
+             399         -4.03929
+&
+@TARGET S2
+@TYPE xy
+               0          266.848
+               1          266.348
+               2          265.848
+               3          265.348
+               4          264.848
+               5          264.348
+               6          263.848
+               7          263.348
+               8          262.848
+               9          262.348
+              10          261.848
+              11          261.348
+              12          260.848
+              13          260.348
+              14          259.848
+              15          259.348
+              16          258.848
+              17          258.348
+              18          257.848
+              19          257.348
+              20          256.848
+              21          256.348
+              22          255.848
+              23          255.348
+              24          254.848
+              25          254.348
+              26          253.848
+              27          253.348
+              28          252.848
+              29          252.348
+              30          251.848
+              31          251.348
+              32          250.848
+              33          250.348
+              34          249.848
+              35          249.348
+              36          248.848
+              37          248.348
+              38          247.848
+              39          247.348
+              40          246.848
+              41          246.348
+              42          245.848
+              43          245.348
+              44          244.848
+              45          244.348
+              46          243.848
+              47          243.348
+              48          242.848
+              49          242.348
+              50          241.848
+              51          241.348
+              52          240.848
+              53          240.348
+              54          239.848
+              55          239.348
+              56          238.848
+              57          238.348
+              58          237.848
+              59          237.348
+              60          236.848
+              61          236.348
+              62          235.848
+              63          235.348
+              64          234.848
+              65          234.348
+              66          233.848
+              67          233.348
+              68          232.848
+              69          232.348
+              70          231.848
+              71          231.348
+              72          230.848
+              73          230.348
+              74          229.848
+              75          229.348
+              76          228.848
+              77          228.348
+              78          227.848
+              79          227.348
+              80          226.848
+              81          226.348
+              82          225.848
+              83          225.348
+              84          224.848
+              85          224.348
+              86          223.848
+              87          223.348
+              88          222.848
+              89          222.348
+              90          221.848
+              91          221.348
+              92          220.848
+              93          220.348
+              94          219.848
+              95          219.348
+              96          218.848
+              97          218.348
+              98          217.848
+              99          217.348
+             100            49.75
+             101            49.25
+             102            48.75
+             103            48.25
+             104            47.75
+             105            47.25
+             106            46.75
+             107            46.25
+             108            45.75
+             109            45.25
+             110            44.75
+             111            44.25
+             112            43.75
+             113            43.25
+             114            42.75
+             115            42.25
+             116            41.75
+             117            41.25
+             118            40.75
+             119            40.25
+             120            39.75
+             121            39.25
+             122            38.75
+             123            38.25
+             124            37.75
+             125            37.25
+             126            36.75
+             127            36.25
+             128            35.75
+             129            35.25
+             130            34.75
+             131            34.25
+             132            33.75
+             133            33.25
+             134            32.75
+             135            32.25
+             136            31.75
+             137            31.25
+             138            30.75
+             139            30.25
+             140            29.75
+             141            29.25
+             142            28.75
+             143            28.25
+             144            27.75
+             145            27.25
+             146            26.75
+             147            26.25
+             148            25.75
+             149            25.25
+             150            24.75
+             151            24.25
+             152            23.75
+             153            23.25
+             154            22.75
+             155            22.25
+             156            21.75
+             157            21.25
+             158            20.75
+             159            20.25
+             160            19.75
+             161            19.25
+             162            18.75
+             163            18.25
+             164            17.75
+             165            17.25
+             166            16.75
+             167            16.25
+             168            15.75
+             169            15.25
+             170            14.75
+             171            14.25
+             172            13.75
+             173            13.25
+             174            12.75
+             175            12.25
+             176            11.75
+             177            11.25
+             178            10.75
+             179            10.25
+             180             9.75
+             181             9.25
+             182             8.75
+             183             8.25
+             184             7.75
+             185             7.25
+             186             6.75
+             187             6.25
+             188             5.75
+             189             5.25
+             190             4.75
+             191             4.25
+             192             3.75
+             193             3.25
+             194             2.75
+             195             2.25
+             196             1.75
+             197             1.25
+             198             0.75
+             199             0.25
+             200            -0.25
+             201            -0.75
+             202            -1.25
+             203            -1.75
+             204            -2.25
+             205            -2.75
+             206            -3.25
+             207            -3.75
+             208            -4.25
+             209            -4.75
+             210            -5.25
+             211            -5.75
+             212            -6.25
+             213            -6.75
+             214            -7.25
+             215            -7.75
+             216            -8.25
+             217            -8.75
+             218            -9.25
+             219            -9.75
+             220           -10.25
+             221           -10.75
+             222           -11.25
+             223           -11.75
+             224           -12.25
+             225           -12.75
+             226           -13.25
+             227           -13.75
+             228           -14.25
+             229           -14.75
+             230           -15.25
+             231           -15.75
+             232           -16.25
+             233           -16.75
+             234           -17.25
+             235           -17.75
+             236           -18.25
+             237           -18.75
+             238           -19.25
+             239           -19.75
+             240           -20.25
+             241           -20.75
+             242           -21.25
+             243           -21.75
+             244           -22.25
+             245           -22.75
+             246           -23.25
+             247           -23.75
+             248           -24.25
+             249           -24.75
+             250           -25.25
+             251           -25.75
+             252           -26.25
+             253           -26.75
+             254           -27.25
+             255           -27.75
+             256           -28.25
+             257           -28.75
+             258           -29.25
+             259           -29.75
+             260           -30.25
+             261           -30.75
+             262           -31.25
+             263           -31.75
+             264           -32.25
+             265           -32.75
+             266           -33.25
+             267           -33.75
+             268           -34.25
+             269           -34.75
+             270           -35.25
+             271           -35.75
+             272           -36.25
+             273           -36.75
+             274           -37.25
+             275           -37.75
+             276           -38.25
+             277           -38.75
+             278           -39.25
+             279           -39.75
+             280           -40.25
+             281           -40.75
+             282           -41.25
+             283           -41.75
+             284           -42.25
+             285           -42.75
+             286           -43.25
+             287           -43.75
+             288           -44.25
+             289           -44.75
+             290           -45.25
+             291           -45.75
+             292           -46.25
+             293           -46.75
+             294           -47.25
+             295           -47.75
+             296           -48.25
+             297           -48.75
+             298           -49.25
+             299           -49.75
+             300          116.848
+             301          116.348
+             302          115.848
+             303          115.348
+             304          114.848
+             305          114.348
+             306          113.848
+             307          113.348
+             308          112.848
+             309          112.348
+             310          111.848
+             311          111.348
+             312          110.848
+             313          110.348
+             314          109.848
+             315          109.348
+             316          108.848
+             317          108.348
+             318          107.848
+             319          107.348
+             320          106.848
+             321          106.348
+             322          105.848
+             323          105.348
+             324          104.848
+             325          104.348
+             326          103.848
+             327          103.348
+             328          102.848
+             329          102.348
+             330          101.848
+             331          101.348
+             332          100.848
+             333          100.348
+             334           99.848
+             335           99.348
+             336           98.848
+             337           98.348
+             338           97.848
+             339           97.348
+             340           96.848
+             341           96.348
+             342           95.848
+             343           95.348
+             344           94.848
+             345           94.348
+             346           93.848
+             347           93.348
+             348           92.848
+             349           92.348
+             350           91.848
+             351           91.348
+             352           90.848
+             353           90.348
+             354           89.848
+             355           89.348
+             356           88.848
+             357           88.348
+             358           87.848
+             359           87.348
+             360           86.848
+             361           86.348
+             362           85.848
+             363           85.348
+             364           84.848
+             365           84.348
+             366           83.848
+             367           83.348
+             368           82.848
+             369           82.348
+             370           81.848
+             371           81.348
+             372           80.848
+             373           80.348
+             374           79.848
+             375           79.348
+             376           78.848
+             377           78.348
+             378           77.848
+             379           77.348
+             380           76.848
+             381           76.348
+             382           75.848
+             383           75.348
+             384           74.848
+             385           74.348
+             386           73.848
+             387           73.348
+             388           72.848
+             389           72.348
+             390           71.848
+             391           71.348
+             392           70.848
+             393           70.348
+             394           69.848
+             395           69.348
+             396           68.848
+             397           68.348
+             398           67.848
+             399           67.348
+&

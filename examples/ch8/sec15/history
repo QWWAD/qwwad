@@ -1,0 +1,92 @@
+#!/bin/sh
+# Calculation of the intrasubband Auger-type scattering rates
+# Define output files
+
+OUT=E-F.r
+OUTsr=cc-F.r
+
+# Initialise files
+
+rm -f $OUT $OUTsr
+
+# Define temperature
+
+T=300
+
+# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
+# Use V=0.67*1247*x, keep x=0.2
+
+V=167.0985
+
+# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
+# Use MB=0.067+0.083*x, keep x=0.2
+
+MB=0.0836
+
+# Define well width here
+
+LW=200
+
+# perform numerical solution
+#
+# First generate structure definition `s.r' file
+echo 100 0.2 0.0 > s.r
+echo $LW 0.0 0.0 >> s.r
+echo 100 0.2 0.0 >> s.r
+
+efsx			# generate alloy concentration as a function of z
+efxm 			# generate mass versus z data
+efxv			# generate potential data
+
+# Define required e-e scattering rates
+
+echo 1 1 1 1 > rr.r
+echo 2 1 2 1 >> rr.r
+echo 2 1 1 2 >> rr.r
+
+# Define subband populations
+
+echo 1 1 > N.r
+echo 2 1 >> N.r
+
+# Loop over electric field 
+
+for F in 0 1 2 5 10 20 50
+do
+{
+ echo -n $F >> $OUT
+ echo -n $F >> $OUTsr
+
+ # Add electric field to potential
+
+ effv -f $F
+
+ # Need a small energy difference to split nearly degenerate levels
+ efshoot -s 2
+
+ # Write energy to output file
+
+ nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
+ echo -n -e "\n" >> $OUT
+
+ # Calculate wavefunctions
+
+ efwf
+
+ # Calculate subband populations
+
+ sbp -T $T
+
+ # Implement e-e scattering rate calculation
+
+ srcc -T $T
+
+ # Collate results
+
+ nawk '{printf(" %e",$5)}' ccABCD.r >> $OUTsr
+
+ # end line
+
+ echo -n -e "\n" >> $OUTsr
+}
+done

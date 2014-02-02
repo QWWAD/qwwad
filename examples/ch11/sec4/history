@@ -1,0 +1,124 @@
+#!/bin/ksh
+# `V-groove' quantum wire calculation
+# Initialise files
+
+rm -f ank*.r Ek*.r
+
+# Define the unit cell extent
+
+NX=5
+NY=5
+NZ=1
+
+# and the lattice constant in Angstrom
+
+A0=5.65
+
+# Create simple cube unit cell of (NX,NY,NZ) lattice constants
+
+cszb -a SI -c SI -x $NX -y $NY -z $NZ
+
+# Define the thickness of the barrier layer and the wire in lattice constants
+
+NB=1
+NW=3
+
+# Now create wire by swapping atoms
+
+nawk "/200/{printf(\"200\n\n\")}
+      /SI/{if((\$2>($NB-0.125)*$A0)&&(\$2<($NB+$NW)*$A0)&&(\$3>($NB-0.125)*$A0)&&(\$3<($NB+$NW-0.125)*$A0))printf(\"GE %9.3f %9.3f %9.3f\n\",\$2,\$3,\$4);
+       else print \$0}" atoms.xyz > atoms.tmp
+
+# Quickest way to alter square wire to `V-groove' (some artistic licence
+# applied) is to just swap individual atoms manually---and one at at time
+
+sed '51s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '57s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '91s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '131s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '137s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '58s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '52s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '55s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '53s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '133s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '56s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '134s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '59s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '132s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '138s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '171s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '175s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+sed '179s/GE/SI/' atoms.tmp > atoms.tmp2
+mv atoms.tmp2 atoms.tmp
+
+mv atoms.tmp atoms.xyz		# restore definitive atoms file
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# Specify k-points for calculation, note only want zone center
+
+echo 0.0 0.0 0.0 > k.r
+
+# Generate reciprocal lattice vectors for this simple cube, and sort,
+# note reduced expansion set
+
+rlv-sc -x $NX -y $NY -z $NZ -g 3 
+
+ppsg
+
+# Implement pseudopotential band structure calculation, use default lattice
+# constant, output all valence band eigenfunctions.  Note the number of
+# valence band states is twice the number of atoms in the basis
+
+# Calculate all the valence band states plus the lowest conduction band
+
+let M=2*$NX*$NY*$NZ*8+1
+
+pplb -n 1 -m $M -w
+
+# Calculate the charge density across the z=0 plane (dissects the
+# cation-anion bond) just do the lowest CB for now
+
+mv ank0.r ank.r
+ppcd -x -0.250 -X 4.750 -y -0.250 -Y 4.750 -z 0 -Z 0 -n $M -m $M
+
+# Tidy up
+
+#rm -f Ek*.r ank*.r

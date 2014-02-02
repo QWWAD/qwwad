@@ -1,0 +1,36 @@
+#!/bin/sh
+
+# Define structure
+
+echo 200 0.1 0.0  > s.r
+echo 60 0.0 0.0  >> s.r
+echo 200 0.1 0.0 >> s.r
+
+efsx			# generates x.r file
+efxv -M cdmnte		# converts x.r into v.r appropriate to Cd(1-x)Mn(x)Te
+
+# Define donor positions
+
+echo '0.0e-10
+2.0e-9
+4.0e-9
+6.0e-9
+8.0e-9
+1.0e-8
+1.2e-8
+1.4e-8 
+1.6e-8 
+1.8e-8 
+2.0e-8 
+2.2e-8 
+2.3e-8' > r_d.r
+
+# Inititiate donor binding energy calculation
+
+d02D -m 0.096 -e 10.6 > output
+
+# Just calculate energy of same structure without a donor, for deduction
+# of donor binding energy
+
+efxm -m 0.096		# generate a m.r with constant mass for comparison
+efshoot			# calculate electron energy without donor, m=constant

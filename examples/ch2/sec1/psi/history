@@ -1,0 +1,2 @@
+# Calculate first three solutions to infinite well of width 100 Angstrom
+efiw -L 100 -N 1000 -s 3

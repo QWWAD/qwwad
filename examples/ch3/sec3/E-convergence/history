@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# Write single quantum well layers to structure file `s.r'
+
+echo 150 0.2 0.0 > s.r
+echo 100 0.0 0.0 >> s.r
+echo 150 0.2 0.0 >> s.r
+
+# Create alloy concentration file
+
+efsx
+
+# Create potential profile
+
+efxv
+
+# Create (constant) effective mass data
+
+efxm -m 0.067
+
+# Implement shooting method
+
+efshoot 

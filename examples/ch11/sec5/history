@@ -1,0 +1,88 @@
+#!/bin/ksh
+# Quantum wire calculation
+# Initialise files
+
+rm -f ank*.r Ek*.r
+
+# Define the unit cell extent
+
+NX=3
+NY=3
+NZ=1
+
+# and the lattice constant in Angstrom
+
+A0=5.65
+
+# Create simple cube unit cell of (NX,NY,NZ) lattice constants
+
+cszb -a SI -c SI -x $NX -y $NY -z $NZ
+
+# Define the thickness of the barrier layer and the wire in lattice constants
+
+NB=0.5
+NW=2
+
+# Now create quantum wire by swapping atoms
+
+mv atoms.xyz atoms.tmp		# Create temporary storage
+
+nawk "/72/{printf(\"72\n\n\")}
+      /SI/{if((\$2>($NB-0.125)*$A0)&&(\$2<($NB+$NW-0.125)*$A0)&&(\$3>($NB-0.125)*$A0)&&(\$3<($NB+$NW-0.125)*$A0))printf(\"GE %9.3f %9.3f %9.3f\n\",\$2,\$3,\$4);       else print \$0}" atoms.tmp > atoms.xyz
+
+
+rm atoms.tmp			# remove temporary storage
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# Specify k-points for calculation, note only want zone center
+
+echo 0.0 0.0 0.0 > k.r
+echo 0.0 0.0 0.1 >> k.r
+echo 0.0 0.0 0.2 >> k.r
+echo 0.0 0.0 0.3 >> k.r
+echo 0.0 0.0 0.4 >> k.r
+echo 0.0 0.0 0.5 >> k.r
+echo 0.0 0.0 0.6 >> k.r
+echo 0.0 0.0 0.7 >> k.r
+echo 0.0 0.0 0.8 >> k.r
+echo 0.0 0.0 0.9 >> k.r
+echo 0.0 0.0 1.0 >> k.r
+
+# Generate reciprocal lattice vectors for this simple cube, and sort
+
+rlv-sc -x $NX -y $NY -z $NZ
+
+ppsg
+
+# Implement pseudopotential band structure calculation, use default lattice
+# constant, output all valence band eigenfunctions.  Note the number of
+# valence band states is twice the number of atoms in the basis
+
+# Calculate the uppermost valence band state plus the lowest conduction band
+
+let N=2*$NX*$NY*$NZ*8
+let M=2*$NX*$NY*$NZ*8+1
+
+pplb -n $N -m $M
+
+# Collate energy levels
+
+# Create dummy file with single line in to allow use of awk for the division
+
+echo dummy line > dummy.file
+
+for K in 0 1 2 3 4 5 6 7 8 9 10
+do
+{
+ nawk "{printf(\"%f\",$K/10)}" dummy.file >> Ek.r
+ nawk '{printf(" %f",$1)}' Ek$K.r >> Ek.r
+ echo -n -e "\n" >> Ek.r
+}
+done
+
+# Tidy up
+
+rm -f ank*.r

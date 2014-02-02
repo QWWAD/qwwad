@@ -1,0 +1,56 @@
+#!/bin/sh
+# Bulk GaAs calculation with the recent continuous potentials of Mader and
+# Zunger et al. Phys. Rev. B (1994)
+# Write crystal basis to file `atoms.xyz' in XYZ format
+# Note basis vectors are +/- (1/8,1/8,1/8) and A0=5.65
+# Note also the atom types are defined as `GAASmz' and `ASGAmz'
+# this selects the Ga in GaAs and As in GaAs potentials
+
+echo 2	> atoms.xyz
+echo    >> atoms.xyz				# leave blank line
+echo GAASmz -0.70625 -0.70625 -0.70625 >> atoms.xyz
+echo ASGAmz  0.70625  0.70625  0.70625 >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# Define k-vectors
+
+echo 0.0 0.0 -0.05 >  k.r
+echo 0.0 0.0 -0.04 >> k.r
+echo 0.0 0.0 -0.03 >> k.r
+echo 0.0 0.0 -0.02 >> k.r
+echo 0.0 0.0 -0.01 >> k.r
+echo 0.0 0.0 0.00 >> k.r		# Gamma
+echo 0.0 0.0 0.01 >> k.r
+echo 0.0 0.0 0.02 >> k.r
+echo 0.0 0.0 0.03 >> k.r
+echo 0.0 0.0 0.04 >> k.r
+echo 0.0 0.0 0.05 >> k.r
+
+# create reciprocal lattice vectors, note use of default maximum |G|
+
+rlv-fcc
+
+# Sort the G vectors into ascending order
+
+ppsg
+
+# Implement pseudopotential calculation, note use of default lattice constant
+
+pplb -n 1 -m 6
+
+# Select the lowest conduction band only
+
+ppee -n 5 -m 5
+ 
+# Need a sed line here to assign negative number to first 5 k-points
+
+mv Ek.r Ek.r.tmp
+sed '1,5s/+/-/' Ek.r.tmp >> Ek.r
+rm Ek.r.tmp
+
+# Tidy up
+
+rm -f ank?.r Ek?.r Ek??.r

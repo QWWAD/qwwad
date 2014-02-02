@@ -1,0 +1,95 @@
+#!/bin/ksh
+# Addition of electric field into the superlattice as a perturbation 
+# calculation for GaAs/AlAs.
+# Initialise files
+
+rm -f ank*.r Ek*.r
+
+# Define output file and initialise
+
+OUTPUT=E-F.r
+rm -f $OUTPUT
+
+# Solve bulk band structure for this superlattice k-point, use Mader and
+# Zunger potentials
+
+# First generate atomic positions in bulk
+
+echo 2  > atoms.xyz
+echo   >> atoms.xyz                            # leave blank line
+echo ALGAAS20 -0.70625 -0.70625 -0.70625 >> atoms.xyz
+echo ASALGA20  0.70625  0.70625  0.70625 >> atoms.xyz
+
+# Generate reciprocal latice vectors, and sort them
+
+rlv-fcc 
+
+ppsg
+
+# Define the number of lattice constants in the left and right hand
+# barriers, followed by the well, and the step.  Hence adjacent wells are 
+# separated by 2*NB=12
+
+NB=6
+NW=11
+
+# Hence calculate the total unit cell length, for the well in the middle of
+# the structure
+
+let NZ=2*NB+NW
+
+# Create `single-spiral' unit cell of the unperturbed atoms
+
+csss -a ASALGA20 -c ALGAAS20 -z $NZ
+
+# Now create superlattice by swapping atoms
+
+rm -f atomsp.xyz atoms.tmp	# initialise files
+let A=4*NB+3		# the first atom to be swapped
+let B=A+4*NW-1		# the last well atom to be swapped
+
+# Create sed command file
+
+echo $A,$B"s/ALGAAS20/GAASmz/" > file.sed
+echo $A,$B"s/ASALGA20/ASGAmz/">> file.sed
+
+# Now execute atom substitution to create superlattice
+
+sed -f file.sed atoms.xyz > atomsp.xyz 
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atomsp
+
+# Create bulk wave vectors required for superlattice calculation
+
+slk -k 0 -z $NZ
+
+# Implement pseudopotential band structure calculation, use default lattice
+# constant, just use 1 CB in basis set
+
+pplb -n 5 -m 5 -w
+
+# Now loop over the electric field strength F
+
+for F in 0 1 2 4 8 16 32 64
+do
+{
+ # Implement superlattice calculation, output lowest two states only
+
+ nice -n 10 ppsl -n 1 -m 1 -f $F -p e
+
+ # Collate lowest conduction band energy levels.  Bulk GaAs calculation
+ # gave top of the valence band as -5.505446 eV, hence add this to all
+ # values
+
+ echo -n $F >> $OUTPUT	# enter electron wavevector first
+
+ nawk '{printf("%10.6f",$1)}' Exi.r >> $OUTPUT
+
+ echo -n -e "\n" >> $OUTPUT	# end line
+}
+done
+# Tidy up
+
+rm -f Ek*.r ank*.r

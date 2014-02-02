@@ -1,0 +1,48 @@
+REMARK    Output from xyz2pdb, the XYZ to Brookhaven Protein DataBank converter
+REMARK    Note in this implementation the Y co-ordinates are reflected to -Y
+REMARK    to produce the familiar x(right)y(up)z(in) axes
+AUTHOR    Paul Harrison, 1998
+ATOM      0 GAASmz              -0.706   0.706  -0.706
+ATOM      1 ASGAmz               0.706  -0.706   0.706
+ATOM      2 GAASmz              -0.706  -2.119   2.119
+ATOM      3 ASGAmz              -2.119  -0.706   3.531
+ATOM      4 GAASmz              -0.706   0.706   4.944
+ATOM      5 ASGAmz               0.706  -0.706   6.356
+ATOM      6 GAASmz              -0.706  -2.119   7.769
+ATOM      7 ASGAmz              -2.119  -0.706   9.181
+ATOM      8 GAASmz              -0.706   0.706  10.594
+ATOM      9 ASGAmz               0.706  -0.706  12.006
+ATOM     10 GAASmz              -0.706  -2.119  13.419
+ATOM     11 ASGAmz              -2.119  -0.706  14.831
+ATOM     12 GAASmz              -0.706   0.706  16.244
+ATOM     13 ASGAmz               0.706  -0.706  17.656
+ATOM     14 GAASmz              -0.706  -2.119  19.069
+ATOM     15 ASGAmz              -2.119  -0.706  20.481
+ATOM     16 GAASmz              -0.706   0.706  21.894
+ATOM     17 ASGAmz               0.706  -0.706  23.306
+ATOM     18 GAASmz              -0.706  -2.119  24.719
+ATOM     19 ASGAmz              -2.119  -0.706  26.131
+ATOM     20 ALGAAS20              -0.706   0.706  27.544
+ATOM     21 ASALGA20               0.706  -0.706  28.956
+ATOM     22 ALGAAS20              -0.706  -2.119  30.369
+ATOM     23 ASALGA20              -2.119  -0.706  31.781
+ATOM     24 ALGAAS20              -0.706   0.706  33.194
+ATOM     25 ASALGA20               0.706  -0.706  34.606
+ATOM     26 ALGAAS20              -0.706  -2.119  36.019
+ATOM     27 ASALGA20              -2.119  -0.706  37.431
+ATOM     28 ALGAAS20              -0.706   0.706  38.844
+ATOM     29 ASALGA20               0.706  -0.706  40.256
+ATOM     30 ALGAAS20              -0.706  -2.119  41.669
+ATOM     31 ASALGA20              -2.119  -0.706  43.081
+ATOM     32 ALGAAS20              -0.706   0.706  44.494
+ATOM     33 ASALGA20               0.706  -0.706  45.906
+ATOM     34 ALGAAS20              -0.706  -2.119  47.319
+ATOM     35 ASALGA20              -2.119  -0.706  48.731
+ATOM     36 ALGAAS20              -0.706   0.706  50.144
+ATOM     37 ASALGA20               0.706  -0.706  51.556
+ATOM     38 ALGAAS20              -0.706  -2.119  52.969
+ATOM     39 ASALGA20              -2.119  -0.706  54.381
+COLOUR######GA################   1.000   0.000   0.000
+COLOUR######AS################   1.000   1.000   0.000
+COLOUR######SI################   0.000   0.000   1.000
+COLOUR######GE################   1.000   0.000   1.000

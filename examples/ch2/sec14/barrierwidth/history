@@ -1,0 +1,9 @@
+#!/bin/sh
+# Loop for barrier widths, use default parameters otherwise
+
+for L in 20 50 100 
+do
+{
+ tsb -L $L 
+ mv T.r TL=$L.r
+} done	# loop L

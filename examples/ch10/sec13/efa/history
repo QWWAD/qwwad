@@ -1,0 +1,61 @@
+#!/bin/sh
+# Define output file
+
+OUT=E-F.r
+
+# Initialise files
+
+rm -f $OUT
+
+# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
+# Use V=0.67*1247*x, keep x=0.2
+
+V=167.0985
+
+# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
+# Use MB=0.067+0.083*x, keep x=0.2
+
+MB=0.0836
+
+# Define well width here, 11*A0 (A0=5.65)
+
+LW=62.15
+
+# perform numerical solution
+#
+# First generate structure definition `s.r' file
+echo 200 0.2 0.0 > s.r
+echo $LW 0.0 0.0 >> s.r
+echo 200 0.2 0.0 >> s.r
+
+efsx			# generate alloy concentration as a function of z
+efxm 			# generate mass versus z data
+efxv			# generate potential data
+
+# Loop over electric field 
+
+for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70
+do
+{
+ echo -n $F >> $OUT
+
+ # Add electric field to potential
+
+ effv -f $F
+
+ # Solve Schrodinger's equation
+
+ efshoot 		# calculate ground state only
+
+ # Write energy to output file
+
+ nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
+ echo -n -e "\n" >> $OUT
+
+ # Calculate wavefunction and keep file
+
+ efwf
+ mv wf_e1.r wf_e1-F=$F.r
+
+}
+done

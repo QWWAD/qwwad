@@ -1,0 +1,22 @@
+#!/bin/sh
+# Initialise files
+
+# Loop for different well widths
+
+for LW in 100;
+do
+{
+ efiw -N 300 -L $LW -m 0.096 -p e	# infinite well electron ground state
+
+ efiw -N 300 -L $LW -m 0.6 -p h		# infinite well hole ground state
+
+# define lambda-beta map and write standard output data to file
+
+ ebe -e 10.6 -m 0.096 -n 0.6 -s 50 -u 70 -w 0.70 -x 0.01 -y 0.91 -o>>output
+
+}
+done
+
+# Sort stadard output data into single column of binding energies
+
+nawk -f sort.awk output > EX0.r

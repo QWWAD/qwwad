@@ -1,0 +1,15 @@
+#!/bin/sh
+# Create the atomic positions for a single spiral, of length 8 lattice
+# constants, make all atoms of the type SI
+# positions
+
+csss -a SI -c SI -z 8
+
+# Substitute second half of atoms for GE to create a superlattice unit cell
+
+mv atoms.xyz atoms.tmp		# temporarily rename file
+sed '19,34s/SI/GE/' atoms.tmp >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms

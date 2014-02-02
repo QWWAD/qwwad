@@ -1,0 +1,58 @@
+#!/bin/sh
+# Define output file
+
+OUT=Ee-t.r
+
+# Initialise files
+
+rm -f $OUT
+
+# Define initial dopant profile using `efsx'
+
+echo 960 0.1 0.0 > s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 150 0.1 0.0 >> s.r
+echo 50 0.0 0.0 >> s.r
+echo 960 0.1 0.0 >> s.r
+
+# Generate initial alloy concentration (diffusant) profile
+
+ efsx 
+
+# Run diffusion `simulation' for various times
+
+for t in 0 10 10 30 50 100
+do
+{
+
+ # Use diffusion coefficient defined in function `dox'
+
+ gde -a 2 -d 0.001 -t $t
+ 
+ # Store diffusion profiles
+
+ cp X.r x-t=$t.r
+
+ # Move diffused profile to initial profile and hence calculate CUMULATIVE
+ # effect
+
+ mv X.r x.r
+
+}
+done

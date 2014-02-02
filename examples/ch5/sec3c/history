@@ -1,0 +1,63 @@
+#!/bin/sh
+# Define output file
+
+OUTPUT=e-E-lw.r
+
+# Initialise files
+
+rm -f $OUTPUT
+
+# Create a dummy file with a single link of junk in, in order to use awk
+# later
+
+echo junk > dummy.file
+
+# Loop over well width
+
+for LW in 20 30 40 60 80 100 140 180 220 300 400
+do
+{
+# Define structure
+
+echo 200 0.1 0.0  > s.r
+echo $LW 0.0 0.0 >> s.r
+echo 200 0.1 0.0 >> s.r
+
+# Generate alloy profile
+
+efsx
+
+# Generate potential profile for Cd(1-x)Mn(x)Te
+
+efxv -M cdmnte
+
+# Create r_d.r with single entry at centre of well
+
+nawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_d.r
+
+# Start donor binding energy calculation
+
+d02D -e 10.6 -m 0.096
+
+# Calculate electron energy for same quantum well but without donor
+
+efxm -m 0.096			# generate constant mass data 
+
+efshoot				# calculate electron energy without donor
+
+# Store data in e-E-lw.r file, i.e. energy with donor (from e.r), energy
+# without donor (from Ee.r) versus well width (lw)
+
+echo -n -e $LW >> $OUTPUT
+
+# Append energy with donor present
+
+nawk '{printf(" %e",$2)}' e.r >> $OUTPUT
+
+# Append energy without donor present
+
+nawk '{printf(" %20.17e\n",$2)}' Ee.r >> $OUTPUT
+
+}
+done
+

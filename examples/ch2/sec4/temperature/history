@@ -1,0 +1,31 @@
+#!/bin/sh
+# Initialise files
+
+rm -f Ef-T.r
+
+# Solve single quantum well
+
+efiw -L 200 -s 3
+
+# Need to artificially create a file v.r containing a barrier height,
+# this used later in numerical solutions of Schrodinger's equation
+
+echo 0.00000 1.60219e-19 > v.r	# i.e., 1eV
+
+# Loop for different temperatures
+
+for T in 2 20 40 60 77 100 140 180 220 260 300
+do
+{
+# Calculate Fermi energies and population distributions
+ sbp -f -T $T
+ mv FD1.r FD1T=$T.r
+ mv FD2.r FD2T=$T.r
+ mv FD3.r FD3T=$T.r
+
+# Write Fermi energy to file
+
+ echo -n -e "$T\t" >> Ef-T.r
+ nawk '/1 /{printf("%8.3f\n",$2)}' Ef.r >> Ef-T.r
+}
+done

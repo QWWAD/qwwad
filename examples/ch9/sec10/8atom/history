@@ -1,0 +1,6 @@
+#!/bin/sh
+# Create 8 atom basis, SI at both anion and cation positions
+
+cszb -a SI -c SI -A 5.43
+
+xyz2pdb atoms

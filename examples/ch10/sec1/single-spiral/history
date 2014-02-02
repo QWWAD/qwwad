@@ -1,0 +1,10 @@
+#!/bin/sh
+# Create the atomic positions for a single spiral, of length 2 lattice
+# constants, just use default atom types of GA at cation and AS at ANION 
+# positions
+
+csss -z 2
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms

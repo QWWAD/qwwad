@@ -1,0 +1,36 @@
+#!/bin/ksh
+# Quantum wire unit cell
+# Define the unit cell extent
+
+NX=3
+NY=3
+NZ=1
+
+# and the lattice constant in Angstrom
+
+A0=5.65
+
+# Create simple cube unit cell of (NX,NY,NZ) lattice constants
+
+cszb -a ASALmz -c ALASmz -x $NX -y $NY -z $NZ
+
+# Define the thickness of the barrier layer and the wire in lattice constants
+
+NB=0
+NW=2
+
+# Now create superlattice by swapping atoms
+
+mv atoms.xyz atoms.tmp		# Create temporary storage
+
+nawk "/72/{printf(\"72\n\n\")}
+      /ALASmz/{if((\$2>$NB*$A0)&&(\$2<($NB+$NW)*$A0)&&(\$3>$NB*$A0)&&(\$3<($NB+$NW)*$A0))printf(\"GAASmz %9.3f %9.3f %9.3f\n\",\$2,\$3,\$4);
+       else print \$0}
+      /ASALmz/{if((\$2>$NB*$A0)&&(\$2<($NB+$NW)*$A0)&&(\$3>$NB*$A0)&&(\$3<($NB+$NW)*$A0))printf(\"ASGAmz %9.3f %9.3f %9.3f\n\",\$2,\$3,\$4);
+       else print \$0}" atoms.tmp > atoms.xyz
+
+rm atoms.tmp			# remove temporary storage
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms

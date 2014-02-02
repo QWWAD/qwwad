@@ -1,0 +1,10 @@
+REMARK    Output from xyz2pdb, the XYZ to Brookhaven Protein DataBank converter
+REMARK    Note in this implementation the Y co-ordinates are reflected to -Y
+REMARK    to produce the familiar x(right)y(up)z(in) axes
+AUTHOR    Paul Harrison, 1998
+ATOM      0 ALASmz              -0.706   0.706  -0.706
+ATOM      1 ASALmz               0.706  -0.706   0.706
+COLOUR######GA################   1.000   0.000   0.000
+COLOUR######AS################   1.000   1.000   0.000
+COLOUR######SI################   0.000   0.000   1.000
+COLOUR######GE################   1.000   0.000   1.000

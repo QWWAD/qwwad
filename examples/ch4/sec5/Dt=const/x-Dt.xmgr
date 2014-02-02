@@ -1,0 +1,2813 @@
+# ACE/gr parameter file
+#
+@version 40102
+@page layout free
+@ps linewidth begin 1
+@ps linewidth increment 2
+@hardcopy device 1
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp linewidth 1
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 4
+@timestamp char size 1.000000
+@timestamp def "Wed Jul  1 10:15:49 1998"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 600
+@    world ymin 0
+@    world ymax 0.1
+@    stack world 0, 0, 0, 0 tick 0, 0, 0, 0
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 1
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 1
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "e-lambda.r"
+@    s1 symbol 0
+@    s1 symbol size 1.000000
+@    s1 symbol fill 0
+@    s1 symbol color 1
+@    s1 symbol linewidth 1
+@    s1 symbol linestyle 1
+@    s1 symbol center false
+@    s1 symbol char 0
+@    s1 skip 0
+@    s1 linestyle 1
+@    s1 linewidth 2
+@    s1 color 1
+@    s1 fill 0
+@    s1 fill with color
+@    s1 fill color 1
+@    s1 fill pattern 0
+@    s1 errorbar type BOTH
+@    s1 errorbar length 1.000000
+@    s1 errorbar linewidth 1
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser on
+@    s1 errorbar riser linewidth 1
+@    s1 errorbar riser linestyle 1
+@    s1 xyz 0.000000, 0.000000
+@    s1 comment "/usr/people/eenph/wrk/bkex/chdiff/sec5/Dt=const/x-t=1000.r"
+@    s2 symbol 2
+@    s2 symbol size 1.000000
+@    s2 symbol fill 1
+@    s2 symbol color 1
+@    s2 symbol linewidth 1
+@    s2 symbol linestyle 1
+@    s2 symbol center false
+@    s2 symbol char 0
+@    s2 skip 10
+@    s2 linestyle 0
+@    s2 linewidth 1
+@    s2 color 1
+@    s2 fill 0
+@    s2 fill with color
+@    s2 fill color 1
+@    s2 fill pattern 0
+@    s2 errorbar type BOTH
+@    s2 errorbar length 1.000000
+@    s2 errorbar linewidth 1
+@    s2 errorbar linestyle 1
+@    s2 errorbar riser on
+@    s2 errorbar riser linewidth 1
+@    s2 errorbar riser linestyle 1
+@    s2 xyz 0.000000, 0.000000
+@    s2 comment "/usr/people/eenph/wrk/bkex/chdiff/sec5/Dt=const/x-D=100.r"
+@    s3 symbol 3
+@    s3 symbol size 1.000000
+@    s3 symbol fill 1
+@    s3 symbol color 1
+@    s3 symbol linewidth 1
+@    s3 symbol linestyle 1
+@    s3 symbol center false
+@    s3 symbol char 0
+@    s3 skip 15
+@    s3 linestyle 0
+@    s3 linewidth 2
+@    s3 color 1
+@    s3 fill 0
+@    s3 fill with color
+@    s3 fill color 1
+@    s3 fill pattern 0
+@    s3 errorbar type BOTH
+@    s3 errorbar length 1.000000
+@    s3 errorbar linewidth 1
+@    s3 errorbar linestyle 1
+@    s3 errorbar riser on
+@    s3 errorbar riser linewidth 1
+@    s3 errorbar riser linestyle 1
+@    s3 xyz 0.000000, 0.000000
+@    s3 comment "/usr/people/eenph/wrk/bkex/chdiff/sec5/Dt=const/x-D=1000.r"
+@    xaxis  tick on
+@    xaxis  tick major 100
+@    xaxis  tick minor 20
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z\0-) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel place on ticks
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 0.02
+@    yaxis  tick minor 0.01
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "Alloy concentration \2x\0"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 2
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel place on ticks
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 200
+@    zeroxaxis  tick minor 100
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 8
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel place on ticks
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 0.02
+@    zeroyaxis  tick minor 0.01
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 2
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel place on ticks
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend off
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.8
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.000000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TARGET S0
+@TYPE xy
+               0        0.0999991
+               1        0.0999991
+               2        0.0999991
+               3        0.0999991
+               4        0.0999991
+               5        0.0999991
+               6         0.099999
+               7         0.099999
+               8        0.0999989
+               9        0.0999988
+              10        0.0999987
+              11        0.0999986
+              12        0.0999985
+              13        0.0999984
+              14        0.0999982
+              15        0.0999981
+              16        0.0999979
+              17        0.0999977
+              18        0.0999975
+              19        0.0999972
+              20         0.099997
+              21        0.0999967
+              22        0.0999963
+              23         0.099996
+              24        0.0999956
+              25        0.0999952
+              26        0.0999947
+              27        0.0999942
+              28        0.0999937
+              29        0.0999931
+              30        0.0999924
+              31        0.0999918
+              32         0.099991
+              33        0.0999901
+              34        0.0999892
+              35        0.0999883
+              36        0.0999872
+              37         0.099986
+              38        0.0999847
+              39        0.0999834
+              40        0.0999819
+              41        0.0999803
+              42        0.0999786
+              43        0.0999767
+              44        0.0999746
+              45        0.0999725
+              46        0.0999701
+              47        0.0999675
+              48        0.0999648
+              49        0.0999618
+              50        0.0999585
+              51        0.0999551
+              52        0.0999513
+              53        0.0999473
+              54         0.099943
+              55        0.0999383
+              56        0.0999334
+              57         0.099928
+              58        0.0999222
+              59         0.099916
+              60        0.0999094
+              61        0.0999023
+              62        0.0998946
+              63        0.0998865
+              64        0.0998777
+              65        0.0998683
+              66        0.0998583
+              67        0.0998476
+              68        0.0998362
+              69        0.0998239
+              70        0.0998109
+              71         0.099797
+              72        0.0997821
+              73        0.0997663
+              74        0.0997495
+              75        0.0997315
+              76        0.0997124
+              77        0.0996921
+              78        0.0996705
+              79        0.0996476
+              80        0.0996232
+              81        0.0995974
+              82        0.0995699
+              83        0.0995408
+              84        0.0995099
+              85        0.0994773
+              86        0.0994426
+              87         0.099406
+              88        0.0993672
+              89        0.0993263
+              90        0.0992829
+              91        0.0992372
+              92        0.0991889
+              93         0.099138
+              94        0.0990842
+              95        0.0990275
+              96        0.0989678
+              97         0.098905
+              98        0.0988388
+              99        0.0987692
+             100         0.098696
+             101         0.098619
+             102        0.0985382
+             103        0.0984533
+             104        0.0983643
+             105        0.0982709
+             106        0.0981729
+             107        0.0980703
+             108        0.0979628
+             109        0.0978503
+             110        0.0977326
+             111        0.0976095
+             112        0.0974808
+             113        0.0973463
+             114        0.0972059
+             115        0.0970594
+             116        0.0969066
+             117        0.0967473
+             118        0.0965812
+             119        0.0964082
+             120        0.0962281
+             121        0.0960408
+             122        0.0958459
+             123        0.0956433
+             124        0.0954328
+             125        0.0952143
+             126        0.0949874
+             127         0.094752
+             128        0.0945079
+             129         0.094255
+             130         0.093993
+             131        0.0937217
+             132         0.093441
+             133        0.0931506
+             134        0.0928504
+             135        0.0925402
+             136        0.0922198
+             137        0.0918892
+             138         0.091548
+             139        0.0911961
+             140        0.0908334
+             141        0.0904598
+             142        0.0900751
+             143        0.0896792
+             144        0.0892719
+             145        0.0888532
+             146        0.0884229
+             147        0.0879809
+             148        0.0875272
+             149        0.0870617
+             150        0.0865842
+             151        0.0860947
+             152        0.0855933
+             153        0.0850798
+             154        0.0845542
+             155        0.0840165
+             156        0.0834668
+             157        0.0829049
+             158        0.0823309
+             159         0.081745
+             160         0.081147
+             161        0.0805371
+             162        0.0799153
+             163        0.0792818
+             164        0.0786366
+             165        0.0779799
+             166        0.0773117
+             167        0.0766322
+             168        0.0759416
+             169        0.0752401
+             170        0.0745277
+             171        0.0738048
+             172        0.0730715
+             173         0.072328
+             174        0.0715746
+             175        0.0708116
+             176        0.0700391
+             177        0.0692575
+             178        0.0684671
+             179        0.0676681
+             180        0.0668609
+             181        0.0660458
+             182        0.0652231
+             183        0.0643932
+             184        0.0635564
+             185        0.0627131
+             186        0.0618636
+             187        0.0610084
+             188        0.0601478
+             189        0.0592823
+             190        0.0584122
+             191         0.057538
+             192          0.05666
+             193        0.0557788
+             194        0.0548947
+             195        0.0540081
+             196        0.0531196
+             197        0.0522295
+             198        0.0513383
+             199        0.0504464
+             200        0.0495543
+             201        0.0486625
+             202        0.0477713
+             203        0.0468812
+             204        0.0459927
+             205        0.0451062
+             206        0.0442222
+             207         0.043341
+             208        0.0424631
+             209        0.0415889
+             210         0.040719
+             211        0.0398535
+             212        0.0389931
+             213         0.038138
+             214        0.0372887
+             215        0.0364456
+             216        0.0356089
+             217        0.0347792
+             218        0.0339567
+             219        0.0331419
+             220        0.0323349
+             221        0.0315362
+             222        0.0307461
+             223        0.0299649
+             224        0.0291928
+             225        0.0284302
+             226        0.0276772
+             227        0.0269343
+             228        0.0262015
+             229        0.0254792
+             230        0.0247675
+             231        0.0240666
+             232        0.0233768
+             233        0.0226982
+             234        0.0220309
+             235        0.0213751
+             236         0.020731
+             237        0.0200986
+             238        0.0194781
+             239        0.0188696
+             240        0.0182731
+             241        0.0176888
+             242        0.0171166
+             243        0.0165566
+             244        0.0160088
+             245        0.0154733
+             246        0.0149501
+             247        0.0144392
+             248        0.0139405
+             249         0.013454
+             250        0.0129798
+             251        0.0125177
+             252        0.0120677
+             253        0.0116298
+             254        0.0112038
+             255        0.0107897
+             256        0.0103874
+             257       0.00999689
+             258       0.00961795
+             259       0.00925053
+             260       0.00889452
+             261       0.00854979
+             262       0.00821623
+             263       0.00789371
+             264       0.00758211
+             265       0.00728128
+             266       0.00699111
+             267       0.00671144
+             268       0.00644214
+             269       0.00618308
+             270        0.0059341
+             271       0.00569508
+             272       0.00546586
+             273       0.00524631
+             274       0.00503628
+             275       0.00483565
+             276       0.00464426
+             277       0.00446199
+             278        0.0042887
+             279       0.00412427
+             280       0.00396856
+             281       0.00382146
+             282       0.00368285
+             283        0.0035526
+             284       0.00343062
+             285        0.0033168
+             286       0.00321104
+             287       0.00311323
+             288       0.00302331
+             289       0.00294118
+             290       0.00286676
+             291       0.00279999
+             292        0.0027408
+             293       0.00268914
+             294       0.00264495
+             295       0.00260819
+             296       0.00257882
+             297       0.00255683
+             298       0.00254218
+             299       0.00253485
+             300       0.00253485
+             301       0.00254218
+             302       0.00255683
+             303       0.00257882
+             304       0.00260819
+             305       0.00264495
+             306       0.00268914
+             307        0.0027408
+             308       0.00279999
+             309       0.00286676
+             310       0.00294118
+             311       0.00302331
+             312       0.00311323
+             313       0.00321104
+             314        0.0033168
+             315       0.00343062
+             316        0.0035526
+             317       0.00368285
+             318       0.00382146
+             319       0.00396856
+             320       0.00412427
+             321        0.0042887
+             322       0.00446199
+             323       0.00464426
+             324       0.00483565
+             325       0.00503628
+             326       0.00524631
+             327       0.00546586
+             328       0.00569508
+             329        0.0059341
+             330       0.00618308
+             331       0.00644214
+             332       0.00671144
+             333       0.00699111
+             334       0.00728128
+             335       0.00758211
+             336       0.00789371
+             337       0.00821623
+             338       0.00854979
+             339       0.00889452
+             340       0.00925053
+             341       0.00961795
+             342       0.00999689
+             343        0.0103874
+             344        0.0107897
+             345        0.0112038
+             346        0.0116298
+             347        0.0120677
+             348        0.0125177
+             349        0.0129798
+             350         0.013454
+             351        0.0139405
+             352        0.0144392
+             353        0.0149501
+             354        0.0154733
+             355        0.0160088
+             356        0.0165566
+             357        0.0171166
+             358        0.0176888
+             359        0.0182731
+             360        0.0188696
+             361        0.0194781
+             362        0.0200986
+             363         0.020731
+             364        0.0213751
+             365        0.0220309
+             366        0.0226982
+             367        0.0233768
+             368        0.0240666
+             369        0.0247675
+             370        0.0254792
+             371        0.0262015
+             372        0.0269343
+             373        0.0276772
+             374        0.0284302
+             375        0.0291928
+             376        0.0299649
+             377        0.0307461
+             378        0.0315362
+             379        0.0323349
+             380        0.0331419
+             381        0.0339567
+             382        0.0347792
+             383        0.0356089
+             384        0.0364456
+             385        0.0372887
+             386         0.038138
+             387        0.0389931
+             388        0.0398535
+             389         0.040719
+             390        0.0415889
+             391        0.0424631
+             392         0.043341
+             393        0.0442222
+             394        0.0451062
+             395        0.0459927
+             396        0.0468812
+             397        0.0477713
+             398        0.0486625
+             399        0.0495543
+             400        0.0504464
+             401        0.0513383
+             402        0.0522295
+             403        0.0531196
+             404        0.0540081
+             405        0.0548947
+             406        0.0557788
+             407          0.05666
+             408         0.057538
+             409        0.0584122
+             410        0.0592823
+             411        0.0601478
+             412        0.0610084
+             413        0.0618636
+             414        0.0627131
+             415        0.0635564
+             416        0.0643932
+             417        0.0652231
+             418        0.0660458
+             419        0.0668609
+             420        0.0676681
+             421        0.0684671
+             422        0.0692575
+             423        0.0700391
+             424        0.0708116
+             425        0.0715746
+             426         0.072328
+             427        0.0730715
+             428        0.0738048
+             429        0.0745277
+             430        0.0752401
+             431        0.0759416
+             432        0.0766322
+             433        0.0773117
+             434        0.0779799
+             435        0.0786366
+             436        0.0792818
+             437        0.0799153
+             438        0.0805371
+             439         0.081147
+             440         0.081745
+             441        0.0823309
+             442        0.0829049
+             443        0.0834668
+             444        0.0840165
+             445        0.0845542
+             446        0.0850798
+             447        0.0855933
+             448        0.0860947
+             449        0.0865842
+             450        0.0870617
+             451        0.0875272
+             452        0.0879809
+             453        0.0884229
+             454        0.0888532
+             455        0.0892719
+             456        0.0896792
+             457        0.0900751
+             458        0.0904598
+             459        0.0908334
+             460        0.0911961
+             461         0.091548
+             462        0.0918892
+             463        0.0922198
+             464        0.0925402
+             465        0.0928504
+             466        0.0931506
+             467         0.093441
+             468        0.0937217
+             469         0.093993
+             470         0.094255
+             471        0.0945079
+             472         0.094752
+             473        0.0949874
+             474        0.0952143
+             475        0.0954328
+             476        0.0956433
+             477        0.0958459
+             478        0.0960408
+             479        0.0962281
+             480        0.0964082
+             481        0.0965812
+             482        0.0967473
+             483        0.0969066
+             484        0.0970594
+             485        0.0972059
+             486        0.0973463
+             487        0.0974808
+             488        0.0976095
+             489        0.0977326
+             490        0.0978503
+             491        0.0979628
+             492        0.0980703
+             493        0.0981729
+             494        0.0982709
+             495        0.0983643
+             496        0.0984533
+             497        0.0985382
+             498         0.098619
+             499         0.098696
+             500        0.0987692
+             501        0.0988388
+             502         0.098905
+             503        0.0989678
+             504        0.0990275
+             505        0.0990842
+             506         0.099138
+             507        0.0991889
+             508        0.0992372
+             509        0.0992829
+             510        0.0993263
+             511        0.0993672
+             512         0.099406
+             513        0.0994426
+             514        0.0994773
+             515        0.0995099
+             516        0.0995408
+             517        0.0995699
+             518        0.0995974
+             519        0.0996232
+             520        0.0996476
+             521        0.0996705
+             522        0.0996921
+             523        0.0997124
+             524        0.0997315
+             525        0.0997495
+             526        0.0997663
+             527        0.0997821
+             528         0.099797
+             529        0.0998109
+             530        0.0998239
+             531        0.0998362
+             532        0.0998476
+             533        0.0998583
+             534        0.0998683
+             535        0.0998777
+             536        0.0998865
+             537        0.0998946
+             538        0.0999023
+             539        0.0999094
+             540         0.099916
+             541        0.0999222
+             542         0.099928
+             543        0.0999334
+             544        0.0999383
+             545         0.099943
+             546        0.0999473
+             547        0.0999513
+             548        0.0999551
+             549        0.0999585
+             550        0.0999618
+             551        0.0999648
+             552        0.0999675
+             553        0.0999701
+             554        0.0999725
+             555        0.0999746
+             556        0.0999767
+             557        0.0999786
+             558        0.0999803
+             559        0.0999819
+             560        0.0999834
+             561        0.0999847
+             562         0.099986
+             563        0.0999872
+             564        0.0999883
+             565        0.0999892
+             566        0.0999901
+             567         0.099991
+             568        0.0999918
+             569        0.0999924
+             570        0.0999931
+             571        0.0999937
+             572        0.0999942
+             573        0.0999947
+             574        0.0999952
+             575        0.0999956
+             576         0.099996
+             577        0.0999963
+             578        0.0999967
+             579         0.099997
+             580        0.0999972
+             581        0.0999975
+             582        0.0999977
+             583        0.0999979
+             584        0.0999981
+             585        0.0999982
+             586        0.0999984
+             587        0.0999985
+             588        0.0999986
+             589        0.0999987
+             590        0.0999988
+             591        0.0999989
+             592         0.099999
+             593         0.099999
+             594        0.0999991
+             595        0.0999991
+             596        0.0999991
+             597        0.0999991
+             598        0.0999991
+             599        0.0999991
+&
+@TARGET S1
+@TYPE xy
+               0        0.0845396
+               1        0.0845396
+               2        0.0845377
+               3         0.084534
+               4        0.0845283
+               5        0.0845208
+               6        0.0845115
+               7        0.0845002
+               8        0.0844871
+               9        0.0844721
+              10        0.0844552
+              11        0.0844365
+              12        0.0844159
+              13        0.0843935
+              14        0.0843691
+              15        0.0843429
+              16        0.0843149
+              17         0.084285
+              18        0.0842533
+              19        0.0842196
+              20        0.0841842
+              21        0.0841469
+              22        0.0841077
+              23        0.0840668
+              24         0.084024
+              25        0.0839793
+              26        0.0839328
+              27        0.0838845
+              28        0.0838344
+              29        0.0837825
+              30        0.0837287
+              31        0.0836732
+              32        0.0836158
+              33        0.0835567
+              34        0.0834957
+              35         0.083433
+              36        0.0833685
+              37        0.0833022
+              38        0.0832342
+              39        0.0831643
+              40        0.0830928
+              41        0.0830194
+              42        0.0829444
+              43        0.0828675
+              44         0.082789
+              45        0.0827087
+              46        0.0826267
+              47         0.082543
+              48        0.0824576
+              49        0.0823706
+              50        0.0822818
+              51        0.0821913
+              52        0.0820991
+              53        0.0820054
+              54        0.0819099
+              55        0.0818128
+              56         0.081714
+              57        0.0816137
+              58        0.0815117
+              59        0.0814081
+              60        0.0813028
+              61         0.081196
+              62        0.0810876
+              63        0.0809777
+              64        0.0808661
+              65        0.0807531
+              66        0.0806385
+              67        0.0805223
+              68        0.0804046
+              69        0.0802854
+              70        0.0801647
+              71        0.0800425
+              72        0.0799189
+              73        0.0797937
+              74        0.0796671
+              75        0.0795391
+              76        0.0794096
+              77        0.0792787
+              78        0.0791464
+              79        0.0790128
+              80        0.0788777
+              81        0.0787412
+              82        0.0786034
+              83        0.0784643
+              84        0.0783238
+              85         0.078182
+              86        0.0780389
+              87        0.0778945
+              88        0.0777488
+              89        0.0776018
+              90        0.0774536
+              91        0.0773042
+              92        0.0771536
+              93        0.0770017
+              94        0.0768486
+              95        0.0766944
+              96         0.076539
+              97        0.0763824
+              98        0.0762248
+              99         0.076066
+             100        0.0759061
+             101        0.0757451
+             102         0.075583
+             103        0.0754199
+             104        0.0752557
+             105        0.0750906
+             106        0.0749244
+             107        0.0747572
+             108        0.0745891
+             109        0.0744199
+             110        0.0742499
+             111        0.0740789
+             112        0.0739071
+             113        0.0737343
+             114        0.0735607
+             115        0.0733862
+             116        0.0732109
+             117        0.0730347
+             118        0.0728578
+             119        0.0726801
+             120        0.0725016
+             121        0.0723224
+             122        0.0721424
+             123        0.0719617
+             124        0.0717804
+             125        0.0715984
+             126        0.0714157
+             127        0.0712324
+             128        0.0710485
+             129        0.0708639
+             130        0.0706789
+             131        0.0704932
+             132         0.070307
+             133        0.0701203
+             134        0.0699331
+             135        0.0697455
+             136        0.0695573
+             137        0.0693688
+             138        0.0691798
+             139        0.0689904
+             140        0.0688006
+             141        0.0686105
+             142        0.0684201
+             143        0.0682293
+             144        0.0680383
+             145         0.067847
+             146        0.0676554
+             147        0.0674636
+             148        0.0672715
+             149        0.0670793
+             150         0.066887
+             151        0.0666945
+             152        0.0665018
+             153         0.066309
+             154        0.0661162
+             155        0.0659233
+             156        0.0657304
+             157        0.0655374
+             158        0.0653445
+             159        0.0651516
+             160        0.0649587
+             161        0.0647659
+             162        0.0645732
+             163        0.0643806
+             164        0.0641881
+             165        0.0639958
+             166        0.0638037
+             167        0.0636117
+             168          0.06342
+             169        0.0632285
+             170        0.0630373
+             171        0.0628464
+             172        0.0626558
+             173        0.0624656
+             174        0.0622756
+             175        0.0620861
+             176        0.0618969
+             177        0.0617082
+             178        0.0615199
+             179        0.0613321
+             180        0.0611448
+             181         0.060958
+             182        0.0607717
+             183        0.0605859
+             184        0.0604008
+             185        0.0602162
+             186        0.0600323
+             187        0.0598489
+             188        0.0596663
+             189        0.0594843
+             190        0.0593031
+             191        0.0591226
+             192        0.0589428
+             193        0.0587638
+             194        0.0585856
+             195        0.0584081
+             196        0.0582316
+             197        0.0580559
+             198         0.057881
+             199        0.0577071
+             200        0.0575341
+             201         0.057362
+             202        0.0571909
+             203        0.0570208
+             204        0.0568516
+             205        0.0566835
+             206        0.0565165
+             207        0.0563505
+             208        0.0561856
+             209        0.0560218
+             210        0.0558591
+             211        0.0556976
+             212        0.0555373
+             213        0.0553781
+             214        0.0552201
+             215        0.0550634
+             216        0.0549079
+             217        0.0547537
+             218        0.0546008
+             219        0.0544491
+             220        0.0542988
+             221        0.0541498
+             222        0.0540023
+             223         0.053856
+             224        0.0537112
+             225        0.0535678
+             226        0.0534258
+             227        0.0532853
+             228        0.0531462
+             229        0.0530087
+             230        0.0528726
+             231        0.0527381
+             232        0.0526051
+             233        0.0524736
+             234        0.0523438
+             235        0.0522155
+             236        0.0520888
+             237        0.0519638
+             238        0.0518403
+             239        0.0517186
+             240        0.0515985
+             241        0.0514801
+             242        0.0513634
+             243        0.0512484
+             244        0.0511352
+             245        0.0510237
+             246        0.0509139
+             247        0.0508059
+             248        0.0506998
+             249        0.0505954
+             250        0.0504928
+             251        0.0503921
+             252        0.0502932
+             253        0.0501961
+             254         0.050101
+             255        0.0500077
+             256        0.0499163
+             257        0.0498268
+             258        0.0497392
+             259        0.0496535
+             260        0.0495698
+             261         0.049488
+             262        0.0494082
+             263        0.0493304
+             264        0.0492546
+             265        0.0491807
+             266        0.0491088
+             267         0.049039
+             268        0.0489711
+             269        0.0489053
+             270        0.0488415
+             271        0.0487798
+             272        0.0487201
+             273        0.0486625
+             274         0.048607
+             275        0.0485535
+             276        0.0485021
+             277        0.0484528
+             278        0.0484056
+             279        0.0483605
+             280        0.0483176
+             281        0.0482767
+             282        0.0482379
+             283        0.0482013
+             284        0.0481668
+             285        0.0481344
+             286        0.0481042
+             287        0.0480761
+             288        0.0480502
+             289        0.0480264
+             290        0.0480047
+             291        0.0479853
+             292        0.0479679
+             293        0.0479528
+             294        0.0479398
+             295        0.0479289
+             296        0.0479203
+             297        0.0479137
+             298        0.0479094
+             299        0.0479072
+             300        0.0479072
+             301        0.0479094
+             302        0.0479137
+             303        0.0479203
+             304        0.0479289
+             305        0.0479398
+             306        0.0479528
+             307        0.0479679
+             308        0.0479853
+             309        0.0480047
+             310        0.0480264
+             311        0.0480502
+             312        0.0480761
+             313        0.0481042
+             314        0.0481344
+             315        0.0481668
+             316        0.0482013
+             317        0.0482379
+             318        0.0482767
+             319        0.0483176
+             320        0.0483605
+             321        0.0484056
+             322        0.0484528
+             323        0.0485021
+             324        0.0485535
+             325         0.048607
+             326        0.0486625
+             327        0.0487201
+             328        0.0487798
+             329        0.0488415
+             330        0.0489053
+             331        0.0489711
+             332         0.049039
+             333        0.0491088
+             334        0.0491807
+             335        0.0492546
+             336        0.0493304
+             337        0.0494082
+             338         0.049488
+             339        0.0495698
+             340        0.0496535
+             341        0.0497392
+             342        0.0498268
+             343        0.0499163
+             344        0.0500077
+             345         0.050101
+             346        0.0501961
+             347        0.0502932
+             348        0.0503921
+             349        0.0504928
+             350        0.0505954
+             351        0.0506998
+             352        0.0508059
+             353        0.0509139
+             354        0.0510237
+             355        0.0511352
+             356        0.0512484
+             357        0.0513634
+             358        0.0514801
+             359        0.0515985
+             360        0.0517186
+             361        0.0518403
+             362        0.0519638
+             363        0.0520888
+             364        0.0522155
+             365        0.0523438
+             366        0.0524736
+             367        0.0526051
+             368        0.0527381
+             369        0.0528726
+             370        0.0530087
+             371        0.0531462
+             372        0.0532853
+             373        0.0534258
+             374        0.0535678
+             375        0.0537112
+             376         0.053856
+             377        0.0540023
+             378        0.0541498
+             379        0.0542988
+             380        0.0544491
+             381        0.0546008
+             382        0.0547537
+             383        0.0549079
+             384        0.0550634
+             385        0.0552201
+             386        0.0553781
+             387        0.0555373
+             388        0.0556976
+             389        0.0558591
+             390        0.0560218
+             391        0.0561856
+             392        0.0563505
+             393        0.0565165
+             394        0.0566835
+             395        0.0568516
+             396        0.0570208
+             397        0.0571909
+             398         0.057362
+             399        0.0575341
+             400        0.0577071
+             401         0.057881
+             402        0.0580559
+             403        0.0582316
+             404        0.0584081
+             405        0.0585856
+             406        0.0587638
+             407        0.0589428
+             408        0.0591226
+             409        0.0593031
+             410        0.0594843
+             411        0.0596663
+             412        0.0598489
+             413        0.0600323
+             414        0.0602162
+             415        0.0604008
+             416        0.0605859
+             417        0.0607717
+             418         0.060958
+             419        0.0611448
+             420        0.0613321
+             421        0.0615199
+             422        0.0617082
+             423        0.0618969
+             424        0.0620861
+             425        0.0622756
+             426        0.0624656
+             427        0.0626558
+             428        0.0628464
+             429        0.0630373
+             430        0.0632285
+             431          0.06342
+             432        0.0636117
+             433        0.0638037
+             434        0.0639958
+             435        0.0641881
+             436        0.0643806
+             437        0.0645732
+             438        0.0647659
+             439        0.0649587
+             440        0.0651516
+             441        0.0653445
+             442        0.0655374
+             443        0.0657304
+             444        0.0659233
+             445        0.0661162
+             446         0.066309
+             447        0.0665018
+             448        0.0666945
+             449         0.066887
+             450        0.0670793
+             451        0.0672715
+             452        0.0674636
+             453        0.0676554
+             454         0.067847
+             455        0.0680383
+             456        0.0682293
+             457        0.0684201
+             458        0.0686105
+             459        0.0688006
+             460        0.0689904
+             461        0.0691798
+             462        0.0693688
+             463        0.0695573
+             464        0.0697455
+             465        0.0699331
+             466        0.0701203
+             467         0.070307
+             468        0.0704932
+             469        0.0706789
+             470        0.0708639
+             471        0.0710485
+             472        0.0712324
+             473        0.0714157
+             474        0.0715984
+             475        0.0717804
+             476        0.0719617
+             477        0.0721424
+             478        0.0723224
+             479        0.0725016
+             480        0.0726801
+             481        0.0728578
+             482        0.0730347
+             483        0.0732109
+             484        0.0733862
+             485        0.0735607
+             486        0.0737343
+             487        0.0739071
+             488        0.0740789
+             489        0.0742499
+             490        0.0744199
+             491        0.0745891
+             492        0.0747572
+             493        0.0749244
+             494        0.0750906
+             495        0.0752557
+             496        0.0754199
+             497         0.075583
+             498        0.0757451
+             499        0.0759061
+             500         0.076066
+             501        0.0762248
+             502        0.0763824
+             503         0.076539
+             504        0.0766944
+             505        0.0768486
+             506        0.0770017
+             507        0.0771536
+             508        0.0773042
+             509        0.0774536
+             510        0.0776018
+             511        0.0777488
+             512        0.0778945
+             513        0.0780389
+             514         0.078182
+             515        0.0783238
+             516        0.0784643
+             517        0.0786034
+             518        0.0787412
+             519        0.0788777
+             520        0.0790128
+             521        0.0791464
+             522        0.0792787
+             523        0.0794096
+             524        0.0795391
+             525        0.0796671
+             526        0.0797937
+             527        0.0799189
+             528        0.0800425
+             529        0.0801647
+             530        0.0802854
+             531        0.0804046
+             532        0.0805223
+             533        0.0806385
+             534        0.0807531
+             535        0.0808661
+             536        0.0809777
+             537        0.0810876
+             538         0.081196
+             539        0.0813028
+             540        0.0814081
+             541        0.0815117
+             542        0.0816137
+             543         0.081714
+             544        0.0818128
+             545        0.0819099
+             546        0.0820054
+             547        0.0820991
+             548        0.0821913
+             549        0.0822818
+             550        0.0823706
+             551        0.0824576
+             552         0.082543
+             553        0.0826267
+             554        0.0827087
+             555         0.082789
+             556        0.0828675
+             557        0.0829444
+             558        0.0830194
+             559        0.0830928
+             560        0.0831643
+             561        0.0832342
+             562        0.0833022
+             563        0.0833685
+             564         0.083433
+             565        0.0834957
+             566        0.0835567
+             567        0.0836158
+             568        0.0836732
+             569        0.0837287
+             570        0.0837825
+             571        0.0838344
+             572        0.0838845
+             573        0.0839328
+             574        0.0839793
+             575         0.084024
+             576        0.0840668
+             577        0.0841077
+             578        0.0841469
+             579        0.0841842
+             580        0.0842196
+             581        0.0842533
+             582         0.084285
+             583        0.0843149
+             584        0.0843429
+             585        0.0843691
+             586        0.0843935
+             587        0.0844159
+             588        0.0844365
+             589        0.0844552
+             590        0.0844721
+             591        0.0844871
+             592        0.0845002
+             593        0.0845115
+             594        0.0845208
+             595        0.0845283
+             596         0.084534
+             597        0.0845377
+             598        0.0845396
+             599        0.0845396
+&
+@TARGET S2
+@TYPE xy
+               0        0.0999991
+               1        0.0999991
+               2        0.0999991
+               3        0.0999991
+               4        0.0999991
+               5        0.0999991
+               6         0.099999
+               7        0.0999989
+               8        0.0999989
+               9        0.0999988
+              10        0.0999987
+              11        0.0999986
+              12        0.0999985
+              13        0.0999984
+              14        0.0999982
+              15        0.0999981
+              16        0.0999979
+              17        0.0999977
+              18        0.0999975
+              19        0.0999972
+              20         0.099997
+              21        0.0999967
+              22        0.0999963
+              23         0.099996
+              24        0.0999956
+              25        0.0999952
+              26        0.0999947
+              27        0.0999942
+              28        0.0999937
+              29        0.0999931
+              30        0.0999924
+              31        0.0999917
+              32         0.099991
+              33        0.0999901
+              34        0.0999892
+              35        0.0999882
+              36        0.0999872
+              37         0.099986
+              38        0.0999847
+              39        0.0999834
+              40        0.0999819
+              41        0.0999803
+              42        0.0999785
+              43        0.0999767
+              44        0.0999746
+              45        0.0999724
+              46        0.0999701
+              47        0.0999675
+              48        0.0999647
+              49        0.0999617
+              50        0.0999585
+              51        0.0999551
+              52        0.0999513
+              53        0.0999473
+              54         0.099943
+              55        0.0999383
+              56        0.0999333
+              57        0.0999279
+              58        0.0999222
+              59         0.099916
+              60        0.0999093
+              61        0.0999022
+              62        0.0998946
+              63        0.0998864
+              64        0.0998776
+              65        0.0998683
+              66        0.0998582
+              67        0.0998475
+              68        0.0998361
+              69        0.0998239
+              70        0.0998108
+              71        0.0997969
+              72         0.099782
+              73        0.0997662
+              74        0.0997494
+              75        0.0997314
+              76        0.0997123
+              77         0.099692
+              78        0.0996704
+              79        0.0996474
+              80        0.0996231
+              81        0.0995972
+              82        0.0995697
+              83        0.0995406
+              84        0.0995097
+              85         0.099477
+              86        0.0994424
+              87        0.0994058
+              88         0.099367
+              89         0.099326
+              90        0.0992827
+              91         0.099237
+              92        0.0991887
+              93        0.0991377
+              94        0.0990839
+              95        0.0990272
+              96        0.0989675
+              97        0.0989046
+              98        0.0988384
+              99        0.0987688
+             100        0.0986956
+             101        0.0986186
+             102        0.0985378
+             103        0.0984529
+             104        0.0983638
+             105        0.0982704
+             106        0.0981724
+             107        0.0980698
+             108        0.0979623
+             109        0.0978498
+             110         0.097732
+             111        0.0976089
+             112        0.0974802
+             113        0.0973457
+             114        0.0972053
+             115        0.0970588
+             116         0.096906
+             117        0.0967466
+             118        0.0965805
+             119        0.0964075
+             120        0.0962274
+             121          0.09604
+             122        0.0958451
+             123        0.0956425
+             124         0.095432
+             125        0.0952134
+             126        0.0949865
+             127        0.0947511
+             128        0.0945071
+             129        0.0942541
+             130        0.0939921
+             131        0.0937208
+             132          0.09344
+             133        0.0931496
+             134        0.0928494
+             135        0.0925392
+             136        0.0922188
+             137        0.0918881
+             138        0.0915469
+             139         0.091195
+             140        0.0908324
+             141        0.0904587
+             142         0.090074
+             143        0.0896781
+             144        0.0892708
+             145        0.0888521
+             146        0.0884217
+             147        0.0879798
+             148         0.087526
+             149        0.0870605
+             150         0.086583
+             151        0.0860936
+             152        0.0855921
+             153        0.0850786
+             154         0.084553
+             155        0.0840153
+             156        0.0834655
+             157        0.0829037
+             158        0.0823297
+             159        0.0817438
+             160        0.0811458
+             161        0.0805359
+             162        0.0799142
+             163        0.0792806
+             164        0.0786355
+             165        0.0779787
+             166        0.0773106
+             167        0.0766311
+             168        0.0759405
+             169         0.075239
+             170        0.0745267
+             171        0.0738038
+             172        0.0730705
+             173         0.072327
+             174        0.0715737
+             175        0.0708106
+             176        0.0700382
+             177        0.0692567
+             178        0.0684662
+             179        0.0676673
+             180        0.0668601
+             181         0.066045
+             182        0.0652224
+             183        0.0643925
+             184        0.0635557
+             185        0.0627124
+             186         0.061863
+             187        0.0610079
+             188        0.0601473
+             189        0.0592818
+             190        0.0584118
+             191        0.0575376
+             192        0.0566597
+             193        0.0557785
+             194        0.0548944
+             195        0.0540079
+             196        0.0531194
+             197        0.0522294
+             198        0.0513382
+             199        0.0504464
+             200        0.0495544
+             201        0.0486625
+             202        0.0477714
+             203        0.0468814
+             204        0.0459929
+             205        0.0451065
+             206        0.0442224
+             207        0.0433413
+             208        0.0424635
+             209        0.0415894
+             210        0.0407194
+             211         0.039854
+             212        0.0389936
+             213        0.0381386
+             214        0.0372893
+             215        0.0364462
+             216        0.0356096
+             217        0.0347799
+             218        0.0339575
+             219        0.0331427
+             220        0.0323357
+             221        0.0315371
+             222         0.030747
+             223        0.0299658
+             224        0.0291937
+             225        0.0284311
+             226        0.0276782
+             227        0.0269353
+             228        0.0262026
+             229        0.0254802
+             230        0.0247686
+             231        0.0240677
+             232        0.0233779
+             233        0.0226993
+             234         0.022032
+             235        0.0213763
+             236        0.0207322
+             237        0.0200998
+             238        0.0194793
+             239        0.0188708
+             240        0.0182744
+             241          0.01769
+             242        0.0171178
+             243        0.0165578
+             244          0.01601
+             245        0.0154746
+             246        0.0149514
+             247        0.0144404
+             248        0.0139417
+             249        0.0134553
+             250         0.012981
+             251        0.0125189
+             252        0.0120689
+             253         0.011631
+             254         0.011205
+             255        0.0107909
+             256        0.0103886
+             257       0.00999805
+             258        0.0096191
+             259       0.00925167
+             260       0.00889565
+             261       0.00855091
+             262       0.00821733
+             263        0.0078948
+             264       0.00758319
+             265       0.00728235
+             266       0.00699216
+             267       0.00671248
+             268       0.00644317
+             269       0.00618409
+             270        0.0059351
+             271       0.00569606
+             272       0.00546683
+             273       0.00524726
+             274       0.00503722
+             275       0.00483657
+             276       0.00464517
+             277       0.00446289
+             278       0.00428959
+             279       0.00412514
+             280       0.00396942
+             281       0.00382231
+             282       0.00368368
+             283       0.00355343
+             284       0.00343144
+             285       0.00331761
+             286       0.00321183
+             287       0.00311402
+             288       0.00302409
+             289       0.00294195
+             290       0.00286752
+             291       0.00280075
+             292       0.00274155
+             293       0.00268988
+             294       0.00264569
+             295       0.00260893
+             296       0.00257956
+             297       0.00255756
+             298       0.00254291
+             299       0.00253559
+             300       0.00253559
+             301       0.00254291
+             302       0.00255756
+             303       0.00257956
+             304       0.00260893
+             305       0.00264569
+             306       0.00268988
+             307       0.00274155
+             308       0.00280075
+             309       0.00286752
+             310       0.00294195
+             311       0.00302409
+             312       0.00311402
+             313       0.00321183
+             314       0.00331761
+             315       0.00343144
+             316       0.00355343
+             317       0.00368368
+             318       0.00382231
+             319       0.00396942
+             320       0.00412514
+             321       0.00428959
+             322       0.00446289
+             323       0.00464517
+             324       0.00483657
+             325       0.00503722
+             326       0.00524726
+             327       0.00546683
+             328       0.00569606
+             329        0.0059351
+             330       0.00618409
+             331       0.00644317
+             332       0.00671248
+             333       0.00699216
+             334       0.00728235
+             335       0.00758319
+             336        0.0078948
+             337       0.00821733
+             338       0.00855091
+             339       0.00889565
+             340       0.00925167
+             341        0.0096191
+             342       0.00999805
+             343        0.0103886
+             344        0.0107909
+             345         0.011205
+             346         0.011631
+             347        0.0120689
+             348        0.0125189
+             349         0.012981
+             350        0.0134553
+             351        0.0139417
+             352        0.0144404
+             353        0.0149514
+             354        0.0154746
+             355          0.01601
+             356        0.0165578
+             357        0.0171178
+             358          0.01769
+             359        0.0182744
+             360        0.0188708
+             361        0.0194793
+             362        0.0200998
+             363        0.0207322
+             364        0.0213763
+             365         0.022032
+             366        0.0226993
+             367        0.0233779
+             368        0.0240677
+             369        0.0247686
+             370        0.0254802
+             371        0.0262026
+             372        0.0269353
+             373        0.0276782
+             374        0.0284311
+             375        0.0291937
+             376        0.0299658
+             377         0.030747
+             378        0.0315371
+             379        0.0323357
+             380        0.0331427
+             381        0.0339575
+             382        0.0347799
+             383        0.0356096
+             384        0.0364462
+             385        0.0372893
+             386        0.0381386
+             387        0.0389936
+             388         0.039854
+             389        0.0407194
+             390        0.0415894
+             391        0.0424635
+             392        0.0433413
+             393        0.0442224
+             394        0.0451065
+             395        0.0459929
+             396        0.0468814
+             397        0.0477714
+             398        0.0486625
+             399        0.0495544
+             400        0.0504464
+             401        0.0513382
+             402        0.0522294
+             403        0.0531194
+             404        0.0540079
+             405        0.0548944
+             406        0.0557785
+             407        0.0566597
+             408        0.0575376
+             409        0.0584118
+             410        0.0592818
+             411        0.0601473
+             412        0.0610079
+             413         0.061863
+             414        0.0627124
+             415        0.0635557
+             416        0.0643925
+             417        0.0652224
+             418         0.066045
+             419        0.0668601
+             420        0.0676673
+             421        0.0684662
+             422        0.0692567
+             423        0.0700382
+             424        0.0708106
+             425        0.0715737
+             426         0.072327
+             427        0.0730705
+             428        0.0738038
+             429        0.0745267
+             430         0.075239
+             431        0.0759405
+             432        0.0766311
+             433        0.0773106
+             434        0.0779787
+             435        0.0786355
+             436        0.0792806
+             437        0.0799142
+             438        0.0805359
+             439        0.0811458
+             440        0.0817438
+             441        0.0823297
+             442        0.0829037
+             443        0.0834655
+             444        0.0840153
+             445         0.084553
+             446        0.0850786
+             447        0.0855921
+             448        0.0860936
+             449         0.086583
+             450        0.0870605
+             451         0.087526
+             452        0.0879798
+             453        0.0884217
+             454        0.0888521
+             455        0.0892708
+             456        0.0896781
+             457         0.090074
+             458        0.0904587
+             459        0.0908324
+             460         0.091195
+             461        0.0915469
+             462        0.0918881
+             463        0.0922188
+             464        0.0925392
+             465        0.0928494
+             466        0.0931496
+             467          0.09344
+             468        0.0937208
+             469        0.0939921
+             470        0.0942541
+             471        0.0945071
+             472        0.0947511
+             473        0.0949865
+             474        0.0952134
+             475         0.095432
+             476        0.0956425
+             477        0.0958451
+             478          0.09604
+             479        0.0962274
+             480        0.0964075
+             481        0.0965805
+             482        0.0967466
+             483         0.096906
+             484        0.0970588
+             485        0.0972053
+             486        0.0973457
+             487        0.0974802
+             488        0.0976089
+             489         0.097732
+             490        0.0978498
+             491        0.0979623
+             492        0.0980698
+             493        0.0981724
+             494        0.0982704
+             495        0.0983638
+             496        0.0984529
+             497        0.0985378
+             498        0.0986186
+             499        0.0986956
+             500        0.0987688
+             501        0.0988384
+             502        0.0989046
+             503        0.0989675
+             504        0.0990272
+             505        0.0990839
+             506        0.0991377
+             507        0.0991887
+             508         0.099237
+             509        0.0992827
+             510         0.099326
+             511         0.099367
+             512        0.0994058
+             513        0.0994424
+             514         0.099477
+             515        0.0995097
+             516        0.0995406
+             517        0.0995697
+             518        0.0995972
+             519        0.0996231
+             520        0.0996474
+             521        0.0996704
+             522         0.099692
+             523        0.0997123
+             524        0.0997314
+             525        0.0997494
+             526        0.0997662
+             527         0.099782
+             528        0.0997969
+             529        0.0998108
+             530        0.0998239
+             531        0.0998361
+             532        0.0998475
+             533        0.0998582
+             534        0.0998683
+             535        0.0998776
+             536        0.0998864
+             537        0.0998946
+             538        0.0999022
+             539        0.0999093
+             540         0.099916
+             541        0.0999222
+             542        0.0999279
+             543        0.0999333
+             544        0.0999383
+             545         0.099943
+             546        0.0999473
+             547        0.0999513
+             548        0.0999551
+             549        0.0999585
+             550        0.0999617
+             551        0.0999647
+             552        0.0999675
+             553        0.0999701
+             554        0.0999724
+             555        0.0999746
+             556        0.0999767
+             557        0.0999785
+             558        0.0999803
+             559        0.0999819
+             560        0.0999834
+             561        0.0999847
+             562         0.099986
+             563        0.0999872
+             564        0.0999882
+             565        0.0999892
+             566        0.0999901
+             567         0.099991
+             568        0.0999917
+             569        0.0999924
+             570        0.0999931
+             571        0.0999937
+             572        0.0999942
+             573        0.0999947
+             574        0.0999952
+             575        0.0999956
+             576         0.099996
+             577        0.0999963
+             578        0.0999967
+             579         0.099997
+             580        0.0999972
+             581        0.0999975
+             582        0.0999977
+             583        0.0999979
+             584        0.0999981
+             585        0.0999982
+             586        0.0999984
+             587        0.0999985
+             588        0.0999986
+             589        0.0999987
+             590        0.0999988
+             591        0.0999989
+             592        0.0999989
+             593         0.099999
+             594        0.0999991
+             595        0.0999991
+             596        0.0999991
+             597        0.0999991
+             598        0.0999991
+             599        0.0999991
+&
+@TARGET S3
+@TYPE xy
+               0        0.0845396
+               1        0.0845396
+               2        0.0845377
+               3         0.084534
+               4        0.0845283
+               5        0.0845208
+               6        0.0845115
+               7        0.0845002
+               8        0.0844871
+               9        0.0844721
+              10        0.0844552
+              11        0.0844365
+              12        0.0844159
+              13        0.0843935
+              14        0.0843691
+              15        0.0843429
+              16        0.0843149
+              17         0.084285
+              18        0.0842533
+              19        0.0842196
+              20        0.0841842
+              21        0.0841469
+              22        0.0841077
+              23        0.0840668
+              24         0.084024
+              25        0.0839793
+              26        0.0839328
+              27        0.0838845
+              28        0.0838344
+              29        0.0837825
+              30        0.0837287
+              31        0.0836732
+              32        0.0836158
+              33        0.0835567
+              34        0.0834957
+              35         0.083433
+              36        0.0833685
+              37        0.0833022
+              38        0.0832342
+              39        0.0831643
+              40        0.0830928
+              41        0.0830194
+              42        0.0829444
+              43        0.0828675
+              44         0.082789
+              45        0.0827087
+              46        0.0826267
+              47        0.0825431
+              48        0.0824576
+              49        0.0823706
+              50        0.0822818
+              51        0.0821913
+              52        0.0820992
+              53        0.0820054
+              54        0.0819099
+              55        0.0818128
+              56         0.081714
+              57        0.0816137
+              58        0.0815117
+              59        0.0814081
+              60        0.0813028
+              61         0.081196
+              62        0.0810876
+              63        0.0809777
+              64        0.0808662
+              65        0.0807531
+              66        0.0806385
+              67        0.0805223
+              68        0.0804046
+              69        0.0802854
+              70        0.0801647
+              71        0.0800425
+              72        0.0799189
+              73        0.0797937
+              74        0.0796671
+              75        0.0795391
+              76        0.0794096
+              77        0.0792787
+              78        0.0791464
+              79        0.0790128
+              80        0.0788777
+              81        0.0787412
+              82        0.0786034
+              83        0.0784643
+              84        0.0783238
+              85         0.078182
+              86        0.0780389
+              87        0.0778945
+              88        0.0777488
+              89        0.0776018
+              90        0.0774536
+              91        0.0773042
+              92        0.0771536
+              93        0.0770017
+              94        0.0768486
+              95        0.0766944
+              96         0.076539
+              97        0.0763824
+              98        0.0762248
+              99         0.076066
+             100        0.0759061
+             101        0.0757451
+             102         0.075583
+             103        0.0754199
+             104        0.0752557
+             105        0.0750906
+             106        0.0749244
+             107        0.0747572
+             108        0.0745891
+             109        0.0744199
+             110        0.0742499
+             111        0.0740789
+             112        0.0739071
+             113        0.0737343
+             114        0.0735607
+             115        0.0733862
+             116        0.0732109
+             117        0.0730347
+             118        0.0728578
+             119        0.0726801
+             120        0.0725016
+             121        0.0723224
+             122        0.0721424
+             123        0.0719617
+             124        0.0717804
+             125        0.0715984
+             126        0.0714157
+             127        0.0712324
+             128        0.0710485
+             129        0.0708639
+             130        0.0706789
+             131        0.0704932
+             132         0.070307
+             133        0.0701203
+             134        0.0699331
+             135        0.0697455
+             136        0.0695573
+             137        0.0693688
+             138        0.0691798
+             139        0.0689904
+             140        0.0688006
+             141        0.0686105
+             142        0.0684201
+             143        0.0682293
+             144        0.0680383
+             145         0.067847
+             146        0.0676554
+             147        0.0674636
+             148        0.0672715
+             149        0.0670793
+             150         0.066887
+             151        0.0666945
+             152        0.0665018
+             153         0.066309
+             154        0.0661162
+             155        0.0659233
+             156        0.0657304
+             157        0.0655374
+             158        0.0653445
+             159        0.0651516
+             160        0.0649587
+             161        0.0647659
+             162        0.0645732
+             163        0.0643806
+             164        0.0641881
+             165        0.0639958
+             166        0.0638037
+             167        0.0636117
+             168          0.06342
+             169        0.0632285
+             170        0.0630373
+             171        0.0628464
+             172        0.0626558
+             173        0.0624656
+             174        0.0622756
+             175        0.0620861
+             176        0.0618969
+             177        0.0617082
+             178        0.0615199
+             179        0.0613321
+             180        0.0611448
+             181         0.060958
+             182        0.0607717
+             183        0.0605859
+             184        0.0604008
+             185        0.0602162
+             186        0.0600323
+             187        0.0598489
+             188        0.0596663
+             189        0.0594843
+             190        0.0593031
+             191        0.0591226
+             192        0.0589428
+             193        0.0587638
+             194        0.0585856
+             195        0.0584081
+             196        0.0582316
+             197        0.0580559
+             198         0.057881
+             199        0.0577071
+             200        0.0575341
+             201         0.057362
+             202        0.0571909
+             203        0.0570208
+             204        0.0568516
+             205        0.0566835
+             206        0.0565165
+             207        0.0563505
+             208        0.0561856
+             209        0.0560218
+             210        0.0558591
+             211        0.0556976
+             212        0.0555373
+             213        0.0553781
+             214        0.0552201
+             215        0.0550634
+             216        0.0549079
+             217        0.0547537
+             218        0.0546008
+             219        0.0544491
+             220        0.0542988
+             221        0.0541498
+             222        0.0540022
+             223         0.053856
+             224        0.0537112
+             225        0.0535678
+             226        0.0534258
+             227        0.0532853
+             228        0.0531462
+             229        0.0530087
+             230        0.0528726
+             231        0.0527381
+             232        0.0526051
+             233        0.0524736
+             234        0.0523438
+             235        0.0522155
+             236        0.0520888
+             237        0.0519638
+             238        0.0518403
+             239        0.0517186
+             240        0.0515985
+             241        0.0514801
+             242        0.0513634
+             243        0.0512484
+             244        0.0511352
+             245        0.0510237
+             246        0.0509139
+             247        0.0508059
+             248        0.0506998
+             249        0.0505954
+             250        0.0504928
+             251        0.0503921
+             252        0.0502932
+             253        0.0501961
+             254         0.050101
+             255        0.0500077
+             256        0.0499163
+             257        0.0498268
+             258        0.0497392
+             259        0.0496535
+             260        0.0495698
+             261         0.049488
+             262        0.0494082
+             263        0.0493304
+             264        0.0492546
+             265        0.0491807
+             266        0.0491088
+             267         0.049039
+             268        0.0489711
+             269        0.0489053
+             270        0.0488415
+             271        0.0487798
+             272        0.0487201
+             273        0.0486625
+             274         0.048607
+             275        0.0485535
+             276        0.0485021
+             277        0.0484528
+             278        0.0484056
+             279        0.0483605
+             280        0.0483176
+             281        0.0482767
+             282        0.0482379
+             283        0.0482013
+             284        0.0481668
+             285        0.0481344
+             286        0.0481042
+             287        0.0480761
+             288        0.0480502
+             289        0.0480264
+             290        0.0480047
+             291        0.0479853
+             292        0.0479679
+             293        0.0479528
+             294        0.0479398
+             295        0.0479289
+             296        0.0479203
+             297        0.0479137
+             298        0.0479094
+             299        0.0479072
+             300        0.0479072
+             301        0.0479094
+             302        0.0479137
+             303        0.0479203
+             304        0.0479289
+             305        0.0479398
+             306        0.0479528
+             307        0.0479679
+             308        0.0479853
+             309        0.0480047
+             310        0.0480264
+             311        0.0480502
+             312        0.0480761
+             313        0.0481042
+             314        0.0481344
+             315        0.0481668
+             316        0.0482013
+             317        0.0482379
+             318        0.0482767
+             319        0.0483176
+             320        0.0483605
+             321        0.0484056
+             322        0.0484528
+             323        0.0485021
+             324        0.0485535
+             325         0.048607
+             326        0.0486625
+             327        0.0487201
+             328        0.0487798
+             329        0.0488415
+             330        0.0489053
+             331        0.0489711
+             332         0.049039
+             333        0.0491088
+             334        0.0491807
+             335        0.0492546
+             336        0.0493304
+             337        0.0494082
+             338         0.049488
+             339        0.0495698
+             340        0.0496535
+             341        0.0497392
+             342        0.0498268
+             343        0.0499163
+             344        0.0500077
+             345         0.050101
+             346        0.0501961
+             347        0.0502932
+             348        0.0503921
+             349        0.0504928
+             350        0.0505954
+             351        0.0506998
+             352        0.0508059
+             353        0.0509139
+             354        0.0510237
+             355        0.0511352
+             356        0.0512484
+             357        0.0513634
+             358        0.0514801
+             359        0.0515985
+             360        0.0517186
+             361        0.0518403
+             362        0.0519638
+             363        0.0520888
+             364        0.0522155
+             365        0.0523438
+             366        0.0524736
+             367        0.0526051
+             368        0.0527381
+             369        0.0528726
+             370        0.0530087
+             371        0.0531462
+             372        0.0532853
+             373        0.0534258
+             374        0.0535678
+             375        0.0537112
+             376         0.053856
+             377        0.0540022
+             378        0.0541498
+             379        0.0542988
+             380        0.0544491
+             381        0.0546008
+             382        0.0547537
+             383        0.0549079
+             384        0.0550634
+             385        0.0552201
+             386        0.0553781
+             387        0.0555373
+             388        0.0556976
+             389        0.0558591
+             390        0.0560218
+             391        0.0561856
+             392        0.0563505
+             393        0.0565165
+             394        0.0566835
+             395        0.0568516
+             396        0.0570208
+             397        0.0571909
+             398         0.057362
+             399        0.0575341
+             400        0.0577071
+             401         0.057881
+             402        0.0580559
+             403        0.0582316
+             404        0.0584081
+             405        0.0585856
+             406        0.0587638
+             407        0.0589428
+             408        0.0591226
+             409        0.0593031
+             410        0.0594843
+             411        0.0596663
+             412        0.0598489
+             413        0.0600323
+             414        0.0602162
+             415        0.0604008
+             416        0.0605859
+             417        0.0607717
+             418         0.060958
+             419        0.0611448
+             420        0.0613321
+             421        0.0615199
+             422        0.0617082
+             423        0.0618969
+             424        0.0620861
+             425        0.0622756
+             426        0.0624656
+             427        0.0626558
+             428        0.0628464
+             429        0.0630373
+             430        0.0632285
+             431          0.06342
+             432        0.0636117
+             433        0.0638037
+             434        0.0639958
+             435        0.0641881
+             436        0.0643806
+             437        0.0645732
+             438        0.0647659
+             439        0.0649587
+             440        0.0651516
+             441        0.0653445
+             442        0.0655374
+             443        0.0657304
+             444        0.0659233
+             445        0.0661162
+             446         0.066309
+             447        0.0665018
+             448        0.0666945
+             449         0.066887
+             450        0.0670793
+             451        0.0672715
+             452        0.0674636
+             453        0.0676554
+             454         0.067847
+             455        0.0680383
+             456        0.0682293
+             457        0.0684201
+             458        0.0686105
+             459        0.0688006
+             460        0.0689904
+             461        0.0691798
+             462        0.0693688
+             463        0.0695573
+             464        0.0697455
+             465        0.0699331
+             466        0.0701203
+             467         0.070307
+             468        0.0704932
+             469        0.0706789
+             470        0.0708639
+             471        0.0710485
+             472        0.0712324
+             473        0.0714157
+             474        0.0715984
+             475        0.0717804
+             476        0.0719617
+             477        0.0721424
+             478        0.0723224
+             479        0.0725016
+             480        0.0726801
+             481        0.0728578
+             482        0.0730347
+             483        0.0732109
+             484        0.0733862
+             485        0.0735607
+             486        0.0737343
+             487        0.0739071
+             488        0.0740789
+             489        0.0742499
+             490        0.0744199
+             491        0.0745891
+             492        0.0747572
+             493        0.0749244
+             494        0.0750906
+             495        0.0752557
+             496        0.0754199
+             497         0.075583
+             498        0.0757451
+             499        0.0759061
+             500         0.076066
+             501        0.0762248
+             502        0.0763824
+             503         0.076539
+             504        0.0766944
+             505        0.0768486
+             506        0.0770017
+             507        0.0771536
+             508        0.0773042
+             509        0.0774536
+             510        0.0776018
+             511        0.0777488
+             512        0.0778945
+             513        0.0780389
+             514         0.078182
+             515        0.0783238
+             516        0.0784643
+             517        0.0786034
+             518        0.0787412
+             519        0.0788777
+             520        0.0790128
+             521        0.0791464
+             522        0.0792787
+             523        0.0794096
+             524        0.0795391
+             525        0.0796671
+             526        0.0797937
+             527        0.0799189
+             528        0.0800425
+             529        0.0801647
+             530        0.0802854
+             531        0.0804046
+             532        0.0805223
+             533        0.0806385
+             534        0.0807531
+             535        0.0808662
+             536        0.0809777
+             537        0.0810876
+             538         0.081196
+             539        0.0813028
+             540        0.0814081
+             541        0.0815117
+             542        0.0816137
+             543         0.081714
+             544        0.0818128
+             545        0.0819099
+             546        0.0820054
+             547        0.0820992
+             548        0.0821913
+             549        0.0822818
+             550        0.0823706
+             551        0.0824576
+             552        0.0825431
+             553        0.0826267
+             554        0.0827087
+             555         0.082789
+             556        0.0828675
+             557        0.0829444
+             558        0.0830194
+             559        0.0830928
+             560        0.0831643
+             561        0.0832342
+             562        0.0833022
+             563        0.0833685
+             564         0.083433
+             565        0.0834957
+             566        0.0835567
+             567        0.0836158
+             568        0.0836732
+             569        0.0837287
+             570        0.0837825
+             571        0.0838344
+             572        0.0838845
+             573        0.0839328
+             574        0.0839793
+             575         0.084024
+             576        0.0840668
+             577        0.0841077
+             578        0.0841469
+             579        0.0841842
+             580        0.0842196
+             581        0.0842533
+             582         0.084285
+             583        0.0843149
+             584        0.0843429
+             585        0.0843691
+             586        0.0843935
+             587        0.0844159
+             588        0.0844365
+             589        0.0844552
+             590        0.0844721
+             591        0.0844871
+             592        0.0845002
+             593        0.0845115
+             594        0.0845208
+             595        0.0845283
+             596         0.084534
+             597        0.0845377
+             598        0.0845396
+             599        0.0845396
+&

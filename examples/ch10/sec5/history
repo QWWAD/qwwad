@@ -1,0 +1,21 @@
+#!/bin/sh
+# Define lattice constant
+
+A0=5.65
+
+# Create bulk zinc blende type crystal
+
+cszb -a AS -c GA -x 2 -y 2 -z 4 -A $A0
+
+# Create heterojunction by substituting atom types, beyond some defined
+# interface
+
+
+mv atoms.xyz atoms.xyz.tmp		# create temporary file for editing
+nawk '{if(($4>11.3)&&($1=="GA")) 
+       printf("AL %9.3f %9.3f %9.3f\n",$2,$3,$4) 
+       else print $0}' atoms.xyz.tmp >> atoms.xyz
+
+# Convert to pdb format for viewing
+
+xyz2pdb atoms

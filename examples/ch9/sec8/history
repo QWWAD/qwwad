@@ -1,0 +1,58 @@
+#!/bin/sh
+# Bulk GaAs calculation
+# Write crystal basis to file `atoms.xyz' in XYZ format
+# Note basis vectors are +/- (1/8,1/8,1/8) and A0=5.65
+# Note also the atom types are defined as `GAAScb' and `ASGAScb'
+# this selects the Ga in GaAs and As in GaAs Cohen and Bergstresser (cb)
+# potentials
+
+OUTPUT=E-x.r
+
+# Initialise files
+
+rm -f $OUTPUT
+
+# Just look at zone center
+
+echo 0.0 0.0 0.0 > k.r		# Gamma
+
+# create reciprocal lattice vectors, note use of default maximum |G|
+
+rlv-fcc
+
+# Sort the G vectors into ascending order
+
+ppsg
+
+for X in 00 10 20 30 40 50 60 70 80 90 99
+do
+{
+echo 2	> atoms.xyz
+echo    >> atoms.xyz				# leave blank line
+echo ALGAAS$X -0.70625 -0.70625 -0.70625 >> atoms.xyz
+echo ASALGA$X  0.70625  0.70625  0.70625 >> atoms.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# Implement pseudopotential calculation, note use of default lattice constant
+
+pplb -n 4 -m 5
+
+# Collate energy levels.  The top of the VB and bottom CB are output in
+# columns, use the utility `ppee' to collate into columns
+
+ ppee -n 1 -m 2		# remember `-n' and `-m' refer to data in file
+
+ echo -n $X >> $OUTPUT  # enter electron wavevector first
+
+ nawk '{printf("%10.6f",$3-$2)}' Ek.r >> $OUTPUT
+
+ echo -n -e "\n" >> $OUTPUT        # end line
+
+}
+done
+# Tidy up
+
+rm -f ank.r Ek?.r Ek??.r

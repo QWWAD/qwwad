@@ -1,0 +1,74 @@
+#!/bin/ksh
+# Superlattice as a perturbation calculation for GaAs/AlAs as a function of 
+# the period.
+# Initialise files
+
+rm -f ank*.r Ek*.r
+
+# Define output file and initialise
+
+OUTPUT=E-Nz.r
+rm -f $OUTPUT
+
+# Solve bulk band structure for this superlattice k-point, use Mader and
+# Zunger potentials
+
+#First generate atomic positions in bulk
+
+echo 2  > atoms.xyz
+echo   >> atoms.xyz                            # leave blank line
+echo GAASmz -0.706 -0.706 -0.706 >> atoms.xyz
+echo ASGAmz  0.706  0.706  0.706 >> atoms.xyz
+
+# Generate reciprocal latice vectors, and sort them
+
+rlv-fcc 
+
+ppsg
+
+# Loop over superlattice period
+
+for NZ in 1 2 3 4 5 6 7 8 9 10 12 14 16 18
+do
+{
+# Create bulk wave vectors required for superlattice calculation
+
+slk -k 0 -z $NZ
+
+# Implement pseudopotential band structure calculation, use default lattice
+# constant, and output the lowest conduction band only
+
+pplb -n 5 -m 5 -w
+
+# Create `single-spiral' unit cell of the unperturbed atoms
+
+csss -a ASGAmz -c GAASmz -z $NZ
+
+# Now create superlattice by swapping atoms
+
+rm -f atomsp.xyz	# initialise file
+let A=2*NZ+3		# the first atom to be swapped
+let B=4*NZ+2		# the last atom to be swapped
+sed "$A,$B s/GA/AL/" atoms.xyz >> atomsp.xyz
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atomsp
+
+# Implement superlattice calculation, output lowest state only
+
+ppsl -n 1 -m 1
+
+# Collate lowest conduction band energy levels.  Bulk GaAs calculation
+# gave top of the valence band as -5.505446 eV, hence add this to all
+# values
+
+echo -n $NZ >> $OUTPUT	# enter superlattice period first
+
+nawk '{printf("%10.6f\n",$1+5.505446)}' Exi.r >> $OUTPUT
+}
+done
+
+# Tidy up
+
+rm -f Ek*.r ank*.r

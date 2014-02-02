@@ -1,0 +1,44 @@
+#!/bin/sh
+# Initialise files
+
+rm -f Ee-LB.r
+
+# Loop for barrier widths
+
+for LB in 60 80 100 120 140 160 180 200 240 280 320 360 400 500 600 700 1000
+do
+{
+# Create structure file `s.r'
+
+echo $LB 0.2 0.0 > s.r
+echo 100 0.0 0.0 >> s.r
+echo $LB 0.2 0.0 >> s.r
+
+# Create alloy concentration file
+
+efsx
+
+# Create potential profile
+
+efxv
+
+# Create (constant) effective mass data
+
+efxm -m 0.067
+
+# Implement shooting method
+
+efshoot 
+
+# Send data to file
+
+echo -n -e "$LB\t" >> Ee-LB.r			# write well width to file
+nawk '{printf("%12.6f",$2)}' Ee.r >> Ee-LB.r	# send data to file
+echo -n -e "\n" >> Ee-LB.r
+
+# Now calculate wave functions and store
+
+efwf
+mv wf_e1.r wf-LB=$LB.r
+}
+done	# done loop over LB

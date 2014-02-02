@@ -1,0 +1,31 @@
+#!/bin/sh
+# GaAs/AlAs Kronig-Penney superlattice calculation for comparison with the 
+# pseudopotential of the previous section.
+
+# Note the hole mass in the well is read in as a command line argument, the
+# hole mass in the barrier is kept fixed at the bulk AlAs value, i.e. 
+# m_hh[001]=0.51 m0, from Adachi `GaAs and related materials', page 254.
+
+OUTPUT=Eh=$1-Nz.r
+rm -f $OUTPUT
+
+# Loop over the equal well and barrier widths, values are equivalent to
+# (a+b)=NZ*A0 of before, recall A0=5.65 Angstroms
+
+for A in 2.825 5.65 8.475 11.3 14.125 16.95 19.775 22.6 25.426 28.25 33.9 39.55 45.2 50.85
+do
+{
+# Perform Kronig-Penney calculation, effective masses as above, valence
+# band offset of 0.51 eV, from previous calculations
+
+efkpsl -a $A -b $A -m $1 -n 0.51 -p h -V 510
+
+# Now collate results in a file, note more complex `nawk' format---the use
+# of " rather than ', this allows incorporation of the shell variable $A
+# into output file.  Note the conversion of the energy, from meV to -eV, as
+# energies in PP calculation are measured absolutely.
+
+nawk "{printf(\"%f %e\n\",$A *2/5.65,-\$2/1000)}" Eh.r >> $OUTPUT
+
+}
+done

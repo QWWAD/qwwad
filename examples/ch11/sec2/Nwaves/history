@@ -1,0 +1,38 @@
+#!/bin/ksh
+# Calculation of the number of plane waves required in the expansion set
+# of a quantum wire
+# Define and initialise files
+
+OUTPUT=N-NxNy.r
+OUTPUT2=N-Natoms.r
+
+rm -f $OUTPUT $OUTPUT2
+
+# Loop over wire side, keep cell square hence NX=NY
+
+for NX in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 
+do
+{
+ # Write the number of lattice constants along the unit cell side, i.e.,
+ # NX to first output file and the number of atoms to the second file
+
+ echo -n $NX >> $OUTPUT
+ 
+ let NA=8*$NX*$NX
+ echo -n $NA >> $OUTPUT2
+
+ # Generate reciprocal lattice vectors
+
+ rlv-sc -x $NX -y $NX -z 1
+
+ # Now count number of G vectors in `G.r', and write to both output files
+
+ wc -l G.r | nawk '{printf(" %i\n",$1)}' >> $OUTPUT
+ wc -l G.r | nawk '{printf(" %i\n",$1)}' >> $OUTPUT2
+
+}
+done
+
+# Tidy up 
+
+rm -f G.r

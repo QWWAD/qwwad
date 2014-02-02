@@ -1,0 +1,57 @@
+#!/bin/sh
+# Create 64 atom basis, i.e., a 2x2x2 cube, SI at both anion and cation 
+# positions
+
+cszb -a SI -c SI -A 5.43 -x 2 -y 2 -z 2
+
+# Now delete one of the SI atoms
+
+mv atoms.xyz atoms.tmp          # create copy of atoms file for substitution
+sed '59d' atoms.tmp>>atoms.xyz	# perform substitution
+
+# And replace the number of atoms on the first line of file with 63 
+
+mv atoms.xyz atoms.tmp          # create copy of atoms file for substitution
+sed '1s/64/63/' atoms.tmp>>atoms.xyz	# perform substitution
+
+# Convert also to pdb format for visual check
+
+xyz2pdb atoms
+
+# Just calculate band structure at zone center (Gamma)
+
+echo 0.0 0.0 0.0 > k.r          # Gamma
+
+# Generate reciprocal lattice vectors
+
+rlv-sc -x 2 -y 2 -z 2
+
+# Implement pseudopotential calculation, output all valence band states
+
+pplb -A 5.43 -n 1 -m 128 -w
+
+# Rename eigenvectors file for charge density calculation
+
+mv ank0.r ank.r
+
+# Loop over z planes
+
+for Z in 0.625 0.750 0.875 1.000 1.125
+do
+{
+
+ # Calculate charge density across the same plane that WILL contain GE atom
+ # remember units spatial units specified are in A0.  Adjust limts of 
+ # x-y plane to place GE atom at centre
+
+ ppcd -A 5.43 -x -0.125 -X 1.875 -y -0.125 -Y 1.875 -z $Z -Z $Z -n 1 -m 128 -N 40
+
+ # Save data in file
+
+ mv cd.r cdz=$Z.r
+}
+done
+
+# Tidy up
+
+rm -f ank.r
