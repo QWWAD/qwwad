@@ -1,0 +1,12 @@
+README file for QWWAD.
+
+This is a suite of simulation tools for modelling semiconductor nanostructures,
+and accompanies the book "Quantum Wells, Wires and Dots" (3rd Edition),
+Paul Harrison, Wiley Chichester (2009).
+
+Please see the following files for more information.
+
+* INSTALL: Installation instructions
+* COPYING: License information
+* AUTHORS: List of authors
+* NEWS: What's new in this version?

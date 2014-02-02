@@ -6,6 +6,10 @@ AC_INIT([qwwad], [1.0], [a.valavanis@leeds.ac.uk])
 AC_CONFIG_SRCDIR([src/csss.c])
 AC_CONFIG_HEADERS([config.h])
 
+# The number in the options list here refers to the minimum version
+# of Automake that can be accepted
+AM_INIT_AUTOMAKE([-W -Wall 1.11])
+
 # Checks for programs.
 AC_PROG_CC
 

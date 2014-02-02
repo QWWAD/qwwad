@@ -1,1 +1,10 @@
 src/Makefile.backup
+src/Makefile.in
+Makefile.in
+depcomp
+install-sh
+missing
+configure
+config.h.in
+aclocal.m4
+autom4te.cache

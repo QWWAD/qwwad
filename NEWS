@@ -1,0 +1,8 @@
+Latest NEWS for QWWAD package:
+
+2014-02-02:
+        * AV steps in to maintain PH's original code
+        * Released under GPL3 license!  Please email p.harrison@shu.ac.uk for
+          confirmation
+        * We now use Launchpad as development site: launchpad.net/qwwad
+        * Code is maintained in Bazaar repo: lp:qwwad
