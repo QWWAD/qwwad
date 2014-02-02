@@ -629,7 +629,7 @@ int	nE;
  char	filename[9];	/* filename string				*/
  FILE 	*FEf;		/* file pointer to energy data 			*/
 
- sprintf(filename,"Ef.r",p);	/* Retain general structure for another day	*/
+ sprintf(filename,"Ef.r");	/* Retain general structure for another day	*/
  if((FEf=fopen(filename,"r"))==0)
  {
    fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
