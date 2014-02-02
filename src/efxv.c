@@ -16,6 +16,8 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <strings.h>
 #include <math.h>
 #include "struct.h"
@@ -68,7 +70,7 @@ while((argc>1)&&(argv[1][0]=='-'))
             default :
                       printf("The only materials defined in the database are\n");
                       printf("Ga(1-x)Al(x)As, Cd(1-x)Mn(x)Te, In(1-x-y)Al(x)Ga(y)As\n");
-                       exit(0);
+		      exit(EXIT_FAILURE);
            }
 	   break;
   case 'p':
@@ -79,13 +81,13 @@ while((argc>1)&&(argv[1][0]=='-'))
             case 'h': break;
             case 'l': break;
             default:  printf("Usage:  efxv [-p particle (\033[1me\033[0m, h, or l)]\n");
-                      exit(0);
+                      exit(EXIT_FAILURE);
            }
            break;
   default:
 	  printf("Usage:  efxv [-M material \033[1mGa(1-x)Al(x)As\033[0m][-p particle (\033[1me\033[0m, h, or l)]\n");
 	  printf("             [-g output bandgap \033[1mfalse\033[0m]\n");
-	  exit(0);
+	  exit(EXIT_FAILURE);
 
  }
  argv++;
@@ -102,14 +104,14 @@ while((argc>1)&&(argv[1][0]=='-'))
 unlink("v0.r");	unlink("v1.r");
 
 if((Fx=fopen("x.r","r"))==NULL)
- {printf("Error: Cannot open input file 'x.r'!\n");exit(0);}
+ {printf("Error: Cannot open input file 'x.r'!\n");exit(EXIT_FAILURE);}
 
 if((Fv=fopen("v.r","w"))==NULL)
- {printf("Error: Cannot open file 'v.r'!\n");exit(0);}
+ {printf("Error: Cannot open file 'v.r'!\n");exit(EXIT_FAILURE);}
 
 if(Eg_flag)
  if((FEg=fopen("Eg.r","w"))==NULL)
-  {printf("Error: Cannot open file 'Eg.r'!\n");exit(0);}
+  {printf("Error: Cannot open file 'Eg.r'!\n");exit(EXIT_FAILURE);}
 
 
 switch(Material)
@@ -124,7 +126,7 @@ switch(Material)
 	     case 'e':V=0.67*dV;break;
 	     case 'h':V=0.33*dV;break;
 	     case 'l':printf("Data not defined for Ga(1-x)Al(x)As light-hole\n");
-		      exit(0);
+		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
 	   if(Eg_flag){Eg=1.426*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
@@ -141,7 +143,7 @@ switch(Material)
 	     case 'e':V=0.70*dV;break;
 	     case 'h':V=0.30*dV;break;
 	     case 'l':printf("Data not defined for Cd(1-x)Mn(x)Te light-hole\n");
-		      exit(0);
+		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
 	   if(Eg_flag){Eg=1.606*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
@@ -161,7 +163,7 @@ switch(Material)
 	     case 'e':V=0.53*dV;break;  
 	     case 'h':V=0.47*dV;break;
 	     case 'l':printf("Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
-		      exit(0);
+		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
 	   if(Eg_flag){Eg=0.36*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}

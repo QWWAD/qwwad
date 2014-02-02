@@ -15,6 +15,7 @@
                                                                
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <strings.h>
 #include <math.h>
 #include "struct.h"
@@ -56,7 +57,7 @@ while((argc>1)&&(argv[1][0]=='-'))
             case 'h': break;
             case 'l': break;
             default:  printf("Usage:  hup [-p particle (\033[1me\033[0m, h, or l)]\n");
-                      exit(0);
+                      exit(EXIT_FAILURE);
            }
            break;
   case 's':
@@ -64,7 +65,7 @@ while((argc>1)&&(argv[1][0]=='-'))
            break;
   default :
            printf("Usage:  hup [-p particle (\033[1me\033[0m, h, or l)][-s state \033[1m1\033[0m]\n");
-           exit(0);
+           exit(EXIT_FAILURE);
  }
  argv++;
  argv++;
@@ -138,7 +139,7 @@ int        *N;              /* number of lines in data files     */
  
  if((Fwf=fopen(filename,"r"))==0)
  {
-  fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);
+  fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(EXIT_FAILURE);
  }
 
  *N=0;
@@ -149,7 +150,7 @@ int        *N;              /* number of lines in data files     */
  start_wf=(data11 *)calloc(*N,sizeof(data11));
  if(start_wf==0)  
  {
-  fprintf(stderr,"Cannot allocate memory!\n");exit(0);
+  fprintf(stderr,"Cannot allocate memory!\n");exit(EXIT_FAILURE);
  }
 
  pointer_wf=start_wf;
