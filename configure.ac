@@ -12,6 +12,9 @@ AC_CONFIG_HEADERS([config.h])
 # of Automake that can be accepted
 AM_INIT_AUTOMAKE([-W -Wall 1.11])
 
+dnl Quieten the Make output
+AM_SILENT_RULES([yes])
+
 # Checks for programs.
 AC_PROG_CC
 
