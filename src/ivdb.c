@@ -26,7 +26,7 @@ double	E;		/* energy				*/
 double	Ef;		/* Fermi energy				*/
 double  F;              /* Electric field                       */
 double	f_FD;		/* Fermi Dirac distribution function	*/
-double	I;		/* current				*/
+double	current;	/* current				*/
 double  L1;             /* left barrier width                   */
 double  L2;             /* central well width                   */
 double	L3;		/* right hand barrier width		*/
@@ -99,7 +99,7 @@ for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
  DeltaE=e_0*F*(L1+0.5*L2);	/* Calculate DeltaE	*/
  V=F*(L1+L2+L3);		/* Calculate voltage	*/
 
- I=0;				/* Initialise current for integration	*/
+ current=0;			/* Initialise current for integration	*/
  for(iE=0;iE<n;iE++)
  {
   E=(TofE+iE)->a;
@@ -108,12 +108,12 @@ for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
    rho=cub(sqrt(2*m)/hbar)*sqrt(E-DeltaE)/(2*sqr(pi));
    f_FD=1/(exp((E-(Ef+DeltaE))/(kb*T))+1);
  
-   I+=((TofE+iE)->b)*f_FD*rho*dE;
+   current+=((TofE+iE)->b)*f_FD*rho*dE;
   /* if(iF==0)printf("%20.17le %20.17le\n",E,rho*f_FD); output f(E)rho(E) */
   }
  }
 
- fprintf(FIV,"%20.17le %20.17le\n",V,I);	/* output data */
+ fprintf(FIV,"%20.17le %20.17le\n",V,current);	/* output data */
 
 } /* end loop over iE	*/
 

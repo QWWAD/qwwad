@@ -21,6 +21,7 @@
 
    Modifications, September 1998                              */
 
+#include <complex.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,7 +36,7 @@ extern int atoi();
 complex *read_ank();	/* function to read reciprocal lattice vectors	*/
 vector *read_rlv();	/* function to read reciprocal lattice vectors	*/
 complex *ank;		/* real coefficients of eigenvectors		*/
-complex psi;    	/* the wave function psi_nk(r)			*/
+double complex psi;    	/* the wave function psi_nk(r)			*/
 double A0;		/* Lattice constant			       	*/
 double Gdotr;		/* G.r						*/
 double Omega;           /* normalisation constant                       */
@@ -153,13 +154,13 @@ for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)		/* index along x-axis */
    for(in=n_min;in<=n_max;in++)			/* sum over bands */
    {
     /* Calculate psi_nk(r)	*/
-    psi.re=0;psi.im=0;
+    psi=0;
     for(iG=0;iG<N;iG++)				/* sum over G */
     {
      Gdotr=vsprod(*(G+iG),r);
-     psi=cadd(psi,cmult(*(ank+iG*Nn+in),cexp(Gdotr)));
+     psi += ank[iG*Nn+in] * cexp(Gdotr);
     }
-    psi_sqr+=sqr(cmod(psi))/Omega;
+    psi_sqr+=sqr(cabs(psi))/Omega;
    }
    fprintf(Fcd,"%le\n",psi_sqr);
   }
@@ -243,7 +244,11 @@ if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 for(iG=0;iG<N;iG++)
  for(in=0;in<*Nn;in++)
-  fscanf(Fank,"%lf %lf",&(ank+iG*(*Nn)+in)->re,&(ank+iG*(*Nn)+in)->im);
+ {
+  double re, im;
+  fscanf(Fank,"%lf %lf",&re,&im);
+  ank[iG*(*Nn)+in] = re + I*im;
+ }
 
 fclose(Fank);
 

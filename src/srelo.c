@@ -313,16 +313,14 @@ data12	*wf;
  complex	G;	/* integral over z and hence form factor	*/
  int		iz;	/* index over z		*/
 
- G.re=0;G.im=0;
+ G=0;
  for(iz=0;iz<n;iz++)		/* Integral of i(=0) and f(=2) over z	*/
  {
-  G.re+=cos(Kz*(wf+iz)->a)*((wf+iz)->b[0])*((wf+iz)->b[1]);
-  G.im+=sin(Kz*(wf+iz)->a)*((wf+iz)->b[0])*((wf+iz)->b[1]);
+  G += cos(Kz*(wf+iz)->a)*((wf+iz)->b[0])*((wf+iz)->b[1]) + I * sin(Kz*(wf+iz)->a)*((wf+iz)->b[0])*((wf+iz)->b[1]);
  }
- G.re*=delta_z;
- G.im*=delta_z;
+ G*=delta_z;
 
-return(cmod(G)*cmod(G));	/* cmod---modulus of complex number	*/
+return(cabs(G)*cabs(G));	/* cmod---modulus of complex number	*/
 
 }
 

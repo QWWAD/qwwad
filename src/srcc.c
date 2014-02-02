@@ -370,7 +370,7 @@ int	state[];	/* electron state index			*/
  double	dmu;		/* mu interval				*/
  double	dI;		/* intervals in I			*/
  double	mu;		/* integration variable			*/
- double	I;		/* temperature dependence integral	*/
+ double	integral;	/* temperature dependence integral	*/
  double	P;		/* polarizability			*/
 
  /* Equation 43 of Smet	*/
@@ -382,15 +382,15 @@ int	state[];	/* electron state index			*/
 
  /* Now perform the integration, equation 44 of Smet	*/
 
- mu=*(E+state[0]-1);dmu=1e-3*e_0;I=0;
+ mu=*(E+state[0]-1);dmu=1e-3*e_0;integral=0;
  do
  {
   dI=1/(4*kb*T*sqr(cosh((*(Ef+state[0]-1)-mu)/(2*kb*T))));
-  I+=dI*dmu;
+  integral+=dI*dmu;
   mu+=dmu;
- }while(dI>I/100);	/* continue until integral converges	*/
+ }while(dI>integral/100);	/* continue until integral converges	*/
 
- P*=I;
+ P*=integral;
 
 return(P);
 

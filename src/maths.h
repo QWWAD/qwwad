@@ -17,13 +17,6 @@ vector	vmult();	/* multiplies a vector by a constant	*/
 double	vmod();		/* modulus of vector		*/
 vector	vvprod();	/* vector product		*/
 double	vsprod();	/* vector product		*/
-double	cmod();		/* modulus of complex number	*/
-complex	cadd();		/* complex addition		*/
-complex	csub();		/* complex subtraction		*/
-complex	cmult();	/* complex mulitplication	*/
-complex	cdiv();		/* complex division		*/
-complex	cconj();	/* complex conjugate		*/
-complex	cexp();		/* complex exponential		*/
 double Theta();		/* Heaviside unit step function	*/
 
 
@@ -200,87 +193,6 @@ double vsprod(A,B)
 vector	A,B;
 {
  return(A.x*B.x+A.y*B.y+A.z*B.z);
-}
-/****************** returns modulus of a complex number ****************/
-
-double cmod(c)
-complex c;
-{
- return(sqrt((c.re)*(c.re)+(c.im)*(c.im)));
-}
-
-
-/****************** multiply two complex numbers ***********************/
-
-complex cmult(c1,c2)
-complex c1,c2;
-{
- complex	c;
- c.re=c1.re*c2.re-c1.im*c2.im;
- c.im=c1.re*c2.im+c1.im*c2.re;
- return(c);
-}
-
-
-/****************** divide two complex numbers ***********************/
-
-complex cdiv(c1,c2)
-complex c1,c2;
-{
- complex	c;
- c.re=(c1.re*c2.re+c1.im*c2.im)/(c2.re*c2.re+c2.im*c2.im);
- c.im=(c2.re*c1.im-c1.re*c2.im)/(c2.re*c2.re+c2.im*c2.im);
- return(c);
-}
-
-
-
-/****************** complex conjugate ***********************/
-
-complex cconj(c)
-complex c;
-{
- complex	cstar;
- cstar.re=c.re;
- cstar.im=-1*c.im;
- return(cstar);
-}
-
-
-/****************** complex exponential ***********************/
-
-complex cexp(d)
-double	d;
-{
- complex	c;
- c.re=cos(d);
- c.im=sin(d);
- return(c);
-}
-
-
-
-/****************** add two complex numbers ***********************/
-
-complex cadd(c1,c2)
-complex c1,c2;
-{
- complex	c;
- c.re=c1.re+c2.re;
- c.im=c1.im+c2.im;
- return(c);
-}
-
-
-/****************** subtract two complex numbers ***********************/
-
-complex csub(c1,c2)
-complex c1,c2;
-{
- complex	c;
- c.re=c1.re-c2.re;
- c.im=c1.im-c2.im;
- return(c);
 }
 
 /**************** Heaviside Step function *****************************/

@@ -23,7 +23,7 @@ AC_PROG_CC
 AC_CHECK_LIB([m], [pow])
 
 # Checks for header files.
-AC_CHECK_HEADERS([malloc.h stdlib.h strings.h])
+AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL

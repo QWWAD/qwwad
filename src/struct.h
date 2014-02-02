@@ -2,18 +2,14 @@
                                    struct.h
   ==========================================================================*/
 
+#include <complex.h>
+
 typedef struct
 {
  double x;
  double y;
  double z;
 }vector;
-
-typedef struct
-{
- double re;
- double im;
-}complex;
 
 typedef struct
 {

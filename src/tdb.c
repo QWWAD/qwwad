@@ -122,45 +122,45 @@ do      /* loop increments energy */
 
  /* Define matrices */
 
- M1.M[0][0].re=1;			M1.M[0][0].im=0;
- M1.M[0][1].re=1;			M1.M[0][1].im=0;
- M1.M[1][0].re=0;			M1.M[1][0].im=k/m_w;
- M1.M[1][1].re=0;			M1.M[1][1].im=-k/m_w;
+ M1.M[0][0] = 1;
+ M1.M[0][1] = 1;
+ M1.M[1][0] = +I*k/m_w;
+ M1.M[1][1] = -I*k/m_w;
 
- M2.M[0][0].re=1;			M2.M[0][0].im=0;
- M2.M[0][1].re=1;			M2.M[0][1].im=0;
- M2.M[1][0].re=K/m_b;			M2.M[1][0].im=0;
- M2.M[1][1].re=-K/m_b;			M2.M[1][1].im=0;
+ M2.M[0][0] = 1;
+ M2.M[0][1] = 1;
+ M2.M[1][0] = +K/m_b;
+ M2.M[1][1] = -K/m_b;
 
- M3.M[0][0].re=exp(K*I2);		M3.M[0][0].im=0;
- M3.M[0][1].re=exp(-K*I2);		M3.M[0][1].im=0;
- M3.M[1][0].re=K*exp(K*I2)/m_b;		M3.M[1][0].im=0;
- M3.M[1][1].re=-K*exp(-K*I2)/m_b;	M3.M[1][1].im=0;
+ M3.M[0][0] = exp(+K*I2);
+ M3.M[0][1] = exp(-K*I2);
+ M3.M[1][0] =  K*exp(+K*I2)/m_b;
+ M3.M[1][1] = -K*exp(-K*I2)/m_b;
 
- M4.M[0][0].re=cos(k*I2);		M4.M[0][0].im=sin(k*I2);
- M4.M[0][1].re=cos(k*I2);		M4.M[0][1].im=-sin(k*I2);
- M4.M[1][0].re=-k*sin(k*I2)/m_w;	M4.M[1][0].im=k*cos(k*I2)/m_w;
- M4.M[1][1].re=k*sin(-k*I2)/m_w;	M4.M[1][1].im=-k*cos(k*I2)/m_w;
+ M4.M[0][0] = cos(k*I2) + I * sin(k*I2);
+ M4.M[0][1] = cos(k*I2) - I * sin(k*I2);
+ M4.M[1][0] = -k*sin(+k*I2)/m_w + I * k*cos(k*I2)/m_w;
+ M4.M[1][1] =  k*sin(-k*I2)/m_w - I * k*cos(k*I2)/m_w;
 
- M5.M[0][0].re=cos(k*I3);		M5.M[0][0].im=sin(k*I3);
- M5.M[0][1].re=cos(k*I3);		M5.M[0][1].im=-sin(k*I3);
- M5.M[1][0].re=-k*sin(k*I3)/m_w;	M5.M[1][0].im=k*cos(k*I3)/m_w;
- M5.M[1][1].re=k*sin(-k*I3)/m_w;	M5.M[1][1].im=-k*cos(k*I3)/m_w;
+ M5.M[0][0] = cos(k*I3) + I * sin(k*I3);
+ M5.M[0][1] = cos(k*I3) - I * sin(k*I3);
+ M5.M[1][0] = -k*sin(+k*I3)/m_w + I * k*cos(k*I3)/m_w;
+ M5.M[1][1] =  k*sin(-k*I3)/m_w - I * k*cos(k*I3)/m_w;
 
- M6.M[0][0].re=exp(K*I3);		M6.M[0][0].im=0;
- M6.M[0][1].re=exp(-K*I3);		M6.M[0][1].im=0;
- M6.M[1][0].re=K*exp(K*I3)/m_b;		M6.M[1][0].im=0;
- M6.M[1][1].re=-K*exp(-K*I3)/m_b;	M6.M[1][1].im=0;
+ M6.M[0][0] = exp(+K*I3);
+ M6.M[0][1] = exp(-K*I3);
+ M6.M[1][0] =  K*exp(+K*I3)/m_b;
+ M6.M[1][1] = -K*exp(-K*I3)/m_b;
 
- M7.M[0][0].re=exp(K*I4);		M7.M[0][0].im=0;
- M7.M[0][1].re=exp(-K*I4);		M7.M[0][1].im=0;
- M7.M[1][0].re=K*exp(K*I4)/m_b;		M7.M[1][0].im=0;
- M7.M[1][1].re=-K*exp(-K*I4)/m_b;	M7.M[1][1].im=0;
+ M7.M[0][0] = exp(+K*I4);
+ M7.M[0][1] = exp(-K*I4);
+ M7.M[1][0] =  K*exp(+K*I4)/m_b;
+ M7.M[1][1] = -K*exp(-K*I4)/m_b;
 
- M8.M[0][0].re=cos(k*I4);		M8.M[0][0].im=sin(k*I4);
- M8.M[0][1].re=cos(k*I4);		M8.M[0][1].im=-sin(k*I4);
- M8.M[1][0].re=-k*sin(k*I4)/m_w;	M8.M[1][0].im=k*cos(k*I4)/m_w;
- M8.M[1][1].re=k*sin(-k*I4)/m_w;	M8.M[1][1].im=-k*cos(k*I4)/m_w;
+ M8.M[0][0] = cos(k*I4) + I * sin(k*I4);
+ M8.M[0][1] = cos(k*I4) - I * sin(k*I4);
+ M8.M[1][0] = -k*sin(+k*I4)/m_w + I * k*cos(k*I4)/m_w;
+ M8.M[1][1] =  k*sin(-k*I4)/m_w - I * k*cos(k*I4)/m_w;
 
  M=cmat2x2mult(invcmat2x2(M1),
     cmat2x2mult(M2,
@@ -176,7 +176,7 @@ do      /* loop increments energy */
     )
    );
 
- T=1/(M.M[0][0].re*M.M[0][0].re+M.M[0][0].im*M.M[0][0].im);
+ T=1/(creal(M.M[0][0])*creal(M.M[0][0]) + cimag(M.M[0][0]) * cimag(M.M[0][0]));
 
  fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
  E+=dE;
@@ -195,12 +195,12 @@ cmat2x2mult(cmat2x2 M1,cmat2x2 M2)
 
  cmat2x2	M;
 
- M.M[0][0]=cadd(cmult(M1.M[0][0],M2.M[0][0]),cmult(M1.M[0][1],M2.M[1][0]));
- M.M[0][1]=cadd(cmult(M1.M[0][0],M2.M[0][1]),cmult(M1.M[0][1],M2.M[1][1]));
- M.M[1][0]=cadd(cmult(M1.M[1][0],M2.M[0][0]),cmult(M1.M[1][1],M2.M[1][0]));
- M.M[1][1]=cadd(cmult(M1.M[1][0],M2.M[0][1]),cmult(M1.M[1][1],M2.M[1][1]));
+ M.M[0][0] = M1.M[0][0] * M2.M[0][0] + M1.M[0][1] * M2.M[1][0];
+ M.M[0][1] = M1.M[0][0] * M2.M[0][1] + M1.M[0][1] * M2.M[1][1];
+ M.M[1][0] = M1.M[1][0] * M2.M[0][0] + M1.M[1][1] * M2.M[1][0];
+ M.M[1][1] = M1.M[1][0] * M2.M[0][1] + M1.M[1][1] * M2.M[1][1];
  
- return(M);
+ return M;
 }
 
 
@@ -211,20 +211,16 @@ invcmat2x2(cmat2x2 M)
  /* Calculates the inverse of a complex 2x2	*/
 
  complex	detcmat2x2();
-
  cmat2x2	Minv;
- complex 	cminus1;
 
- cminus1.re=-1;
- cminus1.im=0;
+ double complex determinant = detcmat2x2(M);
 
- Minv.M[0][0]=cdiv(M.M[1][1],detcmat2x2(M));
- Minv.M[0][1]=cdiv(cmult(cminus1,M.M[0][1]),detcmat2x2(M));
- Minv.M[1][0]=cdiv(cmult(cminus1,M.M[1][0]),detcmat2x2(M));
- Minv.M[1][1]=cdiv(M.M[0][0],detcmat2x2(M));
+ Minv.M[0][0] =  M.M[1][1] / determinant;
+ Minv.M[0][1] = -M.M[0][1] / determinant;
+ Minv.M[1][0] = -M.M[1][0] / determinant;
+ Minv.M[1][1] =  M.M[0][0] / determinant;
 
- return(Minv);
- 
+ return Minv;
 }
 
 
@@ -234,5 +230,5 @@ detcmat2x2(cmat2x2 M)
 {
  /* Calculates the determinant of a complex 2x2	*/
 
- return(csub(cmult(M.M[0][0],M.M[1][1]),cmult(M.M[0][1],M.M[1][0])));
+ return M.M[0][0] * M.M[1][1] - M.M[0][1] * M.M[1][0];
 }

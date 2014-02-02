@@ -54,11 +54,11 @@ double	E_sf[N];	/* spin-flip energy for each r_d	*/
 double	E_min;		/* lower limit of spectrum		*/
 double	E_max;		/* upper limit of spectrum		*/
 double	E_step;		/* energy increment along spectrum	*/
-double	I;		/* intensity of Raman signal at E	*/
+double	intensity;	/* intensity of Raman signal at E	*/
 double	linewidth;	/* linewidth of signal from each r_d	*/
 double	r_d[N];		/* donor positions (r_d)		*/
 double	sigma;		/* standard deviation of Gaussians	*/
-int	i_i;		/* index over r_d for I sum		*/
+int	i_i;		/* index over r_d for intensity sum	*/
 int	i_sf;		/* index over r_d for spin-flip energies*/
 int	N_rd;		/* number of r_d points in e_sf.r	*/
 FILE	*fE_sf;		/* file pointer to input file e_sf.r	*/
@@ -134,12 +134,12 @@ fI=fopen("I.r","w");
 E=E_min;
 do
 {
- I=0;
+ intensity=0;
  for(i_i=0;i_i<N_rd;i_i++)
  {
-  I+=1/(sigma*sqrt(2*pi))*exp(-0.5*sqr((E-E_sf[i_i])/sigma));
+  intensity+=1/(sigma*sqrt(2*pi))*exp(-0.5*sqr((E-E_sf[i_i])/sigma));
  }
- fprintf(fI,"%le %le\n",E,I); /* E in cm^-1, I in arb. units */
+ fprintf(fI,"%le %le\n",E,intensity); /* E in cm^-1, intensity in arb. units */
  E+=E_step;
 }while(E<E_max);
 
