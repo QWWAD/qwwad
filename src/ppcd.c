@@ -30,13 +30,15 @@
 #include "maths.h"
 #include "const.h"
 
+static complex double * read_ank(const int  N,
+                                 int       *Nn);
+
 int main(int argc,char *argv[])
 {
 extern double atof();
 extern int atoi();
-complex *read_ank();	/* function to read reciprocal lattice vectors	*/
 vector *read_rlv();	/* function to read reciprocal lattice vectors	*/
-complex *ank;		/* real coefficients of eigenvectors		*/
+complex double *ank;	/* real coefficients of eigenvectors		*/
 double complex psi;    	/* the wave function psi_nk(r)			*/
 double A0;		/* Lattice constant			       	*/
 double Gdotr;		/* G.r						*/
@@ -202,19 +204,20 @@ return EXIT_SUCCESS;
 
 
 
-complex
-*read_ank(N,Nn)
-
-/* This function reads the eigenvectors (a_nk(G)) from the file a_nk.r
-   created by the code pplb.c into the array a_nk[N][Nn]		*/
-
-int     N;		/* The number of terms in each eigenvector	*/
-int     *Nn;		/* The number of bands in file			*/
+/**
+ * Reads the eigenvectors (a_nk(G)) from the file a_nk.r
+ * created by the code pplb.c into the array a_nk[N][Nn]
+ *
+ * \param[in] N  The number of terms in each eigenvector
+ * \param     Nn The number of bands in file
+ */
+static complex double * read_ank(const int  N,
+                                 int       *Nn)
 {
  int	in;		/* index across bands				*/
  int	iG;		/* index across G vectors			*/
  int	n;		/* counter for number of elements in file	*/
- complex        *ank;
+ complex double *ank;
  FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
 if((Fank=fopen("ank.r","r"))==0)
@@ -237,7 +240,7 @@ rewind(Fank);
 
 /* Allocate memory for eigenvectors	*/
 
-ank=(complex *)calloc(n,sizeof(complex));
+ank=(complex double *)calloc(n,sizeof(complex double));
 if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 /* Finally read eigenvectors into structure	*/

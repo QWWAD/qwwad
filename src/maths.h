@@ -2,7 +2,7 @@
 /*  include file for math functions  */
 /*************************************/
 
-double sqr();
+double sqr(const double x);
 double cub();
 double sec();
 double cosec();
@@ -20,11 +20,16 @@ double	vsprod();	/* vector product		*/
 double Theta();		/* Heaviside unit step function	*/
 
 
-/**************** square of function ****************/
-double sqr(x)
-double x;
+/**
+ * square of a number
+ *
+ * \param[in] x The number to be squared
+ *
+ * \return The square of the number
+ */
+double sqr(const double x)
 {
-return(x*x);
+  return x*x;
 }
 
 /**************** cube function *********************/

@@ -309,7 +309,7 @@ int	n;
 data12	*wf;
 
 {
- complex	G;	/* integral over z and hence form factor	*/
+ complex double	G;	/* integral over z and hence form factor	*/
  int		iz;	/* index over z		*/
 
  G=0;

@@ -14,6 +14,13 @@
 #include <strings.h>
 #include "struct.h"
 
+static void write_ap(const double A0,
+                     const int    n_z,
+                     vector       a,
+                     vector       T[],
+                     char         anion[],
+                     char         cation[]);
+
 int main(int argc,char *argv[])
 {
 void	write_ap();	/* writes the atomic positions/species to file	*/
@@ -73,16 +80,20 @@ return EXIT_SUCCESS;
 
 
 
-
-void 
-write_ap(A0,n_z,a,T,anion,cation)
-
-double	A0;		/* lattice constant				*/
-int	n_z;		/* number of lattice points along z-axis of cell */
-vector	a;		/* lattice vectors (a1, a2, a3 plus null vector) */
-vector	T[];     	/* basis vector   */
-char	anion[];	/* anion species				*/
-char	cation[];	/* cation species				*/
+/**
+ * \param A0     lattice constant
+ * \param n_z    number of lattice points along z-axis of cell
+ * \param a      lattice vectors (a1, a2, a3 plus null vector)
+ * \param T      basis vector
+ * \param anion  anion species
+ * \param cation cation species
+ */
+static void write_ap(const double A0,
+                     const int    n_z,
+                     vector       a,
+                     vector       T[],
+                     char         anion[],
+                     char         cation[])
 {
  int    i_n_z;  /* index to n_z */
  vector t;      /* general vertor representing atom within cell  */

@@ -27,6 +27,6 @@ typedef struct
 
 typedef struct
 {
- complex M[2][2];
+  complex double M[2][2];
 }cmat2x2;
 #endif /* STRUCT_H */

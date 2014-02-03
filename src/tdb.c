@@ -210,7 +210,7 @@ invcmat2x2(cmat2x2 M)
 {
  /* Calculates the inverse of a complex 2x2	*/
 
- complex	detcmat2x2();
+ complex double detcmat2x2();
  cmat2x2	Minv;
 
  double complex determinant = detcmat2x2(M);
@@ -225,7 +225,7 @@ invcmat2x2(cmat2x2 M)
 
 
 
-complex
+complex double
 detcmat2x2(cmat2x2 M)
 {
  /* Calculates the determinant of a complex 2x2	*/
