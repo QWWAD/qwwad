@@ -9,8 +9,6 @@ double cosec();
 double cot();
 int sign();
 double coth();
-double modulus();
-int Nint();
 vector	vadd();		/* adds two vectors together	*/
 vector	vsub();		/* subtracts one vector from another	*/
 vector	vmult();	/* multiplies a vector by a constant	*/
@@ -86,18 +84,6 @@ coth(x)
 double x;
 {
  return(1/tanh(x));
-}
-
-
-
-
-/**************** Takes the modulus of a number ***************/
-double modulus(x)
-
-double x;
-{
-if(x<0)x*=-1;
-return(x);
 }
 
 /****************** add two vectors ***********************************/
