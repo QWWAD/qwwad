@@ -15,6 +15,9 @@ struct	{
  double	mstar;		/* electron and hole values   	  */
 } files;
 
+data11 * read_Egdata(const size_t  n,
+                     files        *data_start);
+
 /**
  * Reads the potential into memory and returns the start address of this
  * block of memory
@@ -22,16 +25,17 @@ struct	{
  * \param[in]  n          Number of lines to read
  * \param[out] data_start Start address of potential
  */
-data11 * read_Egdata(int n, files *data_start)
+data11 * read_Egdata(const size_t  n,
+                     files        *data_start)
 {
- int	i;		/* index				*/
- data11	*data_m0Eg;	/* pointer to m0 and Eg data		*/
- FILE   *FEg;		/* file pointer to potential file	*/
+ unsigned int  i;         /* index				*/
+ data11	      *data_m0Eg; /* pointer to m0 and Eg data		*/
+ FILE         *FEg;	  /* file pointer to potential file	*/
 
  if((FEg=fopen("Eg.r","r"))==0)
    error(EXIT_FAILURE, 0, "Cannot open input file 'Eg.r'!");
 
- data_m0Eg=(data11 *)calloc(n,sizeof(data11));
+ data_m0Eg=(data11 *)calloc(n, sizeof(data11));
  if(data_m0Eg==0)
    error(EXIT_FAILURE, 0, "Cannot allocate memory!");
 

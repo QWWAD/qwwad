@@ -36,6 +36,7 @@
 #include <signal.h>
 #include <malloc.h>
 #include "const.h"
+#include "d0-helpers.h"
 #include "struct.h"
 #include "maths.h"
 
@@ -43,9 +44,7 @@ int main(int argc,char *argv[])
 {
 double read_delta_z();
 double psi_at_inf();
-double V_min();
 void   wavefunctions();
-data11 *read_v();           /* reads potential file into memory  */
 bool    repeat_lambda();    
 
 double d_E;                 /* infinitesmal energy               */
@@ -67,7 +66,7 @@ double y;                   /* function (psi at infinity)        */
 double y1;                  /* temporary y value                 */
 double y2;                  /* temporary y value                 */
 int    i_d;                 /* donor (or acceptor) index         */
-int    n;		    /* number of lines of potential file */
+size_t n;		    /* number of lines of potential file */
 bool   repeat_flag_lambda; /* variational flag=>new lambda      */
 data11  *Vstart;             /* start address of potential        */
 FILE   *fe;                 /* file pointer for energies         */
@@ -123,7 +122,6 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
  argc--;
 }
-
 
   Vstart = read_v(&n);                  /* reads potential file */
 
@@ -216,27 +214,6 @@ while((argc>1)&&(argv[1][0]=='-'))
 
   return EXIT_SUCCESS;
 } /* end main */
-
-
-
-
-
-double 
-read_delta_z(Vp)
-
-/* This function calculates the separation along the z (growth) 
-   direction of the user supplied potentials                                        */
-
-data11 *Vp;
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0] = Vp->a;
- Vp++;
- z[1] = Vp->a;
- return(z[1]-z[0]);
-}
-
 
 bool
 repeat_lambda(lambda,lambda_0,x,x_min)
@@ -332,76 +309,6 @@ data11 *Vp;
 
  return(psi[0]-delta_psi);
 }
-
-
-
-data11
-*read_v(n)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines         */
-
-int     *n;
-
-{
- FILE   *fp;            /* file pointer to potential file          */
- data11  *Vp;           /* temporary pointer to potential          */
- data11  *Vstart;       /* start address of potential              */
-
- if((fp=fopen("v.r","r"))==0)
- {
-   fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
-   exit(0);
- }
- *n=0;
- while(fscanf(fp,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(fp);
-
-
- Vstart = (data11 *)calloc(*n,sizeof(data11));
- if (Vstart==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- Vp = Vstart;
-
- while(fscanf(fp,"%le %le", &(Vp->a), &(Vp->b))!=EOF)
-  Vp++;
-
- fclose(fp);
- return(Vstart);
-
-}
-
-
-
-double 
-V_min(Vp,n)       
-
-/* This function opens the external file v.r and finds     
-   the minimum value for the potential energy, this value
-   is used as the initial energy estimate.                         */
-
-data11 *Vp;             /* pointer to potential                    */
-int   n;                /* number of steps in potential            */
-{
- double min;            /* minimum value of potential energy       */
- int  i;                /* index                                   */
- 
- min=1;
-
- for(i=0; i<n; i++)
- {
-  if(Vp->b<min)
-  {
-   min=Vp->b;
-  }
-  Vp++;
- }
- return(min);
-}
-
 
 void
 wavefunctions(delta_z,E,epsilon,lambda,mstar,r_d,i_d,Vp,n)

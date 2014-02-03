@@ -1,6 +1,11 @@
 #ifndef DOX_H
 #define DOX_H
 
+double D_of_x(const double D0,
+              const double x,
+              const double z,
+              const double t);
+
 /**
  * Calculates the diffusion coefficient at a given depth in a structure
  *

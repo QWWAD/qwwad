@@ -12,16 +12,24 @@
 
 #include <string.h>
 
-double
-Vf(A0,m_per_au,q_sqr,type)
+double Vf(const double  A0,
+          const double  m_per_au,
+          double        q_sqr,
+          const char   *type);
 
-/* This function returns the atomic form factor Vf(q) for the appropriate
-   atomic species */
-
-double	A0;		/* Lattice constant     		*/
-double	m_per_au;	/* number of metres per a.u. of length	*/
-double	q_sqr;		/* modulus squared of q 		*/
-char	type[];		/* atomic species			*/
+/**
+ * This function returns the atomic form factor Vf(q) for the appropriate
+ * atomic species
+ *
+ * \param[in] A0       Lattice constant
+ * \param[in] m_per_au number of metres per a.u. of length
+ * \param[in] q_sqr    modulus squared of q
+ * \param[in]type      atomic species
+ */
+double Vf(const double  A0,
+          const double  m_per_au,
+          double        q_sqr,
+          const char   *type)
 {
  double	sqrt();
  double A0_au;	/* lattice constant in atomic units	*/
@@ -29,11 +37,6 @@ char	type[];		/* atomic species			*/
  double Omega;	/* atomic volume, i.e. fcc cube/4	*/
  double Va;	/* the atomic potential			*/
  double	x;	/* an alloy concentration		*/
-
-
-
-
-
 
  /* The Freidel et al. potentials for Si-Ge heterostructures, 
    Phys. Rev. B39 p7974 (1989)					*/

@@ -37,16 +37,30 @@
 #include <signal.h>
 #include <malloc.h>
 #include "const.h"
+#include "d0-helpers.h"
 #include "struct.h"
 #include "maths.h"
 
+static double I_1(const double lambda,
+                  const double z_dash,
+                  const double zeta);
+static double I_2(const double lambda,
+                  const double z_dash,
+                  const double zeta);
+static double I_3(const double lambda,
+                  const double z_dash,
+                  const double zeta,
+                  const int    N_w);
+static double I_4(const double lambda,
+                  const double z_dash,
+                  const double zeta,
+                  const int    N_w);
+
 int main(int argc,char *argv[])
 {
-double read_delta_z();
 double psi_at_inf();
 double V_min();
 void   wavefunctions();
-data11 *read_v();           /* reads potential file into memory  */
 bool    repeat_lambda();    
 bool    repeat_zeta();    
 
@@ -77,7 +91,7 @@ double zeta_step;           /* zeta increment                    */
 double zeta_stop;           /* final zeta                        */
 int    i_d;                 /* donor (or acceptor) index         */
 int    N_w;                 /* number of strips in w integration */
-int    n;		    /* number of lines of potential file */
+size_t n;		    /* number of lines of potential file */
 bool   repeat_flag_zeta;   /* variational flag=>new zeta        */
 bool   repeat_flag_lambda; /* variational flag=>new lambda      */
 data11  *Vstart;             /* start address of potential        */
@@ -149,7 +163,6 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
  argc--;
 }
-
 
   Vstart = read_v(&n);                  /* reads potential file */
 
@@ -257,26 +270,6 @@ while((argc>1)&&(argv[1][0]=='-'))
 } /* end main */
 
 
-
-
-
-double 
-read_delta_z(Vp)
-
-/* This function calculates the separation along the z (growth) 
-   direction of the user supplied potentials                                        */
-
-data11 *Vp;
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0] = Vp->a;
- Vp++;
- z[1] = Vp->a;
- return(z[1]-z[0]);
-}
-
-
 bool
 repeat_lambda(lambda,lambda_0,x_min_zeta,x_min,zeta_0,zeta_0_lambda)
 
@@ -305,8 +298,6 @@ double *zeta_0_lambda;
  }    
  return(flag);
 }
-
-
 
 bool
 repeat_zeta(zeta,zeta_0_lambda,x,x_min_zeta)
@@ -355,10 +346,6 @@ double zeta;
 data11 *Vp;
 int N_w;
 {
- double I_1();
- double I_2();
- double I_3();
- double I_4();
  double alpha;		     /* coefficient of second derivative, see notes */
  double beta;                /* coefficient of first derivative            */
  double gamma;               /* coefficient of function                    */
@@ -406,76 +393,6 @@ int N_w;
  return(psi[0]-delta_psi);
 }
 
-
-
-data11
-*read_v(n)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines         */
-
-int     *n;
-
-{
- FILE   *fp;            /* file pointer to potential file          */
- data11  *Vp;           /* temporary pointer to potential          */
- data11  *Vstart;       /* start address of potential              */
-
- if((fp=fopen("v.r","r"))==0)
- {
-   fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
-   exit(0);
- }
- *n=0;
- while(fscanf(fp,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(fp);
-
-
- Vstart = (data11 *)calloc(*n,sizeof(data11));
- if (Vstart==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- Vp = Vstart;
-
- while(fscanf(fp,"%le %le", &(Vp->a), &(Vp->b))!=EOF)
-  Vp++;
-
- fclose(fp);
- return(Vstart);
-
-}
-
-
-
-double 
-V_min(Vp,n)       
-
-/* This function opens the external file v.r and finds     
-   the minimum value for the potential energy, this value
-   is used as the initial energy estimate.                         */
-
-data11 *Vp;             /* pointer to potential                    */
-int   n;                /* number of steps in potential            */
-{
- double min;            /* minimum value of potential energy       */
- int  i;                /* index                                   */
- 
- min=1;
-
- for(i=0; i<n; i++)
- {
-  if(Vp->b<min)
-  {
-   min=Vp->b;
-  }
-  Vp++;
- }
- return(min);
-}
-
-
 void
 wavefunctions(delta_z,E,epsilon,lambda,mstar,r_d,zeta,i_d,Vp,n,N_w)
 
@@ -490,29 +407,25 @@ double mstar;
 double r_d;
 double zeta;
 int    i_d;
-int    n;
+size_t n;
 data11  *Vp;
 int    N_w;
 {
- double I_1();
- double I_2();
- double I_3();
- double I_4();
- double alpha;		 /* coefficient of second derivative, see notes */
- double beta;            /* coefficient of first derivative             */
- double gamma;           /* coefficient of function                     */
- double delta_psi;       /* initial wavefunction value                  */
- double I1,I2,I3,I4;     /* particular values of the functions	        */
- double kappa;
- double Npsi=0;          /* normalisation integral for psi              */
- double Nchi=0;          /* normalisation integral for chi              */
- double psi[3];          /* wavefunctions at z-d_z,z,z+d_z              */
- int    i;               /* index                                       */
- char   filename[9];     /* character string for wavefunction filename  */
- FILE   *fw;             /* file wf.r                                   */
- data12  *wf_start;      /* pointer to start of w.f                     */
- data12  *wf;		 /* wavefunction pointer, note b[0]=psi, 
-                            b[1]=chi, see notes                         */
+ double        alpha;		 /* coefficient of second derivative, see notes */
+ double        beta;            /* coefficient of first derivative             */
+ double        gamma;           /* coefficient of function                     */
+ double        delta_psi;       /* initial wavefunction value                  */
+ double        I1,I2,I3,I4;     /* particular values of the functions	        */
+ double        kappa;
+ double        Npsi=0;          /* normalisation integral for psi              */
+ double        Nchi=0;          /* normalisation integral for chi              */
+ double        psi[3];          /* wavefunctions at z-d_z,z,z+d_z              */
+ unsigned int  i;               /* index                                       */
+ char          filename[9];     /* character string for wavefunction filename  */
+ FILE         *fw;             /* file wf.r                                   */
+ data12       *wf_start;      /* pointer to start of w.f                     */
+ data12       *wf;		 /* wavefunction pointer, note b[0]=psi, 
+                                 b[1]=chi, see notes                         */
 
  wf_start=(data12 *)calloc(n,sizeof(data12)); /* allocates memory for wavefunctions */
  if (wf_start==0)  {
@@ -616,59 +529,45 @@ int    N_w;
  fclose(fw);
 }
 
-
-
-double
-I_1(lambda,z_dash,zeta)
-
-double lambda;
-double z_dash;
-double zeta;
+static double I_1(const double lambda,
+                  const double z_dash,
+                  const double zeta)
 {
- return(2*pi*(zeta*fabs(z_dash)*lambda/2+sqr(lambda)/4)*
-        exp(-2*zeta*fabs(z_dash)/lambda));
+ /* Eq. 5.100, QWWAD3 */
+ return 2*pi*(zeta*fabs(z_dash)*lambda/2+sqr(lambda)/4)*
+        exp(-2*zeta*fabs(z_dash)/lambda);
 }
 
-
-
-double
-I_2(lambda,z_dash,zeta)
-
-double lambda;
-double z_dash;
-double zeta;
+static double I_2(const double lambda,
+                  const double z_dash,
+                  const double zeta)
 {
-return(2*pi*(-sqr(zeta)*z_dash/2)*exp(-2*zeta*fabs(z_dash)/lambda));
+  /* Eq. 5.106, QWWAD3 */
+  return 2*pi*(-sqr(zeta)*z_dash/2)*exp(-2*zeta*fabs(z_dash)/lambda);
 }
 
-
-
-double
-I_3(lambda,z_dash,zeta,N_w)
-
-double lambda;
-double z_dash;
-double zeta;
-int    N_w;
-
+static double I_3(const double lambda,
+                  const double z_dash,
+                  const double zeta,
+                  const int    N_w)
 {
-double I_31;
-double I_32;
 double I_33=0.0;
 double I_34=0.0;
 double w;
-double delta_w;
 
-I_31=((-1-sqr(zeta))/2)*exp(-2*zeta*fabs(z_dash)/lambda);
-I_32=(zeta*fabs(z_dash)/(2*lambda)+0.25)*exp(-2*zeta*fabs(z_dash)/lambda);
+/* Eq. 5.113, QWWAD3 */
+const double I_31=((-1-sqr(zeta))/2)*exp(-2*zeta*fabs(z_dash)/lambda);
+const double I_32=(zeta*fabs(z_dash)/(2*lambda)+0.25)*exp(-2*zeta*fabs(z_dash)/lambda);
 
 /* perform integrations over `w' for I_33 and I_34, area simply given by
-   sum of (height of centre of strip * strip width)			*/
-
-delta_w=(1.0-0.0)/(float)N_w;
+   sum of (height of centre of strip * strip width) */
+const double delta_w=(1.0-0.0)/(float)N_w;
 for(w=delta_w/2;w<1;w+=delta_w)
 {
+ /* Eq. 5.116, QWWAD3 */
  I_33+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-sqr(w))/sqr(1+sqr(w))*delta_w;
+
+ /* Eq. 5.117, QWWAD3 */
  I_34+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-sqr(w))/(w*(1+sqr(w)))*delta_w;
 }
 
@@ -680,24 +579,21 @@ return(2*pi*(I_31+I_32+I_33+I_34));
 
 
 
-double
-I_4(lambda,z_dash,zeta,N_w)
-
-double lambda;
-double z_dash;
-double zeta;
-int    N_w;
+static double I_4(const double lambda,
+                  const double z_dash,
+                  const double zeta,
+                  const int    N_w)
 {
 double I_40=0.0;
 double w;
-double delta_w;
+const double delta_w=(1.0-0.0)/(float)N_w;
 
-delta_w=(1.0-0.0)/(float)N_w;
+/* Eq. 5.118, QWWAD3 */
 for (w=delta_w/2;w<1;w+=delta_w)
 {
  I_40+=exp(-2*fabs(z_dash)*sqrt(sqr((1-sqr(w))/(2*w))+sqr(zeta))/lambda)
        *fabs(z_dash)*(1-sqr(w))/(2*sqr(w))*delta_w;
 }
 
-return(2*pi*I_40);
+return 2*pi*I_40;
 }

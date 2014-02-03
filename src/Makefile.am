@@ -1,6 +1,7 @@
 # Makefile.am - Automake input file for QWWAD project (source code)
 
 noinst_HEADERS = const.h      \
+		 d0-helpers.h \
 		 dox.h        \
 		 ef-helpers.h \
 		 maths.h      \
