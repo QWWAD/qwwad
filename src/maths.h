@@ -2,20 +2,27 @@
 /*  include file for math functions  */
 /*************************************/
 
-double sqr(const double x);
-double cub();
-double sec();
-double cosec();
-double cot();
-int sign();
-double coth();
-vector	vadd();		/* adds two vectors together	*/
-vector	vsub();		/* subtracts one vector from another	*/
-vector	vmult();	/* multiplies a vector by a constant	*/
-double	vmod();		/* modulus of vector		*/
-vector	vvprod();	/* vector product		*/
-double	vsprod();	/* vector product		*/
-double Theta();		/* Heaviside unit step function	*/
+#ifndef MATHS_H
+#define MATHS_H
+double sqr   (const double x);
+double cub   (const double x);
+double sec   (const double x);
+double cosec (const double x);
+double cot   (const double x);
+int    sign  (const double x);
+double coth  (const double x);
+vector vadd  (const vector A,
+              const vector B);
+vector vsub  (const vector A,
+              const vector B);
+vector vmult (const vector A,
+              const double c);
+double vmod  (const vector A);
+vector vvprod(const vector A,
+              const vector B);
+double vsprod(const vector A,
+              const vector B);
+double Theta (const double x);
 
 
 /**
@@ -30,45 +37,58 @@ double sqr(const double x)
   return x*x;
 }
 
-/**************** cube function *********************/
-double cub(x)
-double x;
+/**
+ * cube of a number
+ *
+ * \param[in] x The number to be cubed
+ *
+ * \return The cube of the number
+ */
+double cub(const double x)
 {
-return(x*x*x);
+  return x*x*x;
 }
 
-/********************** secans **********************/
-double
-sec(x)
-double x;
+/**
+ * The secant of a number
+ *
+ * \param[in] x The number for which to find the secant (radians)
+ *
+ * \return The secant
+ */
+double sec(const double x)
 {
- return(1.0/cos(x));
+ return 1.0/cos(x);
 }
 
-
-/********************** cosecans ********************/
-double
-cosec(x)
-double x;
+/**
+ * The cosecant of a number
+ *
+ * \param[in] x The number for which to find the cosecant (radians)
+ *
+ * \return The cosecant
+ */
+double cosec(const double x)
 {
- return(1/sin(x));
+ return 1/sin(x);
 }
 
-
-
-/********************** cotangent ********************/
-double
-cot(x)
-double x;
+/**
+ * The cotangent of a number
+ *
+ * \param[in] x The number for which to find the cotangent (radians)
+ *
+ * \return The cotangent
+ */
+double cot(const double x)
 {
- return(1/tan(x));
+ return 1/tan(x);
 }
 
-
-/*********************** sign ***********************/
-int
-sign(x)
-double x;
+/**
+ * sign
+ */
+int sign(const double x)
 {
  int i;
 
@@ -77,20 +97,18 @@ double x;
  return(i);
 }
 
-
-/*************** cotangens hyperbolicus *************/
-double
-coth(x)
-double x;
+/**
+ * cotangens hyperbolicus
+ */
+double coth(const double x)
 {
  return(1/tanh(x));
 }
 
-/****************** add two vectors ***********************************/
-
-vector vadd(A,B)
-vector	A;
-vector	B;
+/**
+ * add two vectors
+ */
+vector vadd(const vector A, const vector B)
 {
  vector	C;
  
@@ -101,11 +119,10 @@ vector	B;
  return(C);
 }
 
-/****************** subtracts on vector from another ***********************/
-
-vector vsub(A,B)
-vector	A;
-vector	B;
+/**
+ * subtracts on vector from another
+ */
+vector vsub(const vector A, const vector B)
 {
  vector	C;
  
@@ -116,12 +133,10 @@ vector	B;
  return(C);
 }
 
-
-/****************** multiply a vector bya constant ********************/
-
-vector vmult(A,c)
-vector	A;
-double	c;
+/**
+ * multiply a vector by a constant
+ */
+vector vmult(const vector A, const double c)
 { 
  vector	B;
 
@@ -132,19 +147,18 @@ double	c;
  return(B);
 }
 
-/****************** returns modulus of a vector ***********************/
-
-double vmod(A)
-vector A;
+/**
+ * returns modulus of a vector
+ */
+double vmod(const vector A)
 {
  return(sqrt((A.x)*(A.x)+(A.y)*(A.y)+(A.z)*(A.z)));
 }
 
-
-/****************** returns vector product of two vectors *************/
-
-vector vvprod(A,B)
-vector	A,B;
+/**
+ * returns vector product of two vectors
+ */
+vector vvprod(const vector A, const vector B)
 {
  vector	C;
 
@@ -155,19 +169,19 @@ vector	A,B;
  return(C);
 }
  
-/****************** returns scalar product of two vectors *************/
-
-double vsprod(A,B)
-vector	A,B;
+/**
+ * returns scalar product of two vectors
+ */
+double vsprod(const vector A, const vector B)
 {
  return(A.x*B.x+A.y*B.y+A.z*B.z);
 }
 
-/**************** Heaviside Step function *****************************/
-double Theta(x)
-
-double x;
+/**
+ * Heaviside Step function
+ */
+double Theta(const double x)
 {
  return((x<0)?0:1);
 }
-
+#endif
