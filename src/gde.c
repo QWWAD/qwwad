@@ -30,7 +30,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 #include "dox.h"
 
 typedef

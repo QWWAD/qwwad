@@ -21,7 +21,6 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 #include "const.h"
 
 int main(int argc,char *argv[])

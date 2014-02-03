@@ -10,6 +10,7 @@
 
    Paul Harrison, December 1998                                   */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -19,7 +20,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 int main(int argc,char *argv[])
 {
@@ -35,7 +35,7 @@ int	i;		/* index				*/
 int	n;		/* length of potential file		*/
 char	p;		/* particle				*/
 char	filename[9];	/* output filename			*/
-boolean	np_flag;	/* non-parabolicity flag		*/
+bool	np_flag;	/* non-parabolicity flag		*/
 FILE	*FE;		/* outputfile for el. energy states	*/
 FILE	*Fwf;		/* outputfile for wavefunctions		*/
 files	*data_start;	/* start address of potential		*/
@@ -202,7 +202,7 @@ files  *fdata;
 data11 *data_m0Eg;
 data11 *data_zwf;
 int    n;
-boolean np_flag;
+bool   np_flag;
 {
  double alpha;		     /* non-parabolicity parameter   */
  double N=0;		     /* normalization integral       */

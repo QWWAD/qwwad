@@ -32,7 +32,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 static double * read_E(char p, int *s);
 static double * calc_field(const double  epsilon,

@@ -16,7 +16,7 @@
    Paul Harrison
 
                                                                 */
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -25,7 +25,6 @@
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
-#include "bools.h"
 
 int main(int argc, char *argv[])
 {
@@ -50,7 +49,7 @@ char	filename_1[9];	/* character string for wavefunction
 char	filename_2[9];	/* character string for wavefunction 
                  		input file			*/
 char	p;		/* particle (e, h, or l)		*/
-boolean	D3_flag;	/* if set, use 3D form of lifetime	*/
+bool	D3_flag;	/* if set, use 3D form of lifetime	*/
 data11	*read_data();
 data11	*start_wf1;	/* start address of data		*/
 data11	*start_wf2;	/* start address of data		*/

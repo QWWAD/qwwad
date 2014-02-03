@@ -19,6 +19,7 @@
  
     Improvements January 1999						*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -27,7 +28,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 int main(int argc,char *argv[])
 {
@@ -68,7 +68,7 @@ int     nki;            /* number of ki calculations                    */
 int	nKz;		/* number of Kz values for lookup table	*/
 char	filename[9];	/* character string for output filename		*/
 char	p;		/* particle					*/
-boolean	ff_flag;	/* form factor flag, output to file if true	*/
+bool	ff_flag;	/* form factor flag, output to file if true	*/
 data11	*Gifsqr;	/* particular values of form factor squared	*/
 data12	*wf;		/* start address of wave function structure	*/
 FILE	*FLOa;		/* pointer to absorption output file		*/

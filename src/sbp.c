@@ -14,6 +14,7 @@
 
    Paul Harrison, March 1997                                   */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -23,7 +24,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 typedef
 struct	{
@@ -47,7 +47,7 @@ int	n;			/* number of lines in `filename'	*/
 int	nE;			/* number of energies to output FD	*/
 int	s;			/* index over subband states		*/
 char	p;			/* particle, e, h or l			*/
-boolean	FD_flag;		/* if true prints out all FD distrib	*/
+bool	FD_flag;		/* if true prints out all FD distrib	*/
 FILE	*FEf;			/* file pointer to Fermi Energy file	*/
 
 /* default values */

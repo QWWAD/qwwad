@@ -19,6 +19,7 @@
     Paul Harrison, March 1997
     Modifications, February 1999					*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -27,7 +28,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 typedef
 struct	{
@@ -91,8 +91,8 @@ int	nq;		/* number of q_perp values for lookup table	*/
 int	ntheta;		/* number of strips in theta integration	*/
 char	filename[9];	/* character string for output filename		*/
 char	p;		/* particle					*/
-boolean	ff_flag;	/* form factor flag, output to file if true	*/
-boolean	S_flag;		/* screening flag, include screening if true	*/
+bool	ff_flag;	/* form factor flag, output to file if true	*/
+bool	S_flag;		/* screening flag, include screening if true	*/
 data11	*Aijfg;		/* form factor over all 4 wave functions	*/
 data11	*PIii;		/* pointer to screening function versus q_perp	*/
 data14	*wf;		/* start address of wave function structure	*/
@@ -410,7 +410,7 @@ double	kifermi;
 double	T;
 int	nq;		/* Number of q_perp values for table	*/
 int	state[];
-boolean	S_flag;
+bool	S_flag;
 
 
 {

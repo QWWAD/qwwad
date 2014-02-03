@@ -41,7 +41,6 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 #include "const.h"
 
 #define N 1000

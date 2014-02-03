@@ -11,6 +11,7 @@
 
    Paul Harrison, December 1998                                   */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -20,14 +21,13 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 static double psi_at_inf(const double  E,
                          const double  delta_z,
 			 files        *fdata,
 			 const data11 *data_m0Eg,
 			 const int     n,
-			 const boolean np_flag);
+			 const bool    np_flag);
 
 int main(int argc,char *argv[])
 {
@@ -50,7 +50,7 @@ int    n;		/* length of potential file		 */
 int    state;		/* electron and hole output states   */
 char   p;		/* particle				 */
 char   filename[9];	/* output filename			 */
-boolean np_flag;	/* Hamiltonian flag def.=1=>D(1/m)D  */
+bool   np_flag;  	/* Hamiltonian flag def.=1=>D(1/m)D  */
 FILE   *FE;		/* outputfile for el. energy states  */
 files  *data_start;	/* start address of potential	 */
 data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
@@ -246,7 +246,7 @@ static double psi_at_inf(const double  E,
 			 files        *fdata,
 			 const data11 *data_m0Eg,
 			 const int     n,
-			 const boolean np_flag)  
+			 const bool    np_flag)  
 {
  double psi[3];              /* wavefunction at z-delta_z,
                                 z and z+delta_z              */

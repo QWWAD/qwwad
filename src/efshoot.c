@@ -14,6 +14,7 @@
 
     Paul Harrison, December 1996                                   */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -23,7 +24,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 int main(int argc,char *argv[])
 {
@@ -47,8 +47,8 @@ int    n;		/* length of potential file		 */
 int    state;		/* electron and hole output states   */
 char   p;		/* particle				 */
 char   filename[9];	/* output filename			 */
-boolean T_flag;		/* Hamiltonian flag def.=1=>D(1/m)D  */
-boolean np_flag;	/* Hamiltonian flag def.=1=>D(1/m)D  */
+bool   T_flag;		/* Hamiltonian flag def.=1=>D(1/m)D  */
+bool   np_flag;     /* Hamiltonian flag def.=1=>D(1/m)D  */
 FILE   *FE;		/* outputfile for el. energy states  */
 files  *data_start;	/* start address of potential	 */
 data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
@@ -248,8 +248,8 @@ double delta_z;
 files  *fdata;
 data11 *data_m0Eg;
 int    n;
-boolean np_flag;
-boolean T_flag;
+bool   np_flag;
+bool   T_flag;
 {
  double alpha;		     /* non-parabolicity parameter   */
  double psi[3];              /* wavefunction at z-delta_z,

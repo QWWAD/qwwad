@@ -10,6 +10,7 @@
 
    Paul Harrison, December 1998                                   */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -19,7 +20,6 @@
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
-#include "bools.h"
 
 static double wf(const double  E,
                  const double  delta_z,
@@ -27,12 +27,11 @@ static double wf(const double  E,
                  const data11 *data_m0Eg,
                  data11       *data_zwf,
                  const int     n,
-                 const boolean np_flag);
+                 const bool    np_flag);
 
 int main(int argc,char *argv[])
 {
 double	read_delta_z();
-double	wf();		/* calculates wavefunctions		*/
 files	*read_data();	/* reads potential file into memory	*/
 data11	*read_Egdata();	/* reads bandgap data			*/
 
@@ -44,7 +43,7 @@ int	i;		/* index				*/
 int	n;		/* length of potential file		*/
 char	p;		/* particle				*/
 char	filename[9];	/* output filename			*/
-boolean	np_flag;	/* non-parabolicity flag		*/
+bool	np_flag;	/* non-parabolicity flag		*/
 FILE	*FE;		/* outputfile for el. energy states	*/
 FILE	*Fwf;		/* outputfile for wavefunctions		*/
 files	*data_start;	/* start address of potential		*/
@@ -214,7 +213,7 @@ static double wf(const double  E,
                  const data11 *data_m0Eg,
                  data11       *data_zwf,
                  const int     n,
-                 const boolean np_flag)
+                 const bool    np_flag)
 {
  double N=0;		     /* normalization integral       */
  double psi[3];              /* wavefunction at z-delta_z,

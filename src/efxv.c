@@ -14,14 +14,13 @@
  
    Paul Harrison, December 1996				 */
 
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 #include "const.h"
 
 int main(int argc,char *argv[])
@@ -38,7 +37,7 @@ char	  p;		   /* particle (e, h, or l)		*/
 FILE      *Fx;
 FILE      *Fv;
 FILE      *FEg;		/* pointer to Eg.r file			*/
-boolean	  Eg_flag;	/* print bandgap or not			*/
+bool	  Eg_flag;	/* print bandgap or not			*/
 
 /* Define global defaults */
 

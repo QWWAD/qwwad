@@ -29,6 +29,7 @@
 
    Paul Harrison, February 1998					*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -37,7 +38,6 @@
 #include "const.h"
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 
 int main(int argc,char *argv[])
 {
@@ -46,7 +46,7 @@ double psi_at_inf();
 double V_min();
 void   wavefunctions();
 data11 *read_v();           /* reads potential file into memory  */
-boolean repeat_lambda();    
+bool    repeat_lambda();    
 
 double d_E;                 /* infinitesmal energy               */
 double delta_E;             /* small but finite energy           */
@@ -68,7 +68,7 @@ double y1;                  /* temporary y value                 */
 double y2;                  /* temporary y value                 */
 int    i_d;                 /* donor (or acceptor) index         */
 int    n;		    /* number of lines of potential file */
-boolean repeat_flag_lambda; /* variational flag=>new lambda      */
+bool   repeat_flag_lambda; /* variational flag=>new lambda      */
 data11  *Vstart;             /* start address of potential        */
 FILE   *fe;                 /* file pointer for energies         */
 FILE   *fl;                 /* file pointer for lambda_0         */
@@ -238,7 +238,7 @@ data11 *Vp;
 }
 
 
-boolean
+bool
 repeat_lambda(lambda,lambda_0,x,x_min)
 
 /* This function compares minimum value of energy for this lambda,
@@ -249,7 +249,7 @@ double *lambda_0;
 double x;
 double *x_min;
 {
- boolean flag;
+ bool flag;
 
  if(x<*x_min)    
  {      

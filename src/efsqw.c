@@ -65,13 +65,13 @@
 
    Paul Harrison, March 1998				*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 #include "const.h"
 
 #define   N  1001      /* number of wavefunction sampling
@@ -104,9 +104,9 @@ char	p;		/* particle				*/
 char	filename[9];	/* output filename			*/
 
 FILE	*FE;		/* pointer to energy file 		*/
-boolean	parity_flag;	/* true  => odd parity   
+bool	parity_flag;	/* true  => odd parity   
                            false => even parity			*/
-boolean	T_flag;		/* KE operator flag def.=1=>D(1/m)D  */
+bool	T_flag;		/* KE operator flag def.=1=>D(1/m)D  */
 
 
 /* default values, appropriate to GaAs-GaAlAs */
@@ -250,7 +250,7 @@ double m_B;
 double m_b;
 double m_w;
 double V;
-boolean parity_flag;
+bool   parity_flag;
 {
  /* Find electron wavevector using Eq. 2.81, QWWAD3 */
  const double k=sqrt(2*m_w/hbar*energy/hbar);
@@ -286,7 +286,7 @@ double m_B;
 double m_b;
 double m_w;
 double V;
-boolean parity_flag;
+bool   parity_flag;
 {
  double k;        /* electron wave vector        */
  double K;        /* wavefunction decay constant */
@@ -321,7 +321,7 @@ double m_w;
 double V;
 int    i_state;
 char   p;
-boolean	parity_flag;
+bool	parity_flag;
 {
  double A;         /* In the well the wavefunction psi=Acoskz */
  double B;         /* and in the barrier  psi=Bexp(-Kz)       */

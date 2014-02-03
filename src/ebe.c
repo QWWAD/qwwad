@@ -19,6 +19,7 @@
 
    Paul Harrison, March 1994                                  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -27,7 +28,6 @@
 #include "const.h"
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 
 typedef
 struct	{
@@ -45,8 +45,8 @@ int main(int argc,char *argv[])
 {
 double Eb_1S();             /* exciton binding energy of 1S      */
 double read_delta_z();
-boolean repeat_beta();      /* repeat beta variational loop      */
-boolean repeat_lambda();    /* repeat lambda variational         */
+bool   repeat_beta();      /* repeat beta variational loop      */
+bool   repeat_lambda();    /* repeat lambda variational         */
 files  *read_data();        /* reads data from external files    */
 probs  *pP_calc();          /* calculates p(a), Pm(a) and
                                  Pmu(a)                          */
@@ -75,9 +75,9 @@ double mu_xy;		    /* exciton reduced mass in x-y plane */
 int    n;		    /* length of potential file		 */
 int    N_x;                 /* number of points in x integration */
 int    state[2];	    /* electron and hole states          */
-boolean output_flag;        /* if set, write data to screen      */
-boolean repeat_flag_beta;   /* repeat variational beta loop flag */
-boolean repeat_flag_lambda; /* repeat variational lambda loop    */
+bool   output_flag;        /* if set, write data to screen      */
+bool   repeat_flag_beta;   /* repeat variational beta loop flag */
+bool   repeat_flag_lambda; /* repeat variational lambda loop    */
 FILE   *FABC;               /* file pointer to ABC.r             */
 FILE   *Fbeta;              /* file pointer to beta.r            */
 FILE   *FEX0l;              /* file pointer to EX0-lambda.r      */
@@ -243,7 +243,7 @@ double m[];
 double mu_xy;
 int    N_x;
 int    n;
-boolean	output_flag;
+bool	output_flag;
 {
  double F();                 /* F(a)---see notes!                 */
  double G();                 /* G(a)---see notes!                 */
@@ -292,7 +292,7 @@ boolean	output_flag;
 
 
 
-boolean
+bool
 repeat_beta(beta,beta_0_lambda,Eb,Eb_min_beta)
 
 double *beta;
@@ -300,7 +300,7 @@ double *beta_0_lambda;
 double *Eb;
 double *Eb_min_beta;
 {
- boolean flag;
+ bool flag;
 
  if(*Eb<*Eb_min_beta)
  {
@@ -318,7 +318,7 @@ double *Eb_min_beta;
 
 
 
-boolean
+bool
 repeat_lambda(beta_0,beta_0_lambda,Eb_min_beta,Eb_min,lambda,lambda_0)
 
 double *beta_0;
@@ -328,7 +328,7 @@ double *Eb_min;
 double *lambda;
 double *lambda_0;
 {
- boolean flag;
+ bool flag;
 
  if(*Eb_min_beta<*Eb_min)
  {

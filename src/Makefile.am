@@ -1,7 +1,6 @@
 # Makefile.am - Automake input file for QWWAD project (source code)
 
-noinst_HEADERS = bools.h      \
-		 const.h      \
+noinst_HEADERS = const.h      \
 		 dox.h        \
 		 ef-helpers.h \
 		 maths.h      \

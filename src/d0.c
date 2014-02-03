@@ -30,6 +30,7 @@
 
    Paul Harrison, February 1998					*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -38,7 +39,6 @@
 #include "const.h"
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
 
 int main(int argc,char *argv[])
 {
@@ -47,8 +47,8 @@ double psi_at_inf();
 double V_min();
 void   wavefunctions();
 data11 *read_v();           /* reads potential file into memory  */
-boolean repeat_lambda();    
-boolean repeat_zeta();    
+bool    repeat_lambda();    
+bool    repeat_zeta();    
 
 double d_E;                 /* infinitesmal energy               */
 double delta_E;             /* small but finite energy           */
@@ -78,8 +78,8 @@ double zeta_stop;           /* final zeta                        */
 int    i_d;                 /* donor (or acceptor) index         */
 int    N_w;                 /* number of strips in w integration */
 int    n;		    /* number of lines of potential file */
-boolean repeat_flag_zeta;   /* variational flag=>new zeta        */
-boolean repeat_flag_lambda; /* variational flag=>new lambda      */
+bool   repeat_flag_zeta;   /* variational flag=>new zeta        */
+bool   repeat_flag_lambda; /* variational flag=>new lambda      */
 data11  *Vstart;             /* start address of potential        */
 FILE   *fe;                 /* file pointer for energies         */
 FILE   *fl;                 /* file pointer for lambda_0         */
@@ -277,7 +277,7 @@ data11 *Vp;
 }
 
 
-boolean
+bool
 repeat_lambda(lambda,lambda_0,x_min_zeta,x_min,zeta_0,zeta_0_lambda)
 
 /* This function compares minimum value of energy for this lambda,
@@ -290,7 +290,7 @@ double *x_min;
 double *zeta_0;
 double *zeta_0_lambda;
 {
- boolean flag;
+ bool flag;
 
  if(*x_min_zeta<*x_min)    
  {      
@@ -308,7 +308,7 @@ double *zeta_0_lambda;
 
 
 
-boolean
+bool
 repeat_zeta(zeta,zeta_0_lambda,x,x_min_zeta)
 
 /* This function compares current energy value with the minima for this
@@ -320,7 +320,7 @@ double *x;
 double *x_min_zeta;
 
 {
- boolean flag;
+ bool flag;
  
  if(*x<*x_min_zeta)
  {
