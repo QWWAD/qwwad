@@ -97,9 +97,9 @@ b3.z=c.z/omega;
 
 /* Calculate the maximum value of each coefficient	*/
 
-beta1max=Nint(Gmax/vmod(b1));
-beta2max=Nint(Gmax/vmod(b2));
-beta3max=Nint(Gmax/vmod(b3));
+beta1max=round(Gmax/vmod(b1));
+beta2max=round(Gmax/vmod(b2));
+beta3max=round(Gmax/vmod(b3));
 
 for(beta1=-beta1max;beta1<=beta1max;beta1++)
  for(beta2=-beta2max;beta2<=beta2max;beta2++)

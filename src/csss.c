@@ -14,7 +14,7 @@
 #include <strings.h>
 #include "struct.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 void	write_ap();	/* writes the atomic positions/species to file	*/
 
@@ -67,7 +67,7 @@ T[2].x=-1.0/8;T[2].y=+3.0/8;T[2].z=+3.0/8;
 T[3].x=-3.0/8;T[3].y=+1.0/8;T[3].z=+5.0/8;
 
 write_ap(A0,n_z,a,T,anion,cation);
-
+return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -85,7 +85,6 @@ char	anion[];	/* anion species				*/
 char	cation[];	/* cation species				*/
 {
  int    i_n_z;  /* index to n_z */
- int    i_T;    /* index across basis vectors `+T' and `-T' */
  vector t;      /* general vertor representing atom within cell  */
  FILE	*Fap;	/* pointer to output file	*/
 

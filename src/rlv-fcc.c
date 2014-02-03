@@ -73,7 +73,7 @@ for(beta_1=-G_max;beta_1<=G_max;beta_1++)
    gamma_1=(float)(beta_1-beta_2+beta_3);
    gamma_2=(float)(beta_1+beta_2-beta_3);
    gamma_3=(float)(-beta_1+beta_2+beta_3);
-   if(Nint(gamma_1*gamma_1+gamma_2*gamma_2+gamma_3*gamma_3)<=G_max*G_max)
+   if(round(gamma_1*gamma_1+gamma_2*gamma_2+gamma_3*gamma_3)<=G_max*G_max)
     fprintf(FG,"%f %f %f\n",gamma_1,gamma_2,gamma_3);
   }
 fclose(FG);

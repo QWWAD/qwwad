@@ -15,6 +15,7 @@
 
    Paul Harrison, October 1996                                */
 
+#include <error.h>
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>

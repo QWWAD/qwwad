@@ -19,7 +19,7 @@ typedef struct
  double z;
 }vector;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 int	*read_as();	/* function to read in atomic species		*/
 void	write_ap();	/* writes the atomic positions/species to file	*/
@@ -84,6 +84,7 @@ T[1].x=+1.0/8;T[1].y=+1.0/8;T[1].z=+1.0/8;
 
 write_ap(A0,n_x,n_y,n_z,a,T,anion,cation);
 
+return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -106,7 +107,6 @@ char	cation[4];	/* cation species				*/
  int    i_n_x;  /* index to n_x */
  int    i_n_y;  /* index to n_y */
  int    i_n_z;  /* index to n_z */
- int    i_T;    /* index across basis vectors `+T' and `-T' */
  vector t;      /* general vertor representing atom within cell  */
  FILE	*Fap;	/* pointer to output file	*/
 

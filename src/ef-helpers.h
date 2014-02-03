@@ -5,6 +5,7 @@
 #ifndef EF_HELPERS_H
 #define EF_HELPERS_H
 
+#include <error.h>
 #include "struct.h"
 
 typedef

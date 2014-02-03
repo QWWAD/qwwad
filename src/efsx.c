@@ -159,7 +159,7 @@ if(elements==3)
   n=0;
   z_1+=w*1e-10;
 
-  while(Nint((z_0+n*1e-10/(float)N)*1e14)<Nint(z_1*1e14))
+  while(round((z_0+n*1e-10/(float)N)*1e14) < round(z_1*1e14))
   {
    fprintf(Fx,"%20.17le %le %le\n",z_0+n*1e-10/(float)N,x,y);
    n++;
@@ -177,7 +177,7 @@ else	/* If number of elements is 4 then output dopant data too 	*/
   z_1+=w*1e-10;
   Nda*=1e+18*1e+6;		/* convert into cm^-3 and then into m^-3 */
 
-  while(Nint((z_0+n*1e-10/(float)N)*1e14)<Nint(z_1*1e14))
+  while(round((z_0+n*1e-10/(float)N)*1e14) < round(z_1*1e14))
   {
    fprintf(Fx,"%20.17le %le %le\n",z_0+n*1e-10/(float)N,x,y);
    fprintf(Fd,"%20.17le %20.17le\n",z_0+n*1e-10/(float)N,Nda);

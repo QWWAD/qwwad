@@ -23,6 +23,7 @@
 
     Paul Harrison, March 1997                                   */
 
+#include <error.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

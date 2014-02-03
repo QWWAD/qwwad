@@ -95,29 +95,6 @@ if(x<0)x*=-1;
 return(x);
 }
 
-/**************** returns nearest integer to a number **************/
-int Nint(x)
-double  x;
-{
-double  r;
-double  y;
-int	i;
-
-y=modf(x,&r);
-
-if (y>=0.5)
-  i=(int)ceil(x);
-if (y>=0 && y<0.5)
-  i=(int)floor(x);
-if (y<0 && y>-0.5)
-  i=(int)ceil(x);
-if (y<=-0.5)
-  i=(int)floor(x);
-
-return(i);
-}
-
-
 /****************** add two vectors ***********************************/
 
 vector vadd(A,B)

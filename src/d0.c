@@ -40,7 +40,7 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double read_delta_z();
 double psi_at_inf();
@@ -253,7 +253,7 @@ while((argc>1)&&(argv[1][0]=='-'))
   fclose(fzeta);
   free(Vstart);
 
-
+  return EXIT_SUCCESS;
 } /* end main */
 
 

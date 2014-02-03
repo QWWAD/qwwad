@@ -22,6 +22,7 @@
    Modifications, September 1998                              */
 
 #include <complex.h>
+#include <error.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>

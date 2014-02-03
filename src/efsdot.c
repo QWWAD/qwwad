@@ -16,17 +16,11 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include "ef-helpers.h"
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
 #include "bools.h"
-
-typedef
-struct	{
- double	z;		/* z value of files    		  */
- double	V;		/* electron and hole values   	  */
- double	mstar;		/* electron and hole values   	  */
-} files;
 
 main(int argc,char *argv[])
 {
@@ -34,7 +28,6 @@ double read_delta_z();
 double psi_at_inf();
 double V_min();
 files  *read_data();	/* reads potential file into memory  */
-data11	*read_Egdata();	/* reads bandgap data			*/
 
 double d_E;		/* infinitesmal energy               */
 double delta_E;		/* small but finite energy           */
@@ -229,43 +222,6 @@ int	*n;
  return(data_start);
 
 }
-
-
-
-data11
-*read_Egdata(n,data_start)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines         */
-
-int     n;
-files  *data_start;    /* start address of potential              */
-
-{
- int	i;		/* index				*/
- data11	*data_m0Eg;	/* pointer to m0 and Eg data		*/
- FILE   *FEg;		/* file pointer to potential file	*/
-
- if((FEg=fopen("Eg.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'Eg.r'!\n");exit(0);}
-
- data_m0Eg=(data11 *)calloc(n,sizeof(data11));
- if(data_m0Eg==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
- for(i=0;i<n;i++)
- {
-  int n_read = fscanf(FEg,"%*e %le",&(data_m0Eg+i)->b);
-  if(n_read != 2)
-    error(EXIT_FAILURE, 0, "Data missing on line %d of %s", i, "Eg.r");
-  ((data_m0Eg+i)->a)=(data_start+i)->mstar;
- }
-
- fclose(FEg);
-
- return(data_m0Eg);
-
-}
-
 
 
 double
