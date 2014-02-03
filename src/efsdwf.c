@@ -21,7 +21,7 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	read_delta_z();
 double	wf();		/* calculates wavefunctions		*/
@@ -102,7 +102,7 @@ FE=fopen(filename,"r");
 while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
 {
  E*=1e-3*e_0;	/* convert E from meV->J	*/
- N=wf(E,delta_z,data_start,data_m0Eg,data_zwf,n,np_flag,i_state);
+ N=wf(E,delta_z,data_start,data_m0Eg,data_zwf,n,np_flag);
 
  sprintf(filename,"wf_%c%i.r",p,i_state);
  Fwf=fopen(filename,"w");
@@ -119,7 +119,7 @@ free(data_start);
 free(data_m0Eg);
 free(data_zwf);
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -190,7 +190,7 @@ int	*n;
 }
 
 double
-wf(E,delta_z,fdata,data_m0Eg,data_zwf,n,np_flag,i_state)     
+wf(E,delta_z,fdata,data_m0Eg,data_zwf,n,np_flag)
 
 /* This function returns the value of the wavefunction (psi)
    at +infinity for a given value of the energy.  The solution
@@ -203,7 +203,6 @@ data11 *data_m0Eg;
 data11 *data_zwf;
 int    n;
 boolean np_flag;
-int	i_state;
 {
  double alpha;		     /* non-parabolicity parameter   */
  double N=0;		     /* normalization integral       */

@@ -21,7 +21,15 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+static double wf(const double  E,
+                 const double  delta_z,
+                 files        *fdata,
+                 const data11 *data_m0Eg,
+                 data11       *data_zwf,
+                 const int     n,
+                 const boolean np_flag);
+
+int main(int argc,char *argv[])
 {
 double	read_delta_z();
 double	wf();		/* calculates wavefunctions		*/
@@ -103,7 +111,7 @@ FE=fopen(filename,"r");
 while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
 {
  E*=1e-3*e_0;	/* convert E from meV->J	*/
- N=wf(E,delta_z,data_start,data_m0Eg,data_zwf,n,np_flag,i_state);
+ N=wf(E,delta_z,data_start,data_m0Eg,data_zwf,n,np_flag);
 
  sprintf(filename,"wf_%c%i.r",p,i_state);
  Fwf=fopen(filename,"w");
@@ -120,11 +128,8 @@ free(data_start);
 free(data_m0Eg);
 free(data_zwf);
 
-
+return EXIT_SUCCESS;
 } /* end main */
-
-
-
 
 double
 read_delta_z(fdata)
@@ -190,23 +195,27 @@ int	*n;
 
 }
 
-double
-wf(E,delta_z,fdata,data_m0Eg,data_zwf,n,np_flag,i_state)     
-
-/* This function returns the value of the wavefunction (psi)
-   at +infinity for a given value of the energy.  The solution
-   to the energy occurs for psi(+infinity)=0.                      */
-
-double E;
-double delta_z;
-files  *fdata;
-data11 *data_m0Eg;
-data11 *data_zwf;
-int    n;
-boolean np_flag;
-int	i_state;
+/**
+ * Finds the wavefunction (\f$\psi\f$) for a given energy
+ *
+ * \param[in]      E         energy
+ * \param[in]      delta_z
+ * \param[in, out] fdata
+ * \param[in]      data_m0Eg
+ * \param[out]     data_zwf
+ * \param[in]      n
+ * \param[in]      np_flag   Whether to use non-parabolic effective mass
+ *
+ * \returns The value of the wavefunction at \f$\infty\f$
+ */
+static double wf(const double  E,
+                 const double  delta_z,
+                 files        *fdata,
+                 const data11 *data_m0Eg,
+                 data11       *data_zwf,
+                 const int     n,
+                 const boolean np_flag)
 {
- double alpha;		     /* non-parabolicity parameter   */
  double N=0;		     /* normalization integral       */
  double psi[3];              /* wavefunction at z-delta_z,
                                 z and z+delta_z              */
@@ -218,18 +227,20 @@ int	i_state;
  {
   for(i=0;i<n;i++)
   {
-   alpha=sqr(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
-   (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
+   /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
+   const double alpha=sqr(1-data_m0Eg[i].a/m0)/data_m0Eg[i].b;
+
+   /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
+   fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
   }
  }
 
- /* boundary conditions */
- 
+ /* boundary conditions: Eq. 8.55, QWWAD3 */
  psi[0]=1.0;
  psi[1]=1.0;
 
- (data_zwf)->b=psi[0];
- (data_zwf+1)->b=psi[1];
+ data_zwf[0].b=psi[0];
+ data_zwf[1].b=psi[1];
 
  N+=sqr(psi[0]);
  N+=sqr(psi[1]);
@@ -238,20 +249,21 @@ int	i_state;
 
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
+   /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
    psi[2]=(
            2*(fdata->z)*(2*(fdata->mstar)*sqr(delta_z/hbar)*(fdata->V-E)+2)*
 	   psi[1]+
            (-2*(fdata->z)+delta_z)*psi[0]
           )
            /(2*(fdata->z)+delta_z);
-   (data_zwf+i+1)->b=psi[2];
+   data_zwf[i+1].b=psi[2];
    N+=sqr(psi[2]);
    psi[0]=psi[1];
    psi[1]=psi[2];
    fdata++;
   } 
 
- return(N*delta_z);
+ return N*delta_z;
 }
 
 

@@ -6,8 +6,8 @@
    uncorrelated one particle energies of any user supplied
    radial potential.  The potential is read from the file v.r
 
-   This prgram has been butchered from `efshoot', there may be 
-   a little redundant code lieing around...
+   This program has been butchered from `efshoot', there may be 
+   a little redundant code lying around...
 
    Paul Harrison, December 1998                                   */
 
@@ -22,10 +22,16 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+static double psi_at_inf(const double  E,
+                         const double  delta_z,
+			 files        *fdata,
+			 const data11 *data_m0Eg,
+			 const int     n,
+			 const boolean np_flag);
+
+int main(int argc,char *argv[])
 {
 double read_delta_z();
-double psi_at_inf();
 double V_min();
 files  *read_data();	/* reads potential file into memory  */
 
@@ -115,16 +121,14 @@ if(fabs(E_start)<1e-3*1e-3*e_0) x=V_min(data_start,n);
 
 for(i_state=1;i_state<=state;i_state++)  
 {
-
  /* increment energy-search for f(x)=0 */
-
- y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
+ y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
 
  do
  {
   y1=y2;
   x+=delta_E;
-  y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
+  y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
  }while(y1*y2>0);
 
 /* improve estimate using midpoint rule */
@@ -135,9 +139,9 @@ for(i_state=1;i_state<=state;i_state++)
 
  do
  {
-  y=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
-  dy=(psi_at_inf(x+d_E,delta_z,data_start,data_m0Eg,n,np_flag,i_state)-
-      psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag,i_state))/
+  y=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
+  dy=(psi_at_inf(x+d_E,delta_z,data_start,data_m0Eg,n,np_flag)-
+      psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag))/
      (2.0*d_E);
   x-=y/dy;
  }while(fabs(y/dy)>1e-12*e_0);
@@ -154,7 +158,7 @@ fclose(FE);
 free(data_start);
 free(data_m0Eg);
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -223,22 +227,27 @@ int	*n;
 
 }
 
-double
-psi_at_inf(E,delta_z,fdata,data_m0Eg,n,np_flag,i_state)     
-
-/* This function returns the value of the wavefunction (psi)
-   at +infinity for a given value of the energy.  The solution
-   to the energy occurs for psi(+infinity)=0.                      */
-
-double E;
-double delta_z;
-files  *fdata;
-data11 *data_m0Eg;
-int    n;
-boolean np_flag;
-int	i_state;
+/**
+ * Finds the value of the wavefunction (\f$\psi\f$)
+ * at \f$+\infty\f$ for a given energy. The solution
+ * to the energy occurs for \f$\psi(+\infty)=0\f$.
+ *
+ * \param[in]      E         energy
+ * \param[in]      delta_z
+ * \param[in, out] fdata
+ * \param[in]      data_m0Eg
+ * \param[in]      n
+ * \param[in]      np_flag   Whether to use non-parabolic effective mass
+ *
+ * \returns The value of the wavefunction at \f$\infty\f$
+ */
+static double psi_at_inf(const double  E,
+                         const double  delta_z,
+			 files        *fdata,
+			 const data11 *data_m0Eg,
+			 const int     n,
+			 const boolean np_flag)  
 {
- double alpha;		     /* non-parabolicity parameter   */
  double psi[3];              /* wavefunction at z-delta_z,
                                 z and z+delta_z              */
  int	i;		     /* index			     */
@@ -249,13 +258,15 @@ int	i_state;
  {
   for(i=0;i<n;i++)
   {
-   alpha=sqr(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
-   (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
+   /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
+   const double alpha=sqr(1-data_m0Eg[i].a/m0)/data_m0Eg[i].b;
+
+   /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
+   fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
   }
  }
 
- /* boundary conditions */
- 
+ /* boundary conditions: Eq. 8.55, QWWAD3 */
  psi[0]=1.0;
  psi[1]=1.0;
 
@@ -263,21 +274,22 @@ int	i_state;
 
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
+   /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
    psi[2]=(
            2*(fdata->z)*(2*(fdata->mstar)*sqr(delta_z/hbar)*(fdata->V-E)+2)*
 	   psi[1]+
            (-2*(fdata->z)+delta_z)*psi[0]
           )
            /(2*(fdata->z)+delta_z);
+
+   /* Shift previous values along ready for next iteration */
    psi[0]=psi[1];
    psi[1]=psi[2];
    fdata++;
   } 
 
- return(psi[2]);
+ return psi[2];
 }
-
-
 
 double 
 V_min(fdata,n)       

@@ -25,8 +25,9 @@ Paul Harrison, June 1996
 Paul Harrison, Modifications 1998	               */
  
 #include <stdio.h>
+#include <stdlib.h>
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 double	beta_1;		/* coefficients of the reciprocal lattice vectors */
 double	beta_2;		/*  b_1, b_2 and b_3 constituting the general     */
@@ -79,4 +80,5 @@ for(beta_1=-G_max;beta_1<=G_max;beta_1+=1/(double)n_x)
     fprintf(FG,"%20.17lf %20.17lf %20.17lf\n",beta_1,beta_2,beta_3);
   }
 fclose(FG);
+return EXIT_SUCCESS;
 }

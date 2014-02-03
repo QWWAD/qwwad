@@ -23,7 +23,7 @@
 #include"maths.h"
 #include"const.h"
 
-main()
+int main()
 {
 vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 int	i;		/* index					*/
@@ -61,6 +61,7 @@ fclose(FG);
 
 free(G);
 
+return EXIT_SUCCESS;
 }/* end main */
 
 

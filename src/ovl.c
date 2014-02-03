@@ -21,7 +21,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 double    overlap();       /* calculates overlap integral       */
 double    overlapmod();    /* calculates overlap integral       */
@@ -64,6 +64,7 @@ printf("<Y1|Y2> %20.17le <|Y1|||Y2|> %20.17le\n",O,Omod);
 free(start_wf1);
 free(start_wf2);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

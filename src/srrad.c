@@ -27,7 +27,7 @@
 #include "const.h"
 #include "bools.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 double	E[9];		/* Energy levels			*/
 double	gamma;		/* constant, see Smet			*/
@@ -147,6 +147,7 @@ printf("Radiative lifetime %20.17le s\n",rad);
 free(start_wf1);
 free(start_wf2);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

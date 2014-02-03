@@ -31,7 +31,7 @@ struct	{
  double	SR;		    /* scattering rate            	  */
 } data;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	calc_fermilevel();	/* calculates Fermi level		*/
 double	*read_energies();	/* reads subband energies from Ep.r	*/
@@ -119,7 +119,7 @@ fclose(FEf);
 
 free(E);
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -294,9 +294,6 @@ int	*n;
  int	i=0;		/* index over the energies			*/
  char	filename[9];	/* filename string				*/
  FILE 	*FE;		/* file pointer to energy data 			*/
- data	*fdata;		/* temporary pointer to data			*/
- data	*data_start;	/* start address of data			*/
-
 
  sprintf(filename,"E%c.r",p);
  if((FE=fopen(filename,"r"))==0)

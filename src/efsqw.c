@@ -80,7 +80,7 @@
                           integration.                            */
 
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	df_dx();	/* derivative of function wrt energy	*/
 double	f();		/* function of energy			*/
@@ -232,16 +232,17 @@ for(i_state=1;i_state<=state;i_state++)
 
 fclose(FE);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 
 
 
-
+/**
+ * This function is the derivative of standard fw result =0
+ */
 double 
 df_dx(a,energy,m_B,m_b,m_w,V,parity_flag)
-
-/* This function is the derivative of standard fw result =0 */
 
 double a;
 double energy;     /* local energy */
@@ -251,24 +252,24 @@ double m_w;
 double V;
 boolean parity_flag;
 {
- double dk_de;      /* derivative wrt energy of k     */
- double dK_de;      /* derivative wrt energy of K     */
- double k;          /* electron wave vector           */
- double K;          /* wavefunction decay constant    */
+ /* Find electron wavevector using Eq. 2.81, QWWAD3 */
+ const double k=sqrt(2*m_w/hbar*energy/hbar);
 
- k=sqrt(2*m_w/hbar*energy/hbar);
- K=sqrt(2*m_b/hbar*(V-energy)/hbar);
+ /* Energy-derivitive of wavevector (Eq. 2.88, QWWAD3) */
+ const double dk_de=sqrt(2*m_w)/(2*hbar*sqrt(energy));
 
- dk_de=sqrt(2*m_w)/(2*hbar*sqrt(energy));
- dK_de=sqrt(2*m_b)/(-2*hbar*sqrt(V-energy));
+ /* Energy-derivitive of wavefunction decay constant (Eq. 2.88, QWWAD3) */
+ const double dK_de=sqrt(2*m_b)/(-2*hbar*sqrt(V-energy));
 
- if(parity_flag)
+ if(parity_flag) /* ODD parity */
  {
- return(dk_de*cot(k*a/2)/m_w-k*a*sqr(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B);
+   /* df/dE for odd states (Eq. 2.87, QWWAD3) */
+   return dk_de*cot(k*a/2)/m_w-k*a*sqr(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
  }
- else
+ else /* EVEN parity */
  {
- return(dk_de*tan(k*a/2)/m_w+k*a*sqr(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B);
+   /* df/dE for even states (Eq. 2.86, QWWAD3) */
+   return dk_de*tan(k*a/2)/m_w+k*a*sqr(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
  }
 }     
 
@@ -324,8 +325,6 @@ boolean	parity_flag;
 {
  double A;         /* In the well the wavefunction psi=Acoskz */
  double B;         /* and in the barrier  psi=Bexp(-Kz)       */
- double C;         /* For type II psi=Aexp(Kz)+Bexp(-Kz)      */
-                   /* and in the well psi=C =const.           */
  double k;         /* wavevector in the well                  */
  double K;         /* decay constant in the barrier           */
  double norm_int;  /* integral over all space of psi*psi      */

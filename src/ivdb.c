@@ -16,7 +16,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 data11	*read_TofE();	/* reads T(E) v. E data into memory	*/
 
@@ -121,6 +121,7 @@ fclose(FIV);
 
 free(TofE);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

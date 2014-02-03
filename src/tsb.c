@@ -17,7 +17,7 @@
 #include "const.h"
 
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	dE;		/* energy step				*/
 double	E;		/* energy				*/
@@ -97,4 +97,5 @@ do      /* loop increments energy */
 
 fclose(FT);
 
+return EXIT_SUCCESS;
 }        /* end main */

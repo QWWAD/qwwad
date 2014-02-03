@@ -21,6 +21,7 @@
 	
    Modifications June 1998                                       */
 
+#include <error.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -44,14 +45,19 @@ struct	{
  double	z;		    /* z value of files    		  */
 } diff;
 
-main(int argc,char *argv[])
+static void diffuse(data         *data_start,
+                    diff         *dD,
+                    const double  delta_t,
+                    const double  delta_z,
+                    const int     n);
+
+int main(int argc,char *argv[])
 {
 
 data   *read_data();        /* reads data from external files    */
 diff   *create_D();         /* creates diffusion coefficient     */
 double read_delta_z();      /* deduces interval along z-axis     */
 void   calculate_D();       /* calculates D for D=D(x)           */
-void   diffuse();           /* diffuse for time delta_t          */
 void   read_D();
 
 double D0;                  /* the constant value of D           */
@@ -62,7 +68,6 @@ double t_final;             /* final time of diffusion           */
 int    form_of_D;           /* dependencies of D                 */
 int    i;
 int    n;		    /* length of potential file		 */
-char   c;                   /* general character                 */
 FILE   *FX;                 /* file pointer to X.r               */
 data   *data_start;    	    /* start address of data             */
 data   *ddata;              /* pointer to data                   */
@@ -133,27 +138,27 @@ switch(form_of_D)
 	for(i=0;i<n;i++)(D_start+i)->D=D0;	/* set constant D	*/
 	for(t=delta_t;t<=t_final;t+=delta_t)
         {
-         diffuse(data_start,D_start,FX,delta_t,delta_z,n);
+         diffuse(data_start,D_start,delta_t,delta_z,n);
         }break;
 
  case 1:
         read_D(D_start);			/* read D from file	*/
         for(t=delta_t;t<=t_final;t+=delta_t)
         {
-         diffuse(data_start,D_start,FX,delta_t,delta_z,n);
+         diffuse(data_start,D_start,delta_t,delta_z,n);
         }break;
  case 2:
         for(t=delta_t;t<=t_final;t+=delta_t)
         {
          calculate_D(data_start,D_start,t,n);	/* calculate D using `dox.c'	*/
-         diffuse(data_start,D_start,FX,delta_t,delta_z,n);
+         diffuse(data_start,D_start,delta_t,delta_z,n);
         }break;
  case 3:
         read_D(D_start);			/* read D at t=0 from file	*/
         for(t=delta_t;t<=t_final;t+=delta_t)
         {
          calculate_D(data_start,D_start,t,n);	/* calculate subsequent D */
-         diffuse(data_start,D_start,FX,delta_t,delta_z,n);
+         diffuse(data_start,D_start,delta_t,delta_z,n);
         }break;
 }
 
@@ -169,11 +174,8 @@ fclose(FX);
 free(data_start);
 free(D_start);
 
+return EXIT_SUCCESS;
 } /* end main */
-
-
-
-
 
 void
 calculate_D(ddata,dD,t,n)
@@ -202,18 +204,20 @@ int   n;
 
 
 
-void
-diffuse(data_start,dD,FX,delta_t,delta_z,n)
-
-/* This function projects the diffusant profile a short
-   time interval delta_t into the future                         */
-
-data   *data_start;         /* start address of data             */
-diff   *dD;                 /* pointer to diffusion coefficient  */
-FILE   *FX;                 /* file pointer to ABC.r             */
-double delta_t;
-double delta_z;
-int    n;
+/**
+ * Projects the diffusant profile a short time interval delta_t into the future
+ *
+ * \param     data_start start address of data
+ * \param     dD         pointer to diffusion coefficient
+ * \param[in] delta_t    time step
+ * \param[in] delta_z    spatial step
+ * \param     n
+ */
+static void diffuse(data         *data_start,
+                    diff         *dD,
+                    const double  delta_t,
+                    const double  delta_z,
+                    const int     n)
 {
  data   *ddata;              /* pointer to data structure         */
  data   *dnewdata;           /* pointer to data structure         */
@@ -223,10 +227,7 @@ int    n;
 
  newdata_start=(data *)calloc(n,sizeof(data));
  if (newdata_start==0)  
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
+  error(EXIT_FAILURE, 0, "Cannot allocate memory!");
  
  ddata=data_start;
  dnewdata=newdata_start;
@@ -250,24 +251,20 @@ int    n;
   dD++;
  }
 
-/* Impose `closed-system boundary conditions */
-
- (newdata_start->x)=((newdata_start+1)->x);         
- ((newdata_start+n-1)->x)=((newdata_start+n-2)->x); 
-
+ /* Impose `closed-system boundary conditions. See section 4.3, QWWAD3 */
+ newdata_start[0].x   = newdata_start[1].x;
+ newdata_start[n-1].x = newdata_start[n-2].x;
 
  ddata=data_start;
  dnewdata=newdata_start;
  for(i=0;i<n;i++)
  {
-  (ddata->x)=(dnewdata->x);
+  ddata->x = dnewdata->x;
   ddata++;
   dnewdata++;
  }
  
 free(newdata_start);
-
-
 }
 
 

@@ -25,7 +25,7 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double read_delta_z();
 double psi_at_inf();
@@ -166,6 +166,7 @@ fclose(FE);
 free(data_start);
 if(np_flag)free(data_m0Eg);
 
+return EXIT_SUCCESS;
 } /* end main */
 
 

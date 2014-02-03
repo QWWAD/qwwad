@@ -23,7 +23,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 extern double atof();
 extern int atoi();
@@ -114,5 +114,6 @@ fclose(FEkr);
 fclose(Fk);
 free(Ek);
 
+return EXIT_SUCCESS;
 }/* end main */
 

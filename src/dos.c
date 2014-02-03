@@ -27,7 +27,7 @@
 #include "const.h"
 #include "maths.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	*read_E();	/* reads subband minima energies from file	*/
 
@@ -87,7 +87,7 @@ E=read_E(p,&nE);	/* read in subband minima	*/
 
 Frho=fopen("rho.r","w");
 
-for(ie=0;ie<=1000;ie++)
+for(ie=0;ie<=n;ie++)
 {
  energy=(float)ie*1e-3*e_0;		/* convert meV-> J	*/
  dos_bulk=cub(sqrt(2*m)/hbar)*sqrt(energy)/(2*sqr(pi));
@@ -103,7 +103,7 @@ fprintf(Frho,"%le %le %le %le\n",energy/(1e-3*e_0),dos_bulk,dos_2D,dos_1D);
 }
 
 fclose(Frho);
-
+return EXIT_SUCCESS;
 } /* end main */
 
 

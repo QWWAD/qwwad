@@ -24,7 +24,7 @@
 #include "bools.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double  a;             /* length a                          */
 double  b;             /* end cap width                     */
@@ -36,7 +36,6 @@ double  y=0;           /* quaternary alloy concentration
                           note not used, compatibility only */
 double  z;             /* displacement                      */ 
 FILE   *Fx;            /* file pointer to x versus z data   */
-boolean	output_flag;   /* if set, write data to screen      */
 
 
 /* default values */
@@ -44,7 +43,6 @@ boolean	output_flag;   /* if set, write data to screen      */
 a=100e-10;          
 b=100e-10;
 N=1e+10;
-output_flag=false;
 x_min=0.0;
 x_max=0.100;
 
@@ -61,11 +59,6 @@ while((argc>1)&&(argv[1][0]=='-'))
   case 'N':
 	   N=atof(argv[2])*1e+10;
 	   break;
-  case 'o':
-           output_flag=true;
-           argv--;
-           argc++;
-           break;
   case 'x':
 	   x_min=atof(argv[2]);
 	   break;
@@ -75,7 +68,6 @@ while((argc>1)&&(argv[1][0]=='-'))
   default:
 	   printf("Usage:  efpqw [-a width at top of well (\033[1m100\033[0mA)][-b barrier width (\033[1m100\033[0mA)]\n");
 	   printf("              [-N number of points per Angstrom \033[1m1\033[0m]\n");
-	   printf("              [-o output data to screen \033[1mfalse\033[0m]\n");
 	   printf("              [-x minimum alloy concentration x \033[1m0.0\033[0m]\n");
 	   printf("              [-y maximum alloy concentration x \033[1m0.1\033[0m]\n");
 	   exit(0);
@@ -105,7 +97,7 @@ while(z<(2*b+a))
 
 fclose(Fx);
 
-
+return EXIT_SUCCESS;
 }/* end main */
 
 

@@ -24,7 +24,7 @@
 #include "bools.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	  dV;		   /* Delta V, total band discontinuity */
 double	  Eg;		   /* Bandgap				*/
@@ -32,7 +32,6 @@ double	  V;		   /* CB and VB potentials		*/
 double	  x;	           /* alloy concentration               */
 double	  y;	           /* alloy concentration               */
 double    z;               /* growth direction                  */
-int       n;               /* return value of fopen             */
 char	  material[9];	   /* material string			*/
 char	  Material;	   /* material character		*/
 char	  p;		   /* particle (e, h, or l)		*/
@@ -99,8 +98,8 @@ while((argc>1)&&(argv[1][0]=='-'))
    electric field potential file, or v1.r---the zero dopant reference, then
    remove them.  Thus ensuring each time a new structure is designed, 
    existing files are handled correctly.	*/
-
-unlink("v0.r");	unlink("v1.r");
+remove("v0.r");
+remove("v1.r");
 
 if((Fx=fopen("x.r","r"))==NULL)
  {printf("Error: Cannot open input file 'x.r'!\n");exit(EXIT_FAILURE);}
@@ -174,6 +173,6 @@ fclose(Fx);
 fclose(Fv);
 if(Eg_flag)fclose(FEg);
 
-
+return EXIT_SUCCESS;
 }        /* end main */
 

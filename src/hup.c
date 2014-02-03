@@ -22,7 +22,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 double	ev_z;		/* Expectation Value of z			*/
 double	ev_zsqr;	/* Expectation Value of sqr(z)			*/
@@ -118,6 +118,7 @@ printf("Delta_z*Delta_p\t\t\t\t%20.17le hbar\n",Delta_z*Delta_p);
 
 free(psi);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

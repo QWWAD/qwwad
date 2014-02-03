@@ -46,7 +46,7 @@
 
 #define N 1000
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	E;		/* spectral energy			*/
 double	E_sf[N];	/* spin-flip energy for each r_d	*/
@@ -145,6 +145,6 @@ do
 fclose(fI);
 
 
-
+return EXIT_SUCCESS;
 }        /* end main */
 

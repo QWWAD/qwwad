@@ -28,7 +28,7 @@
 #include "bools.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	B_J();		/* Brillouin function			*/
 double	Seff();		/* effective spin as function of x	*/
@@ -44,9 +44,7 @@ double	N0beta;		/* Magnetic parameter			*/
 double	Sz;		/* effective spin			*/
 double	T;		/* sample temperature			*/
 double	T0;		/* effective temperature		*/
-double	V;		/* CB and VB potentials			*/
 double	x;		/* the alloy concentration		*/
-double	z;		/* growth direction			*/
 int	n;		/* return value of fopen		*/
 int	i;		/* index				*/
 char	p;		/* particle (e, h, or l)		*/
@@ -205,7 +203,7 @@ for(i=0;i<n;i++)
 
 fclose(FvF);
 
-
+return EXIT_SUCCESS;
 }        /* end main */
 
 

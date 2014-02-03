@@ -41,7 +41,7 @@ struct  {
  double p;                  /* probability of separation by a     */
 } probs;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double Eb_1S();             /* exciton binding energy of 1S      */
 double read_delta_z();
@@ -78,7 +78,6 @@ int    state[2];	    /* electron and hole states          */
 boolean output_flag;        /* if set, write data to screen      */
 boolean repeat_flag_beta;   /* repeat variational beta loop flag */
 boolean repeat_flag_lambda; /* repeat variational lambda loop    */
-char   c;                   /* general character                 */
 FILE   *FABC;               /* file pointer to ABC.r             */
 FILE   *Fbeta;              /* file pointer to beta.r            */
 FILE   *FEX0l;              /* file pointer to EX0-lambda.r      */
@@ -225,7 +224,7 @@ fclose(FEX0l);
 free(data_start);
 free(pP_start);
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 

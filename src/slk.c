@@ -18,7 +18,7 @@
 #include <strings.h>
 #include "struct.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 float	kxi;		/* the set of electron k-points `kxi'		*/
 float	g;		/* superlattice reciprocal lattice vector	*/
@@ -73,5 +73,6 @@ for(i_kxi=0;i_kxi<2*n_z;i_kxi++)
 
 fclose(Fk);
 
+return EXIT_SUCCESS;
 }/* end main */
 

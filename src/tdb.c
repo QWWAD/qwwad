@@ -19,16 +19,15 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 cmat2x2	invcmat2x2();
 cmat2x2	cmat2x2mult();
 
 double	dE;		/* energy step				*/
 double	E;		/* energy				*/
-double	I1,I2,I3,I4;	/* the interfaces			*/
+double	I2,I3,I4;	/* the interfaces			*/
 double	k;		/* wave vector in `well' material	*/
-double	kdash;		/* wave vector in barrier material	*/
 double	K;		/* decay constant in barrier material	*/
 double	L1;		/* left barrier width			*/
 double	L2;		/* central well width			*/
@@ -105,7 +104,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 
 /* Calculate interfaces	*/
 
-I1=0;	I2=L1;	I3=L1+L2;	I4=L1+L2+L3;
+I2=L1;	I3=L1+L2;	I4=L1+L2+L3;
 
 /* Initialise energy	*/
 
@@ -184,6 +183,7 @@ do      /* loop increments energy */
 
 fclose(FT);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

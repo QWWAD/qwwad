@@ -28,7 +28,7 @@ Paul Harrison, March 1995                                                */
 #include "struct.h"
 #include "maths.h"
 
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 int beta_1;          /* coefficients of the reciprocal lattice vectors */
 int beta_2;          /*  b_1, b_2 and b_3 constituting the general     */
@@ -77,4 +77,6 @@ for(beta_1=-G_max;beta_1<=G_max;beta_1++)
     fprintf(FG,"%f %f %f\n",gamma_1,gamma_2,gamma_3);
   }
 fclose(FG);
+
+return EXIT_SUCCESS;
 }

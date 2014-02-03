@@ -14,7 +14,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(argc, argv)
+int main(argc, argv)
 int	argc;
 char	*argv[2];
 {
@@ -105,4 +105,5 @@ for(is=1;is<=s;is++)
 
 fclose(FE);
 
+return EXIT_SUCCESS;
 }

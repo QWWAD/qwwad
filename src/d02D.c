@@ -39,6 +39,14 @@
 #include "maths.h"
 #include "bools.h"
 
+static double I_1(const double lambda);
+static double I_2(const double lambda);
+static double I_3(const double lambda);
+static double I_4(const double lambda,
+                  const double z_dash,
+                  const size_t N_w);
+
+int
 main(int argc,char *argv[])
 {
 double read_delta_z();
@@ -216,7 +224,7 @@ while((argc>1)&&(argv[1][0]=='-'))
   fclose(fl);
   free(Vstart);
 
-
+  return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -285,10 +293,6 @@ int n;
 data11 *Vp;
 int N_w;
 {
- double I_1();
- double I_2();
- double I_3();
- double I_4();
  double alpha;		     /* coefficient of second derivative, see notes */
  double beta;                /* coefficient of first derivative            */
  double gamma;               /* coefficient of function                    */
@@ -423,10 +427,6 @@ int    n;
 data11  *Vp;
 int    N_w;
 {
- double I_1();
- double I_2();
- double I_3();
- double I_4();
  double alpha;		 /* coefficient of second derivative, see notes */
  double beta;            /* coefficient of first derivative             */
  double gamma;           /* coefficient of function                     */
@@ -545,57 +545,83 @@ int    N_w;
  fclose(fw);
 }
 
-
-
-double
-I_1(lambda)
-
-double lambda;
+/**
+ * Computes the binding energy integral \f$I_1\f$ for a 2D trial wavefunction
+ *
+ * \param[in] lambda variational parameter [m]
+ *
+ * \returns Binding energy integral [m^2]
+ *
+ * \details See Eq. 5.39, QWWAD3. The integral is solved analytically as
+ *          \f[
+ *            I_1 = 2\pi\frac{\lambda^2}{4}
+ *          \f]
+ */
+static double I_1(const double lambda)
 {
- return(2*pi*sqr(lambda)/4);
+ return 2*pi*sqr(lambda)/4;
 }
 
-
-
-double
-I_2(lambda)
-
-double lambda;
+/**
+ * Computes the binding energy integral \f$I_2\f$ for a 2D trial wavefunction
+ *
+ * \param[in] lambda variational parameter [m]
+ *
+ * \returns Binding energy integral [m]
+ *
+ * \details See Eq. 5.42, QWWAD3. The integral evaluates to zero
+ */
+static double I_2(const double lambda)
 {
-return(2*pi*0);
+ (void)lambda; /* Silence compiler warning about unused param */
+ return 0;
 }
 
-
-
-double
-I_3(lambda)
-
-double lambda;
-
+/**
+ * Computes the binding energy integral \f$I_3\f$ for a 2D trial wavefunction
+ *
+ * \param[in] lambda variational parameter [m]
+ *
+ * \returns Binding energy integral [dimensionless]
+ *
+ * \details See Eq. 5.52, QWWAD3. The integral is solved analytically as
+ *          \f[
+ *            I_3 = 2\pi \left(-\frac{1}{4}\right)
+ *          \f]
+ */
+static double I_3(const double lambda)
 {
-return(2*pi*(-0.25));
+ (void)lambda; /* Silence compiler warning about unused param */
+ return 2*pi*(-0.25);
 }
 
-
-
-double
-I_4(lambda,z_dash,N_w)
-
-double lambda;
-double z_dash;
-int    N_w;
+/**
+ * Computes the binding energy integral \f$I_4\f$ for a 2D trial wavefunction
+ *
+ * \param[in] lambda variational parameter [m]
+ * \param[in] z_dash displacement between electron and donor in z-direction [m]
+ * \param[in] N_w    number of samples to take in integration
+ *
+ * \returns Binding energy integral [m]
+ *
+ * \details See Eq. 5.54, QWWAD3. The integral is given by
+ *          \f[
+ *            I_4 = 2\pi \int_{|z'|}^{\infty}\frac{\exp{-\frac{2\sqrt{r'^2-z'^2}}{\lambda}}}{r'}r'\mathrm{d}r'
+ *          \f]
+ */
+static double I_4(const double lambda,
+                  const double z_dash,
+                  const size_t N_w)
 {
-double I_40=0.0;
-double w;
-double delta_w;
+ double I_40=0.0; /* Integral term */
+ double w;
+ double delta_w=(1.0-0.0)/(float)N_w;
 
-delta_w=(1.0-0.0)/(float)N_w;
-for (w=delta_w/2;w<1;w+=delta_w)
-{
- I_40+=exp(-fabs(z_dash)*(1/w-w)/lambda)*fabs(z_dash)
-       *(1-sqr(w))/(2*sqr(w))*delta_w;
-}
+ for (w=delta_w/2;w<1;w+=delta_w)
+ {
+  I_40+=exp(-fabs(z_dash)*(1/w-w)/lambda)*fabs(z_dash)
+        *(1-sqr(w))/(2*sqr(w))*delta_w;
+ }
 
-return(2*pi*I_40);
-
+ return 2*pi*I_40;
 }

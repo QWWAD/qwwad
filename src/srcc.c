@@ -35,14 +35,15 @@ struct	{
  double	b[4];		/* wave function			*/
 } data14;
 
-main(int argc,char *argv[])
+static double * read_Ef(const int nE);
+
+int main(int argc,char *argv[])
 {
 double	A();		/* form factor calculation			*/
 double	lookup_ff();	/* look up form factor in table			*/
 double	lookup_PI();	/* look up screening function in table		*/
 double	PI();		/* screening term				*/
 double	*read_E();	/* reads subband minima energies from file	*/
-double	*read_Ef();	/* reads Fermi energies from file		*/
 double	*read_N();	/* reads subband populations from file		*/
 double	Vmax();		/* maximum value of the potential		*/
 void	output_ff();	/* output formfactors				*/
@@ -76,7 +77,6 @@ double	theta;		/* angle between kij and kfg			*/
 double	W;		/* arbitrary well width, soley for output	*/
 double	Wbar;		/* FD weighted mean of Wijfg			*/
 double	Wijfg;		/* the carrier-carrier scattering rate		*/
-int	i;		/* general index				*/
 int	ialpha;		/* index over alpha				*/
 int	iki;		/* index over ki				*/
 int	ikj;		/* index over kj				*/
@@ -176,7 +176,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 
 E=read_E(p,&nE);	/* read in subband minima	*/
 
-Ef=read_Ef(p,nE);	/* read in Fermi energies	*/
+Ef=read_Ef(nE);	/* read in Fermi energies	*/
 
 N=read_N(nE);		/* read in subband populations	*/
 
@@ -212,7 +212,7 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
 
  kifermi=sqrt(2*pi*(*(N+state[0]-1))/1);
 
- PIii=PI_table(Aijfg,m,E,Ef,kifermi,T,n,nq,state,S_flag);/* generate PIii table	*/
+ PIii=PI_table(Aijfg,m,E,Ef,kifermi,T,nq,state,S_flag);/* generate PIii table	*/
 
  /* calculate maximum value of ki & kj and hence kj step length	*/
 
@@ -309,6 +309,7 @@ free(Ef);
 fclose(FccABCD);	/* close weighted mean output file	*/
 fclose(Frr);
 
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -397,7 +398,7 @@ return(P);
 
 
 data11
-*PI_table(Aijfg,m,E,Ef,kifermi,T,n,nq,state,S_flag)
+*PI_table(Aijfg,m,E,Ef,kifermi,T,nq,state,S_flag)
 
 /* This function creates the polarizability table */
 
@@ -407,7 +408,6 @@ double	*E;
 double	*Ef;
 double	kifermi;
 double	T;
-int	n;
 int	nq;		/* Number of q_perp values for table	*/
 int	state[];
 boolean	S_flag;
@@ -612,17 +612,10 @@ int	*nE;
 
 }
 
-
-
-double
-*read_Ef(p,nE)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-char	p;
-int	nE;
-
+/**
+ * Reads the Fermi energy into memory and returns the start
+ * address of this block of memory and the number of lines */
+static double * read_Ef(const int nE)
 {
  double	*Ef;
  int	i=0;		/* index over the energies			*/
@@ -666,7 +659,6 @@ int	nE;
 {
  double	*N;
  int	i=0;		/* index over the energies			*/
- char	filename[9];	/* filename string				*/
  FILE 	*FN;		/* file pointer to subband populations data	*/
 
  if((FN=fopen("N.r","r"))==0)

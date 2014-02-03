@@ -37,11 +37,12 @@ struct	{
  double	SR;		    /* scattering rate            	  */
 } data;
 
-main(int argc,char *argv[])
+static double * read_Ef(int *nE);
+
+int main(int argc,char *argv[])
 {
 double	FD_averageSR();		/* performs a FD weighted average of the
 				   scattering rate over a subband	*/
-double	*read_Ef();		/* reads Fermi energies from file	*/
 double  *read_N();		/* reads subband populations from file	*/
 data	*read_data();		/* reads scattering rate file 		*/
 
@@ -63,7 +64,6 @@ char	e_or_a;			/* Emission 'e' or absorption 'a'	*/
 char	mode[11];		/* phonon mode, `AC' or `LO' etc.	*/
 char	filename_i[11];		/* input filename			*/
 char	filename_o[11];		/* output filename			*/
-char	p;			/* particle, e, h or l			*/
 data	*data_start_i;		/* start address of potential	 	*/
 FILE	*Foutput;		/* pointer to output file		*/
 FILE	*Frrp;			/* pointer to required rates file	*/
@@ -111,7 +111,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-Ef=read_Ef(p,&nE);	/* read in Fermi energies       */
+Ef=read_Ef(&nE);	/* read in Fermi energies       */
 N=read_N(nE);		/* read in subband populations  */
 
 /* Calculate weighted means for both emission (e) and absorption (a)	*/
@@ -158,7 +158,7 @@ for(i_ea=0;i_ea<=1;i_ea++)
  
 }/* end for loop over i_ea	*/
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -262,17 +262,9 @@ char	filename[];	/* filename string				*/
 
 }
 
-
-
-double
-*read_Ef(p,nE)
-
-/* This function reads the potential into memory and returns the start
+/* This function reads the Fermi energies into memory and returns the start
    address of this block of memory and the number of lines         */
-
-char	p;
-int	*nE;
-
+static double * read_Ef(int *nE)
 {
  double *Ef;
  int    i=0;            /* index over the energies                      */
@@ -321,7 +313,6 @@ int     nE;
 {
  double *N;
  int    i=0;            /* index over the energies                      */
- char   filename[9];    /* filename string                              */
  FILE   *FN;            /* file pointer to subband populations data     */
 
  if((FN=fopen("N.r","r"))==0)

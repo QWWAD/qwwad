@@ -23,7 +23,7 @@
 
 #include "ppff.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 extern double	Vf();	/* the form factor function			*/
 double	A0;		/* Lattice constant				*/
@@ -93,5 +93,6 @@ for(iq=0;iq<N;iq++)
 /* Close output file	*/
 
 fclose(FVfq);
- 
+
+return EXIT_SUCCESS;
 }/* end main */

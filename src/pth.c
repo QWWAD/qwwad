@@ -17,7 +17,7 @@
 #include "bools.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	alpha;		/* with parameter			*/
 double	E;		/* energy				*/
@@ -121,5 +121,6 @@ while((lambda-1-n)>=0)
 
 fclose(FE);
 
+return EXIT_SUCCESS;
 }        /* end main */
 

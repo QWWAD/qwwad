@@ -18,12 +18,10 @@
 #include "bools.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	F;		/* Electric field			*/
 double	q;		/* carrier charge +/- e_0		*/
-double	V;		/* CB and VB potentials			*/
-double	z;		/* growth direction			*/
 double	z0;		/* z-axis centre of structure		*/
 int	n;		/* return value of fopen		*/
 int	i;		/* index				*/
@@ -116,7 +114,7 @@ for(i=0;i<n;i++)
 
 fclose(FvF);
 
-
+return EXIT_SUCCESS;
 }        /* end main */
 
 

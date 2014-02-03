@@ -22,7 +22,7 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double read_delta_z();
 double psi_at_inf();
@@ -118,13 +118,13 @@ for(i_state=1;i_state<=state;i_state++)
 
  /* increment energy-search for f(x)=0 */
 
- y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
+ y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
 
  do
  {
   y1=y2;
   x+=delta_E;
-  y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
+  y2=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
  }while(y1*y2>0);
 
 /* improve estimate using midpoint rule */
@@ -135,9 +135,9 @@ for(i_state=1;i_state<=state;i_state++)
 
  do
  {
-  y=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag,i_state);
-  dy=(psi_at_inf(x+d_E,delta_z,data_start,data_m0Eg,n,np_flag,i_state)-
-      psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag,i_state))/
+  y=psi_at_inf(x,delta_z,data_start,data_m0Eg,n,np_flag);
+  dy=(psi_at_inf(x+d_E,delta_z,data_start,data_m0Eg,n,np_flag)-
+      psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag))/
      (2.0*d_E);
   x-=y/dy;
  }while(fabs(y/dy)>1e-12*e_0);
@@ -154,7 +154,7 @@ fclose(FE);
 free(data_start);
 free(data_m0Eg);
 
-
+return EXIT_SUCCESS;
 } /* end main */
 
 
@@ -225,7 +225,7 @@ int	*n;
 
 
 double
-psi_at_inf(E,delta_z,fdata,data_m0Eg,n,np_flag,i_state)     
+psi_at_inf(E,delta_z,fdata,data_m0Eg,n,np_flag)
 
 /* This function returns the value of the wavefunction (psi)
    at +infinity for a given value of the energy.  The solution
@@ -237,7 +237,6 @@ files  *fdata;
 data11 *data_m0Eg;
 int    n;
 boolean np_flag;
-int	i_state;
 {
  double alpha;		     /* non-parabolicity parameter   */
  double psi[3];              /* wavefunction at z-delta_z,

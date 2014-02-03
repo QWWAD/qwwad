@@ -7,6 +7,10 @@
 
    Paul Harrison, July 1998					 */
 
+#ifndef PPFF_H
+#define PPFF_H
+
+#include <string.h>
 
 double
 Vf(A0,m_per_au,q_sqr,type)
@@ -369,3 +373,4 @@ char	type[];		/* atomic species			*/
  printf("Error atom type '%s' undefined!\n",type);exit(0);
 
 }
+#endif

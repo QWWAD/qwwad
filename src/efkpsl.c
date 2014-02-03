@@ -43,7 +43,7 @@
 #include "const.h"
 
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	f();		/* function of energy			*/
 double	a;		/* well width				*/
@@ -174,6 +174,7 @@ for(i_state=1;i_state<=state;i_state++)
 
 fclose(FE);
 
+return EXIT_SUCCESS;
 }        /* end main */
 
 

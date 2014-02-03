@@ -34,12 +34,16 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+static double * read_E(char p, int *s);
+static double * calc_field(const double  epsilon,
+                           const double *sigma,
+                           const double *z,
+                           const size_t  n);
+
+int main(int argc,char *argv[])
 {
-double	*calc_field();	/* calculates electric field along z-axis	*/
 double	*calc_potn();	/* calculates the potential due to charge 	*/
 double	*calc_sigma();	/* calculates the net areal charge density	*/
-double	*read_E();	/* reads subband minima energies from file	*/
 double	*read_N();	/* reads subband populations from file		*/
 double	*read_Nda();	/* reads doping levels from file		*/
 double 	*read_z();	/* reads z co-ordinates				*/
@@ -50,7 +54,6 @@ void	write_potn();	/* output potential to file			*/
 void	write_sigma();	/* output charge density to file		*/
 
 double	delta_z;	/* mesh length along growth (z-) axis		*/
-double	*E;		/* pointer to subband minima			*/
 double	epsilon;	/* low frequency dielectric constant		*/
 double	*F;		/* electric field along z-axis			*/
 double	*N;		/* pointer to subband populations		*/
@@ -60,14 +63,12 @@ double	Nutotal;	/* total unnormalised carrier concentration	*/
 double	q;		/* charge on carrier +/-e_0			*/
 double	*sigma;		/* net areal charge density in m^-2		*/
 double	*V;		/* potential due to charge distribution		*/
-double	*wf;		/* start address of wave function structure	*/
 double	**wfs;		/* pointer to start addresses of wave functions	*/
 double	*z;		/* pointer to z co-ordinates			*/
 int	i;		/* general index				*/
 int	is;		/* index over states				*/
 int	n;		/* length of wavefunctions file			*/
 int	s;		/* number of states as specified by Ep.r	*/
-char	filename[9];	/* character string for output filename		*/
 char	p;		/* particle					*/
 FILE	*FN;		/* pointer to output file `N.r'			*/
 
@@ -112,7 +113,8 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-E=read_E(p,&s);		/* read in subband minima	*/
+double *E=read_E(p, &s); /* read subband energies. Actually, we're only interested in number of states */
+(void)E; /* Suppress compiler warning about unused variable */
 
 N=read_N(s);		/* read in unnormalised subband populations	*/
 
@@ -162,7 +164,7 @@ write_sigma(sigma,z,n);
 
 /* Calculate electric field and output to file	*/
 
-F=calc_field(delta_z,epsilon,sigma,z,n);
+F=calc_field(epsilon,sigma,z,n);
 write_field(F,z,n);
 
 /* Calculate potential due to charge distribution and output to file	*/
@@ -174,42 +176,46 @@ write_potn(V,z,n);
 
 comb_potn(V,z,n);
 
-free(F);free(N);free(Nda);free(sigma);free(V);free(wf);free(wfs);free(z);
+free(F);free(N);free(Nda);free(sigma);free(V);free(wfs);free(z);
 
+return EXIT_SUCCESS;
 } /* end main */
 
 
-
-double
-*calc_field(delta_z,epsilon,sigma,z,n)
-
-/* This function calculates `net' areal charge density	*/
-
-double	delta_z;
-double	epsilon;
-double	*sigma;
-double	*z;
-int	n;
-
+/**
+ * Calculates the electric field along the z axis
+ *
+ * \param[in] epsilon permittivity
+ * \param[in] sigma   areal charge density [number/m^2]
+ * \param[in] z       spatial locations
+ * \param[in] n       number of spatial samples
+ *
+ * \returns Electric field [V/m]
+ */
+static double * calc_field(const double  epsilon,
+                           const double *sigma,
+                           const double *z,
+                           const size_t  n)
 {
- double	*F;		/* electric field as a function of z-	*/
- int	iz;		/* index over z co-ordinates	*/
- int	izdash;		/* index over z' co-ordinates	*/
+ double	      *F;      /* electric field as a function of z-	*/
+ unsigned int  iz;     /* index over z co-ordinates	*/
+ unsigned int  izdash; /* index over z' co-ordinates	*/
 
  /* Allocate memory for wave function */
 
  F=(double *)calloc(n,sizeof(double));
  if(F==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
+ /* Find total field using Eq. 3.83, QWWAD3 */
  for(iz=0;iz<n;iz++)
  {
-  *(F+iz)=0;			/* initialise F at each z co-ordinate	*/
+  F[iz]=0; /* initialise F at each z co-ordinate */
+
   for(izdash=0;izdash<n;izdash++)
   {
    /* Note sigma is a number density per unit area, needs to be converted
       to Couloumb per unit area						*/
-
-   *(F+iz)+=*(sigma+izdash)*e_0*(float)sign(*(z+iz)-*(z+izdash))/epsilon;
+   F[iz] += sigma[izdash]*e_0*(float)sign(z[iz]-z[izdash])/epsilon;
   }
  }
 
@@ -341,16 +347,11 @@ int	n;
 
 }
 
-
-double
-*read_E(p,s)
-
-/* This function reads the subband minima into memory and returns 
-   the number of defined states, and the start address of the data	*/
-
-char	p;
-int	*s;
-
+/**
+ * Reads the subband minima into memory and returns
+ * the number of defined states, and the start address of the data
+ */
+static double * read_E(char p, int *s)
 {
  double	*E;
  int	i=0;		/* index over the energies			*/
@@ -386,8 +387,6 @@ int	*s;
  return(E);
 
 }
-
-
 
 double
 *read_N(s)

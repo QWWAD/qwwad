@@ -29,7 +29,7 @@
 #include "maths.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	Gsqr();		/* form factor calculation			*/
 double	*read_E();	/* reads subband minima energies from file	*/
@@ -253,6 +253,7 @@ free(E);
 
 fclose(Frrp);
 
+return EXIT_SUCCESS;
 } /* end main */
 
 

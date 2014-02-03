@@ -30,7 +30,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 extern double atof();
 extern int atoi();
@@ -194,7 +194,7 @@ for(iz=0;iz<=(z_max-z_min)*n_xyz;iz++)      /* index along x-axis */
 
 fclose(Fcdx);fclose(Fcdy);fclose(Fcdz);
 
-
+return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -215,7 +215,6 @@ int     *Nn;		/* The number of bands in file			*/
  int	iG;		/* index across G vectors			*/
  int	n;		/* counter for number of elements in file	*/
  complex        *ank;
- complex	c;	/* a general (dummy) complex number		*/
  FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
 if((Fank=fopen("ank.r","r"))==0)

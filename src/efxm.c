@@ -20,7 +20,7 @@
 #include "maths.h"
 #include "const.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	m;		/* effective mass 			*/
 double	mp;		/* effective mass perpendicular growth	*/
@@ -95,13 +95,14 @@ Fm=fopen("m.r","w");
 Fmp=fopen("m_perp.r","w");
 
 /* if mstar is set to a value greater than zero, then this overrides the
-   dependencies set below and creates a file with containing constant mass */
+   dependencies set below and creates a file containing constant mass */
 
 if(mstar>0) 
 {
  while(fscanf(Fx,"%lf %lf %lf",&z,&x,&y)!=EOF)
  {
  m=mstar*m0;
+ mp=mstar*m0;
  fprintf(Fm,"%20.17le %20.17le\n",z,m);
  fprintf(Fmp,"%20.17le %20.17le\n",z,mp);
  }
@@ -183,4 +184,5 @@ fclose(Fx);
 fclose(Fm);
 fclose(Fmp);
 
+return EXIT_SUCCESS;
 } /* end main */

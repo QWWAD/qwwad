@@ -26,7 +26,7 @@
 #include "const.h"
 #include "bools.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 void    Create_files();	/* create files 's.r' and 'm.r'      */
 int	No_of_el();	/* number of elements per line       */
@@ -66,7 +66,7 @@ if((Fp=fopen("s.r","r"))==0)
 /* In case file v0.r exists, remove it.  Thus ensuring each time a new
    structure is designed, existing files are handled correctly	*/
 
-unlink("v0.r");	
+remove("v0.r");	
 
 Nel=No_of_el(Fp);
 
@@ -88,6 +88,8 @@ switch(Nel)
 Create_files(Fp,N,Nel);
 
 fclose(Fp);
+
+return EXIT_SUCCESS;
 }
 
 
