@@ -32,13 +32,11 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
 #include "const.h"
 #include "d0-helpers.h"
-#include "struct.h"
 #include "maths.h"
 
 static double I_1(const double lambda,

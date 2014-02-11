@@ -53,3 +53,10 @@ bin_PROGRAMS =  csss    \
 	       	srrad   \
 	       	tdb     \
 	       	tsb
+
+d0_helpers = d0-helpers.c d0-helpers.h
+
+d0_SOURCES   = d0.c $(d0_helpers)
+d02D_SOURCES = d02D.c $(d0_helpers)
+d03D_SOURCES = d03D.c $(d0_helpers)
+
