@@ -70,6 +70,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -264,12 +265,12 @@ bool   parity_flag;
  if(parity_flag) /* ODD parity */
  {
    /* df/dE for odd states (Eq. 2.87, QWWAD3) */
-   return dk_de*cot(k*a/2)/m_w-k*a*sqr(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
+   return dk_de*cot(k*a/2)/m_w-k*a*gsl_pow_2(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
  }
  else /* EVEN parity */
  {
    /* df/dE for even states (Eq. 2.86, QWWAD3) */
-   return dk_de*tan(k*a/2)/m_w+k*a*sqr(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
+   return dk_de*tan(k*a/2)/m_w+k*a*gsl_pow_2(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
  }
 }     
 
@@ -367,8 +368,8 @@ bool	parity_flag;
   
     /* normalisation integral for odd parity type I */
 
-    norm_int=sqr(A)*(a/2-sin(k*a)/(2*k))-
-             sqr(B)*exp(-K*a)*(exp(-2*K*b)-1)/K;
+    norm_int=gsl_pow_2(A)*(a/2-sin(k*a)/(2*k))-
+             gsl_pow_2(B)*exp(-K*a)*(exp(-2*K*b)-1)/K;
 
   }
   else		/* even parity wavefunction */
@@ -395,8 +396,8 @@ bool	parity_flag;
   
     /* normalisation integral for even parity type I */
 
-    norm_int=sqr(A)*(a/2+sin(k*a)/(2*k))+
-             sqr(B)*exp(-K*a)*(1-exp(-2*K*b))/K;
+    norm_int=gsl_pow_2(A)*(a/2+sin(k*a)/(2*k))+
+             gsl_pow_2(B)*exp(-K*a)*(1-exp(-2*K*b))/K;
 
    }
 

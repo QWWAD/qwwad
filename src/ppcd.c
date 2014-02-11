@@ -26,6 +26,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -163,7 +164,7 @@ for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)		/* index along x-axis */
      Gdotr=vsprod(*(G+iG),r);
      psi += ank[iG*Nn+in] * cexp(Gdotr);
     }
-    psi_sqr+=sqr(cabs(psi))/Omega;
+    psi_sqr+=gsl_pow_2(cabs(psi))/Omega;
    }
    fprintf(Fcd,"%le\n",psi_sqr);
   }

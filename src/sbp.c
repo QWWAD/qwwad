@@ -21,6 +21,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -179,7 +180,7 @@ f=1/(exp((Emax-Ef)/(kb*T))+1);
 fprintf(FFD,"%20.17le %20.17le\n",Emax/(1e-3*e_0),f);
 Ne+=f;
 
-Ne*=m/(pi*sqr(hbar))*0.5*dE;
+Ne*=m/(pi*gsl_pow_2(hbar))*0.5*dE;
 
 printf("Ne=%20.17le\n",Ne/1e+14);
 

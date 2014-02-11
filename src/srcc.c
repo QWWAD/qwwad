@@ -25,6 +25,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -256,7 +257,7 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
     if(q_perpsqr4>=0) 
     {
      q_perp=sqrt(q_perpsqr4)/2;
-     Wijfg+=sqr(lookup_ff(Aijfg,q_perp,nq)/
+     Wijfg+=gsl_pow_2(lookup_ff(Aijfg,q_perp,nq)/
                 (q_perp+2*pi*e_0*e_0*lookup_PI(PIii,q_perp,nq)
                  *lookup_ff(Aijfg,q_perp,nq)/(4*pi*epsilon)
                 )
@@ -274,19 +275,19 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
  
  Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
 
- Wijfg*=sqr(e_0*e_0/(hbar*4*pi*epsilon))*m/(pi*hbar);
+ Wijfg*=gsl_pow_2(e_0*e_0/(hbar*4*pi*epsilon))*m/(pi*hbar);
 
  /* output scattering rate versus carrier energy=subband minima+in-plane
     kinetic energy						*/
 
- fprintf(Fcc,"%20.17le %20.17le\n",(*(E+state[0]-1)+sqr(hbar*ki)/(2*m))/
+ fprintf(Fcc,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
                                    (1e-3*e_0),Wijfg);
 
  /* calculate Fermi-Dirac weighted mean of scattering rates over the 
     initial carrier states, note that the integral step length 
     dE=2*sqr(hbar)*ki*dki/(2m)					*/
 
- Wbar+=Wijfg*ki/(exp((*(E+state[0]-1)+sqr(hbar*ki)/(2*m)-*(Ef+state[0]-1))/(kb*T))+1);
+ Wbar+=Wijfg*ki/(exp((*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m)-*(Ef+state[0]-1))/(kb*T))+1);
 
  } /* end ki	*/
 
@@ -377,14 +378,14 @@ int	state[];	/* electron state index			*/
  if(q_perp<=2*kifermi)
   P=m/(pi*hbar*hbar);
  else
-  P=m/(pi*hbar*hbar)*(1-sqrt(1-sqr(2*kifermi/q_perp)));
+  P=m/(pi*hbar*hbar)*(1-sqrt(1-gsl_pow_2(2*kifermi/q_perp)));
 
  /* Now perform the integration, equation 44 of Smet	*/
 
  mu=*(E+state[0]-1);dmu=1e-3*e_0;integral=0;
  do
  {
-  dI=1/(4*kb*T*sqr(cosh((*(Ef+state[0]-1)-mu)/(2*kb*T))));
+  dI=1/(4*kb*T*gsl_pow_2(cosh((*(Ef+state[0]-1)-mu)/(2*kb*T))));
   integral+=dI*dmu;
   mu+=dmu;
  }while(dI>integral/100);	/* continue until integral converges	*/
@@ -481,8 +482,8 @@ int	state[];
    exit(0);
   }
 
- q_perp_max=sqrt(2*sqr(kimax+kjmax)+Deltak0sqr+2*(kimax+kjmax)*
-                 sqrt(sqr(kimax+kjmax)+Deltak0sqr))/2;
+ q_perp_max=sqrt(2*gsl_pow_2(kimax+kjmax)+Deltak0sqr+2*(kimax+kjmax)*
+                 sqrt(gsl_pow_2(kimax+kjmax)+Deltak0sqr))/2;
 
  dq=q_perp_max/((float)(nq-1));
  for(iq=0;iq<nq;iq++)
@@ -771,7 +772,7 @@ int	state[];
  {
   q_perp=6*iq/(100*W);
   Aijfg=A(delta_z,q_perp,n,wf);
-  fprintf(FA,"%le %le\n",q_perp*W,sqr(Aijfg));
+  fprintf(FA,"%le %le\n",q_perp*W,gsl_pow_2(Aijfg));
  }
 
  fclose(FA);

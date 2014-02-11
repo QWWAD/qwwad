@@ -27,6 +27,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -209,7 +210,7 @@ for(i=0;i<n-1;i++)	/* miss last ordinate	*/
          *(1-1/(exp((((data_start+i)->E)-Ephonon-E_F[1])/(kb*T))+1))*dE;
 }
 
-mean_SR/=(Ne*pi*sqr(hbar)/m);
+mean_SR/=(Ne*pi*gsl_pow_2(hbar)/m);
 
 return(mean_SR);
 

@@ -25,6 +25,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "const.h"
 #include "struct.h"
 #include "maths.h"
@@ -285,7 +286,7 @@ bool	output_flag;
 
  if(output_flag)
   printf("%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf %6.3le\n",lambda/1e-10,beta,
-         Eb/(1e-3*e_0),(A+B+Ct)/D/(1e-3*e_0),Cv/D/(1e-3*e_0),sqr(O)/D);
+         Eb/(1e-3*e_0),(A+B+Ct)/D/(1e-3*e_0),Cv/D/(1e-3*e_0),gsl_pow_2(O)/D);
 
  return(Eb);
 }
@@ -357,8 +358,8 @@ double beta;
 double lambda;
 {
  double f;
- f=2*pi*lambda*(sqrt(1-sqr(beta))*a/2+lambda/4)*
-   exp(-2*sqrt(1-sqr(beta))*a/lambda);
+ f=2*pi*lambda*(sqrt(1-gsl_pow_2(beta))*a/2+lambda/4)*
+   exp(-2*sqrt(1-gsl_pow_2(beta))*a/lambda);
 
  return(f);
 }
@@ -388,10 +389,10 @@ int    N_x;
 
  for(x=delta_x/2;x<1;x+=delta_x)
  {
-  g+=1/(1/x+x)*exp(-sqrt(1-sqr(beta))*a*(1/x+x)/lambda)
-     *(1/sqr(x)-1)*delta_x;
+  g+=1/(1/x+x)*exp(-sqrt(1-gsl_pow_2(beta))*a*(1/x+x)/lambda)
+     *(1/gsl_pow_2(x)-1)*delta_x;
  }
- g*=2*pi*sqr(1-sqr(beta))*sqr(a)/sqr(lambda);
+ g*=2*pi*gsl_pow_2(1-gsl_pow_2(beta))*gsl_pow_2(a)/gsl_pow_2(lambda);
 
  return(g);
 }
@@ -418,21 +419,21 @@ int    N_x;
 
  delta_x=(1.0-0.0)/(float)N_x;
 
- j13=2*pi*(sqrt(1-sqr(beta))*a/(2*lambda)-0.25)
-     *exp(-2*sqrt(1-sqr(beta))*a/lambda);
+ j13=2*pi*(sqrt(1-gsl_pow_2(beta))*a/(2*lambda)-0.25)
+     *exp(-2*sqrt(1-gsl_pow_2(beta))*a/lambda);
 
  j24=0;        /* initialize variable */
 
  for(x=delta_x/2;x<1;x+=delta_x)
  {
   j24+=(
-        -1/(lambda*sqr(1/x+x)/4)
-        -sqrt(1-sqr(beta))*a/(sqr(lambda)*(1/x+x)/2)
+        -1/(lambda*gsl_pow_2(1/x+x)/4)
+        -sqrt(1-gsl_pow_2(beta))*a/(gsl_pow_2(lambda)*(1/x+x)/2)
        )
-       *exp(-sqrt(1-sqr(beta))*a*(1/x+x)/lambda)
-       *(1/sqr(x)-1)*delta_x;
+       *exp(-sqrt(1-gsl_pow_2(beta))*a*(1/x+x)/lambda)
+       *(1/gsl_pow_2(x)-1)*delta_x;
  }
- j24*=2*pi*sqrt(1-sqr(beta))*a/2;
+ j24*=2*pi*sqrt(1-gsl_pow_2(beta))*a/2;
 
  return(j13+j24);
 }
@@ -458,7 +459,7 @@ int N_x;
  double upper_limit;  /* upper limit of integration */
  double x;            /* dummy variable---see notes! */
 
- upper_limit=(1-sqrt(1-sqr(beta)))/beta;
+ upper_limit=(1-sqrt(1-gsl_pow_2(beta)))/beta;
  lower_limit=0;
 
  delta_x=(upper_limit-lower_limit)/(float)N_x;
@@ -468,7 +469,7 @@ int N_x;
  for(x=lower_limit+delta_x/2;x<upper_limit;x+=delta_x)
  {
   k+=exp(-beta*a*(1/x-x)/lambda)
-     *(1/sqr(x)-1)*delta_x;
+     *(1/gsl_pow_2(x)-1)*delta_x;
  }
  k*=2*pi*beta*a/2;
 
@@ -603,8 +604,8 @@ files   *data_start;    /* pointer to beginning of wavefunctions   */
   fdata=data_start;      /* reset wavefunction pointer  */
   for(j=0;j<n-i;j++)
   {
-   ppP->p+=(sqr((fdata+i)->wf[0])*sqr(fdata->wf[1])
-            +sqr(fdata->wf[0])*sqr((fdata+i)->wf[1])
+   ppP->p+=(gsl_pow_2((fdata+i)->wf[0])*gsl_pow_2(fdata->wf[1])
+            +gsl_pow_2(fdata->wf[0])*gsl_pow_2((fdata+i)->wf[1])
            )*delta_a;
    fdata++;
   }

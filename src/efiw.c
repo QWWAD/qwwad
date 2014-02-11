@@ -1,15 +1,16 @@
-/*===================================================================
-			iw Infinite Well
-===================================================================*/
-
-/* This program calculates the eigenfunctions and eigenenergies of
-   an infinite square well. The well width is passed via the
-   command line.
-*/
+/**
+ * \file   efiw.c Calculates eigenstates of an infinite square well
+ *
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details The well width is passed via the command line.
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -86,7 +87,7 @@ FE=fopen(filename,"w");
 
 for(is=1;is<=s;is++)
 {
- E=sqr(pi*hbar*is/L)/(2*m);
+ E=gsl_pow_2(pi*hbar*is/L)/(2*m);
  fprintf(FE,"%i %24.17le\n",is,E/(1e-3*e_0));
 
  sprintf(filename,"wf_%c%i.r",p,is);

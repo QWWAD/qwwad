@@ -23,6 +23,7 @@
 #include <strings.h>
 #include <math.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -237,7 +238,7 @@ double x;
  double E = 8.083;
  double s;
 
- s=(A+B*sqr(x)/(1+C*sqr(x))+D*x/(1+E*x))/(N0alpha+N0beta);
+ s=(A+B*gsl_pow_2(x)/(1+C*gsl_pow_2(x))+D*x/(1+E*x))/(N0alpha+N0beta);
 
  return(s);
 }

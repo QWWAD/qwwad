@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -94,7 +95,7 @@ FV=fopen("v.r","w");
 z=-L/2;		/* initialise z position	*/
 do      
 {
- V=-sqr(hbar*alpha)*lambda*(lambda-1)/(2*m*sqr(cosh(alpha*z)));
+ V=-gsl_pow_2(hbar*alpha)*lambda*(lambda-1)/(2*m*gsl_pow_2(cosh(alpha*z)));
  fprintf(FV,"%20.17le %20.17le\n",z,V);
  z+=1/((float)N)*1e-10;
 }while(z<=(L/2));
@@ -109,7 +110,7 @@ FE=fopen(filename,"w");
 n=0;
 while((lambda-1-n)>=0)	
 {
- E=-sqr(hbar*alpha)*sqr(lambda-1-(float)n)/(2*m);
+ E=-gsl_pow_2(hbar*alpha)*gsl_pow_2(lambda-1-(float)n)/(2*m);
  
  /* Write data to file, note n->n+1 to conform with other standards	*/
 

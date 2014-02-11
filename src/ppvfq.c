@@ -46,7 +46,7 @@ N=100;
 
 /* computational default	*/
 
-m_per_au=4*pi*epsilon_0*sqr(hbar/e_0)/m0;
+m_per_au=4*pi*epsilon_0*gsl_pow_2(hbar/e_0)/m0;
 
 while((argc>1)&&(argv[1][0]=='-'))
 {

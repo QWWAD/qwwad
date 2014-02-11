@@ -17,6 +17,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "const.h"
@@ -259,7 +260,7 @@ static double psi_at_inf(const double  E,
   for(i=0;i<n;i++)
   {
    /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
-   const double alpha=sqr(1-data_m0Eg[i].a/m0)/data_m0Eg[i].b;
+   const double alpha=gsl_pow_2(1-data_m0Eg[i].a/m0)/data_m0Eg[i].b;
 
    /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
    fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
@@ -276,7 +277,7 @@ static double psi_at_inf(const double  E,
   {
    /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
    psi[2]=(
-           2*(fdata->z)*(2*(fdata->mstar)*sqr(delta_z/hbar)*(fdata->V-E)+2)*
+           2*(fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+2)*
 	   psi[1]+
            (-2*(fdata->z)+delta_z)*psi[0]
           )

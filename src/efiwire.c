@@ -11,6 +11,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+#include <gsl/gsl_math.h>
+
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -96,7 +99,7 @@ FE=fopen(filename,"w");
 for(in_y=1;in_y<=s;in_y++)
  for(in_z=1;in_z<=s;in_z++)
  {
-  E=sqr(pi*hbar)/(2*m)*(sqr(in_y/Ly)+sqr(in_z/Lz));
+  E=gsl_pow_2(pi*hbar)/(2*m)*(gsl_pow_2(in_y/Ly)+gsl_pow_2(in_z/Lz));
   fprintf(FE,"%i%i %24.17le\n",in_y,in_z,E/(1e-3*e_0));
 
   sprintf(filename,"cd%i%i.r",in_y,in_z);
@@ -110,7 +113,7 @@ for(in_y=1;in_y<=s;in_y++)
    {
     z=(float)iz*Lz/(float)(N-1);
     psi_z=sqrt(2/Lz)*sin(in_z*pi*z/Lz);
-    fprintf(Fcd,"%20.17le\n",sqr(psi_y*psi_z));
+    fprintf(Fcd,"%20.17le\n",gsl_pow_2(psi_y*psi_z));
    }
   }
   fclose(Fcd);

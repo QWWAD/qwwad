@@ -18,9 +18,21 @@ AM_SILENT_RULES([yes])
 # Checks for programs.
 AC_PROG_CC
 
+dnl Enable some compiler flags by default
+CFLAGS="-Wall $CFLAGS"
+
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [pow])
+
+dnl Check for a CBLAS implementation
+AC_SEARCH_LIBS([cblas_dgemm], [cblas gslcblas],,
+	       AC_MSG_ERROR([Cannot find a CBLAS implementation]))
+
+dnl Check for the GSL library
+AC_CHECK_LIB([gsl], [gsl_blas_dgemm],,
+	     AC_MSG_ERROR([Cannot locate the GSL library.  Please
+			  install it and try again.]))
 
 # Checks for header files.
 AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])

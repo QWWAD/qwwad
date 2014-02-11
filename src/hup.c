@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -87,7 +88,7 @@ for(i=1;i<N-1;i++)
 {
  delta_z=((psi+i+1)->a)-((psi+i)->a);
  ev_z+=((psi+i)->b)*((psi+i)->a)*((psi+i)->b)*delta_z;
- ev_zsqr+=((psi+i)->b)*sqr((psi+i)->a)*((psi+i)->b)*delta_z;
+ ev_zsqr+=((psi+i)->b)*gsl_pow_2((psi+i)->a)*((psi+i)->b)*delta_z;
 
 /* Note leave <p> in units of hbar and <p^2> in hbar^2 */
 
@@ -95,12 +96,12 @@ for(i=1;i<N-1;i++)
        (((psi+i+1)->b)-((psi+i-1)->b))/(2*delta_z)
        *delta_z;
  ev_psqr-=((psi+i)->b)*
-          (((psi+i+1)->b)+((psi+i-1)->b)-2*((psi+i)->b))/sqr(delta_z)
+          (((psi+i+1)->b)+((psi+i-1)->b)-2*((psi+i)->b))/gsl_pow_2(delta_z)
           *delta_z;
 }
 
-Delta_z=sqrt(ev_zsqr-sqr(ev_z));
-Delta_p=sqrt(ev_psqr-sqr(ev_p));
+Delta_z=sqrt(ev_zsqr-gsl_pow_2(ev_z));
+Delta_p=sqrt(ev_psqr-gsl_pow_2(ev_p));
 
 printf("<z>\t\t\t\t\t%20.17le\n",ev_z);
 printf("<z^2>\t\t\t\t\t%20.17le\n",ev_zsqr);

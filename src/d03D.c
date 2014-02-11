@@ -35,6 +35,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "const.h"
 #include "d0-helpers.h"
 #include "struct.h"
@@ -156,7 +157,7 @@ while((argc>1)&&(argv[1][0]=='-'))
     /* initial energy estimate=minimum potential-binding energy
                                of particle to free ionised dopant */
 
-    x=V_min(Vstart,n)-sqr(e_0)/(4*pi*epsilon*lambda);   
+    x=V_min(Vstart,n)-gsl_pow_2(e_0)/(4*pi*epsilon*lambda);   
 
     /* increment energy-search for f(x)=0 */
 
@@ -295,11 +296,11 @@ data11 *Vp;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*sqr(e_0/hbar)/(4*pi*epsilon))*I4
+  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
           -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-sqr(delta_z)*gamma/alpha)*psi[1]
+          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
          )/(1+beta*delta_z/(2*alpha));
 
   psi[0]=psi[1];
@@ -385,11 +386,11 @@ data11  *Vp;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*sqr(e_0/hbar)/(4*pi*epsilon))*I4
+  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
           -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-sqr(delta_z)*gamma/alpha)*psi[1]
+          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
          )/(1+beta*delta_z/(2*alpha));
 
 
@@ -414,8 +415,8 @@ data11  *Vp;
  wf=wf_start;
  for(i=0;i<n;i++)
  {
-  Npsi+=sqr(wf->b[0])*delta_z;
-  Nchi+=sqr(wf->b[1])*delta_z;
+  Npsi+=gsl_pow_2(wf->b[0])*delta_z;
+  Nchi+=gsl_pow_2(wf->b[1])*delta_z;
   wf++;
  }
 
@@ -456,7 +457,7 @@ I_1(lambda,z_dash)
 double lambda;
 double z_dash;
 {
- return(2*pi*(fabs(z_dash)*lambda/2+sqr(lambda)/4)*
+ return(2*pi*(fabs(z_dash)*lambda/2+gsl_pow_2(lambda)/4)*
         exp(-2*fabs(z_dash)/lambda));
 }
 

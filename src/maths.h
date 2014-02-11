@@ -4,12 +4,9 @@
 
 #ifndef MATHS_H
 #define MATHS_H
-double sqr   (const double x);
-double cub   (const double x);
 double sec   (const double x);
 double cosec (const double x);
 double cot   (const double x);
-int    sign  (const double x);
 double coth  (const double x);
 vector vadd  (const vector A,
               const vector B);
@@ -23,31 +20,6 @@ vector vvprod(const vector A,
 double vsprod(const vector A,
               const vector B);
 double Theta (const double x);
-
-
-/**
- * square of a number
- *
- * \param[in] x The number to be squared
- *
- * \return The square of the number
- */
-double sqr(const double x)
-{
-  return x*x;
-}
-
-/**
- * cube of a number
- *
- * \param[in] x The number to be cubed
- *
- * \return The cube of the number
- */
-double cub(const double x)
-{
-  return x*x*x;
-}
 
 /**
  * The secant of a number
@@ -86,23 +58,11 @@ double cot(const double x)
 }
 
 /**
- * sign
- */
-int sign(const double x)
-{
- int i;
-
- if (x<0) i=-1;
- else i=1;
- return(i);
-}
-
-/**
  * cotangens hyperbolicus
  */
 double coth(const double x)
 {
- return(1/tanh(x));
+ return 1/tanh(x);
 }
 
 /**
@@ -116,7 +76,7 @@ vector vadd(const vector A, const vector B)
  C.y=A.y+B.y;
  C.z=A.z+B.z;
 
- return(C);
+ return C;
 }
 
 /**
@@ -130,7 +90,7 @@ vector vsub(const vector A, const vector B)
  C.y=A.y-B.y;
  C.z=A.z-B.z;
 
- return(C);
+ return C;
 }
 
 /**
@@ -144,7 +104,7 @@ vector vmult(const vector A, const double c)
  B.y=c*A.y;
  B.z=c*A.z;
 
- return(B);
+ return B;
 }
 
 /**
@@ -152,7 +112,7 @@ vector vmult(const vector A, const double c)
  */
 double vmod(const vector A)
 {
- return(sqrt((A.x)*(A.x)+(A.y)*(A.y)+(A.z)*(A.z)));
+ return sqrt((A.x)*(A.x)+(A.y)*(A.y)+(A.z)*(A.z));
 }
 
 /**
@@ -166,7 +126,7 @@ vector vvprod(const vector A, const vector B)
  C.y=-(A.x*B.z-A.z*B.x);
  C.z=A.x*B.y-A.y*B.x;
 
- return(C);
+ return C;
 }
  
 /**
@@ -174,7 +134,7 @@ vector vvprod(const vector A, const vector B)
  */
 double vsprod(const vector A, const vector B)
 {
- return(A.x*B.x+A.y*B.y+A.z*B.z);
+ return A.x*B.x+A.y*B.y+A.z*B.z;
 }
 
 /**
@@ -182,6 +142,6 @@ double vsprod(const vector A, const vector B)
  */
 double Theta(const double x)
 {
- return((x<0)?0:1);
+ return (x<0)?0:1;
 }
 #endif

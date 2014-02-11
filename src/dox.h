@@ -1,6 +1,8 @@
 #ifndef DOX_H
 #define DOX_H
 
+#include <gsl/gsl_math.h>
+
 double D_of_x(const double D0,
               const double x,
               const double z,
@@ -37,7 +39,7 @@ double D_of_x(const double D0,
  const double k     = 10;   /* Proportionality constant [angstrom] */
 
  /* Find diffusion coefficient [angstrom^2/s] at this depth using Eq. 4.16, QWWAD3 */
- const double diff_coeff = k*exp(-sqr((z/1e-10-z0)/sigma)/2);
+ const double diff_coeff = k*exp(-gsl_pow_2((z/1e-10-z0)/sigma)/2);
 
  return diff_coeff * 1e-20; /* return in m^2/s */
 }

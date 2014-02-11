@@ -240,9 +240,9 @@ static void diffuse(data         *data_start,
   dnewdata->x=delta_t*
               (
                (((dD+1)->D)-((dD-1)->D))*
-               (((ddata+1)->x)-((ddata-1)->x))/sqr(2*delta_z)
+               (((ddata+1)->x)-((ddata-1)->x))/gsl_pow_2(2*delta_z)
               +(dD->D)*
-               (((ddata+1)->x)-2*(ddata->x)+((ddata-1)->x))/sqr(delta_z)
+               (((ddata+1)->x)-2*(ddata->x)+((ddata-1)->x))/gsl_pow_2(delta_z)
               )
               +(ddata->x);
   dnewdata++;

@@ -29,6 +29,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -214,7 +215,7 @@ static double * calc_field(const double  epsilon,
   {
    /* Note sigma is a number density per unit area, needs to be converted
       to Couloumb per unit area						*/
-   F[iz] += sigma[izdash]*e_0*(float)sign(z[iz]-z[izdash])/epsilon;
+   F[iz] += sigma[izdash]*e_0*(float)GSL_SIGN(z[iz]-z[izdash])/epsilon;
   }
  }
 
@@ -282,7 +283,7 @@ int	s;
   *(sigma+i)=0;		/* initialise sigma at each z co-ordinate	*/
   for(is=0;is<s;is++)	/* sum over all subbands			*/
   {
-   *(sigma+i)+=*(N+is)*sqr(*(*(wfs+is)+i))*delta_z;
+   *(sigma+i)+=*(N+is)*gsl_pow_2(*(*(wfs+is)+i))*delta_z;
   }
   /* n-type dopants give -ve *(N+is) representing electrons, hence 
      addition of +ve ionised donors requires -*(Nda+i), note Nda is still a

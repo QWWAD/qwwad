@@ -35,6 +35,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "const.h"
 #include "d0-helpers.h"
 #include "maths.h"
@@ -200,7 +201,7 @@ while((argc>1)&&(argv[1][0]=='-'))
     /* initial energy estimate=minimum potential-binding energy
                                of particle to free ionised dopant */
 
-    x=V_min(Vstart,n)-sqr(e_0)/(4*pi*epsilon*lambda);   
+    x=V_min(Vstart,n)-gsl_pow_2(e_0)/(4*pi*epsilon*lambda);   
 
     /* increment energy-search for f(x)=0 */
 
@@ -376,11 +377,11 @@ int N_w;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*sqr(e_0/hbar)/(4*pi*epsilon))*I4
+  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
           -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-sqr(delta_z)*gamma/alpha)*psi[1]
+          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
          )/(1+beta*delta_z/(2*alpha));
 
   psi[0]=psi[1];
@@ -464,11 +465,11 @@ int    N_w;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*sqr(e_0/hbar)/(4*pi*epsilon))*I4
+  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
           -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-sqr(delta_z)*gamma/alpha)*psi[1]
+          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
          )/(1+beta*delta_z/(2*alpha));
 
 
@@ -493,8 +494,8 @@ int    N_w;
  wf=wf_start;
  for(i=0;i<n;i++)
  {
-  Npsi+=sqr(wf->b[0])*delta_z;
-  Nchi+=sqr(wf->b[1])*delta_z;
+  Npsi+=gsl_pow_2(wf->b[0])*delta_z;
+  Nchi+=gsl_pow_2(wf->b[1])*delta_z;
   wf++;
  }
 
@@ -532,7 +533,7 @@ static double I_1(const double lambda,
                   const double zeta)
 {
  /* Eq. 5.100, QWWAD3 */
- return 2*pi*(zeta*fabs(z_dash)*lambda/2+sqr(lambda)/4)*
+ return 2*pi*(zeta*fabs(z_dash)*lambda/2+gsl_pow_2(lambda)/4)*
         exp(-2*zeta*fabs(z_dash)/lambda);
 }
 
@@ -541,7 +542,7 @@ static double I_2(const double lambda,
                   const double zeta)
 {
   /* Eq. 5.106, QWWAD3 */
-  return 2*pi*(-sqr(zeta)*z_dash/2)*exp(-2*zeta*fabs(z_dash)/lambda);
+  return 2*pi*(-gsl_pow_2(zeta)*z_dash/2)*exp(-2*zeta*fabs(z_dash)/lambda);
 }
 
 static double I_3(const double lambda,
@@ -554,7 +555,7 @@ double I_34=0.0;
 double w;
 
 /* Eq. 5.113, QWWAD3 */
-const double I_31=((-1-sqr(zeta))/2)*exp(-2*zeta*fabs(z_dash)/lambda);
+const double I_31=((-1-gsl_pow_2(zeta))/2)*exp(-2*zeta*fabs(z_dash)/lambda);
 const double I_32=(zeta*fabs(z_dash)/(2*lambda)+0.25)*exp(-2*zeta*fabs(z_dash)/lambda);
 
 /* perform integrations over `w' for I_33 and I_34, area simply given by
@@ -563,14 +564,14 @@ const double delta_w=(1.0-0.0)/(float)N_w;
 for(w=delta_w/2;w<1;w+=delta_w)
 {
  /* Eq. 5.116, QWWAD3 */
- I_33+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-sqr(w))/sqr(1+sqr(w))*delta_w;
+ I_33+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-gsl_pow_2(w))/gsl_pow_2(1+gsl_pow_2(w))*delta_w;
 
  /* Eq. 5.117, QWWAD3 */
- I_34+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-sqr(w))/(w*(1+sqr(w)))*delta_w;
+ I_34+=exp(-zeta*fabs(z_dash)*(1/w+w)/lambda)*(1-gsl_pow_2(w))/(w*(1+gsl_pow_2(w)))*delta_w;
 }
 
-I_33*=2*(zeta*zeta*zeta-zeta)*fabs(z_dash)/lambda;
-I_34*=(sqr(zeta)*sqr(zeta)-sqr(zeta))*sqr(z_dash)/sqr(lambda);
+I_33*=2*(gsl_pow_3(zeta)-zeta)*fabs(z_dash)/lambda;
+I_34*=(gsl_pow_4(zeta)-gsl_pow_2(zeta))*gsl_pow_2(z_dash/lambda);
 
 return(2*pi*(I_31+I_32+I_33+I_34));
 }
@@ -589,8 +590,8 @@ const double delta_w=(1.0-0.0)/(float)N_w;
 /* Eq. 5.118, QWWAD3 */
 for (w=delta_w/2;w<1;w+=delta_w)
 {
- I_40+=exp(-2*fabs(z_dash)*sqrt(sqr((1-sqr(w))/(2*w))+sqr(zeta))/lambda)
-       *fabs(z_dash)*(1-sqr(w))/(2*sqr(w))*delta_w;
+ I_40+=exp(-2*fabs(z_dash)*sqrt(gsl_pow_2((1-gsl_pow_2(w))/(2*w))+gsl_pow_2(zeta))/lambda)
+       *fabs(z_dash)*(1-gsl_pow_2(w))/(2*gsl_pow_2(w))*delta_w;
 }
 
 return 2*pi*I_40;

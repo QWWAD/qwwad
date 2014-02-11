@@ -11,6 +11,7 @@
 #define PPFF_H
 
 #include <string.h>
+#include <gsl/gsl_math.h>
 
 double Vf(const double  A0,
           const double  m_per_au,
@@ -43,9 +44,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"SI"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   a1=106.0686;
@@ -63,9 +64,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GE"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   a1=54.4512;
@@ -86,45 +87,45 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GAASmz"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
-  Va=(-1.24498*exp(-1.52748*sqr(sqrt(q_sqr)-0))
-      +0.0366517*exp(-0.959082*sqr(sqrt(q_sqr)-2.09782))
-      +0.0464357*exp(-0.574047*sqr(sqrt(q_sqr)-2.01935))
-      -0.0133385*exp(-11.2708*sqr(sqrt(q_sqr)-2.93581)))*131.4/Omega;
+  Va=(-1.24498*exp(-1.52748*gsl_pow_2(sqrt(q_sqr)-0))
+      +0.0366517*exp(-0.959082*gsl_pow_2(sqrt(q_sqr)-2.09782))
+      +0.0464357*exp(-0.574047*gsl_pow_2(sqrt(q_sqr)-2.01935))
+      -0.0133385*exp(-11.2708*gsl_pow_2(sqrt(q_sqr)-2.93581)))*131.4/Omega;
 
   return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  if(!strcmp(type,"ASGAmz"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
-  Va=(-1.0582*exp(-0.959327*sqr(sqrt(q_sqr)-0))
-      -0.00217627*exp(-6.53145*sqr(sqrt(q_sqr)-2.46808))
-      -0.0434312*exp(-2.94679*sqr(sqrt(q_sqr)-0.851644))
-      +0.10569*exp(-0.820922*sqr(sqrt(q_sqr)-1.22436)))*145.2/Omega;
+  Va=(-1.0582*exp(-0.959327*gsl_pow_2(sqrt(q_sqr)-0))
+      -0.00217627*exp(-6.53145*gsl_pow_2(sqrt(q_sqr)-2.46808))
+      -0.0434312*exp(-2.94679*gsl_pow_2(sqrt(q_sqr)-0.851644))
+      +0.10569*exp(-0.820922*gsl_pow_2(sqrt(q_sqr)-1.22436)))*145.2/Omega;
 
   return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  if(!strcmp(type,"ALASmz"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
-  Va=(-1.32712*exp(-1.59819*sqr(sqrt(q_sqr)-0))
-      +0.158114*exp(-2.10827*sqr(sqrt(q_sqr)-1.77453))
-      +0.0601648*exp(-0.527745*sqr(sqrt(q_sqr)-2.59550))
-      +0.0168167*exp(-11.2708*sqr(sqrt(q_sqr)-2.93581)))*111.3
+  Va=(-1.32712*exp(-1.59819*gsl_pow_2(sqrt(q_sqr)-0))
+      +0.158114*exp(-2.10827*gsl_pow_2(sqrt(q_sqr)-1.77453))
+      +0.0601648*exp(-0.527745*gsl_pow_2(sqrt(q_sqr)-2.59550))
+      +0.0168167*exp(-11.2708*gsl_pow_2(sqrt(q_sqr)-2.93581)))*111.3
      *(1+0.02*exp(-10*q_sqr))/Omega;
 
   return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
@@ -132,15 +133,15 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASALmz"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
-  Va=(-1.10411*exp(-0.972439*sqr(sqrt(q_sqr)-0))
-      +0.0174946*exp(-6.53147*sqr(sqrt(q_sqr)-2.46793))
-      -0.00368081*exp(-5.50601*sqr(sqrt(q_sqr)-1.22845))
-      +0.0921512*exp(-1.18638*sqr(sqrt(q_sqr)-1.35897)))*145.2/Omega;
+  Va=(-1.10411*exp(-0.972439*gsl_pow_2(sqrt(q_sqr)-0))
+      +0.0174946*exp(-6.53147*gsl_pow_2(sqrt(q_sqr)-2.46793))
+      -0.00368081*exp(-5.50601*gsl_pow_2(sqrt(q_sqr)-1.22845))
+      +0.0921512*exp(-1.18638*gsl_pow_2(sqrt(q_sqr)-1.35897)))*145.2/Omega;
 
   return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
  }
@@ -173,9 +174,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GAASw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=139478*(q_sqr-2.316)/(3810.60*exp(0.283*q_sqr)-1)/Omega;
@@ -187,9 +188,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASGAw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=13.825*(q_sqr-2.878)/(1.169*exp(0.281*q_sqr)-1)/Omega;
@@ -201,9 +202,9 @@ double Vf(const double  A0,
  
   if(!strcmp(type,"ALASw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=319.275*(q_sqr-2.292)/(13.625*exp(0.315*q_sqr)-1)/Omega;
@@ -215,9 +216,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASALw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=21.993*(q_sqr-2.520)/(1.205*exp(0.336*q_sqr)-1)/Omega;
@@ -229,9 +230,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"INASw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=107.755*(q_sqr-1.915)/(3.460*exp(0.414*q_sqr)-1)/Omega;
@@ -243,9 +244,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASINw"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=sqr(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   Va=49.614*(q_sqr-2.737)/(1.523*exp(0.574*q_sqr)-1)/Omega;
@@ -261,7 +262,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"SIcb"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.43*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      +0.27*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.54*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
@@ -271,7 +272,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GEcb"))
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.57*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      +0.07*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.41*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
@@ -287,7 +288,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GAAScb"))	/* Ga in GaAs	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -1.51*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      -0.10*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -298,7 +299,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASGAcb"))	/* As in GaAs	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -0.83*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      +0.24*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -309,7 +310,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"INAScb"))	/* In in InAs	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -1.47*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      -0.26*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -320,7 +321,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"ASINcb"))	/* As in InAs	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.95*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -0.79*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      +0.26*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -331,7 +332,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GAPcb"))	/* Ga in GaP	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.31*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -1.56*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      -0.06*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -342,7 +343,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"PGAcb"))	/* P in GaP	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.68*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -0.61*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      +0.47*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -353,7 +354,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"INPcb"))	/* In in InP	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -1.51*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      -0.10*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
@@ -364,7 +365,7 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"PINcb"))	/* P in InP	*/
  {
-  q_sqr/=sqr(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
      -0.83*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
      +0.24*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/

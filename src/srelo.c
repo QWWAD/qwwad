@@ -25,6 +25,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -154,10 +155,10 @@ omega_0=Ephonon/hbar;		/* phonon angular frequency	*/
 N0=1/(exp(Ephonon/(kb*T))-1);	/* Bose-Einstein factor	*/
 
 Upsilon_star_a=pi*e_0*e_0*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0)
-               *2*m/sqr(hbar)*2/(8*pi*pi*pi);
+               *2*m/gsl_pow_2(hbar)*2/(8*pi*pi*pi);
 
 Upsilon_star_e=pi*e_0*e_0*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0+1)
-               *2*m/sqr(hbar)*2/(8*pi*pi*pi);
+               *2*m/gsl_pow_2(hbar)*2/(8*pi*pi*pi);
 
 E=read_E(p,&nE);	/* read in subband minima	*/
 
@@ -205,15 +206,15 @@ while(fscanf(Frrp,"%i %i",&state[0],&state[1])!=EOF)
    Kz=(Gifsqr+iKz)->a;
 
    Waif+=((Gifsqr+iKz)->b)/
-         sqrt(sqr(sqr(Kz))+
-              2*sqr(Kz)*(2*sqr(ki)-2*m*Delta_a/sqr(hbar))+
-              sqr(2*m*Delta_a/sqr(hbar))
+         sqrt(gsl_pow_2(gsl_pow_2(Kz))+
+              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_a/gsl_pow_2(hbar))+
+              gsl_pow_2(2*m*Delta_a/gsl_pow_2(hbar))
              );
 
    Weif+=((Gifsqr+iKz)->b)/
-         sqrt(sqr(sqr(Kz))+
-              2*sqr(Kz)*(2*sqr(ki)-2*m*Delta_e/sqr(hbar))+
-              sqr(2*m*Delta_e/sqr(hbar))
+         sqrt(gsl_pow_2(gsl_pow_2(Kz))+
+              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_e/gsl_pow_2(hbar))+
+              gsl_pow_2(2*m*Delta_e/gsl_pow_2(hbar))
              );
 
 
@@ -226,19 +227,19 @@ while(fscanf(Frrp,"%i %i",&state[0],&state[1])!=EOF)
   /* Now check for energy conservation!, would be faster with a nasty `if'
      statement just after the beginning of the ki loop!			*/
 
-  Weif*=Theta(sqr(hbar*ki)/(2*m)-Delta_e)*
-        Theta(Vmax()-*(E+state[0]-1)+Ephonon-sqr(hbar*ki)/(2*m));
+  Weif*=Theta(gsl_pow_2(hbar*ki)/(2*m)-Delta_e)*
+        Theta(Vmax()-*(E+state[0]-1)+Ephonon-gsl_pow_2(hbar*ki)/(2*m));
 
-  Waif*=Theta(sqr(hbar*ki)/(2*m)-Delta_a)*
-        Theta(Vmax()-*(E+state[0]-1)-Ephonon-sqr(hbar*ki)/(2*m));
+  Waif*=Theta(gsl_pow_2(hbar*ki)/(2*m)-Delta_a)*
+        Theta(Vmax()-*(E+state[0]-1)-Ephonon-gsl_pow_2(hbar*ki)/(2*m));
 
   /* output scattering rate versus carrier energy=subband minima+in-plane
      kinetic energy						*/
 
-  fprintf(FLOa,"%20.17le %20.17le\n",(*(E+state[0]-1)+sqr(hbar*ki)/(2*m))/
+  fprintf(FLOa,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
                                     (1e-3*e_0),Waif);
 
-  fprintf(FLOe,"%20.17le %20.17le\n",(*(E+state[0]-1)+sqr(hbar*ki)/(2*m))/
+  fprintf(FLOe,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
                                     (1e-3*e_0),Weif);
 
  }

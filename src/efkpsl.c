@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -203,7 +204,7 @@ double V;
   K=sqrt(2*m_b/hbar*(V-energy)/hbar);
 
   F=cos(k_w*a)*cosh(K*b)-sin(k_w*a)*sinh(K*b)*
-        (sqr(m_b*k_w)-sqr(m_w*K))/(2*m_w*m_b*k_w*K)-cos(k*(a+b));
+        (gsl_pow_2(m_b*k_w)-gsl_pow_2(m_w*K))/(2*m_w*m_b*k_w*K)-cos(k*(a+b));
  }
  else
  {
@@ -212,7 +213,7 @@ double V;
 
 
   F=cos(k_w*a)*cos(k_b*b)-sin(k_w*a)*sin(k_b*b)*
-        (sqr(m_b*k_w)-sqr(m_w*k_b))/(2*m_w*m_b*k_w*k_b)-cos(k*(a+b));
+        (gsl_pow_2(m_b*k_w)-gsl_pow_2(m_w*k_b))/(2*m_w*m_b*k_w*k_b)-cos(k*(a+b));
  }
 
  return(F);

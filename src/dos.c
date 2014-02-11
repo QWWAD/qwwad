@@ -23,6 +23,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "const.h"
 #include "maths.h"
@@ -90,13 +91,13 @@ Frho=fopen("rho.r","w");
 for(ie=0;ie<=n;ie++)
 {
  energy=(float)ie*1e-3*e_0;		/* convert meV-> J	*/
- dos_bulk=cub(sqrt(2*m)/hbar)*sqrt(energy)/(2*sqr(pi));
+ dos_bulk=gsl_pow_3(sqrt(2*m)/hbar)*sqrt(energy)/(2*gsl_pow_2(pi));
 
  dos_2D=0;		/* initialise before sum over subbands	*/
  dos_1D=0;		/* initialise before sum over subbands	*/
  for(i=0;i<nE;i++)
  {
-  dos_2D+=m/(pi*sqr(hbar))*Theta(energy-*(E+i));
+  dos_2D+=m/(pi*gsl_pow_2(hbar))*Theta(energy-*(E+i));
   if(energy>*(E+i))dos_1D+=sqrt(2*m)/hbar/(pi*sqrt(energy-*(E+i)));
  }
 fprintf(Frho,"%le %le %le %le\n",energy/(1e-3*e_0),dos_bulk,dos_2D,dos_1D);

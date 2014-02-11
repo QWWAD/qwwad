@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -81,7 +82,7 @@ do      /* loop increments energy */
 {
  k=sqrt(2*m*E)/hbar;
  K=sqrt(2*m*(V-E))/hbar;
- T=1/(1+sqr((k*k+K*K)/(2*k*K))*sqr(sinh(K*L)));
+ T=1/(1+gsl_pow_2((k*k+K*K)/(2*k*K))*gsl_pow_2(sinh(K*L)));
  fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
  E+=dE;
 }while(E<V);
@@ -90,7 +91,7 @@ do      /* loop increments energy */
 {
  k=sqrt(2*m*E)/hbar;
  kdash=sqrt(2*m*(E-V))/hbar;
- T=1/(1+sqr((k*k-kdash*kdash)/(2*k*kdash))*sqr(sin(kdash*L)));
+ T=1/(1+gsl_pow_2((k*k-kdash*kdash)/(2*k*kdash))*gsl_pow_2(sin(kdash*L)));
  fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
  E+=dE;
 }while(E<10*V);

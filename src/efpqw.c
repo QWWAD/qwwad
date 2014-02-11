@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -88,7 +89,7 @@ while(z<(2*b+a))
  }
  else
  {
-  x=x_min+sqr(z-(b+a/2))*(x_max-x_min)/sqr(a/2);
+  x=x_min+gsl_pow_2(z-(b+a/2))*(x_max-x_min)/gsl_pow_2(a/2);
  }
  fprintf(Fx,"%20.17le %le %le\n",z,x,y);
  z+=1/N;               /* z incremented by distance between points */

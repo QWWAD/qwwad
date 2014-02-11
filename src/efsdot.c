@@ -17,6 +17,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "const.h"
@@ -249,7 +250,7 @@ bool   np_flag;
  {
   for(i=0;i<n;i++)
   {
-   alpha=sqr(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
+   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
    (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
   }
  }
@@ -264,7 +265,7 @@ bool   np_flag;
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
    psi[2]=(
-           (fdata->z)*(2*(fdata->mstar)*sqr(delta_z/hbar)*(fdata->V-E)+2)*
+           (fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+2)*
 	   psi[1]+
            (-(fdata->z)+delta_z)*psi[0]
           )

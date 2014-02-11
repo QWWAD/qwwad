@@ -23,6 +23,7 @@
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
+#include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "const.h"
@@ -232,7 +233,7 @@ bool   T_flag;
  {
   for(i=0;i<n;i++)
   {
-   alpha=sqr(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
+   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
    (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
   }
  }
@@ -245,8 +246,8 @@ bool   T_flag;
  (data_zwf)->b=psi[0];
  (data_zwf+1)->b=psi[1];
 
- N+=sqr(psi[0]);
- N+=sqr(psi[1]);
+ N+=gsl_pow_2(psi[0]);
+ N+=gsl_pow_2(psi[1]);
 
  fdata++;                    /* ignore data corresponding to psi[0] */
 
@@ -255,14 +256,14 @@ bool   T_flag;
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
    psi[2]=(
-           (2*sqr(delta_z/hbar)*(fdata->V-E)+
+           (2*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+
 	    2/(fdata->mstar+(fdata+1)->mstar)+
 	    2/(fdata->mstar+(fdata-1)->mstar))*psi[1]
            -2/(fdata->mstar+(fdata-1)->mstar)*psi[0]
           )
            *(fdata->mstar+(fdata+1)->mstar)/2;
    (data_zwf+i+1)->b=psi[2];
-   N+=sqr(psi[2]);
+   N+=gsl_pow_2(psi[2]);
    psi[0]=psi[1];
    psi[1]=psi[2];
    fdata++;
@@ -272,10 +273,10 @@ bool   T_flag;
  {
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
-   psi[2]=(2*fdata->mstar*(fdata->V-E)*sqr(delta_z/hbar)+2)*psi[1]
+   psi[2]=(2*fdata->mstar*(fdata->V-E)*gsl_pow_2(delta_z/hbar)+2)*psi[1]
           -psi[0];
    (data_zwf+i+1)->b=psi[2];
-   N+=sqr(psi[2]);
+   N+=gsl_pow_2(psi[2]);
    psi[0]=psi[1];
    psi[1]=psi[2];
    fdata++;

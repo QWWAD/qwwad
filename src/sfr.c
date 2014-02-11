@@ -39,6 +39,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -135,7 +136,7 @@ do
  intensity=0;
  for(i_i=0;i_i<N_rd;i_i++)
  {
-  intensity+=1/(sigma*sqrt(2*pi))*exp(-0.5*sqr((E-E_sf[i_i])/sigma));
+  intensity+=1/(sigma*sqrt(2*pi))*exp(-0.5*gsl_pow_2((E-E_sf[i_i])/sigma));
  }
  fprintf(fI,"%le %le\n",E,intensity); /* E in cm^-1, intensity in arb. units */
  E+=E_step;

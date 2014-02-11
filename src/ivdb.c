@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "const.h"
@@ -105,7 +106,7 @@ for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
   E=(TofE+iE)->a;
   if(E>DeltaE)	/* only add contribution to current if E>DeltaE	*/
   {
-   rho=cub(sqrt(2*m)/hbar)*sqrt(E-DeltaE)/(2*sqr(pi));
+   rho=gsl_pow_3(sqrt(2*m)/hbar)*sqrt(E-DeltaE)/(2*gsl_pow_2(pi));
    f_FD=1/(exp((E-(Ef+DeltaE))/(kb*T))+1);
  
    current+=((TofE+iE)->b)*f_FD*rho*dE;
