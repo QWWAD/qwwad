@@ -26,7 +26,7 @@ AC_CHECK_LIB([m], [pow])
 AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
+AC_HEADER_STDBOOL
 
 # Checks for library functions.
 AC_CHECK_FUNCS([floor modf sqrt])
