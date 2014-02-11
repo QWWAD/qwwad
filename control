@@ -8,7 +8,8 @@ Maintainer: Alex Valavanis <valavanisalex@gmail.com>
 Build-Depends: autoconf,
                automake,
                autopoint,
-               debhelper (>= 8.0.0)
+               debhelper (>= 8.0.0),
+               dh-autoreconf
 Standards-Version: 3.9.4
 
 Package: qwwad
