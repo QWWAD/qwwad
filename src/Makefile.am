@@ -61,8 +61,10 @@ bin_PROGRAMS =  csss    \
 d0_helpers    = d0-helpers.c d0-helpers.h
 creaddata     = creaddata.cpp creaddata.h
 qwwad_options = qwwad-options.cpp qwwad-options.h
+qclsim_maths  = qclsim-maths.cpp qclsim-maths.h
+qclsim_linalg = qclsim-linalg.cpp qclsim-linalg.h $(qclsim_maths)
 
 d0_SOURCES   = d0.c $(d0_helpers)
 d02D_SOURCES = d02D.c $(d0_helpers)
 d03D_SOURCES = d03D.c $(d0_helpers)
-efiw_SOURCES = efiw.cpp $(qwwad_options)
+efiw_SOURCES = efiw.cpp $(qwwad_options) $(qclsim_linalg)

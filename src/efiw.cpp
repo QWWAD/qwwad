@@ -3,18 +3,17 @@
  *
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- *
- * \details The well width is passed via the command line.
  */
 
-#include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <valarray>
 #include <gsl/gsl_math.h>
+#include "qclsim-linalg.h"
 #include "qwwad-options.h"
-#include "struct.h"
-#include "maths.h"
 #include "const.h"
+
+using namespace Leeds;
 
 /**
  * Handler for command-line options
@@ -93,34 +92,46 @@ int main(int argc, char *argv[])
     const double m = opt.get_mass();     // effective mass [kg]
     const size_t N = opt.get_n_points(); // number of spatial steps
     const size_t s = opt.get_n_states(); // number of states
-    char	filename[9];	/* wavefunction filename	*/
 
-    sprintf(filename,"E%c.r",p);
-    FILE *FE=fopen(filename,"w");
+    // Create array of spatial locations [m]
+    std::valarray<double> z(N);
+    const double dz = L/(N-1); // Spatial step [m]
+
+    for(unsigned int iz = 0; iz < N; ++iz)
+        z[iz] = iz*dz;
+
+    std::vector<State> solutions;
 
     // Loop over all required states
     for(unsigned int is=1; is<=s; is++)
     {
         // Energy of state [J] (QWWAD3, 2.13)
-        const double E=gsl_pow_2(pi*hbar*is/L)/(2*m);
-        fprintf(FE,"%i %24.17le\n",is,E/(1e-3*e_0));
+        double E=gsl_pow_2(pi*hbar*is/L)/(2*m);
 
-        sprintf(filename,"wf_%c%i.r",p,is);
-        FILE *Fwf=fopen(filename,"w");
+        std::valarray<double> psi(N); // Wavefunction amplitude at each point [m^{-0.5}]
 
         // Loop over spatial locations and find wavefunction
         // amplitude at each point (QWWAD3, 2.15)
         for(unsigned int i=0;i<N;i++)
-        {
-            const double z=(float)i*L/(float)(N-1); // Position [m]
-            const double psi=sqrt(2/L)*sin(is*pi*z/L); // Wavefunction [m^{-0.5}]
-            fprintf(Fwf,"%20.17le %20.17le\n",z,psi);
-        }
+            psi=sqrt(2/L)*sin(is*pi*z/L); // Wavefunction [m^{-0.5}]
 
-        fclose(Fwf);
+        E*=1e3/e_0; // Convert energy to meV
+
+        solutions.push_back(State(E, psi));
     }
 
-    fclose(FE);
+    // Dump to file
+    char energy_filename[9];
+    sprintf(energy_filename,"E%c.r",p);
+
+    char wf_prefix[9];
+    sprintf(wf_prefix,"wf_%c",p);
+    State::write_to_file(energy_filename,
+                         wf_prefix,
+                         ".r",
+                         solutions,
+                         z,
+                         true);
 
     return EXIT_SUCCESS;
 }

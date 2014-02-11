@@ -41,6 +41,25 @@ AX_BOOST_BASE([1.35],,
 
 AX_BOOST_PROGRAM_OPTIONS
 
+# Check that BLAS/LAPACK are available
+# This is a hack to set the location of linear algebra stuff on ARC1
+# automatically
+if [[ "x$ARC_LINALG_MT_CFLAGS" != "x" ]]; then
+	with_blas=$ARC_LINALG_MT_CFLAGS
+	with_lapack="$ARC_LINALG_MT_CFLAGS"
+fi
+
+AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try again]))
+AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))
+
+LINALG_LIBS="$BLAS_LIBS $LAPACK_LIBS"
+
+if [[ "x$ARC_LINALG_CFLAGS" != "x" ]]; then
+	LINALG_LIBS=$ARC_LINALG_MT_CFLAGS
+fi
+
+LIBS="$LINALG_LIBS $LIBS"
+
 dnl Check for a CBLAS implementation
 AC_SEARCH_LIBS([cblas_dgemm], [cblas gslcblas],,
 	       AC_MSG_ERROR([Cannot find a CBLAS implementation]))
@@ -49,6 +68,21 @@ dnl Check for the GSL library
 AC_CHECK_LIB([gsl], [gsl_blas_dgemm],,
 	     AC_MSG_ERROR([Cannot locate the GSL library.  Please
 			  install it and try again.]))
+
+# Check if we have the new "official" C header for LAPACK.  Also, note that
+# there is a bug in LAPACK that causes incorrect linkage with C++11. See
+# http://icl.cs.utk.edu/lapack-forum/viewtopic.php?f=2&t=4221
+AC_CHECK_HEADER([lapacke.h],
+		AC_CHECK_LIB([lapacke], [LAPACKE_dlamch], with_lapacke=yes, with_lapacke=no),
+		with_lapacke=no)
+
+if test "x$with_lapacke" = "xyes"; then
+	AC_MSG_RESULT([Using official C bindings for LAPACK])
+	AC_DEFINE(HAVE_LAPACKE,1,[Build with lapacke.h])
+	LIBS="$LIBS -llapacke"
+else
+	AC_MSG_WARN([Official C bindings for LAPACK unavailable.  Using our own crappy bindings instead!])
+fi
 
 # Checks for header files.
 AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])
