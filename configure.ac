@@ -17,13 +17,29 @@ AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CXX
 
 dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"
+CXXFLAGS="-Wall $CXXFLAGS"
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [pow])
+
+# Check for Boost Program Options
+
+# This hack automatically checks for boost in the BOOST_HOME directory if
+# it has been defined.  Care is probably needed to ensure that this doesn't
+# cause unwanted side-effects.
+if [[ "x$BOOST_HOME" != "x" ]]; then
+	ac_boost_path=${BOOST_HOME}
+fi
+
+AX_BOOST_BASE([1.35],,
+	      AC_MSG_ERROR([Boost C++ extensions unavailable.  Please install and try again]))
+
+AX_BOOST_PROGRAM_OPTIONS
 
 dnl Check for a CBLAS implementation
 AC_SEARCH_LIBS([cblas_dgemm], [cblas gslcblas],,

@@ -1,5 +1,9 @@
 # Makefile.am - Automake input file for QWWAD project (source code)
 
+AM_CPPFLAGS = $(BOOST_CPPFLAGS)
+LDADD = $(BOOST_LDFLAGS)             \
+	$(BOOST_PROGRAM_OPTIONS_LIB)
+
 noinst_HEADERS = const.h      \
 		 d0-helpers.h \
 		 dox.h        \
@@ -54,9 +58,11 @@ bin_PROGRAMS =  csss    \
 	       	tdb     \
 	       	tsb
 
-d0_helpers = d0-helpers.c d0-helpers.h
+d0_helpers    = d0-helpers.c d0-helpers.h
+creaddata     = creaddata.cpp creaddata.h
+qwwad_options = qwwad-options.cpp qwwad-options.h
 
 d0_SOURCES   = d0.c $(d0_helpers)
 d02D_SOURCES = d02D.c $(d0_helpers)
 d03D_SOURCES = d03D.c $(d0_helpers)
-
+efiw_SOURCES = efiw.cpp $(qwwad_options)
