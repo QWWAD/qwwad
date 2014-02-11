@@ -9,7 +9,7 @@ Build-Depends: autoconf,
                automake,
                autopoint,
                debhelper (>= 8.0.0)
-Standards-Version: 3.9.5
+Standards-Version: 3.9.4
 
 Package: qwwad
 Architecture: any
@@ -19,11 +19,11 @@ Description: Simulation tools for semiconductor heterostructures
  The "Quantum Wells, Wires and Dots" (qwwad) package provides a set of
  programmes for simulating the electronic and optical properties of
  semiconductor heterostructures. At present, it includes:
- * solutions of the Schroedinger wave equation for a range of structures
- * numerical solvers for the Schroedinger and Poisson equations
- * diffusion calculations
- * impurity binding energies
- * exciton binding energies
- * quantum wires and dots
- * carrier scattering
- * empirical pseudopotential calculations
+  * solutions of the Schroedinger wave equation for a range of structures
+  * numerical solvers for the Schroedinger and Poisson equations
+  * diffusion calculations
+  * impurity binding energies
+  * exciton binding energies
+  * quantum wires and dots
+  * carrier scattering
+  * empirical pseudopotential calculations
