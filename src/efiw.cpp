@@ -10,6 +10,7 @@
 #include <valarray>
 #include <gsl/gsl_math.h>
 #include "qclsim-linalg.h"
+#include "qclsim-schroedinger.h"
 #include "qwwad-options.h"
 #include "const.h"
 
@@ -93,32 +94,9 @@ int main(int argc, char *argv[])
     const size_t N = opt.get_n_points(); // number of spatial steps
     const size_t s = opt.get_n_states(); // number of states
 
-    // Create array of spatial locations [m]
-    std::valarray<double> z(N);
-    const double dz = L/(N-1); // Spatial step [m]
+    SchroedingerSolverInfWell se(m, L, N, s);
 
-    for(unsigned int iz = 0; iz < N; ++iz)
-        z[iz] = iz*dz;
-
-    std::vector<State> solutions;
-
-    // Loop over all required states
-    for(unsigned int is=1; is<=s; is++)
-    {
-        // Energy of state [J] (QWWAD3, 2.13)
-        double E=gsl_pow_2(pi*hbar*is/L)/(2*m);
-
-        std::valarray<double> psi(N); // Wavefunction amplitude at each point [m^{-0.5}]
-
-        // Loop over spatial locations and find wavefunction
-        // amplitude at each point (QWWAD3, 2.15)
-        for(unsigned int i=0;i<N;i++)
-            psi=sqrt(2/L)*sin(is*pi*z/L); // Wavefunction [m^{-0.5}]
-
-        E*=1e3/e_0; // Convert energy to meV
-
-        solutions.push_back(State(E, psi));
-    }
+    std::vector<State> solutions = se.get_solutions(true);
 
     // Dump to file
     char energy_filename[9];
@@ -130,7 +108,7 @@ int main(int argc, char *argv[])
                          wf_prefix,
                          ".r",
                          solutions,
-                         z,
+                         se.get_z(),
                          true);
 
     return EXIT_SUCCESS;

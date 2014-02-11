@@ -10,7 +10,8 @@ noinst_HEADERS = const.h      \
 		 ef-helpers.h \
 		 maths.h      \
 		 ppff.h       \
-		 struct.h
+		 qclsim-schroedinger.h \
+		 struct.h 
 
 bin_PROGRAMS =  csss    \
 		cszb    \
@@ -61,10 +62,13 @@ bin_PROGRAMS =  csss    \
 d0_helpers    = d0-helpers.c d0-helpers.h
 creaddata     = creaddata.cpp creaddata.h
 qwwad_options = qwwad-options.cpp qwwad-options.h
-qclsim_maths  = qclsim-maths.cpp qclsim-maths.h
-qclsim_linalg = qclsim-linalg.cpp qclsim-linalg.h $(qclsim_maths)
+
+# QCLsim infrastructure (released from Leeds code)
+qclsim_maths        = qclsim-maths.cpp qclsim-maths.h
+qclsim_linalg       = qclsim-linalg.cpp qclsim-linalg.h $(qclsim_maths)
+qclsim_schroedinger = qclsim-schroedinger.cpp qclsim-schroedinger.h
 
 d0_SOURCES   = d0.c $(d0_helpers)
 d02D_SOURCES = d02D.c $(d0_helpers)
 d03D_SOURCES = d03D.c $(d0_helpers)
-efiw_SOURCES = efiw.cpp $(qwwad_options) $(qclsim_linalg)
+efiw_SOURCES = efiw.cpp qclsim-schroedinger.cpp $(qwwad_options) $(qclsim_linalg) $(qclsim_schoedinger)
