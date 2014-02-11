@@ -1,0 +1,6 @@
+qwwad (1.0+1) saucy; urgency=low
+
+  * Start packaging for automated bzr builder. See the real packaging
+    changelog on Launchpad.
+
+ -- Alex Valavanis <a.valavanis@leeds.ac.uk>  Tue, 11 Feb 2014 11:24:00 +0000
