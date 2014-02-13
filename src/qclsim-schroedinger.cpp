@@ -11,7 +11,7 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include <boost/multi_array.hpp>
-#include "qclsim_constants.h"
+#include "qclsim-constants.h"
 
 typedef boost::multi_array<double, 2> matrix;
 
@@ -294,7 +294,7 @@ void SchroedingerSolverTaylor::calculate()
 {
     _solutions = eigen_banded(&AB[0], &BB[0], _V.min(), _V.max(), _V.size(), _nst_max);
 }
-    
+
 SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                                                      const double       L,
                                                      const size_t       nz,

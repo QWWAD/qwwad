@@ -10,6 +10,7 @@ noinst_HEADERS = const.h      \
 		 ef-helpers.h \
 		 maths.h      \
 		 ppff.h       \
+		 qclsim-constants.h \
 		 qclsim-schroedinger.h \
 		 struct.h 
 

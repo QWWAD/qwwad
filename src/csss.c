@@ -23,8 +23,6 @@ static void write_ap(const double A0,
 
 int main(int argc,char *argv[])
 {
-void	write_ap();	/* writes the atomic positions/species to file	*/
-
 double	A0;		/* the lattice constant				*/
 int	n_z;		/* number of lattice points along z-axis of cell*/
 char	cation[12];	/* cation species				*/
