@@ -2,8 +2,8 @@ Source: qwwad
 Section: science
 Priority: optional
 Homepage: https://www.launchpad.net/qwwad
-Vcs-Browser: https://code.launchpad.net/~valavanisalex/qwwad/trunk
-Vcs-bzr: https://code.launchpad.net/~valavanisalex/qwwad/trunk
+Vcs-Browser: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
+Vcs-bzr: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
 Maintainer: Alex Valavanis <valavanisalex@gmail.com>
 Build-Depends: autoconf,
                automake,
