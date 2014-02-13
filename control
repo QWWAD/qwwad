@@ -11,9 +11,10 @@ Build-Depends: autoconf,
                debhelper (>= 8.0.0),
                dh-autoreconf,
                gfortran,
-               libopenblas-dev | libatlas-base-dev | libblas-dev,
+               libatlas-base-dev | libopenblas-dev | libblas-dev,
                libboost-program-options-dev,
-               libgsl0-dev
+               libgsl0-dev,
+               liblapack-dev
 Standards-Version: 3.9.4
 
 Package: qwwad
