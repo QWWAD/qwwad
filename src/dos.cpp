@@ -9,13 +9,12 @@
  *          minima which are read in from the external file `Ee.r', or `Eh.r'
  */
 
+#include "dos-functions.h"
 #include "qclsim-constants.h"
 #include "qwwad-options.h"
 #include "creaddata.h"
 #include <cstdlib>
-#include <cmath>
 #include <valarray>
-#include <gsl/gsl_math.h>
 
 using namespace Leeds;
 using namespace constants;
@@ -75,7 +74,6 @@ int main(int argc,char *argv[])
     const size_t n=1000; // Number of output energies
 
     std::valarray<double> E = read_E(p); // read in subband minima [J]
-    size_t nE = E.size();
 
     std::valarray<double> energy(n+1);   // Energies at which dos is calculated [J]
     std::valarray<double> dos_bulk(n+1); // bulk (3D) dos [J^{-1}m^{-3}]
@@ -88,19 +86,9 @@ int main(int argc,char *argv[])
     {
         energy[ie] = ie*1e-3*e; // convert meV-> J
 
-        // Bulk density of states [QWWAD3, Eq. 2.40]
-        dos_bulk[ie] = gsl_pow_3(sqrt(2*m)/hBar)*sqrt(energy[ie])/(2*gsl_pow_2(pi));
-
-        for(unsigned int i=0;i<nE;i++)
-        {
-            // Increment dos whenever we enter a new subband
-            if(energy[ie] > E[i])
-            {
-                // [QWWAD3, Eq. 2.47]
-                dos_2D[ie] += m/(pi*gsl_pow_2(hBar));
-                dos_1D[ie] += sqrt(2*m)/hBar/(pi*sqrt(energy[ie]-E[i]));
-            }
-        }
+        dos_bulk[ie] = calculate_dos_3D(m, energy[ie]);
+        dos_2D[ie]   = calculate_dos_2D(m, energy[ie], E);
+        dos_1D[ie]   = calculate_dos_1D(m, energy[ie], E);
 
         Frho << energy[ie]/(1e-3*e) << " " << dos_bulk[ie] << " " << dos_2D[ie] << " " << dos_1D[ie] << std::endl;
     }

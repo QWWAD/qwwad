@@ -4,12 +4,13 @@ AM_CPPFLAGS = $(BOOST_CPPFLAGS)
 LDADD = $(BOOST_LDFLAGS)             \
 	$(BOOST_PROGRAM_OPTIONS_LIB)
 
-noinst_HEADERS = const.h      \
-		 d0-helpers.h \
-		 dox.h        \
-		 ef-helpers.h \
-		 maths.h      \
-		 ppff.h       \
+noinst_HEADERS = const.h         \
+		 d0-helpers.h    \
+		 dos-functions.h \
+		 dox.h           \
+		 ef-helpers.h    \
+		 maths.h         \
+		 ppff.h          \
 		 qclsim-constants.h \
 		 qclsim-schroedinger.h \
 		 struct.h 
@@ -61,6 +62,7 @@ bin_PROGRAMS =  csss    \
 	       	tsb
 
 d0_helpers    = d0-helpers.c d0-helpers.h
+dos_funcs     = dos-functions.cpp dos-functions.h
 creaddata     = creaddata.cpp creaddata.h
 qwwad_options = qwwad-options.cpp qwwad-options.h
 
@@ -72,5 +74,5 @@ qclsim_schroedinger = qclsim-schroedinger.cpp qclsim-schroedinger.h
 d0_SOURCES   = d0.c $(d0_helpers)
 d02D_SOURCES = d02D.c $(d0_helpers)
 d03D_SOURCES = d03D.c $(d0_helpers)
-dos_SOURCES  = dos.cpp $(qwwad_options) $(creaddata)
+dos_SOURCES  = dos.cpp $(qwwad_options) $(creaddata) $(dos_funcs)
 efiw_SOURCES = efiw.cpp qclsim-schroedinger.cpp $(qwwad_options) $(qclsim_linalg) $(qclsim_schoedinger)
