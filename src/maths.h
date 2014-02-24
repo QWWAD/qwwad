@@ -4,6 +4,7 @@
 
 #ifndef MATHS_H
 #define MATHS_H
+#include "struct.h"
 double sec   (const double x);
 double cosec (const double x);
 double cot   (const double x);

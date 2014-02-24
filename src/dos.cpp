@@ -1,37 +1,28 @@
-/*==================================================================
-              dos  Density Of States
-  ==================================================================*/
+/**
+ * \file   dos.c Density of states calculator
+ *
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program calculates the density of states for bulk (3D),
+ *          quantum wells (2D) and quantum wires (1D), for a series of subband
+ *          minima which are read in from the external file `Ee.r', or `Eh.r'
+ */
 
-/* This program calculates the density of states for bulk (3D),
-   quantum wells (2D) and quantum wires (1D), for a series of subband
-   minima which are read in from the external file `Ee.r', or `Eh.r'
-   etc.
-
-	Input files:
-				Ex.r	x=particle, energies
-
-	Output files:		rho.r	density of states
-
-
-    Paul Harrison, 1998 						
- 
-    Paul Harrison, quantum wire added December 1998		*/
-
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
-#include <malloc.h>
+#include "qclsim-constants.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
-#include "struct.h"
-#include "const.h"
-#include "maths.h"
+
+using namespace Leeds;
+using namespace constants;
+
+double * read_E(char  p,
+                int  *nE);
 
 int main(int argc,char *argv[])
 {
-double	*read_E();	/* reads subband minima energies from file	*/
-
 double	dos_bulk;	/* bulk density of states			*/
 double	dos_2D;		/* quantum well (2D) density of states		*/
 double	dos_1D;		/* quantum wire (1D) density of states		*/
@@ -47,20 +38,19 @@ FILE	*Frho;		/* pointer to output file rho.r			*/
 
 /* default values */
 
-m=0.067*m0;		/* GaAs electron value		*/
+m=0.067*me;		/* GaAs electron value		*/
 p='e';			/* electron			*/
 
 /* default values for numerical calculations	*/
 
 n=1000;
 
-
 while((argc>1)&&(argv[1][0]=='-'))
 {
  switch(argv[1][1])
  {
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'p':
 	   p=*argv[2];
@@ -90,17 +80,19 @@ Frho=fopen("rho.r","w");
 
 for(ie=0;ie<=n;ie++)
 {
- energy=(float)ie*1e-3*e_0;		/* convert meV-> J	*/
- dos_bulk=gsl_pow_3(sqrt(2*m)/hbar)*sqrt(energy)/(2*gsl_pow_2(pi));
+ energy=(float)ie*1e-3*e;		/* convert meV-> J	*/
+ dos_bulk=gsl_pow_3(sqrt(2*m)/hBar)*sqrt(energy)/(2*gsl_pow_2(pi));
 
  dos_2D=0;		/* initialise before sum over subbands	*/
  dos_1D=0;		/* initialise before sum over subbands	*/
  for(i=0;i<nE;i++)
  {
-  dos_2D+=m/(pi*gsl_pow_2(hbar))*Theta(energy-*(E+i));
-  if(energy>*(E+i))dos_1D+=sqrt(2*m)/hbar/(pi*sqrt(energy-*(E+i)));
+     if(energy > E[i])
+         dos_2D+=m/(pi*gsl_pow_2(hBar));
+
+     if(energy>*(E+i))dos_1D+=sqrt(2*m)/hBar/(pi*sqrt(energy-*(E+i)));
  }
-fprintf(Frho,"%le %le %le %le\n",energy/(1e-3*e_0),dos_bulk,dos_2D,dos_1D);
+fprintf(Frho,"%le %le %le %le\n",energy/(1e-3*e),dos_bulk,dos_2D,dos_1D);
 }
 
 fclose(Frho);
@@ -110,15 +102,12 @@ return EXIT_SUCCESS;
 
 
 
-double
-*read_E(p,nE)
-
-/* This function reads the subband minima into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-char	p;
-int	*nE;
-
+/**
+ * Reads subband minima into memory and returns the start
+ * address of this block of memory and the number of lines
+ */
+double * read_E(char  p,
+                int  *nE)
 {
  double	*E;
  int	i=0;		/* index over the energies			*/
@@ -145,7 +134,7 @@ int	*nE;
 
  while(fscanf(FE,"%*i %le",E+i)!=EOF)
  {
-  *(E+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(E+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 
@@ -154,4 +143,4 @@ int	*nE;
  return(E);
 
 }
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

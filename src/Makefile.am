@@ -72,4 +72,5 @@ qclsim_schroedinger = qclsim-schroedinger.cpp qclsim-schroedinger.h
 d0_SOURCES   = d0.c $(d0_helpers)
 d02D_SOURCES = d02D.c $(d0_helpers)
 d03D_SOURCES = d03D.c $(d0_helpers)
+dos_SOURCES  = dos.cpp
 efiw_SOURCES = efiw.cpp qclsim-schroedinger.cpp $(qwwad_options) $(qclsim_linalg) $(qclsim_schoedinger)

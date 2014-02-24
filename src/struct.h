@@ -4,7 +4,11 @@
 #ifndef STRUCT_H
 #define STRUCT_H
 
-#include <complex.h>
+#ifdef __cplusplus
+# include <complex>
+#else
+# include <complex.h>
+#endif
 
 typedef struct
 {
