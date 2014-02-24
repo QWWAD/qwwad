@@ -9,12 +9,13 @@
 #include <cmath>
 #include <valarray>
 #include <gsl/gsl_math.h>
+#include "qclsim-constants.h"
 #include "qclsim-linalg.h"
 #include "qclsim-schroedinger.h"
 #include "qwwad-options.h"
-#include "const.h"
 
 using namespace Leeds;
+using namespace constants;
 
 /**
  * Handler for command-line options
@@ -66,7 +67,7 @@ class EFIWOptions : public Options
         /**
          * \returns the effective mass [kg]
          */
-        double get_mass() const {return vm["mass"].as<double>()*m0;}
+        double get_mass() const {return vm["mass"].as<double>()*me;}
 
         /**
          * \returns the particle ID
