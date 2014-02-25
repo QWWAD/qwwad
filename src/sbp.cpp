@@ -26,14 +26,7 @@
 using namespace Leeds;
 using namespace constants;
 
-typedef
-struct	{
-    double	E;		    /* total electron energy		  */
-    double	SR;		    /* scattering rate            	  */
-} data;
-
 double   f(double E_F, double Emax, double Emin, double m, int N, double T);
-double * read_populations(int n);
 void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
 double   calc_fermilevel(double E, double m, double N, double T);
 double   Vmax();
@@ -111,14 +104,14 @@ int main(int argc,char *argv[])
 
     std::valarray<double> E=read_E(p); // reads subband energy file
     const size_t n = E.size();
-    double *N=read_populations(n);		/* reads subband populations file	*/
+    std::valarray<double> N=read_populations(n); // reads subband populations file
 
     if((FEf=fopen("Ef.r","w"))==0)
     {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(EXIT_FAILURE);}
 
     for(unsigned int s=0; s<n; s++) // s=0 => ground state
     {
-        const double Ef=calc_fermilevel(E[s],m,*(N+s),T);
+        const double Ef=calc_fermilevel(E[s],m,N[s],T);
 
         fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
 
@@ -202,8 +195,8 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
  */
 double calc_fermilevel(double E, double m, double N, double T)
 {
-    double	delta_E=0.001*1e-3*e;	// energy increment
-    double	y1;			/* dependent variable			*/
+    double delta_E=0.001*1e-3*e; // energy increment
+    double y1;			 // dependent variable
 
     double Emin=E;      // subband minimum
     double vmax=Vmax();	// calulate potential maximum
@@ -256,57 +249,13 @@ double f(double E_F, double Emax, double Emin, double m, int N, double T)
 }
 
 /**
- * \brief reads subband populations from N.r
- *
- * \details This function reads the populations into memory and returns the start
- *          address of this block of memory and the number of lines
- */
-double * read_populations(int n)
-{
-    int	i=0;		/* index over the energies			*/
-    FILE 	*FN;		/* file pointer to energy data 			*/
-
-    if((FN=fopen("N.r","r"))==0)
-    {
-        fprintf(stderr,"Error: Cannot open input file 'N.r'!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    int m=0; // Counter over number of populations defined
-    while(fscanf(FN,"%*i %*f")!=EOF)
-        m++;
-    rewind(FN);
-
-    if(m!=n)
-    {printf("Subband populations not defined for all levels!\n");exit(EXIT_FAILURE);}
-
-    double *N = new double[n];
-    if (N==0)  {
-        fprintf(stderr,"Cannot allocate memory!\n");
-        exit(EXIT_FAILURE);
-    }
-
-    while(fscanf(FN,"%*i %lf",N+i)!=EOF)
-    {
-        N[i]=1e+10*1e+4;	/*convert from units of 10^10cm^-2->m^-2 */
-        i++;
-    }
-
-    fclose(FN);
-
-    return N;
-}
-
-/**
  * Scans the file v.r and returns the maximum value of the potential.
  */
 double Vmax()
 {
-    double	max;			/* maximum value of potential energy	*/
-    double	v;			/* potential				*/
-    FILE	*Fv;			/* file pointer to v.r			*/
-
-    max=0;
+    double  max = 0; // maximum value of potential energy
+    double  v;       // potential
+    FILE   *Fv;      // file pointer to v.r
 
     if((Fv=fopen("v.r","r"))==0)
     {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(EXIT_FAILURE);}
@@ -316,6 +265,6 @@ double Vmax()
 
     fclose(Fv);
 
-    return(max);
+    return max;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

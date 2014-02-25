@@ -37,4 +37,22 @@ std::valarray<double> read_E(char p)
 
     return E;
 }
+
+/**
+ * \brief reads subband populations from N.r
+ *
+ * \details The input file is expected to take the form:
+ *          COLUMN 1: Subband index
+ *          COLUMN 2: Population [10^10 cm^{-2}]
+ */
+std::valarray<double> read_populations(int n)
+{
+    std::valarray<unsigned int> indices(n);
+    std::valarray<double>       N(n);
+    Leeds::read_table_xy("N.r", indices, N, n);
+
+    N *= 1e+10*1e+4; // convert from units of 10^10cm^{-2}->m^{-2}
+
+    return N;
+}
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

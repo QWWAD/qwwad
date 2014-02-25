@@ -12,5 +12,6 @@
 #include <valarray>
 
 std::valarray<double> read_E(char p);
+std::valarray<double> read_populations(int n);
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
