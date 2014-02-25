@@ -1,5 +1,5 @@
 /**
- * \file qwwad-fileio.cpp
+ * \file qwwad-fileio.h
  *
  * \brief Convenience functions for reading common data from files
  *

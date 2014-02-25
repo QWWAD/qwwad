@@ -19,14 +19,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
+#include "fermi.h"
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 #include "qwwad-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
 using namespace constants;
 
-double   f(double E_F, double Emax, double Emin, double m, int N, double T);
 void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
 double   calc_fermilevel(double E, double m, double N, double T);
 
@@ -101,16 +102,21 @@ int main(int argc,char *argv[])
     const char   p       = opt.get_particle();
     const double T       = opt.get_temperature();
 
-    std::valarray<double> E=read_E(p); // reads subband energy file
+    std::valarray<double> E = read_E(p); // reads subband energy file
     const size_t n = E.size();
     std::valarray<double> N=read_populations(n); // reads subband populations file
 
     if((FEf=fopen("Ef.r","w"))==0)
-    {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(EXIT_FAILURE);}
+    {
+        fprintf(stderr,"Error: Cannot open output file 'Ef.r'!\n");
+        exit(EXIT_FAILURE);
+    }
 
     for(unsigned int s=0; s<n; s++) // s=0 => ground state
     {
-        const double Ef=calc_fermilevel(E[s],m,N[s],T);
+        //const double Ef=calc_fermilevel(E[s],m,N[s],T);
+        std::cout << E[s] << " " << m << " " << N[s] << " " << T << std::endl;
+        const double Ef=find_fermi(E[s],m,N[s],T);
 
         fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
 
@@ -134,116 +140,28 @@ int main(int argc,char *argv[])
  */
 void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
 {
-    double Ne=0;        // total electron density (for checking)
     char   filename[9]; // output filename for FD distribs
-
     sprintf(filename,"FD%i.r",s+1);
-    FILE *FFD=fopen(filename,"w"); // FD probability file
 
     double vmax=Vmax(); // Maximum potential
-    double Emax=Ef+10*kB*T;if(Emax>vmax) Emax=vmax; // Cut-off energy [J]
+    double Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
 
-    /* Implement trapezium rule integration, i.e. `ends+2middles' 	*/
-
-    double f=1/(exp((Emin-Ef)/(kB*T))+1); // occupation probability
-    fprintf(FFD,"%20.17le %20.17le\n",Emin/(1e-3*e),f);
-    Ne+=f;
-
-    const double dE=(Emax-Emin)/(nE-1); // Energy increment for integration
-    double E=Emin; //Energy
-    for(int i=1; i<nE-1; i++)
-    {
-        E+=dE;
-        f=1/(exp((E-Ef)/(kB*T))+1);
-        fprintf(FFD,"%20.17le %20.17le\n",E/(1e-3*e),f);
-        Ne+=2*f;
-    }
-
-    f=1/(exp((Emax-Ef)/(kB*T))+1);
-    fprintf(FFD,"%20.17le %20.17le\n",Emax/(1e-3*e),f);
-    Ne+=f;
-
-    Ne*=m/(pi*gsl_pow_2(hBar))*0.5*dE;
-
-    printf("Ne=%20.17le\n",Ne/1e+14);
-
-    fclose(FFD);
-}
-
-/**
- * \brief calculates Fermi level
- *
- * \param[in] E subband minima
- * \param[in] m effective mass
- * \param[in] N number of electrons/unit area
- * \param[in] T temperature
- *
- * \details Solutions are sought, using a stepping algorithm, a midpoint rule and
- *          finally a Newton-Raphson method, to the equation f(E_F)=0.  This
- *          function has been derived by integrating the total density of states
- *          multiplied by the Fermi-Dirac distribution function across the in-plane
- *          energy---thus giving the total electron density, i.e.
- *
- *                 oo
- *           Ne=  I  f(E)N(E) dE
- *                 Eo
- *
- *         where f(E) is the normal Fermi-Dirac distribution function and
- *         N(E)=m/(pi*sqr(hbar)) is the areal density of states in a QW, see
- *         Bastard p12.
- */
-double calc_fermilevel(double E, double m, double N, double T)
-{
-    double delta_E=0.001*1e-3*e; // energy increment
-    double y1;			 // dependent variable
-
-    double Emin=E;      // subband minimum
-    double vmax=Vmax();	// calulate potential maximum
-
-    double x=Emin-20*kB*T; // first value of x
-
-    /* In this implementation, the upper limit of integration is set at the 
-       Fermi level+10kT, limited at potential maximum			*/
-
-    double Emax=x+10*kB*T; // Subband maximum
+    if(Emax<Emin) Emax=Emin+10*kB*T;
     if(Emax>vmax) Emax=vmax;
 
-    double y2=f(x,Emax,Emin,m,N,T);
+    std::valarray<double> E(nE); // Array of energies for plot
+    std::valarray<double> f(nE); // Occupation probabilities
 
-    do
+    const double dE=(Emax-Emin)/(nE-1); // Energy increment for integration
+    for(int i=0; i<nE; i++)
     {
-        y1=y2;
-        x+=delta_E;
-        Emax=x+10*kB*T;if(Emax>vmax) Emax=vmax;
-        y2=f(x,Emax,Emin,m,N,T);
-    }while(y1*y2>0);
+        E[i] = Emin + i*dE;
+        f[i] = f_FD(Ef, E[i], T);
+    }
 
-    /* improve estimate using midpoint rule */
+    E/=(1e-3*e); // Convert to meV for output
 
-    x-=fabs(y2)/(fabs(y1)+fabs(y2))*delta_E;
-
-    return x;
-}
-
-/**
- * Function to be solved
- *
- * \param[in] E_F   Fermi energy
- * \param[in] Emax  subband maximum (top of QW)
- * \param[in] Emin  subband minimum
- * \param[in] m     effective mass
- * \param[in] N     number of electrons/unit area
- * \param[in] T     temperature
- */
-double f(double E_F, double Emax, double Emin, double m, int N, double T)
-{
-    double y=m/(pi*hBar)*(kB*T/hBar)*
-        (
-         ((Emax-E_F)/(kB*T)-log(1+exp((Emax-E_F)/(kB*T))))-
-         ((Emin-E_F)/(kB*T)-log(1+exp((Emin-E_F)/(kB*T))))
-        )
-        -N;
-
-    return y;
+    write_table_xy(filename, E, f);
+    printf("Ne=%20.17le\n",find_pop(m, Ef-Emin, T)/1e+14);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

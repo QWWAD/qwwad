@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Solve single quantum well
 
 efiw -L 200 -s 1
@@ -27,7 +27,7 @@ echo 1 $N > N.r
 
 # Write Fermi energy to file
 
- echo -n -e "$N\t" >> Ef-N.r
+ echo -n "$N\t" >> Ef-N.r
  nawk '{printf("%8.3f\n",$2)}' Ef.r >> Ef-N.r
 }
 done

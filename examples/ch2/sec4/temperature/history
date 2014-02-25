@@ -6,6 +6,10 @@ rm -f Ef-T.r
 # Solve single quantum well
 
 efiw -L 200 -s 3
+N=1
+echo 1 $N > N.r
+echo 2 $N >> N.r
+echo 3 $N >> N.r
 
 # Need to artificially create a file v.r containing a barrier height,
 # this used later in numerical solutions of Schrodinger's equation
