@@ -29,7 +29,6 @@ using namespace constants;
 double   f(double E_F, double Emax, double Emin, double m, int N, double T);
 void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
 double   calc_fermilevel(double E, double m, double N, double T);
-double   Vmax();
 
 /**
  * Handler for command-line options
@@ -246,25 +245,5 @@ double f(double E_F, double Emax, double Emin, double m, int N, double T)
         -N;
 
     return y;
-}
-
-/**
- * Scans the file v.r and returns the maximum value of the potential.
- */
-double Vmax()
-{
-    double  max = 0; // maximum value of potential energy
-    double  v;       // potential
-    FILE   *Fv;      // file pointer to v.r
-
-    if((Fv=fopen("v.r","r"))==0)
-    {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(EXIT_FAILURE);}
-
-    while(fscanf(Fv,"%*e %le",&v)!=EOF)
-        if(v>max) max=v;
-
-    fclose(Fv);
-
-    return max;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

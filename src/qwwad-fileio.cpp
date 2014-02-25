@@ -55,4 +55,17 @@ std::valarray<double> read_populations(int n)
 
     return N;
 }
+
+/**
+ * \brief Scans the file v.r and returns the maximum value of the potential
+ *
+ * \returns Maximum potential [J]
+ */
+double Vmax()
+{
+    std::valarray<double> z;
+    std::valarray<double> V;
+    Leeds::read_table_xy("v.r", z, V);
+    return V.max();
+}
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
