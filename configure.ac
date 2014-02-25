@@ -10,13 +10,14 @@ AC_CONFIG_HEADERS([config.h])
 
 # The number in the options list here refers to the minimum version
 # of Automake that can be accepted
-AM_INIT_AUTOMAKE([-W -Wall 1.11])
+AM_INIT_AUTOMAKE([-W -Wall 1.11 subdir-objects])
 
 dnl Quieten the Make output
 AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_CXX
 
 dnl Enable some compiler flags by default
@@ -93,9 +94,5 @@ AC_HEADER_STDBOOL
 # Checks for library functions.
 AC_CHECK_FUNCS([floor modf sqrt])
 
-AC_CONFIG_FILES([Makefile
-		 config/Makefile
-		 examples/Makefile
-		 m4/Makefile
-		 src/Makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
