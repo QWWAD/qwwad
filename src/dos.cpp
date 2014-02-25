@@ -11,15 +11,14 @@
 
 #include "dos-functions.h"
 #include "qclsim-constants.h"
+#include "qwwad-fileio.h"
 #include "qwwad-options.h"
-#include "creaddata.h"
 #include <cstdlib>
 #include <valarray>
+#include <fstream>
 
 using namespace Leeds;
 using namespace constants;
-
-static std::valarray<double> read_E(char p);
 
 /**
  * Handler for command-line options
@@ -96,22 +95,4 @@ int main(int argc,char *argv[])
     Frho.close();
     return EXIT_SUCCESS;
 } /* end main */
-
-/**
- * Reads subband minima from file
- */
-static std::valarray<double> read_E(char p)
-{
-    char filename[9];	// filename string
-
-    std::valarray<double> indices;
-    std::valarray<double> E;
-
-    sprintf(filename,"E%c.r",p);
-    read_table_xy(filename, indices, E);
-
-    E *= 1e-3*e; // convert meV->J
-
-    return E;
-}
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

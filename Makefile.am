@@ -78,6 +78,7 @@ bin_PROGRAMS =  src/csss    \
 d0_helpers    = src/d0-helpers.c src/d0-helpers.h
 dos_funcs     = src/dos-functions.cpp src/dos-functions.h
 qwwad_options = src/qwwad-options.cpp src/qwwad-options.h
+qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 
 # QCLsim infrastructure (released from Leeds code)
 noinst_LIBRARIES = src/libqclsim.a
@@ -95,11 +96,11 @@ src_d0_SOURCES   = src/d0.c $(d0_helpers)
 src_d02D_SOURCES = src/d02D.c $(d0_helpers)
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
 
-src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(dos_funcs)
+src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(dos_funcs) $(qwwad_fileio)
 src_dos_LDADD    = src/libqclsim.a $(LDADD)
 
 src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
 src_efiw_LDADD   = src/libqclsim.a $(LDADD)
 
-src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options)
+src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqclsim.a $(LDADD)

@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
+#include "qwwad-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
@@ -32,7 +33,6 @@ struct	{
 } data;
 
 double   f(double E_F, double Emax, double Emin, double m, int N, double T);
-double * read_energies(char p, int *n);
 double * read_populations(int n);
 void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
 double   calc_fermilevel(double E, double m, double N, double T);
@@ -101,8 +101,6 @@ int main(int argc,char *argv[])
 {
     SBPOptions opt(argc, argv);
 
-double	Ef;			/* Fermi energy 			*/
-int	n;			/* number of lines in `filename'	*/
 FILE	*FEf;			/* file pointer to Fermi Energy file	*/
 
 const bool   FD_flag = opt.get_fd_flag();
@@ -111,24 +109,23 @@ const size_t nE      = opt.get_n_energy();
 const char   p       = opt.get_particle();
 const double T       = opt.get_temperature();
 
-double *E=read_energies(p,&n);		/* reads subband energy file	*/
+std::valarray<double> E=read_E(p); // reads subband energy file
+const size_t n = E.size();
 double *N=read_populations(n);		/* reads subband populations file	*/
 
 if((FEf=fopen("Ef.r","w"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(0);}
 
-for(int s=0;s<n;s++)		/* s=0 => ground state		*/
+for(unsigned int s=0; s<n; s++) // s=0 => ground state
 {
- Ef=calc_fermilevel(*(E+s),m,*(N+s),T);
+ const double Ef=calc_fermilevel(E[s],m,*(N+s),T);
 
  fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
 
- if(FD_flag) calc_dist(*(E+s),Ef,m,T,nE,s);
+ if(FD_flag) calc_dist(E[s],Ef,m,T,nE,s);
 }
 
 fclose(FEf);
-
-free(E);
 
 return EXIT_SUCCESS;
 } /* end main */
@@ -271,49 +268,6 @@ y=m/(pi*hBar)*(kB*T/hBar)*
   -N;
 
 return(y);
-}
-
-/**
- * \brief reads subband energies from Ep.r
- *
- * \details This function reads the potential into memory and returns the start
- *          address of this block of memory and the number of lines
- */
-double * read_energies(char p, int *n)
-{
- double	*E;
- int	i=0;		/* index over the energies			*/
- char	filename[9];	/* filename string				*/
- FILE 	*FE;		/* file pointer to energy data 			*/
-
- sprintf(filename,"E%c.r",p);
- if((FE=fopen(filename,"r"))==0)
- {
-   fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
-   exit(0);
- }
-
- *n=0;
- while(fscanf(FE,"%*i %*e")!=EOF)
-  (*n)++;
- rewind(FE);
-
- E=(double *)calloc(*n,sizeof(double));
- if (E==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
-
- while(fscanf(FE,"%*i %le",E+i)!=EOF)
- {
-  *(E+i)*=1e-3*e;		/*convert meV->J		*/
-  i++;
- }
-
- fclose(FE);
-
- return(E);
-
 }
 
 /**
