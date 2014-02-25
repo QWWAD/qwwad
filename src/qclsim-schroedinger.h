@@ -9,11 +9,9 @@
 #define QCLSIM_SCHROEDINGER_H
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #endif
 
-#include <valarray>
-#include <vector>
 #include "qclsim-linalg.h"
 
 namespace Leeds
@@ -98,7 +96,6 @@ public:
 private:
     double _me; ///< Effective mass (constant) [kg]
     double _L;  ///< Width of quantum well [m]
-    size_t _nz; ///< Number of spatial samples
 
     void calculate();
 };

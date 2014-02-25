@@ -2,8 +2,7 @@
  *  \file     qclsim-schroedinger.cpp
  *  \author   Jonathan Cooper 
  *  \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
- *  \date     2012-10-12
- *  \brief    Implementatation of Schrodinger solver functions for two-dimensional systemsi
+ *  \brief    Implementatation of Schrodinger solver functions for two-dimensional systems
  */
 
 #include "qclsim-schroedinger.h"
@@ -303,8 +302,7 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                        std::valarray<double>(nz),
                        nst_max),
     _me(me),
-    _L(L),
-    _nz(nz)
+    _L(L)
 {
     const double dz = L/(nz-1); // Spatial step
 
