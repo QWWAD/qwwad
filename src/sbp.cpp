@@ -32,13 +32,15 @@ struct	{
  double	SR;		    /* scattering rate            	  */
 } data;
 
+double   f(double E_F, double Emax, double Emin, double m, int N, double T);
+double * read_energies(char p, int *n);
+double * read_populations(int n);
+void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
+double   calc_fermilevel(double E, double m, double N, double T);
+double   Vmax();
+
 int main(int argc,char *argv[])
 {
-double	calc_fermilevel();	/* calculates Fermi level		*/
-double	*read_energies();	/* reads subband energies from Ep.r	*/
-double	*read_populations();	/* reads subband populations from N.r	*/
-void	calc_dist();		/* calculates electron distribution	*/
-
 double	*E;			/* pointer to energy data		*/
 double	Ef;			/* Fermi energy 			*/
 double	m;			/* effective mass			*/
@@ -125,24 +127,18 @@ return EXIT_SUCCESS;
 
 
 
-void
-calc_dist(Emin,Ef,m,T,nE,s)
-
-/* This function calculates the probability of occupation of the 
-   subband energies.
-
-                                                                        */
- 
-
-double	Emin;			/* subband minima			*/
-double  Ef;			/* Fermi energy                         */
-double  m;                      /* effective mass                       */
-double  T;                      /* temperature                          */
-int	nE;			/* number of energies to output FD	*/
-int	s;			/* number of subband			*/
+/**
+ * \brief calculates the probability of occupation of the subband energies
+ *
+ * \param[in] Emin subband minima
+ * \param[in] Ef   Fermi energy
+ * \param[in] m    effective mass
+ * \param[in] T    temperature
+ * \param[in] nE   number of energies to output FD
+ * \param[in] s    number of subband
+ */
+void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
 {
-double	Vmax(); 
-
 double	dE;			/* energy increment in integration	*/
 double	E;			/* Energy				*/
 double	Emax;
@@ -189,33 +185,30 @@ fclose(FFD);
 
 
 
-double
-calc_fermilevel(E,m,N,T)
- 
-/* Solutions are sought, using a stepping algorithm, a midpoint rule and 
-   finally a Newton-Raphson method, to the equation f(E_F)=0.  This 
-   function has been derived by integrating the total density of states
-   multiplied by the Fermi-Dirac distribution function across the in-plane
-   energy---thus giving the total electron density, i.e.
-
-         oo
-   Ne=  I  f(E)N(E) dE
-         Eo
-   
-   where f(E) is the normal Fermi-Dirac distribution function and
-   N(E)=m/(pi*sqr(hbar)) is the areal density of states in a QW, see
-   Bastard p12.
-									*/
-   
-
-double	E;			/* subband minima 			*/
-double	m;			/* effective mass			*/
-double	N;			/* number of electrons/unit area	*/
-double	T;			/* temperature				*/
+/**
+ * \brief calculates Fermi level
+ *
+ * \param[in] E subband minima
+ * \param[in] m effective mass
+ * \param[in] N number of electrons/unit area
+ * \param[in] T temperature
+ *
+ * \details Solutions are sought, using a stepping algorithm, a midpoint rule and
+ *          finally a Newton-Raphson method, to the equation f(E_F)=0.  This
+ *          function has been derived by integrating the total density of states
+ *          multiplied by the Fermi-Dirac distribution function across the in-plane
+ *          energy---thus giving the total electron density, i.e.
+ *
+ *                 oo
+ *           Ne=  I  f(E)N(E) dE
+ *                 Eo
+ *
+ *         where f(E) is the normal Fermi-Dirac distribution function and
+ *         N(E)=m/(pi*sqr(hbar)) is the areal density of states in a QW, see
+ *         Bastard p12.
+ */
+double calc_fermilevel(double E, double m, double N, double T)
 {
-double  f();			/* function to be solved		*/
-double	Vmax();			/* maximum value of potential		*/
-
 double	delta_E=0.001*1e-3*e_0;	/* energy increment			*/
 double 	Emin;			/* subband minimum			*/
 double 	Emax;			/* subband maximum			*/
@@ -254,18 +247,17 @@ return(x);
 
 
 
-double
-f(E_F,Emax,Emin,m,N,T)
-
-/* Function to be solved						
-									*/
-
-double 	E_F;			/* Fermi energy				*/
-double 	Emax;			/* subband maximum (top of QW)		*/
-double 	Emin;			/* subband minimum			*/
-double	m;			/* effective mass			*/
-double	N;			/* number of electrons/unit area	*/
-double	T;			/* temperature				*/
+/**
+ * Function to be solved
+ *
+ * \param[in] E_F   Fermi energy
+ * \param[in] Emax  subband maximum (top of QW)
+ * \param[in] Emin  subband minimum
+ * \param[in] m     effective mass
+ * \param[in] N     number of electrons/unit area
+ * \param[in] T     temperature
+ */
+double f(double E_F, double Emax, double Emin, double m, int N, double T)
 {
 double	y;			/* dependent variable			*/
 
@@ -281,15 +273,13 @@ return(y);
 
 
 
-double
-*read_energies(p,n)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-char	p;
-int	*n;
-
+/**
+ * \brief reads subband energies from Ep.r
+ *
+ * \details This function reads the potential into memory and returns the start
+ *          address of this block of memory and the number of lines
+ */
+double * read_energies(char p, int *n)
 {
  double	*E;
  int	i=0;		/* index over the energies			*/
@@ -328,14 +318,13 @@ int	*n;
 
 
 
-double
-*read_populations(n)
-
-/* This function reads the populations into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-int	n;
-
+/**
+ * \brief reads subband populations from N.r
+ *
+ * \details This function reads the populations into memory and returns the start
+ *          address of this block of memory and the number of lines
+ */
+double * read_populations(int n)
 {
  double	*N;
  int	i=0;		/* index over the energies			*/
@@ -376,12 +365,10 @@ int	n;
 
 
 
-double
-Vmax()
-
-/* This function scans the file v.r and returns the maximum value of the
-   potential.
-									*/
+/**
+ * Scans the file v.r and returns the maximum value of the potential.
+ */
+double Vmax()
 {
  double	max;			/* maximum value of potential energy	*/
  double	v;			/* potential				*/
@@ -400,3 +387,4 @@ fclose(Fv);
 return(max);
 
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
