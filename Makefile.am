@@ -3,7 +3,7 @@
 #endif
 
 ACLOCAL_AMFLAGS=-I m4
-#SUBDIRS=config m4 # $(OPTIONAL_DOCS)
+#SUBDIRS=$(OPTIONAL_DOCS)
 
 EXTRA_DIST=autogen.sh                     \
 	   config/install-sh              \
@@ -77,16 +77,26 @@ bin_PROGRAMS =  src/csss    \
 
 d0_helpers    = src/d0-helpers.c src/d0-helpers.h
 dos_funcs     = src/dos-functions.cpp src/dos-functions.h
-creaddata     = src/creaddata.cpp src/creaddata.h
 qwwad_options = src/qwwad-options.cpp src/qwwad-options.h
 
 # QCLsim infrastructure (released from Leeds code)
-qclsim_maths        = src/qclsim-maths.cpp src/qclsim-maths.h
-qclsim_linalg       = src/qclsim-linalg.cpp src/qclsim-linalg.h $(qclsim_maths)
-qclsim_schroedinger = src/qclsim-schroedinger.cpp src/qclsim-schroedinger.h
+noinst_LIBRARIES = src/libqclsim.a
+src_libqclsim_a_SOURCES =  \
+			   src/qclsim-fileio.cpp       \
+			   src/qclsim-fileio.h         \
+			   src/qclsim-linalg.cpp       \
+			   src/qclsim-linalg.h         \
+			   src/qclsim-maths.cpp        \
+			   src/qclsim-maths.h          \
+			   src/qclsim-schroedinger.cpp \
+			   src/qclsim-schroedinger.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 src_d02D_SOURCES = src/d02D.c $(d0_helpers)
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
-src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(creaddata) $(dos_funcs)
-src_efiw_SOURCES = src/efiw.cpp src/qclsim-schroedinger.cpp $(qwwad_options) $(qclsim_linalg) $(qclsim_schoedinger)
+
+src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(dos_funcs)
+src_dos_LDADD    = src/libqclsim.a $(LDADD)
+
+src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
+src_efiw_LDADD   = src/libqclsim.a $(LDADD)

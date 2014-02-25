@@ -17,8 +17,19 @@ AM_SILENT_RULES([yes])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_F77
 AM_PROG_CC_C_O
 AC_PROG_CXX
+
+dnl Libtool needs access to the "ar" archiver so check that it exists.
+dnl TODO: This macro is new in Automake 1.12 so we can apply this
+dnl       check by default once we update our Automake dependency.
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
+# Set up libtool
+AC_PROG_LIBTOOL
+LT_PREREQ([2.2])
+LT_INIT
 
 dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"

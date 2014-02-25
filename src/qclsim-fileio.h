@@ -1,5 +1,5 @@
 /**
- * \file   creaddata.h
+ * \file   qclsim-fileio.h
  * \brief  Functions for reading data from standard input 
  * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
  * \author Jonathan Cooper <jdc.tas@gmail.com>

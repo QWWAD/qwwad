@@ -1,11 +1,11 @@
 /**
- * \file   creaddata.cpp
+ * \file   qclsim-fileio.cpp
  * \brief  Functions for reading data from standard input
  * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
  * \author Jonathan Cooper <jdc.tas@gmail.com>
  */
 
-#include "creaddata.h"
+#include "qclsim-fileio.h"
 
 namespace Leeds
 {
