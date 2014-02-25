@@ -1,30 +1,29 @@
-/*==================================================================
-      sbp	SubBand Populations
-  ==================================================================
+/**
+ * \file  sbp.cpp
+ * \brief Calculate subband populations
+ *
+ * \details This program generates the Fermi-Dirac distribution function
+ *          for an individual subband given its population and the lattice
+ *          temperature.
+ *
+ *          Input files:
+ *            Ep.r  Subband energies file, p=e,h,l
+ *
+ *          Output files:
+ *            FDX.r F-D distribution for subband X
+ *
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
-   This program generates the Fermi-Dirac distribution function
-   for an individual subband given its population and the lattice
-   temperature.
-
-	Input files:
-			Ep.r	Subband energies file, p=e,h,l
-
-	Output files:
-			FDX.r	F-D distribution for subband X
-
-   Paul Harrison, March 1997                                   */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <math.h>
-#include <signal.h>
-#include <malloc.h>
+#include <cstdio>
+#include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "struct.h"
-#include "const.h"
-#include "maths.h"
+#include "qclsim-constants.h"
+#include "qwwad-options.h"
+
+using namespace Leeds;
+using namespace constants;
 
 typedef
 struct	{
@@ -39,81 +38,90 @@ void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
 double   calc_fermilevel(double E, double m, double N, double T);
 double   Vmax();
 
+/**
+ * Handler for command-line options
+ */
+class SBPOptions : public Options
+{
+    public:
+        SBPOptions(int argc, char* argv[])
+        {
+            try
+            {
+                program_specific_options->add_options()
+                    ("fd,f", po::bool_switch()->default_value(false),
+                     "Output Fermi-Dirac distribution.")
+
+                    ("mass,m", po::value<double>()->default_value(0.067),
+                     "Effective mass (relative to that of a free electron)")
+
+                    ("nenergy,n", po::value<size_t>()->default_value(1000),
+                     "Number of energy samples for output file")
+
+                    ("particle,p", po::value<char>()->default_value('e'),
+                     "Particle to be used: 'e', 'h' or 'l'")
+
+                    ("temperature,T", po::value<double>()->default_value(300),
+                     "Temperature of carrier distribution [K]")
+                    ;
+
+                std::string doc("Find the Fermi-Dirac distribution function for an individual "
+                                "subband given its population and temperature."
+                                "The subband minimum is read from the file \"E*.r\", "
+                                "and the distribution is written to \"FDi.r\" where the '*' "
+                                "is replaced by the particle ID in each case and the "
+                                "'i' is replaced by the number of the state");
+
+                add_prog_specific_options_and_parse(argc, argv, doc);	
+            }
+            catch(std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        /// \returns the effective mass [kg]
+        bool get_fd_flag() const {return vm["fd"].as<bool>();}
+
+        /// \returns the effective mass [kg]
+        double get_mass() const {return vm["mass"].as<double>()*me;}
+
+        /// \returns the particle ID
+        char get_particle() const {return vm["particle"].as<char>();}
+
+        /// \returns the number of energy samples
+        size_t get_n_energy() const {return vm["nenergy"].as<size_t>();}
+
+        /// \returns the temperature of the carrier distributeion [K]
+        double get_temperature() const {return vm["temperature"].as<double>();}
+};
+
 int main(int argc,char *argv[])
 {
-double	*E;			/* pointer to energy data		*/
+    SBPOptions opt(argc, argv);
+
 double	Ef;			/* Fermi energy 			*/
-double	m;			/* effective mass			*/
-double	*N;			/* number of electrons/area 		*/
-double	T;			/* temperature				*/
 int	n;			/* number of lines in `filename'	*/
-int	nE;			/* number of energies to output FD	*/
-int	s;			/* index over subband states		*/
-char	p;			/* particle, e, h or l			*/
-bool	FD_flag;		/* if true prints out all FD distrib	*/
 FILE	*FEf;			/* file pointer to Fermi Energy file	*/
 
-/* default values */
+const bool   FD_flag = opt.get_fd_flag();
+const double m       = opt.get_mass();
+const size_t nE      = opt.get_n_energy();
+const char   p       = opt.get_particle();
+const double T       = opt.get_temperature();
 
-FD_flag=false;
-m=0.067*m0;		/* GaAs electron effective mass		*/
-nE=1000;
-p='e';
-T=300;
-
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'f':
-           FD_flag=true;
-           argv--;
-           argc++;
-           break;
-  case 'm':
-	   m=atof(argv[2])*m0;
-	   break;
-  case 'n':
-	   nE=atoi(argv[2]);
-	   break;
-  case 'p':
-           p=*argv[2];
-           switch(p)
-           {
-            case 'e': break;
-            case 'h': break;
-            case 'l': break;
-            default:  printf("Usage:  sbp [-p particle (\033[1me\033[0m, h, or l)]\n");
-                      exit(0);
-           }
-           break;
-  case 'T':
-	   T=atof(argv[2]);
-	   break;
-  default :
-	   printf("Usage:  sbp [-f (output distributions \033[1mfalse\033[0m)][-m mass (\033[1m0.067\033[0mm0)]\n");
-	   printf("            [-n (number of output energies \033[1m1000\033[0m)][-p particle (\033[1me\033[0m, h, or l)]\n");
-	   printf("            [-T temperature (\033[1m300\033[0mK)]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
-
-E=read_energies(p,&n);		/* reads subband energy file	*/
-
-N=read_populations(n);		/* reads subband populations file	*/
+double *E=read_energies(p,&n);		/* reads subband energy file	*/
+double *N=read_populations(n);		/* reads subband populations file	*/
 
 if((FEf=fopen("Ef.r","w"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(0);}
 
-for(s=0;s<n;s++)		/* s=0 => ground state		*/
+for(int s=0;s<n;s++)		/* s=0 => ground state		*/
 {
  Ef=calc_fermilevel(*(E+s),m,*(N+s),T);
 
- fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e_0));
+ fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
 
  if(FD_flag) calc_dist(*(E+s),Ef,m,T,nE,s);
 }
@@ -124,8 +132,6 @@ free(E);
 
 return EXIT_SUCCESS;
 } /* end main */
-
-
 
 /**
  * \brief calculates the probability of occupation of the subband energies
@@ -154,12 +160,12 @@ sprintf(filename,"FD%i.r",s+1);
 FFD=fopen(filename,"w");
 
 vmax=Vmax();
-Emax=Ef+10*kb*T;if(Emax>vmax) Emax=vmax;
+Emax=Ef+10*kB*T;if(Emax>vmax) Emax=vmax;
 
 /* Implement trapezium rule integration, i.e. `ends+2middles' 	*/
 
-f=1/(exp((Emin-Ef)/(kb*T))+1);
-fprintf(FFD,"%20.17le %20.17le\n",Emin/(1e-3*e_0),f);
+f=1/(exp((Emin-Ef)/(kB*T))+1);
+fprintf(FFD,"%20.17le %20.17le\n",Emin/(1e-3*e),f);
 Ne+=f;
 
 dE=(Emax-Emin)/(nE-1);
@@ -167,23 +173,21 @@ E=Emin;
 for(i=1;i<nE-1;i++)
 {
  E+=dE;
- f=1/(exp((E-Ef)/(kb*T))+1);
- fprintf(FFD,"%20.17le %20.17le\n",E/(1e-3*e_0),f);
+ f=1/(exp((E-Ef)/(kB*T))+1);
+ fprintf(FFD,"%20.17le %20.17le\n",E/(1e-3*e),f);
  Ne+=2*f;
 }
 
-f=1/(exp((Emax-Ef)/(kb*T))+1);
-fprintf(FFD,"%20.17le %20.17le\n",Emax/(1e-3*e_0),f);
+f=1/(exp((Emax-Ef)/(kB*T))+1);
+fprintf(FFD,"%20.17le %20.17le\n",Emax/(1e-3*e),f);
 Ne+=f;
 
-Ne*=m/(pi*gsl_pow_2(hbar))*0.5*dE;
+Ne*=m/(pi*gsl_pow_2(hBar))*0.5*dE;
 
 printf("Ne=%20.17le\n",Ne/1e+14);
 
 fclose(FFD);
 }
-
-
 
 /**
  * \brief calculates Fermi level
@@ -209,7 +213,7 @@ fclose(FFD);
  */
 double calc_fermilevel(double E, double m, double N, double T)
 {
-double	delta_E=0.001*1e-3*e_0;	/* energy increment			*/
+double	delta_E=0.001*1e-3*e;	/* energy increment			*/
 double 	Emin;			/* subband minimum			*/
 double 	Emax;			/* subband maximum			*/
 double	vmax;			/* potential maximum, i.e. top of well	*/
@@ -221,12 +225,12 @@ Emin=E;				/* subband minimum 			*/
 
 vmax=Vmax();			/* calulate potential maximum		*/
 
-x=Emin-20*kb*T;			/* first value of x			*/
+x=Emin-20*kB*T;			/* first value of x			*/
 
 /* In this implementation, the upper limit of integration is set at the 
    Fermi level+10kT, limited at potential maximum			*/
 
-Emax=x+10*kb*T;if(Emax>vmax) Emax=vmax;
+Emax=x+10*kB*T;if(Emax>vmax) Emax=vmax;
 
 y2=f(x,Emax,Emin,m,N,T);
 
@@ -234,7 +238,7 @@ do
 {
  y1=y2;
  x+=delta_E;
- Emax=x+10*kb*T;if(Emax>vmax) Emax=vmax;
+ Emax=x+10*kB*T;if(Emax>vmax) Emax=vmax;
  y2=f(x,Emax,Emin,m,N,T);
 }while(y1*y2>0);
 
@@ -244,8 +248,6 @@ x-=fabs(y2)/(fabs(y1)+fabs(y2))*delta_E;
 
 return(x);
 }
-
-
 
 /**
  * Function to be solved
@@ -261,17 +263,15 @@ double f(double E_F, double Emax, double Emin, double m, int N, double T)
 {
 double	y;			/* dependent variable			*/
 
-y=m/(pi*hbar)*(kb*T/hbar)*
+y=m/(pi*hBar)*(kB*T/hBar)*
   (
-   ((Emax-E_F)/(kb*T)-log(1+exp((Emax-E_F)/(kb*T))))-
-   ((Emin-E_F)/(kb*T)-log(1+exp((Emin-E_F)/(kb*T))))
+   ((Emax-E_F)/(kB*T)-log(1+exp((Emax-E_F)/(kB*T))))-
+   ((Emin-E_F)/(kB*T)-log(1+exp((Emin-E_F)/(kB*T))))
   )
   -N;
 
 return(y);
 }
-
-
 
 /**
  * \brief reads subband energies from Ep.r
@@ -306,7 +306,7 @@ double * read_energies(char p, int *n)
 
  while(fscanf(FE,"%*i %le",E+i)!=EOF)
  {
-  *(E+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(E+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 
@@ -315,8 +315,6 @@ double * read_energies(char p, int *n)
  return(E);
 
 }
-
-
 
 /**
  * \brief reads subband populations from N.r
@@ -362,8 +360,6 @@ double * read_populations(int n)
  return(N);
 
 }
-
-
 
 /**
  * Scans the file v.r and returns the maximum value of the potential.
