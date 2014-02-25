@@ -114,7 +114,7 @@ int main(int argc,char *argv[])
     double *N=read_populations(n);		/* reads subband populations file	*/
 
     if((FEf=fopen("Ef.r","w"))==0)
-    {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(0);}
+    {fprintf(stderr,"Error: Cannot open input file 'Ef.r'!\n");exit(EXIT_FAILURE);}
 
     for(unsigned int s=0; s<n; s++) // s=0 => ground state
     {
@@ -128,7 +128,7 @@ int main(int argc,char *argv[])
     fclose(FEf);
 
     return EXIT_SUCCESS;
-} /* end main */
+}
 
 /**
  * \brief calculates the probability of occupation of the subband energies
@@ -142,32 +142,24 @@ int main(int argc,char *argv[])
  */
 void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
 {
-    double	dE;			/* energy increment in integration	*/
-    double	E;			/* Energy				*/
-    double	Emax;
-    double	f;			/* probability of occupation		*/
-    double	Ne=0;			/* total electron density (for checking)*/
-    double	vmax;			/* maximum value of potential		*/
-    int     i;			/* general index			*/
-    char	filename[9];		/* output filename for FD distribs.	*/
-    FILE	*FFD;			/* file pointer to Fermi-Dirac probability
-                                           of occupation of subband file	*/
+    double Ne=0;        // total electron density (for checking)
+    char   filename[9]; // output filename for FD distribs
 
     sprintf(filename,"FD%i.r",s+1);
-    FFD=fopen(filename,"w");
+    FILE *FFD=fopen(filename,"w"); // FD probability file
 
-    vmax=Vmax();
-    Emax=Ef+10*kB*T;if(Emax>vmax) Emax=vmax;
+    double vmax=Vmax(); // Maximum potential
+    double Emax=Ef+10*kB*T;if(Emax>vmax) Emax=vmax; // Cut-off energy [J]
 
     /* Implement trapezium rule integration, i.e. `ends+2middles' 	*/
 
-    f=1/(exp((Emin-Ef)/(kB*T))+1);
+    double f=1/(exp((Emin-Ef)/(kB*T))+1); // occupation probability
     fprintf(FFD,"%20.17le %20.17le\n",Emin/(1e-3*e),f);
     Ne+=f;
 
-    dE=(Emax-Emin)/(nE-1);
-    E=Emin;
-    for(i=1;i<nE-1;i++)
+    const double dE=(Emax-Emin)/(nE-1); // Energy increment for integration
+    double E=Emin; //Energy
+    for(int i=1; i<nE-1; i++)
     {
         E+=dE;
         f=1/(exp((E-Ef)/(kB*T))+1);
@@ -210,26 +202,21 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
  */
 double calc_fermilevel(double E, double m, double N, double T)
 {
-    double	delta_E=0.001*1e-3*e;	/* energy increment			*/
-    double 	Emin;			/* subband minimum			*/
-    double 	Emax;			/* subband maximum			*/
-    double	vmax;			/* potential maximum, i.e. top of well	*/
-    double	x;			/* independent variable			*/
+    double	delta_E=0.001*1e-3*e;	// energy increment
     double	y1;			/* dependent variable			*/
-    double	y2;			/* dependent variable			*/
 
-    Emin=E;				/* subband minimum 			*/
+    double Emin=E;      // subband minimum
+    double vmax=Vmax();	// calulate potential maximum
 
-    vmax=Vmax();			/* calulate potential maximum		*/
-
-    x=Emin-20*kB*T;			/* first value of x			*/
+    double x=Emin-20*kB*T; // first value of x
 
     /* In this implementation, the upper limit of integration is set at the 
        Fermi level+10kT, limited at potential maximum			*/
 
-    Emax=x+10*kB*T;if(Emax>vmax) Emax=vmax;
+    double Emax=x+10*kB*T; // Subband maximum
+    if(Emax>vmax) Emax=vmax;
 
-    y2=f(x,Emax,Emin,m,N,T);
+    double y2=f(x,Emax,Emin,m,N,T);
 
     do
     {
@@ -243,7 +230,7 @@ double calc_fermilevel(double E, double m, double N, double T)
 
     x-=fabs(y2)/(fabs(y1)+fabs(y2))*delta_E;
 
-    return(x);
+    return x;
 }
 
 /**
@@ -258,16 +245,14 @@ double calc_fermilevel(double E, double m, double N, double T)
  */
 double f(double E_F, double Emax, double Emin, double m, int N, double T)
 {
-    double	y;			/* dependent variable			*/
-
-    y=m/(pi*hBar)*(kB*T/hBar)*
+    double y=m/(pi*hBar)*(kB*T/hBar)*
         (
          ((Emax-E_F)/(kB*T)-log(1+exp((Emax-E_F)/(kB*T))))-
          ((Emin-E_F)/(kB*T)-log(1+exp((Emin-E_F)/(kB*T))))
         )
         -N;
 
-    return(y);
+    return y;
 }
 
 /**
@@ -278,41 +263,38 @@ double f(double E_F, double Emax, double Emin, double m, int N, double T)
  */
 double * read_populations(int n)
 {
-    double	*N;
     int	i=0;		/* index over the energies			*/
-    int	m;		/* counter over number of populations defined	*/
     FILE 	*FN;		/* file pointer to energy data 			*/
 
     if((FN=fopen("N.r","r"))==0)
     {
         fprintf(stderr,"Error: Cannot open input file 'N.r'!\n");
-        exit(0);
+        exit(EXIT_FAILURE);
     }
 
-    m=0;
+    int m=0; // Counter over number of populations defined
     while(fscanf(FN,"%*i %*f")!=EOF)
         m++;
     rewind(FN);
 
     if(m!=n)
-    {printf("Subband populations not defined for all levels!\n");exit(0);}
+    {printf("Subband populations not defined for all levels!\n");exit(EXIT_FAILURE);}
 
-    N=(double *)calloc(n,sizeof(double));
+    double *N = new double[n];
     if (N==0)  {
         fprintf(stderr,"Cannot allocate memory!\n");
-        exit(0);
+        exit(EXIT_FAILURE);
     }
 
     while(fscanf(FN,"%*i %lf",N+i)!=EOF)
     {
-        *(N+i)*=1e+10*1e+4;	/*convert from units of 10^10cm^-2->m^-2 */
+        N[i]=1e+10*1e+4;	/*convert from units of 10^10cm^-2->m^-2 */
         i++;
     }
 
     fclose(FN);
 
-    return(N);
-
+    return N;
 }
 
 /**
@@ -327,7 +309,7 @@ double Vmax()
     max=0;
 
     if((Fv=fopen("v.r","r"))==0)
-    {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
+    {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(EXIT_FAILURE);}
 
     while(fscanf(Fv,"%*e %le",&v)!=EOF)
         if(v>max) max=v;
@@ -335,6 +317,5 @@ double Vmax()
     fclose(Fv);
 
     return(max);
-
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
