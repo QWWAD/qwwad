@@ -15,7 +15,7 @@
 #include <valarray>
 #include <vector>
 #include <sstream>
-#include "creaddata.h"
+#include "qclsim-fileio.h"
 #include "qclsim-maths.h"
 
 // If we don't have the official LAPACK C bindings, we need to declare
