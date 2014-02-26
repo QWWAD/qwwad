@@ -114,8 +114,6 @@ int main(int argc,char *argv[])
 
     for(unsigned int s=0; s<n; s++) // s=0 => ground state
     {
-        //const double Ef=calc_fermilevel(E[s],m,N[s],T);
-        std::cout << E[s] << " " << m << " " << N[s] << " " << T << std::endl;
         const double Ef=find_fermi(E[s],m,N[s],T);
 
         fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
