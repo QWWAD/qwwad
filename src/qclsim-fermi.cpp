@@ -1,18 +1,12 @@
 /** 
- * \file   fermi.cpp
+ * \file   qclsim-fermi.cpp
  * \brief  Find the Fermi energy for a set of subbands
- * \author Alex Valavanis, University of Leeds
- * \date   2012-03-14
- * \todo   Create a program that wraps this library and outputs file
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include <cstdlib>
-#include <error.h>
-#include <stdio.h>
 #include "qclsim-constants.h"
-#include "fermi.h"
-#include "material_library.h"
-#include "condbandpotential.h"
+#include "qclsim-fermi.h"
+#include <stdexcept>
 
 namespace Leeds {
 using namespace constants;
@@ -46,35 +40,43 @@ double f_FD_ionised(const double E_F, const double Ed, const double Te)
 }
 
 /**
- * Find total population of a subband with a known Fermi energy
+ * \brief Find total population of a subband with a known Fermi energy
  * 
+ * \param Esb Energy of the subband minimum [J]
+ * \param E_F Quasi-Fermi energy on the same absolute scale as the Fermi energy [J]
  * \param md  Density-of-states mass [kg]
- * \param E_F Quasi-Fermi energy, relative to subband minimum [J]
  * \param Te  Temperature of electron distribution [K]
  *
  * \returns Subband population [m^{-2}]
  */
-double find_pop(const double md, const double E_F, const double Te)
+double find_pop(const double Esb, const double E_F, const double md, const double Te)
 {
     // Density of states in 2D system
     double rho=md/(pi*hBar*hBar);
 
-    /* Solve Fermi integral [Harrison, 2005 (eq 2.51)] */
-    /* 2011-02-23: Simplified the integral a bit, by 
-     * noting that the log term can be factorised */
-    double y=E_F/(kB*Te); // Just a substitution to tidy the maths
-    double int_f_FD=kB*Te*gsl_log1p(exp(y)); /* Solve Fermi integral */
+    // Solve Fermi integral (eq 2.57, QWWAD4)]
+    double y = -(Esb - E_F)/(kB*Te); // Just a substitution to tidy the maths
+    double int_f_FD=kB*Te*gsl_log1p(exp(y)); // Solve Fermi integral
 
     return rho*int_f_FD;
 }
 
 /** 
- * Find quasi-Fermi energy for a single subband with known population and temperature
- * \param mat Material specification
- * \param N   Population density of system [m^{-2}]
- * \param Te  Temperature of carrier distribution [K]
+ * \brief Find quasi-Fermi energy for a single subband with known population and temperature
  *
- * \returns The Fermi energy for the subband relative to the subband minimum [J]
+ * \param[in] Esb Energy of the subband minimum [J]
+ * \param[in] m   Mass of carriers [kg]
+ * \param[in] N   Population density of system [m^{-2}]
+ * \param[in] Te  Temperature of carrier distribution [K]
+ *
+ * \returns The Fermi energy for the subband [J]
+ *
+ * \details The Fermi energy is calculated using equation 2.58, QWWAD4
+ *          \f[
+ *            E_{\text{F}} = E_{\text{min}} + kT\ln{\left[\mbox{e}^{\left(\frac{N\pi\hbar^2}{m^*kT}\right)}-1\right]}
+ *          \f]
+ *          which assumes that the carriers can spread to any energy above the subband
+ *          minimum.
  *
  * \todo Use dos mass calculated by Subband class.
  *       In fact, should the fermi functions all just be member functions of that
@@ -87,18 +89,17 @@ double find_fermi(const double Esb, const double m, const double N, const double
     return E_F;
 }
 
-
-#if 0
 /** 
- * Find Fermi energy for an entire 2D system with many subbands, a known total population and temperature
- * \param mat Material specification
+ * \brief Find Fermi energy for an entire 2D system with many subbands, a known total population and temperature
+ *
+ * \param m   Mass of carrier [kg]
  * \param N   Population density of system [m^{-2}]
  * \param Te  Temperature of carrier distribution [K]
  * \param E   Array of subband minima [J]
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const MaterialSpecification *mat,
+double find_fermi_global(const double                 m,
                          const double                 N,
                          const double                 Te,
                          const std::valarray<double> &E)
@@ -112,14 +113,9 @@ double find_fermi_global(const MaterialSpecification *mat,
     // Find bisector of the limits [J]
     double E_mid=(E_min+E_max)/2.0;
 
-    // TODO: Should calculate band-edge parameters for a given substrate
-    //       and temperature.
-    const BandEdge band_edge(*mat, *mat);
-    const double _md = band_edge.get_md(); // Density-of-states mass [kg]
-
     // Find the signs of ∫f(E_min) - N at the endpoints
-    const int sign_min=GSL_SIGN(find_pop(_md, E_min, Te) -  N);
-    const int sign_max=GSL_SIGN(find_pop(_md, E_max, Te) -  N);
+    const int sign_min=GSL_SIGN(find_pop(E[0], E_min, m, Te) -  N);
+    const int sign_max=GSL_SIGN(find_pop(E[0], E_max, m, Te) -  N);
 
     // We can solve the Fermi integral only if there is a sign-change 
     // between the limits
@@ -135,7 +131,7 @@ double find_fermi_global(const MaterialSpecification *mat,
             double total_population = 0.0;
 
             for(unsigned int ist = 0; ist < nst; ist++)
-                total_population += find_pop(_md, E_mid - E[ist], Te);
+                total_population += find_pop(E[ist], E_mid, m, Te);
 
             const int sign_mid=GSL_SIGN(total_population - N);
 
@@ -145,11 +141,9 @@ double find_fermi_global(const MaterialSpecification *mat,
             E_mid=(E_max+E_min)/2.0;
         }
     }
-    else error(EXIT_FAILURE, 0, "ERROR: No quasi-Fermi energy in range.");
+    else throw std::runtime_error("No quasi-Fermi energy in range.");
 
     return E_mid;
 }
-#endif
 } // namespace Leeds
-
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -83,8 +83,8 @@ qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 # QCLsim infrastructure (released from Leeds code)
 noinst_LIBRARIES = src/libqclsim.a
 src_libqclsim_a_SOURCES =  \
-			   src/fermi.cpp               \
-			   src/fermi.h                 \
+			   src/qclsim-fermi.cpp        \
+			   src/qclsim-fermi.h          \
 			   src/qclsim-fileio.cpp       \
 			   src/qclsim-fileio.h         \
 			   src/qclsim-linalg.cpp       \

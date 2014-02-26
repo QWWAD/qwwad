@@ -19,8 +19,8 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "fermi.h"
 #include "qclsim-constants.h"
+#include "qclsim-fermi.h"
 #include "qclsim-fileio.h"
 #include "qwwad-fileio.h"
 #include "qwwad-options.h"
@@ -160,6 +160,6 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
     E/=(1e-3*e); // Convert to meV for output
 
     write_table_xy(filename, E, f);
-    printf("Ne=%20.17le\n",find_pop(m, Ef-Emin, T)/1e+14);
+    printf("Ne=%20.17le\n",find_pop(Emin, Ef, m, T)/1e+14);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
