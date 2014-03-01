@@ -18,3 +18,4 @@ m4/ltversion.m4
 m4/lt~obsolete.m4
 config/ar-lib
 config/ltmain.sh
+config/test-driver
