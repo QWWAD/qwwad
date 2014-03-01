@@ -73,7 +73,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 #define   N  1001      /* number of wavefunction sampling
                           points, must be odd to provide an
@@ -114,16 +114,16 @@ bool	T_flag;		/* KE operator flag def.=1=>D(1/m)D  */
 
 a=100e-10;          
 b=200e-10;
-m_w=0.067*m0;
-m_b=0.067*m0;
+m_w=0.067*me;
+m_b=0.067*me;
 p='e';
-V=100*1e-3*e_0;   
+V=100*1e-3*e;   
 state=1;
 T_flag=true;
 
 /* Computational values	*/
 
-dx=1e-4*e_0;        /* arbitrarily small energy---0.1meV   */
+dx=1e-4*e;        /* arbitrarily small energy---0.1meV   */
 
 x=dx;    /* first energy estimate */
  
@@ -143,10 +143,10 @@ while((argc>1)&&(argv[1][0]=='-'))
            argc++;
            break;
   case 'm':
-	   m_w=atof(argv[2])*m0;
+	   m_w=atof(argv[2])*me;
 	   break;
   case 'n':
-	   m_b=atof(argv[2])*m0;
+	   m_b=atof(argv[2])*me;
 	   break;
   case 'p':
            p=*argv[2];
@@ -163,7 +163,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   state=atoi(argv[2]);
 	   break;
   case 'V':
-	   V=atof(argv[2])*1e-3*e_0;
+	   V=atof(argv[2])*1e-3*e;
 	   break;
   default:
 	   printf("Usage:  efsqw [-a well width (\033[1m100\033[0mA)][-b barrier width (\033[1m200\033[0mA)]\n");
@@ -217,11 +217,11 @@ for(i_state=1;i_state<=state;i_state++)
    y=f(a,x,m_B,m_b,m_w,V,parity_flag);
    dy=df_dx(a,x,m_B,m_b,m_w,V,parity_flag);
    x-=y/dy;
-  }while (fabs(y/dy)>1e-12*e_0);
+  }while (fabs(y/dy)>1e-12*e);
 
   E=x;
 
-  fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e_0));
+  fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e));
 
   wavef(a,b,E,m_b,m_w,V,i_state,p,parity_flag);
 
@@ -254,13 +254,13 @@ double V;
 bool   parity_flag;
 {
  /* Find electron wavevector using Eq. 2.81, QWWAD3 */
- const double k=sqrt(2*m_w/hbar*energy/hbar);
+ const double k=sqrt(2*m_w/hBar*energy/hBar);
 
  /* Energy-derivitive of wavevector (Eq. 2.88, QWWAD3) */
- const double dk_de=sqrt(2*m_w)/(2*hbar*sqrt(energy));
+ const double dk_de=sqrt(2*m_w)/(2*hBar*sqrt(energy));
 
  /* Energy-derivitive of wavefunction decay constant (Eq. 2.88, QWWAD3) */
- const double dK_de=sqrt(2*m_b)/(-2*hbar*sqrt(V-energy));
+ const double dK_de=sqrt(2*m_b)/(-2*hBar*sqrt(V-energy));
 
  if(parity_flag) /* ODD parity */
  {
@@ -292,8 +292,8 @@ bool   parity_flag;
  double k;        /* electron wave vector        */
  double K;        /* wavefunction decay constant */
 
- k=sqrt(2*m_w/hbar*energy/hbar);
- K=sqrt(2*m_b/hbar*(V-energy)/hbar);
+ k=sqrt(2*m_w/hBar*energy/hBar);
+ K=sqrt(2*m_b/hBar*(V-energy)/hBar);
 
  if(parity_flag)
  {
@@ -341,8 +341,8 @@ bool	parity_flag;
 
  /* Define k and K	*/
 
-  k=sqrt(2*m_w/hbar*E/hbar);
-  K=sqrt(2*m_b/hbar*(V-E)/hbar);
+  k=sqrt(2*m_w/hBar*E/hBar);
+  K=sqrt(2*m_b/hBar*(V-E)/hBar);
 
   if(parity_flag)	/* odd parity wavefunction */
   {

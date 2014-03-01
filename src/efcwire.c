@@ -20,8 +20,8 @@
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
-#include "const.h"
 #include "maths.h"
+#include "qclsim-constants.h"
 
 static double psi_at_inf(const double  E,
                          const double  delta_z,
@@ -58,8 +58,8 @@ data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
 
 /* default values */
 
-delta_E=1e-3*e_0;
-E_start=0e-3*e_0;
+delta_E=1e-3*e;
+E_start=0e-3*e;
 np_flag=false;
 p='e';
 state=1;
@@ -74,10 +74,10 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   argc++;
 	   break;
   case 'd':
-	   delta_E=atof(argv[2])*1e-3*e_0;
+	   delta_E=atof(argv[2])*1e-3*e;
 	   break;
   case 'e':
-	   E_start=atof(argv[2])*1e-3*e_0;
+	   E_start=atof(argv[2])*1e-3*e;
 	   break;
   case 'p':
 	   p=*argv[2];
@@ -107,7 +107,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-d_E=1e-8*e_0;
+d_E=1e-8*e;
 
 sprintf(filename,"E%c.r",p);
 FE=fopen(filename,"w");
@@ -117,7 +117,7 @@ if(np_flag)data_m0Eg=read_Egdata(n,data_start);	/* reads bandgap data	*/
 
 delta_z=read_delta_z(data_start);
 
-if(fabs(E_start)<1e-3*1e-3*e_0) x=V_min(data_start,n);
+if(fabs(E_start)<1e-3*1e-3*e) x=V_min(data_start,n);
  else x=E_start;                       /* initial energy estimate */
 
 for(i_state=1;i_state<=state;i_state++)  
@@ -145,11 +145,11 @@ for(i_state=1;i_state<=state;i_state++)
       psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag))/
      (2.0*d_E);
   x-=y/dy;
- }while(fabs(y/dy)>1e-12*e_0);
+ }while(fabs(y/dy)>1e-12*e);
 
  E=x;
 
- fprintf(FE,"%i %24.17le\n",i_state,E/(1e-3*e_0));
+ fprintf(FE,"%i %24.17le\n",i_state,E/(1e-3*e));
 
  x+=delta_E;    /* clears x from solution */
 
@@ -260,7 +260,7 @@ static double psi_at_inf(const double  E,
   for(i=0;i<n;i++)
   {
    /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
-   const double alpha=gsl_pow_2(1-data_m0Eg[i].a/m0)/data_m0Eg[i].b;
+   const double alpha=gsl_pow_2(1-data_m0Eg[i].a/me)/data_m0Eg[i].b;
 
    /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
    fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
@@ -277,7 +277,7 @@ static double psi_at_inf(const double  E,
   {
    /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
    psi[2]=(
-           2*(fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+2)*
+           2*(fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+2)*
 	   psi[1]+
            (-2*(fdata->z)+delta_z)*psi[0]
           )

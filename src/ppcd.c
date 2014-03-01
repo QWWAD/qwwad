@@ -29,7 +29,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 static complex double * read_ank(const int  N,
                                  int       *Nn);

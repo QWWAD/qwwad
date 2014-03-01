@@ -42,7 +42,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 #define N 1000
 
@@ -113,7 +113,7 @@ if((fE_sf=fopen("e_sf.r","r"))==0)
 i_sf=0;
 while(fscanf(fE_sf,"%lf %lf",&r_d[i_sf],&E_sf[i_sf])!=EOF)
 {
- E_sf[i_sf]*=1e-3*e_0/(h*c0)/100;	/* convert from meV to cm^-1	*/
+ E_sf[i_sf]*=1e-3*e/(h*c)/100;	/* convert from meV to cm^-1	*/
  i_sf++;
 }
 

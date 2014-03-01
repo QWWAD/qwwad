@@ -19,15 +19,12 @@ LDADD = $(BOOST_LDFLAGS)             \
 	$(BOOST_PROGRAM_OPTIONS_LIB)
 
 
-noinst_HEADERS = src/const.h         \
-		 src/d0-helpers.h    \
+noinst_HEADERS = src/d0-helpers.h    \
 		 src/dos-functions.h \
 		 src/dox.h           \
 		 src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/ppff.h          \
-		 src/qclsim-constants.h \
-		 src/qclsim-schroedinger.h \
 		 src/struct.h 
 
 bin_PROGRAMS =  src/csss    \
@@ -84,6 +81,7 @@ qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 # QCLsim infrastructure (released from Leeds code)
 noinst_LIBRARIES = src/libqclsim.a
 src_libqclsim_a_SOURCES =  \
+			   src/qclsim-constants.h      \
 			   src/qclsim-fermi.cpp        \
 			   src/qclsim-fermi.h          \
 			   src/qclsim-fileio.cpp       \
@@ -104,6 +102,9 @@ src_dos_LDADD    = src/libqclsim.a $(LDADD)
 
 src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
 src_efiw_LDADD   = src/libqclsim.a $(LDADD)
+
+src_ppvfq_SOURCES = src/ppvfq.c src/ppff.h
+src_ppvfq_LDADD   = src/libqclsim.a
 
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqclsim.a $(LDADD)

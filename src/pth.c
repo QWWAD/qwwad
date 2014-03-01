@@ -15,7 +15,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -39,7 +39,7 @@ FILE	*FV;		/* pointer to potential file 		*/
 alpha=0.1*1e+10;	/* Convert A^-1->m^-1	*/
 lambda=2.0;
 L=300e-10;
-m=0.067*m0;
+m=0.067*me;
 N=1;
 p='e';
 
@@ -57,7 +57,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   L=atof(argv[2])*1e-10;
 	   break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'N':
 	   N=atoi(argv[2]);
@@ -95,7 +95,7 @@ FV=fopen("v.r","w");
 z=-L/2;		/* initialise z position	*/
 do      
 {
- V=-gsl_pow_2(hbar*alpha)*lambda*(lambda-1)/(2*m*gsl_pow_2(cosh(alpha*z)));
+ V=-gsl_pow_2(hBar*alpha)*lambda*(lambda-1)/(2*m*gsl_pow_2(cosh(alpha*z)));
  fprintf(FV,"%20.17le %20.17le\n",z,V);
  z+=1/((float)N)*1e-10;
 }while(z<=(L/2));
@@ -110,11 +110,11 @@ FE=fopen(filename,"w");
 n=0;
 while((lambda-1-n)>=0)	
 {
- E=-gsl_pow_2(hbar*alpha)*gsl_pow_2(lambda-1-(float)n)/(2*m);
+ E=-gsl_pow_2(hBar*alpha)*gsl_pow_2(lambda-1-(float)n)/(2*m);
  
  /* Write data to file, note n->n+1 to conform with other standards	*/
 
- fprintf(FE,"%i %20.17le\n",n+1,E/(1e-3*e_0));	
+ fprintf(FE,"%i %20.17le\n",n+1,E/(1e-3*e));	
 
  n++;
 }

@@ -23,7 +23,7 @@
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 int main(int argc,char *argv[])
@@ -56,8 +56,8 @@ data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
 
 /* default values */
 
-delta_E=1e-3*e_0;
-E_start=0e-3*e_0;
+delta_E=1e-3*e;
+E_start=0e-3*e;
 np_flag=false;
 T_flag=true;
 p='e';
@@ -73,10 +73,10 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   argc++;
 	   break;
   case 'd':
-	   delta_E=atof(argv[2])*1e-3*e_0;
+	   delta_E=atof(argv[2])*1e-3*e;
 	   break;
   case 'e':
-	   E_start=atof(argv[2])*1e-3*e_0;
+	   E_start=atof(argv[2])*1e-3*e;
 	   break;
   case 'k':
 	   T_flag=false;
@@ -112,7 +112,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-d_E=1e-8*e_0;
+d_E=1e-8*e;
 
 sprintf(filename,"E%c.r",p);
 FE=fopen(filename,"w");
@@ -122,7 +122,7 @@ if(np_flag)data_m0Eg=read_Egdata(n,data_start);	/* reads bandgap data	*/
 
 delta_z=read_delta_z(data_start);
 
-if(fabs(E_start)<1e-3*1e-3*e_0) x=V_min(data_start,n);
+if(fabs(E_start)<1e-3*1e-3*e) x=V_min(data_start,n);
  else x=E_start;                       /* initial energy estimate */
 
 for(i_state=1;i_state<=state;i_state++)  
@@ -152,11 +152,11 @@ for(i_state=1;i_state<=state;i_state++)
       psi_at_inf(x-d_E,delta_z,data_start,data_m0Eg,n,np_flag,T_flag))/
      (2.0*d_E);
   x-=y/dy;
- }while(fabs(y/dy)>1e-12*e_0);
+ }while(fabs(y/dy)>1e-12*e);
 
  E=x;
 
- fprintf(FE,"%i %24.17le\n",i_state,E/(1e-3*e_0));
+ fprintf(FE,"%i %24.17le\n",i_state,E/(1e-3*e));
 
  x+=delta_E;    /* clears x from solution */
 
@@ -263,7 +263,7 @@ bool   T_flag;
  {
   for(i=0;i<n;i++)
   {
-   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
+   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/me)/((data_m0Eg+i)->b);
    (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
   }
  }
@@ -280,7 +280,7 @@ bool   T_flag;
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
    psi[2]=(
-           (2*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+
+           (2*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+
 	    2/(fdata->mstar+(fdata+1)->mstar)+
 	    2/(fdata->mstar+(fdata-1)->mstar))*psi[1]
            -2/(fdata->mstar+(fdata-1)->mstar)*psi[0]
@@ -295,7 +295,7 @@ bool   T_flag;
  {
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
-   psi[2]=(2*fdata->mstar*(fdata->V-E)*gsl_pow_2(delta_z/hbar)+2)*psi[1]
+   psi[2]=(2*fdata->mstar*(fdata->V-E)*gsl_pow_2(delta_z/hBar)+2)*psi[1]
           -psi[0];
    psi[0]=psi[1];
    psi[1]=psi[2];

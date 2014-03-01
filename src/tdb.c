@@ -17,7 +17,7 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -55,13 +55,13 @@ FILE	*FT;		/* pointer to output file `T.r'		*/
 L1=100e-10;          
 L2=100e-10;          
 L3=100e-10;          
-m_w=0.067*m0;
-m_b=0.067*m0;
-V=100*1e-3*e_0;   
+m_w=0.067*me;
+m_b=0.067*me;
+V=100*1e-3*e;   
 
 /* Computational values	*/
 
-dE=0.01*1e-3*e_0;        /* arbitrarily small energy---0.01meV   */
+dE=0.01*1e-3*e;        /* arbitrarily small energy---0.01meV   */
 
  
 while((argc>1)&&(argv[1][0]=='-'))
@@ -69,7 +69,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'd':
-	   dE=atof(argv[2])*1e-3*e_0;
+	   dE=atof(argv[2])*1e-3*e;
 	   break;
   case 'a':
 	   L1=atof(argv[2])*1e-10;
@@ -81,13 +81,13 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   L3=atof(argv[2])*1e-10;
 	   break;
   case 'm':
-	   m_w=atof(argv[2])*m0;
+	   m_w=atof(argv[2])*me;
 	   break;
   case 'n':
-	   m_b=atof(argv[2])*m0;
+	   m_b=atof(argv[2])*me;
 	   break;
   case 'V':
-	   V=atof(argv[2])*1e-3*e_0;
+	   V=atof(argv[2])*1e-3*e;
 	   break;
   default:
 	   printf("Usage:  tdb [-a left hand barrier width (\033[1m100\033[0mA)][-b well width (\033[1m100\033[0mA)]\n");
@@ -116,8 +116,8 @@ FT=fopen("T.r","w");
 
 do      /* loop increments energy */
 {
- k=sqrt(2*m_w*E)/hbar;
- K=sqrt(2*m_b*(V-E))/hbar;
+ k=sqrt(2*m_w*E)/hBar;
+ K=sqrt(2*m_b*(V-E))/hBar;
 
  /* Define matrices */
 
@@ -177,7 +177,7 @@ do      /* loop increments energy */
 
  T=1/(creal(M.M[0][0])*creal(M.M[0][0]) + cimag(M.M[0][0]) * cimag(M.M[0][0]));
 
- fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
+ fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e),T);
  E+=dE;
 }while(E<V);
 

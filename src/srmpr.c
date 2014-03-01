@@ -29,7 +29,7 @@
 #include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 typedef
@@ -75,15 +75,15 @@ sprintf(mode,"LO");
 state_i=2;
 state_f=1;
 T=300;
-m=0.067*m0;
-Ephonon=36*1e-3*e_0;
+m=0.067*me;
+Ephonon=36*1e-3*e;
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
  switch(argv[1][1])
  {
   case 'E':
-	   Ephonon=atof(argv[2])*1e-3*e_0;
+	   Ephonon=atof(argv[2])*1e-3*e;
 	   break;
   case 'f':
 	   state_f=atoi(argv[2]);
@@ -92,7 +92,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   state_i=atoi(argv[2]);
            break;
   case 'm':
-           m=atof(argv[2])*m0;
+           m=atof(argv[2])*me;
            break;
   case 'M':
 	   sprintf(mode,"%s",argv[2]);
@@ -206,11 +206,11 @@ int	i;
 for(i=0;i<n-1;i++)	/* miss last ordinate	*/
 {
  dE=((data_start+i+1)->E)-((data_start+i)->E);
- mean_SR+=((data_start+i)->SR)/(exp((((data_start+i)->E)-E_F[0])/(kb*T))+1)
-         *(1-1/(exp((((data_start+i)->E)-Ephonon-E_F[1])/(kb*T))+1))*dE;
+ mean_SR+=((data_start+i)->SR)/(exp((((data_start+i)->E)-E_F[0])/(kB*T))+1)
+         *(1-1/(exp((((data_start+i)->E)-Ephonon-E_F[1])/(kB*T))+1))*dE;
 }
 
-mean_SR/=(Ne*pi*gsl_pow_2(hbar)/m);
+mean_SR/=(Ne*pi*gsl_pow_2(hBar)/m);
 
 return(mean_SR);
 
@@ -253,7 +253,7 @@ char	filename[];	/* filename string				*/
 
  while(fscanf(Fsr,"%le %le",&(fdata->E),&(fdata->SR))!=EOF)
  {
-  (fdata->E)*=1e-3*e_0;		/*convert meV->J		*/
+  (fdata->E)*=1e-3*e;		/*convert meV->J		*/
   fdata++;
  }
 
@@ -292,7 +292,7 @@ static double * read_Ef(int *nE)
 
  while(fscanf(FEf,"%*i %le",Ef+i)!=EOF)
  {
-  *(Ef+i)*=1e-3*e_0;            /*convert meV->J                */
+  *(Ef+i)*=1e-3*e;            /*convert meV->J                */
   i++;
  }
 

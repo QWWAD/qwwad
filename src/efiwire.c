@@ -16,7 +16,7 @@
 
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(argc, argv)
 int	argc;
@@ -46,7 +46,7 @@ FILE	*Fcd;	/* filepointer to charge density file	*/
 Ly=100e-10;
 Lz=100e-10;
 N=100;
-m=0.067*m0;		/* GaAs electron value	*/
+m=0.067*me;		/* GaAs electron value	*/
 p='e';
 s=1;
 
@@ -55,7 +55,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'm':
-           m=atof(argv[2])*m0;
+           m=atof(argv[2])*me;
            break;
   case 'N':
            N=atoi(argv[2]);
@@ -99,8 +99,8 @@ FE=fopen(filename,"w");
 for(in_y=1;in_y<=s;in_y++)
  for(in_z=1;in_z<=s;in_z++)
  {
-  E=gsl_pow_2(pi*hbar)/(2*m)*(gsl_pow_2(in_y/Ly)+gsl_pow_2(in_z/Lz));
-  fprintf(FE,"%i%i %24.17le\n",in_y,in_z,E/(1e-3*e_0));
+  E=gsl_pow_2(pi*hBar)/(2*m)*(gsl_pow_2(in_y/Ly)+gsl_pow_2(in_z/Lz));
+  fprintf(FE,"%i%i %24.17le\n",in_y,in_z,E/(1e-3*e));
 
   sprintf(filename,"cd%i%i.r",in_y,in_z);
   Fcd=fopen(filename,"w");

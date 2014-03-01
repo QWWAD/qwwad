@@ -18,7 +18,7 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -101,8 +101,8 @@ if(mstar>0)
 {
  while(fscanf(Fx,"%lf %lf %lf",&z,&x,&y)!=EOF)
  {
- m=mstar*m0;
- mp=mstar*m0;
+ m=mstar*me;
+ mp=mstar*me;
  fprintf(Fm,"%20.17le %20.17le\n",z,m);
  fprintf(Fmp,"%20.17le %20.17le\n",z,mp);
  }
@@ -119,12 +119,12 @@ switch(Material)
 	   switch(p)
 	   {
 	    case 'e':
-		     m=(0.067+0.083*x)*m0;
-		     mp=(0.067+0.083*x)*m0;
+		     m=(0.067+0.083*x)*me;
+		     mp=(0.067+0.083*x)*me;
 		     break;
 	    case 'h':
-		     m=(0.62+0.14*x)*m0;
-		     mp=(0.62+0.14*x)*m0;
+		     m=(0.62+0.14*x)*me;
+		     mp=(0.62+0.14*x)*me;
 		     break;
 	    case 'l':
 		     printf("Data not defined for Ga(1-x)Al(x)As light-hole\n");
@@ -140,16 +140,16 @@ switch(Material)
            switch(p)
            {
             case 'e':
-                     m=(0.11+0.067*x)*m0;
-                     mp=(0.11+0.067*x)*m0;
+                     m=(0.11+0.067*x)*me;
+                     mp=(0.11+0.067*x)*me;
                      break;
             case 'h':
-                     m=(0.60+0.21*x+0.15*x*x)*m0;
-                     mp=(0.60+0.21*x+0.15*x*x)*m0;
+                     m=(0.60+0.21*x+0.15*x*x)*me;
+                     mp=(0.60+0.21*x+0.15*x*x)*me;
                      break;
             case 'l':
-                     m=(0.18+0.14*x)*m0;
-                     mp=(0.18+0.14*x)*m0;
+                     m=(0.18+0.14*x)*me;
+                     mp=(0.18+0.14*x)*me;
                      break;
            }
            fprintf(Fm,"%20.17le %20.17le\n",z,m);
@@ -162,8 +162,8 @@ switch(Material)
            switch(p)
            {
             case 'e':
-                     m=(0.0427+0.0685*x)*m0;
-                     mp=(0.0427+0.0685*x)*m0;
+                     m=(0.0427+0.0685*x)*me;
+                     mp=(0.0427+0.0685*x)*me;
                      break;
             case 'h':
                      printf("Data not defined for In(1-x-y)Al(x)Ga(y)As heavy-hole\n");

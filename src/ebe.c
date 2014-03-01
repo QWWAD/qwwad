@@ -26,7 +26,7 @@
 #include <signal.h>
 #include <malloc.h>
 #include <gsl/gsl_math.h>
-#include "const.h"
+#include "qclsim-constants.h"
 #include "struct.h"
 #include "maths.h"
 
@@ -93,12 +93,12 @@ state[1]=1;
 beta_start=0.001;
 beta_step=0.05;
 beta_stop=-1.0;
-epsilon=13.18*epsilon_0;
+epsilon=13.18*eps0;
 lambda_start=70e-10;
 lambda_step=1e-10;
 lambda_stop=-1e-10;
-m[0]=0.067*m0;
-m[1]=0.62*m0;
+m[0]=0.067*me;
+m[1]=0.62*me;
 output_flag=false;
 repeat_flag_beta=true;
 repeat_flag_lambda=true;
@@ -118,13 +118,13 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   state[1]=atoi(argv[2]);
 	   break;
   case 'e':
-           epsilon=atof(argv[2])*epsilon_0;
+           epsilon=atof(argv[2])*eps0;
            break;
   case 'm':
-           m[0]=atof(argv[2])*m0;
+           m[0]=atof(argv[2])*me;
            break;
   case 'n':
-           m[1]=atof(argv[2])*m0;
+           m[1]=atof(argv[2])*me;
            break;
   case 'N':
 	   N_x=atoi(argv[2]);
@@ -172,7 +172,7 @@ data_start=read_data(state,&n);	/* reads wave functions */
 
 delta_z=read_delta_z(data_start);
 delta_a=delta_z;
-Eb_min=1*e_0;			/* i.e. 1eV ! */
+Eb_min=1*e;			/* i.e. 1eV ! */
 m_xy[0]=m[0];	m_xy[1]=m[1];	/* assumes isotropic mass for now	*/
 mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
 
@@ -189,7 +189,7 @@ lambda=lambda_start;
 do
 {
  beta=beta_start;
- Eb_min_beta=1*e_0;           /* i.e. 1eV ! */
+ Eb_min_beta=1*e;           /* i.e. 1eV ! */
  do
  {
 
@@ -201,7 +201,7 @@ Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,outp
 
  }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
 
- fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e_0));
+ fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
  fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
 
  repeat_flag_lambda=repeat_lambda(&beta_0,&beta_0_lambda,&Eb_min_beta,&Eb_min,
@@ -215,7 +215,7 @@ Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,outp
 /* Write out final data to file	*/
 
 FEX0=fopen("EX0.r","w");
-fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e_0),lambda_0/1e-10,beta_0);
+fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
 fclose(FEX0);
 
 fclose(FABC);
@@ -274,19 +274,19 @@ bool	output_flag;
   fdata++;
  }
 
- A*=hbar*hbar/(2*m[0]);         /* multiply integrals by constant factors */
- B*=hbar*hbar/(2*m[1]);
- Ct*=-hbar*hbar/(2*mu_xy);
- Cv*=-e_0*e_0/(4*pi*epsilon);
+ A*=hBar*hBar/(2*m[0]);         /* multiply integrals by constant factors */
+ B*=hBar*hBar/(2*m[1]);
+ Ct*=-hBar*hBar/(2*mu_xy);
+ Cv*=-e*e/(4*pi*epsilon);
 
  fprintf(FABC,"%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf\n",lambda/1e-10,
-         A/D/(1e-3*e_0),B/D/(1e-3*e_0),Ct/D/(1e-3*e_0),Cv/D/(1e-3*e_0));
+         A/D/(1e-3*e),B/D/(1e-3*e),Ct/D/(1e-3*e),Cv/D/(1e-3*e));
 
  Eb=(A+B+Ct+Cv)/D;
 
  if(output_flag)
   printf("%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf %6.3le\n",lambda/1e-10,beta,
-         Eb/(1e-3*e_0),(A+B+Ct)/D/(1e-3*e_0),Cv/D/(1e-3*e_0),gsl_pow_2(O)/D);
+         Eb/(1e-3*e),(A+B+Ct)/D/(1e-3*e),Cv/D/(1e-3*e),gsl_pow_2(O)/D);
 
  return(Eb);
 }

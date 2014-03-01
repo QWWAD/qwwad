@@ -26,7 +26,7 @@
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 int main(int argc,char *argv[])
@@ -117,7 +117,7 @@ FE=fopen(filename,"r");
 
 while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
 {
- E*=1e-3*e_0;	/* convert E from meV->J	*/
+ E*=1e-3*e;	/* convert E from meV->J	*/
  N=wf(E,delta_z,data_start,data_m0Eg,data_zwf,n,np_flag,T_flag);
 
  sprintf(filename,"wf_%c%i.r",p,i_state);
@@ -233,7 +233,7 @@ bool   T_flag;
  {
   for(i=0;i<n;i++)
   {
-   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/m0)/((data_m0Eg+i)->b);
+   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/me)/((data_m0Eg+i)->b);
    (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
   }
  }
@@ -256,7 +256,7 @@ bool   T_flag;
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
    psi[2]=(
-           (2*gsl_pow_2(delta_z/hbar)*(fdata->V-E)+
+           (2*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+
 	    2/(fdata->mstar+(fdata+1)->mstar)+
 	    2/(fdata->mstar+(fdata-1)->mstar))*psi[1]
            -2/(fdata->mstar+(fdata-1)->mstar)*psi[0]
@@ -273,7 +273,7 @@ bool   T_flag;
  {
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
-   psi[2]=(2*fdata->mstar*(fdata->V-E)*gsl_pow_2(delta_z/hbar)+2)*psi[1]
+   psi[2]=(2*fdata->mstar*(fdata->V-E)*gsl_pow_2(delta_z/hBar)+2)*psi[1]
           -psi[0];
    (data_zwf+i+1)->b=psi[2];
    N+=gsl_pow_2(psi[2]);

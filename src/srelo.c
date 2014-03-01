@@ -27,7 +27,7 @@
 #include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 int main(int argc,char *argv[])
@@ -79,11 +79,11 @@ FILE	*Frrp;		/* scattering rate required c-c rates		*/
 /* default values */
 
 A0=5.65*1e-10;			/* lattice constant for GaAs		*/
-Ephonon=36*1e-3*e_0;    	/* bulk LO phonon energy, 36 meV in GaAs*/
-epsilon_s=13.18*epsilon_0;	/* low frequency dielectric constant for GaAs*/
-epsilon_inf=10.89*epsilon_0;	/* high frequency dielectric constant for GaAs*/
+Ephonon=36*1e-3*e;    	/* bulk LO phonon energy, 36 meV in GaAs*/
+epsilon_s=13.18*eps0;	/* low frequency dielectric constant for GaAs*/
+epsilon_inf=10.89*eps0;	/* high frequency dielectric constant for GaAs*/
 ff_flag=false;			/* don't output formfactors	*/
-m=0.067*m0;			/* GaAs electron value		*/
+m=0.067*me;			/* GaAs electron value		*/
 p='e';				/* electron			*/
 T=300;				/* temperature			*/
 
@@ -109,16 +109,16 @@ while((argc>1)&&(argv[1][0]=='-'))
            argc++;
            break;
   case 'E':
-	   Ephonon=atof(argv[2])*1e-3*e_0;
+	   Ephonon=atof(argv[2])*1e-3*e;
 	   break;
   case 'e':
-	   epsilon_s=atof(argv[2])*epsilon_0;
+	   epsilon_s=atof(argv[2])*eps0;
 	   break;
   case 'f':
-	   epsilon_inf=atof(argv[2])*epsilon_0;
+	   epsilon_inf=atof(argv[2])*eps0;
 	   break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'p':
 	   p=*argv[2];
@@ -151,14 +151,14 @@ while((argc>1)&&(argv[1][0]=='-'))
 
 /* calculate often used constants	*/
 
-omega_0=Ephonon/hbar;		/* phonon angular frequency	*/
-N0=1/(exp(Ephonon/(kb*T))-1);	/* Bose-Einstein factor	*/
+omega_0=Ephonon/hBar;		/* phonon angular frequency	*/
+N0=1/(exp(Ephonon/(kB*T))-1);	/* Bose-Einstein factor	*/
 
-Upsilon_star_a=pi*e_0*e_0*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0)
-               *2*m/gsl_pow_2(hbar)*2/(8*pi*pi*pi);
+Upsilon_star_a=pi*e*e*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0)
+               *2*m/gsl_pow_2(hBar)*2/(8*pi*pi*pi);
 
-Upsilon_star_e=pi*e_0*e_0*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0+1)
-               *2*m/gsl_pow_2(hbar)*2/(8*pi*pi*pi);
+Upsilon_star_e=pi*e*e*omega_0/epsilon_s*(epsilon_s/epsilon_inf-1)*(N0+1)
+               *2*m/gsl_pow_2(hBar)*2/(8*pi*pi*pi);
 
 E=read_E(p,&nE);	/* read in subband minima	*/
 
@@ -190,7 +190,7 @@ while(fscanf(Frrp,"%i %i",&state[0],&state[1])!=EOF)
 
  /* calculate maximum value of ki and hence ki step length */
 
- kimax=sqrt(2*m*(Vmax()-*(E+state[0]-1)))/hbar; /* sqr(hbar*kimax)/2m=Vmax-Ei */
+ kimax=sqrt(2*m*(Vmax()-*(E+state[0]-1)))/hBar; /* sqr(hBar*kimax)/2m=Vmax-Ei */
  dki=kimax/((float)nki);
 
  for(iki=0;iki<nki;iki++)       /* calculate e-LO rate for all ki	*/
@@ -207,14 +207,14 @@ while(fscanf(Frrp,"%i %i",&state[0],&state[1])!=EOF)
 
    Waif+=((Gifsqr+iKz)->b)/
          sqrt(gsl_pow_2(gsl_pow_2(Kz))+
-              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_a/gsl_pow_2(hbar))+
-              gsl_pow_2(2*m*Delta_a/gsl_pow_2(hbar))
+              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_a/gsl_pow_2(hBar))+
+              gsl_pow_2(2*m*Delta_a/gsl_pow_2(hBar))
              );
 
    Weif+=((Gifsqr+iKz)->b)/
          sqrt(gsl_pow_2(gsl_pow_2(Kz))+
-              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_e/gsl_pow_2(hbar))+
-              gsl_pow_2(2*m*Delta_e/gsl_pow_2(hbar))
+              2*gsl_pow_2(Kz)*(2*gsl_pow_2(ki)-2*m*Delta_e/gsl_pow_2(hBar))+
+              gsl_pow_2(2*m*Delta_e/gsl_pow_2(hBar))
              );
 
 
@@ -227,20 +227,20 @@ while(fscanf(Frrp,"%i %i",&state[0],&state[1])!=EOF)
   /* Now check for energy conservation!, would be faster with a nasty `if'
      statement just after the beginning of the ki loop!			*/
 
-  Weif*=Theta(gsl_pow_2(hbar*ki)/(2*m)-Delta_e)*
-        Theta(Vmax()-*(E+state[0]-1)+Ephonon-gsl_pow_2(hbar*ki)/(2*m));
+  Weif*=Theta(gsl_pow_2(hBar*ki)/(2*m)-Delta_e)*
+        Theta(Vmax()-*(E+state[0]-1)+Ephonon-gsl_pow_2(hBar*ki)/(2*m));
 
-  Waif*=Theta(gsl_pow_2(hbar*ki)/(2*m)-Delta_a)*
-        Theta(Vmax()-*(E+state[0]-1)-Ephonon-gsl_pow_2(hbar*ki)/(2*m));
+  Waif*=Theta(gsl_pow_2(hBar*ki)/(2*m)-Delta_a)*
+        Theta(Vmax()-*(E+state[0]-1)-Ephonon-gsl_pow_2(hBar*ki)/(2*m));
 
   /* output scattering rate versus carrier energy=subband minima+in-plane
      kinetic energy						*/
 
-  fprintf(FLOa,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
-                                    (1e-3*e_0),Waif);
+  fprintf(FLOa,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hBar*ki)/(2*m))/
+                                    (1e-3*e),Waif);
 
-  fprintf(FLOe,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
-                                    (1e-3*e_0),Weif);
+  fprintf(FLOe,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hBar*ki)/(2*m))/
+                                    (1e-3*e),Weif);
 
  }
  fclose(FLOa);	/* close output file for this mechanism	*/
@@ -393,7 +393,7 @@ int	*nE;
 
  while(fscanf(FE,"%*i %le",E+i)!=EOF)
  {
-  *(E+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(E+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 

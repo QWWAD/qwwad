@@ -15,7 +15,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 
 int main(int argc,char *argv[])
@@ -35,12 +35,12 @@ FILE	*FT;		/* pointer to output file `T.r'		*/
 /* default values, appropriate to GaAs-GaAlAs */
 
 L=100e-10;          
-m=0.067*m0;
-V=100*1e-3*e_0;   
+m=0.067*me;
+V=100*1e-3*e;   
 
 /* Computational values	*/
 
-dE=1e-4*e_0;        /* arbitrarily small energy---0.1meV   */
+dE=1e-4*e;        /* arbitrarily small energy---0.1meV   */
 
  
 while((argc>1)&&(argv[1][0]=='-'))
@@ -48,16 +48,16 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'd':
-	   dE=atof(argv[2])*1e-3*e_0;
+	   dE=atof(argv[2])*1e-3*e;
 	   break;
   case 'L':
 	   L=atof(argv[2])*1e-10;
 	   break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'V':
-	   V=atof(argv[2])*1e-3*e_0;
+	   V=atof(argv[2])*1e-3*e;
 	   break;
   default:
 	   printf("Usage:  tsb [-d energy step (\033[1m0.1\033[0mmeV)][-L barrier width (\033[1m100\033[0mA)]\n");
@@ -80,19 +80,19 @@ FT=fopen("T.r","w");
 
 do      /* loop increments energy */
 {
- k=sqrt(2*m*E)/hbar;
- K=sqrt(2*m*(V-E))/hbar;
+ k=sqrt(2*m*E)/hBar;
+ K=sqrt(2*m*(V-E))/hBar;
  T=1/(1+gsl_pow_2((k*k+K*K)/(2*k*K))*gsl_pow_2(sinh(K*L)));
- fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
+ fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e),T);
  E+=dE;
 }while(E<V);
 
 do      /* loop increments energy */
 {
- k=sqrt(2*m*E)/hbar;
- kdash=sqrt(2*m*(E-V))/hbar;
+ k=sqrt(2*m*E)/hBar;
+ kdash=sqrt(2*m*(E-V))/hBar;
  T=1/(1+gsl_pow_2((k*k-kdash*kdash)/(2*k*kdash))*gsl_pow_2(sin(kdash*L)));
- fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e_0),T);
+ fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e),T);
  E+=dE;
 }while(E<10*V);
 

@@ -40,7 +40,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 
 int main(int argc,char *argv[])
@@ -72,15 +72,15 @@ FILE	*FE;		/* pointer to energy file 		*/
 a=100e-10;          
 b=100e-10;
 k=0;
-m_w=0.067*m0;
-m_b=0.067*m0;
+m_w=0.067*me;
+m_b=0.067*me;
 p='e';
-V=100*1e-3*e_0;   
+V=100*1e-3*e;   
 state=1;
 
 /* Computational values	*/
 
-dx=1e-3*e_0;        /* arbitrarily small energy---0.1meV   */
+dx=1e-3*e;        /* arbitrarily small energy---0.1meV   */
 
 x=dx;    /* first energy estimate */
  
@@ -98,10 +98,10 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   k=atof(argv[2]);
            break;
   case 'm':
-	   m_w=atof(argv[2])*m0;
+	   m_w=atof(argv[2])*me;
 	   break;
   case 'n':
-	   m_b=atof(argv[2])*m0;
+	   m_b=atof(argv[2])*me;
 	   break;
   case 'p':
            p=*argv[2];
@@ -118,7 +118,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   state=atoi(argv[2]);
 	   break;
   case 'V':
-	   V=atof(argv[2])*1e-3*e_0;
+	   V=atof(argv[2])*1e-3*e;
 	   break;
   default:
 	   printf("Usage:  efkpsl [-a well width (\033[1m100\033[0mA)][-b barrier width (\033[1m100\033[0mA)]\n");
@@ -159,12 +159,12 @@ for(i_state=1;i_state<=state;i_state++)
   y=f(a,b,x,k,m_b,m_w,V);
   dy=(f(a,b,x+dx/100,k,m_b,m_w,V)-f(a,b,x-dx/100,k,m_b,m_w,V))/(2*dx/100);
   x-=y/dy;
- }while(fabs(y/dy)>1e-9*e_0);	
+ }while(fabs(y/dy)>1e-9*e);	
  
 
  E=x;
 
- fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e_0));
+ fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e));
 
  x+=dx;       /* clears x from solution */
 
@@ -200,16 +200,16 @@ double V;
 
  if(energy<V)
  {
-  k_w=sqrt(2*m_w/hbar*energy/hbar);
-  K=sqrt(2*m_b/hbar*(V-energy)/hbar);
+  k_w=sqrt(2*m_w/hBar*energy/hBar);
+  K=sqrt(2*m_b/hBar*(V-energy)/hBar);
 
   F=cos(k_w*a)*cosh(K*b)-sin(k_w*a)*sinh(K*b)*
         (gsl_pow_2(m_b*k_w)-gsl_pow_2(m_w*K))/(2*m_w*m_b*k_w*K)-cos(k*(a+b));
  }
  else
  {
-  k_w=sqrt(2*m_w/hbar*energy/hbar);
-  k_b=sqrt(2*m_b/hbar*(energy-V)/hbar);
+  k_w=sqrt(2*m_w/hBar*energy/hBar);
+  k_b=sqrt(2*m_b/hBar*(energy-V)/hBar);
 
 
   F=cos(k_w*a)*cos(k_b*b)-sin(k_w*a)*sin(k_b*b)*

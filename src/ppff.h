@@ -12,6 +12,7 @@
 
 #include <string.h>
 #include <gsl/gsl_math.h>
+#include "qclsim-constants.h"
 
 double Vf(const double  A0,
           const double  m_per_au,
@@ -58,7 +59,7 @@ double Vf(const double  A0,
 
   Va=a1*(q_sqr-a2)*(tanh((a5-q_sqr)/a6)+1)/(2.0*(exp(a3*(q_sqr-a4))+1))/Omega;
  
-  return(2*Va*h*c0*Rinf);	/*  first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/*  first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI  */
  }
 
@@ -78,7 +79,7 @@ double Vf(const double  A0,
 
   Va=a1*(q_sqr-a2)*(tanh((a5-q_sqr)/a6)+1)/(2.0*(exp(a3*(q_sqr-a4))+1))/Omega;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg	*/
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg	*/
 				/* second factor Rydberg --> SI	*/
  }
 
@@ -97,7 +98,7 @@ double Vf(const double  A0,
       +0.0464357*exp(-0.574047*gsl_pow_2(sqrt(q_sqr)-2.01935))
       -0.0133385*exp(-11.2708*gsl_pow_2(sqrt(q_sqr)-2.93581)))*131.4/Omega;
 
-  return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
+  return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  if(!strcmp(type,"ASGAmz"))
@@ -112,7 +113,7 @@ double Vf(const double  A0,
       -0.0434312*exp(-2.94679*gsl_pow_2(sqrt(q_sqr)-0.851644))
       +0.10569*exp(-0.820922*gsl_pow_2(sqrt(q_sqr)-1.22436)))*145.2/Omega;
 
-  return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
+  return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  if(!strcmp(type,"ALASmz"))
@@ -128,7 +129,7 @@ double Vf(const double  A0,
       +0.0168167*exp(-11.2708*gsl_pow_2(sqrt(q_sqr)-2.93581)))*111.3
      *(1+0.02*exp(-10*q_sqr))/Omega;
 
-  return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
+  return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  if(!strcmp(type,"ASALmz"))
@@ -143,7 +144,7 @@ double Vf(const double  A0,
       -0.00368081*exp(-5.50601*gsl_pow_2(sqrt(q_sqr)-1.22845))
       +0.0921512*exp(-1.18638*gsl_pow_2(sqrt(q_sqr)-1.35897)))*145.2/Omega;
 
-  return(Va*h*c0*Rinf);		/* factor converts Rydberg --> SI */
+  return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
  /* Alloy definitions for Al(x)Ga(1-x)As using the Mader and Zunger
@@ -182,7 +183,7 @@ double Vf(const double  A0,
   Va=139478*(q_sqr-2.316)/(3810.60*exp(0.283*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg	*/
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg	*/
 				/* second factor Rydberg --> SI */
  }
 
@@ -196,7 +197,7 @@ double Vf(const double  A0,
   Va=13.825*(q_sqr-2.878)/(1.169*exp(0.281*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI */
  }
  
@@ -210,7 +211,7 @@ double Vf(const double  A0,
   Va=319.275*(q_sqr-2.292)/(13.625*exp(0.315*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI */
  }
 
@@ -224,7 +225,7 @@ double Vf(const double  A0,
   Va=21.993*(q_sqr-2.520)/(1.205*exp(0.336*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI */
  }
 
@@ -238,7 +239,7 @@ double Vf(const double  A0,
   Va=107.755*(q_sqr-1.915)/(3.460*exp(0.414*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI */
  }
 
@@ -252,7 +253,7 @@ double Vf(const double  A0,
   Va=49.614*(q_sqr-2.737)/(1.523*exp(0.574*q_sqr)-1)/Omega;
   Va/=2;
 
-  return(2*Va*h*c0*Rinf);	/* first factor a.u.--> Rydberg */
+  return(2*Va*h*c*Rinf);	/* first factor a.u.--> Rydberg */
 				/* second factor Rydberg --> SI */
  }
 
@@ -267,7 +268,7 @@ double Vf(const double  A0,
      +0.27*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.54*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"GEcb"))
@@ -277,7 +278,7 @@ double Vf(const double  A0,
      +0.07*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.41*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  /* These atomic potentials are derived from the Symmetric and
@@ -294,7 +295,7 @@ double Vf(const double  A0,
      -0.10*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.34*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"ASGAcb"))	/* As in GaAs	*/
@@ -305,7 +306,7 @@ double Vf(const double  A0,
      +0.24*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.48*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"INAScb"))	/* In in InAs	*/
@@ -316,7 +317,7 @@ double Vf(const double  A0,
      -0.26*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.14*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"ASINcb"))	/* As in InAs	*/
@@ -327,7 +328,7 @@ double Vf(const double  A0,
      +0.26*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.55*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"GAPcb"))	/* Ga in GaP	*/
@@ -338,7 +339,7 @@ double Vf(const double  A0,
      -0.06*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.34*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"PGAcb"))	/* P in GaP	*/
@@ -349,7 +350,7 @@ double Vf(const double  A0,
      +0.47*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.61*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"INPcb"))	/* In in InP	*/
@@ -360,7 +361,7 @@ double Vf(const double  A0,
      -0.10*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.34*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  if(!strcmp(type,"PINcb"))	/* P in InP	*/
@@ -371,7 +372,7 @@ double Vf(const double  A0,
      +0.24*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
      +0.48*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
-  return(Va*e_0);	/* Convert eV --> SI	*/
+  return(Va*e);	/* Convert eV --> SI	*/
  }
 
  printf("Error atom type '%s' undefined!\n",type);exit(0);

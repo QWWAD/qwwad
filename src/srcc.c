@@ -27,7 +27,7 @@
 #include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 typedef
@@ -103,9 +103,9 @@ FILE	*Frr;		/* scattering rate required c-c rates		*/
 
 /* default values */
 
-epsilon=13.18*epsilon_0;/* low frequency dielectric constant for GaAs	*/
+epsilon=13.18*eps0;/* low frequency dielectric constant for GaAs	*/
 ff_flag=false;		/* don't output formfactors	*/
-m=0.067*m0;		/* GaAs electron value		*/
+m=0.067*me;		/* GaAs electron value		*/
 p='e';			/* electron			*/
 T=300;			/* temperature			*/
 W=250e-10;		/* a well width, same as Smet	*/
@@ -134,10 +134,10 @@ while((argc>1)&&(argv[1][0]=='-'))
            argc++;
            break;
   case 'e':
-	   epsilon=atof(argv[2])*epsilon_0;
+	   epsilon=atof(argv[2])*eps0;
 	   break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'p':
 	   p=*argv[2];
@@ -204,7 +204,7 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
  if((state[0]+state[1])==(state[2]+state[3])) Deltak0sqr=0;
  else
   Deltak0sqr=4*m*(*(E+state[0]-1)+*(E+state[1]-1)
-                 -*(E+state[2]-1)-*(E+state[3]-1))/(hbar*hbar);	
+                 -*(E+state[2]-1)-*(E+state[3]-1))/(hBar*hBar);	
 
  Aijfg=ff_table(Deltak0sqr,delta_z,m,E,wf,n,nq,state);	/* generate Aijfg table	*/
 
@@ -217,10 +217,10 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
 
  /* calculate maximum value of ki & kj and hence kj step length	*/
 
- kimax=sqrt(2*m*(Vmax()-*(E+state[0]-1)))/hbar;	/* sqr(hbar*kimax)/2m=Vmax-Ei	*/
+ kimax=sqrt(2*m*(Vmax()-*(E+state[0]-1)))/hBar;	/* sqr(hBar*kimax)/2m=Vmax-Ei	*/
  dki=kimax/((float)nki);
 
- kjmax=sqrt(2*m*(Vmax()-*(E+state[1]-1)))/hbar;	/* sqr(hbar*kjmax)/2m=Vmax-Ej	*/
+ kjmax=sqrt(2*m*(Vmax()-*(E+state[1]-1)))/hBar;	/* sqr(hBar*kjmax)/2m=Vmax-Ej	*/
  dkj=kjmax/((float)nkj);
 
  Wbar=0;			/* initialise integral sum */
@@ -233,7 +233,7 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
  {
   kj=dkj*(float)ikj;
 
-  P=1/(exp((*(E+state[1]-1)+hbar*kj*hbar*kj/(2*m)-*(Ef+state[1]-1))/(kb*T))+1);
+  P=1/(exp((*(E+state[1]-1)+hBar*kj*hBar*kj/(2*m)-*(Ef+state[1]-1))/(kB*T))+1);
 
   for(ialpha=0;ialpha<nalpha;ialpha++)	/* Integral over alpha	*/
   {
@@ -258,7 +258,7 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
     {
      q_perp=sqrt(q_perpsqr4)/2;
      Wijfg+=gsl_pow_2(lookup_ff(Aijfg,q_perp,nq)/
-                (q_perp+2*pi*e_0*e_0*lookup_PI(PIii,q_perp,nq)
+                (q_perp+2*pi*e*e*lookup_PI(PIii,q_perp,nq)
                  *lookup_ff(Aijfg,q_perp,nq)/(4*pi*epsilon)
                 )
                )*P*kj;
@@ -275,19 +275,19 @@ while(fscanf(Frr,"%i %i %i %i",&state[0],&state[1],&state[2],&state[3])!=EOF)
  
  Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
 
- Wijfg*=gsl_pow_2(e_0*e_0/(hbar*4*pi*epsilon))*m/(pi*hbar);
+ Wijfg*=gsl_pow_2(e*e/(hBar*4*pi*epsilon))*m/(pi*hBar);
 
  /* output scattering rate versus carrier energy=subband minima+in-plane
     kinetic energy						*/
 
- fprintf(Fcc,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m))/
-                                   (1e-3*e_0),Wijfg);
+ fprintf(Fcc,"%20.17le %20.17le\n",(*(E+state[0]-1)+gsl_pow_2(hBar*ki)/(2*m))/
+                                   (1e-3*e),Wijfg);
 
  /* calculate Fermi-Dirac weighted mean of scattering rates over the 
     initial carrier states, note that the integral step length 
-    dE=2*sqr(hbar)*ki*dki/(2m)					*/
+    dE=2*sqr(hBar)*ki*dki/(2m)					*/
 
- Wbar+=Wijfg*ki/(exp((*(E+state[0]-1)+gsl_pow_2(hbar*ki)/(2*m)-*(Ef+state[0]-1))/(kb*T))+1);
+ Wbar+=Wijfg*ki/(exp((*(E+state[0]-1)+gsl_pow_2(hBar*ki)/(2*m)-*(Ef+state[0]-1))/(kB*T))+1);
 
  } /* end ki	*/
 
@@ -376,16 +376,16 @@ int	state[];	/* electron state index			*/
  /* Equation 43 of Smet	*/
 
  if(q_perp<=2*kifermi)
-  P=m/(pi*hbar*hbar);
+  P=m/(pi*hBar*hBar);
  else
-  P=m/(pi*hbar*hbar)*(1-sqrt(1-gsl_pow_2(2*kifermi/q_perp)));
+  P=m/(pi*hBar*hBar)*(1-sqrt(1-gsl_pow_2(2*kifermi/q_perp)));
 
  /* Now perform the integration, equation 44 of Smet	*/
 
- mu=*(E+state[0]-1);dmu=1e-3*e_0;integral=0;
+ mu=*(E+state[0]-1);dmu=1e-3*e;integral=0;
  do
  {
-  dI=1/(4*kb*T*gsl_pow_2(cosh((*(Ef+state[0]-1)-mu)/(2*kb*T))));
+  dI=1/(4*kB*T*gsl_pow_2(cosh((*(Ef+state[0]-1)-mu)/(2*kB*T))));
   integral+=dI*dmu;
   mu+=dmu;
  }while(dI>integral/100);	/* continue until integral converges	*/
@@ -473,8 +473,8 @@ int	state[];
  data11	*Aijfg;
 
  vmax=Vmax();
- kimax=sqrt(2*m*(vmax-*(E+state[0]-1)))/hbar;	/* sqr(hbar*kimax)/2m=Vmax-Ei	*/
- kjmax=sqrt(2*m*(vmax-*(E+state[1]-1)))/hbar;	/* sqr(hbar*kfmax)/2m=Vmax-Ef	*/
+ kimax=sqrt(2*m*(vmax-*(E+state[0]-1)))/hBar;	/* sqr(hBar*kimax)/2m=Vmax-Ei	*/
+ kjmax=sqrt(2*m*(vmax-*(E+state[1]-1)))/hBar;	/* sqr(hBar*kfmax)/2m=Vmax-Ef	*/
 
  Aijfg=(data11 *)calloc(nq,sizeof(data11));
   if (Aijfg==0)  {
@@ -603,7 +603,7 @@ int	*nE;
 
  while(fscanf(FE,"%*i %le",E+i)!=EOF)
  {
-  *(E+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(E+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 
@@ -638,7 +638,7 @@ static double * read_Ef(const int nE)
 
  while(fscanf(FEf,"%*i %le",Ef+i)!=EOF)
  {
-  *(Ef+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(Ef+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 

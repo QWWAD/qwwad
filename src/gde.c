@@ -28,7 +28,6 @@
 #include <malloc.h>
 #include <math.h>
 #include "struct.h"
-#include "const.h"
 #include "maths.h"
 #include "dox.h"
 

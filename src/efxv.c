@@ -21,7 +21,7 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -117,7 +117,7 @@ switch(Material)
 
           while((fscanf(Fx,"%lf %lf %lf\n",&z,&x,&y))!=EOF)
           {
-           dV=(1.247*x)*e_0;
+           dV=(1.247*x)*e;
 	    switch(p)
 	    {
 	     case 'e':V=0.67*dV;break;
@@ -126,7 +126,7 @@ switch(Material)
 		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
-	   if(Eg_flag){Eg=1.426*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
+	   if(Eg_flag){Eg=1.426*e+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
           }
           break;
 
@@ -134,7 +134,7 @@ switch(Material)
 
 	  while((fscanf(Fx,"%lf %lf %lf\n",&z,&x,&y))!=EOF)
           {
-           dV=(1.587*x)*e_0;
+           dV=(1.587*x)*e;
 	    switch(p)
 	    {
 	     case 'e':V=0.70*dV;break;
@@ -143,7 +143,7 @@ switch(Material)
 		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
-	   if(Eg_flag){Eg=1.606*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
+	   if(Eg_flag){Eg=1.606*e+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
           }
           break;
 
@@ -152,7 +152,7 @@ switch(Material)
 	  while((fscanf(Fx,"%lf %lf %lf\n",&z,&x,&y))!=EOF)
           {
            dV=(2.093*x+0.629*y+0.577*x*x+0.436*y*y+1.013*x*y
-               -2.0*x*x*(1-x-y))*e_0;
+               -2.0*x*x*(1-x-y))*e;
 	    switch(p)
 	    {
 	     /* 53% gives an offset with AlAs of 1.2 eV---close to that 
@@ -163,7 +163,7 @@ switch(Material)
 		      exit(EXIT_FAILURE);
 	    }
            fprintf(Fv,"%20.17e %20.17e\n",z,V);
-	   if(Eg_flag){Eg=0.36*e_0+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
+	   if(Eg_flag){Eg=0.36*e+dV;fprintf(FEg,"%20.17e %20.17e\n",z,Eg);}
           }
           break;
 }

@@ -22,7 +22,6 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
 
 int main(int argc,char *argv[])
 {

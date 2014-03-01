@@ -25,7 +25,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc, char *argv[])
 {
@@ -61,7 +61,7 @@ data11	*start_wf2;	/* start address of data		*/
 D3_flag=false;
 state_i=2;
 state_f=1;
-mstar=0.067*m0;
+mstar=0.067*me;
 p='e';
 Wmz=3e-6;		/* default from Smet			*/
 
@@ -81,7 +81,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   state_i=atoi(argv[2]);
 	   break;
   case 'm':
-	   mstar=atof(argv[2])*m0;
+	   mstar=atof(argv[2])*me;
 	   break;
   case 'p':
 	   p=*argv[2];
@@ -117,11 +117,11 @@ printf("state_i=%i state_f=%i\n",state_i,state_f);
 
 read_E(E);
 
-omega=(E[state_i-1]-E[state_f-1])/hbar;
+omega=(E[state_i-1]-E[state_f-1])/hBar;
 
-lambda=2*pi*c0/omega;
+lambda=2*pi*c/omega;
 
-printf("frequency %le\n",c0/lambda);
+printf("frequency %le\n",c/lambda);
 
 start_wf1=read_data(filename_1,&N_1);
 start_wf2=read_data(filename_2,&N_2);
@@ -131,16 +131,16 @@ if(N_1!=N_2)
          filename_1,filename_2);exit(0);
  }
 
-OS=2*hbar/(mstar*omega)*gsl_pow_2(M(start_wf1,start_wf2,N_1));
+OS=2*hBar/(mstar*omega)*gsl_pow_2(M(start_wf1,start_wf2,N_1));
 
 printf("Oscillator strength %20.17le\n",OS);
 
-if(D3_flag)gamma=ri(lambda)*gsl_pow_2(e_0)*gsl_pow_2(omega)/(6*pi*epsilon_0*mstar*c0*c0*c0);
-else gamma=gsl_pow_2(e_0)*omega/(4*epsilon_0*Wmz*c0*c0*mstar);
+if(D3_flag)gamma=ri(lambda)*gsl_pow_2(e)*gsl_pow_2(omega)/(6*pi*eps0*mstar*c*c*c);
+else gamma=gsl_pow_2(e)*omega/(4*eps0*Wmz*c*c*mstar);
 
 rad=1/(gamma*OS);
 
-printf("Refractive index at %20.17le meV %20.17le\n",(E[state_i-1]-E[state_f-1])/(1e-3*e_0),ri(lambda));
+printf("Refractive index at %20.17le meV %20.17le\n",(E[state_i-1]-E[state_f-1])/(1e-3*e),ri(lambda));
 
 printf("Radiative lifetime %20.17le s\n",rad);
 
@@ -236,7 +236,7 @@ FE=fopen("Ee.r","r");
 
 while(fscanf(FE,"%*i %le",&E[i])!=EOF)
   {
-   E[i]*=1e-3*e_0;                       /* eV->J */
+   E[i]*=1e-3*e;                       /* eV->J */
    i++;
   }
 

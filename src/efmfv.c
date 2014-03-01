@@ -26,7 +26,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -62,8 +62,8 @@ p='e';
 s='+';
 
 T=1.8;
-N0alpha=0.220*e_0;
-N0beta=0.880*e_0;
+N0alpha=0.220*e;
+N0beta=0.880*e;
 J=2.5;
 
 while((argc>1)&&(argv[1][0]=='-'))
@@ -231,10 +231,10 @@ double N0alpha;
 double N0beta;
 double x;
 {
- double A = 2488.0*e_0*1e-3;
- double B = -57880.0*e_0*1e-3;
+ double A = 2488.0*e*1e-3;
+ double B = -57880.0*e*1e-3;
  double C = 152.7;
- double D = -20760.0*e_0*1e-3;
+ double D = -20760.0*e*1e-3;
  double E = 8.083;
  double s;
 
@@ -274,7 +274,7 @@ double T0;
 {
  double	y;
  
- y=((2*J*mu_b*MF)/(kb*(T+T0)));
+ y=((2*J*mu_b*MF)/(kB*(T+T0)));
 
  return(((2*J+1)/(2*J))*coth(((2*J+1)*y)/(2*J))-(1/(2*J))*coth((y/(2*J))));
 }

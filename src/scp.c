@@ -31,7 +31,7 @@
 #include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "const.h"
+#include "qclsim-constants.h"
 #include "maths.h"
 
 static double * read_E(char p, int *s);
@@ -60,7 +60,7 @@ double	*N;		/* pointer to subband populations		*/
 double	*Nda;		/* dopant concentration in m^-3			*/
 double	Ntotal;		/* total carrier concentration yielded by dopant*/
 double	Nutotal;	/* total unnormalised carrier concentration	*/
-double	q;		/* charge on carrier +/-e_0			*/
+double	q;		/* charge on carrier +/-e			*/
 double	*sigma;		/* net areal charge density in m^-2		*/
 double	*V;		/* potential due to charge distribution		*/
 double	**wfs;		/* pointer to start addresses of wave functions	*/
@@ -74,9 +74,9 @@ FILE	*FN;		/* pointer to output file `N.r'			*/
 
 /* default values */
 
-epsilon=13.18*epsilon_0;/* low frequency dielectric constant for GaAs	*/
+epsilon=13.18*eps0;/* low frequency dielectric constant for GaAs	*/
 p='e';			/* electron			*/
-q=-e_0;
+q=-e;
 
 /* default values for numerical calculations	*/
 
@@ -88,15 +88,15 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'e':
-	   epsilon=atof(argv[2])*epsilon_0;
+	   epsilon=atof(argv[2])*eps0;
 	   break;
   case 'p':
 	   p=*argv[2];
 	   switch(p)
 	   {
-	    case 'e': q=-e_0;break;
-	    case 'h': q=+e_0;break;
-	    case 'l': q=+e_0;break;
+	    case 'e': q=-e;break;
+	    case 'h': q=+e;break;
+	    case 'l': q=+e;break;
 	    default:  printf("Usage:  scp [-p particle (\033[1me\033[0m, h, or l)]\n");
                       exit(0);
 	   }
@@ -215,7 +215,7 @@ static double * calc_field(const double  epsilon,
   {
    /* Note sigma is a number density per unit area, needs to be converted
       to Couloumb per unit area						*/
-   F[iz] += sigma[izdash]*e_0*(float)GSL_SIGN(z[iz]-z[izdash])/epsilon;
+   F[iz] += sigma[izdash]*e*(float)GSL_SIGN(z[iz]-z[izdash])/epsilon;
   }
  }
 
@@ -378,7 +378,7 @@ static double * read_E(char p, int *s)
 
  while(fscanf(FE,"%*i %le",E+i)!=EOF)
  {
-  *(E+i)*=1e-3*e_0;		/*convert meV->J		*/
+  *(E+i)*=1e-3*e;		/*convert meV->J		*/
   i++;
  }
 

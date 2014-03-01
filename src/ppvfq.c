@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 #include "ppff.h"
 
@@ -46,7 +46,7 @@ N=100;
 
 /* computational default	*/
 
-m_per_au=4*pi*epsilon_0*gsl_pow_2(hbar/e_0)/m0;
+m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me;
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -87,7 +87,7 @@ for(iq=0;iq<N;iq++)
 
  v=Vf(A0,m_per_au,q*q,type);	/* calculate form factor---a function of q^2	*/
 
- fprintf(FVfq,"%f %le\n",q/(2*pi/A0),v/e_0);	/* write to file	*/
+ fprintf(FVfq,"%f %le\n",q/(2*pi/A0),v/e);	/* write to file	*/
 }
 
 /* Close output file	*/

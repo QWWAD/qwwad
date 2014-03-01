@@ -15,7 +15,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
@@ -45,12 +45,12 @@ FILE	*FIV;		/* pointer to output file `IV.r'	*/
 
 /* default values, appropriate to GaAs-GaAlAs */
 
-Ef=2*1e-3*e_0;		/* just set Ef=2meV to represent some fixed density */
+Ef=2*1e-3*e;		/* just set Ef=2meV to represent some fixed density */
 F=0.0;
 L1=100e-10;
 L2=100e-10;
 L3=100e-10;
-m=0.067*m0;
+m=0.067*me;
 T=300;
 
 /* Computational values	*/
@@ -70,7 +70,7 @@ while((argc>1)&&(argv[1][0]=='-'))
            L3=atof(argv[2])*1e-10;
            break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 'T':
 	   T=atof(argv[2]);
@@ -97,7 +97,7 @@ dE=((TofE+1)->a)-(TofE->a);	/* Calculate step length, assume constant */
 for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
 {
  F=(double)iF*1e+5;		/* Convert kVcm^-1-->Vm^-1	*/
- DeltaE=e_0*F*(L1+0.5*L2);	/* Calculate DeltaE	*/
+ DeltaE=e*F*(L1+0.5*L2);	/* Calculate DeltaE	*/
  V=F*(L1+L2+L3);		/* Calculate voltage	*/
 
  current=0;			/* Initialise current for integration	*/
@@ -106,8 +106,8 @@ for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
   E=(TofE+iE)->a;
   if(E>DeltaE)	/* only add contribution to current if E>DeltaE	*/
   {
-   rho=gsl_pow_3(sqrt(2*m)/hbar)*sqrt(E-DeltaE)/(2*gsl_pow_2(pi));
-   f_FD=1/(exp((E-(Ef+DeltaE))/(kb*T))+1);
+   rho=gsl_pow_3(sqrt(2*m)/hBar)*sqrt(E-DeltaE)/(2*gsl_pow_2(pi));
+   f_FD=1/(exp((E-(Ef+DeltaE))/(kB*T))+1);
  
    current+=((TofE+iE)->b)*f_FD*rho*dE;
   /* if(iF==0)printf("%20.17le %20.17le\n",E,rho*f_FD); output f(E)rho(E) */
@@ -163,7 +163,7 @@ int	*n;
   i=0;
   while(fscanf(FTofE,"%le %le",&((TofE+i)->a),&((TofE+i)->b))!=EOF)
   {
-   ((TofE+i)->a)*=1e-3*e_0;	/* convert meV->J	*/
+   ((TofE+i)->a)*=1e-3*e;	/* convert meV->J	*/
    i++;
   }
 

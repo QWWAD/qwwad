@@ -40,7 +40,6 @@
 #include <stdlib.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
 #include "bools.h"
 
 #include "ppff.c"

@@ -15,12 +15,12 @@
 #include <malloc.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
+#include "qclsim-constants.h"
 
 int main(int argc,char *argv[])
 {
 double	F;		/* Electric field			*/
-double	q;		/* carrier charge +/- e_0		*/
+double	q;		/* carrier charge +/- e		*/
 double	z0;		/* z-axis centre of structure		*/
 int	n;		/* return value of fopen		*/
 int	i;		/* index				*/
@@ -32,7 +32,7 @@ data11	*V0;		/* pointer to potential data		*/
 /* Define global defaults */
 
 F=0.0;
-q=-e_0;
+q=-e;
 p='e';
 
 while((argc>1)&&(argv[1][0]=='-'))
@@ -46,9 +46,9 @@ while((argc>1)&&(argv[1][0]=='-'))
            p=*argv[2];
            switch(p)
            {
-            case 'e': q=-e_0;break;
-            case 'h': q=e_0;break;
-            case 'l': q=e_0;break;
+            case 'e': q=-e;break;
+            case 'h': q=e;break;
+            case 'l': q=e;break;
             default:  printf("Usage:  effv [-p particle (\033[1me\033[0m, h, or l)]\n");
                       exit(0);
            }

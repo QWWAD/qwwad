@@ -36,7 +36,7 @@
 #include <signal.h>
 #include <malloc.h>
 #include <gsl/gsl_math.h>
-#include "const.h"
+#include "qclsim-constants.h"
 #include "d0-helpers.h"
 #include "struct.h"
 #include "maths.h"
@@ -84,12 +84,12 @@ FILE   *fr_d;               /* file pointer to donor positions   */
 
 /* default values */
 
-delta_E=1e-3*e_0;
-epsilon=13.18*epsilon_0;
+delta_E=1e-3*e;
+epsilon=13.18*eps0;
 lambda_start=50.0e-10;
 lambda_step=1.0e-10;
 lambda_stop=-1.0e-10;
-mstar=0.067*m0;
+mstar=0.067*me;
 
 /* computational default values */
 
@@ -102,13 +102,13 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'd':
-	   delta_E=atof(argv[2])*1e-3*e_0;
+	   delta_E=atof(argv[2])*1e-3*e;
 	   break;
   case 'e':
-	   epsilon=atof(argv[2])*epsilon_0;
+	   epsilon=atof(argv[2])*eps0;
 	   break;
   case 'm':
-	   mstar=atof(argv[2])*m0;
+	   mstar=atof(argv[2])*me;
 	   break;
   case 's':
 	   lambda_start=atof(argv[2])*1e-10;
@@ -155,7 +155,7 @@ while((argc>1)&&(argv[1][0]=='-'))
   while(fscanf(fr_d,"%lf\n",&r_d)!=EOF)
   {
    lambda=lambda_start;    /* initial lambda value               */
-   x_min=e_0;              /* minimum energy of single donor 1eV */
+   x_min=e;              /* minimum energy of single donor 1eV */
 
    /* Variational calculation */
 
@@ -165,7 +165,7 @@ while((argc>1)&&(argv[1][0]=='-'))
     /* initial energy estimate=minimum potential-binding energy
                                of particle to free ionised dopant */
 
-    x=V_min(Vstart,n)-gsl_pow_2(e_0)/(4*pi*epsilon*lambda);   
+    x=V_min(Vstart,n)-gsl_pow_2(e)/(4*pi*epsilon*lambda);   
 
     /* increment energy-search for f(x)=0 */
 
@@ -192,9 +192,9 @@ while((argc>1)&&(argv[1][0]=='-'))
         (2.0*d_E);
      x-=y/dy;
 
-    }while(fabs(y/dy)>1e-9*e_0);
+    }while(fabs(y/dy)>1e-9*e);
 
-    printf("r_d %le lambda %le energy %le meV\n",r_d,lambda,x/(1e-3*e_0));       
+    printf("r_d %le lambda %le energy %le meV\n",r_d,lambda,x/(1e-3*e));       
 
     repeat_flag_lambda=repeat_lambda(&lambda,&lambda_0,x,&x_min);
 
@@ -207,7 +207,7 @@ while((argc>1)&&(argv[1][0]=='-'))
    /* Output neutral dopant binding energies (E) and 
       Bohr radii (lambda) in meV and Angstrom respectively */
 
-   fprintf(fe,"%le %le\n",r_d/1e-10,E/(1e-3*e_0));
+   fprintf(fe,"%le %le\n",r_d/1e-10,E/(1e-3*e));
    fprintf(fl,"%le %le\n",r_d/1e-10,lambda_0/1e-10);
 
    wavefunctions(delta_z,E,epsilon,lambda_0,mstar,r_d,i_d,Vstart,n,N_w);
@@ -285,7 +285,7 @@ size_t N_w;
 
  /* boundary conditions */
 
- kappa=sqrt(2*mstar/hbar*(Vp->b-E)/hbar);
+ kappa=sqrt(2*mstar/hBar*(Vp->b-E)/hBar);
 
  delta_psi=1.0e-10;
 
@@ -301,8 +301,8 @@ size_t N_w;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
-          -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
+  gamma=I3+(2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
+          -(2*mstar/hBar)*((Vp->b)-E)*I1/hBar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
           +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
@@ -358,7 +358,7 @@ size_t  N_w;
 
  /* boundary conditions */
 
- kappa=sqrt(2*mstar/hbar*((Vp->b)-E)/hbar);
+ kappa=sqrt(2*mstar/hBar*((Vp->b)-E)/hBar);
 
  delta_psi=1.0e-10;
 
@@ -388,8 +388,8 @@ size_t  N_w;
 
   alpha=I1;
   beta=2*I2;
-  gamma=I3+(2*mstar*gsl_pow_2(e_0/hbar)/(4*pi*epsilon))*I4
-          -(2*mstar/hbar)*((Vp->b)-E)*I1/hbar;
+  gamma=I3+(2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
+          -(2*mstar/hBar)*((Vp->b)-E)*I1/hBar;
 
   psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
           +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]

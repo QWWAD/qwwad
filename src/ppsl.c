@@ -42,7 +42,6 @@
 #include "struct.h"
 #include "maths.h"
 #include "mathnag.h"
-#include "const.h"
 #include "bools.h"
 
 #include "ppff.c"
