@@ -18,6 +18,7 @@ AM_CPPFLAGS = $(BOOST_CPPFLAGS)
 LDADD = $(BOOST_LDFLAGS)             \
 	$(BOOST_PROGRAM_OPTIONS_LIB)
 
+
 noinst_HEADERS = src/const.h         \
 		 src/d0-helpers.h    \
 		 src/dos-functions.h \
@@ -106,3 +107,71 @@ src_efiw_LDADD   = src/libqclsim.a $(LDADD)
 
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqclsim.a $(LDADD)
+
+### COMPILE THE GTEST LIBRARY ITSELF ###
+
+EXTRA_DIST += \
+  gtest/include/gtest/gtest-param-test.h.pump \
+  gtest/include/gtest/internal/gtest-param-util-generated.h.pump \
+  gtest/include/gtest/internal/gtest-tuple.h.pump \
+  gtest/include/gtest/internal/gtest-type-util.h.pump \
+  gtest/src/gtest-death-test.cc \
+  gtest/src/gtest-filepath.cc \
+  gtest/src/gtest-internal-inl.h \
+  gtest/src/gtest-port.cc \
+  gtest/src/gtest-printers.cc \
+  gtest/src/gtest-test-part.cc \
+  gtest/src/gtest-typed-test.cc \
+  gtest/src/gtest.cc \
+  gtest/include/gtest/internal/gtest-param-util-generated.h \
+  gtest/include/gtest/internal/gtest-type-util.h \
+  gtest/include/gtest/internal/gtest-param-util.h \
+  gtest/include/gtest/internal/gtest-port.h \
+  gtest/include/gtest/internal/gtest-linked_ptr.h \
+  gtest/include/gtest/internal/gtest-internal.h \
+  gtest/include/gtest/internal/gtest-death-test-internal.h \
+  gtest/include/gtest/internal/gtest-filepath.h \
+  gtest/include/gtest/internal/gtest-string.h \
+  gtest/include/gtest/internal/gtest-tuple.h \
+  gtest/include/gtest/gtest.h \
+  gtest/include/gtest/gtest-typed-test.h \
+  gtest/include/gtest/gtest-message.h \
+  gtest/include/gtest/gtest-test-part.h \
+  gtest/include/gtest/gtest_pred_impl.h \
+  gtest/include/gtest/gtest-printers.h \
+  gtest/include/gtest/gtest-death-test.h \
+  gtest/include/gtest/gtest-param-test.h \
+  gtest/include/gtest/gtest-spi.h \
+  gtest/include/gtest/gtest_prod.h 
+
+# Modifies compiler and linker flags for pthreads compatibility.
+if HAVE_PTHREADS
+  GTEST_CXXFLAGS = @PTHREAD_CFLAGS@ -DGTEST_HAS_PTHREAD=1
+  GTEST_LIBS = @PTHREAD_LIBS@
+else
+  GTEST_CXXFLAGS = -DGTEST_HAS_PTHREAD=0
+endif
+
+# We define the global AM_CPPFLAGS as everything we compile includes from these
+# directories.
+AM_CPPFLAGS += -isystem $(srcdir)/gtest/include -I$(srcdir)/gtest
+
+# Build rules for libraries.
+check_LTLIBRARIES = gtest/lib/libgtest.la gtest/lib/libgtest_main.la
+#check_CPPFLAGS = -I$(srcdir)/gtest/include
+
+gtest_lib_libgtest_la_SOURCES = gtest/src/gtest-all.cc
+
+gtest_lib_libgtest_main_la_SOURCES = gtest/src/gtest_main.cc
+gtest_lib_libgtest_main_la_CXXFLAGS = $(GTEST_CXXFLAGS)
+gtest_lib_libgtest_main_la_LIBADD = gtest/lib/libgtest.la $(GTEST_LIBS)
+
+### TESTS ###
+TESTS = tests/run-all-unit-tests
+check_PROGRAMS = tests/run-all-unit-tests
+tests_run_all_unit_tests_SOURCES = tests/run-all-unit-tests.cpp
+tests_run_all_unit_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
+tests_run_all_unit_tests_LDADD = gtest/lib/libgtest_main.la \
+				 gtest/lib/libgtest.la \
+				 $(GTEST_LIBS)
+

@@ -93,7 +93,7 @@ if test "x$with_lapacke" = "xyes"; then
 	AC_DEFINE(HAVE_LAPACKE,1,[Build with lapacke.h])
 	LIBS="$LIBS -llapacke"
 else
-	AC_MSG_WARN([Official C bindings for LAPACK unavailable.  Using our own crappy bindings instead!])
+	AC_MSG_WARN([Official C bindings for LAPACK unavailable.  Using our own bindings instead!])
 fi
 
 # Checks for header files.
@@ -101,6 +101,13 @@ AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
+
+# Configure pthreads.
+have_pthreads=no
+AX_PTHREAD([have_pthreads=yes], [have_pthreads=no])
+AM_CONDITIONAL([HAVE_PTHREADS],[test "x$have_pthreads" = "xyes"])
+AC_SUBST(PTHREAD_CFLAGS)
+AC_SUBST(PTHREAD_LIBS)
 
 # Checks for library functions.
 AC_CHECK_FUNCS([floor modf sqrt])
