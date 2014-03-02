@@ -1,19 +1,34 @@
 #!/bin/sh
-# Initialise files
 
-rm -f Ee-lw.r
+# Append data to the file Eei-lw.r if the energy is real
+# Param 1: Number of state
+# Param 2: Energy value
+output_E_if_real()
+{
+ if test "x$2" != "xnan"; then
+	 printf "%d\t%.17e\n" $LW $2 >> Ee$1-lw.r
+ fi
+}
+
+# Initialise files
+rm -f Ee1-lw.r Ee2-lw.r Ee3-lw.r Ee4-lw.r
 
 # Loop for different well widths
 
 for LW in 10 20 30 40 50 60 70 80 90 100 120 140 160 180 200 
 do
-{
  # Calculate first 4 energy levels as a function of well width for GaAs
+ efsqw -a $LW -s 4
 
- efsqw -a $LW -s 4	
+ # Extract energies from output file
+ Ee1=`awk '{print $2}' Ee.r|head -n1`
+ Ee2=`awk '{print $2}' Ee.r|head -n2|tail -n1`
+ Ee3=`awk '{print $2}' Ee.r|head -n3|tail -n1`
+ Ee4=`awk '{print $2}' Ee.r|head -n4|tail -n1`
 
- echo -e "$LW\t" >> Ee-lw.r	# write well width to file
- cat Ee.r >> Ee-lw.r		# send data to file
-
-}
+ # If the energies are real, send data to file
+ output_E_if_real 1 $Ee1
+ output_E_if_real 2 $Ee2
+ output_E_if_real 3 $Ee3
+ output_E_if_real 4 $Ee4
 done
