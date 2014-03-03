@@ -65,7 +65,9 @@
 #include <strings.h>
 #include <valarray>
 #include <cmath>
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_roots.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
@@ -95,7 +97,10 @@ class EFSQWOptions : public Options
                      "Width of quantum well [angstrom].")
                     
                     ("barrier-width,b", po::value<double>()->default_value(200),
-                     "Width of barrier [angstrom].")
+                     "Width of barrier [angstrom]. Note that this is only used "
+                     "for the purposes of outputting the data. The calculation here "
+                     "assumes that the barriers are infinitely thick.  As such, the "
+                     "wavefunctions do not decay to precisely zero at the boundaries.")
 
                     ("alt-KE,k", po::bool_switch()->default_value(false),
                      "Use alternative kinetic energy operator (1/m)PP")
@@ -156,21 +161,19 @@ class EFSQWOptions : public Options
         double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
 };
 
-double df_dx(const double a,
-             const double energy,
-	     const double m_B,
-	     const double m_b,
-	     const double m_w,
-	     const double V,
-	     const bool   parity_flag);
+/// Parameters needed for computing square-well eigenstates
+struct sqw_params
+{
+    double a;           ///< Well width [m]
+    double m_B;         ///< Boundary mass [kg]
+    double m_b;         ///< Barrier mass [kg]
+    double m_w;         ///< Well mass [kg]
+    double V;           ///< Barrier potential [J]
+    bool   parity_flag; ///< True for odd states
+};
 
-double f(const double a,
-         const double energy,
-         const double m_B,
-         const double m_b,
-         const double m_w,
-         const double V,
-         const bool   parity_flag);
+double f(double  energy,
+         void   *params);
 
 void wavef(const double a,
            const double b,
@@ -201,111 +204,88 @@ int main(int argc,char *argv[])
        conditions produces T=(1/m)PP */
     const double m_B = T_flag?m_b:m_w;
 
-    std::valarray<double> E(state); // Energies of states
+    std::vector<double> E; // Energies of states
 
     for(unsigned int i_state=1; i_state<=state;i_state++)
     {
         // deduce parity: false if even parity
         const bool parity_flag = (i_state%2 != 1);
 
-        double y1; // temporary y value
-        double y2; // "         " "
+        sqw_params params = {a, m_B, m_b, m_w, V, parity_flag};
+        gsl_function F;
+        F.function = &f;
+        F.params   = &params;
 
-        do // loop increments energy until function changes sign
+        /// Look for a solution in the range (x,x+dx)
+        gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+        int status;
+        bool root_found = false;
+        double x_end = x;
+        bool V_limit_hit = false;
+
+        do
         {
-            y1=f(a,x,m_B,m_b,m_w,V,parity_flag);
-            x+=dx;
-            y2=f(a,x,m_B,m_b,m_w,V,parity_flag);
-        }while (y1*y2>0);
+            x = x_end;
+            x_end+=dx;
 
-        x-=fabs(y2)/(fabs(y1)+fabs(y2))*dx;
+            // Set a coarse bracket for search
+            double y1=f(x,     &params);
+            double y2=f(x_end, &params);
+            root_found = (y1*y2 < 0);
+            V_limit_hit = std::isunordered(y1,y2);
 
-        double	dy; // derivative of y
-        double	y;  // current functional value
+            if(root_found)
+            {
+                E.push_back(0);
+                double x_lo = x;
+                double x_hi = x_end;
+                gsl_root_fsolver_set(solver, &F, x_lo, x_hi);
 
-        do // Newton-Raphson iterative method
-        {
-            y=f(a,x,m_B,m_b,m_w,V,parity_flag);
-            dy=df_dx(a,x,m_B,m_b,m_w,V,parity_flag);
-            x-=y/dy;
-        }while (fabs(y/dy)>1e-12*e);
+                do
+                {
+                    status = gsl_root_fsolver_iterate(solver);
+                    E[i_state-1] = gsl_root_fsolver_root(solver);
+                    double x_lo = gsl_root_fsolver_x_lower(solver);
+                    double x_hi = gsl_root_fsolver_x_upper(solver);
+                    status = gsl_root_test_interval(x_lo, x_hi, 1e-15*e, 0);
+                }while(status == GSL_CONTINUE);
+                wavef(a,b,E[i_state-1],m_b,m_w,V,i_state,p,parity_flag);
+            }
+        }while(!(root_found or V_limit_hit));
+        x+=dx;
 
-        E[i_state-1]=x; // Uncorrelated energy
-
-        wavef(a,b,E[i_state-1],m_b,m_w,V,i_state,p,parity_flag);
-
-        x+=dx; // clears x from solution
+        gsl_root_fsolver_free(solver);
     }
     
     char filename[9]; // output filename
     sprintf(filename,"E%c.r",p);
-    E/=(0.001*e);
-    write_table_x(filename, E, true);
+    std::valarray<double> _E(E.size());
+    for(unsigned int i=0; i<E.size(); ++i)
+        _E[i] = E[i] /(0.001*e);
+    write_table_x(filename, _E, true);
 
     return EXIT_SUCCESS;
 }
 
 /**
- * \brief derivative of standard fw result =0
- *
- * \param[in] a           well width
- * \param[in] energy      local energy
- * \param[in] m_B         effective mass boundary condition
- * \param[in] m_b         effective mass in the barrier
- * \param[in] m_w         effective mass in the well
- * \param[in] V           barrier potential
- * \param[in] parity_flag true for odd parity states
- */
-double df_dx(const double a,
-             const double energy,
-	     const double m_B,
-	     const double m_b,
-	     const double m_w,
-	     const double V,
-	     const bool   parity_flag)
-{
-    /* Find electron wavevector using Eq. 2.81, QWWAD3 */
-    const double k=sqrt(2*m_w/hBar*energy/hBar);
-
-    /* Energy-derivitive of wavevector (Eq. 2.88, QWWAD3) */
-    const double dk_de=sqrt(2*m_w)/(2*hBar*sqrt(energy));
-
-    /* Energy-derivitive of wavefunction decay constant (Eq. 2.88, QWWAD3) */
-    const double dK_de=sqrt(2*m_b)/(-2*hBar*sqrt(V-energy));
-
-    if(parity_flag) /* ODD parity */
-    {
-        /* df/dE for odd states (Eq. 2.87, QWWAD3) */
-        return dk_de*cot(k*a/2)/m_w-k*a*gsl_pow_2(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
-    }
-    else /* EVEN parity */
-    {
-        /* df/dE for even states (Eq. 2.86, QWWAD3) */
-        return dk_de*tan(k*a/2)/m_w+k*a*gsl_pow_2(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
-    }
-}
-
-/**
  * \brief standard fw result =0
  *
- * \param[in] a           well width
- * \param[in] energy      local energy
- * \param[in] m_B
- * \param[in] m_b
- * \param[in] m_w         effective mass in the well
- * \param[in] V           barrier potential
- * \param[in] parity_flag true for odd parity states
+ * \param[in] energy local energy
+ * \param[in] params sqw params object
  */
-double f(const double a,
-         const double energy,
-         const double m_B,
-         const double m_b,
-         const double m_w,
-         const double V,
-         const bool   parity_flag)
+double f(double  energy,
+         void   *params)
 {
-    const double k=sqrt(2*m_w/hBar*energy/hBar); // electron wave vector
-    const double K=sqrt(2*m_b/hBar*(V-energy)/hBar); // wavefunction decay constant
+    const sqw_params *p = reinterpret_cast<sqw_params *>(params);
+    const double a   = p->a;
+    const double m_B = p->m_B;
+    const double m_b = p->m_b;
+    const double m_w = p->m_w;
+    const double V   = p->V;
+    const bool   parity_flag = p->parity_flag;
+
+    const double k=sqrt(2*m_w*energy)/hBar; // electron wave vector
+    const double K=sqrt(2*m_b*(V-energy))/hBar; // wavefunction decay constant
 
     double result = 0.0;
 
@@ -315,8 +295,8 @@ double f(const double a,
         result = k*tan(k*a/2)/m_w-K/m_B;
 
     return result;
-}     
- 
+}
+
 /**
  * \brief calculates the uncorrelated one particle wavefunctions for the electron and hole and writes to an external file.
  *

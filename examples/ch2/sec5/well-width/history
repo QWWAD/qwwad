@@ -1,12 +1,13 @@
-#!/bin/sh
+#! /bin/sh
 
-# Append data to the file Eei-lw.r if the energy is real
+# Append data to the file Eei-lw.r if the state exists
 # Param 1: Number of state
-# Param 2: Energy value
 output_E_if_real()
 {
- if test "x$2" != "xnan"; then
-	 printf "%d\t%.17e\n" $LW $2 >> Ee$1-lw.r
+ # Extract energies from output file
+ Ee=`awk '{print $2}' Ee.r|sed -n "$1p"`
+ if test "x$Ee" != "x"; then
+	 printf "%d\t%.17e\n" $LW $Ee >> Ee$1-lw.r
  fi
 }
 
@@ -20,15 +21,8 @@ do
  # Calculate first 4 energy levels as a function of well width for GaAs
  efsqw -a $LW -s 4
 
- # Extract energies from output file
- Ee1=`awk '{print $2}' Ee.r|head -n1`
- Ee2=`awk '{print $2}' Ee.r|head -n2|tail -n1`
- Ee3=`awk '{print $2}' Ee.r|head -n3|tail -n1`
- Ee4=`awk '{print $2}' Ee.r|head -n4|tail -n1`
-
- # If the energies are real, send data to file
- output_E_if_real 1 $Ee1
- output_E_if_real 2 $Ee2
- output_E_if_real 3 $Ee3
- output_E_if_real 4 $Ee4
+ # Output energies to file
+ for state in `seq 1 4`; do
+	 output_E_if_real $state
+ done
 done
