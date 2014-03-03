@@ -1,8 +1,9 @@
-/*=========================================================
-                           efsqw
-  =========================================================*/
-
-/* One particle energies and wavefunctions in a single
+/**
+ * \file   efsqw.cpp
+ * \brief  Calculate the 1-particle energies and wavefunctions in a single quantum well
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ * \details One particle energies and wavefunctions in a single
    quantum well.  Three basic theoretical approaches are
    contained within this sourcecode
 
@@ -50,7 +51,6 @@
    in the evaluation of k and K, but m_b is artificially
    forced to equal m_w for the boundary conditions.
 
-
    The system is solved by expressing the
    standard condition as a function f(x)=0 and
    implementing a Newton-Raphson iterative method
@@ -58,12 +58,7 @@
    The first estimate of the energy is found by 
    following the function along the x axis until it
    changes sign then using a midpoint rule.
-
-   Paul Harrison 1992 
-
-   Major modifications/simplifications
-
-   Paul Harrison, March 1998				*/
+*/
 
 #include <cstdio>
 #include <cstdlib>
@@ -73,6 +68,8 @@
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "qwwad-options.h"
+
 using namespace Leeds;
 using namespace constants;
 
@@ -80,6 +77,82 @@ using namespace constants;
                           points, must be odd to provide an
                           even number of strips for numerical 
                           integration.                            */
+
+/**
+ * Handler for command-line options
+ */
+class EFSQWOptions : public Options
+{
+    public:
+        EFSQWOptions(int argc, char* argv[])
+        {
+            try
+            {
+                program_specific_options->add_options()
+                    ("well-width,a", po::value<double>()->default_value(100),
+                     "Width of quantum well [angstrom].")
+                    
+                    ("barrier-width,b", po::value<double>()->default_value(200),
+                     "Width of barrier [angstrom].")
+
+                    ("alt-KE,k", po::bool_switch()->default_value(false),
+                     "Use alternative kinetic energy operator (1/m)PP")
+
+                    ("well-mass,m", po::value<double>()->default_value(0.067),
+                     "Effective mass in well (relative to that of a free electron)")
+
+                    ("barrier-mass,n", po::value<double>()->default_value(0.067),
+                     "Effective mass in barrier (relative to that of a free electron)")
+
+                    ("particle,p", po::value<char>()->default_value('e'),
+                     "Particle to be used: 'e', 'h' or 'l'")
+
+                    ("states,s", po::value<size_t>()->default_value(1),
+                     "Number of states to find")
+
+                    ("potential,V", po::value<double>()->default_value(100),
+                     "Barrier potential [meV]")
+                    ;
+
+                std::string doc("Find the eigenstates of a single finite quantum well. "
+                                "The energies are written to the file \"E*.r\", and the "
+                                "wavefunctions are written to \"wf_*i.r\" where the '*' "
+                                "is replaced by the particle ID in each case and the "
+                                "'i' is replaced by the number of the state");
+
+                add_prog_specific_options_and_parse(argc, argv, doc);	
+            }
+            catch(std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        /// \returns the width of the quantum well [m]
+        double get_well_width() const {return vm["well-width"].as<double>()*1e-10;}
+        
+        /// \returns the width of the barriers [m]
+        double get_barrier_width() const {return vm["barrier-width"].as<double>()*1e-10;}
+
+        /// \returns true if normal kinetic energy operator is to be used
+        bool get_T_flag() const {return !vm["alt-KE"].as<bool>();}
+
+        /// \returns the effective mass in the quantum well [kg]
+        double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
+
+        /// \returns the effective mass in the quantum well [kg]
+        double get_barrier_mass() const {return vm["barrier-mass"].as<double>()*me;}
+
+        /// \returns the particle ID
+        char get_particle() const {return vm["particle"].as<char>();}
+
+        /// \returns the number of spatial points
+        size_t get_n_states() const {return vm["states"].as<size_t>();}
+
+        /// \returns the effective mass in the quantum well [J]
+        double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
+};
 
 double df_dx(const double a,
              const double energy,
@@ -109,40 +182,29 @@ void wavef(const double a,
 
 int main(int argc,char *argv[])
 {
-double	a;		/* well width				*/
-double	b;		/* barrier width			*/
 double	dy;		/* derivative of y			*/
 double	E;		/* uncorrelated energies		*/
 double	dx;		/* small energy increment		*/
-double	m_w;		/* effective masses in the well		*/
-double	m_b;		/* effective masses in the barrier	*/
 double	m_B;		/* m_b for the boundary conditions	*/
-double	V;		/* potential				*/
 double	x;		/* energy estimate			*/
 double	y;		/* current functional value		*/
 double	y1;		/* temporary y value			*/
 double	y2;		/*     "     "   " 			*/
-int	i_state;	/* principal quantum number index	*/
-int	state;		/* number of states			*/
-char	p;		/* particle				*/
 char	filename[9];	/* output filename			*/
 
 FILE	*FE;		/* pointer to energy file 		*/
 bool	parity_flag;	/* true  => odd parity   
                            false => even parity			*/
-bool	T_flag;		/* KE operator flag def.=1=>D(1/m)D  */
 
-
-/* default values, appropriate to GaAs-GaAlAs */
-
-a=100e-10;          
-b=200e-10;
-m_w=0.067*me;
-m_b=0.067*me;
-p='e';
-V=100*1e-3*e;   
-state=1;
-T_flag=true;
+EFSQWOptions opt(argc, argv);
+const double a      = opt.get_well_width();
+const double b      = opt.get_barrier_width();
+const double m_w    = opt.get_well_mass();
+const double m_b    = opt.get_barrier_mass();
+const char   p      = opt.get_particle();
+const double V      = opt.get_potential();   
+const size_t state  = opt.get_n_states();
+const bool   T_flag = opt.get_T_flag();
 
 /* Computational values	*/
 
@@ -150,58 +212,6 @@ dx=1e-4*e;        /* arbitrarily small energy---0.1meV   */
 
 x=dx;    /* first energy estimate */
  
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'a':
-	   a=atof(argv[2])*1e-10;
-	   break;
-  case 'b':
-	   b=atof(argv[2])*1e-10;
-	   break;
-  case 'k':
-	   T_flag=false;
-           argv--;
-           argc++;
-           break;
-  case 'm':
-	   m_w=atof(argv[2])*me;
-	   break;
-  case 'n':
-	   m_b=atof(argv[2])*me;
-	   break;
-  case 'p':
-           p=*argv[2];
-           switch(p)
-           {
-            case 'e': break;
-            case 'h': break;
-            case 'l': break;
-            default:  printf("Usage:  efsqw [-p particle (e, h, or l)]\n");
-                      exit(0);
-           }
-           break;
-  case 's':
-	   state=atoi(argv[2]);
-	   break;
-  case 'V':
-	   V=atof(argv[2])*1e-3*e;
-	   break;
-  default:
-	   printf("Usage:  efsqw [-a well width (\033[1m100\033[0mA)][-b barrier width (\033[1m200\033[0mA)]\n");
-           printf("              [-k use alternative KE operator (1/m)PP \033[1mP(1/m)P\033[0m]\n");
-	   printf("              [-m well mass (\033[1m0.067\033[0mm0)][-n barrier mass (\033[1m0.067\033[0mm0)\n");
-	   printf("              [-p particle (\033[1me\033[0m, h, or l)][-s # states \033[1m1\033[0m]\n");
-	   printf("              [-V barrier height (\033[1m100\033[0mmeV)]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
-
 /* Setting the barrier mass equal to the well mass within the boundary 
    conditions produces T=(1/m)PP */
 
@@ -211,7 +221,7 @@ else m_B=m_w;
 sprintf(filename,"E%c.r",p);
 FE=fopen(filename,"w");
 
-for(i_state=1;i_state<=state;i_state++)
+for(unsigned int i_state=1; i_state<=state;i_state++)
 {
 
  /* deduce parity */
