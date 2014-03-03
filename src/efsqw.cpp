@@ -65,27 +65,50 @@
 
    Paul Harrison, March 1998				*/
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <strings.h>
-#include <math.h>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+using namespace Leeds;
+using namespace constants;
 
 #define   N  1001      /* number of wavefunction sampling
                           points, must be odd to provide an
                           even number of strips for numerical 
                           integration.                            */
 
+double df_dx(const double a,
+             const double energy,
+	     const double m_B,
+	     const double m_b,
+	     const double m_w,
+	     const double V,
+	     const bool   parity_flag);
+
+double f(const double a,
+         const double energy,
+         const double m_B,
+         const double m_b,
+         const double m_w,
+         const double V,
+         const bool   parity_flag);
+
+void wavef(const double a,
+           const double b,
+           const double E,
+           const double m_b,
+           const double m_w,
+           const double V,
+           const int    i_state,
+           const char   p,
+           const bool   parity_flag);
 
 int main(int argc,char *argv[])
 {
-double	df_dx();	/* derivative of function wrt energy	*/
-double	f();		/* function of energy			*/
-void	wavef();	/* generates wave functions		*/
 double	a;		/* well width				*/
 double	b;		/* barrier width			*/
 double	dy;		/* derivative of y			*/
@@ -240,18 +263,23 @@ return EXIT_SUCCESS;
 
 
 /**
- * This function is the derivative of standard fw result =0
+ * \brief derivative of standard fw result =0
+ *
+ * \param[in] a           well width
+ * \param[in] energy      local energy
+ * \param[in] m_B
+ * \param[in] m_b
+ * \param[in] m_w         effective mass in the well
+ * \param[in] V           barrier potential
+ * \param[in] parity_flag true for odd parity states
  */
-double 
-df_dx(a,energy,m_B,m_b,m_w,V,parity_flag)
-
-double a;
-double energy;     /* local energy */
-double m_B;
-double m_b;
-double m_w;
-double V;
-bool   parity_flag;
+double df_dx(const double a,
+             const double energy,
+	     const double m_B,
+	     const double m_b,
+	     const double m_w,
+	     const double V,
+	     const bool   parity_flag)
 {
  /* Find electron wavevector using Eq. 2.81, QWWAD3 */
  const double k=sqrt(2*m_w/hBar*energy/hBar);
@@ -274,20 +302,24 @@ bool   parity_flag;
  }
 }     
 
-
-
-double
-f(a,energy,m_B,m_b,m_w,V,parity_flag)
-
-/* This function is the standard fw result =0 */
-
-double a;
-double energy;     /* local energy */
-double m_B;
-double m_b;
-double m_w;
-double V;
-bool   parity_flag;
+/**
+ * \brief standard fw result =0
+ *
+ * \param[in] a           well width
+ * \param[in] energy      local energy
+ * \param[in] m_B
+ * \param[in] m_b
+ * \param[in] m_w         effective mass in the well
+ * \param[in] V           barrier potential
+ * \param[in] parity_flag true for odd parity states
+ */
+double f(const double a,
+         const double energy,
+         const double m_B,
+         const double m_b,
+         const double m_w,
+         const double V,
+         const bool   parity_flag)
 {
  double k;        /* electron wave vector        */
  double K;        /* wavefunction decay constant */
@@ -305,24 +337,28 @@ bool   parity_flag;
  }
 }     
  
-
-
-void
-wavef(a,b,E,m_b,m_w,V,i_state,p,parity_flag)
-
-/* This function calculates the uncorrelated one particle
-   wavefunctions for the electron and hole and writes
-   them to an external file.                              */
-
-double a;              /* well width             */
-double b;              /* barrier width          */
-double E;
-double m_b;
-double m_w;
-double V;
-int    i_state;
-char   p;
-bool	parity_flag;
+/**
+ * \brief calculates the uncorrelated one particle wavefunctions for the electron and hole and writes to an external file.
+ *
+ * \param[in] a           well width
+ * \param[in] b           barrier width
+ * \param[in] E           local energy
+ * \param[in] m_b
+ * \param[in] m_w
+ * \param[in] V           barrier potential
+ * \param[in] i_state     state index
+ * \param[in] p           particle ID
+ * \param[in] parity_flag true for odd states, false for even
+ */
+void wavef(const double a,
+           const double b,
+           const double E,
+           const double m_b,
+           const double m_w,
+           const double V,
+           const int    i_state,
+           const char   p,
+           const bool   parity_flag)
 {
  double A;         /* In the well the wavefunction psi=Acoskz */
  double B;         /* and in the barrier  psi=Bexp(-Kz)       */
@@ -415,4 +451,4 @@ bool	parity_flag;
 
  fclose(wf_out);              /* close the external file */
 }
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

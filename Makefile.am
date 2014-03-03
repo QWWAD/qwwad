@@ -103,6 +103,9 @@ src_dos_LDADD    = src/libqclsim.a $(LDADD)
 src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
 src_efiw_LDADD   = src/libqclsim.a $(LDADD)
 
+src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
+src_efsqw_LDADD   = src/libqclsim.a $(LDADD)
+
 src_ppvfq_SOURCES = src/ppvfq.c src/ppff.h
 src_ppvfq_LDADD   = src/libqclsim.a
 
