@@ -117,7 +117,7 @@ class EFSQWOptions : public Options
                     ("states,s", po::value<size_t>()->default_value(1),
                      "Number of states to find")
 
-                    ("potential,V", po::value<double>()->default_value(100),
+                    ("potential", po::value<double>()->default_value(100),
                      "Barrier potential [meV]")
                     ;
 
