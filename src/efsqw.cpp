@@ -63,11 +63,13 @@
 #include <cstdio>
 #include <cstdlib>
 #include <strings.h>
+#include <valarray>
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
@@ -182,103 +184,74 @@ void wavef(const double a,
 
 int main(int argc,char *argv[])
 {
-double	dy;		/* derivative of y			*/
-double	E;		/* uncorrelated energies		*/
-double	dx;		/* small energy increment		*/
-double	m_B;		/* m_b for the boundary conditions	*/
-double	x;		/* energy estimate			*/
-double	y;		/* current functional value		*/
-double	y1;		/* temporary y value			*/
-double	y2;		/*     "     "   " 			*/
-char	filename[9];	/* output filename			*/
+    EFSQWOptions opt(argc, argv);
+    const double a      = opt.get_well_width();
+    const double b      = opt.get_barrier_width();
+    const double m_w    = opt.get_well_mass();
+    const double m_b    = opt.get_barrier_mass();
+    const char   p      = opt.get_particle();
+    const double V      = opt.get_potential();   
+    const size_t state  = opt.get_n_states();
+    const bool   T_flag = opt.get_T_flag();
 
-FILE	*FE;		/* pointer to energy file 		*/
-bool	parity_flag;	/* true  => odd parity   
-                           false => even parity			*/
+    const double dx = 1e-4*e; // arbitrarily small energy increment [0.1meV]
+    double x = dx; // first energy estimate
 
-EFSQWOptions opt(argc, argv);
-const double a      = opt.get_well_width();
-const double b      = opt.get_barrier_width();
-const double m_w    = opt.get_well_mass();
-const double m_b    = opt.get_barrier_mass();
-const char   p      = opt.get_particle();
-const double V      = opt.get_potential();   
-const size_t state  = opt.get_n_states();
-const bool   T_flag = opt.get_T_flag();
+    /* Setting the barrier mass equal to the well mass within the boundary 
+       conditions produces T=(1/m)PP */
+    const double m_B = T_flag?m_b:m_w;
 
-/* Computational values	*/
+    std::valarray<double> E(state); // Energies of states
 
-dx=1e-4*e;        /* arbitrarily small energy---0.1meV   */
+    for(unsigned int i_state=1; i_state<=state;i_state++)
+    {
+        // deduce parity: false if even parity
+        const bool parity_flag = (i_state%2 != 1);
 
-x=dx;    /* first energy estimate */
- 
-/* Setting the barrier mass equal to the well mass within the boundary 
-   conditions produces T=(1/m)PP */
+        double y1; // temporary y value
+        double y2; // "         " "
 
-if(T_flag)m_B=m_b;	
-else m_B=m_w;
+        do // loop increments energy until function changes sign
+        {
+            y1=f(a,x,m_B,m_b,m_w,V,parity_flag);
+            x+=dx;
+            y2=f(a,x,m_B,m_b,m_w,V,parity_flag);
+        }while (y1*y2>0);
 
-sprintf(filename,"E%c.r",p);
-FE=fopen(filename,"w");
+        x-=fabs(y2)/(fabs(y1)+fabs(y2))*dx;
 
-for(unsigned int i_state=1; i_state<=state;i_state++)
-{
+        double	dy; // derivative of y
+        double	y;  // current functional value
 
- /* deduce parity */
+        do // Newton-Raphson iterative method
+        {
+            y=f(a,x,m_B,m_b,m_w,V,parity_flag);
+            dy=df_dx(a,x,m_B,m_b,m_w,V,parity_flag);
+            x-=y/dy;
+        }while (fabs(y/dy)>1e-12*e);
 
- if(i_state%2==1)
- {
-  parity_flag=false;		/* even parity (state 1,3 etc.) */
- }
- else
- {
-  parity_flag=true;		/* odd parity (state 2,4 etc.)  */
- }
+        E[i_state-1]=x; // Uncorrelated energy
 
+        wavef(a,b,E[i_state-1],m_b,m_w,V,i_state,p,parity_flag);
 
-  do      /* loop increments energy until function changes sign */
-  {
-   y1=f(a,x,m_B,m_b,m_w,V,parity_flag);
-   x+=dx;
-   y2=f(a,x,m_B,m_b,m_w,V,parity_flag);
-  }while (y1*y2>0);
+        x+=dx; // clears x from solution
+    }
+    
+    char filename[9]; // output filename
+    sprintf(filename,"E%c.r",p);
+    E/=(0.001*e);
+    write_table_x(filename, E, true);
 
-  x-=fabs(y2)/(fabs(y1)+fabs(y2))*dx;
-
-  do      /* Newton-Raphson iterative method */
-  {
-   y=f(a,x,m_B,m_b,m_w,V,parity_flag);
-   dy=df_dx(a,x,m_B,m_b,m_w,V,parity_flag);
-   x-=y/dy;
-  }while (fabs(y/dy)>1e-12*e);
-
-  E=x;
-
-  fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e));
-
-  wavef(a,b,E,m_b,m_w,V,i_state,p,parity_flag);
-
- x+=dx;       /* clears x from solution */
-
-}/* end i_state */
-
-
-
-fclose(FE);
-
-return EXIT_SUCCESS;
-}        /* end main */
-
-
-
+    return EXIT_SUCCESS;
+}
 
 /**
  * \brief derivative of standard fw result =0
  *
  * \param[in] a           well width
  * \param[in] energy      local energy
- * \param[in] m_B
- * \param[in] m_b
+ * \param[in] m_B         effective mass boundary condition
+ * \param[in] m_b         effective mass in the barrier
  * \param[in] m_w         effective mass in the well
  * \param[in] V           barrier potential
  * \param[in] parity_flag true for odd parity states
@@ -291,26 +264,26 @@ double df_dx(const double a,
 	     const double V,
 	     const bool   parity_flag)
 {
- /* Find electron wavevector using Eq. 2.81, QWWAD3 */
- const double k=sqrt(2*m_w/hBar*energy/hBar);
+    /* Find electron wavevector using Eq. 2.81, QWWAD3 */
+    const double k=sqrt(2*m_w/hBar*energy/hBar);
 
- /* Energy-derivitive of wavevector (Eq. 2.88, QWWAD3) */
- const double dk_de=sqrt(2*m_w)/(2*hBar*sqrt(energy));
+    /* Energy-derivitive of wavevector (Eq. 2.88, QWWAD3) */
+    const double dk_de=sqrt(2*m_w)/(2*hBar*sqrt(energy));
 
- /* Energy-derivitive of wavefunction decay constant (Eq. 2.88, QWWAD3) */
- const double dK_de=sqrt(2*m_b)/(-2*hBar*sqrt(V-energy));
+    /* Energy-derivitive of wavefunction decay constant (Eq. 2.88, QWWAD3) */
+    const double dK_de=sqrt(2*m_b)/(-2*hBar*sqrt(V-energy));
 
- if(parity_flag) /* ODD parity */
- {
-   /* df/dE for odd states (Eq. 2.87, QWWAD3) */
-   return dk_de*cot(k*a/2)/m_w-k*a*gsl_pow_2(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
- }
- else /* EVEN parity */
- {
-   /* df/dE for even states (Eq. 2.86, QWWAD3) */
-   return dk_de*tan(k*a/2)/m_w+k*a*gsl_pow_2(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
- }
-}     
+    if(parity_flag) /* ODD parity */
+    {
+        /* df/dE for odd states (Eq. 2.87, QWWAD3) */
+        return dk_de*cot(k*a/2)/m_w-k*a*gsl_pow_2(cosec(k*a/2))*dk_de/(2*m_w)+dK_de/m_B;
+    }
+    else /* EVEN parity */
+    {
+        /* df/dE for even states (Eq. 2.86, QWWAD3) */
+        return dk_de*tan(k*a/2)/m_w+k*a*gsl_pow_2(sec(k*a/2))*dk_de/(2*m_w)-dK_de/m_B;
+    }
+}
 
 /**
  * \brief standard fw result =0
@@ -331,20 +304,17 @@ double f(const double a,
          const double V,
          const bool   parity_flag)
 {
- double k;        /* electron wave vector        */
- double K;        /* wavefunction decay constant */
+    const double k=sqrt(2*m_w/hBar*energy/hBar); // electron wave vector
+    const double K=sqrt(2*m_b/hBar*(V-energy)/hBar); // wavefunction decay constant
 
- k=sqrt(2*m_w/hBar*energy/hBar);
- K=sqrt(2*m_b/hBar*(V-energy)/hBar);
+    double result = 0.0;
 
- if(parity_flag)
- {
-  return(k*cot(k*a/2)/m_w+K/m_B);
- }
- else
- {
-  return(k*tan(k*a/2)/m_w-K/m_B);
- }
+    if(parity_flag)
+        result = k*cot(k*a/2)/m_w+K/m_B;
+    else
+        result = k*tan(k*a/2)/m_w-K/m_B;
+
+    return result;
 }     
  
 /**
@@ -353,8 +323,8 @@ double f(const double a,
  * \param[in] a           well width
  * \param[in] b           barrier width
  * \param[in] E           local energy
- * \param[in] m_b
- * \param[in] m_w
+ * \param[in] m_b         barrier mass
+ * \param[in] m_w         well mass
  * \param[in] V           barrier potential
  * \param[in] i_state     state index
  * \param[in] p           particle ID
@@ -370,95 +340,76 @@ void wavef(const double a,
            const char   p,
            const bool   parity_flag)
 {
- double A;         /* In the well the wavefunction psi=Acoskz */
- double B;         /* and in the barrier  psi=Bexp(-Kz)       */
- double k;         /* wavevector in the well                  */
- double K;         /* decay constant in the barrier           */
- double norm_int;  /* integral over all space of psi*psi      */
- double psi[N];    /* wavefunction                            */
- double z[N];      /* displacement along growth direction     */
- int i_z;          /* z displacement index                    */
- char filename[9]; /* output filename                         */
- FILE *wf_out;
+    double A;         /* In the well the wavefunction psi=Acoskz */
+    const double B=1; /* and in the barrier  psi=Bexp(-Kz)       */
+    double norm_int;  /* integral over all space of psi*psi      */
 
- /* Generate z co-ordinates	*/
+    // Generate z co-ordinates
+    std::valarray<double> z(N);
 
- for (i_z=0;i_z<N;i_z++) z[i_z]=i_z*(a+2*b)/(N-1)-(b+a/2);
+    for (unsigned int i_z=0;i_z<N;i_z++)
+        z[i_z]=i_z*(a+2*b)/(N-1)-(b+a/2);
 
- /* Define k and K	*/
+    // Define k and K
+    const double k=sqrt(2*m_w/hBar*E/hBar); // wave vector in the well
+    const double K=sqrt(2*m_b/hBar*(V-E)/hBar); // decay constant in barrier
+    
+    std::valarray<double> psi(N); // wavefunction
 
-  k=sqrt(2*m_w/hBar*E/hBar);
-  K=sqrt(2*m_b/hBar*(V-E)/hBar);
-
-  if(parity_flag)	/* odd parity wavefunction */
-  {
-   B=1;              /* choose B arbitrarily                    */
-
-   A=B*exp(-K*a/2)/sin(k*a/2);
-
-   for (i_z=0;i_z<N;i_z++)		/* calculate wavefunctions */
-   {
-    if (z[i_z]<(-a/2))
+    if(parity_flag) // odd parity wavefunction
     {
-     psi[i_z]=-B*exp(-K*fabs(z[i_z]));		/* barrier */
+        A=B*exp(-K*a/2)/sin(k*a/2);
+
+        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
+        {
+            if (z[i_z]<(-a/2)) // Left barrier
+            {
+                psi[i_z]=-B*exp(-K*fabs(z[i_z]));
+            }
+            if ((z[i_z]>=(-a/2))&&(z[i_z]<(a/2))) // Well
+            {
+                psi[i_z]=A*sin(k*z[i_z]);
+            }
+            if (z[i_z]>=(a/2)) // Right barrier
+            {
+                psi[i_z]=B*exp(-K*z[i_z]);
+            }
+        }
+
+        // normalisation integral for odd parity type I
+        norm_int=gsl_pow_2(A)*(a/2-sin(k*a)/(2*k))-
+            gsl_pow_2(B)*exp(-K*a)*(exp(-2*K*b)-1)/K;
     }
-    if ((z[i_z]>=(-a/2))&&(z[i_z]<(a/2)))
+    else // even parity wavefunction
     {
-     psi[i_z]=A*sin(k*z[i_z]);			/* well    */
+        A=B*exp(-K*a/2)/cos(k*a/2);
+
+        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
+        {
+            if (z[i_z]<(-a/2)) // Left barrier
+            {
+                psi[i_z]=B*exp(-K*fabs(z[i_z]));
+            }
+            if ((z[i_z]>=(-a/2))&&(z[i_z]<(a/2))) // Well
+            {
+                psi[i_z]=A*cos(k*z[i_z]);
+            }
+            if (z[i_z]>=(a/2)) // Right barrier
+            {
+                psi[i_z]=B*exp(-K*z[i_z]);
+            }
+        }
+
+        // normalisation integral for even parity type I
+        norm_int=gsl_pow_2(A)*(a/2+sin(k*a)/(2*k))+
+            gsl_pow_2(B)*exp(-K*a)*(1-exp(-2*K*b))/K;
     }
-    if (z[i_z]>=(a/2))
-    {
-     psi[i_z]=B*exp(-K*z[i_z]);			/* barrier */
-    }
-   }/* end for*/
-  
-    /* normalisation integral for odd parity type I */
 
-    norm_int=gsl_pow_2(A)*(a/2-sin(k*a)/(2*k))-
-             gsl_pow_2(B)*exp(-K*a)*(exp(-2*K*b)-1)/K;
+    // normalise wavefunction
+    psi/=sqrt(norm_int);
 
-  }
-  else		/* even parity wavefunction */
-  {
-   B=1;              /* choose B arbitrarily                    */
-
-   A=B*exp(-K*a/2)/cos(k*a/2);
-
-   for (i_z=0;i_z<N;i_z++)           /* calculate wavefunctions */
-   {
-    if (z[i_z]<(-a/2))
-    {
-     psi[i_z]=B*exp(-K*fabs(z[i_z]));          /* barrier */
-    }
-    if ((z[i_z]>=(-a/2))&&(z[i_z]<(a/2)))
-    {
-     psi[i_z]=A*cos(k*z[i_z]);                 /* well    */
-    }
-    if (z[i_z]>=(a/2))
-    {
-     psi[i_z]=B*exp(-K*z[i_z]);                /* barrier */
-    }
-   }/* end for*/
-  
-    /* normalisation integral for even parity type I */
-
-    norm_int=gsl_pow_2(A)*(a/2+sin(k*a)/(2*k))+
-             gsl_pow_2(B)*exp(-K*a)*(1-exp(-2*K*b))/K;
-
-   }
-
-  /* normalise wavefunction */
-
-  for(i_z=0;i_z<N;i_z++)psi[i_z]/=sqrt(norm_int);
-
- sprintf(filename,"wf_%c%i.r",p,i_state);
- wf_out=fopen(filename,"w");    /* open the external file  */
-
- for (i_z=0;i_z<N;i_z++)
- {
-  fprintf(wf_out,"%e %e\n",z[i_z],psi[i_z]);
- }
-
- fclose(wf_out);              /* close the external file */
+    char filename[9]; // output filename
+    sprintf(filename,"wf_%c%i.r",p,i_state);
+    write_table_xy(filename, z, psi);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
