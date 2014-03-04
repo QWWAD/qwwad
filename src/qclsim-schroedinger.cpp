@@ -8,7 +8,9 @@
 #include "qclsim-schroedinger.h"
 
 #include <cmath>
+#include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_roots.h>
 #include <boost/multi_array.hpp>
 #include "qclsim-constants.h"
 
@@ -329,6 +331,221 @@ void SchroedingerSolverInfWell::calculate()
             psi=sqrt(2/_L)*sin(is*pi*_z/_L); // Wavefunction [m^{-0.5}]
 
         _solutions[is-1] = State(E, psi);
+    }
+}
+
+SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
+                                                           const double l_b,
+                                                           const double V,
+                                                           const double m_w,
+                                                           const double m_b,
+                                                           const size_t nz,
+                                                           const bool   alt_KE,
+                                                           const unsigned int nst_max) :
+    SchroedingerSolver(std::valarray<double>(nz),
+                       std::valarray<double>(nz),
+                       nst_max),
+    _l_w(l_w),
+    _l_b(l_b),
+    _V(V),
+    _m_w(m_w),
+    _m_b(m_b),
+    _m_B(alt_KE?m_b:m_w)
+{
+    for (unsigned int i_z=0; i_z<nz; i_z++)
+        _z[i_z]=i_z*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
+}
+
+/// Parameters needed for computing square-well eigenstates
+struct sqw_params
+{
+    double a;           ///< Well width [m]
+    double m_B;         ///< Boundary mass [kg]
+    double m_b;         ///< Barrier mass [kg]
+    double m_w;         ///< Well mass [kg]
+    double V;           ///< Barrier potential [J]
+    bool   parity_flag; ///< True for odd states
+};
+
+/**
+ * \brief Computes the characteristic equation for a finite well
+ *
+ * \details This can be used to find the eigenstates for the system,
+ *          since the characteristic equation is zero for an eigenstate.
+ *          For even parity states, it is given by
+ *          \f[
+ *            f(E) = k\tan\left(\frac{kl_w}{2}\right) - \kappa
+ *          \f]
+ *          For odd states, it is
+ *          \f[
+ *            f(E) = k\cot\left(\frac{kl_w}{2}\right) + \kappa
+ *          \f]
+ *
+ * \param[in] energy local energy
+ * \param[in] params square-well parameters
+ *
+ * \returns The value of the characteristic equation for the well.
+ *          This is zero when the energy equals the an eigenvalue.
+ */
+double SchroedingerSolverFiniteWell_f(double  energy,
+                                      void   *params)
+{
+    const sqw_params *p = reinterpret_cast<sqw_params *>(params);
+    const double a   = p->a;
+    const double m_B = p->m_B;
+    const double m_b = p->m_b;
+    const double m_w = p->m_w;
+    const double V   = p->V;
+    const bool   parity_flag = p->parity_flag;
+
+    const double k=sqrt(2*m_w*energy)/hBar; // electron wave vector
+    const double K=sqrt(2*m_b*(V-energy))/hBar; // wavefunction decay constant
+
+    double result = 0.0;
+
+    if(parity_flag)
+        result = k*cot(k*a/2)/m_w+K/m_B;
+    else
+        result = k*tan(k*a/2)/m_w-K/m_B;
+
+    return result;
+}
+
+/**
+ * \brief calculates the uncorrelated one particle wavefunctions for the electron and hole and writes to an external file.
+ *
+ * \param[in] E           local energy
+ * \param[in] i_state     state index
+ * \param[in] parity_flag true for odd states, false for even
+ */
+std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
+                                                          const int    i_state,
+                                                          const bool   parity_flag)
+{
+    const size_t N = _z.size();
+    double A;         /* In the well the wavefunction psi=Acoskz */
+    const double B=1; /* and in the barrier  psi=Bexp(-Kz)       */
+    double norm_int;  /* integral over all space of psi*psi      */
+
+    // Define k and K
+    const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
+    const double K=sqrt(2*_m_b/hBar*(_V-E)/hBar); // decay constant in barrier
+    
+    std::valarray<double> psi(N); // wavefunction
+
+    if(parity_flag) // odd parity wavefunction
+    {
+        A=B*exp(-K*_l_w/2)/sin(k*_l_w/2);
+
+        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
+        {
+            if (_z[i_z]<(-_l_w/2)) // Left barrier
+            {
+                psi[i_z]=-B*exp(-K*fabs(_z[i_z]));
+            }
+            if ((_z[i_z]>=(-_l_w/2))&&(_z[i_z]<(_l_w/2))) // Well
+            {
+                psi[i_z]=A*sin(k*_z[i_z]);
+            }
+            if (_z[i_z]>=(_l_w/2)) // Right barrier
+            {
+                psi[i_z]=B*exp(-K*_z[i_z]);
+            }
+        }
+
+        // normalisation integral for odd parity type I
+        norm_int=gsl_pow_2(A)*(_l_w/2-sin(k*_l_w)/(2*k))-
+            gsl_pow_2(B)*exp(-K*_l_w)*(exp(-2*K*_l_b)-1)/K;
+    }
+    else // even parity wavefunction
+    {
+        A=B*exp(-K*_l_w/2)/cos(k*_l_w/2);
+
+        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
+        {
+            if (_z[i_z]<(-_l_w/2)) // Left barrier
+            {
+                psi[i_z]=B*exp(-K*fabs(_z[i_z]));
+            }
+            if ((_z[i_z]>=(-_l_w/2))&&(_z[i_z]<(_l_w/2))) // Well
+            {
+                psi[i_z]=A*cos(k*_z[i_z]);
+            }
+            if (_z[i_z]>=(_l_w/2)) // Right barrier
+            {
+                psi[i_z]=B*exp(-K*_z[i_z]);
+            }
+        }
+
+        // normalisation integral for even parity type I
+        norm_int=gsl_pow_2(A)*(_l_w/2+sin(k*_l_w)/(2*k))+
+            gsl_pow_2(B)*exp(-K*_l_w)*(1-exp(-2*K*_l_b))/K;
+    }
+
+    // normalise wavefunction
+    psi/=sqrt(norm_int);
+    return psi;
+}
+
+void SchroedingerSolverFiniteWell::calculate()
+{
+    const double dx = 1e-4*e; // arbitrarily small energy increment [0.1meV]
+    double x = dx; // first energy estimate
+    for(unsigned int i_state=1; i_state<=_nst_max;i_state++)
+    {
+        // deduce parity: false if even parity
+        const bool parity_flag = (i_state%2 != 1);
+
+        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V, parity_flag};
+        gsl_function F;
+        F.function = &SchroedingerSolverFiniteWell_f;
+        F.params   = &params;
+
+        gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+        int status;
+        bool root_found = false;
+        double x_end = x;
+        bool V_limit_hit = false;
+
+        // Look for a solution in the range (x,x+dx)
+        do
+        {
+            // Set a coarse bracket for search
+            x = x_end;
+            x_end+=dx;
+            double y1=SchroedingerSolverFiniteWell_f(x,     &params);
+            double y2=SchroedingerSolverFiniteWell_f(x_end, &params);
+            root_found = (y1*y2 < 0);
+
+            // Check that we haven't hit the top of the well
+            // (i.e., either y1 or y2 are not-a-number)
+            V_limit_hit = std::isunordered(y1,y2);
+
+            if(root_found)
+            {
+                double E = 0.5 * (x+x_end); // Initial estimate of energy
+                double x_lo = x;
+                double x_hi = x_end;
+                gsl_root_fsolver_set(solver, &F, x_lo, x_hi);
+
+                // Improve the estimate of energy using the Brent algorithm
+                // until we hit a desired level of precision
+                do
+                {
+                    status = gsl_root_fsolver_iterate(solver);
+                    E = gsl_root_fsolver_root(solver);
+                    double x_lo = gsl_root_fsolver_x_lower(solver);
+                    double x_hi = gsl_root_fsolver_x_upper(solver);
+                    status = gsl_root_test_interval(x_lo, x_hi, 1e-15*e, 0);
+                }while(status == GSL_CONTINUE);
+
+                std::valarray<double> psi = wavef(E,i_state,parity_flag);
+                _solutions.push_back(State(E, psi));
+            }
+        }while(!(root_found or V_limit_hit));
+        x+=dx;
+
+        gsl_root_fsolver_free(solver);
     }
 }
 } // namespace Leeds

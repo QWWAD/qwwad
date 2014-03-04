@@ -7,7 +7,6 @@
 #include "struct.h"
 double sec   (const double x);
 double cosec (const double x);
-double cot   (const double x);
 double coth  (const double x);
 vector vadd  (const vector A,
               const vector B);
@@ -44,18 +43,6 @@ double sec(const double x)
 double cosec(const double x)
 {
  return 1/sin(x);
-}
-
-/**
- * The cotangent of a number
- *
- * \param[in] x The number for which to find the cotangent (radians)
- *
- * \return The cotangent
- */
-double cot(const double x)
-{
- return 1/tan(x);
 }
 
 /**

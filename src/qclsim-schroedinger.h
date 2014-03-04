@@ -101,6 +101,37 @@ private:
 };
 
 /**
+ * Schroedinger solver for a finite square well with infinitely thick barriers
+ */
+class SchroedingerSolverFiniteWell : public SchroedingerSolver
+{
+public:
+    SchroedingerSolverFiniteWell(const double l_w,
+                                 const double l_b,
+                                 const double V,
+                                 const double m_w,
+                                 const double m_b,
+                                 const size_t nz,
+                                 const bool   alt_KE  = false,
+                                 const unsigned int nst_max = 0);
+
+    std::string get_name() {return "finite-square-well";}
+private:
+    double _l_w; ///< Width of well [m]
+    double _l_b; ///< Width of barriers [m]
+    double _V;   ///< Confining potential [J]
+    double _m_w; ///< Effective mass in well [kg]
+    double _m_b; ///< Effective mass in barriers [kg]
+    double _m_B; ///< Effective mass for use in boundary conditions [kg]
+
+    void calculate();
+    
+    std::valarray<double> wavef(const double E,
+                                const int    i_state,
+                                const bool   parity_flag);
+};
+
+/**
  * Schroedinger solver that uses a full generalised matrix
  */
 class SchroedingerSolverFull : public SchroedingerSolver

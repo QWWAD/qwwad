@@ -27,6 +27,8 @@ double lin_interp(const double y0,
                   const double x,
                   const double b=0);
 
+double cot(const double x);
+
 /**
  * A numerical solver for Laplace transforms
  *
