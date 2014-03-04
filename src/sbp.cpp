@@ -16,6 +16,7 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>

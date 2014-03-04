@@ -6,10 +6,6 @@
 #ifndef QWWAD_OPTIONS_H
 #define QWWAD_OPTIONS_H
 
-#if HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;

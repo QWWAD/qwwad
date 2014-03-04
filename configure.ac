@@ -2,7 +2,19 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.63])
-AC_INIT([qwwad], [1.0], [a.valavanis@leeds.ac.uk])
+
+AC_INIT([Quantum Wells, Wires and Dots], [1.0], [a.valavanis@leeds.ac.uk], [qwwad], [https://launchpad.net/qwwad])
+
+dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
+dnl manually.
+dnl TODO: Get rid of this and bump the version to 2.64 in AC_PREREQ when all reasonable
+dnl       OSes have Autoconf >= 2.64 available
+m4_if(m4_version_compare(m4_defn([AC_AUTOCONF_VERSION]),[2.64]), [-1],
+  [AC_MSG_WARN([Using an old version of Autoconf])
+   AC_DEFINE([PACKAGE_URL], ["https://launchpad.net/qwwad"], [The URL for the package])
+  ]
+)
+
 AC_CONFIG_SRCDIR([src/csss.c])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])

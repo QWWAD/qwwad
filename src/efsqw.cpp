@@ -57,6 +57,7 @@
    changes sign then using a midpoint rule.
 */
 
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 #include <valarray>

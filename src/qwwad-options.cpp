@@ -3,6 +3,10 @@
  * \brief Implementaions of common methods for program options
  */
 
+#if HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include "qwwad-options.h"
 #include <iostream>
 #include <fstream>

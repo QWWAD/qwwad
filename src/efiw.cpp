@@ -5,6 +5,7 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
+#include <iostream>
 #include <cstdlib>
 #include <cmath>
 #include <valarray>

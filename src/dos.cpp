@@ -9,6 +9,7 @@
  *          minima which are read in from the external file `Ee.r', or `Eh.r'
  */
 
+#include <iostream>
 #include "dos-functions.h"
 #include "qclsim-constants.h"
 #include "qwwad-fileio.h"
