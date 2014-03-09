@@ -3,11 +3,15 @@
 #include <valarray>
 
 double calculate_dos_3D(const double mass,
-                        const double energy);
+                        const double energy,
+                        const double V     = 0,
+                        const double alpha = 0);
 
 double calculate_dos_2D(const double                 mass,
                         const double                 E_carrier,
-                        const std::valarray<double> &E_subbands);
+                        const std::valarray<double> &E_subbands,
+                        const double                 V = 0,
+                        const double                 alpha = 0);
 
 double calculate_dos_1D(const double                 mass,
                         const double                 E_carrier,

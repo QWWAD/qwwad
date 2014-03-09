@@ -35,6 +35,12 @@ class DOSOptions : public Options
                     ("mass,m", po::value<double>()->default_value(0.067),
                      "Effective mass (relative to that of a free electron)")
 
+                    ("band-edge", po::value<double>()->default_value(0),
+                     "Band edge potential [eV]")
+
+                    ("alpha", po::value<double>()->default_value(0),
+                     "Nonparabolicity parameter [eV^{-1}]")
+
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
                     ;
@@ -61,6 +67,12 @@ class DOSOptions : public Options
         /// \returns the effective mass [kg]
         double get_mass() const {return vm["mass"].as<double>()*me;}
 
+        /// \returns the band edge [J]
+        double get_band_edge() const {return vm["band-edge"].as<double>()*e;}
+
+        /// \returns the nonparabolicity parameter [J^{-1}]
+        double get_alpha() const {return vm["alpha"].as<double>()/e;}
+
         /// \returns the particle ID
         char get_particle() const {return vm["particle"].as<char>();}
 };
@@ -68,8 +80,10 @@ class DOSOptions : public Options
 int main(int argc,char *argv[])
 {
     DOSOptions opt(argc, argv);
-    const char   p = opt.get_particle(); // particle (e, h or l)
-    const double m = opt.get_mass();     // effective mass [kg]
+    const char   p = opt.get_particle();  // particle (e, h or l)
+    const double m = opt.get_mass();      // effective mass [kg]
+    const double V = opt.get_band_edge(); // band-edge potential [J]
+    const double alpha = opt.get_alpha(); // Nonparabolicity parameter [1/J]
 
     const size_t n=1000; // Number of output energies
 
@@ -86,8 +100,8 @@ int main(int argc,char *argv[])
     {
         energy[ie] = ie*1e-3*e; // convert meV-> J
 
-        dos_bulk[ie] = calculate_dos_3D(m, energy[ie]);
-        dos_2D[ie]   = calculate_dos_2D(m, energy[ie], E);
+        dos_bulk[ie] = calculate_dos_3D(m, energy[ie], V, alpha);
+        dos_2D[ie]   = calculate_dos_2D(m, energy[ie], E, V, alpha);
         dos_1D[ie]   = calculate_dos_1D(m, energy[ie], E);
 
         Frho << energy[ie]/(1e-3*e) << " " << dos_bulk[ie] << " " << dos_2D[ie] << " " << dos_1D[ie] << std::endl;
