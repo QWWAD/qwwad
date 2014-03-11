@@ -8,7 +8,6 @@
 #include "dos-functions.h"
 #include "qclsim-constants.h"
 #include <cmath>
-
 using namespace Leeds;
 using namespace constants;
 
@@ -34,10 +33,16 @@ double calculate_dos_3D(const double mass,
 {
     double rho = 0.0;
 
+    // Only bother calculating if we're above the band edge
     if(gsl_fcmp(energy,V,energy/1e12)==1)
     {
+        const double E = energy - V; // Express energy relative to band edge
+
+        // Density-of-states mass for an excited state in bulk
+        const double m_d = mass * pow((1.0+alpha*E) * gsl_pow_2(1.0+2*alpha*E),1.0/3.0);
+
         // Bulk density of states [QWWAD3, Eq. 2.40]
-        rho = gsl_pow_3(sqrt(2*mass/(hBar*hBar)))*sqrt(energy-V)/(2*gsl_pow_2(pi)) * (1.0 + alpha*(2.0*energy-V));
+        rho = 1/(2.0*gsl_pow_2(pi)) * gsl_pow_3(sqrt(2.0*m_d/gsl_pow_2(hBar))) * sqrt(E);
     }
 
     return rho;
@@ -66,7 +71,8 @@ double calculate_dos_2D(const double                 mass,
                         const double                 alpha)
 {
     // Density of states in a single subband [QWWAD3, Eq. 2.46]
-    const double dos_1sb = mass/(pi*gsl_pow_2(hBar)) + mass*alpha*(2*E_carrier - V)/(pi*gsl_pow_2(hBar));
+    const double m_d = mass * (1 + 2*alpha*(E_carrier-V));
+    const double dos_1sb = m_d/(pi*gsl_pow_2(hBar));
 
     double dos_total = 0; // Total dos over all occupied subbands
     const size_t nsb = E_subbands.size();
