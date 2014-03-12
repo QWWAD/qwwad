@@ -7,6 +7,7 @@
 #include "qclsim-constants.h"
 #include "qclsim-fermi.h"
 #include <stdexcept>
+#include <gsl/gsl_sf_dilog.h>
 
 namespace Leeds {
 using namespace constants;
@@ -44,21 +45,35 @@ double f_FD_ionised(const double E_F, const double Ed, const double Te)
  * 
  * \param Esb Energy of the subband minimum [J]
  * \param E_F Quasi-Fermi energy on the same absolute scale as the Fermi energy [J]
- * \param md  Density-of-states mass [kg]
+ * \param m0  Band-edge effective mass [kg]
  * \param Te  Temperature of electron distribution [K]
  *
  * \returns Subband population [m^{-2}]
  */
-double find_pop(const double Esb, const double E_F, const double md, const double Te)
+double find_pop(const double Esb,
+                const double E_F,
+                const double m0,
+                const double Te,
+                const double alpha,
+                const double V)
 {
-    // Density of states in 2D system
-    double rho=md/(pi*hBar*hBar);
+    // Density of states in 2D system with parabolic dispersion
+    const double rho_p = m0/(pi*hBar*hBar);
 
     // Solve Fermi integral (eq 2.57, QWWAD4)]
-    double y = -(Esb - E_F)/(kB*Te); // Just a substitution to tidy the maths
-    double int_f_FD=kB*Te*gsl_log1p(exp(y)); // Solve Fermi integral
+//    double y = -(Esb - E_F)/(kB*Te); // Just a substitution to tidy the maths
+//    double int_f_FD=kB*Te*gsl_log1p(exp(y)); // Solve Fermi integral
 
-    return rho*int_f_FD;
+//    return rho*int_f_FD;
+
+    const double x = (Esb - E_F)/(kB*Te); // Substitution to simplify the expression!
+
+    return kB*Te*rho_p * (
+            (1.0 + 2.0 * alpha * (E_F-V))*gsl_log1p(exp(-x))
+            + 2*kB*Te*alpha * (
+                pi*pi/6 + gsl_sf_dilog(-exp(x)) - 0.5*x*x + x*gsl_log1p(exp(x))
+                )
+            );
 }
 
 /** 
@@ -82,9 +97,59 @@ double find_pop(const double Esb, const double E_F, const double md, const doubl
  *       In fact, should the fermi functions all just be member functions of that
  *       class?
  */
-double find_fermi(const double Esb, const double m, const double N, const double Te)
+double find_fermi(const double Esb,
+                  const double m,
+                  const double N,
+                  const double Te,
+                  const double alpha,
+                  const double V)
 {
-    const double E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
+    double E_F = 0;
+
+    // Use the analytical form if possible
+//    if(gsl_fcmp(alpha, 0.0, 1.0e10) == 1)
+//    {
+//        std::cout << "HERE" << std::endl;
+//        E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
+//    }
+//    else
+    {
+        // Set limits for search [J]
+        double E_min=Esb-100.0*kB*Te;
+        double E_max=Esb+100.0*kB*Te;
+
+        // Find bisector of the limits [J]
+        double E_mid=(E_min+E_max)/2.0;
+
+        // Find the signs of ∫f(E_min) - N at the endpoints
+        const int sign_min=GSL_SIGN(find_pop(Esb, E_min, m, Te, alpha, V) -  N);
+        const int sign_max=GSL_SIGN(find_pop(Esb, E_max, m, Te, alpha, V) -  N);
+
+        // We can solve the Fermi integral only if there is a sign-change 
+        // between the limits
+        const bool solvable=!(sign_min==sign_max);
+
+        if(solvable)
+        {
+            // Solve iteratively using linear-bisection to a precision of
+            // 0.01 micro-eV
+            // TODO: Make precision configurable
+            while(fabs(E_max-E_min) > 1e-8*e)
+            {
+                double pop = find_pop(Esb, E_mid, m, Te, alpha, V);
+
+                const int sign_mid=GSL_SIGN(pop - N);
+
+                if(sign_mid==sign_min) E_min=E_mid;
+                else E_max=E_mid;
+
+                E_mid=(E_max+E_min)/2.0;
+            }
+        }
+        else throw std::runtime_error("No quasi-Fermi energy in range.");
+
+        E_F = E_mid;
+    }
 
     return E_F;
 }

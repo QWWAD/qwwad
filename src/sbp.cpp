@@ -29,8 +29,7 @@
 using namespace Leeds;
 using namespace constants;
 
-void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s);
-double   calc_fermilevel(double E, double m, double N, double T);
+void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const double alpha, const double V);
 
 /**
  * Handler for command-line options
@@ -47,7 +46,13 @@ class SBPOptions : public Options
                      "Output Fermi-Dirac distribution.")
 
                     ("mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass (relative to that of a free electron)")
+                     "Effective mass at the band edge (relative to that of a free electron)")
+
+                    ("band-edge", po::value<double>()->default_value(0),
+                     "Band edge potential [eV]")
+
+                    ("alpha", po::value<double>()->default_value(0),
+                     "Nonparabolicity parameter [eV^{-1}]")
 
                     ("nenergy,n", po::value<size_t>()->default_value(1000),
                      "Number of energy samples for output file")
@@ -81,6 +86,12 @@ class SBPOptions : public Options
         /// \returns the effective mass [kg]
         double get_mass() const {return vm["mass"].as<double>()*me;}
 
+        /// \returns the band edge [J]
+        double get_band_edge() const {return vm["band-edge"].as<double>()*e;}
+
+        /// \returns the nonparabolicity parameter [J^{-1}]
+        double get_alpha() const {return vm["alpha"].as<double>()/e;}
+
         /// \returns the particle ID
         char get_particle() const {return vm["particle"].as<char>();}
 
@@ -99,6 +110,8 @@ int main(int argc,char *argv[])
 
     const bool   FD_flag = opt.get_fd_flag();
     const double m       = opt.get_mass();
+    const double alpha   = opt.get_alpha();
+    const double V       = opt.get_band_edge();
     const size_t nE      = opt.get_n_energy();
     const char   p       = opt.get_particle();
     const double T       = opt.get_temperature();
@@ -115,11 +128,11 @@ int main(int argc,char *argv[])
 
     for(unsigned int s=0; s<n; s++) // s=0 => ground state
     {
-        const double Ef=find_fermi(E[s],m,N[s],T);
+        const double Ef=find_fermi(E[s],m,N[s],T,alpha,V);
 
         fprintf(FEf,"%i %20.17le\n",s+1,Ef/(1e-3*e));
 
-        if(FD_flag) calc_dist(E[s],Ef,m,T,nE,s);
+        if(FD_flag) calc_dist(E[s],Ef,m,T,nE,s, alpha,V);
     }
 
     fclose(FEf);
@@ -137,7 +150,7 @@ int main(int argc,char *argv[])
  * \param[in] nE   number of energies to output FD
  * \param[in] s    number of subband
  */
-void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
+void calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const double alpha, const double V)
 {
     char   filename[9]; // output filename for FD distribs
     sprintf(filename,"FD%i.r",s+1);
@@ -161,6 +174,6 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s)
     E/=(1e-3*e); // Convert to meV for output
 
     write_table_xy(filename, E, f);
-    printf("Ne=%20.17le\n",find_pop(Emin, Ef, m, T)/1e+14);
+    printf("Ne=%20.17le\n",find_pop(Emin, Ef, m, T,alpha,V)/1e+14);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -14,9 +14,19 @@ double f_FD(const double E_F, const double Ek, const double Te);
 
 double f_FD_ionised(const double E_F, const double Ed, const double Te);
 
-double find_pop(const double Esb, const double E_F, const double md, const double Te);
+double find_pop(const double Esb,
+                const double E_F,
+                const double md,
+                const double Te,
+                const double alpha=0,
+                const double V=0);
 
-double find_fermi(const double Esb, const double m, const double N, const double Te);
+double find_fermi(const double Esb,
+                  const double m,
+                  const double N,
+                  const double Te,
+                  const double alpha=0,
+                  const double V=0);
 
 double find_fermi_global(const double                 m,
                          const double                 N,

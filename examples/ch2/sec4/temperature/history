@@ -30,6 +30,6 @@ do
 # Write Fermi energy to file
 
  echo -n -e "$T\t" >> Ef-T.r
- nawk '/1 /{printf("%8.3f\n",$2)}' Ef.r >> Ef-T.r
+ awk '/1 /{printf("%8.3f\n",$2)}' Ef.r >> Ef-T.r
 }
 done
