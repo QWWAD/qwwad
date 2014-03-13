@@ -7,6 +7,8 @@
 #include "qclsim-constants.h"
 #include "qclsim-fermi.h"
 #include <stdexcept>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_roots.h>
 #include <gsl/gsl_sf_dilog.h>
 #include <gsl/gsl_sf_fermi_dirac.h>
 
@@ -83,22 +85,48 @@ double find_pop(const double Esb,
     return N;
 }
 
+/**
+ * \brief Parameters used for checking the population
+ */
+struct pop_params {
+    double Esb;     ///< Subband minimum [J]
+    double m0;      ///< Band-edge effective mass [kg]
+    double Te;      ///< Temperature of carrier distribution [K]
+    double alpha;   ///< Nonparabolicity [1/J]
+    double V;       ///< Band-edge [J]
+    double N;       ///< Population we expect to find [m^{-3}]
+};
+
+/**
+ * \brief Find the error in population for a given Fermi energy
+ */
+double find_pop_error(double E_F, void *params)
+{
+    const pop_params *p = reinterpret_cast<pop_params *>(params);
+    return find_pop(p->Esb, E_F, p->m0, p->Te, p->alpha, p->V) - p->N;
+}
+
+
 /** 
  * \brief Find quasi-Fermi energy for a single subband with known population and temperature
  *
- * \param[in] Esb Energy of the subband minimum [J]
- * \param[in] m   Mass of carriers [kg]
- * \param[in] N   Population density of system [m^{-2}]
- * \param[in] Te  Temperature of carrier distribution [K]
+ * \param[in] Esb   Energy of the subband minimum [J]
+ * \param[in] m     Mass of carriers [kg]
+ * \param[in] N     Population density of system [m^{-2}]
+ * \param[in] Te    Temperature of carrier distribution [K]
+ * \param[in] alpha Nonparabolicity parameter [1/J]
+ * \param[in] V     Band-edge [J]
  *
  * \returns The Fermi energy for the subband [J]
  *
- * \details The Fermi energy is calculated using equation 2.58, QWWAD4
+ * \details For parabolic bands, the Fermi energy is calculated using equation 2.58, QWWAD4
  *          \f[
  *            E_{\text{F}} = E_{\text{min}} + kT\ln{\left[\mbox{e}^{\left(\frac{N\pi\hbar^2}{m^*kT}\right)}-1\right]}
  *          \f]
  *          which assumes that the carriers can spread to any energy above the subband
  *          minimum.
+ *
+ *          For nonparabolic bands, the Fermi energy is found numerically
  *
  * \todo Use dos mass calculated by Subband class.
  *       In fact, should the fermi functions all just be member functions of that
@@ -125,12 +153,12 @@ double find_fermi(const double Esb,
         double E_min=Esb-100.0*kB*Te;
         double E_max=Esb+100.0*kB*Te;
 
-        // Find bisector of the limits [J]
-        double E_mid=(E_min+E_max)/2.0;
+        // Set parameters for search
+        pop_params params = {Esb, m, Te, alpha, V, N};
 
         // Find the signs of ∫f(E_min) - N at the endpoints
-        const int sign_min=GSL_SIGN(find_pop(Esb, E_min, m, Te, alpha, V) -  N);
-        const int sign_max=GSL_SIGN(find_pop(Esb, E_max, m, Te, alpha, V) -  N);
+        const int sign_min=GSL_SIGN(find_pop_error(E_min, &params));
+        const int sign_max=GSL_SIGN(find_pop_error(E_max, &params));
 
         // We can solve the Fermi integral only if there is a sign-change 
         // between the limits
@@ -138,24 +166,26 @@ double find_fermi(const double Esb,
 
         if(solvable)
         {
-            // Solve iteratively using linear-bisection to a precision of
-            // 0.01 micro-eV
-            // TODO: Make precision configurable
-            while(fabs(E_max-E_min) > 1e-8*e)
+            gsl_function F;
+            F.function = &find_pop_error;
+            F.params   = &params;
+            gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+            gsl_root_fsolver_set(solver, &F, E_min, E_max);
+
+            int status;
+            // Solve iteratively
+            do
             {
-                double pop = find_pop(Esb, E_mid, m, Te, alpha, V);
+                status = gsl_root_fsolver_iterate(solver);
+                E_F   = gsl_root_fsolver_root(solver);
+                E_min = gsl_root_fsolver_x_lower(solver);
+                E_max = gsl_root_fsolver_x_upper(solver);
+                status = gsl_root_test_interval(E_min, E_max, 1e-8*e, 0);
+            }while(status == GSL_CONTINUE);
 
-                const int sign_mid=GSL_SIGN(pop - N);
-
-                if(sign_mid==sign_min) E_min=E_mid;
-                else E_max=E_mid;
-
-                E_mid=(E_max+E_min)/2.0;
-            }
+            gsl_root_fsolver_free(solver);
         }
         else throw std::runtime_error("No quasi-Fermi energy in range.");
-
-        E_F = E_mid;
     }
 
     return E_F;
