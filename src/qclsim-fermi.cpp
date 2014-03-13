@@ -8,6 +8,7 @@
 #include "qclsim-fermi.h"
 #include <stdexcept>
 #include <gsl/gsl_sf_dilog.h>
+#include <gsl/gsl_sf_fermi_dirac.h>
 
 namespace Leeds {
 using namespace constants;
@@ -57,23 +58,29 @@ double find_pop(const double Esb,
                 const double alpha,
                 const double V)
 {
+    double N = 0; // Population to output
+
     // Density of states in 2D system with parabolic dispersion
     const double rho_p = m0/(pi*hBar*hBar);
 
-    // Solve Fermi integral (eq 2.57, QWWAD4)]
-//    double y = -(Esb - E_F)/(kB*Te); // Just a substitution to tidy the maths
-//    double int_f_FD=kB*Te*gsl_log1p(exp(y)); // Solve Fermi integral
+    const double x = (E_F - Esb)/(kB*Te); // Substitution to simplify the expression
 
-//    return rho*int_f_FD;
+    // Use the parabolic (simple) solution if possible
+    if(gsl_fcmp(alpha,0,1e-6) == 0)
+    {
+        // Solve Fermi integral (eq 2.66, QWWAD4)
+        N = rho_p*kB*Te*gsl_sf_fermi_dirac_0(x);
+    }
+    else
+    {
+        // Full non-parabolic solution (eq 2.69, QWWAD4)
+        N = rho_p * kB*Te *(
+                (1.0 + 2.0 * alpha * (Esb-V)) * gsl_sf_fermi_dirac_0(x)
+                + 2*alpha*kB*Te * gsl_sf_fermi_dirac_1(x)
+                );
+    }
 
-    const double x = (Esb - E_F)/(kB*Te); // Substitution to simplify the expression!
-
-    return kB*Te*rho_p * (
-            (1.0 + 2.0 * alpha * (E_F-V))*gsl_log1p(exp(-x))
-            + 2*kB*Te*alpha * (
-                pi*pi/6 + gsl_sf_dilog(-exp(x)) - 0.5*x*x + x*gsl_log1p(exp(x))
-                )
-            );
+    return N;
 }
 
 /** 
@@ -107,12 +114,12 @@ double find_fermi(const double Esb,
     double E_F = 0;
 
     // Use the analytical form if possible
-//    if(gsl_fcmp(alpha, 0.0, 1.0e10) == 1)
-//    {
-//        std::cout << "HERE" << std::endl;
-//        E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
-//    }
-//    else
+    if(gsl_fcmp(alpha, 0.0, 1.0e-6) == 0)
+    {
+        // Eq. 2.75, QWWAD4
+        E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
+    }
+    else
     {
         // Set limits for search [J]
         double E_min=Esb-100.0*kB*Te;
