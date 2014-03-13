@@ -5,29 +5,33 @@ efiw -L 200 -s 1
 
 # Initialise files
 
-rm -f v.r N.r Ef-N.r
+rm -f v.r N.r Ef-N.r Ef-N-np.r
 
 # Need to artificially create a file v.r containing the barrier height,
 # this used later in numerical solutions of Schrodinger's equation
 
 echo 0.00000 1.60219e-19 > v.r	# i.e., 1eV
 
+alpha=0.701 # Nonparabolicity for GaAs [1/eV]
+
 # Loop for different concentrations
 
 for N in 0.1 0.2 0.5 1 2 5 10 20 50 100
 do
-{
-# Write populations file N.r first
+    # Write populations file N.r first
+    echo 1 $N > N.r
 
-echo 1 $N > N.r
+    # Calculate Fermi energies and population distribution
+    sbp -f -T 77
+    mv FD1.r FD1N=$N.r
 
-# Calculate Fermi energies and population distribution
- sbp -f -T 77
- mv FD1.r FD1N=$N.r
+    # Write Fermi energy to file
+    echo -n "$N\t" >> Ef-N.r
+    awk '{printf("%8.3f\n",$2)}' Ef.r >> Ef-N.r
 
-# Write Fermi energy to file
-
- echo -n "$N\t" >> Ef-N.r
- nawk '{printf("%8.3f\n",$2)}' Ef.r >> Ef-N.r
-}
+    # Repeat for nonparabolic bands
+    sbp -f -T 77 --alpha $alpha
+    mv FD1.r FD1N=$N-np.r
+    echo -n "$N\t" >> Ef-N-np.r
+    awk '{printf("%8.3f\n",$2)}' Ef.r >> Ef-N-np.r
 done
