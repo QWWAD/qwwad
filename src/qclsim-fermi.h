@@ -22,16 +22,18 @@ double find_pop(const double Esb,
                 const double V=0);
 
 double find_fermi(const double Esb,
-                  const double m,
+                  const double m0,
                   const double N,
                   const double Te,
                   const double alpha=0,
                   const double V=0);
 
-double find_fermi_global(const double                 m,
+double find_fermi_global(const std::valarray<double> &Esb,
+                         const double                 m0,
                          const double                 N,
                          const double                 Te,
-                         const std::valarray<double>& E);
+                         const double                 alpha=0,
+                         const double                 V=0);
 } // namespace Leeds
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

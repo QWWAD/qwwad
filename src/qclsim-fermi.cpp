@@ -106,6 +106,36 @@ double find_pop_error(double E_F, void *params)
     return find_pop(p->Esb, E_F, p->m0, p->Te, p->alpha, p->V) - p->N;
 }
 
+/**
+ * \brief Parameters used for checking the population of multiple subbands
+ */
+struct total_pop_params {
+    std::valarray<double> Esb; ///< Subband minimum [J]
+    double m0;                 ///< Band-edge effective mass [kg]
+    double Te;                 ///< Temperature of carrier distribution [K]
+    double alpha;              ///< Nonparabolicity [1/J]
+    double V;                  ///< Band-edge [J]
+    double N;                  ///< Population we expect to find [m^{-3}]
+};
+
+/**
+ * \brief Find the error in the total population for multiple subbands
+ */
+double find_total_pop_error(double E_F, void *params)
+{
+    const total_pop_params *p = reinterpret_cast<total_pop_params *>(params);
+
+    // Find total population in each subband, using the same global Fermi
+    // energy
+    double N_total = 0.0;
+    const size_t nst = p->Esb.size();
+
+    for(unsigned int ist = 0; ist < nst; ist++)
+        N_total += find_pop(p->Esb[ist], E_F, p->m0, p->Te, p->alpha, p->V);
+
+    return N_total - p->N;
+}
+
 
 /** 
  * \brief Find quasi-Fermi energy for a single subband with known population and temperature
@@ -194,30 +224,37 @@ double find_fermi(const double Esb,
 /** 
  * \brief Find Fermi energy for an entire 2D system with many subbands, a known total population and temperature
  *
- * \param m   Mass of carrier [kg]
- * \param N   Population density of system [m^{-2}]
- * \param Te  Temperature of carrier distribution [K]
- * \param E   Array of subband minima [J]
+ * \param Esb   Array of subband minima [J]
+ * \param m0    Mass of carriers at band edge [kg]
+ * \param N     Population density of system [m^{-2}]
+ * \param Te    Temperature of carrier distribution [K]
+ * \param alpha Nonparabolicity parameter [1/J]
+ * \param V     Band-edge [J]
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const double                 m,
+double find_fermi_global(const std::valarray<double> &Esb,
+                         const double                 m0,
                          const double                 N,
                          const double                 Te,
-                         const std::valarray<double> &E)
+                         const double                 alpha,
+                         const double                 V)
 {
-    const size_t nst = E.size();
+    const size_t nst = Esb.size();
 
     // Set limits for search [J]
-    double E_min=E[0]-100.0*kB*Te;
-    double E_max=E[nst-1]+100.0*kB*Te;
+    double E_min=Esb[0]-100.0*kB*Te;
+    double E_max=Esb[nst-1]+100.0*kB*Te;
 
     // Find bisector of the limits [J]
-    double E_mid=(E_min+E_max)/2.0;
+    double E_F=(E_min+E_max)/2.0;
+
+    // Set parameters for search
+    total_pop_params params = {Esb, m0, Te, alpha, V, N};
 
     // Find the signs of ∫f(E_min) - N at the endpoints
-    const int sign_min=GSL_SIGN(find_pop(E[0], E_min, m, Te) -  N);
-    const int sign_max=GSL_SIGN(find_pop(E[0], E_max, m, Te) -  N);
+    const int sign_min=GSL_SIGN(find_total_pop_error(E_min, &params));
+    const int sign_max=GSL_SIGN(find_total_pop_error(E_max, &params));
 
     // We can solve the Fermi integral only if there is a sign-change 
     // between the limits
@@ -225,27 +262,28 @@ double find_fermi_global(const double                 m,
 
     if(solvable)
     {
-        // Solve iteratively using linear-bisection to a precision of
-        // 0.01 micro-eV
-        // TODO: Make precision configurable
-        while(fabs(E_max-E_min) > 1e-8*e)
+        gsl_function F;
+        F.function = &find_total_pop_error;
+        F.params   = &params;
+        gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+        gsl_root_fsolver_set(solver, &F, E_min, E_max);
+
+        int status;
+        // Solve iteratively
+        do
         {
-            double total_population = 0.0;
+            status = gsl_root_fsolver_iterate(solver);
+            E_F   = gsl_root_fsolver_root(solver);
+            E_min = gsl_root_fsolver_x_lower(solver);
+            E_max = gsl_root_fsolver_x_upper(solver);
+            status = gsl_root_test_interval(E_min, E_max, 1e-8*e, 0);
+        }while(status == GSL_CONTINUE);
 
-            for(unsigned int ist = 0; ist < nst; ist++)
-                total_population += find_pop(E[ist], E_mid, m, Te);
-
-            const int sign_mid=GSL_SIGN(total_population - N);
-
-            if(sign_mid==sign_min) E_min=E_mid;
-            else E_max=E_mid;
-
-            E_mid=(E_max+E_min)/2.0;
-        }
+        gsl_root_fsolver_free(solver);
     }
     else throw std::runtime_error("No quasi-Fermi energy in range.");
 
-    return E_mid;
+    return E_F;
 }
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
