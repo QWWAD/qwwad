@@ -29,7 +29,14 @@
 using namespace Leeds;
 using namespace constants;
 
-void     calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const double alpha, const double V);
+static double calc_dist(const double       Emin,
+                        const double       Ef,
+                        const double       m,
+                        const double       T,
+                        const size_t       nE,
+                        const unsigned int s,
+                        const double       alpha,
+                        const double       V);
 
 /**
  * Handler for command-line options
@@ -159,7 +166,13 @@ int main(int argc,char *argv[])
 
     for(unsigned int i=0; i<n; ++i)
     {
-        if(FD_flag) calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
+        if(FD_flag)
+        {
+            const double N = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
+
+            if(opt.get_verbose())
+                printf("Ne=%20.17le\n", N/1e+14);
+        }
     }
     Ef *= 1000.0/e; // Rescale to meV
     Leeds::write_table_x("Ef.r", Ef, true, 17);
@@ -170,14 +183,23 @@ int main(int argc,char *argv[])
 /**
  * \brief calculates the probability of occupation of the subband energies
  *
- * \param[in] Emin subband minima
- * \param[in] Ef   Fermi energy
- * \param[in] m    effective mass
- * \param[in] T    temperature
- * \param[in] nE   number of energies to output FD
- * \param[in] s    number of subband
+ * \param[in] Emin  subband minima [J]
+ * \param[in] Ef    Fermi energy [J]
+ * \param[in] m     effective mass at band edge [kg]
+ * \param[in] T     temperature [K]
+ * \param[in] nE    number of energies to output FD
+ * \param[in] s     number of subband
+ * \param[in] alpha nonparabolicity [1/J]
+ * \param[in] V     band edge [J]
  */
-void calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const double alpha, const double V)
+static double calc_dist(const double       Emin,
+                        const double       Ef,
+                        const double       m,
+                        const double       T,
+                        const size_t       nE,
+                        const unsigned int s,
+                        const double       alpha,
+                        const double       V)
 {
     char   filename[9]; // output filename for FD distribs
     sprintf(filename,"FD%i.r",s+1);
@@ -192,7 +214,7 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const 
     std::valarray<double> f(nE); // Occupation probabilities
 
     const double dE=(Emax-Emin)/(nE-1); // Energy increment for integration
-    for(int i=0; i<nE; i++)
+    for(unsigned int i=0; i<nE; i++)
     {
         E[i] = Emin + i*dE;
         f[i] = f_FD(Ef, E[i], T);
@@ -201,7 +223,6 @@ void calc_dist(double Emin, double Ef, double m, double T, int nE, int s, const 
     E/=(1e-3*e); // Convert to meV for output
 
     write_table_xy(filename, E, f);
-    double N = find_pop(Emin, Ef, m, T,alpha,V);
-    printf("Ne=%20.17le\n", N/1e+14);
+    return find_pop(Emin, Ef, m, T,alpha,V);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

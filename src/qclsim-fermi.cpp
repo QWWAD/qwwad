@@ -67,6 +67,10 @@ double find_pop(const double Esb,
 
     const double x = (E_F - Esb)/(kB*Te); // Substitution to simplify the expression
 
+    // In case of underflow, return a tiny value
+    if(gsl_fcmp(x,-700,1e-6) == -1)
+            return 1;
+
     // Use the parabolic (simple) solution if possible
     if(gsl_fcmp(alpha,0,1e-6) == 0)
     {
@@ -244,7 +248,7 @@ double find_fermi_global(const std::valarray<double> &Esb,
 
     // Set limits for search [J]
     double E_min=Esb[0]-100.0*kB*Te;
-    double E_max=Esb[nst-1]+100.0*kB*Te;
+    double E_max=Esb[nst-1]+500.0*kB*Te;
 
     // Find bisector of the limits [J]
     double E_F=(E_min+E_max)/2.0;
