@@ -299,12 +299,16 @@ void SchroedingerSolverTaylor::calculate()
 SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                                                      const double       L,
                                                      const size_t       nz,
+                                                     const double       alpha,
+                                                     const double       V,
                                                      const unsigned int nst_max) :
     SchroedingerSolver(std::valarray<double>(nz),
                        std::valarray<double>(nz),
                        nst_max),
     _me(me),
-    _L(L)
+    _L(L),
+    _alpha(alpha),
+    _V(V)
 {
     const double dz = L/(nz-1); // Spatial step
 
@@ -320,8 +324,19 @@ void SchroedingerSolverInfWell::calculate()
     // Loop over all required states
     for(unsigned int is=1; is<=_nst_max; is++)
     {
+        double E = 0;
+
         // Energy of state [J] (QWWAD3, 2.13)
-        double E=gsl_pow_2(pi*hBar*is/_L)/(2*_me);
+        if(gsl_fcmp(_alpha, 0, 1e-6) == 1)
+            E = 1.0/(2.0*_alpha*_me*_L) * (
+                    sqrt(_me*(
+                            2.0*_alpha*gsl_pow_2(hBar*pi*is) + _me*_L*_L
+                            )
+                        )
+                    -_me*_L
+                    ) + _V;
+        else
+            E = gsl_pow_2(pi*hBar*is/_L)/(2*_me) + _V;
 
         std::valarray<double> psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 

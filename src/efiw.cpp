@@ -43,6 +43,12 @@ class EFIWOptions : public Options
 
                     ("states,s", po::value<size_t>()->default_value(1),
                      "Number of states to find")
+                    
+                    ("band-edge", po::value<double>()->default_value(0),
+                     "Band edge potential [eV]")
+
+                    ("alpha", po::value<double>()->default_value(0),
+                     "Nonparabolicity parameter [eV^{-1}]")
                     ;
 
                 std::string doc("Find the eigenstates of an infinite quantum well. "
@@ -84,19 +90,27 @@ class EFIWOptions : public Options
          * \returns the number of spatial points
          */
         size_t get_n_states() const {return vm["states"].as<size_t>();}
+
+        /// \returns the band edge [J]
+        double get_band_edge() const {return vm["band-edge"].as<double>()*e;}
+
+        /// \returns the nonparabolicity parameter [J^{-1}]
+        double get_alpha() const {return vm["alpha"].as<double>()/e;}
 };
 
 int main(int argc, char *argv[])
 {
     EFIWOptions opt(argc, argv);
 
-    const double L = opt.get_width();    // well width [m]
-    const char   p = opt.get_particle(); // particle (e, h or l)
-    const double m = opt.get_mass();     // effective mass [kg]
-    const size_t N = opt.get_n_points(); // number of spatial steps
-    const size_t s = opt.get_n_states(); // number of states
+    const double L     = opt.get_width();    // well width [m]
+    const char   p     = opt.get_particle(); // particle (e, h or l)
+    const double m     = opt.get_mass();     // effective mass [kg]
+    const size_t N     = opt.get_n_points(); // number of spatial steps
+    const size_t s     = opt.get_n_states(); // number of states
+    const double alpha = opt.get_alpha();
+    const double V     = opt.get_band_edge();
 
-    SchroedingerSolverInfWell se(m, L, N, s);
+    SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
 
     std::vector<State> solutions = se.get_solutions(true);
 
