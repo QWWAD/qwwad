@@ -7,22 +7,28 @@ output_E_if_real()
  # Extract energies from output file
  Ee=`awk '{print $2}' Ee.r|sed -n "$1p"`
  if test "x$Ee" != "x"; then
-	 printf "%d\t%.17e\n" $LW $Ee >> Ee$1-lw.r
+	 printf "%f\t%.17e\n" $LW $Ee >> Ee$1-lw.r
  fi
 }
 
 # Initialise files
 rm -f Ee1-lw.r Ee2-lw.r Ee3-lw.r Ee4-lw.r
 
-# Loop for different well widths
+# Set fixed parameters
+nst=4 # Number of states to find
 
-for LW in 10 20 30 40 50 60 70 80 90 100 120 140 160 180 200 
+# Loop for different well widths
+for i in `seq 1 0.05 2.3`
 do
- # Calculate first 4 energy levels as a function of well width for GaAs
- efsqw -a $LW -s 4
+ # Generate well-widths exponentially so we get a smooth curve at small
+ # widths
+ LW=`echo $i | awk '{print 10^$1}'`
+
+ # Calculate energy levels
+ efsqw -a $LW -s $nst
 
  # Output energies to file
- for state in `seq 1 4`; do
+ for state in `seq 1 $nst`; do
 	 output_E_if_real $state
  done
 done
