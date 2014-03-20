@@ -5,26 +5,28 @@ rm -f Ee-V.r
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x for x=0.4---keep constant
-
 MB=0.1002
+MW=0.067 # Well mass (GaAs)
 
 # Keep well width constant at 100 Angstom
-
 LW=100
 
 # Loop for different barrier heights
-
-for V in 100 200 300 400 500 600 700 800 900 1000 1200 1400 1600 1800 2000 3000 4000 5000 6000 7000 8000 9000 10000 20000 50000 100000
+for iV in `seq 2 0.1 5`
 do
 {
+ # Generate potentials exponentially so we get a smooth curve at small
+ # widths
+ V=`echo $iV | awk '{print 10^$1}'`
+
  echo -n -e "$V\t" >> Ee-V.r	# write potential to file
 
-# Calculate ground state energy for barrier mass (MB)=well mass (0.067)
- efsqw -a $LW -m 0.067 -n 0.067 -V $V
- nawk '{printf("%8.3f",$2)}' Ee.r >> Ee-V.r		# send data to file
+ # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
+ efsqw -a $LW -m $MW -n $MW --potential $V
+ awk '{printf("%8.3f",$2)}' Ee.r >> Ee-V.r		# send data to file
 
-# Calculate ground state energy for different well and barrier masses
- efsqw -a $LW -m 0.067 -n $MB -V $V
- nawk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-V.r		# send data to file
+ # Calculate ground state energy for different well and barrier masses
+ efsqw -a $LW -m $MW -n $MB --potential $V
+ awk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-V.r		# send data to file
 }
 done

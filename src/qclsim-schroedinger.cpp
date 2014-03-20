@@ -431,70 +431,87 @@ double SchroedingerSolverFiniteWell_f(double  energy,
  *
  * \param[in] E           local energy
  * \param[in] i_state     state index
- * \param[in] parity_flag true for odd states, false for even
+ * \param[in] odd_parity  true for odd states, false for even
  */
 std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
                                                           const int    i_state,
-                                                          const bool   parity_flag)
+                                                          const bool   odd_parity)
 {
-    const size_t N = _z.size();
-    double A;         /* In the well the wavefunction psi=Acoskz */
-    const double B=1; /* and in the barrier  psi=Bexp(-Kz)       */
-    double norm_int;  /* integral over all space of psi*psi      */
-
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
     const double K=sqrt(2*_m_b/hBar*(_V-E)/hBar); // decay constant in barrier
-    
+
+    // Determine whether the decay into the barriers is going to underflow
+    // out calculations.  If it is, then just treat it as an infinitely sharp decay
+    bool sharp_decay=false;
+    if (gsl_fcmp(K*_l_b, 700, 1e-6) == 1)
+        sharp_decay=true;
+
+    const size_t N = _z.size();
     std::valarray<double> psi(N); // wavefunction
+    const double dz = _z[1] - _z[0];
+    const double epsilon = dz/1000;
 
-    if(parity_flag) // odd parity wavefunction
+    // If the wavefunction decays sharply into the barriers, assume that the 
+    // entire probability density lies in the well and normalise to 1.
+    //
+    // Otherwise, we let the amplitude = 1 in the barriers and find the
+    // amplitude in the well and the normalisation constant for the system.
+    double A = 0;
+    double norm_int=1.0;  // integral over all space of psi*psi
+    if(sharp_decay)
     {
-        A=B*exp(-K*_l_w/2)/sin(k*_l_w/2);
-
-        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
-        {
-            if (_z[i_z]<(-_l_w/2)) // Left barrier
-            {
-                psi[i_z]=-B*exp(-K*fabs(_z[i_z]));
-            }
-            if ((_z[i_z]>=(-_l_w/2))&&(_z[i_z]<(_l_w/2))) // Well
-            {
-                psi[i_z]=A*sin(k*_z[i_z]);
-            }
-            if (_z[i_z]>=(_l_w/2)) // Right barrier
-            {
-                psi[i_z]=B*exp(-K*_z[i_z]);
-            }
-        }
-
-        // normalisation integral for odd parity type I
-        norm_int=gsl_pow_2(A)*(_l_w/2-sin(k*_l_w)/(2*k))-
-            gsl_pow_2(B)*exp(-K*_l_w)*(exp(-2*K*_l_b)-1)/K;
+        if(odd_parity)
+            A = sqrt(2.0*k/(_l_w*k - sin(_l_w*k)));
+        else
+            A = sqrt(2.0*k/(_l_w*k + sin(_l_w*k)));
     }
-    else // even parity wavefunction
+    else
     {
-        A=B*exp(-K*_l_w/2)/cos(k*_l_w/2);
-
-        for (unsigned int i_z=0;i_z<N;i_z++) // calculate wavefunctions
+        if(odd_parity)
         {
-            if (_z[i_z]<(-_l_w/2)) // Left barrier
+            A=exp(-K*_l_w/2)/sin(k*_l_w/2);
+
+            norm_int=gsl_pow_2(A)*(_l_w/2-sin(k*_l_w)/(2*k))
+                - exp(-K*_l_w)*gsl_expm1(-2*K*_l_b)/K;
+        }
+        else
+        {
+            A=exp(-K*_l_w/2)/cos(k*_l_w/2);
+
+            norm_int=gsl_pow_2(A)*(_l_w/2+sin(k*_l_w)/(2*k))
+                - exp(-K*_l_w)*gsl_expm1(-2*K*_l_b)/K;
+        }
+    }
+
+    for (unsigned int i_z=0;i_z<N;i_z++)
+    {
+        // Fill in the barrier decays only if the decay constant is
+        // small enough to compute them accurately.  Otherwise, just
+        // leave the barrier wavefunction as zero
+        if(!sharp_decay)
+        {
+            // Left barrier
+            if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon)==-1)
             {
-                psi[i_z]=B*exp(-K*fabs(_z[i_z]));
+                if(odd_parity)
+                    psi[i_z]=-exp(-K*fabs(_z[i_z]));
+                else
+                    psi[i_z]=exp(-K*fabs(_z[i_z]));
             }
-            if ((_z[i_z]>=(-_l_w/2))&&(_z[i_z]<(_l_w/2))) // Well
-            {
-                psi[i_z]=A*cos(k*_z[i_z]);
-            }
-            if (_z[i_z]>=(_l_w/2)) // Right barrier
-            {
-                psi[i_z]=B*exp(-K*_z[i_z]);
-            }
+            // Right barrier
+            else if (gsl_fcmp(_z[i_z], _l_w/2, epsilon)>=0)
+                psi[i_z]=exp(-K*_z[i_z]);
         }
 
-        // normalisation integral for even parity type I
-        norm_int=gsl_pow_2(A)*(_l_w/2+sin(k*_l_w)/(2*k))+
-            gsl_pow_2(B)*exp(-K*_l_w)*(1-exp(-2*K*_l_b))/K;
+        // Find wavefunction within well region
+        if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon) >= 0 && (_z[i_z]<(_l_w/2)))
+        {
+            if(odd_parity)
+                psi[i_z]=A*sin(k*_z[i_z]);
+            else
+                psi[i_z]=A*cos(k*_z[i_z]);
+        }
     }
 
     // normalise wavefunction
