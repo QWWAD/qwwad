@@ -7,9 +7,13 @@ rm -f Ee-mb.r
 # Use V=0.67*1247*x, keep x=0.4
 V=334.1965
 
-# TODO: Read well width in from command line
 LW=100 # Well width [angstrom]
 MW=0.067 # Well mass (GaAs)
+
+if [ "x$1" != "x" ];
+then
+	LW=$1
+fi
 
 # Loop for different barrier masses
 for iMB in `seq -2 0.1 3`

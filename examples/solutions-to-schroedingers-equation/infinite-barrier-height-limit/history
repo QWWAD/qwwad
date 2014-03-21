@@ -1,6 +1,6 @@
 #!/bin/sh
-# Initialise files
 
+# Initialise files
 rm -f Ee-V.r
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
