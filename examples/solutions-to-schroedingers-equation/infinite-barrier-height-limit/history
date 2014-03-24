@@ -19,7 +19,7 @@ do
  # widths
  V=`echo $iV | awk '{print 10^$1}'`
 
- echo -n -e "$V\t" >> Ee-V.r	# write potential to file
+ printf "%f\t" "$V" >> Ee-V.r	# write potential to file
 
  # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
  efsqw -a $LW -m $MW -n $MW --potential $V

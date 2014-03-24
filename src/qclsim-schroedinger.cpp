@@ -13,7 +13,6 @@
 #include <gsl/gsl_roots.h>
 #include <boost/multi_array.hpp>
 #include "qclsim-constants.h"
-
 typedef boost::multi_array<double, 2> matrix;
 
 namespace Leeds
@@ -402,26 +401,25 @@ struct sqw_params
  * \returns The value of the characteristic equation for the well.
  *          This is zero when the energy equals the an eigenvalue.
  */
-double SchroedingerSolverFiniteWell_f(double  energy,
+double SchroedingerSolverFiniteWell_f(double  v,
                                       void   *params)
 {
     const sqw_params *p = reinterpret_cast<sqw_params *>(params);
     const double a   = p->a;
     const double m_B = p->m_B;
-    const double m_b = p->m_b;
     const double m_w = p->m_w;
     const double V   = p->V;
     const bool   parity_flag = p->parity_flag;
+    const double k = 2.0*v/a;
+    const double E = hBar*hBar*k*k/(2.0*m_w);
 
-    const double k=sqrt(2*m_w*energy)/hBar; // electron wave vector
-    const double K=sqrt(2*m_b*(V-energy))/hBar; // wavefunction decay constant
-
+    const double u_0_sq = a*a*m_w/(2.0*hBar*hBar)*(m_w*V/m_B + E*(1.0-m_w/m_B));
     double result = 0.0;
 
     if(parity_flag)
-        result = k*cot(k*a/2)/m_w+K/m_B;
+        result = sqrt(u_0_sq - v*v) + v*cot(v);
     else
-        result = k*tan(k*a/2)/m_w-K/m_B;
+        result = sqrt(u_0_sq - v*v) - v*tan(v);
 
     return result;
 }
@@ -521,62 +519,51 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
 
 void SchroedingerSolverFiniteWell::calculate()
 {
-    const double dx = 1e-4*e; // arbitrarily small energy increment [0.1meV]
-    double x = dx; // first energy estimate
-    for(unsigned int i_state=1; i_state<=_nst_max;i_state++)
+    // Calculate number of bound states in well
+    double u_0_max = sqrt(_V*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
+    const double nst = ceil(u_0_max/(pi/2.0));
+
+    for (unsigned int ist=0; ist < _nst_max && ist < nst; ++ist)
     {
         // deduce parity: false if even parity
-        const bool parity_flag = (i_state%2 != 1);
+        const bool parity_flag = (ist%2 == 1);
 
         sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V, parity_flag};
         gsl_function F;
         F.function = &SchroedingerSolverFiniteWell_f;
         F.params   = &params;
-
         gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
-        int status;
-        bool root_found = false;
-        double x_end = x;
-        bool V_limit_hit = false;
 
-        // Look for a solution in the range (x,x+dx)
+        // Normally, the root needs to lie within each pi/2 cell so we
+        // set the limits for the root accordingly.
+        double vlo = ist * pi/2.0;
+        double vhi = (ist+1) * pi/2.0;
+
+        // If this is the highest state in the well, then we need to
+        // reduce the range so that the energy doesn't go over the
+        // top of the well.
+        if (ist == nst - 1)
+           vhi = 0.999999999999*u_0_max;
+
+        double v = 0.5 * (vlo+vhi); // Initial estimate of solution
+        gsl_root_fsolver_set(solver, &F, vlo, vhi);
+        int status = 0;
+
+        // Improve the estimate of solution using the Brent algorithm
+        // until we hit a desired level of precision
         do
         {
-            // Set a coarse bracket for search
-            x = x_end;
-            x_end+=dx;
-            double y1=SchroedingerSolverFiniteWell_f(x,     &params);
-            double y2=SchroedingerSolverFiniteWell_f(x_end, &params);
-            root_found = (y1*y2 < 0);
+            status = gsl_root_fsolver_iterate(solver);
+            v = gsl_root_fsolver_root(solver);
+            vlo = gsl_root_fsolver_x_lower(solver);
+            vhi = gsl_root_fsolver_x_upper(solver);
+            status = gsl_root_test_interval(vlo, vhi, 0.001, 0);
+        }while(status == GSL_CONTINUE);
 
-            // Check that we haven't hit the top of the well
-            // (i.e., either y1 or y2 are not-a-number)
-            V_limit_hit = std::isunordered(y1,y2);
-
-            if(root_found)
-            {
-                double E = 0.5 * (x+x_end); // Initial estimate of energy
-                double x_lo = x;
-                double x_hi = x_end;
-                gsl_root_fsolver_set(solver, &F, x_lo, x_hi);
-
-                // Improve the estimate of energy using the Brent algorithm
-                // until we hit a desired level of precision
-                do
-                {
-                    status = gsl_root_fsolver_iterate(solver);
-                    E = gsl_root_fsolver_root(solver);
-                    double x_lo = gsl_root_fsolver_x_lower(solver);
-                    double x_hi = gsl_root_fsolver_x_upper(solver);
-                    status = gsl_root_test_interval(x_lo, x_hi, 1e-15*e, 0);
-                }while(status == GSL_CONTINUE);
-
-                std::valarray<double> psi = wavef(E,i_state,parity_flag);
-                _solutions.push_back(State(E, psi));
-            }
-        }while(!(root_found or V_limit_hit));
-        x+=dx;
-
+        const double k = 2.0*v/_l_w;
+        const double E = hBar*hBar*k*k/(2.0*_m_w);
+        std::valarray<double> psi = wavef(E,ist+1,parity_flag);
+        _solutions.push_back(State(E, psi));
         gsl_root_fsolver_free(solver);
     }
 }
