@@ -414,12 +414,16 @@ double SchroedingerSolverFiniteWell_f(double  v,
     const double E = hBar*hBar*k*k/(2.0*m_w);
 
     const double u_0_sq = a*a*m_w/(2.0*hBar*hBar)*(m_w*V/m_B + E*(1.0-m_w/m_B));
+
     double result = 0.0;
 
+    if(gsl_fcmp(v*v, u_0_sq, 1e-12) == -1)
+        result = sqrt(u_0_sq - v*v);
+
     if(parity_flag)
-        result = sqrt(u_0_sq - v*v) + v*cot(v);
+        result += v*cot(v);
     else
-        result = sqrt(u_0_sq - v*v) - v*tan(v);
+        result -= v*tan(v);
 
     return result;
 }
@@ -543,7 +547,7 @@ void SchroedingerSolverFiniteWell::calculate()
         // reduce the range so that the energy doesn't go over the
         // top of the well.
         if (ist == nst - 1)
-           vhi = 0.999999999999*u_0_max;
+           vhi = u_0_max;
 
         double v = 0.5 * (vlo+vhi); // Initial estimate of solution
         gsl_root_fsolver_set(solver, &F, vlo, vhi);
