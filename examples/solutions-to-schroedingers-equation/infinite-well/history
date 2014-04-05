@@ -30,7 +30,7 @@ do
  LW=`echo $i | awk '{print 10^$1}'`
 
  # Calculate first 3 energy levels as a function of well width for GaAs
- efiw -L $LW -m $mass -s 3
+ efiw -L $LW -m $mass -s $nst
 
  printf "%f\t" "$LW" >> Ee-lw.r	# write well width to file
 
@@ -38,7 +38,7 @@ do
  echo $energies >> Ee-lw.r
 
  # Repeat using nonparabolicity
- efiw -L $LW -m 0.067 -s 3 --alpha 0.701
+ efiw -L $LW -m 0.067 -s $nst --alpha 0.701
 
  printf "%f\t" "$LW" >> Ee-lw-alpha.r	# write well width to file
 

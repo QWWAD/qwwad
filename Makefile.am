@@ -32,6 +32,7 @@ bin_PROGRAMS =  src/csss    \
 		src/d0      \
 		src/d02D    \
 		src/d03D    \
+		src/dispersion_relation \
 		src/dos     \
 		src/ebe     \
 		src/efcwire \
@@ -76,6 +77,7 @@ bin_PROGRAMS =  src/csss    \
 d0_helpers    = src/d0-helpers.c src/d0-helpers.h
 dos_funcs     = src/dos-functions.cpp src/dos-functions.h
 qwwad_options = src/qwwad-options.cpp src/qwwad-options.h
+wf_options    = src/wf_options.cpp src/wf_options.h $(qwwad_options)
 qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 
 # QCLsim infrastructure (released from Leeds code)
@@ -96,8 +98,12 @@ src_libqclsim_a_SOURCES =  \
 			   src/qclsim-subband.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
+
 src_d02D_SOURCES = src/d02D.c $(d0_helpers)
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
+
+src_dispersion_relation_SOURCES = src/dispersion_relation.cpp $(wf_options)
+src_dispersion_relation_LDADD   = src/libqclsim.a $(LDADD)
 
 src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(dos_funcs) $(qwwad_fileio)
 src_dos_LDADD    = src/libqclsim.a $(LDADD)

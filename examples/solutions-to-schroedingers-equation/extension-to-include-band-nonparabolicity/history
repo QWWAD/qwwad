@@ -1,0 +1,38 @@
+#! /bin/sh
+
+# Calculate subband dispersion in systems with or without nonparabolicity
+# (c) 2014 Alex Valavanis <a.valavanis@leeds.ac.uk>
+
+# Effective mass for GaAs
+mass=0.067
+
+# Use a 200 angstrom well and find first 2 states
+LW=200
+nst=2
+
+# Find parabolic solution first
+efiw -L $LW -m $mass -s $nst
+awk '{print $1, mass*9.11e-31}' mass=$mass < wf_e1.r > massd.dat
+
+# A little hack needed to provide the subband class with the necessary
+# data for construction (just fills some arrays with placeholder data)
+awk '{print 1}' < Ee.r > populations.dat
+cp Ee.r Ef.dat
+cp Ee.r Ee-alpha=0.r
+
+# Rescale the energy to Joules
+awk '{print $2*1.6e-19/1000}' < Ee.r > Ee.dat
+
+dispersion_relation --wf-input-ext ".r" --parabolic --disp-ext "alpha=0.dat"
+awk '{print $1, 0}' < wf_e1.r > Vtotal.dat
+
+# Repeat the calculation using nonparabolicity
+for alpha in 0.701 5; do
+    efiw -L $LW -m $mass -s $nst --alpha $alpha
+    cp Ee.r Ee-alpha=$alpha.r
+    
+    awk '{print $1, alpha/1.6e-19}' alpha=$alpha < wf_e1.r > alphad.dat
+    awk '{print $2*1.6e-19/1000}' < Ee.r > Ee.dat
+    dispersion_relation --wf-input-ext ".r" --disp-ext "alpha=$alpha.dat"
+done
+
