@@ -91,7 +91,9 @@ src_libqclsim_a_SOURCES =  \
 			   src/qclsim-maths.cpp        \
 			   src/qclsim-maths.h          \
 			   src/qclsim-schroedinger.cpp \
-			   src/qclsim-schroedinger.h
+			   src/qclsim-schroedinger.h   \
+			   src/qclsim-subband.cpp      \
+			   src/qclsim-subband.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 src_d02D_SOURCES = src/d02D.c $(d0_helpers)
