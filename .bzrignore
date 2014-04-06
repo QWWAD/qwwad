@@ -20,3 +20,4 @@ config/ar-lib
 config/ltmain.sh
 config/test-driver
 ../INSTALL
+INSTALL
