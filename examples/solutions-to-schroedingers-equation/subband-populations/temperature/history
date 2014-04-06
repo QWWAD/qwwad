@@ -1,8 +1,6 @@
 #!/bin/sh
 set -e
 
-# Initialise files
-
 # Find the Fermi-Dirac functions and subband
 # energies for a given non-parabolicity value
 # parameter 1: The nonparabolicty [1/eV]
@@ -23,14 +21,18 @@ solve_for_alpha()
     awk '/3 /{printf("%8.3f\n",$2)}' Ef.r >> Ef3-T-alpha$1.r
 }
 
+# Initialise files
 rm -f Ef?-T*.r N.r FD*.r
 
+lw=200 # Well width
+nst=3  # Number of states
+
 # Solve single quantum well
-efiw -L 200 -s 10
+efiw -L $lw -s $nst
 
 # Generate table of populations
 N=1
-for i in `seq 1 10`; do
+for i in `seq 1 $nst`; do
     echo $i $N >> N.r
 done
 
