@@ -382,6 +382,56 @@ struct sqw_params
 };
 
 /**
+ * \brief Finds the right-hand side of the matching equation for a finite well
+ *
+ * \param[in] v          Normalised wave-vector for well region
+ * \param[in] odd_parity True if the required state has odd parity
+ *
+ * \returns The right-hand side of the matching equation
+ */
+double SchroedingerSolverFiniteWell_rhs(const double v,
+                                        const bool   odd_parity)
+{
+    double result = 0;
+
+    if(odd_parity)
+        result = -v*cot(v);
+    else
+        result = v*tan(v);
+
+    return result;
+}
+
+/**
+ * \brief Finds the left-hand side of the matching equation for a finite well
+ *
+ * \param[in] v    Normalised wave-vector for the well region
+ * \param[in] a    Well width [m]
+ * \param[in] m_w  Effective mass in well region [kg]
+ * \param[in] m_b  Effective mass in barrier region [kg]
+ * \param[in] V    Barrier potential [J]
+ *
+ * \returns the left-hand side of the matching equation
+ */
+double SchroedingerSolverFiniteWell_lhs(const double v,
+                                        const double a,
+                                        const double m_w,
+                                        const double m_b,
+                                        const double V)
+{
+    const double k = 2.0*v/a;
+    const double E = hBar*hBar*k*k/(2.0*m_w);
+    const double u_0_sq = a*a*m_w/(2.0*hBar*hBar)*(m_w*V/m_b + E*(1.0-m_w/m_b));
+
+    double result = 0.0;
+
+    if(gsl_fcmp(v*v, u_0_sq, 1e-12) == -1)
+        result = sqrt(u_0_sq - v*v);
+
+    return result;
+}
+
+/**
  * \brief Computes the characteristic equation for a finite well
  *
  * \details This can be used to find the eigenstates for the system,
@@ -410,22 +460,10 @@ double SchroedingerSolverFiniteWell_f(double  v,
     const double m_w = p->m_w;
     const double V   = p->V;
     const bool   parity_flag = p->parity_flag;
-    const double k = 2.0*v/a;
-    const double E = hBar*hBar*k*k/(2.0*m_w);
 
-    const double u_0_sq = a*a*m_w/(2.0*hBar*hBar)*(m_w*V/m_B + E*(1.0-m_w/m_B));
-
-    double result = 0.0;
-
-    if(gsl_fcmp(v*v, u_0_sq, 1e-12) == -1)
-        result = sqrt(u_0_sq - v*v);
-
-    if(parity_flag)
-        result += v*cot(v);
-    else
-        result -= v*tan(v);
-
-    return result;
+    const double lhs = SchroedingerSolverFiniteWell_lhs(v, a, m_w, m_B, V);
+    const double rhs = SchroedingerSolverFiniteWell_rhs(v, parity_flag);
+    return lhs - rhs;
 }
 
 /**

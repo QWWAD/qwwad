@@ -135,6 +135,16 @@ private:
                                 const bool   parity_flag);
 };
 
+
+double SchroedingerSolverFiniteWell_lhs(const double v,
+                                        const double a,
+                                        const double m_w,
+                                        const double m_b,
+                                        const double V);
+
+double SchroedingerSolverFiniteWell_rhs(const double v,
+                                        const bool   odd_parity);
+
 /**
  * Schroedinger solver that uses a full generalised matrix
  */
