@@ -102,6 +102,9 @@ class EFSQWOptions : public Options
                     ("barrier-mass,n", po::value<double>()->default_value(0.067),
                      "Effective mass in barrier (relative to that of a free electron)")
 
+                    ("output-equations", po::bool_switch()->default_value(false),
+                     "Output the matching equations for the system")
+
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
 
@@ -136,6 +139,9 @@ class EFSQWOptions : public Options
         /// \returns true if normal kinetic energy operator is to be used
         bool get_T_flag() const {return !vm["alt-KE"].as<bool>();}
 
+        /// \returns true if we are required to output the matching equations for the system
+        bool output_equations() const {return vm["output-equations"].as<bool>();}
+
         /// \returns the effective mass in the quantum well [kg]
         double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
 
@@ -165,6 +171,28 @@ int main(int argc,char *argv[])
     const bool   T_flag = opt.get_T_flag();
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, T_flag,state);
+
+    if(opt.output_equations())
+    {
+        const size_t nst    = se.get_n_bound();
+        const double v_max  = (nst+1)*pi/2;
+
+        const size_t nv = (nst+1)*1000;
+        const double dv = v_max/(nv-1);
+        std::valarray<double> v(nv);
+        std::valarray<double> rhs(nv);
+        std::valarray<double> lhs(nv);
+
+        for (unsigned int iv = 0; iv < nv; ++iv)
+        {
+            v[iv] = iv*dv;
+            rhs[iv] = se.get_rhs(v[iv]);
+            lhs[iv] = se.get_lhs(v[iv]);
+        }
+
+        Leeds::write_table_xy("lhs.r", v, lhs);
+        Leeds::write_table_xy("rhs.r", v, rhs);
+    }
 
     // Dump to file
     char energy_filename[9];

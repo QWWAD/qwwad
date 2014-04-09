@@ -15,6 +15,8 @@
 #include "qclsim-constants.h"
 typedef boost::multi_array<double, 2> matrix;
 
+#include <iostream>
+
 namespace Leeds
 {
 using namespace constants;
@@ -378,21 +380,24 @@ struct sqw_params
     double m_b;         ///< Barrier mass [kg]
     double m_w;         ///< Well mass [kg]
     double V;           ///< Barrier potential [J]
-    bool   parity_flag; ///< True for odd states
 };
 
 /**
  * \brief Finds the right-hand side of the matching equation for a finite well
  *
  * \param[in] v          Normalised wave-vector for well region
- * \param[in] odd_parity True if the required state has odd parity
  *
  * \returns The right-hand side of the matching equation
  */
-double SchroedingerSolverFiniteWell_rhs(const double v,
-                                        const bool   odd_parity)
+static double SchroedingerSolverFiniteWell_rhs(const double v)
 {
     double result = 0;
+
+    // Figure out which branch of the rhs function we're on
+    // and whether the wave-function has odd or even symmetry
+    const unsigned int branch = floor(v / (pi/2)) + 1;
+
+    const bool odd_parity = (branch % 2 == 0);
 
     if(odd_parity)
         result = -v*cot(v);
@@ -400,6 +405,11 @@ double SchroedingerSolverFiniteWell_rhs(const double v,
         result = v*tan(v);
 
     return result;
+}
+
+double SchroedingerSolverFiniteWell::get_rhs(const double v) const
+{
+    return SchroedingerSolverFiniteWell_rhs(v);
 }
 
 /**
@@ -413,11 +423,11 @@ double SchroedingerSolverFiniteWell_rhs(const double v,
  *
  * \returns the left-hand side of the matching equation
  */
-double SchroedingerSolverFiniteWell_lhs(const double v,
-                                        const double a,
-                                        const double m_w,
-                                        const double m_b,
-                                        const double V)
+static double SchroedingerSolverFiniteWell_lhs(const double v,
+                                               const double a,
+                                               const double m_w,
+                                               const double m_b,
+                                               const double V)
 {
     const double k = 2.0*v/a;
     const double E = hBar*hBar*k*k/(2.0*m_w);
@@ -429,6 +439,11 @@ double SchroedingerSolverFiniteWell_lhs(const double v,
         result = sqrt(u_0_sq - v*v);
 
     return result;
+}
+
+double SchroedingerSolverFiniteWell::get_lhs(const double v) const
+{
+    return SchroedingerSolverFiniteWell_lhs(v, _l_w, _m_w, _m_B, _V);
 }
 
 /**
@@ -459,10 +474,9 @@ double SchroedingerSolverFiniteWell_f(double  v,
     const double m_B = p->m_B;
     const double m_w = p->m_w;
     const double V   = p->V;
-    const bool   parity_flag = p->parity_flag;
 
     const double lhs = SchroedingerSolverFiniteWell_lhs(v, a, m_w, m_B, V);
-    const double rhs = SchroedingerSolverFiniteWell_rhs(v, parity_flag);
+    const double rhs = SchroedingerSolverFiniteWell_rhs(v);
     return lhs - rhs;
 }
 
@@ -559,18 +573,33 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
     return psi;
 }
 
-void SchroedingerSolverFiniteWell::calculate()
+double SchroedingerSolverFiniteWell::get_u0_max() const
+{
+    return sqrt(_V*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
+}
+
+/**
+ * \brief Find number of bound states in the well
+ */
+size_t SchroedingerSolverFiniteWell::get_n_bound() const
 {
     // Calculate number of bound states in well
-    double u_0_max = sqrt(_V*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
+    const double u_0_max = get_u0_max();
     const double nst = ceil(u_0_max/(pi/2.0));
+    return nst;
+}
+
+void SchroedingerSolverFiniteWell::calculate()
+{
+    const double u_0_max = get_u0_max();
+    const size_t nst = get_n_bound();
 
     for (unsigned int ist=0; ist < _nst_max && ist < nst; ++ist)
     {
         // deduce parity: false if even parity
         const bool parity_flag = (ist%2 == 1);
 
-        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V, parity_flag};
+        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V};
         gsl_function F;
         F.function = &SchroedingerSolverFiniteWell_f;
         F.params   = &params;
@@ -579,7 +608,7 @@ void SchroedingerSolverFiniteWell::calculate()
         // Normally, the root needs to lie within each pi/2 cell so we
         // set the limits for the root accordingly.
         double vlo = ist * pi/2.0;
-        double vhi = (ist+1) * pi/2.0;
+        double vhi = (ist+0.999999999) * pi/2.0;
 
         // If this is the highest state in the well, then we need to
         // reduce the range so that the energy doesn't go over the

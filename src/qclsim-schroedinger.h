@@ -120,6 +120,11 @@ public:
                                  const unsigned int nst_max = 0);
 
     std::string get_name() {return "finite-square-well";}
+
+    double get_u0_max() const;
+    size_t get_n_bound() const;
+    double get_lhs(const double v) const;
+    double get_rhs(const double v) const;
 private:
     double _l_w; ///< Width of well [m]
     double _l_b; ///< Width of barriers [m]
@@ -134,16 +139,6 @@ private:
                                 const int    i_state,
                                 const bool   parity_flag);
 };
-
-
-double SchroedingerSolverFiniteWell_lhs(const double v,
-                                        const double a,
-                                        const double m_w,
-                                        const double m_b,
-                                        const double V);
-
-double SchroedingerSolverFiniteWell_rhs(const double v,
-                                        const bool   odd_parity);
 
 /**
  * Schroedinger solver that uses a full generalised matrix
