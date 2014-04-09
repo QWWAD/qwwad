@@ -1,0 +1,21 @@
+\begin{picture}(0,0)%
+\includegraphics{fw.pstex}%
+\end{picture}%
+\setlength{\unitlength}{1492sp}%
+%
+\begingroup\makeatletter\ifx\SetFigFont\undefined%
+\gdef\SetFigFont#1#2#3#4#5{%
+  \reset@font\fontsize{#1}{#2pt}%
+  \fontfamily{#3}\fontseries{#4}\fontshape{#5}%
+  \selectfont}%
+\fi\endgroup%
+\begin{picture}(7489,4900)(1700,-4923)
+\put(7001,-2590){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$B\exp(-\kappa z)$}}}}
+\put(4644,-2590){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$A\cos(kz)$}}}}
+\put(5573,-4733){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}0}}}}
+\put(6644,-4733){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$\frac{l_w}{2}$}}}}
+\put(9002,-4447){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$z$}}}}
+\put(1715,-4161){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}0}}}}
+\put(1715,-1875){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$V$}}}}
+\put(1786,-446){\makebox(0,0)[lb]{\smash{{\SetFigFont{12}{14.4}{\familydefault}{\mddefault}{\updefault}$E$}}}}
+\end{picture}%
