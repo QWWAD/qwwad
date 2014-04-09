@@ -127,7 +127,6 @@ public:
     double get_rhs(const double v) const;
 private:
     double _l_w; ///< Width of well [m]
-    double _l_b; ///< Width of barriers [m]
     double _V;   ///< Confining potential [J]
     double _m_w; ///< Effective mass in well [kg]
     double _m_b; ///< Effective mass in barriers [kg]

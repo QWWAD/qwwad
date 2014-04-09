@@ -362,7 +362,6 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                        std::valarray<double>(nz),
                        nst_max),
     _l_w(l_w),
-    _l_b(l_b),
     _V(V),
     _m_w(m_w),
     _m_b(m_b),
@@ -495,71 +494,46 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
     const double K=sqrt(2*_m_b/hBar*(_V-E)/hBar); // decay constant in barrier
 
-    // Determine whether the decay into the barriers is going to underflow
-    // out calculations.  If it is, then just treat it as an infinitely sharp decay
-    bool sharp_decay=false;
-    if (gsl_fcmp(K*_l_b, 700, 1e-6) == 1)
-        sharp_decay=true;
-
     const size_t N = _z.size();
     std::valarray<double> psi(N); // wavefunction
     const double dz = _z[1] - _z[0];
     const double epsilon = dz/1000;
 
-    // If the wavefunction decays sharply into the barriers, assume that the 
-    // entire probability density lies in the well and normalise to 1.
-    //
-    // Otherwise, we let the amplitude = 1 in the barriers and find the
-    // amplitude in the well and the normalisation constant for the system.
-    double A = 0;
-    double norm_int=1.0;  // integral over all space of psi*psi
-    if(sharp_decay)
+    // Compute the normalisation constants
+    double A = 0; // Amplitude in well
+    double B = 0; // Amplitude in barriers
+
+    if(odd_parity)
     {
-        if(odd_parity)
-            A = sqrt(2.0*k/(_l_w*k - sin(_l_w*k)));
-        else
-            A = sqrt(2.0*k/(_l_w*k + sin(_l_w*k)));
+        A = 1.0/sqrt(
+                _l_w/2.0 - sin(k*_l_w)/(2.0*k) + gsl_pow_2(sin(k*_l_w/2.0))/K
+                );
+        B = A * exp(K*_l_w/2.0) * sin(k*_l_w/2.0);
     }
     else
     {
-        if(odd_parity)
-        {
-            A=exp(-K*_l_w/2)/sin(k*_l_w/2);
-
-            norm_int=gsl_pow_2(A)*(_l_w/2-sin(k*_l_w)/(2*k))
-                - exp(-K*_l_w)*gsl_expm1(-2*K*_l_b)/K;
-        }
-        else
-        {
-            A=exp(-K*_l_w/2)/cos(k*_l_w/2);
-
-            norm_int=gsl_pow_2(A)*(_l_w/2+sin(k*_l_w)/(2*k))
-                - exp(-K*_l_w)*gsl_expm1(-2*K*_l_b)/K;
-        }
+        A = 1.0/sqrt(
+                _l_w/2.0 + sin(k*_l_w)/(2.0*k) + gsl_pow_2(cos(k*_l_w/2.0))/K
+                );
+        B = A * exp(K*_l_w/2.0) * cos(k*_l_w/2.0);
     }
 
     for (unsigned int i_z=0;i_z<N;i_z++)
     {
-        // Fill in the barrier decays only if the decay constant is
-        // small enough to compute them accurately.  Otherwise, just
-        // leave the barrier wavefunction as zero
-        if(!sharp_decay)
+        // Left barrier
+        if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon)==-1)
         {
-            // Left barrier
-            if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon)==-1)
-            {
-                if(odd_parity)
-                    psi[i_z]=-exp(-K*fabs(_z[i_z]));
-                else
-                    psi[i_z]=exp(-K*fabs(_z[i_z]));
-            }
-            // Right barrier
-            else if (gsl_fcmp(_z[i_z], _l_w/2, epsilon)>=0)
-                psi[i_z]=exp(-K*_z[i_z]);
+            if(odd_parity)
+                psi[i_z]=-B*exp(-K*fabs(_z[i_z]));
+            else
+                psi[i_z]=B*exp(-K*fabs(_z[i_z]));
         }
+        // Right barrier
+        else if (gsl_fcmp(_z[i_z], _l_w/2, epsilon)>=0)
+            psi[i_z]=B*exp(-K*_z[i_z]);
 
         // Find wavefunction within well region
-        if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon) >= 0 && (_z[i_z]<(_l_w/2)))
+        else if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon) >= 0 && (_z[i_z]<(_l_w/2)))
         {
             if(odd_parity)
                 psi[i_z]=A*sin(k*_z[i_z]);
@@ -568,8 +542,6 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
         }
     }
 
-    // normalise wavefunction
-    psi/=sqrt(norm_int);
     return psi;
 }
 
