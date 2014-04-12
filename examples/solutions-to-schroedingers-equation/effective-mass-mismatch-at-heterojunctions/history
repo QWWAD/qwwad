@@ -3,13 +3,23 @@
 # Initialise files
 rm -f Ee-lw.r
 
+# Read the barrier alloy from command-line argument
+if [ "z$1" = "z" ]; then
+    echo "You need to specify the barrier alloy as an argument to this script"
+    echo "For example, to use 10% alloy in the barrier, enter:"
+    echo "  $0 0.1"
+    exit 1
+else
+    x=$1
+fi
+
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x
-V=334.196
+V=`echo 0.67*1247*$x|bc`
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x
-MB=0.1002
+MB=`echo 0.067 + 0.083*$x|bc`
 MW=0.067 # Well mass (GaAs)
 
 # Loop for different well widths
@@ -27,3 +37,5 @@ do
  awk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-lw.r		# send data to file
 }
 done
+
+cp Ee-lw.r x\=$x-Ee-lw.r
