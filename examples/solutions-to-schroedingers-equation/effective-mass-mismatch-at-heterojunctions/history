@@ -29,11 +29,15 @@ do
  printf "%d\t" "$LW" >> Ee-lw.r	# write well width to file
 
  # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
- efsqw -a $LW -m $MW -n $MW --potential $V
+ efsqw -a $LW -m $MW -n $MW --potential $V --output-equations
+ mv rhs.r rhs-const.r
+ mv lhs.r lhs-const.r
  awk '{printf("%8.3f",$2)}' Ee.r >> Ee-lw.r		# send data to file
 
  # Calculate ground state energy for correct barrier mass 
- efsqw -a $LW -m $MW -n $MB --potential $V
+ efsqw -a $LW -m $MW -n $MB --potential $V --output-equations
+ mv rhs.r rhs-mb.r
+ mv lhs.r lhs-mb.r
  awk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-lw.r		# send data to file
 }
 done

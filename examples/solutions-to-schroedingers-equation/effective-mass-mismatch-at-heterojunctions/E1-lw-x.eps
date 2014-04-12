@@ -1,811 +1,1232 @@
-%!PS-Adobe-2.0 EPSF-1.2
-%%BoundingBox: 12 12 576 684
-%%Creator: XMgr v3.01pl7
-%%Title: E1-lw-x.eps
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: (atend)
+%%LanguageLevel: 2
+%%Creator: Grace-5.1.23
+%%CreationDate: Sat Apr 12 13:59:38 2014
+%%DocumentData: Clean8Bit
+%%Orientation: Portrait
+%%Title: /home/alex/devel/qwwad/lp-qwwad-ch/examples/solutions-to-schroedingers-equation/effective-mass-mismatch-at-heterojunctions/E1-lw-x.agr
+%%For: alex
+%%DocumentNeededResources: (atend)
 %%EndComments
-/m {moveto} bind def
-/l {lineto} bind def
-/RJ {
- stringwidth neg exch neg exch
- rmoveto
-} bind def
-/CS {
- stringwidth
- 2 div neg exch 2 div neg exch
- rmoveto
-} bind def
-0.25 0.25 scale
-1 setlinecap
-
-mark             
-/ISOLatin1Encoding 
-  8#000 1 8#054 {StandardEncoding exch get} for 
-  /minus 
-  8#056 1 8#217 {StandardEncoding exch get} for 
-  /dotlessi 
-  8#301 1 8#317 {StandardEncoding exch get} for 
-  /space /exclamdown /cent /sterling /currency /yen /brokenbar /section 
-  /dieresis /copyright /ordfeminine /guillemotleft /logicalnot /hyphen 
-  /registered /macron /degree /plusminus /twosuperior /threesuperior /acute 
-  /mu /paragraph /periodcentered /cedilla /onesuperior /ordmasculine 
-  /guillemotright /onequarter /onehalf /threequarters /questiondown /Agrave 
-  /Aacute /Acircumflex /Atilde /Adieresis /Aring /AE /Ccedilla /Egrave /Eacute 
-  /Ecircumflex /Edieresis /Igrave /Iacute /Icircumflex /Idieresis /Eth /Ntilde 
-  /Ograve /Oacute /Ocircumflex /Otilde /Odieresis /multiply /Oslash /Ugrave 
-  /Uacute /Ucircumflex /Udieresis /Yacute /Thorn /germandbls /agrave /aacute 
-  /acircumflex /atilde /adieresis /aring /ae /ccedilla /egrave /eacute 
-  /ecircumflex /edieresis /igrave /iacute /icircumflex /idieresis /eth /ntilde 
-  /ograve /oacute /ocircumflex /otilde /odieresis /divide /oslash /ugrave 
-  /uacute /ucircumflex /udieresis /yacute /thorn /ydieresis 
-  /ISOLatin1Encoding where not {256 array astore def} if 
- cleartomark 
-
-/makeISOEncoded 
-{ findfont /curfont exch def 
-  /newfont curfont maxlength dict def  
-  /ISOLatin1 (-ISOLatin1) def
-  /curfontname curfont /FontName get dup length string cvs def 
-  /newfontname curfontname length ISOLatin1 length add string 
-     dup 0                  curfontname putinterval 
-     dup curfontname length ISOLatin1   putinterval 
-  def 
-  curfont   
-  { exch dup /FID ne  
-    { dup /Encoding eq  
-      { exch pop ISOLatin1Encoding exch }  
-      if  
-      dup /FontName eq  
-      { exch pop newfontname exch }  
-      if  
-      exch newfont 3 1 roll put  
-    }  
-    { pop pop }  
-    ifelse  
-  }  
-  forall 
-  newfontname newfont definefont 
-} def 
-
-/Times-Roman makeISOEncoded pop 
-/Times-Bold makeISOEncoded pop 
-/Times-Italic makeISOEncoded pop 
-/Times-BoldItalic makeISOEncoded pop 
-/Helvetica makeISOEncoded pop 
-/Helvetica-Bold makeISOEncoded pop 
-/Helvetica-Oblique makeISOEncoded pop 
-/Helvetica-BoldOblique makeISOEncoded pop 
-2500 0 translate
-90 rotate
-0.000000 0.000000 0.000000 setrgbcolor
-1 setlinewidth
-/Times-Italic-ISOLatin1 findfont 60 scalefont setfont
-[] 0 setdash
-677 577 m
-677 2090 l
-2474 2090 l
-2474 577 l
-677 577 l
-stroke
-[] 0 setdash
-677 577 m
-677 587 l
-857 577 m
-857 587 l
-1036 577 m
-1036 587 l
-1216 577 m
-1216 587 l
-1396 577 m
-1396 587 l
-1575 577 m
-1575 587 l
-1755 577 m
-1755 587 l
-1935 577 m
-1935 587 l
-2114 577 m
-2114 587 l
-2294 577 m
-2294 587 l
-2474 577 m
-2474 587 l
-677 2090 m
-677 2080 l
-857 2090 m
-857 2080 l
-1036 2090 m
-1036 2080 l
-1216 2090 m
-1216 2080 l
-1396 2090 m
-1396 2080 l
-1575 2090 m
-1575 2080 l
-1755 2090 m
-1755 2080 l
-1935 2090 m
-1935 2080 l
-2114 2090 m
-2114 2080 l
-2294 2090 m
-2294 2080 l
-2474 2090 m
-2474 2080 l
-stroke
-677 577 m
-677 597 l
-1036 577 m
-1036 597 l
-1396 577 m
-1396 597 l
-1755 577 m
-1755 597 l
-2114 577 m
-2114 597 l
-2474 577 m
-2474 597 l
-677 2090 m
-677 2070 l
-1036 2090 m
-1036 2070 l
-1396 2090 m
-1396 2070 l
-1755 2090 m
-1755 2070 l
-2114 2090 m
-2114 2070 l
-2474 2090 m
-2474 2070 l
-/Times-Italic-ISOLatin1 findfont 120 scalefont setfont
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-stroke
-677 477 m
-gsave
-677 477 translate
-0 rotate
-0 -40  m
-(0) CS
+%%BeginProlog
+/m {moveto} def
+/l {lineto} def
+/s {stroke} def
+/n {newpath} def
+/c {closepath} def
+/RL {rlineto} def
+/SLW {setlinewidth} def
+/GS {gsave} def
+/GR {grestore} def
+/SC {setcolor} def
+/SGRY {setgray} def
+/SRGB {setrgbcolor} def
+/SD {setdash} def
+/SLC {setlinecap} def
+/SLJ {setlinejoin} def
+/SCS {setcolorspace} def
+/FFSF {findfont setfont} def
+/CC {concat} def
+/PXL {n m 0 0 RL s} def
+/Color0 {1.0000 1.0000 1.0000} def
+/Color1 {0.0000 0.0000 0.0000} def
+/Color2 {1.0000 0.0000 0.0000} def
+/Color3 {0.0000 1.0000 0.0000} def
+/Color4 {0.0000 0.0000 1.0000} def
+/Color5 {1.0000 1.0000 0.0000} def
+/Color6 {0.7373 0.5608 0.5608} def
+/Color7 {0.8627 0.8627 0.8627} def
+/Color8 {0.5804 0.0000 0.8275} def
+/Color9 {0.0000 1.0000 1.0000} def
+/Color10 {1.0000 0.0000 1.0000} def
+/Color11 {1.0000 0.6471 0.0000} def
+/Color12 {0.4471 0.1294 0.7373} def
+/Color13 {0.4039 0.0275 0.2824} def
+/Color14 {0.2510 0.8784 0.8157} def
+/Color15 {0.0000 0.5451 0.0000} def
+/Color16 {0.7529 0.7529 0.7529} def
+/Color17 {0.5059 0.5059 0.5059} def
+/Color18 {0.2588 0.2588 0.2588} def
+/PTRN {
+ /pat_bits exch def 
+ <<
+  /PaintType 2
+  /PatternType 1 /TilingType 1
+  /BBox[0 0 16 16]
+  /XStep 16 /YStep 16
+  /PaintProc {
+   pop
+   16 16 true [-1 0 0 -1 16 16] pat_bits imagemask
+  }
+ >>
+ [0.0016 0 0 0.0016 0 0]
+ makepattern
+} def
+/Pattern0 {<0000000000000000000000000000000000000000000000000000000000000000> PTRN} bind def
+/Pattern1 {<ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff> PTRN} bind def
+/Pattern2 {<eeeeffffbbbbffffeeeeffffbbbbffffeeeeffffbbbbffffeeeeffffbbbbffff> PTRN} bind def
+/Pattern3 {<eeeebbbbeeeebbbbeeeebbbbeeeebbbbeeeebbbbeeeebbbbeeeebbbbeeeebbbb> PTRN} bind def
+/Pattern4 {<5555aaaa5555aaaa5555aaaa5555aaaa5555aaaa5555aaaa5555aaaa5555aaaa> PTRN} bind def
+/Pattern5 {<1111444411114444111144441111444411114444111144441111444411114444> PTRN} bind def
+/Pattern6 {<1111000044440000111100004444000011110000444400001111000044440000> PTRN} bind def
+/Pattern7 {<1010000000000000010100000000000010100000000000000101000000000000> PTRN} bind def
+/Pattern8 {<0000000000000000000000000000000000000000000000000000000000000000> PTRN} bind def
+/Pattern9 {<1e1e0f0f8787c3c3e1e1f0f078783c3c1e1e0f0f8787c3c3e1e1f0f078783c3c> PTRN} bind def
+/Pattern10 {<7878f0f0e1e1c3c387870f0f1e1e3c3c7878f0f0e1e1c3c387870f0f1e1e3c3c> PTRN} bind def
+/Pattern11 {<3333333333333333333333333333333333333333333333333333333333333333> PTRN} bind def
+/Pattern12 {<ffffffff00000000ffffffff00000000ffffffff00000000ffffffff00000000> PTRN} bind def
+/Pattern13 {<8181424224241818181824244242818181814242242418181818242442428181> PTRN} bind def
+/Pattern14 {<8080404020201010080804040202010180804040202010100808040402020101> PTRN} bind def
+/Pattern15 {<0101020204040808101020204040808001010202040408081010202040408080> PTRN} bind def
+/Pattern16 {<2222222222222222222222222222222222222222222222222222222222222222> PTRN} bind def
+/Pattern17 {<0000ffff000000000000ffff000000000000ffff000000000000ffff00000000> PTRN} bind def
+/Pattern18 {<2222ffff222222222222ffff222222222222ffff222222222222ffff22222222> PTRN} bind def
+/Pattern19 {<ffffffff33333333ffffffff33333333ffffffff33333333ffffffff33333333> PTRN} bind def
+/Pattern20 {<0f0f0f0f0f0f0f0ff0f0f0f0f0f0f0f00f0f0f0f0f0f0f0ff0f0f0f0f0f0f0f0> PTRN} bind def
+/Pattern21 {<ff00ff00ff00ff00ff00ff00ff00ff0000ff00ff00ff00ff00ff00ff00ff00ff> PTRN} bind def
+/Pattern22 {<8001800180018001800180018001ffffffff8001800180018001800180018001> PTRN} bind def
+/Pattern23 {<c003c003c003c003c003c003ffffffffffffffffc003c003c003c003c003c003> PTRN} bind def
+/Pattern24 {<040404040404ffff404040404040ffff040404040404ffff404040404040ffff> PTRN} bind def
+/Pattern25 {<180018001800180018001800ffffffff001800180018001800180018ffffffff> PTRN} bind def
+/Pattern26 {<1111b8b87c7c3a3a1111a3a3c7c78b8b1111b8b87c7c3a3a1111a3a3c7c78b8b> PTRN} bind def
+/Pattern27 {<101010102828c7c70101010182827c7c101010102828c7c70101010182827c7c> PTRN} bind def
+/Pattern28 {<1c1c121211112121c1c12121111112121c1c121211112121c1c1212111111212> PTRN} bind def
+/Pattern29 {<3e3e414180808080e3e31414080808083e3e414180808080e3e3141408080808> PTRN} bind def
+/Pattern30 {<4848888884848383848488884848383848488888848483838484888848483838> PTRN} bind def
+/Pattern31 {<03030404080808080c0c12122121c0c003030404080808080c0c12122121c0c0> PTRN} bind def
+/ellipsedict 8 dict def
+ellipsedict /mtrx matrix put
+/EARC {
+ ellipsedict begin
+  /endangle exch def
+  /startangle exch def
+  /yrad exch def
+  /xrad exch def
+  /y exch def
+  /x exch def
+  /savematrix mtrx currentmatrix def
+  x y translate
+  xrad yrad scale
+  0 0 1 startangle endangle arc
+  savematrix setmatrix
+ end
+} def
+/TL {
+  /kcomp exch def
+  /linewidth exch def
+  /offset exch def
+  GS
+  0 offset rmoveto
+  linewidth SLW
+  dup stringwidth exch kcomp add exch RL s
+  GR
+} def
+/KINIT
+{
+ /kvector exch def
+ /kid 0 def
+} def
+/KPROC
+{
+ pop pop
+ kvector kid get
+ 0 rmoveto
+ /kid 1 kid add def
+} def
+/DefEncoding [
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /space
+ /exclam
+ /quotedbl
+ /numbersign
+ /dollar
+ /percent
+ /ampersand
+ /quoteright
+ /parenleft
+ /parenright
+ /asterisk
+ /plus
+ /comma
+ /hyphen
+ /period
+ /slash
+ /zero
+ /one
+ /two
+ /three
+ /four
+ /five
+ /six
+ /seven
+ /eight
+ /nine
+ /colon
+ /semicolon
+ /less
+ /equal
+ /greater
+ /question
+ /at
+ /A
+ /B
+ /C
+ /D
+ /E
+ /F
+ /G
+ /H
+ /I
+ /J
+ /K
+ /L
+ /M
+ /N
+ /O
+ /P
+ /Q
+ /R
+ /S
+ /T
+ /U
+ /V
+ /W
+ /X
+ /Y
+ /Z
+ /bracketleft
+ /backslash
+ /bracketright
+ /asciicircum
+ /underscore
+ /grave
+ /a
+ /b
+ /c
+ /d
+ /e
+ /f
+ /g
+ /h
+ /i
+ /j
+ /k
+ /l
+ /m
+ /n
+ /o
+ /p
+ /q
+ /r
+ /s
+ /t
+ /u
+ /v
+ /w
+ /x
+ /y
+ /z
+ /braceleft
+ /bar
+ /braceright
+ /asciitilde
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /.notdef
+ /space
+ /exclamdown
+ /cent
+ /sterling
+ /currency
+ /yen
+ /brokenbar
+ /section
+ /dieresis
+ /copyright
+ /ordfeminine
+ /guillemotleft
+ /logicalnot
+ /hyphen
+ /registered
+ /macron
+ /degree
+ /plusminus
+ /twosuperior
+ /threesuperior
+ /acute
+ /mu
+ /paragraph
+ /periodcentered
+ /cedilla
+ /onesuperior
+ /ordmasculine
+ /guillemotright
+ /onequarter
+ /onehalf
+ /threequarters
+ /questiondown
+ /Agrave
+ /Aacute
+ /Acircumflex
+ /Atilde
+ /Adieresis
+ /Aring
+ /AE
+ /Ccedilla
+ /Egrave
+ /Eacute
+ /Ecircumflex
+ /Edieresis
+ /Igrave
+ /Iacute
+ /Icircumflex
+ /Idieresis
+ /Eth
+ /Ntilde
+ /Ograve
+ /Oacute
+ /Ocircumflex
+ /Otilde
+ /Odieresis
+ /multiply
+ /Oslash
+ /Ugrave
+ /Uacute
+ /Ucircumflex
+ /Udieresis
+ /Yacute
+ /Thorn
+ /germandbls
+ /agrave
+ /aacute
+ /acircumflex
+ /atilde
+ /adieresis
+ /aring
+ /ae
+ /ccedilla
+ /egrave
+ /eacute
+ /ecircumflex
+ /edieresis
+ /igrave
+ /iacute
+ /icircumflex
+ /idieresis
+ /eth
+ /ntilde
+ /ograve
+ /oacute
+ /ocircumflex
+ /otilde
+ /odieresis
+ /divide
+ /oslash
+ /ugrave
+ /uacute
+ /ucircumflex
+ /udieresis
+ /yacute
+ /thorn
+ /ydieresis
+] def
+%%EndProlog
+%%BeginSetup
+%%EndSetup
+612.00 612.00 scale
+n
+0.0000 0.0000 m
+0.0000 1.0000 l
+1.2941 1.0000 l
+1.2941 0.0000 l
+c
+[/DeviceRGB] SCS
+Color0 SC
+fill
+[/DeviceRGB] SCS
+Color1 SC
+[] 0 SD
+0.0030 SLW
+0 SLC
+0 SLJ
+n
+0.3662 0.3564 m
+0.4478 0.3398 l
+0.5293 0.3192 l
+0.6108 0.2990 l
+0.6924 0.2812 l
+0.7739 0.2661 l
+0.8554 0.2536 l
+0.9369 0.2433 l
+1.0185 0.2347 l
+1.1000 0.2276 l
+1.1001 0.2276 l
+s
+n
+0.3662 0.3564 0.0100 0.0100 0 360 EARC c
+fill
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.3564 0.0100 0.0100 0 360 EARC s
+n
+0.4478 0.3398 0.0100 0.0100 0 360 EARC c
+fill
+n 0.4478 0.3398 0.0100 0.0100 0 360 EARC s
+n
+0.5293 0.3192 0.0100 0.0100 0 360 EARC c
+fill
+n 0.5293 0.3192 0.0100 0.0100 0 360 EARC s
+n
+0.6108 0.2990 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6108 0.2990 0.0100 0.0100 0 360 EARC s
+n
+0.6924 0.2812 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6924 0.2812 0.0100 0.0100 0 360 EARC s
+n
+0.7739 0.2661 0.0100 0.0100 0 360 EARC c
+fill
+n 0.7739 0.2661 0.0100 0.0100 0 360 EARC s
+n
+0.8554 0.2536 0.0100 0.0100 0 360 EARC c
+fill
+n 0.8554 0.2536 0.0100 0.0100 0 360 EARC s
+n
+0.9369 0.2433 0.0100 0.0100 0 360 EARC c
+fill
+n 0.9369 0.2433 0.0100 0.0100 0 360 EARC s
+n
+1.0185 0.2347 0.0100 0.0100 0 360 EARC c
+fill
+n 1.0185 0.2347 0.0100 0.0100 0 360 EARC s
+n
+1.1000 0.2276 0.0100 0.0100 0 360 EARC c
+fill
+n 1.1000 0.2276 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.3556 m
+0.4478 0.3376 l
+0.5293 0.3161 l
+0.6108 0.2956 l
+0.6924 0.2779 l
+0.7739 0.2631 l
+0.8554 0.2510 l
+0.9369 0.2410 l
+1.0185 0.2328 l
+1.1000 0.2259 l
+1.1001 0.2259 l
+s
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.3556 0.0100 0.0100 0 360 EARC s
+n 0.4478 0.3376 0.0100 0.0100 0 360 EARC s
+n 0.5293 0.3161 0.0100 0.0100 0 360 EARC s
+n 0.6108 0.2956 0.0100 0.0100 0 360 EARC s
+n 0.6924 0.2779 0.0100 0.0100 0 360 EARC s
+n 0.7739 0.2631 0.0100 0.0100 0 360 EARC s
+n 0.8554 0.2510 0.0100 0.0100 0 360 EARC s
+n 0.9369 0.2410 0.0100 0.0100 0 360 EARC s
+n 1.0185 0.2328 0.0100 0.0100 0 360 EARC s
+n 1.1000 0.2259 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.5258 m
+0.4478 0.4706 l
+0.5293 0.4139 l
+0.6108 0.3670 l
+0.6924 0.3306 l
+0.7739 0.3028 l
+0.8554 0.2815 l
+0.9369 0.2649 l
+1.0185 0.2517 l
+1.1000 0.2412 l
+1.1001 0.2412 l
+s
+n
+0.3662 0.5258 0.0100 0.0100 0 360 EARC c
+fill
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.5258 0.0100 0.0100 0 360 EARC s
+n
+0.4478 0.4706 0.0100 0.0100 0 360 EARC c
+fill
+n 0.4478 0.4706 0.0100 0.0100 0 360 EARC s
+n
+0.5293 0.4139 0.0100 0.0100 0 360 EARC c
+fill
+n 0.5293 0.4139 0.0100 0.0100 0 360 EARC s
+n
+0.6108 0.3670 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6108 0.3670 0.0100 0.0100 0 360 EARC s
+n
+0.6924 0.3306 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6924 0.3306 0.0100 0.0100 0 360 EARC s
+n
+0.7739 0.3028 0.0100 0.0100 0 360 EARC c
+fill
+n 0.7739 0.3028 0.0100 0.0100 0 360 EARC s
+n
+0.8554 0.2815 0.0100 0.0100 0 360 EARC c
+fill
+n 0.8554 0.2815 0.0100 0.0100 0 360 EARC s
+n
+0.9369 0.2649 0.0100 0.0100 0 360 EARC c
+fill
+n 0.9369 0.2649 0.0100 0.0100 0 360 EARC s
+n
+1.0185 0.2517 0.0100 0.0100 0 360 EARC c
+fill
+n 1.0185 0.2517 0.0100 0.0100 0 360 EARC s
+n
+1.1000 0.2412 0.0100 0.0100 0 360 EARC c
+fill
+n 1.1000 0.2412 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.5205 m
+0.4478 0.4590 l
+0.5293 0.4009 l
+0.6108 0.3552 l
+0.6924 0.3208 l
+0.7739 0.2949 l
+0.8554 0.2750 l
+0.9369 0.2596 l
+1.0185 0.2475 l
+1.1000 0.2377 l
+1.1001 0.2377 l
+s
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.5205 0.0100 0.0100 0 360 EARC s
+n 0.4478 0.4590 0.0100 0.0100 0 360 EARC s
+n 0.5293 0.4009 0.0100 0.0100 0 360 EARC s
+n 0.6108 0.3552 0.0100 0.0100 0 360 EARC s
+n 0.6924 0.3208 0.0100 0.0100 0 360 EARC s
+n 0.7739 0.2949 0.0100 0.0100 0 360 EARC s
+n 0.8554 0.2750 0.0100 0.0100 0 360 EARC s
+n 0.9369 0.2596 0.0100 0.0100 0 360 EARC s
+n 1.0185 0.2475 0.0100 0.0100 0 360 EARC s
+n 1.1000 0.2377 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.6846 m
+0.4478 0.5789 l
+0.5293 0.4841 l
+0.6108 0.4133 l
+0.6924 0.3623 l
+0.7739 0.3253 l
+0.8554 0.2980 l
+0.9369 0.2773 l
+1.0185 0.2613 l
+1.1000 0.2488 l
+1.1001 0.2488 l
+s
+n
+0.3662 0.6846 0.0100 0.0100 0 360 EARC c
+fill
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.6846 0.0100 0.0100 0 360 EARC s
+n
+0.4478 0.5789 0.0100 0.0100 0 360 EARC c
+fill
+n 0.4478 0.5789 0.0100 0.0100 0 360 EARC s
+n
+0.5293 0.4841 0.0100 0.0100 0 360 EARC c
+fill
+n 0.5293 0.4841 0.0100 0.0100 0 360 EARC s
+n
+0.6108 0.4133 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6108 0.4133 0.0100 0.0100 0 360 EARC s
+n
+0.6924 0.3623 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6924 0.3623 0.0100 0.0100 0 360 EARC s
+n
+0.7739 0.3253 0.0100 0.0100 0 360 EARC c
+fill
+n 0.7739 0.3253 0.0100 0.0100 0 360 EARC s
+n
+0.8554 0.2980 0.0100 0.0100 0 360 EARC c
+fill
+n 0.8554 0.2980 0.0100 0.0100 0 360 EARC s
+n
+0.9369 0.2773 0.0100 0.0100 0 360 EARC c
+fill
+n 0.9369 0.2773 0.0100 0.0100 0 360 EARC s
+n
+1.0185 0.2613 0.0100 0.0100 0 360 EARC c
+fill
+n 1.0185 0.2613 0.0100 0.0100 0 360 EARC s
+n
+1.1000 0.2488 0.0100 0.0100 0 360 EARC c
+fill
+n 1.1000 0.2488 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.6691 m
+0.4478 0.5514 l
+0.5293 0.4578 l
+0.6108 0.3920 l
+0.6924 0.3458 l
+0.7739 0.3126 l
+0.8554 0.2881 l
+0.9369 0.2695 l
+1.0185 0.2551 l
+1.1000 0.2438 l
+1.1001 0.2438 l
+s
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.6691 0.0100 0.0100 0 360 EARC s
+n 0.4478 0.5514 0.0100 0.0100 0 360 EARC s
+n 0.5293 0.4578 0.0100 0.0100 0 360 EARC s
+n 0.6108 0.3920 0.0100 0.0100 0 360 EARC s
+n 0.6924 0.3458 0.0100 0.0100 0 360 EARC s
+n 0.7739 0.3126 0.0100 0.0100 0 360 EARC s
+n 0.8554 0.2881 0.0100 0.0100 0 360 EARC s
+n 0.9369 0.2695 0.0100 0.0100 0 360 EARC s
+n 1.0185 0.2551 0.0100 0.0100 0 360 EARC s
+n 1.1000 0.2438 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.8342 m
+0.4478 0.6712 l
+0.5293 0.5395 l
+0.6108 0.4481 l
+0.6924 0.3853 l
+0.7739 0.3412 l
+0.8554 0.3094 l
+0.9369 0.2858 l
+1.0185 0.2678 l
+1.1000 0.2538 l
+1.1001 0.2538 l
+s
+n
+0.3662 0.8342 0.0100 0.0100 0 360 EARC c
+fill
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.8342 0.0100 0.0100 0 360 EARC s
+n
+0.4478 0.6712 0.0100 0.0100 0 360 EARC c
+fill
+n 0.4478 0.6712 0.0100 0.0100 0 360 EARC s
+n
+0.5293 0.5395 0.0100 0.0100 0 360 EARC c
+fill
+n 0.5293 0.5395 0.0100 0.0100 0 360 EARC s
+n
+0.6108 0.4481 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6108 0.4481 0.0100 0.0100 0 360 EARC s
+n
+0.6924 0.3853 0.0100 0.0100 0 360 EARC c
+fill
+n 0.6924 0.3853 0.0100 0.0100 0 360 EARC s
+n
+0.7739 0.3412 0.0100 0.0100 0 360 EARC c
+fill
+n 0.7739 0.3412 0.0100 0.0100 0 360 EARC s
+n
+0.8554 0.3094 0.0100 0.0100 0 360 EARC c
+fill
+n 0.8554 0.3094 0.0100 0.0100 0 360 EARC s
+n
+0.9369 0.2858 0.0100 0.0100 0 360 EARC c
+fill
+n 0.9369 0.2858 0.0100 0.0100 0 360 EARC s
+n
+1.0185 0.2678 0.0100 0.0100 0 360 EARC c
+fill
+n 1.0185 0.2678 0.0100 0.0100 0 360 EARC s
+n
+1.1000 0.2538 0.0100 0.0100 0 360 EARC c
+fill
+n 1.1000 0.2538 0.0100 0.0100 0 360 EARC s
+[] 0 SD
+0.0030 SLW
+n
+0.3662 0.8020 m
+0.4478 0.6235 l
+0.5293 0.4988 l
+0.6108 0.4173 l
+0.6924 0.3625 l
+0.7739 0.3242 l
+0.8554 0.2964 l
+0.9369 0.2758 l
+1.0185 0.2599 l
+1.1000 0.2475 l
+1.1001 0.2475 l
+s
+[] 0 SD
+0.0015 SLW
+n 0.3662 0.8020 0.0100 0.0100 0 360 EARC s
+n 0.4478 0.6235 0.0100 0.0100 0 360 EARC s
+n 0.5293 0.4988 0.0100 0.0100 0 360 EARC s
+n 0.6108 0.4173 0.0100 0.0100 0 360 EARC s
+n 0.6924 0.3625 0.0100 0.0100 0 360 EARC s
+n 0.7739 0.3242 0.0100 0.0100 0 360 EARC s
+n 0.8554 0.2964 0.0100 0.0100 0 360 EARC s
+n 0.9369 0.2758 0.0100 0.0100 0 360 EARC s
+n 1.0185 0.2599 0.0100 0.0100 0 360 EARC s
+n 1.1000 0.2475 0.0100 0.0100 0 360 EARC s
+n
+0.3662 0.2200 m
+0.3662 0.2300 l
+s
+n
+0.3662 0.8500 m
+0.3662 0.8400 l
+s
+n
+0.5293 0.2200 m
+0.5293 0.2300 l
+s
+n
+0.5293 0.8500 m
+0.5293 0.8400 l
+s
+n
+0.6924 0.2200 m
+0.6924 0.2300 l
+s
+n
+0.6924 0.8500 m
+0.6924 0.8400 l
+s
+n
+0.8554 0.2200 m
+0.8554 0.2300 l
+s
+n
+0.8554 0.8500 m
+0.8554 0.8400 l
+s
+n
+1.0185 0.2200 m
+1.0185 0.2300 l
+s
+n
+1.0185 0.8500 m
+1.0185 0.8400 l
+s
+n
+0.2847 0.2200 m
+0.2847 0.2400 l
+s
+n
+0.2847 0.8500 m
+0.2847 0.8300 l
+s
+n
+0.4478 0.2200 m
+0.4478 0.2400 l
+s
+n
+0.4478 0.8500 m
+0.4478 0.8300 l
+s
+n
+0.6108 0.2200 m
+0.6108 0.2400 l
+s
+n
+0.6108 0.8500 m
+0.6108 0.8300 l
+s
+n
+0.7739 0.2200 m
+0.7739 0.2400 l
+s
+n
+0.7739 0.8500 m
+0.7739 0.8300 l
+s
+n
+0.9369 0.2200 m
+0.9369 0.2400 l
+s
+n
+0.9369 0.8500 m
+0.9369 0.8300 l
+s
+n
+1.1000 0.2200 m
+1.1000 0.2400 l
+s
+n
+1.1000 0.8500 m
+1.1000 0.8300 l
+s
+/Times-Roman findfont
+dup length dict begin
+ {1 index /FID ne {def} {pop pop} ifelse} forall
+ /Encoding DefEncoding def
+ currentdict
+end
+/Font42 exch definefont pop
+/Font42 FFSF
+0.2714 0.1720 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (0) show
-grestore
-newpath
-1036 477 m
-gsave
-1036 477 translate
-0 rotate
-0 -40  m
-(20) CS
+GR
+/Font42 FFSF
+0.4205 0.1720 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (20) show
-grestore
-newpath
-1396 477 m
-gsave
-1396 477 translate
-0 rotate
-0 -40  m
-(40) CS
+GR
+/Font42 FFSF
+0.5836 0.1720 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (40) show
-grestore
-newpath
-1755 477 m
-gsave
-1755 477 translate
-0 rotate
-0 -40  m
-(60) CS
+GR
+/Font42 FFSF
+0.7466 0.1716 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (60) show
-grestore
-newpath
-2114 477 m
-gsave
-2114 477 translate
-0 rotate
-0 -40  m
-(80) CS
+GR
+/Font42 FFSF
+0.9097 0.1720 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (80) show
-grestore
-newpath
-2474 477 m
-gsave
-2474 477 translate
-0 rotate
-0 -40  m
-(100) CS
+GR
+/Font42 FFSF
+1.0586 0.1720 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (100) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-1575 277 m
-gsave
-1575 277 translate
-0 rotate
-0 0  m
-(Well width lw \(E\)) CS
+GR
+/Font42 FFSF
+0.4947 0.1098 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (Well width ) show
-/Times-Italic-ISOLatin1 findfont 120 scalefont setfont
+GR
+/Times-Italic findfont
+dup length dict begin
+ {1 index /FID ne {def} {pop pop} ifelse} forall
+ /Encoding DefEncoding def
+ currentdict
+end
+/Font41 exch definefont pop
+/Font41 FFSF
+0.7590 0.1098 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 (l) show
-/Times-Italic-ISOLatin1 findfont 72 scalefont setfont
-0 -36 rmoveto
+GR
+/Font41 FFSF
+0.7747 0.0874 m
+GS
+[0.0396 0.0000 0.0000 0.0396 0 0] CC
 (w) show
-/Times-Italic-ISOLatin1 findfont 120 scalefont setfont
-0 36 rmoveto
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
+GR
+/Font42 FFSF
+0.8010 0.1098 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
 ( \(Å\)) show
-grestore
-newpath
-677 577 m
-687 577 l
-677 632 m
-687 632 l
-677 686 m
-687 686 l
-677 740 m
-687 740 l
-677 793 m
-687 793 l
-677 848 m
-687 848 l
-677 902 m
-687 902 l
-677 955 m
-687 955 l
-677 1009 m
-687 1009 l
-677 1064 m
-687 1064 l
-677 1117 m
-687 1117 l
-677 1172 m
-687 1172 l
-677 1226 m
-687 1226 l
-677 1280 m
-687 1280 l
-677 1333 m
-687 1333 l
-677 1387 m
-687 1387 l
-677 1442 m
-687 1442 l
-677 1496 m
-687 1496 l
-677 1550 m
-687 1550 l
-677 1604 m
-687 1604 l
-677 1657 m
-687 1657 l
-677 1711 m
-687 1711 l
-677 1765 m
-687 1765 l
-677 1820 m
-687 1820 l
-677 1874 m
-687 1874 l
-677 1928 m
-687 1928 l
-677 1981 m
-687 1981 l
-677 2035 m
-687 2035 l
-677 2090 m
-687 2090 l
-2474 577 m
-2464 577 l
-2474 632 m
-2464 632 l
-2474 686 m
-2464 686 l
-2474 740 m
-2464 740 l
-2474 793 m
-2464 793 l
-2474 848 m
-2464 848 l
-2474 902 m
-2464 902 l
-2474 955 m
-2464 955 l
-2474 1009 m
-2464 1009 l
-2474 1064 m
-2464 1064 l
-2474 1117 m
-2464 1117 l
-2474 1172 m
-2464 1172 l
-2474 1226 m
-2464 1226 l
-2474 1280 m
-2464 1280 l
-2474 1333 m
-2464 1333 l
-2474 1387 m
-2464 1387 l
-2474 1442 m
-2464 1442 l
-2474 1496 m
-2464 1496 l
-2474 1550 m
-2464 1550 l
-2474 1604 m
-2464 1604 l
-2474 1657 m
-2464 1657 l
-2474 1711 m
-2464 1711 l
-2474 1765 m
-2464 1765 l
-2474 1820 m
-2464 1820 l
-2474 1874 m
-2464 1874 l
-2474 1928 m
-2464 1928 l
-2474 1981 m
-2464 1981 l
-2474 2035 m
-2464 2035 l
-2474 2090 m
-2464 2090 l
-stroke
-677 577 m
-697 577 l
-677 848 m
-697 848 l
-677 1117 m
-697 1117 l
-677 1387 m
-697 1387 l
-677 1657 m
-697 1657 l
-677 1928 m
-697 1928 l
-2474 577 m
-2454 577 l
-2474 848 m
-2454 848 l
-2474 1117 m
-2454 1117 l
-2474 1387 m
-2454 1387 l
-2474 1657 m
-2454 1657 l
-2474 1928 m
-2454 1928 l
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-stroke
-605 577 m
-gsave
-605 577 translate
-0 rotate
-0 -40  m
-(20) RJ
-(20) show
-grestore
-newpath
-605 848 m
-gsave
-605 848 translate
-0 rotate
-0 -40  m
-(70) RJ
-(70) show
-grestore
-newpath
-605 1117 m
-gsave
-605 1117 translate
-0 rotate
-0 -40  m
-(120) RJ
-(120) show
-grestore
-newpath
-605 1387 m
-gsave
-605 1387 translate
-0 rotate
-0 -40  m
-(170) RJ
-(170) show
-grestore
-newpath
-605 1657 m
-gsave
-605 1657 translate
-0 rotate
-0 -40  m
-(220) RJ
-(220) show
-grestore
-newpath
-605 1928 m
-gsave
-605 1928 translate
-0 rotate
-0 -40  m
-(270) RJ
-(270) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-336 1333 m
-gsave
-336 1333 translate
-90 rotate
-0 0  m
-(E1 \(meV\)) CS
-/Times-Italic-ISOLatin1 findfont 120 scalefont setfont
+GR
+n
+0.2847 0.2200 m
+0.2947 0.2200 l
+s
+n
+1.1000 0.2200 m
+1.0900 0.2200 l
+s
+n
+0.2847 0.2425 m
+0.2947 0.2425 l
+s
+n
+1.1000 0.2425 m
+1.0900 0.2425 l
+s
+n
+0.2847 0.2650 m
+0.2947 0.2650 l
+s
+n
+1.1000 0.2650 m
+1.0900 0.2650 l
+s
+n
+0.2847 0.3100 m
+0.2947 0.3100 l
+s
+n
+1.1000 0.3100 m
+1.0900 0.3100 l
+s
+n
+0.2847 0.3325 m
+0.2947 0.3325 l
+s
+n
+1.1000 0.3325 m
+1.0900 0.3325 l
+s
+n
+0.2847 0.3550 m
+0.2947 0.3550 l
+s
+n
+1.1000 0.3550 m
+1.0900 0.3550 l
+s
+n
+0.2847 0.3775 m
+0.2947 0.3775 l
+s
+n
+1.1000 0.3775 m
+1.0900 0.3775 l
+s
+n
+0.2847 0.4225 m
+0.2947 0.4225 l
+s
+n
+1.1000 0.4225 m
+1.0900 0.4225 l
+s
+n
+0.2847 0.4450 m
+0.2947 0.4450 l
+s
+n
+1.1000 0.4450 m
+1.0900 0.4450 l
+s
+n
+0.2847 0.4675 m
+0.2947 0.4675 l
+s
+n
+1.1000 0.4675 m
+1.0900 0.4675 l
+s
+n
+0.2847 0.4900 m
+0.2947 0.4900 l
+s
+n
+1.1000 0.4900 m
+1.0900 0.4900 l
+s
+n
+0.2847 0.5350 m
+0.2947 0.5350 l
+s
+n
+1.1000 0.5350 m
+1.0900 0.5350 l
+s
+n
+0.2847 0.5575 m
+0.2947 0.5575 l
+s
+n
+1.1000 0.5575 m
+1.0900 0.5575 l
+s
+n
+0.2847 0.5800 m
+0.2947 0.5800 l
+s
+n
+1.1000 0.5800 m
+1.0900 0.5800 l
+s
+n
+0.2847 0.6025 m
+0.2947 0.6025 l
+s
+n
+1.1000 0.6025 m
+1.0900 0.6025 l
+s
+n
+0.2847 0.6475 m
+0.2947 0.6475 l
+s
+n
+1.1000 0.6475 m
+1.0900 0.6475 l
+s
+n
+0.2847 0.6700 m
+0.2947 0.6700 l
+s
+n
+1.1000 0.6700 m
+1.0900 0.6700 l
+s
+n
+0.2847 0.6925 m
+0.2947 0.6925 l
+s
+n
+1.1000 0.6925 m
+1.0900 0.6925 l
+s
+n
+0.2847 0.7150 m
+0.2947 0.7150 l
+s
+n
+1.1000 0.7150 m
+1.0900 0.7150 l
+s
+n
+0.2847 0.7600 m
+0.2947 0.7600 l
+s
+n
+1.1000 0.7600 m
+1.0900 0.7600 l
+s
+n
+0.2847 0.7825 m
+0.2947 0.7825 l
+s
+n
+1.1000 0.7825 m
+1.0900 0.7825 l
+s
+n
+0.2847 0.8050 m
+0.2947 0.8050 l
+s
+n
+1.1000 0.8050 m
+1.0900 0.8050 l
+s
+n
+0.2847 0.8275 m
+0.2947 0.8275 l
+s
+n
+1.1000 0.8275 m
+1.0900 0.8275 l
+s
+n
+0.2847 0.2875 m
+0.3047 0.2875 l
+s
+n
+1.1000 0.2875 m
+1.0800 0.2875 l
+s
+n
+0.2847 0.4000 m
+0.3047 0.4000 l
+s
+n
+1.1000 0.4000 m
+1.0800 0.4000 l
+s
+n
+0.2847 0.5125 m
+0.3047 0.5125 l
+s
+n
+1.1000 0.5125 m
+1.0800 0.5125 l
+s
+n
+0.2847 0.6250 m
+0.3047 0.6250 l
+s
+n
+1.1000 0.6250 m
+1.0800 0.6250 l
+s
+n
+0.2847 0.7375 m
+0.3047 0.7375 l
+s
+n
+1.1000 0.7375 m
+1.0800 0.7375 l
+s
+n
+0.2847 0.8500 m
+0.3047 0.8500 l
+s
+n
+1.1000 0.8500 m
+1.0800 0.8500 l
+s
+/Font42 FFSF
+0.2202 0.2687 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(50) show
+GR
+/Font42 FFSF
+0.1920 0.3814 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(100) show
+GR
+/Font42 FFSF
+0.1920 0.4937 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(150) show
+GR
+/Font42 FFSF
+0.1920 0.6064 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(200) show
+GR
+/Font42 FFSF
+0.1920 0.7187 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(250) show
+GR
+/Font42 FFSF
+0.1920 0.8314 m
+GS
+[0.0560 0.0000 0.0000 0.0560 0 0] CC
+(300) show
+GR
+/Font41 FFSF
+0.1596 0.4293 m
+GS
+[0.0000 0.0560 -0.0560 0.0000 0 0] CC
 (E) show
-/Times-Italic-ISOLatin1 findfont 72 scalefont setfont
-0 -36 rmoveto
+GR
+/Font41 FFSF
+0.1820 0.4634 m
+GS
+[0.0000 0.0396 -0.0396 0.0000 0 0] CC
 (1) show
-/Times-Italic-ISOLatin1 findfont 120 scalefont setfont
-0 36 rmoveto
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
+GR
+/Font42 FFSF
+0.1596 0.4830 m
+GS
+[0.0000 0.0560 -0.0560 0.0000 0 0] CC
 ( \(meV\)) show
-grestore
-newpath
-6 setlinewidth
-857 905 m
-1036 865 l
-1216 816 l
-1396 767 l
-1575 724 l
-1755 688 l
-1935 658 l
-2114 633 l
-2294 613 l
-2474 596 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 905 20 0 360 arc
-gsave fill grestore
-stroke
-1036 865 20 0 360 arc
-gsave fill grestore
-stroke
-1216 816 20 0 360 arc
-gsave fill grestore
-stroke
-1396 767 20 0 360 arc
-gsave fill grestore
-stroke
-1575 724 20 0 360 arc
-gsave fill grestore
-stroke
-1755 688 20 0 360 arc
-gsave fill grestore
-stroke
-1935 658 20 0 360 arc
-gsave fill grestore
-stroke
-2114 633 20 0 360 arc
-gsave fill grestore
-stroke
-2294 613 20 0 360 arc
-gsave fill grestore
-stroke
-2474 596 20 0 360 arc
-gsave fill grestore
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 903 m
-1036 860 l
-1216 808 l
-1396 759 l
-1575 716 l
-1755 681 l
-1935 652 l
-2114 628 l
-2294 608 l
-2474 592 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 903 20 0 360 arc
-stroke
-1036 860 20 0 360 arc
-stroke
-1216 808 20 0 360 arc
-stroke
-1396 759 20 0 360 arc
-stroke
-1575 716 20 0 360 arc
-stroke
-1755 681 20 0 360 arc
-stroke
-1935 652 20 0 360 arc
-stroke
-2114 628 20 0 360 arc
-stroke
-2294 608 20 0 360 arc
-stroke
-2474 592 20 0 360 arc
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 1311 m
-1036 1179 l
-1216 1043 l
-1396 930 l
-1575 843 l
-1755 776 l
-1935 725 l
-2114 685 l
-2294 654 l
-2474 628 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 1311 20 0 360 arc
-gsave fill grestore
-stroke
-1036 1179 20 0 360 arc
-gsave fill grestore
-stroke
-1216 1043 20 0 360 arc
-gsave fill grestore
-stroke
-1396 930 20 0 360 arc
-gsave fill grestore
-stroke
-1575 843 20 0 360 arc
-gsave fill grestore
-stroke
-1755 776 20 0 360 arc
-gsave fill grestore
-stroke
-1935 725 20 0 360 arc
-gsave fill grestore
-stroke
-2114 685 20 0 360 arc
-gsave fill grestore
-stroke
-2294 654 20 0 360 arc
-gsave fill grestore
-stroke
-2474 628 20 0 360 arc
-gsave fill grestore
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 1299 m
-1036 1151 l
-1216 1012 l
-1396 902 l
-1575 819 l
-1755 757 l
-1935 710 l
-2114 673 l
-2294 643 l
-2474 620 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 1299 20 0 360 arc
-stroke
-1036 1151 20 0 360 arc
-stroke
-1216 1012 20 0 360 arc
-stroke
-1396 902 20 0 360 arc
-stroke
-1575 819 20 0 360 arc
-stroke
-1755 757 20 0 360 arc
-stroke
-1935 710 20 0 360 arc
-stroke
-2114 673 20 0 360 arc
-stroke
-2294 643 20 0 360 arc
-stroke
-2474 620 20 0 360 arc
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 1693 m
-1036 1439 l
-1216 1211 l
-1396 1041 l
-1575 919 l
-1755 830 l
-1935 765 l
-2114 715 l
-2294 677 l
-2474 647 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 1693 20 0 360 arc
-gsave fill grestore
-stroke
-1036 1439 20 0 360 arc
-gsave fill grestore
-stroke
-1216 1211 20 0 360 arc
-gsave fill grestore
-stroke
-1396 1041 20 0 360 arc
-gsave fill grestore
-stroke
-1575 919 20 0 360 arc
-gsave fill grestore
-stroke
-1755 830 20 0 360 arc
-gsave fill grestore
-stroke
-1935 765 20 0 360 arc
-gsave fill grestore
-stroke
-2114 715 20 0 360 arc
-gsave fill grestore
-stroke
-2294 677 20 0 360 arc
-gsave fill grestore
-stroke
-2474 647 20 0 360 arc
-gsave fill grestore
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 1655 m
-1036 1373 l
-1216 1148 l
-1396 990 l
-1575 879 l
-1755 800 l
-1935 741 l
-2114 696 l
-2294 662 l
-2474 635 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 1655 20 0 360 arc
-stroke
-1036 1373 20 0 360 arc
-stroke
-1216 1148 20 0 360 arc
-stroke
-1396 990 20 0 360 arc
-stroke
-1575 879 20 0 360 arc
-stroke
-1755 800 20 0 360 arc
-stroke
-1935 741 20 0 360 arc
-stroke
-2114 696 20 0 360 arc
-stroke
-2294 662 20 0 360 arc
-stroke
-2474 635 20 0 360 arc
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 2052 m
-1036 1660 l
-1216 1344 l
-1396 1125 l
-1575 974 l
-1755 868 l
-1935 792 l
-2114 735 l
-2294 692 l
-2474 659 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 2052 20 0 360 arc
-gsave fill grestore
-stroke
-1036 1660 20 0 360 arc
-gsave fill grestore
-stroke
-1216 1344 20 0 360 arc
-gsave fill grestore
-stroke
-1396 1125 20 0 360 arc
-gsave fill grestore
-stroke
-1575 974 20 0 360 arc
-gsave fill grestore
-stroke
-1755 868 20 0 360 arc
-gsave fill grestore
-stroke
-1935 792 20 0 360 arc
-gsave fill grestore
-stroke
-2114 735 20 0 360 arc
-gsave fill grestore
-stroke
-2294 692 20 0 360 arc
-gsave fill grestore
-stroke
-2474 659 20 0 360 arc
-gsave fill grestore
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-6 setlinewidth
-857 1974 m
-1036 1546 l
-1216 1247 l
-1396 1051 l
-1575 919 l
-1755 827 l
-1935 761 l
-2114 711 l
-2294 673 l
-2474 644 l
-/Times-Roman-ISOLatin1 findfont 60 scalefont setfont
-stroke
-1 setlinewidth
-857 1974 20 0 360 arc
-stroke
-1036 1546 20 0 360 arc
-stroke
-1216 1247 20 0 360 arc
-stroke
-1396 1051 20 0 360 arc
-stroke
-1575 919 20 0 360 arc
-stroke
-1755 827 20 0 360 arc
-stroke
-1935 761 20 0 360 arc
-stroke
-2114 711 20 0 360 arc
-stroke
-2294 673 20 0 360 arc
-stroke
-2474 644 20 0 360 arc
-stroke
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-/Times-Roman-ISOLatin1 findfont 90 scalefont setfont
-706 830 m
-gsave
-706 830 translate
-0 rotate
-0 -30  m
+GR
+n
+0.2847 0.2200 m
+0.2847 0.8500 l
+1.1000 0.8500 l
+1.1000 0.2200 l
+0.2847 0.2200 l
+c
+s
+/Font42 FFSF
+0.2977 0.3250 m
+GS
+[0.0420 0.0000 0.0000 0.0420 0 0] CC
 (0.1) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-/Times-Roman-ISOLatin1 findfont 90 scalefont setfont
-718 1218 m
-gsave
-718 1218 translate
-0 rotate
-0 -30  m
+GR
+/Font42 FFSF
+0.3031 0.4867 m
+GS
+[0.0420 0.0000 0.0000 0.0420 0 0] CC
 (0.2) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-/Times-Roman-ISOLatin1 findfont 90 scalefont setfont
-714 1578 m
-gsave
-714 1578 translate
-0 rotate
-0 -30  m
+GR
+/Font42 FFSF
+0.3013 0.6367 m
+GS
+[0.0420 0.0000 0.0000 0.0420 0 0] CC
 (0.3) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-/Times-Roman-ISOLatin1 findfont 90 scalefont setfont
-714 1886 m
-gsave
-714 1886 translate
-0 rotate
-0 -30  m
+GR
+/Font42 FFSF
+0.3013 0.7650 m
+GS
+[0.0420 0.0000 0.0000 0.0420 0 0] CC
 (0.4) show
-grestore
-newpath
-/Times-Roman-ISOLatin1 findfont 120 scalefont setfont
-showpage
+GR
 %%Trailer
+%%BoundingBox: 73 52 700 534
+%%DocumentNeededResources: font Times-Italic
+%%+ font Times-Roman
+%%EOF
