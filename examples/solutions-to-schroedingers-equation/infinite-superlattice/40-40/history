@@ -25,11 +25,9 @@ do
 {
  printf "%e\t" $K >> Ee-k.r	# write wave vector to file
 
-# Calculate energies for different wave vectors
-
- efkpsl -a $LW -b $LB -m 0.067 -n $MB -V $V -k $K -s 1
+ # Calculate energies for different wave vectors
+ efkpsl -a $LW -b $LB -m 0.067 -n $MB --potential $V -k $K -s 1
  nawk '{printf("%9.3f\n",$2)}' Ee.r >> Ee-k.r		# send data to file
- printf "\n" >> Ee-k.r		# end line
 }
 done
 
