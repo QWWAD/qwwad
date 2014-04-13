@@ -1,11 +1,13 @@
-/*=========================================================
-     efkpsl  Envelope Function Kronig-Penney SuperLattice
-  =========================================================*/
-
-/* This program calculates the energy levels for a user 
-   supplied wave vector along the growth (z-) axis of an 
-   infinite Kronig-Penney superlattice.
-   The code is based around:
+/**
+ * \file    efkpsl.cpp
+ * \brief   Calculate the energy levels for a Kronig-Penney superlattice
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program calculates the energy levels for a user 
+ *          supplied wave vector along the growth (z-) axis of an 
+ *          infinite Kronig-Penney superlattice.
+ *          The code is based around:
 
    Different masses in well and barrier
 
@@ -31,21 +33,27 @@
    following the function along the x axis until it
    changes sign then using a midpoint rule.
 
-   Paul Harrison, April 1998				*/
+   Paul Harrison, April 1998
+*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "struct.h"
-#include "maths.h"
 #include "qclsim-constants.h"
 
+using namespace Leeds;
+using namespace constants;
+
+static double f(const double a,
+                const double b,
+                const double energy,
+                const double k,
+                const double m_b,
+                const double m_w,
+                const double V);
 
 int main(int argc,char *argv[])
 {
-double	f();		/* function of energy			*/
 double	a;		/* well width				*/
 double	b;		/* barrier width			*/
 double	dy;		/* derivative of y			*/
@@ -126,7 +134,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   printf("               [-m well mass (\033[1m0.067\033[0mm0)][-n barrier mass (\033[1m0.067\033[0mm0)\n");
 	   printf("               [-p particle (\033[1me\033[0m, h, or l)][-s # states \033[1m1\033[0m]\n");
 	   printf("               [-V barrier height (\033[1m100\033[0mmeV)]\n");
-	   exit(0);
+	   exit(EXIT_FAILURE);
  }
  argv++;
  argv++;
@@ -161,13 +169,11 @@ for(i_state=1;i_state<=state;i_state++)
   x-=y/dy;
  }while(fabs(y/dy)>1e-9*e);	
  
-
  E=x;
 
  fprintf(FE,"%i %20.17le\n",i_state,E/(1e-3*e));
 
  x+=dx;       /* clears x from solution */
-
 }/* end i_state */
 
 
@@ -177,20 +183,18 @@ fclose(FE);
 return EXIT_SUCCESS;
 }        /* end main */
 
-
-
-double
-f(a,b,energy,k,m_b,m_w,V)
-
-/* This function is the standard fw result =0 */
-
-double a;
-double b;
-double energy;     /* local energy */
-double k;
-double m_b;
-double m_w;
-double V;
+/**
+ * \brief This function is the standard fw result = 0
+ *
+ * \param[in] energy Local energy
+ */
+static double f(const double a,
+                const double b,
+                const double energy,
+                const double k,
+                const double m_b,
+                const double m_w,
+                const double V)
 {
  double F;	    /* value of function	   */
  double k_w;        /* wave vector in well         */
@@ -216,5 +220,6 @@ double V;
         (gsl_pow_2(m_b*k_w)-gsl_pow_2(m_w*k_b))/(2*m_w*m_b*k_w*k_b)-cos(k*(a+b));
  }
 
- return(F);
+ return F;
 }     
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
