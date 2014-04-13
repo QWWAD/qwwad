@@ -1,12 +1,21 @@
 #!/bin/sh
 # Initialise files
+set -e
 
 rm -f Ee-k.r
 
 # Read well and barrier width from command line
 
-LW=$1
-LB=$2
+LW=40
+LB=40
+
+if [ "x$1" != "x" ]; then
+    LW=$1
+fi
+
+if [ "x$2" != "x" ]; then
+    LB=$2
+fi
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
