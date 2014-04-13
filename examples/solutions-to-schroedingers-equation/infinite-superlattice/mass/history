@@ -28,7 +28,7 @@ do
 {
  # Loop for carrier momentum at centre and edge of Brillouin zone only
 
- echo -n -e "$LW\t" >> $OUT	# write well width to file
+ printf "%d\t" "$LW" >> $OUT	# write well width to file
 
  # calculate E(k) at points for 2nd derivative
 
@@ -37,13 +37,13 @@ do
  {
  # Calculate energies for different wave vectors
 
-  efkpsl -a $LW -b $LW -m 0.067 -n $MB -V $V -k $K -s $S
+  efkpsl -a $LW -b $LW -m 0.067 -n $MB --potential $V -k $K -s $S
   nawk '{printf("%22.17f",$2)}' Ee.r >> $OUT	# send data to file
 
  }
  done	# done loop over k
 
-echo -n -e "\n" >> $OUT				# end line
+ printf "\n" >> $OUT				# end line
 
 } done	# loop over LW
 
