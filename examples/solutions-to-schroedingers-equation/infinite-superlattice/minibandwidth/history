@@ -1,5 +1,6 @@
 #!/bin/sh
 # Initialise files
+set -e
 
 rm -f Delta-Ee-LW.r
 
@@ -24,14 +25,14 @@ do
 {
  # Loop for carrier momentum at centre and edge of Brillouin zone only
 
- echo -n -e "$LW\t" >> Delta-Ee-LW.r	# write well width to file
+ printf "%d\t" "$LW" >> Delta-Ee-LW.r	# write well width to file
  
  for K in 0.0 1.0 
  do
  {
  # Calculate energies for different wave vectors
 
-  efkpsl -a $LW -b $LW -m 0.067 -n $MB -V $V -k $K -s $S
+  efkpsl -a $LW -b $LW -m 0.067 -n $MB --potential $V -k $K -s $S
   nawk '{printf("%9.3f",$2)}' Ee.r >> Delta-Ee-LW.r	# send data to file
 
  }
@@ -39,8 +40,8 @@ do
 
 # Compare with energy of single quantum well
 
-efsqw -a $LW -m 0.067 -n $MB -V $V -s $S
+efsqw -a $LW -m 0.067 -n $MB --potential $V -s $S
 nawk '{printf("%9.3f",$2)}' Ee.r >> Delta-Ee-LW.r	# send data to file
-echo -n -e "\n" >> Delta-Ee-LW.r		# end line
+printf "\n" >> Delta-Ee-LW.r		# end line
 
 } done	# loop over LW
