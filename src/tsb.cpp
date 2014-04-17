@@ -8,15 +8,17 @@
 
    Paul Harrison, April 1998				*/
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <strings.h>
-#include <math.h>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
 
+using namespace Leeds;
+using namespace constants;
 
 int main(int argc,char *argv[])
 {

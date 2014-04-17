@@ -123,6 +123,9 @@ src_ppvfq_LDADD   = src/libqclsim.a
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqclsim.a $(LDADD)
 
+src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
+src_tsb_LDADD    = src/libqclsim.a $(LDADD)
+
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
 EXTRA_DIST += \

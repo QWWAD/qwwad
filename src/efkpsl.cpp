@@ -34,7 +34,7 @@
  changes sign then using a midpoint rule.
  */
 
-#include <cstdio>
+#include <iostream>
 #include <cstdlib>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
