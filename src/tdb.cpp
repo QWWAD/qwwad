@@ -16,12 +16,14 @@
 #include <cstdlib>
 #include <cmath>
 #include <valarray>
+#include <armadillo>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
+using namespace arma;
 using namespace Leeds;
 using namespace constants;
 
@@ -92,13 +94,6 @@ class TDBOptions : public Options
         double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
 };
 
-typedef std::complex<double> cdouble;
-
-static cmat2x2 invcmat2x2 (const cmat2x2 M);
-static cdouble detcmat2x2 (const cmat2x2 M);
-static cmat2x2 cmat2x2mult(const cmat2x2 M1,
-                           const cmat2x2 M2);
-
 int main(int argc,char *argv[])
 {
     const TDBOptions opt(argc, argv);
@@ -129,71 +124,60 @@ int main(int argc,char *argv[])
         const double K=sqrt(2*m_b*(V-E[iE]))/hBar;
 
         // Define transfer matrices
-        cmat2x2 M1;
-        M1.M[0][0] = 1;
-        M1.M[0][1] = 1;
-        M1.M[1][0] = cdouble(0.0,  k/m_w);
-        M1.M[1][1] = cdouble(0.0, -k/m_w);
+        cx_mat M1(2,2);
+        M1(0,0) = 1;
+        M1(0,1) = 1;
+        M1(1,0) = cx_double(0.0,  k/m_w);
+        M1(1,1) = cx_double(0.0, -k/m_w);
 
-        cmat2x2 M2;
-        M2.M[0][0] = 1;
-        M2.M[0][1] = 1;
-        M2.M[1][0] = +K/m_b;
-        M2.M[1][1] = -K/m_b;
+        cx_mat M2(2,2);
+        M2(0,0) = 1;
+        M2(0,1) = 1;
+        M2(1,0) = +K/m_b;
+        M2(1,1) = -K/m_b;
 
-        cmat2x2 M3;
-        M3.M[0][0] = exp(+K*I2);
-        M3.M[0][1] = exp(-K*I2);
-        M3.M[1][0] =  K*exp(+K*I2)/m_b;
-        M3.M[1][1] = -K*exp(-K*I2)/m_b;
+        cx_mat M3(2,2);
+        M3(0,0) = exp(+K*I2);
+        M3(0,1) = exp(-K*I2);
+        M3(1,0) =  K*exp(+K*I2)/m_b;
+        M3(1,1) = -K*exp(-K*I2)/m_b;
 
-        cmat2x2 M4;
-        M4.M[0][0] = cdouble(cos(k*I2),         +sin(k*I2));
-        M4.M[0][1] = cdouble(cos(k*I2),         -sin(k*I2));
-        M4.M[1][0] = cdouble(-k*sin(+k*I2)/m_w, +k*cos(k*I2)/m_w);
-        M4.M[1][1] = cdouble(+k*sin(-k*I2)/m_w, -k*cos(k*I2)/m_w);
+        cx_mat M4(2,2);
+        M4(0,0) = cx_double(cos(k*I2),         +sin(k*I2));
+        M4(0,1) = cx_double(cos(k*I2),         -sin(k*I2));
+        M4(1,0) = cx_double(-k*sin(+k*I2)/m_w, +k*cos(k*I2)/m_w);
+        M4(1,1) = cx_double(+k*sin(-k*I2)/m_w, -k*cos(k*I2)/m_w);
 
-        cmat2x2 M5;
-        M5.M[0][0] = cdouble(cos(k*I3),         +sin(k*I3));
-        M5.M[0][1] = cdouble(cos(k*I3),         -sin(k*I3));
-        M5.M[1][0] = cdouble(-k*sin(+k*I3)/m_w, +k*cos(k*I3)/m_w);
-        M5.M[1][1] = cdouble(+k*sin(-k*I3)/m_w, -k*cos(k*I3)/m_w);
+        cx_mat M5(2,2);
+        M5(0,0) = cx_double(cos(k*I3),         +sin(k*I3));
+        M5(0,1) = cx_double(cos(k*I3),         -sin(k*I3));
+        M5(1,0) = cx_double(-k*sin(+k*I3)/m_w, +k*cos(k*I3)/m_w);
+        M5(1,1) = cx_double(+k*sin(-k*I3)/m_w, -k*cos(k*I3)/m_w);
 
-        cmat2x2 M6;
-        M6.M[0][0] = exp(+K*I3);
-        M6.M[0][1] = exp(-K*I3);
-        M6.M[1][0] =  K*exp(+K*I3)/m_b;
-        M6.M[1][1] = -K*exp(-K*I3)/m_b;
+        cx_mat M6(2,2);
+        M6(0,0) = exp(+K*I3);
+        M6(0,1) = exp(-K*I3);
+        M6(1,0) =  K*exp(+K*I3)/m_b;
+        M6(1,1) = -K*exp(-K*I3)/m_b;
 
-        cmat2x2 M7;
-        M7.M[0][0] = exp(+K*I4);
-        M7.M[0][1] = exp(-K*I4);
-        M7.M[1][0] =  K*exp(+K*I4)/m_b;
-        M7.M[1][1] = -K*exp(-K*I4)/m_b;
+        cx_mat M7(2,2);
+        M7(0,0) = exp(+K*I4);
+        M7(0,1) = exp(-K*I4);
+        M7(1,0) =  K*exp(+K*I4)/m_b;
+        M7(1,1) = -K*exp(-K*I4)/m_b;
 
-        cmat2x2 M8;
-        M8.M[0][0] = cdouble(cos(k*I4),         +sin(k*I4));
-        M8.M[0][1] = cdouble(cos(k*I4),         -sin(k*I4));
-        M8.M[1][0] = cdouble(-k*sin(+k*I4)/m_w, +k*cos(k*I4)/m_w);
-        M8.M[1][1] = cdouble(+k*sin(-k*I4)/m_w, -k*cos(k*I4)/m_w);
-
-        cmat2x2 M=cmat2x2mult(invcmat2x2(M1),
-                cmat2x2mult(M2,
-                    cmat2x2mult(invcmat2x2(M3),
-                        cmat2x2mult(M4,
-                            cmat2x2mult(invcmat2x2(M5),
-                                cmat2x2mult(M6,
-                                    cmat2x2mult(invcmat2x2(M7),M8)
-                                    )
-                                )
-                            )
-                        )
-                    )
-                );
+        cx_mat M8(2,2);
+        M8(0,0) = cx_double(cos(k*I4),         +sin(k*I4));
+        M8(0,1) = cx_double(cos(k*I4),         -sin(k*I4));
+        M8(1,0) = cx_double(-k*sin(+k*I4)/m_w, +k*cos(k*I4)/m_w);
+        M8(1,1) = cx_double(+k*sin(-k*I4)/m_w, -k*cos(k*I4)/m_w);
 
         // Little hack to stop nonsense output when E = 0
         if (iE > 0)
-            T[iE] = 1/(norm(M.M[0][0])); // Transission coeff
+        {
+            cx_mat M = inv(M1) * M2 * inv(M3) * M4 * inv(M5) * M6 * inv(M7) * M8;
+            T[iE] = 1/(norm(M(1,1))); // Transission coeff
+        }
     }
 
     // Rescale to meV for output
@@ -201,46 +185,5 @@ int main(int argc,char *argv[])
     write_table_xy("T.r", E, T);
 
     return EXIT_SUCCESS;
-}
-
-/**
- * \brief Multiplies two complex 2x2 matrices together
- */
-static cmat2x2 cmat2x2mult(const cmat2x2 M1,
-                           const cmat2x2 M2)
-{
-    cmat2x2 M;
-
-    M.M[0][0] = M1.M[0][0] * M2.M[0][0] + M1.M[0][1] * M2.M[1][0];
-    M.M[0][1] = M1.M[0][0] * M2.M[0][1] + M1.M[0][1] * M2.M[1][1];
-    M.M[1][0] = M1.M[1][0] * M2.M[0][0] + M1.M[1][1] * M2.M[1][0];
-    M.M[1][1] = M1.M[1][0] * M2.M[0][1] + M1.M[1][1] * M2.M[1][1];
-
-    return M;
-}
-
-/**
- * \brief Calculates the inverse of a complex 2x2
- */
-static cmat2x2 invcmat2x2(const cmat2x2 M)
-{
- cmat2x2 Minv;
-
- cdouble determinant = detcmat2x2(M);
-
- Minv.M[0][0] =  M.M[1][1] / determinant;
- Minv.M[0][1] = -M.M[0][1] / determinant;
- Minv.M[1][0] = -M.M[1][0] / determinant;
- Minv.M[1][1] =  M.M[0][0] / determinant;
-
- return Minv;
-}
-
-/**
- * \brief Calculates the determinant of a complex 2x2
- */
-static cdouble detcmat2x2(const cmat2x2 M)
-{
- return M.M[0][0] * M.M[1][1] - M.M[0][1] * M.M[1][0];
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -27,6 +27,8 @@ AM_INIT_AUTOMAKE([-W -Wall 1.11 subdir-objects])
 dnl Quieten the Make output
 AM_SILENT_RULES([yes])
 
+AC_LANG([C++])
+
 # Checks for programs.
 AC_PROG_CC
 AC_PROG_F77
@@ -106,6 +108,19 @@ if test "x$with_lapacke" = "xyes"; then
 	LIBS="$LIBS -llapacke"
 else
 	AC_MSG_WARN([Official C bindings for LAPACK unavailable.  Using our own bindings instead!])
+fi
+
+dnl Check for an armadillo implementation
+AC_CHECK_HEADER([armadillo])
+AC_MSG_CHECKING([whether we can link to the Armadillo library])
+LIBS="$LIBS -larmadillo"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <armadillo>]],
+		                [[arma::mat A = arma::randu<arma::mat>(4,5)]])],
+               [have_armadillo=yes], [have_armadillo=no])
+AC_MSG_RESULT([$have_armadillo])
+
+if test "x$have_armadillo" = "xno"; then
+	AC_MSG_ERROR([Armadillo library is not usable])
 fi
 
 # Checks for header files.
