@@ -47,7 +47,7 @@ class TDBOptions : public Options
                     ("well-mass,m", po::value<double>()->default_value(0.067),
                      "Effective mass in well (relative to that of a free electron).")
 
-                    ("barrier-mass,m", po::value<double>()->default_value(0.067),
+                    ("barrier-mass,n", po::value<double>()->default_value(0.067),
                      "Effective mass in both barriers (relative to that of a free electron).")
 
                     ("potential", po::value<double>()->default_value(100),

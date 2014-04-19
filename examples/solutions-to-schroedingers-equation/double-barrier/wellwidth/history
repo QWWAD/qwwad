@@ -1,6 +1,7 @@
 #!/bin/sh
-# Loop for well widths, use default parameters otherwise
+set -e
 
+# Loop for well widths, use default parameters otherwise
 for L2 in 20 50 100 200 
 do
 {
