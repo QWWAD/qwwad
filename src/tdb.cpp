@@ -15,9 +15,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <valarray>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
@@ -109,23 +111,22 @@ int main(int argc,char *argv[])
     const double m_b = opt.get_barrier_mass();        // [kg]
     const double V   = opt.get_potential();           // [J]
 
+    const size_t nE = floor(V/dE); // Number of points in plot
+
+    std::valarray<double> E(nE); // Array of energies
+    std::valarray<double> T(nE); // Array of transmission coefficients
+
     // Calculate interfaces
     const double I2=L1;
     const double I3=L1+L2;
     const double I4=L1+L2+L3;
 
-    // Initialise energy
-
-    double E=dE; 
-
-    // Open output file
-    FILE *FT=fopen("T.r","w");
-
     // Loop over energy
-    do
+    for(unsigned int iE = 0; iE < nE; ++iE)
     {
-        const double k=sqrt(2*m_w*E)/hBar;
-        const double K=sqrt(2*m_b*(V-E))/hBar;
+        E[iE] = iE*dE; // Find energy
+        const double k=sqrt(2*m_w*E[iE])/hBar;
+        const double K=sqrt(2*m_b*(V-E[iE]))/hBar;
 
         // Define transfer matrices
         cmat2x2 M1;
@@ -190,13 +191,14 @@ int main(int argc,char *argv[])
                     )
                 );
 
-        const double T=1/(norm(M.M[0][0])); // Transission coeff
+        // Little hack to stop nonsense output when E = 0
+        if (iE > 0)
+            T[iE] = 1/(norm(M.M[0][0])); // Transission coeff
+    }
 
-        fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e),T);
-        E+=dE;
-    }while(E<V);
-
-    fclose(FT);
+    // Rescale to meV for output
+    E/=(1e-3*e);
+    write_table_xy("T.r", E, T);
 
     return EXIT_SUCCESS;
 }
