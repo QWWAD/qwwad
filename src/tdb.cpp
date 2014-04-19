@@ -41,7 +41,7 @@ class TDBOptions : public Options
                     ("well-width,b", po::value<double>()->default_value(100),
                      "Width of well [angstrom].")
 
-                    ("right-barrier-width,c", po::value<double>()->default_value(100),
+                    ("right-barrier-width", po::value<double>()->default_value(100),
                      "Width of right barrier [angstrom].")
 
                     ("well-mass,m", po::value<double>()->default_value(0.067),

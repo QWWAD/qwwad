@@ -17,10 +17,13 @@
 #include "maths.h"
 #include "qclsim-constants.h"
 
+using namespace Leeds;
+using namespace constants;
+
+static data11 * read_TofE(int *n);
+
 int main(int argc,char *argv[])
 {
-data11	*read_TofE();	/* reads T(E) v. E data into memory	*/
-
 double	DeltaE;		/* change in energy of band minima	*/
 double	dE;		/* energy integration step length	*/
 double	E;		/* energy				*/
@@ -125,18 +128,10 @@ free(TofE);
 return EXIT_SUCCESS;
 }        /* end main */
 
-
-
-
-data11
-*read_TofE(n)
-
 /* This function reads the transmission coefficient versus E data
    into memory and returns the start address of this block of 
    memory and the number of lines	   */
-
-int	*n;
-
+static data11 * read_TofE(int *n)
 {
  int	i;
  data11	*TofE;		/* pointer to start of T(E) data	*/
