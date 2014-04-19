@@ -11,19 +11,25 @@
 
    Paul Harrison, 30th April/1st May 1998		*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
 
+using namespace Leeds;
+using namespace constants;
+
+typedef std::complex<double> cdouble;
+
+static cmat2x2 invcmat2x2 (const cmat2x2 M);
+static cdouble detcmat2x2 (const cmat2x2 M);
+static cmat2x2 cmat2x2mult(const cmat2x2 M1,
+                           const cmat2x2 M2);
+
 int main(int argc,char *argv[])
 {
-cmat2x2	invcmat2x2();
-cmat2x2	cmat2x2mult();
-
 double	dE;		/* energy step				*/
 double	E;		/* energy				*/
 double	I2,I3,I4;	/* the interfaces			*/
@@ -123,8 +129,8 @@ do      /* loop increments energy */
 
  M1.M[0][0] = 1;
  M1.M[0][1] = 1;
- M1.M[1][0] = +I*k/m_w;
- M1.M[1][1] = -I*k/m_w;
+ M1.M[1][0] = cdouble(0.0,  k/m_w);
+ M1.M[1][1] = cdouble(0.0, -k/m_w);
 
  M2.M[0][0] = 1;
  M2.M[0][1] = 1;
@@ -136,15 +142,15 @@ do      /* loop increments energy */
  M3.M[1][0] =  K*exp(+K*I2)/m_b;
  M3.M[1][1] = -K*exp(-K*I2)/m_b;
 
- M4.M[0][0] = cos(k*I2) + I * sin(k*I2);
- M4.M[0][1] = cos(k*I2) - I * sin(k*I2);
- M4.M[1][0] = -k*sin(+k*I2)/m_w + I * k*cos(k*I2)/m_w;
- M4.M[1][1] =  k*sin(-k*I2)/m_w - I * k*cos(k*I2)/m_w;
+ M4.M[0][0] = cdouble(cos(k*I2),         +sin(k*I2));
+ M4.M[0][1] = cdouble(cos(k*I2),         -sin(k*I2));
+ M4.M[1][0] = cdouble(-k*sin(+k*I2)/m_w, +k*cos(k*I2)/m_w);
+ M4.M[1][1] = cdouble(+k*sin(-k*I2)/m_w, -k*cos(k*I2)/m_w);
 
- M5.M[0][0] = cos(k*I3) + I * sin(k*I3);
- M5.M[0][1] = cos(k*I3) - I * sin(k*I3);
- M5.M[1][0] = -k*sin(+k*I3)/m_w + I * k*cos(k*I3)/m_w;
- M5.M[1][1] =  k*sin(-k*I3)/m_w - I * k*cos(k*I3)/m_w;
+ M5.M[0][0] = cdouble(cos(k*I3),         +sin(k*I3));
+ M5.M[0][1] = cdouble(cos(k*I3),         -sin(k*I3));
+ M5.M[1][0] = cdouble(-k*sin(+k*I3)/m_w, +k*cos(k*I3)/m_w);
+ M5.M[1][1] = cdouble(+k*sin(-k*I3)/m_w, -k*cos(k*I3)/m_w);
 
  M6.M[0][0] = exp(+K*I3);
  M6.M[0][1] = exp(-K*I3);
@@ -156,10 +162,10 @@ do      /* loop increments energy */
  M7.M[1][0] =  K*exp(+K*I4)/m_b;
  M7.M[1][1] = -K*exp(-K*I4)/m_b;
 
- M8.M[0][0] = cos(k*I4) + I * sin(k*I4);
- M8.M[0][1] = cos(k*I4) - I * sin(k*I4);
- M8.M[1][0] = -k*sin(+k*I4)/m_w + I * k*cos(k*I4)/m_w;
- M8.M[1][1] =  k*sin(-k*I4)/m_w - I * k*cos(k*I4)/m_w;
+ M8.M[0][0] = cdouble(cos(k*I4),         +sin(k*I4));
+ M8.M[0][1] = cdouble(cos(k*I4),         -sin(k*I4));
+ M8.M[1][0] = cdouble(-k*sin(+k*I4)/m_w, +k*cos(k*I4)/m_w);
+ M8.M[1][1] = cdouble(+k*sin(-k*I4)/m_w, -k*cos(k*I4)/m_w);
 
  M=cmat2x2mult(invcmat2x2(M1),
     cmat2x2mult(M2,
@@ -175,7 +181,7 @@ do      /* loop increments energy */
     )
    );
 
- T=1/(creal(M.M[0][0])*creal(M.M[0][0]) + cimag(M.M[0][0]) * cimag(M.M[0][0]));
+ T=1/(norm(M.M[0][0]));
 
  fprintf(FT,"%20.17le %20.17le\n",E/(1e-3*e),T);
  E+=dE;
@@ -186,10 +192,8 @@ fclose(FT);
 return EXIT_SUCCESS;
 }        /* end main */
 
-
-
-cmat2x2
-cmat2x2mult(cmat2x2 M1,cmat2x2 M2)
+static cmat2x2 cmat2x2mult(const cmat2x2 M1,
+                           const cmat2x2 M2)
 {
  /* Multiplies two complex 2x2 matrices together	*/
 
@@ -203,17 +207,13 @@ cmat2x2mult(cmat2x2 M1,cmat2x2 M2)
  return M;
 }
 
-
-
-cmat2x2
-invcmat2x2(cmat2x2 M)
+static cmat2x2 invcmat2x2(const cmat2x2 M)
 {
  /* Calculates the inverse of a complex 2x2	*/
 
- complex double detcmat2x2();
  cmat2x2	Minv;
 
- double complex determinant = detcmat2x2(M);
+ cdouble determinant = detcmat2x2(M);
 
  Minv.M[0][0] =  M.M[1][1] / determinant;
  Minv.M[0][1] = -M.M[0][1] / determinant;
@@ -223,12 +223,10 @@ invcmat2x2(cmat2x2 M)
  return Minv;
 }
 
-
-
-complex double
-detcmat2x2(cmat2x2 M)
+static cdouble detcmat2x2(const cmat2x2 M)
 {
  /* Calculates the determinant of a complex 2x2	*/
 
  return M.M[0][0] * M.M[1][1] - M.M[0][1] * M.M[1][0];
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
