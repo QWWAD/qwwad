@@ -12,21 +12,20 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
+#include <valarray>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 
 using namespace Leeds;
 using namespace constants;
-
-static data11 * read_TofE(int *n);
 
 int main(int argc,char *argv[])
 {
 double	DeltaE;		/* change in energy of band minima	*/
 double	dE;		/* energy integration step length	*/
-double	E;		/* energy				*/
 double	Ef;		/* Fermi energy				*/
 double  F;              /* Electric field                       */
 double	f_FD;		/* Fermi Dirac distribution function	*/
@@ -38,10 +37,6 @@ double	m;		/* effective mass			*/
 double	rho;		/* bulk density of states		*/
 double	T;		/* temperature				*/
 double	V;		/* barrier height			*/
-int	iE;		/* index over E				*/
-int	iF;		/* index over F				*/
-int	n;		/* number of lines in `T.r' file	*/
-data11	*TofE;		/* transmission coefficient		*/
 
 FILE	*FIV;		/* pointer to output file `IV.r'	*/
 
@@ -91,80 +86,40 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-TofE=read_TofE(&n);
+std::valarray<double> Tx; // Transmission coefficient
+std::valarray<double> E;  // Energy [J]
+
+read_table_xy("T.r", E, Tx);
+E *= 1e-3*e; // Rescale energy to J
+const size_t n = E.size();
 
 FIV=fopen("IV.r","w");		/* Open output file for writing	*/
 
-dE=((TofE+1)->a)-(TofE->a);	/* Calculate step length, assume constant */
+dE=E[1] - E[0];	/* Calculate step length, assume constant */
 
-for(iF=0;iF<100;iF++)		/* Loop for different fields	*/
+for(unsigned int iF=0; iF<100; ++iF)		/* Loop for different fields	*/
 {
  F=(double)iF*1e+5;		/* Convert kVcm^-1-->Vm^-1	*/
  DeltaE=e*F*(L1+0.5*L2);	/* Calculate DeltaE	*/
  V=F*(L1+L2+L3);		/* Calculate voltage	*/
 
  current=0;			/* Initialise current for integration	*/
- for(iE=0;iE<n;iE++)
+ for(unsigned int iE=0;iE<n;iE++)
  {
-  E=(TofE+iE)->a;
-  if(E>DeltaE)	/* only add contribution to current if E>DeltaE	*/
+  if(E[iE] > DeltaE)	/* only add contribution to current if E>DeltaE	*/
   {
-   rho=gsl_pow_3(sqrt(2*m)/hBar)*sqrt(E-DeltaE)/(2*gsl_pow_2(pi));
-   f_FD=1/(exp((E-(Ef+DeltaE))/(kB*T))+1);
+   rho=gsl_pow_3(sqrt(2*m)/hBar)*sqrt(E[iE]-DeltaE)/(2*gsl_pow_2(pi));
+   f_FD=1/(exp((E[iE]-(Ef+DeltaE))/(kB*T))+1);
  
-   current+=((TofE+iE)->b)*f_FD*rho*dE;
+   current+=Tx[iE]*f_FD*rho*dE;
   /* if(iF==0)printf("%20.17le %20.17le\n",E,rho*f_FD); output f(E)rho(E) */
   }
  }
 
  fprintf(FIV,"%20.17le %20.17le\n",V,current);	/* output data */
-
 } /* end loop over iE	*/
 
 fclose(FIV);
 
-free(TofE);
-
 return EXIT_SUCCESS;
-}        /* end main */
-
-/* This function reads the transmission coefficient versus E data
-   into memory and returns the start address of this block of 
-   memory and the number of lines	   */
-static data11 * read_TofE(int *n)
-{
- int	i;
- data11	*TofE;		/* pointer to start of T(E) data	*/
- FILE 	*FTofE;		/* file pointer to wavefunction file	*/
-
- 
- /* Count number of lines	*/
-
- if((FTofE=fopen("T.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'T.r'!\n");exit(0);}
-
- *n=0;	
- while(fscanf(FTofE,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(FTofE);
-
- /* Allocate memory for T versus E data */
-
- TofE=(data11 *)calloc(*n,sizeof(data11));
- if(TofE==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
- /* Read in data	*/
-
-  i=0;
-  while(fscanf(FTofE,"%le %le",&((TofE+i)->a),&((TofE+i)->b))!=EOF)
-  {
-   ((TofE+i)->a)*=1e-3*e;	/* convert meV->J	*/
-   i++;
-  }
-
- fclose(FTofE);					/* Close each file	*/
-
- return(TofE);
 }
-
-
