@@ -12,13 +12,10 @@
  *          however equal.
  */
 
-#include <cstdio>
 #include <cstdlib>
 #include <cmath>
 #include <valarray>
 #include <armadillo>
-#include "struct.h"
-#include "maths.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
