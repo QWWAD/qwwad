@@ -1,19 +1,22 @@
-/*=========================================================
-  ivdb I-V for Double Barrier
-  =========================================================*/
-
-/* This code reads in the transmission coefficient T(E) for a 
-   double barrier and uses a very simple model to calculate 
-   an I-V curve.
-
-   Paul Harrison, May 1998		*/
+/**
+ * \file   ivdb.cpp
+ * \brief  Calculate I-V for double barrier structure
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This code reads in the transmission coefficient T(E) for a 
+ *          double barrier and uses a very simple model to calculate 
+ *          an I-V curve.
+ */
 
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 #include <valarray>
 #include <gsl/gsl_math.h>
+#include "dos-functions.h"
 #include "qclsim-constants.h"
+#include "qclsim-fermi.h"
 #include "qclsim-fileio.h"
 
 using namespace Leeds;
@@ -21,26 +24,14 @@ using namespace constants;
 
 int main(int argc,char *argv[])
 {
-    double	DeltaE;		/* change in energy of band minima	*/
-    double	dE;		/* energy integration step length	*/
-    double	Ef;		/* Fermi energy				*/
-    double  F;              /* Electric field                       */
-    double	f_FD;		/* Fermi Dirac distribution function	*/
-    double	current;	/* current				*/
-    double  L1;             /* left barrier width                   */
-    double  L2;             /* central well width                   */
-    double	L3;		/* right hand barrier width		*/
-    double	m;		/* effective mass			*/
-    double	rho;		/* bulk density of states		*/
-    double	T;		/* temperature				*/
-    double	V;		/* barrier height			*/
-
-    FILE	*FIV;		/* pointer to output file `IV.r'	*/
-
+    double L1;             /* left barrier width                   */
+    double L2;             /* central well width                   */
+    double L3;		/* right hand barrier width		*/
+    double m;		/* effective mass			*/
+    double T;		/* temperature				*/
 
     /* default values, appropriate to GaAs-GaAlAs */
-    Ef=2*1e-3*e;		/* just set Ef=2meV to represent some fixed density */
-    F=0.0;
+    const double Ef=2*1e-3*e; // just set Ef=2meV to represent some fixed density
     L1=100e-10;
     L2=100e-10;
     L3=100e-10;
@@ -48,8 +39,6 @@ int main(int argc,char *argv[])
     T=300;
 
     /* Computational values	*/
-
-
     while((argc>1)&&(argv[1][0]=='-'))
     {
         switch(argv[1][1])
@@ -89,33 +78,33 @@ int main(int argc,char *argv[])
     E *= 1e-3*e; // Rescale energy to J
     const size_t n = E.size();
 
-    FIV=fopen("IV.r","w");		/* Open output file for writing	*/
+    const double dE = E[1] - E[0]; // Calculate energy step length, assume constant
+    const size_t nF = 100; // Number of field points
+    std::valarray<double> V(nF); // Voltage drop across structure [V]
+    std::valarray<double> current(nF);
 
-    dE=E[1] - E[0];	/* Calculate step length, assume constant */
-
-    for(unsigned int iF=0; iF<100; ++iF)		/* Loop for different fields	*/
+    // Loop over field
+    for(unsigned int iF=0; iF<nF; ++iF)
     {
-        F=(double)iF*1e+5;		/* Convert kVcm^-1-->Vm^-1	*/
-        DeltaE=e*F*(L1+0.5*L2);	/* Calculate DeltaE	*/
-        V=F*(L1+L2+L3);		/* Calculate voltage	*/
+        const double F = iF*1e+5;            // Electric field [Vm^{-1}]
+        const double DeltaE=e*F*(L1+0.5*L2); // Field induced shift in band energy
+        V[iF] = F*(L1+L2+L3);
 
-        current=0;			/* Initialise current for integration	*/
+        current[iF] = 0; // Initialise current for integration
         for(unsigned int iE=0;iE<n;iE++)
         {
             if(E[iE] > DeltaE)	/* only add contribution to current if E>DeltaE	*/
             {
-                rho=gsl_pow_3(sqrt(2*m)/hBar)*sqrt(E[iE]-DeltaE)/(2*gsl_pow_2(pi));
-                f_FD=1/(exp((E[iE]-(Ef+DeltaE))/(kB*T))+1);
+                const double rho   = calculate_dos_3D(m, E[iE] - DeltaE); // Bulk density of states
+                const double _f_FD = f_FD(Ef + DeltaE, E[iE], T); // Fermi function
 
-                current+=Tx[iE]*f_FD*rho*dE;
+                current[iF] += Tx[iE]*_f_FD*rho*dE;
                 /* if(iF==0)printf("%20.17le %20.17le\n",E,rho*f_FD); output f(E)rho(E) */
             }
         }
+    }
 
-        fprintf(FIV,"%20.17le %20.17le\n",V,current);	/* output data */
-    } /* end loop over iE	*/
-
-    fclose(FIV);
+    write_table_xy("IV.r", V, current);
 
     return EXIT_SUCCESS;
 }
