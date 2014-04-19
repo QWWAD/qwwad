@@ -18,58 +18,78 @@
 #include "qclsim-constants.h"
 #include "qclsim-fermi.h"
 #include "qclsim-fileio.h"
+#include "qwwad-options.h"
 
 using namespace Leeds;
 using namespace constants;
 
+/**
+ * Handler for command-line options
+ */
+class IVDBOptions : public Options
+{
+    public:
+        IVDBOptions(int argc, char* argv[])
+        {
+            try
+            {
+                program_specific_options->add_options()
+                    ("left-barrier-width,a", po::value<double>()->default_value(100),
+                     "Width of left barrier [angstrom].")
+
+                    ("well-width,b", po::value<double>()->default_value(100),
+                     "Width of well [angstrom].")
+
+                    ("right-barrier-width", po::value<double>()->default_value(100),
+                     "Width of right barrier [angstrom].")
+
+                    ("well-mass,m", po::value<double>()->default_value(0.067),
+                     "Effective mass in well (relative to that of a free electron). This is used "
+                     "to compute the distribution of carriers at the input.")
+
+                    ("temperature,T", po::value<double>()->default_value(300),
+                     "Temperature of carrier distribution [K]")
+                    ;
+
+                std::string doc("Find the current through a double barrier structure as a "
+                                "function of voltage.  The values are written in (V, I) format "
+                                "to the file IV.r.");
+
+                add_prog_specific_options_and_parse(argc, argv, doc);	
+            }
+            catch(std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        /// \returns the width of the left barrier [m]
+        double get_left_barrier_width() const {return vm["left-barrier-width"].as<double>()*1e-10;}
+
+        /// \returns the width of the well [m]
+        double get_well_width() const {return vm["well-width"].as<double>()*1e-10;}
+
+        /// \returns the width of the right barrier [m]
+        double get_right_barrier_width() const {return vm["right-barrier-width"].as<double>()*1e-10;}
+
+        /// \returns the effective mass in the well [kg]
+        double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
+
+        /// \returns the temperature of the carrier distribution [K]
+        double get_temperature() const {return vm["temperature"].as<double>();}
+};
+
 int main(int argc,char *argv[])
 {
-    double L1;             /* left barrier width                   */
-    double L2;             /* central well width                   */
-    double L3;		/* right hand barrier width		*/
-    double m;		/* effective mass			*/
-    double T;		/* temperature				*/
+    IVDBOptions opt(argc, argv);
+    const double L1 = opt.get_left_barrier_width();  // [m]
+    const double L2 = opt.get_well_width();          // [m]
+    const double L3 = opt.get_right_barrier_width(); // [m]
+    const double m  = opt.get_well_mass();           // [kg]
+    const double T  = opt.get_temperature();         // [K]
 
-    /* default values, appropriate to GaAs-GaAlAs */
-    const double Ef=2*1e-3*e; // just set Ef=2meV to represent some fixed density
-    L1=100e-10;
-    L2=100e-10;
-    L3=100e-10;
-    m=0.067*me;
-    T=300;
-
-    /* Computational values	*/
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'a':
-                L1=atof(argv[2])*1e-10;
-                break;
-            case 'b':
-                L2=atof(argv[2])*1e-10;
-                break;
-            case 'c':
-                L3=atof(argv[2])*1e-10;
-                break;
-            case 'm':
-                m=atof(argv[2])*me;
-                break;
-            case 'T':
-                T=atof(argv[2]);
-                break;
-            default:
-                printf("Usage:  ivdb [-a left hand barrier width (\033[1m100\033[0mA)][-b well width (\033[1m100\033[0mA)]\n");
-                printf("             [-c right hand barrier width (\033[1m100\033[0mA)]\n");
-                printf("             [-m effective mass (\033[1m0.067\033[0mm0)]\n");
-                printf("             [-T temperature (\033[1m300\033[0mK)]\n");
-                exit(0);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
+    const double Ef=2*1e-3*e; // Just set Ef=2meV to represent some fixed density
 
     std::valarray<double> Tx; // Transmission coefficient
     std::valarray<double> E;  // Energy [J]
