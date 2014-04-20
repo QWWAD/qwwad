@@ -25,8 +25,7 @@ T=70
 for L1 in 30 40 50
 do
 { 
- tdb -a $L1 -b $L2 --right-barrier-width $L1 --potential $V -n $MB
- ivdb -a $L1 -b $L2 --right-barrier-width $L1 -T $T
+ ivdb -a $L1 -b $L2 --right-barrier-width $L1 --potential $V -n $MB -T $T
  mv T.r TL1=$L1.r
  mv IV.r IVL1=$L1.r
 } done

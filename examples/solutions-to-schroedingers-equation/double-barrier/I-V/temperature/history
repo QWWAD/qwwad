@@ -21,11 +21,9 @@ L1=100
 L2=50
 L3=100
 
-tdb -a $L1 -b $L2 --right-barrier-width $L3 --potential $V -n $MB
-
 for T in 2 77 300
 do
 { 
- ivdb -a $L1 -b $L2 --right-barrier-width $L3 -T $T
+ ivdb -a $L1 -b $L2 --right-barrier-width $L3 --potential $V -n $MB -T $T
  mv IV.r IVT=$T.r
 } done
