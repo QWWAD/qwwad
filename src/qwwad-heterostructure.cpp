@@ -6,8 +6,9 @@
  * \brief   A description of layers in a heterostructure
  */
 
-#include "heterostructure.h"
+#include "qwwad-heterostructure.h"
 
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_sf_erf.h>
 #include <error.h>
 #include <fstream>
@@ -30,21 +31,18 @@ namespace Leeds {
  * \param[in] x_layer   Alloy fraction of each layer
  * \param[in] W_layer   Thickness of each layer [m]
  * \param[in] n3D_layer Volume doping in each layer [m^{-3}]
- * \param[in] dz_max    The maximum permissible spatial separation between points in the
- *                      structure
+ * \param[in] nz_1per   The number of points to be used in mapping out a single
+ *                      period of the structure
  * \param[in] n_periods Number of periods of the structure to generate
  * \param[in] L_diff    Alloy diffusion length [m]
  *
- * \details The Heterostructure is created using an automatically-determined spatial
- *          resolution.  You specify an upper limit on the separation between points
- *          by using the dz_max and the class works out the a suitable value.  We do
- *          things this way so that we can guarantee that each period in the structure
- *          has the same, fixed number of points.
+ * \details The number of points in the entire structure is given by
+ *          N = (nz_{\text{1per}} - 1) \times n_{\text{period}} + 1
  */
-Heterostructure::Heterostructure(const std::valarray<double>& x_layer,
-                                 const std::valarray<double>& W_layer,
-                                 const std::valarray<double>& n3D_layer,
-                                 const double                 dz_max,
+Heterostructure::Heterostructure(const std::valarray<double> &x_layer,
+                                 const std::valarray<double> &W_layer,
+                                 const std::valarray<double> &n3D_layer,
+                                 const size_t                 nz_1per,
                                  const size_t                 n_periods,
                                  const double                 L_diff) :
     _x_layer(x_layer),
@@ -52,32 +50,35 @@ Heterostructure::Heterostructure(const std::valarray<double>& x_layer,
     _n3D_layer(n3D_layer),
     _n_periods(n_periods),
     _L_diff(L_diff),
-    _nz_1per(ceil( ceil(_W_layer.sum()*n_periods/dz_max) / n_periods )),
+    _nz_1per(nz_1per),
     _layer_top_index(_x_layer.size() * n_periods),
-    _z(_nz_1per*n_periods),
-    _x_nominal(_nz_1per*n_periods),
-    _x_diffuse(_nz_1per*n_periods),
-    _n3D(_nz_1per*n_periods)
+    _z((_nz_1per - 1)*n_periods + 1),
+    _x_nominal(_z.size()),
+    _x_diffuse(_z.size()),
+    _n3D(_z.size())
 {
-    const double dz = _W_layer.sum()/_nz_1per;
+    const double Lp = _W_layer.sum(); // Length of one period [m]
+    _dz = Lp/(_nz_1per - 1);
 
     // TODO: Check that no layer is thinner than dz and throw an error if it is
 
-    for (unsigned int iL = 0; iL < _x_layer.size() * _n_periods; ++iL)
-    {
-        const double height = get_height_at_top_of_layer(iL);
-
-        // Divide by the spatial separation to find the total height of the
-        // stack up to the top of the desired layer
-        _layer_top_index[iL] = (unsigned int)round(height / dz);
-    }
-
     // Calculate spatial points
-    for (unsigned int iz = 0; iz < _nz_1per * n_periods; ++iz)
+    unsigned int iL_cache = 0;
+    unsigned int idx = 0;
+    for (unsigned int iz = 0; iz < _z.size(); ++iz)
     {
-        _z[iz] = iz*dz; // Calculate the spatial location [m]
+        _z[iz] = iz*_dz; // Calculate the spatial location [m]
 
-        const unsigned int iL = get_layer_from_height(_z[iz]);
+        const double zp = fmod(_z[iz], Lp); // Position within period [m]
+        const unsigned int iL = zp/Lp * _x_layer.size(); // Layer index from input file
+
+        if(iL != iL_cache)
+        {
+            // TODO: Add some kind of bounds checking
+            _layer_top_index[idx++] = iz;
+            iL_cache = iL;
+        }
+
         _n3D[iz]       = get_n3D_in_layer(iL);
         _x_nominal[iz] = get_x_in_layer_nominal(iL);
         _x_diffuse[iz] = calculate_x_annealed_at_point(iz);
@@ -88,16 +89,17 @@ Heterostructure::Heterostructure(const std::valarray<double>& x_layer,
  * Create a heterostructure using data from an input file containing data for each layer
  *
  * \param[in] layer_filename Name of input file
- * \param[in] unit           The unit of measurement for the layer thicknesses
- * \param[in] dz_max         The maximum permissible spatial separation between points in the
- *                           structure
+ * \param[in] thickness_unit The unit of measurement for the layer thicknesses
+ * \param[in] nz_1per        The number of points to be used in mapping out a single
+ *                           period of the structure
  * \param[in] n_periods      Number of periods to generate
+ * \param[in] L_diff         Alloy diffusion length [m]
  *
  * \return A new heterostructure object for the system.  Remember to delete it after use!
  */
 Heterostructure* Heterostructure::read_from_file(const std::string &layer_filename,
                                                  const Unit         thickness_unit,
-                                                 const double       dz_max,
+                                                 const size_t       nz_1per,
                                                  const size_t       n_periods,
                                                  const double       L_diff)
 {
@@ -130,7 +132,7 @@ Heterostructure* Heterostructure::read_from_file(const std::string &layer_filena
     n3D_layer *= 1000000.0; // Scale doping to m^{-3}
 
     // Pack input data into a heterostructure object
-    return new Heterostructure(x_layer, W_layer, n3D_layer, dz_max, n_periods, L_diff);
+    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods, L_diff);
 }
 
 /**
@@ -189,7 +191,7 @@ double Heterostructure::get_x_in_layer_nominal(const unsigned int iL) const
  */
 unsigned int Heterostructure::get_layer_top_index(const unsigned int iL) const
 {
-    if(iL >= _W_layer.size()*_n_periods)
+    if(iL >= _W_layer.size()*_n_periods + 1)
         throw std::domain_error("Cannot find layer top: layer index is outside the heterostructure");
 
     return _layer_top_index[iL];
@@ -207,8 +209,8 @@ unsigned int Heterostructure::get_layer_top_index(const unsigned int iL) const
  */
 double Heterostructure::get_height_at_top_of_layer(const unsigned int iL) const
 {
-    if(iL >= _W_layer.size() * _n_periods)
-        throw std::domain_error("Tried to find top of a layer that is outside the heterostructure.");
+//    if(iL >= _W_layer.size() * _n_periods + 10)
+//        throw std::domain_error("Tried to find top of a layer that is outside the heterostructure.");
 
     // Find the height of the highest **incomplete** period
     double height = _W_layer[std::slice(0, iL%_W_layer.size() + 1, 1)].sum();
@@ -237,20 +239,19 @@ double Heterostructure::calculate_x_annealed_at_point(const unsigned int iz) con
 {
     const double Lp  = _W_layer.sum();  // Length of period [m]
     const double z   = fmod(_z[iz], Lp); // Position within period [m]
-    const double dz  = _z[1] - _z[0];   // Spatial step [m]
-    double _x = 0.0; // Ge fraction
+    double _x = 0.0; // alloy fraction
 
     if (_L_diff > 0)
     {
         // Find contribution from each layer
         for(unsigned int iL = 0; iL < _W_layer.size(); iL++){
             // Find top of layer
-            const double zi = dz*get_layer_top_index(iL);
+            const double zi = _dz*get_layer_top_index(iL);
 
             // Find bottom of layer
             double zi_1 = 0;
             if(iL != 0)
-                zi_1 = dz*get_layer_top_index(iL-1);
+                zi_1 = _dz*get_layer_top_index(iL-1);
 
             _x += 0.5 * _x_layer[iL] * (erf((z-zi_1)/_L_diff) - erf((z-zi)/_L_diff));
 
@@ -283,7 +284,8 @@ double Heterostructure::calculate_x_annealed_at_point(const unsigned int iz) con
 bool Heterostructure::point_is_in_layer(const double       z,
                                         const unsigned int iL) const
 {
-    if(iL >= get_n_layers_total() or z > get_total_length())
+    /*
+    if(iL >= get_n_layers_total() + 1 or gsl_fcmp(z, get_total_length()*2, get_dz()/10) == 1)
     {
         std::ostringstream oss;
         oss << "Tried to check whether the layer with index " << iL << " contains the point at " << z*1e9 << " nm."
@@ -291,7 +293,7 @@ bool Heterostructure::point_is_in_layer(const double       z,
             << get_total_length()*1e9 << " nm.";
 
         throw std::domain_error(oss.str());
-    }
+    }*/
 
     double       top_of_previous_layer = 0;
     const double top_of_this_layer     = get_height_at_top_of_layer(iL);

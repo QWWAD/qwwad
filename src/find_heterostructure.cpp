@@ -81,9 +81,9 @@ class HeterostructureOptions : public Options
         double get_Ldiff() const {return Ldiff;}
 
         /**
-         * \returns The maximum permissible spatial step in the discretisation grid
+         * \returns The number of spatial points (per period) to output
          */
-        double get_dz_max() const {return vm["dz-max"].as<double>();}
+        size_t get_nz_1per() const {return vm["nz-1per"].as<size_t>();}
 
         /**
          * \brief Returns the number of periods
@@ -130,8 +130,8 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
             ("ldiff,l", po::value(&Ldiff)->default_value(0),
              "Set diffusion length.")
 
-            ("dz-max", po::value<double>()->default_value(1e-10),
-             "Set maximum permissible spatial step of discretisation grid [m].")
+            ("nz-1per", po::value<size_t>()->default_value(1000),
+             "Number of points (per period) within the structure")
 
             ("nper,p", po::value<size_t>()->default_value(1),
              "Number of periods to output")
@@ -220,7 +220,7 @@ void HeterostructureOptions::print() const
 
     printf(" * Unit of length for input: %s\n", unit_string);
     printf(" * Diffusion length: %f %s\n",Ldiff,unit_string);
-    printf(" * Maximum permissible spatial step for discretisation grid: %g m\n", get_dz_max());
+    printf(" * Number of points per period: %i\n", (int)get_nz_1per());
     printf(" * Number of periods to output: %i\n", (int)get_nper());
     printf(" * Filename of input structure: %s\n", get_input_filename().c_str());
     printf(" * Filename for interface locations: %s\n",get_interfaces_filename().c_str());
@@ -237,7 +237,7 @@ int main(int argc, char* argv[])
     // Create a new heterostructure using input data
     const Heterostructure *het = Heterostructure::read_from_file(opt.get_input_filename(),
                                                                  opt.get_unit(),
-                                                                 opt.get_dz_max(),
+                                                                 opt.get_nz_1per(),
                                                                  opt.get_nper(),
                                                                  opt.get_Ldiff());
 

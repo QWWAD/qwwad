@@ -47,6 +47,7 @@ class Heterostructure
         std::valarray<double> _x_nominal; ///< Ge fraction at each spatial point (nominal)
         std::valarray<double> _x_diffuse; ///< Ge fraction at each spatial point (with interdiffusion)
         std::valarray<double> _n3D;       ///< Volume doping at each point [m^{-3}]
+        double                _dz;        ///< Spatial separation between points [m]
 
         double calculate_x_annealed_at_point(const unsigned int iz) const;
 
@@ -54,13 +55,13 @@ class Heterostructure
         Heterostructure(const std::valarray<double> &x_layer,
                         const std::valarray<double> &W_layer,
                         const std::valarray<double> &n3D_layer,
-                        const double                 dz_max,
-                        const size_t                 n_periods,
-                        const double                 L_diff = 0.0);
+                        const size_t                 nz_1per,
+                        const size_t                 n_periods = 1,
+                        const double                 L_diff    = 0.0);
 
         static Heterostructure* read_from_file(const std::string &layer_filename,
                                                const Unit         thickness_unit,
-                                               const double       dz_max,
+                                               const size_t       nz_1per,
                                                const size_t       n_periods,
                                                const double       L_diff = 0.0);
 
@@ -72,7 +73,7 @@ class Heterostructure
 
         std::valarray<double> get_z() const {return _z;}
         double                get_z(unsigned int iz) const {return _z[iz];}
-        double                get_dz() const {return _z[1] - _z[0];}
+        double                get_dz() const {return _dz;}
 
         std::valarray<double> get_layer_widths() const {return _W_layer;}
 
