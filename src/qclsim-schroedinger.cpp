@@ -8,14 +8,8 @@
 #include "qclsim-schroedinger.h"
 
 #include <cmath>
-#include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
-#include <gsl/gsl_roots.h>
-#include <boost/multi_array.hpp>
 #include "qclsim-constants.h"
-typedef boost::multi_array<double, 2> matrix;
-
-#include <iostream>
 
 namespace Leeds
 {
