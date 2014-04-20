@@ -62,7 +62,7 @@
 #include <cstdlib>
 #include <valarray>
 #include "qclsim-constants.h"
-#include "qclsim-schroedinger.h"
+#include "qclsim-schroedinger-finite-well.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;

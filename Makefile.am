@@ -97,6 +97,8 @@ src_libqclsim_a_SOURCES =  \
 			   src/qclsim-maths.h          \
 			   src/qclsim-schroedinger.cpp \
 			   src/qclsim-schroedinger.h   \
+			   src/qclsim-schroedinger-finite-well.cpp \
+			   src/qclsim-schroedinger-finite-well.h   \
 			   src/qclsim-subband.cpp      \
 			   src/qclsim-subband.h
 
