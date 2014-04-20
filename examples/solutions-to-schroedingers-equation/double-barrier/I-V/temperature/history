@@ -4,25 +4,28 @@ set -e
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 X=0.2
 
-# Use V=0.67*1247*x, V(0.1)=83.549, V(0.2)=167.098, V(0.3)=250.647,
-# V(0.4)=334.196
-V=167.098
+# Allow barrier composition to be read from command-line
+if [ "x$1" != "x" ]; then
+    X=$1
+fi
+
+# Use V=0.67*1247*x
+V=`echo $X | awk '{print 0.67*1247*$1}'`
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
-# Use MB=0.067+0.083*x, MB(0.1)=0.0753, MB(0.2)=0.0836, MB(0.3)=0.0919,
-# MB(0.4)=0.1002
-MB=0.0836
+# Use MB=0.067+0.083*x
+MB=`echo $X | awk '{print 0.067+0.083*$1}'`
 
 # Keep well width constant
 L1=100
 L2=50
 L3=100
 
-tdb -a $L1 -b $L2 -c $L3 --potential $V -n $MB
+tdb -a $L1 -b $L2 --right-barrier-width $L3 --potential $V -n $MB
 
 for T in 2 77 300
 do
 { 
- ivdb -a $L1 -b $L2 -c $L3 -T $T
+ ivdb -a $L1 -b $L2 --right-barrier-width $L3 -T $T
  mv IV.r IVT=$T.r
 } done
