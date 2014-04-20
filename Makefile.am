@@ -82,9 +82,11 @@ qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 # QCLsim infrastructure (released from Leeds code)
 noinst_LIBRARIES = src/libqclsim.a
 src_libqclsim_a_SOURCES =  \
-			   src/qclsim-constants.h      \
 			   src/dos-functions.cpp       \
 			   src/dos-functions.h         \
+			   src/double-barrier.cpp      \
+			   src/double-barrier.h        \
+			   src/qclsim-constants.h      \
 			   src/qclsim-fermi.cpp        \
 			   src/qclsim-fermi.h          \
 			   src/qclsim-fileio.cpp       \

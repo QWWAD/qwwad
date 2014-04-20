@@ -15,12 +15,11 @@
 #include <cstdlib>
 #include <cmath>
 #include <valarray>
-#include <armadillo>
+#include "double-barrier.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
-using namespace arma;
 using namespace Leeds;
 using namespace constants;
 
@@ -108,73 +107,11 @@ int main(int argc,char *argv[])
     std::valarray<double> E(nE); // Array of energies
     std::valarray<double> T(nE); // Array of transmission coefficients
 
-    // Calculate interfaces
-    const double I2=L1;
-    const double I3=L1+L2;
-    const double I4=L1+L2+L3;
-
     // Loop over energy
     for(unsigned int iE = 0; iE < nE; ++iE)
     {
-        E[iE] = iE*dE; // Find energy
-        const double k=sqrt(2*m_w*E[iE])/hBar;
-        const double K=sqrt(2*m_b*(V-E[iE]))/hBar;
-
-        // Define transfer matrices
-        cx_mat M1(2,2);
-        M1(0,0) = 1;
-        M1(0,1) = 1;
-        M1(1,0) = cx_double(0.0,  k/m_w);
-        M1(1,1) = cx_double(0.0, -k/m_w);
-
-        cx_mat M2(2,2);
-        M2(0,0) = 1;
-        M2(0,1) = 1;
-        M2(1,0) = +K/m_b;
-        M2(1,1) = -K/m_b;
-
-        cx_mat M3(2,2);
-        M3(0,0) = exp(+K*I2);
-        M3(0,1) = exp(-K*I2);
-        M3(1,0) =  K*exp(+K*I2)/m_b;
-        M3(1,1) = -K*exp(-K*I2)/m_b;
-
-        cx_mat M4(2,2);
-        M4(0,0) = cx_double(cos(k*I2),         +sin(k*I2));
-        M4(0,1) = cx_double(cos(k*I2),         -sin(k*I2));
-        M4(1,0) = cx_double(-k*sin(+k*I2)/m_w, +k*cos(k*I2)/m_w);
-        M4(1,1) = cx_double(+k*sin(-k*I2)/m_w, -k*cos(k*I2)/m_w);
-
-        cx_mat M5(2,2);
-        M5(0,0) = cx_double(cos(k*I3),         +sin(k*I3));
-        M5(0,1) = cx_double(cos(k*I3),         -sin(k*I3));
-        M5(1,0) = cx_double(-k*sin(+k*I3)/m_w, +k*cos(k*I3)/m_w);
-        M5(1,1) = cx_double(+k*sin(-k*I3)/m_w, -k*cos(k*I3)/m_w);
-
-        cx_mat M6(2,2);
-        M6(0,0) = exp(+K*I3);
-        M6(0,1) = exp(-K*I3);
-        M6(1,0) =  K*exp(+K*I3)/m_b;
-        M6(1,1) = -K*exp(-K*I3)/m_b;
-
-        cx_mat M7(2,2);
-        M7(0,0) = exp(+K*I4);
-        M7(0,1) = exp(-K*I4);
-        M7(1,0) =  K*exp(+K*I4)/m_b;
-        M7(1,1) = -K*exp(-K*I4)/m_b;
-
-        cx_mat M8(2,2);
-        M8(0,0) = cx_double(cos(k*I4),         +sin(k*I4));
-        M8(0,1) = cx_double(cos(k*I4),         -sin(k*I4));
-        M8(1,0) = cx_double(-k*sin(+k*I4)/m_w, +k*cos(k*I4)/m_w);
-        M8(1,1) = cx_double(+k*sin(-k*I4)/m_w, -k*cos(k*I4)/m_w);
-
-        // Little hack to stop nonsense output when E = 0
-        if (iE > 0)
-        {
-            cx_mat M = inv(M1) * M2 * inv(M3) * M4 * inv(M5) * M6 * inv(M7) * M8;
-            T[iE] = 1/(norm(M(1,1))); // Transission coeff
-        }
+        E[iE] = iE*dE;
+        T[iE] = get_transmission_coefficient(E[iE], m_w, m_b, V, L1, L2, L3);
     }
 
     // Rescale to meV for output
