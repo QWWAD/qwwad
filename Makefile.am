@@ -51,6 +51,7 @@ bin_PROGRAMS =  src/csss    \
 	       	src/efwf    \
 		src/efxm    \
 		src/efxv    \
+		src/find_heterostructure \
 		src/gde     \
 		src/hup     \
 		src/ivdb    \
@@ -100,7 +101,9 @@ src_libqclsim_a_SOURCES =  \
 			   src/qclsim-schroedinger-finite-well.cpp \
 			   src/qclsim-schroedinger-finite-well.h   \
 			   src/qclsim-subband.cpp      \
-			   src/qclsim-subband.h
+			   src/qclsim-subband.h        \
+			   src/qwwad-heterostructure.cpp \
+			   src/qwwad-heterostructure.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
@@ -121,6 +124,9 @@ src_efkpsl_LDADD   = src/libqclsim.a $(LDADD)
 
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
 src_efsqw_LDADD   = src/libqclsim.a $(LDADD)
+
+src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
+src_find_heterostructure_LDADD   = src/libqclsim.a $(LDADD)
 
 src_ivdb_SOURCES = src/ivdb.cpp $(qwwad_options)
 src_ivdb_LDADD   = src/libqclsim.a $(LDADD)
