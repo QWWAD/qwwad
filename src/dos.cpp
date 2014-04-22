@@ -45,17 +45,15 @@ class DOSOptions : public Options
                      "Particle to be used: 'e', 'h' or 'l'")
                     ;
 
-                std::string doc("Find the density of states for bulk (3D), "
-                                "quantum wells (2D) and quantum wires (1D), "
-                                "for a series of subband minima which are read "
-                                "in from the external file `Ee.r', or `Eh.r'."
-                                "Data is written to the file `rho.r' in the format: \n"
-                                "Column 1 = energy (meV)\n"
-                                "Column 2 = 3D density of states (J^{-1}m^{-3})\n"
-                                "Column 3 = 2D density of states (J^{-1}m^{-2})\n"
-                                "Column 4 = 1D density of states (J^{-1}m^{-1})");
+                std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
+                std::string details("Energies of subband minima are read from the file `Ee.r', or `Eh.r'.\n"
+                                    "Data is written to the file `rho.r' in the format: \n"
+                                    "Column 1 = energy (meV)\n"
+                                    "Column 2 = 3D density of states (J^{-1}m^{-3})\n"
+                                    "Column 3 = 2D density of states (J^{-1}m^{-2})\n"
+                                    "Column 4 = 1D density of states (J^{-1}m^{-1})");
 
-                add_prog_specific_options_and_parse(argc, argv, doc);	
+                add_prog_specific_options_and_parse(argc, argv, summary, details);
             }
             catch(std::exception &e)
             {

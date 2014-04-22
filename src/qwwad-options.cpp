@@ -81,22 +81,23 @@ void Options::print_version_then_exit(char* prog_name) const
               << "This is free software: you are free to change and redistribute it." << std::endl
               << "There is NO WARRANTY, to the extent permitted by law." << std::endl
               << std::endl
-              << "** Any use of this software in published work must be accompanied by a      **" << std::endl
-              << "** citation of the textbook: \"Quantum Wells, Wires and Dots\" (4th edition), **" << std::endl
-              << "** Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015).         **" << std::endl
-              << "** in addition to any works cited in the source code.                       **" << std::endl
+              << "Any use of this software in published work must be accompanied by a " << std::endl
+              << "citation of the textbook: \"Quantum Wells, Wires and Dots\" (4th edition), " << std::endl
+              << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015). " << std::endl
+              << "in addition to any works cited in the source code." << std::endl
               << std::endl
-              << PACKAGE_URL << std::endl; 
+              << "Report bugs to " << PACKAGE_URL << std::endl; 
 
     exit (EXIT_SUCCESS);
 }
 
 /**
  * \brief Add program-specific options to the list of options and then parse
- * \param[in] argc The number of command-line arguments
- * \param[in] argv The list of command-line arguments
- * \param[in] doc  A documentation string describing the purpose of the program.
- *                 This is displayed when the user gives the "--help" option.
+ * \param[in] argc    The number of command-line arguments
+ * \param[in] argv    The list of command-line arguments
+ * \param[in] summary A short (1 line) documentation string describing the purpose of the program.
+ *                    This is displayed at the top when the user gives the "--help" option.
+ * \param[in] details More detailed notes to display below the program options in "--help" output
  *
  * \details Configuration is read in the following (decreasing) order of
  *          preference:
@@ -139,7 +140,10 @@ void Options::print_version_then_exit(char* prog_name) const
  * \todo It would be better to use a smarter parser that ignores undesired options
  *       and unknown options.
  */
-void Options::add_prog_specific_options_and_parse(int argc, char* argv[], std::string doc)
+void Options::add_prog_specific_options_and_parse(int          argc,
+                                                  char        *argv[],
+                                                  std::string  summary,
+                                                  std::string  details)
 {
     try {
         // Allow all options to be given on the command-line
@@ -183,8 +187,9 @@ void Options::add_prog_specific_options_and_parse(int argc, char* argv[], std::s
         // Post-processing for default options...
         if(vm.count("help"))
         {
-            std::cout << argv[0] << " : " << doc << std::endl << 
-                command_line_options << std::endl;
+            std::cout << summary << std::endl
+                      << command_line_options << std::endl
+                      << details << std::endl;
 
             exit(EXIT_SUCCESS);
         }

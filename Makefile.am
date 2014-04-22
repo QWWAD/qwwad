@@ -149,7 +149,7 @@ dist_man1_MANS = man/dos.1
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
-	help2man --output=man/dos.1 src/dos$(EXEEXT)
+	help2man --output=man/dos.1 --name="compute density of states in 1D, 2D and 3D systems" src/dos$(EXEEXT)
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

@@ -60,7 +60,8 @@ class Options
         // Common options for all programs
         void add_prog_specific_options_and_parse(int          argc,
                                                  char        *argv[],
-                                                 std::string  doc);
+                                                 std::string  summary,
+                                                 std::string  details="");
     public:
         Options();
         Options(const Options &options);
