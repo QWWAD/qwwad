@@ -16,7 +16,7 @@ Build-Depends: autoconf,
                libboost-program-options-dev,
                libgsl0-dev,
                liblapack-dev
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 
 Package: qwwad
 Architecture: any
