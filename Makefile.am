@@ -143,6 +143,15 @@ src_tdb_LDADD    = src/libqclsim.a $(LDADD)
 src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
 src_tsb_LDADD    = src/libqclsim.a $(LDADD)
 
+# Build rule for installing manual pages
+dist_man1_MANS = man/dos.1
+
+man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
+	help2man --output=man/dos.1 src/dos$(EXEEXT)
+
+
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
 EXTRA_DIST += \
