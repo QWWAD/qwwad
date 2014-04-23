@@ -1,5 +1,5 @@
 /*==================================================================
-              efcwire  Envelope Function Spherical DOT 
+              efsdot  Envelope Function Spherical DOT 
   ==================================================================*/
 
 /* This program uses a shooting technique to calculate the
@@ -44,7 +44,7 @@ int    n;		/* length of potential file		 */
 int    state;		/* electron and hole output states   */
 char   p;		/* particle				 */
 char   filename[9];	/* output filename			 */
-bool   np_flag; 	/* Hamiltonian flag def.=1=>D(1/m)D  */
+bool   np_flag;	/* Hamiltonian flag def.=1=>D(1/m)D  */
 FILE   *FE;		/* outputfile for el. energy states  */
 files  *data_start;	/* start address of potential	 */
 data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
@@ -152,7 +152,7 @@ for(i_state=1;i_state<=state;i_state++)
 
 fclose(FE);
 free(data_start);
-free(data_m0Eg);
+if(np_flag)free(data_m0Eg);
 
 return EXIT_SUCCESS;
 } /* end main */
@@ -212,7 +212,7 @@ int	*n;
  {
   int n_read = fscanf(Fm,"%*e %le",&(fdata->mstar));
 
-  if(n_read == 3)
+  if (n_read == 2)
     fdata++;
  }
 
