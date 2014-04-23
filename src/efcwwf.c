@@ -33,7 +33,6 @@ int main(int argc,char *argv[])
 {
 double	read_delta_z();
 files	*read_data();	/* reads potential file into memory	*/
-data11	*read_Egdata();	/* reads bandgap data			*/
 
 double	delta_z;	/* z separation of input potentials	*/
 double	E;		/* electron and hole energies		*/
@@ -124,7 +123,7 @@ while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
 
 fclose(FE);
 free(data_start);
-free(data_m0Eg);
+if(np_flag)free(data_m0Eg);
 free(data_zwf);
 
 return EXIT_SUCCESS;
@@ -234,7 +233,7 @@ static double wf(const double  E,
   }
  }
 
- /* boundary conditions: Eq. 8.55, QWWAD3 */
+ /* boundary conditions: Eq. 8.55. QWWAD3 */
  psi[0]=1.0;
  psi[1]=1.0;
 
