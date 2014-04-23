@@ -39,6 +39,7 @@ double	E;		/* electron and hole energies		*/
 double	N;		/* normalization integral		*/
 int	i_state;	/* electron/hole state index		*/
 int	i;		/* index				*/
+int	Nout;		/* output ratio =1 every, =2 every other*/
 int	n;		/* length of potential file		*/
 char	p;		/* particle				*/
 char	filename[9];	/* output filename			*/
@@ -53,6 +54,7 @@ data11	*data_zwf;	/* start address of z and wf		*/
 /* default values */
 
 np_flag=false;
+Nout=1;
 T_flag=true;
 p='e';
 
@@ -70,6 +72,9 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   argv--;
 	   argc++;
 	   break;
+  case 'N':
+	   Nout=atoi(argv[2]);
+	   break;
   case 'p':
 	   p=*argv[2];
 	   switch(p)
@@ -84,6 +89,7 @@ while((argc>1)&&(argv[1][0]=='-'))
   default :
 	   printf("Usage:  efwf [-a include non-parabolicity \033[1mfalse\033[0m]\n");
 	   printf("             [-k use alternative KE operator (1/m)PP \033[1mP(1/m)P\033[0m]\n");
+	   printf("             [-N ratio of input/output points \033[1m1\033[0m]\n");
 	   printf("             [-p particle (\033[1me\033[0m, h, or l)]\n");
 	   exit(0);
  }
@@ -123,7 +129,8 @@ while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
  Fwf=fopen(filename,"w");
 
  for(i=0;i<n;i++)
-  fprintf(Fwf,"%20.17le %20.17le\n",(data_zwf+i)->a,((data_zwf+i)->b)/sqrt(N));
+  if(i%Nout==0)fprintf(Fwf,"%20.17le %20.17le\n",
+			(data_zwf+i)->a,((data_zwf+i)->b)/sqrt(N));
 
  fclose(Fwf);
 
