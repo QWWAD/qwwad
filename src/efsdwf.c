@@ -116,7 +116,7 @@ while(fscanf(FE,"%i %le",&i_state,&E)!=EOF)
 
 fclose(FE);
 free(data_start);
-free(data_m0Eg);
+if(np_flag)free(data_m0Eg);
 free(data_zwf);
 
 return EXIT_SUCCESS;
