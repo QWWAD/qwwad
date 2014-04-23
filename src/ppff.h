@@ -375,6 +375,78 @@ double Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
+ if(!strcmp(type,"CDTEcb"))	/* Cd in CdTe	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.175*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.12*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
+     -0.03*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
+     +0.00*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
+ }
+
+ if(!strcmp(type,"TECDcb"))	/* Te in CdTe	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.025*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.030*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
+     +0.030*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
+     +0.040*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
+ }
+
+ /* Chelikowsky and Cohen, Phys. Rev. B14 p556 (1976)	*/
+
+ if(!strcmp(type,"GAAScc"))	/* Ga in GaAs	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.135*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.098*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
+     +0.000*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
+     +0.033*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI	*/
+ }
+
+ if(!strcmp(type,"ASGAcc"))	/* As in GaAs	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.080*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.060*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
+     +0.014*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
+     +0.034*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI	*/
+ }
+
+ /* Cd(1-x)Mn(x)Te potentials from Fei Long et al., J. Appl. Phys. 79,
+  * p6939 (1996)							*/
+
+ if(!strcmp(type,"CDTE"))	/* Cd in CdTe	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.175*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.123*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
+     -0.0279*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))	/* Vf(sqrt(8))	*/
+     +0.0213*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
+ }
+
+ if(!strcmp(type,"TECD"))	/* Te in CdTe	*/
+ {
+  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
+  Va=-0.055*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
+     -0.0518*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))	/* Vf(sqrt(4))	*/
+     +0.0229*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))	/* Vf(sqrt(8))	*/
+     +0.0598*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
+
+  return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
+ }
+
+
  printf("Error atom type '%s' undefined!\n",type);exit(0);
 
 }

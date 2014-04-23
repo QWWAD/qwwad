@@ -21,6 +21,27 @@ double vsprod(const vector A,
               const vector B);
 double Theta (const double x);
 
+
+/**
+ * \brief Form the transpose of a complex matrix
+ * \param[in] N the matrix order
+ */
+void ctranspose(complex double *M,
+                int             N)
+{
+ complex double m;	/* workspace---a single element	*/
+ int	i;		/* indices			*/
+ int	j;		/* indices			*/
+
+ for(i=0;i<N;i++) 		
+  for(j=0;j<i;j++)	
+  {
+   m=*(M+i*N+j);		/* copy Mij to m		*/
+   *(M+i*N+j)=*(M+j*N+i);	/* make Mij=Mji			*/
+   *(M+j*N+i)=m;		/* make Mji=m			*/
+  }
+}
+
 /**
  * The secant of a number
  *
