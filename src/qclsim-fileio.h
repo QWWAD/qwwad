@@ -90,7 +90,7 @@ void check_not_negative(double*);
  * \return 0 if scan was successful, 1 if there was an error
  */
     template <class T>
-int read_line_array(std::valarray<T> dest, const size_t n, std::istream& stream)
+int read_line_array(std::valarray<T> &dest, const size_t n, std::istream& stream)
 {
     std::streamsize nbytes = 100; // Initial size of buffer
     int scan_result=1; // Flag to show whether scan was successful [1=error]

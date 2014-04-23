@@ -1,7 +1,6 @@
 /**
- * \file   heterostructure.h
- * \author Alex Valavanis
- * \date   2012-01-08
+ * \file   qwwad-heterostructure.h
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \brief  Declarations for heterostructure array generation
  */
 
@@ -14,8 +13,12 @@
 
 #include <string>
 #include <valarray>
+#include <vector>
 
 namespace Leeds {
+/// Convenience wrapper for a list of vector components in each layer
+typedef std::vector< std::valarray<double> > alloy_vector;
+
 /**
  * \brief Unit of measurement for layer thickness
  */
@@ -31,7 +34,8 @@ class Heterostructure
 {
     private:
         // Parameters for each individual layer of the structure
-        std::valarray<double> _x_layer;   ///< Ge fraction in each layer
+        size_t                _n_alloy;   ///< Number of alloy components
+        alloy_vector          _x_layer;   ///< Alloy fractions in each layer
         std::valarray<double> _W_layer;   ///< Width of each layer [m]
         std::valarray<double> _n3D_layer; ///< Donor density in each layer [m^{-3}]
 
@@ -44,15 +48,15 @@ class Heterostructure
 
         // Parameters for each point in the entire, expanded structure
         std::valarray<double> _z;         ///< Spatial position at each point [m]
-        std::valarray<double> _x_nominal; ///< Ge fraction at each spatial point (nominal)
-        std::valarray<double> _x_diffuse; ///< Ge fraction at each spatial point (with interdiffusion)
+        alloy_vector          _x_nominal; ///< Alloy fractions at each spatial point (nominal)
+        alloy_vector          _x_diffuse; ///< Alloy fractions at each spatial point (with interdiffusion)
         std::valarray<double> _n3D;       ///< Volume doping at each point [m^{-3}]
         double                _dz;        ///< Spatial separation between points [m]
 
-        double calculate_x_annealed_at_point(const unsigned int iz) const;
+        double calculate_x_annealed_at_point(const unsigned int iz, const unsigned int ialloy) const;
 
     public:
-        Heterostructure(const std::valarray<double> &x_layer,
+        Heterostructure(const alloy_vector          &x_layer,
                         const std::valarray<double> &W_layer,
                         const std::valarray<double> &n3D_layer,
                         const size_t                 nz_1per,
@@ -77,9 +81,9 @@ class Heterostructure
 
         std::valarray<double> get_layer_widths() const {return _W_layer;}
 
-        double get_x_in_layer_nominal(const unsigned int iL) const;
-        std::valarray<double> get_x_nominal_array() const {return _x_nominal;}
-        std::valarray<double> get_x_diffuse_array() const {return _x_diffuse;}
+        double get_x_in_layer_nominal(const unsigned int iL, const unsigned int ialloy) const;
+        alloy_vector get_x_nominal_array() const {return _x_nominal;}
+        alloy_vector get_x_diffuse_array() const {return _x_diffuse;}
 
         double get_n3D_in_layer(const unsigned int iL) const;
         double get_n3D_at_point(const unsigned int iz) const;

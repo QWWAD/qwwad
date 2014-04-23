@@ -253,7 +253,18 @@ int main(int argc, char* argv[])
     
     // Output the index of each interface to file
     write_table_x(opt.get_interfaces_filename().c_str(), het->get_layer_top_indices());
-    write_table_xy(opt.get_alloy_filename().c_str(), het->get_z(), het->get_x_diffuse_array());
+
+    std::ofstream stream(opt.get_alloy_filename().c_str());
+    for(unsigned int iz = 0; iz < het->get_z().size(); ++iz)
+    {
+        stream << std::setprecision(20) << std::scientific << het->get_z()[iz] << "\t";
+
+        for(unsigned int ialloy = 0; ialloy < het->get_x_diffuse_array().at(0).size(); ++ialloy)
+            stream << std::setprecision(20) << std::scientific << het->get_x_diffuse_array().at(iz)[ialloy] << "\t";
+
+        stream << std::endl;
+    }
+
     write_table_xy(opt.get_doping_filename().c_str(), het->get_z(), het->get_n3D_array());
 
     delete het;
