@@ -8,26 +8,34 @@ set( qwwad_options qwwad-options.cpp qwwad-options.h )
 set( wf_options wf_options.cpp wf_options.h ${qwwad_options} )
 set( qwwad_fileio qwwad-fileio.cpp qwwad-fileio.h )
 
-set( qclsim_src
+set( qwwad_src
+        dos-functions.cpp
+        double-barrier.cpp
         qclsim-fermi.cpp
         qclsim-fileio.cpp
         qclsim-linalg.cpp
         qclsim-maths.cpp
         qclsim-schroedinger.cpp
+        qclsim-schroedinger-finite-well.cpp
         qclsim-subband.cpp
+        qwwad-heterostructure.cpp
     )
 
-set( qclsim_h
+set( qwwad_h
+        dos-functions.h
+        double-barrier.h
         qclsim-constants.h
         qclsim-fermi.h
         qclsim-fileio.h
         qclsim-linalg.h
         qclsim-maths.h
         qclsim-schroedinger.h
+        qclsim-schroedinger-finite-well.h
         qclsim-subband.h
+        qwwad-heterostructure.h
     )
 
-add_library( qclsim ${qclsim_src} )
+add_library( qwwad ${qwwad_src} )
 
 add_executable( d0 d0.c ${d0_helpers} )
 target_link_libraries( d0 m gsl cblas )
@@ -37,7 +45,7 @@ add_executable( d03D d03D.c ${d0_helpers} )
 target_link_libraries( d03D m gsl cblas )
 
 #add_executable( dispersion_relation dispersion_relation.cpp ${wf_options} )
-#target_link_libraries( dispersion_relation qclsim )
+#target_link_libraries( dispersion_relation qwwad )
 
 #add_executable( dos dos.cpp ${qwwad_options} ${dos_funcs} ${qwwad_fileio} )
-#target_link_libraries( dos qclsim )
+#target_link_libraries( dos qwwad )
