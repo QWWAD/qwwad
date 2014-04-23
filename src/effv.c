@@ -12,7 +12,6 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
-#include <malloc.h>
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"

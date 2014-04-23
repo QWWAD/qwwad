@@ -22,7 +22,6 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
-#include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"

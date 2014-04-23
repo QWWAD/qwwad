@@ -26,7 +26,6 @@
 #include <strings.h>
 #include <math.h>
 #include <signal.h>
-#include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "qclsim-constants.h"

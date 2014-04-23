@@ -34,7 +34,6 @@
 #include <stdio.h>
 #include <math.h>
 #include <signal.h>
-#include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "d0-helpers.h"
 #include "maths.h"

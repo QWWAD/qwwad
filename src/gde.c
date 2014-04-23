@@ -25,7 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
-#include <malloc.h>
 #include <math.h>
 #include "struct.h"
 #include "maths.h"

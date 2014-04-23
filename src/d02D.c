@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <signal.h>
-#include <malloc.h>
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
 #include "d0-helpers.h"
