@@ -40,8 +40,8 @@ typedef struct
 
 int main(int argc,char *argv[])
 {
-complex	V();		/* potential component of H_GG			*/
-complex	Vso();		/* spin-orbit component of H_GG			*/
+complex double V();		/* potential component of H_GG			*/
+complex double Vso();		/* spin-orbit component of H_GG			*/
 atom	*read_atoms();	/* read in atomic positions/species		*/
 void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
 void	write_ank();	/* writes eigenvectors to file			*/
@@ -128,7 +128,7 @@ Ns=2*N;			/* Matrix order with spin		*/
 
 LWORK=2*Ns;		/* LAPACK workspace definition		*/
 
-WORK=(complex *)calloc(LWORK,sizeof(complex));
+WORK=(complex double *)calloc(LWORK,sizeof(complex double));
  if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 RWORK=(double *)calloc(3*Ns-2,sizeof(double));
@@ -136,13 +136,13 @@ RWORK=(double *)calloc(3*Ns-2,sizeof(double));
 
 /* end of LAPACK definitions	*/
 
-Vc=(complex *)calloc(Ns*Ns,sizeof(complex));
+Vc=(complex double *)calloc(Ns*Ns,sizeof(complex double));
  if(Vc==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 E=(double *)calloc(Ns,sizeof(double));
  if(E==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-ank=(complex *)calloc(Ns*Ns,sizeof(complex));
+ank=(complex double *)calloc(Ns*Ns,sizeof(complex double));
  if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 /* Create crystal potential Vc	*/
@@ -269,7 +269,7 @@ int	*n_atoms;
   exit(0);
  }
  
- while((fscanf(Fatoms,"%s %lf %lf %lf",&(atoms+ia)->type,
+ while((fscanf(Fatoms,"%s %lf %lf %lf", atoms[ia].type,
         &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
  {
   /* Convert atomic positions from Angstrom into S.I. units	*/
@@ -327,7 +327,7 @@ int     *N;
 
 
 
-complex 
+complex double 
 V(A0,m_per_au,atoms,n_atoms,q)
 
 double A0;	/* Lattice constant */
@@ -360,7 +360,7 @@ vector q;       /* a reciprocal lattice vector, G'-G */
 
 
 
-complex 
+complex double 
 Vso(A0,m_per_au,atoms,G,n_atoms,k,i,j,N)
 
 double A0;	/* Lattice constant 				*/
