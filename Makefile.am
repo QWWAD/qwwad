@@ -58,8 +58,10 @@ bin_PROGRAMS =  src/csss    \
 		src/ovl     \
 		src/ppcd    \
 		src/ppee    \
+		src/pplb    \
 		src/pplbso  \
 		src/ppsg    \
+		src/ppsl    \
 		src/ppvfq   \
 		src/pth     \
 		src/rlv-fcc \

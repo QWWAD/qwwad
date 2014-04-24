@@ -32,15 +32,17 @@
    	Use of LAPACK diagonalisation routine
 								*/
 
+#include <complex.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
-#include "bools.h"
+#include "qclsim-constants.h"
 
-#include "ppff.c"
+#include "ppff.h"
 
 typedef struct
 {
@@ -48,20 +50,20 @@ typedef struct
  vector	r;
 }atom;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
-complex	V();		/* potential component of H_GG			*/
+complex	double V();		/* potential component of H_GG			*/
 atom	*read_atoms();	/* read in atomic positions/species		*/
 void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
 void	write_ank();	/* writes eigenvectors to file			*/
 vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 
-complex	*ank;		/* coefficients of eigenvectors			*/
-complex	*H_GG;		/* components of H_G'G (see notes)		*/
-complex	T_GG;		/* kinetic energy component of H_GG		*/
-complex	*V_GG;		/* potential energy of H_GG, diagonal elements	*/
+complex double	*ank;		/* coefficients of eigenvectors			*/
+complex double	*H_GG;		/* components of H_G'G (see notes)		*/
+complex double	T_GG;		/* kinetic energy component of H_GG		*/
+complex	double *V_GG;		/* potential energy of H_GG, diagonal elements	*/
 			/* stored here for efficiency			*/
-complex	*WORK;		/* LAPACK: workspace				*/
+complex	double *WORK;		/* LAPACK: workspace				*/
 double	A0;		/* Lattice constant				*/
 double	*E;		/* energy eigenvalues				*/
 double	m_per_au;	/* unit conversion factor, m/a.u.		*/
@@ -82,7 +84,7 @@ char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
 FILE	*Fk;		/* pointer to k.r file				*/
 FILE	*FEk;		/* pointer to Ek.r file				*/
 atom	*atoms;		/* the type and position of the atoms		*/
-boolean	ev;		/* flag, if set output eigenvectors 		*/
+bool	ev;		/* flag, if set output eigenvectors 		*/
 vector	*G;		/* reciprocal lattice vectors			*/
 vector	k;		/* electron wave vector				*/
 vector	q;		/* G'-G						*/
@@ -93,7 +95,7 @@ A0=5.65e-10;
 ev=false;
 n_min=0;
 n_max=-1;
-m_per_au=4*pi*epsilon_0*sqr(hbar/e_0)/m0;
+m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me;
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -136,7 +138,7 @@ G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
 
 LWORK=2*N;		/* LAPACK workspace definition		*/
 
-WORK=(complex *)calloc(LWORK,sizeof(complex));
+WORK=(complex double *)calloc(LWORK,sizeof(complex double));
  if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 RWORK=(double *)calloc(3*N-2,sizeof(double));
@@ -144,16 +146,16 @@ RWORK=(double *)calloc(3*N-2,sizeof(double));
 
 /* end of LAPACK definitions	*/
 
-H_GG=(complex *)calloc(N*N,sizeof(complex));
+H_GG=(complex double *)calloc(N*N,sizeof(complex double));
  if(H_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-V_GG=(complex *)calloc(N,sizeof(complex));
+V_GG=(complex double *)calloc(N,sizeof(complex double));
  if(V_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 E=(double *)calloc(N,sizeof(double));
  if(E==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-ank=(complex *)calloc(N*N,sizeof(complex));
+ank=(complex double *)calloc(N*N,sizeof(complex double));
  if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 for(i=0;i<N;i++)        /* index down rows */
@@ -179,10 +181,9 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
  k.x*=(2*pi/A0);k.y*=(2*pi/A0);k.z*=(2*pi/A0);
  for(i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
  {
-  T_GG.re=hbar*(sqr(((G+i)->x)+k.x)+sqr(((G+i)->y)+k.y)+sqr(((G+i)->z)+k.z))*hbar/(2*m0);
-  T_GG.im=0;
+  T_GG=hBar*(gsl_pow_2(((G+i)->x)+k.x)+gsl_pow_2(((G+i)->y)+k.y)+gsl_pow_2(((G+i)->z)+k.z))*hBar/(2*me);
   *(H_GG+i*N+i)=*(V_GG+i);
-  ((H_GG+i*N+i)->re)+=T_GG.re;
+  H_GG[i*N+i] += T_GG;
  }
 
 for(i=0;i<N;i++) 		/* LAPACK routine zheev() writes vectors */
@@ -198,7 +199,7 @@ for(i=0;i<N;i++) 		/* LAPACK routine zheev() writes vectors */
 
  sprintf(filenameE,"Ek%i.r",ik);
  FEk=fopen(filenameE,"w");
- for(iE=n_min;iE<=n_max;iE++)fprintf(FEk,"%10.6f\n",*(E+iE)/e_0);
+ for(iE=n_min;iE<=n_max;iE++)fprintf(FEk,"%10.6f\n",*(E+iE)/e);
  fclose(FEk);
 
  /* Output eigenvectors */
@@ -222,6 +223,7 @@ free(atoms);
 
 free(WORK);free(RWORK);		/* The LAPACK definitions	*/
 
+return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -236,7 +238,6 @@ atom
 
 int	*n_atoms;
 {
- int    *as;
  int    ia=0;
  FILE 	*Fatoms;        /* file pointer to wavefunction file       */
  atom	*atoms;		/* atomic definitions			*/
@@ -260,7 +261,7 @@ int	*n_atoms;
   exit(0);
  }
  
- while((fscanf(Fatoms,"%s %lf %lf %lf",&(atoms+ia)->type,
+ while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
         &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
  {
   /* Convert atomic positions from Angstrom into S.I. units	*/
@@ -318,7 +319,7 @@ int     *N;
 
 
 
-complex 
+complex double 
 V(A0,m_per_au,atoms,n_atoms,q)
 
 double A0;	/* Lattice constant */
@@ -328,12 +329,12 @@ int    n_atoms; /* number of atoms in structure */
 vector q;       /* a reciprocal lattice vector, G'-G */
 {
  extern double Vf();   /* Fourier transform of potential	*/
- complex v;     /* potential					*/
+ complex double v;     /* potential					*/
  double	vf;	/* storage for returned data from Vf()		*/
  int	ia;	/* index across atoms				*/
  vector t;      /* general vertor representing atom within cell	*/
 
- v.re=0;v.im=0;
+ v=0;
 
  for(ia=0;ia<n_atoms;ia++)
  {
@@ -341,12 +342,10 @@ vector q;       /* a reciprocal lattice vector, G'-G */
   t.y=(atoms+ia)->r.y;
   t.z=(atoms+ia)->r.z;
   vf=Vf(A0,m_per_au,q.x*q.x+q.y*q.y+q.z*q.z,(atoms+ia)->type);
-  v.re+=cos(q.x*t.x+q.y*t.y+q.z*t.z)*vf;
-  v.im-=sin(q.x*t.x+q.y*t.y+q.z*t.z)*vf;
+  v+=cos(q.x*t.x+q.y*t.y+q.z*t.z)*vf - I * sin(q.x*t.x+q.y*t.y+q.z*t.z)*vf;
  }
 
- v.re/=(double)(n_atoms/2);
- v.im/=(double)(n_atoms/2);
+ v/=(double)(n_atoms/2);
 
  return(v);
 }
@@ -358,7 +357,7 @@ write_ank(ank,ik,N,n_min,n_max)
 
 /* This function writes the eigenvectors (a_nk(G)) to the files ank.r */
 
-complex	*ank;
+complex double	*ank;
 int	ik;		/* k point identifier				*/
 int	N;
 int     n_min;          /* lowest output band				*/
@@ -375,7 +374,7 @@ Fank=fopen(filename,"w");
 for(iG=0;iG<N;iG++)
 {
  for(in=n_min;in<=n_max;in++)
-  fprintf(Fank,"%20.16le %20.16le ",(ank+iG*N+in)->re,(ank+iG*N+in)->im);
+  fprintf(Fank,"%20.16le %20.16le ",creal(ank[iG*N+in]),cimag(ank[iG*N+in]));
  fprintf(Fank,"\n");
 }
 

@@ -34,15 +34,15 @@
 
 								*/
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 #include "struct.h"
 #include "maths.h"
-#include "const.h"
-#include "bools.h"
+#include "qclsim-constants.h"
 
-#include "ppff.c"
+#include "ppff.h"
 
 typedef struct
 {
@@ -50,11 +50,11 @@ typedef struct
  vector	r;
 }atom;
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
-complex	V();		/* potential component of Hdash			*/
-complex	VF();		/* field potential component of Hdash		*/
-complex	*read_ank();	/* reads in all the bulk eigenvectors ank(G)	*/
+complex double	V();		/* potential component of Hdash			*/
+complex double	VF();		/* field potential component of Hdash		*/
+complex double	*read_ank();	/* reads in all the bulk eigenvectors ank(G)	*/
 double	*read_Enk();	/* reads in all the bulk eigenvalues Enk	*/
 atom	*read_atoms();	/* read in atomic positions/species		*/
 void	clean_Hdash();	/* removes round-up errors => makes H' Hermitian*/
@@ -64,10 +64,10 @@ int	read_ank0();	/* deduces the number of bands in calculation	*/
 vector	*read_kxi();	/* reads in kxi points				*/
 vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 
-complex	*Ank;		/* coefficients of eigenvectors			*/
-complex	*ank;		/* coefficients of bulk eigenvectors		*/
-complex	*Hdash;		/* components of H' (see notes)			*/
-complex	*WORK;		/* LAPACK: workspace				*/
+complex double	*Ank;		/* coefficients of eigenvectors			*/
+complex double	*ank;		/* coefficients of bulk eigenvectors		*/
+complex double	*Hdash;		/* components of H' (see notes)			*/
+complex double	*WORK;		/* LAPACK: workspace				*/
 double	A0;		/* Lattice constant				*/
 double	*Enk;		/* bulk energy eigenvalues			*/
 double	*Exi;		/* energy eigenvalues				*/
@@ -103,18 +103,18 @@ atom	*atomsp;	/* the type and position of the perturbed atoms	*/
 vector	*G;		/* reciprocal lattice vectors			*/
 vector	*kxi;		/* set of electron wave vectors			*/
 vector	g;		/* G'-G+kxi'-kxi				*/
-boolean	o;		/* if set, output the Fourier Transform VF(g)	*/
+bool	o;		/* if set, output the Fourier Transform VF(g)	*/
 
 /* default values	*/
 
 A0=5.65e-10;
 F=0.0;
-q=e_0;
+q=e;
 n_min=0;
 n_max=3;
 o=false;
 p='h';
-m_per_au=4*pi*epsilon_0*sqr(hbar/e_0)/m0;
+m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me;
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -141,8 +141,8 @@ while((argc>1)&&(argv[1][0]=='-'))
            p=*argv[2];
            switch(p)
            {
-            case 'e': q=-e_0;break;
-            case 'h': q=+e_0;break;
+            case 'e': q=-e;break;
+            case 'h': q=+e;break;
             default:  printf("Usage:  ppsl [-p particle (e or \033[1mh\033[0m)]\n");
                       exit(0);
            }
@@ -181,7 +181,7 @@ if(o) write_VF(A0,F,q,atoms,n_atoms);
 
 LWORK=2*Nn*Nkxi;		/* LAPACK workspace definition		*/
 
-WORK=(complex *)calloc(LWORK,sizeof(complex));
+WORK=(complex double *)calloc(LWORK,sizeof(complex double));
  if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 RWORK=(double *)calloc(3*Nn*Nkxi-2,sizeof(double));
@@ -189,13 +189,13 @@ RWORK=(double *)calloc(3*Nn*Nkxi-2,sizeof(double));
 
 /* end of LAPACK definitions	*/
 
-Hdash=(complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex));
+Hdash=(complex double *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex double));
  if(Hdash==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 Exi=(double *)calloc(Nn*Nkxi,sizeof(double));
  if(Exi==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-Ank=(complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex));
+Ank=(complex double *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex double));
  if(Ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 
@@ -217,11 +217,9 @@ for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
      eigenvalues as specified by delta functions 	*/
 
   if((indash==in)&&(ikxidash==ikxi))
-   (Hdash+i*Nn*Nkxi+j)->re=*(Enk+ikxi*Nn+in);
+   Hdash[i*Nn*Nkxi+j] = Enk[ikxi*Nn+in];
   else
-   (Hdash+i*Nn*Nkxi+j)->re=0;
-
-  (Hdash+i*Nn*Nkxi+j)->im=0;
+   Hdash[i*Nn*Nkxi+j] = 0;
 
   for(iGdash=0;iGdash<N;iGdash++)	/* sum over G'	*/
   {
@@ -236,19 +234,21 @@ for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
     /* Add on potential term	*/
 
     *(Hdash+i*Nn*Nkxi+j)=
-                 cadd(
-                      *(Hdash+i*Nn*Nkxi+j),
-		      cmult(
-                            cmult(
-                                  cconj(*(ank+ikxidash*N*Nn+iGdash*Nn+indash)),
+                      *(Hdash+i*Nn*Nkxi+j)
+		      +
+		      (
+                                 ( conj(*(ank+ikxidash*N*Nn+iGdash*Nn+indash))
+
+				  *
+
                                   *(ank+ikxi*N*Nn+iG*Nn+in)
-                                 ),
-	                    cadd(
-				 V(A0,m_per_au,atoms,atomsp,n_atoms,g),
+				  )
+                                 *
+				 (
+				 V(A0,m_per_au,atoms,atomsp,n_atoms,g) +
 				 VF(A0,F,q,atoms,n_atoms,g)
-				)
-                           )
-                     ); 
+				 )
+		      );
    } /* end iG */
   } /* end iGdash */
 
@@ -273,7 +273,7 @@ zheev_(&JOBZ,&UPLO,&OH,Ank,&OH,Exi,WORK,&LWORK,RWORK,&INFO);
 /* Output eigenvalues in a separate file for each k point */
 
 FExi=fopen("Exi.r","w");
-for(iE=n_min;iE<=n_max;iE++)fprintf(FExi,"%10.6f\n",*(Exi+iE)/e_0);
+for(iE=n_min;iE<=n_max;iE++)fprintf(FExi,"%10.6f\n",*(Exi+iE)/e);
 fclose(FExi);
 
 
@@ -286,6 +286,7 @@ free(Enk);
 free(atoms);
 free(atomsp);
 
+return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -298,7 +299,7 @@ clean_Hdash(Hdash,O)
    H', it ensures that the imaginary components of these elements are zero	
  									*/
 
-complex	*Hdash;	/* The matrix to be `cleaned'	*/
+complex	double *Hdash;	/* The matrix to be `cleaned'	*/
 int	O;	/* the order of the matrix	*/
 
 {
@@ -306,8 +307,8 @@ int	O;	/* the order of the matrix	*/
 
  for(i=0;i<O;i++)
  {
-  if(((Hdash+i*O+i)->im)/((Hdash+i*O+i)->re)<(1e-10))
-  (Hdash+i*O+i)->im=0;	   
+  if(cimag(Hdash[i*O+i])/creal(Hdash[i*O+i])<(1e-10))
+  Hdash[i*O+i] = creal(Hdash[i*O+i]);	   
  }
 
 }
@@ -346,7 +347,7 @@ char	filename[];
   exit(0);
  }
  
- while((fscanf(Fatoms,"%s %lf %lf %lf",&(atoms+ia)->type,
+ while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
         &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
  {
   /* Convert atomic positions from Angstrom into S.I. units	*/
@@ -398,7 +399,7 @@ return(Nn);
 }
 
 
-complex
+complex double
 *read_ank(N,Nn,Nkxi)
 
 /* This function reads the eigenvectors (a_nk(G)) from the file a_nk.r
@@ -411,14 +412,13 @@ int	Nkxi;		/* number of k points in calculation		*/
  int	in;		/* index across bands				*/
  int	iG;		/* index across G vectors			*/
  int	ikxi;		/* index across kxi				*/
- int	n;		/* counter for number of elements in file	*/
  char	filename[9];	/* eigenfunction output filename                */
- complex        *ank;
+ complex double       *ank;
  FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
 /* Allocate memory for eigenvectors	*/
 
-ank=(complex *)calloc(N*Nn*Nkxi,sizeof(complex));
+ank=(complex double *)calloc(N*Nn*Nkxi,sizeof(complex double));
 if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 /* Finally read eigenvectors into structure	*/
@@ -435,8 +435,12 @@ for(ikxi=0;ikxi<Nkxi;ikxi++)
 
  for(iG=0;iG<N;iG++)
   for(in=0;in<Nn;in++)
-   fscanf(Fank,"%lf %lf",&(ank+ikxi*N*Nn+iG*Nn+in)->re,
-		         &(ank+ikxi*N*Nn+iG*Nn+in)->im);
+  {
+   double temp_re=0.0;
+   double temp_im=0.0;
+   fscanf(Fank,"%lf %lf", &temp_re, &temp_im);
+   ank[ikxi*N*Nn+iG*Nn+in] = temp_re + I * temp_im;
+  }
 
  fclose(Fank);
 }
@@ -457,7 +461,6 @@ int	Nkxi;		/* number of k points in calculation		*/
 {
  int	in;		/* index across bands				*/
  int	ikxi;		/* index across kxi				*/
- int	n;		/* counter for number of elements in file	*/
  char	filename[9];	/* eigenfunction output filename                */
  double	*Enk;
  FILE   *FEnk;		/* file pointer to eigenvectors file		*/
@@ -482,7 +485,7 @@ for(ikxi=0;ikxi<Nkxi;ikxi++)
  for(in=0;in<Nn;in++)
  {
   fscanf(FEnk,"%lf",(Enk+ikxi*Nn+in));
-  *(Enk+ikxi*Nn+in)*=e_0;		/* convert from eV->S.I.	*/
+  *(Enk+ikxi*Nn+in)*=e;		/* convert from eV->S.I.	*/
  }
 
  fclose(FEnk);
@@ -579,7 +582,7 @@ int     *Nkxi;
 
 
 
-complex 
+complex double
 V(A0,m_per_au,atoms,atomsp,n_atoms,g)
 
 double A0;	/* Lattice constant 		*/
@@ -590,13 +593,13 @@ int    n_atoms; /* number of atoms in structure */
 vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 {
  extern double Vf();   /* Fourier transform of potential	*/
- complex v;     /* potential					*/
+ complex double v;     /* potential					*/
  double	vf;	/* storage for returned data from Vf()		*/
  double	vfdash;	/* storage for returned data from Vf()		*/
  int	ia;	/* index across atoms				*/
  vector t;      /* general vertor representing atom within cell	*/
 
- v.re=0;v.im=0;
+ v=0;
 
  for(ia=0;ia<n_atoms;ia++)
  {
@@ -605,22 +608,19 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
   t.z=(atoms+ia)->r.z;
   vf=Vf(A0,m_per_au,g.x*g.x+g.y*g.y+g.z*g.z,(atoms+ia)->type);
   vfdash=Vf(A0,m_per_au,g.x*g.x+g.y*g.y+g.z*g.z,(atomsp+ia)->type);
-  v.re+=cos(g.x*t.x+g.y*t.y+g.z*t.z)*(vfdash-vf);
-  v.im-=sin(g.x*t.x+g.y*t.y+g.z*t.z)*(vfdash-vf);
+  v+=cos(g.x*t.x+g.y*t.y+g.z*t.z)*(vfdash-vf) - I * sin(g.x*t.x+g.y*t.y+g.z*t.z)*(vfdash-vf);
  }
 
  /* These last divisions represent Omega_c/Omega_sl included here for
     convenience	*/
-
- v.re/=(double)(n_atoms/2);
- v.im/=(double)(n_atoms/2);
+ v/=(double)(n_atoms/2);
 
  return(v);
 }
 
 
 
-complex 
+complex double
 VF(A0,F,q,atoms,n_atoms,g)
 
 double A0;	/* Lattice constant 		*/
@@ -630,9 +630,9 @@ atom   *atoms;	/* atomic definitions		*/
 int    n_atoms; /* number of atoms in structure */
 vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 {
- complex v;	/* potential					*/
- complex v1;	/* first term in potential			*/
- complex v2;	/* second term in potential			*/
+ complex double v;	/* potential					*/
+ complex double v1;	/* first term in potential			*/
+ complex double v2;	/* second term in potential			*/
  double	z0;	/* the midpoint of the unit cell		*/
  double	zero;	/* an effective `0'				*/
  int	n_z;	/* number of lattice constants in each period	*/
@@ -646,7 +646,7 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
  
  zero=pi/(n_z*A0)/10;
 
- v.re=0;v.im=0;
+ v=0;
 
  /* Immitates the behaviour of the product of the two delta-functions	*/ 
 
@@ -659,32 +659,24 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 
   if(fabs(g.z)>zero)
   {
-   v1.re=1/sqr(g.z);
-   v1.im=(((atoms+n_atoms-1)->r.z)-z0)/g.z;
-   v1=cmult(v1,cexp(-g.z*((atoms+n_atoms-1)->r.z)));
+   v1=1/gsl_pow_2(g.z) + I*(((atoms+n_atoms-1)->r.z)-z0)/g.z;
+   v1*=cexp(-g.z*((atoms+n_atoms-1)->r.z));
 
-   v2.re=1/sqr(g.z);
-   v2.im=((atoms->r.z)-z0)/g.z;
-   v2=cmult(v2,cexp(-g.z*(atoms->r.z)));
+   v2=1/gsl_pow_2(g.z) + I*((atoms->r.z)-z0)/g.z;
+   v2*=cexp(-g.z*(atoms->r.z));
   }
   else
   {
-   v1.re=sqr((atoms+n_atoms-1)->r.z)/2-((atoms+n_atoms-1)->r.z)*z0;
-   v1.im=0;
-
-   v2.re=sqr(atoms->r.z)/2-(atoms->r.z)*z0;
-   v2.im=0;
+   v1=gsl_pow_2((atoms+n_atoms-1)->r.z)/2-((atoms+n_atoms-1)->r.z)*z0;
+   v2=gsl_pow_2(atoms->r.z)/2-(atoms->r.z)*z0;
   }
 
 
-  /* Combine the two, note v=v1-v2	*/
-
-  v=csub(v1,v2);
+  /* Combine the two */
+  v=v1-v2;
 
   /* Multiply through by the scaling factor	*/
- 
-  v.re*=-q*F/((double)(n_z)*A0);
-  v.im*=-q*F/((double)(n_z)*A0);
+  v*=-q*F/((double)(n_z)*A0);
 
   return(v);
  }
@@ -701,7 +693,7 @@ atom   *atoms;	/* atomic definitions		*/
 int    n_atoms; /* number of atoms in structure */
 
 {
- complex	VF();	
+ complex double	VF();	
  vector g;		/* the vector, g=G'-G+kxi'-kxi	*/
  FILE	*FVFg;		/* pointer to output file	*/
  int	i;		/* index			*/
@@ -711,7 +703,7 @@ int    n_atoms; /* number of atoms in structure */
  for(i=-500;i<500;i++)
  {
   g.x=0;g.y=0;g.z=((float)i*4/500)*pi/A0;
-  fprintf(FVFg,"%le %le\n",g.z/(pi/A0),cmod(VF(A0,F,q,atoms,n_atoms,g)));
+  fprintf(FVFg,"%le %le\n",g.z/(pi/A0),cabs(VF(A0,F,q,atoms,n_atoms,g)));
  }
 
  fclose(FVFg);
