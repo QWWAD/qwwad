@@ -480,7 +480,8 @@
     || GTEST_OS_QNX)
 #endif  // GTEST_HAS_PTHREAD
 
-#if GTEST_HAS_PTHREAD
+#if GTEST_HAS_PTHREAD != 0
+#warning "plop"
 // gtest-port.h guarantees to #include <pthread.h> when GTEST_HAS_PTHREAD is
 // true.
 # include <pthread.h>  // NOLINT

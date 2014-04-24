@@ -138,6 +138,8 @@ src_ivdb_LDADD   = src/libqclsim.a $(LDADD)
 src_ppvfq_SOURCES = src/ppvfq.c src/ppff.h
 src_ppvfq_LDADD   = src/libqclsim.a
 
+src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
+
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqclsim.a $(LDADD)
 
@@ -155,6 +157,17 @@ man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
 	help2man --output=man/dos.1 --name="compute density of states in 1D, 2D and 3D systems" src/dos$(EXEEXT)
 
+# Install examples
+exdatadir = $(datadir)/qwwad/examples
+ 
+ex2datadir = $(exdatadir)/solutions-to-schroedingers-equation
+ex2srcdir = examples/solutions-to-schroedingers-equation
+
+EXTRA_DIST = examples
+
+ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh  \
+	       $(ex2srcdir)/infinite-well-energy-vs-width.agr \
+	       $(ex2srcdir)/infinite-well-energy-vs-width.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
@@ -209,6 +222,8 @@ check_LTLIBRARIES = gtest/lib/libgtest.la gtest/lib/libgtest_main.la
 #check_CPPFLAGS = -I$(srcdir)/gtest/include
 
 gtest_lib_libgtest_la_SOURCES = gtest/src/gtest-all.cc
+gtest_lib_libgtest_la_CXXFLAGS = $(GTEST_CXXFLAGS)
+gtest_lib_libgtest_la_LIBADD = $(GTEST_LIBS)
 
 gtest_lib_libgtest_main_la_SOURCES = gtest/src/gtest_main.cc
 gtest_lib_libgtest_main_la_CXXFLAGS = $(GTEST_CXXFLAGS)

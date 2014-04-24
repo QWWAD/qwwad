@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # Calculates the first 3 energy level in an infinite GaAs quantum well
 # with a range of well widths. The energies are output to the file
@@ -15,7 +16,8 @@
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 
 # Initialise files
-rm -f Ee-lw.r Ee-lw-alpha.r
+outfile=infinite-well-energy-vs-width.r
+rm -f $outfile
 
 # Set fixed parameters
 mass=0.067 # Effective mass relative to a free electron
@@ -32,17 +34,11 @@ do
  # Calculate first 3 energy levels as a function of well width for GaAs
  efiw -L $LW -m $mass -s $nst
 
- printf "%f\t" "$LW" >> Ee-lw.r	# write well width to file
+ printf "%f\t" "$LW" >> $outfile	# write well width to file
 
  energies=`awk '{print $2}' < Ee.r`
- echo $energies >> Ee-lw.r
-
- # Repeat using nonparabolicity
- efiw -L $LW -m 0.067 -s $nst --alpha 0.701
-
- printf "%f\t" "$LW" >> Ee-lw-alpha.r	# write well width to file
-
- energies=`awk '{print $2}' < Ee.r`
- echo $energies >> Ee-lw-alpha.r
+ echo $energies >> $outfile
 }
 done
+
+rm wf_e?.r Ee.r
