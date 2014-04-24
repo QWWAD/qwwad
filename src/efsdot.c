@@ -47,7 +47,7 @@ char   filename[9];	/* output filename			 */
 bool   np_flag;	/* Hamiltonian flag def.=1=>D(1/m)D  */
 FILE   *FE;		/* outputfile for el. energy states  */
 files  *data_start;	/* start address of potential	 */
-data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
+data11 *data_m0Eg=NULL;	/* start address of m(0) and Eg		*/
 
 /* default values */
 
@@ -258,6 +258,7 @@ bool   np_flag;
  
  psi[0]=1.0;                 /* even parity solutions, 1, 3, etc.	*/
  psi[1]=1.0;
+ psi[2]=0;
 
  fdata++;                    /* ignore data corresponding to psi[0] */
 

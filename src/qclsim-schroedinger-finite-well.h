@@ -47,7 +47,6 @@ private:
     void calculate();
     
     std::valarray<double> wavef(const double E,
-                                const int    i_state,
                                 const bool   parity_flag);
 };
 } // namespace Leeds

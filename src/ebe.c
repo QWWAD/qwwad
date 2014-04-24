@@ -68,7 +68,9 @@ double lambda;              /* Bohr radius                       */
 double lambda_start;        /* initial Bohr radius               */
 double lambda_step;         /* lambda increment                  */
 double lambda_stop;         /* final lambda                      */
-double lambda_0;            /* lambda for Eb_min                 */
+
+/* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
+double lambda_0=0;            /* lambda for Eb_min                 */
 double m[2];		    /* e and h z-axis masses		 */
 double m_xy[2];		    /* e and h x-y plane masses		 */
 double mu_xy;		    /* exciton reduced mass in x-y plane */

@@ -335,12 +335,17 @@ char	filename[];
  }
 
  /* Read in the first line and hence the number of atoms	*/
-
- fscanf(Fatoms,"%i",n_atoms);
+ int n_read = fscanf(Fatoms,"%i",n_atoms);
  
  /* Allocate memory for atom definitions	*/
+ if (n_read == 1)
+     atoms=(atom *)calloc(*n_atoms,sizeof(atom));
+ else
+ {
+  fprintf(stderr,"Cannot read number of atoms!\n");
+  exit(EXIT_FAILURE);
+ }
 
- atoms=(atom *)calloc(*n_atoms,sizeof(atom));
  if(atoms==0)
  {
   fprintf(stderr,"Cannot allocate memory!\n");
@@ -386,7 +391,7 @@ int	N;		/* The number of terms in each eigenvector	*/
 /* Deduce number of complexes in file and hence number of bands	*/
 
 n=0;
-while(fscanf(Fank,"%*lf %*lf")!=EOF)
+while(fscanf(Fank,"%*f %*f")!=EOF)
  n++;
 
 /* The number of bands Nn is therefore the total number of elements divided
@@ -438,8 +443,14 @@ for(ikxi=0;ikxi<Nkxi;ikxi++)
   {
    double temp_re=0.0;
    double temp_im=0.0;
-   fscanf(Fank,"%lf %lf", &temp_re, &temp_im);
-   ank[ikxi*N*Nn+iG*Nn+in] = temp_re + I * temp_im;
+   int n_read = fscanf(Fank,"%lf %lf", &temp_re, &temp_im);
+   if (n_read == 2)
+       ank[ikxi*N*Nn+iG*Nn+in] = temp_re + I * temp_im;
+   else
+   {
+       fprintf(stderr, "Could not read number.\n");
+       exit(EXIT_FAILURE);
+   }
   }
 
  fclose(Fank);
@@ -484,8 +495,14 @@ for(ikxi=0;ikxi<Nkxi;ikxi++)
 
  for(in=0;in<Nn;in++)
  {
-  fscanf(FEnk,"%lf",(Enk+ikxi*Nn+in));
-  *(Enk+ikxi*Nn+in)*=e;		/* convert from eV->S.I.	*/
+  int n_read = fscanf(FEnk,"%lf",(Enk+ikxi*Nn+in));
+  if (n_read == 1)
+      Enk[ikxi*Nn+in] *= e;		/* convert from eV->S.I.	*/
+  else
+  {
+      fprintf(stderr, "Could not read number\n");
+      exit(EXIT_FAILURE);
+  }
  }
 
  fclose(FEnk);
@@ -515,7 +532,7 @@ int     *N;
  }
 
  *N=0;
- while(fscanf(FG,"%*lf %*lf %*lf")!=EOF)
+ while(fscanf(FG,"%*f %*f %*f")!=EOF)
   (*N)++;
  rewind(FG);
 
@@ -559,7 +576,7 @@ int     *Nkxi;
  }
 
  *Nkxi=0;
- while(fscanf(Fkxi,"%*lf %*lf %*lf")!=EOF)
+ while(fscanf(Fkxi,"%*f %*f %*f")!=EOF)
   (*Nkxi)++;
  rewind(Fkxi);
 

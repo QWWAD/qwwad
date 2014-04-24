@@ -69,7 +69,9 @@ double dy;                  /* derivative of function            */
 double E;                   /* electron (or hole) energies       */
 double epsilon;             /* permitivity of material           */
 double lambda;              /* Bohr radius (variational)         */
-double lambda_0;            /* Bohr radius of electron (or hole) */
+
+/* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
+double lambda_0 = 0;        /* Bohr radius of electron (or hole) */
 double lambda_start;        /* initial Bohr radius               */
 double lambda_step;         /* Bohr radius increment             */
 double lambda_stop;         /* final lambda                      */
@@ -82,8 +84,13 @@ double y;                   /* function (psi at infinity)        */
 double y1;                  /* temporary y value                 */
 double y2;                  /* temporary y value                 */
 double zeta;                /* value for zeta in wavefunction    */
-double zeta_0;              /* zeta of solution                  */
-double zeta_0_lambda;       /* zeta of minimum for each lambda   */
+
+/*
+ * TODO: zeta_0 and zeta_0_lambda are found iteratively. 
+ *       Check that this is a sensible initial value
+ */
+double zeta_0 = 0;          /* zeta of solution                  */
+double zeta_0_lambda = 0;   /* zeta of minimum for each lambda   */
 double zeta_start;          /* initial zeta                      */
 double zeta_step;           /* zeta increment                    */
 double zeta_stop;           /* final zeta                        */
@@ -232,11 +239,11 @@ while((argc>1)&&(argv[1][0]=='-'))
     printf("r_d %le lambda %le zeta %le energy %le meV\n",
             r_d,lambda,zeta,x/(1e-3*e));       
 
-    repeat_flag_zeta=repeat_zeta(&zeta,&zeta_0_lambda,&x,&x_min_zeta);
+    repeat_flag_zeta=repeat_zeta(zeta,&zeta_0_lambda,x,&x_min_zeta);
     zeta+=zeta_step;		/* increments zeta	*/
     }while((repeat_flag_zeta&&(zeta_stop<0))||(zeta<zeta_stop));
 
-    repeat_flag_lambda=repeat_lambda(&lambda,&lambda_0,&x_min_zeta,&x_min,&zeta_0,&zeta_0_lambda);
+    repeat_flag_lambda=repeat_lambda(lambda,&lambda_0,x_min_zeta,&x_min,&zeta_0,zeta_0_lambda);
 
     lambda+=lambda_step;     /* increments Bohr radius */
 
@@ -268,60 +275,58 @@ while((argc>1)&&(argv[1][0]=='-'))
 } /* end main */
 
 
-bool
-repeat_lambda(lambda,lambda_0,x_min_zeta,x_min,zeta_0,zeta_0_lambda)
-
-/* This function compares minimum value of energy for this lambda,
-   if it is a new true minima, then repeat for new lambda	*/
-
-double *lambda;
-double *lambda_0;
-double *x_min_zeta;
-double *x_min;
-double *zeta_0;
-double *zeta_0_lambda;
+/**
+ * Compares minimum value of energy for this lambda,
+ * if it is a new true minima, then repeat for new lambda
+ *
+ * \param[in]  lambda        Bohr radius (variational)
+ * \param[out] lambda_0      Bohr radius of electron (or hole)
+ * \param[in]  x_min_zeta    Minimum x as zeta varies only
+ * \param[out] x_min         Variational calculation minimum x
+ * \param[out] zeta_0        Zeta of solution
+ * \param[in]  zeta_0_lambda Zeta of minimum for each lambda
+ *
+ * \returns True if x_min_zeta < x_min
+ */
+bool repeat_lambda(const double  lambda,
+                   double       *lambda_0,
+                   const double  x_min_zeta,
+                   double       *x_min,
+                   double       *zeta_0,
+                   const double  zeta_0_lambda)
 {
- bool flag;
+ bool flag = false;
 
- if(*x_min_zeta<*x_min)    
+ if(x_min_zeta<*x_min)    
  {      
-  *x_min=*x_min_zeta;                 /* set new minimum        */
-  *lambda_0=*lambda;
-  *zeta_0=*zeta_0_lambda;
+  *x_min=x_min_zeta;                 /* set new minimum        */
+  *lambda_0=lambda;
+  *zeta_0=zeta_0_lambda;
   flag=true;                          /* repeat for new lambda  */
  }
- else 
- {
-  flag=false;
- }    
- return(flag);
+
+ return flag;
 }
 
-bool
-repeat_zeta(zeta,zeta_0_lambda,x,x_min_zeta)
-
-/* This function compares current energy value with the minima for this
-   value of lambda only, if a new minima for this lambda, then repeat	*/
-
-double *zeta;
-double *zeta_0_lambda;
-double *x;
-double *x_min_zeta;
-
+/**
+ * compares current energy value with the minima for this
+ * value of lambda only, if a new minima for this lambda, then repeat
+ */
+bool repeat_zeta(const double  zeta,
+                 double       *zeta_0_lambda,
+                 const double  x,
+                 double       *x_min_zeta)
 {
- bool flag;
+ bool flag = false;
  
- if(*x<*x_min_zeta)
+ if(x<*x_min_zeta)
  {
-  *x_min_zeta=*x;
-  *zeta_0_lambda=*zeta;
+  *x_min_zeta=x;
+  *zeta_0_lambda=zeta;
   flag=true;
  }
- else
- {
-  flag=false;
- }
- return(flag);
+
+ return flag;
 }
 
 
@@ -391,23 +396,19 @@ int N_w;
  return(psi[0]-delta_psi);
 }
 
-void
-wavefunctions(delta_z,E,epsilon,lambda,mstar,r_d,zeta,i_d,Vp,n,N_w)
-
 /* This function calculates and writes the wavefunctions
    both psi(z) and chi(z) to the external file wf(n).r.		*/
-
-double delta_z;
-double E;
-double epsilon;
-double lambda;
-double mstar;
-double r_d;
-double zeta;
-int    i_d;
-size_t n;
-data11  *Vp;
-int    N_w;
+void wavefunctions(const double  delta_z,
+                   const double  E,
+                   const double  epsilon,
+                   const double  lambda,
+                   const double  mstar,
+                   const double  r_d,
+                   const double  zeta,
+                   const int     i_d,
+                   data11       *Vp,
+                   const size_t  n,
+                   const int     N_w)
 {
  double        alpha;		 /* coefficient of second derivative, see notes */
  double        beta;            /* coefficient of first derivative             */

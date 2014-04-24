@@ -55,7 +55,6 @@ double  ki;             /* carrier momentum (wave vector actually)	*/
 double	Kz;		/* phonon wavevector				*/
 double	m;		/* carrier effective mass			*/
 double	N0;		/* number of phonons at LO phonon energy	*/
-double	omega_0;	/* angular frequency of LO phonon		*/
 double	rho;		/* density of material				*/
 double	T;		/* temperature					*/
 double	theta;		/* the angle theta				*/
@@ -158,7 +157,6 @@ while((argc>1)&&(argv[1][0]=='-'))
 
 /* calculate often used constants	*/
 
-omega_0=Ephonon/hBar;		/* phonon angular frequency	*/
 N0=1/(exp(Ephonon/(kB*T))-1);	/* Bose-Einstein factor	*/
 
 Upsilon_a=gsl_pow_2(Da)*m*N0/(rho*Vs*4*gsl_pow_2(pi*hBar));
@@ -393,7 +391,7 @@ int	*nE;
  }
 
  *nE=0;
- while(fscanf(FE,"%*i %*le")!=EOF)
+ while(fscanf(FE,"%*i %*e")!=EOF)
   (*nE)++;
  rewind(FE);
 
@@ -441,7 +439,7 @@ char	p;
  {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
 
  *n=0;	
- while(fscanf(Fv,"%*le %*le")!=EOF)
+ while(fscanf(Fv,"%*e %*e")!=EOF)
   (*n)++;
  fclose(Fv);
 
@@ -487,7 +485,7 @@ max=0;
 if((Fv=fopen("v.r","r"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
 
-while(fscanf(Fv,"%*le %le",&v)!=EOF)
+while(fscanf(Fv,"%*e %le",&v)!=EOF)
  if(v>max) max=v;
 
 fclose(Fv);

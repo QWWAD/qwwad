@@ -250,11 +250,17 @@ int	*n_atoms;
 
  /* Read in the first line and hence the number of atoms	*/
 
- fscanf(Fatoms,"%i",n_atoms);
+ int n_read = fscanf(Fatoms,"%i",n_atoms);
  
  /* Allocate memory for atom definitions	*/
+ if (n_read == 1)
+   atoms=(atom *)calloc(*n_atoms,sizeof(atom));
+ else
+ {
+   fprintf(stderr, "Could not read number of atoms!\n");
+   exit(EXIT_FAILURE);
+ }
 
- atoms=(atom *)calloc(*n_atoms,sizeof(atom));
  if(atoms==0)
  {
   fprintf(stderr,"Cannot allocate memory!\n");
@@ -296,7 +302,7 @@ int     *N;
  }
 
  *N=0;
- while(fscanf(FG,"%*lf %*lf %*lf")!=EOF)
+ while(fscanf(FG,"%*f %*f %*f")!=EOF)
   (*N)++;
  rewind(FG);
 

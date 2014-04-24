@@ -54,7 +54,9 @@ double dy;                  /* derivative of function            */
 double E;                   /* electron (or hole) energies       */
 double epsilon;             /* permitivity of material           */
 double lambda;              /* Bohr radius (variational)         */
-double lambda_0;            /* Bohr radius of electron (or hole) */
+
+/* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
+double lambda_0 = 0;        /* Bohr radius of electron (or hole) */
 double lambda_start;        /* initial Bohr radius               */
 double lambda_step;         /* Bohr radius increment             */
 double lambda_stop;         /* final lambda                      */

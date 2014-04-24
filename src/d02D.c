@@ -60,7 +60,9 @@ double dy;                  /* derivative of function            */
 double E;                   /* electron (or hole) energies       */
 double epsilon;             /* permitivity of material           */
 double lambda;              /* Bohr radius (variational)         */
-double lambda_0;            /* Bohr radius of electron (or hole) */
+
+/* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
+double lambda_0 = 0;        /* Bohr radius of electron (or hole) */
 double lambda_start;        /* initial Bohr radius               */
 double lambda_step;         /* Bohr radius increment             */
 double lambda_stop;         /* final lambda                      */
@@ -341,7 +343,7 @@ size_t  N_w;
  double Npsi=0;          /* normalisation integral for psi              */
  double Nchi=0;          /* normalisation integral for chi              */
  double psi[3];          /* wavefunctions at z-d_z,z,z+d_z              */
- int    i;               /* index                                       */
+ unsigned int    i;               /* index                                       */
  char   filename[9];     /* character string for wavefunction filename  */
  FILE   *fw;             /* file wf.r                                   */
  data12  *wf_start;      /* pointer to start of w.f                     */

@@ -191,7 +191,7 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
  for(i=0;i<Ns;i++) 		
   for(j=0;j<=i;j++)	
   {
-   ank[i*Ns+j] = Vso(A0,m_per_au,atoms,G,n_atoms,k,i,j,N) + *(ank+i*Ns+j);
+   ank[i*Ns+j] = Vso(A0,atoms,G,n_atoms,k,i,j,N) + *(ank+i*Ns+j);
   }
 
  /* call LAPACK diagonalisation routine	*/
@@ -361,10 +361,9 @@ vector q;       /* a reciprocal lattice vector, G'-G */
 
 
 complex double 
-Vso(A0,m_per_au,atoms,G,n_atoms,k,i,j,N)
+Vso(A0,atoms,G,n_atoms,k,i,j,N)
 
 double A0;	/* Lattice constant 				*/
-double m_per_au;/* conversion factor from SI to a.u. 		*/
 atom   *atoms;	/* atomic definitions				*/
 vector *G;	/* the reciprocal lattice vectors		*/
 int    n_atoms; /* number of atoms in structure 		*/

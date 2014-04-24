@@ -146,14 +146,12 @@ double SchroedingerSolverFiniteWell_f(double  v,
 }
 
 /**
- * \brief calculates the uncorrelated one particle wavefunctions for the electron and hole and writes to an external file.
+ * \brief calculates the uncorrelated one particle wavefunction
  *
  * \param[in] E           local energy
- * \param[in] i_state     state index
  * \param[in] odd_parity  true for odd states, false for even
  */
 std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
-                                                          const int    i_state,
                                                           const bool   odd_parity)
 {
     // Define k and K
@@ -271,7 +269,7 @@ void SchroedingerSolverFiniteWell::calculate()
 
         const double k = 2.0*v/_l_w;
         const double E = hBar*hBar*k*k/(2.0*_m_w);
-        std::valarray<double> psi = wavef(E,ist+1,parity_flag);
+        std::valarray<double> psi = wavef(E,parity_flag);
         _solutions.push_back(State(E, psi));
         gsl_root_fsolver_free(solver);
     }

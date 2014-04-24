@@ -48,7 +48,7 @@ bool	np_flag;	/* non-parabolicity flag		*/
 FILE	*FE;		/* outputfile for el. energy states	*/
 FILE	*Fwf;		/* outputfile for wavefunctions		*/
 files	*data_start;	/* start address of potential		*/
-data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
+data11	*data_m0Eg=NULL;	/* start address of m(0) and Eg		*/
 data11	*data_zwf;	/* start address of z and wf		*/
 
 /* default values */

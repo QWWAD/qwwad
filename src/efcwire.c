@@ -53,7 +53,7 @@ char   filename[9];	/* output filename			 */
 bool   np_flag;         /* Hamiltonian flag def.=1=>D(1/m)D  */
 FILE   *FE;		/* outputfile for el. energy states  */
 files  *data_start;	/* start address of potential	 */
-data11	*data_m0Eg;	/* start address of m(0) and Eg		*/
+data11 *data_m0Eg=NULL;	/* start address of m(0) and Eg		*/
 
 /* default values */
 
@@ -112,7 +112,9 @@ sprintf(filename,"E%c.r",p);
 FE=fopen(filename,"w");
 
 data_start=read_data(&n);			/* reads potential file	*/
-if(np_flag)data_m0Eg=read_Egdata(n,data_start);	/* reads bandgap data	*/	
+
+if(np_flag)
+    data_m0Eg=read_Egdata(n,data_start);	/* reads bandgap data	*/	
 
 delta_z=read_delta_z(data_start);
 
@@ -269,6 +271,7 @@ static double psi_at_inf(const double  E,
  /* boundary conditions: Eq. 8.55, QWWAD3 */
  psi[0]=1.0;
  psi[1]=1.0;
+ psi[2]=0;
 
  fdata++;                    /* ignore data corresponding to psi[0] */
 
