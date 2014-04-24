@@ -38,11 +38,11 @@ set( qwwad_h
 add_library( qwwad ${qwwad_src} )
 
 add_executable( d0 d0.c ${d0_helpers} )
-target_link_libraries( d0 m gsl cblas )
+target_link_libraries( d0 ${GSL_LIBRARIES} )
 add_executable( d02D d02D.c ${d0_helpers} )
-target_link_libraries( d02D m gsl cblas )
+target_link_libraries( d02D ${GSL_LIBRARIES} )
 add_executable( d03D d03D.c ${d0_helpers} )
-target_link_libraries( d03D m gsl cblas )
+target_link_libraries( d03D ${GSL_LIBRARIES} )
 
 #add_executable( dispersion_relation dispersion_relation.cpp ${wf_options} )
 #target_link_libraries( dispersion_relation qwwad )
