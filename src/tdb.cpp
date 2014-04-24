@@ -14,6 +14,7 @@
 
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 #include <valarray>
 #include "double-barrier.h"
 #include "qclsim-constants.h"

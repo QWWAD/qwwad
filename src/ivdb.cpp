@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 #include <valarray>
 #include <gsl/gsl_math.h>
 #include "dos-functions.h"
