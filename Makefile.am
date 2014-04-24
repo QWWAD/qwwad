@@ -222,7 +222,7 @@ check_LTLIBRARIES = gtest/lib/libgtest.la gtest/lib/libgtest_main.la
 #check_CPPFLAGS = -I$(srcdir)/gtest/include
 
 gtest_lib_libgtest_la_SOURCES = gtest/src/gtest-all.cc
-gtest_lib_libgtest_la_CXXFLAGS = $(GTEST_CXXFLAGS)
+gtest_lib_libgtest_la_CXXFLAGS = $(GTEST_CXXFLAGS) -Wno-missing-field-initializers
 gtest_lib_libgtest_la_LIBADD = $(GTEST_LIBS)
 
 gtest_lib_libgtest_main_la_SOURCES = gtest/src/gtest_main.cc
