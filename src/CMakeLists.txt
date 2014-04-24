@@ -44,8 +44,9 @@ target_link_libraries( d02D ${GSL_LIBRARIES} )
 add_executable( d03D d03D.c ${d0_helpers} )
 target_link_libraries( d03D ${GSL_LIBRARIES} )
 
-#add_executable( dispersion_relation dispersion_relation.cpp ${wf_options} )
-#target_link_libraries( dispersion_relation qwwad )
+add_executable( dispersion_relation dispersion_relation.cpp ${wf_options} )
+target_link_libraries( dispersion_relation qwwad ${Boost_LIBRARIES}
+	${GSL_LIBRARIES} )
 
-#add_executable( dos dos.cpp ${qwwad_options} ${dos_funcs} ${qwwad_fileio} )
-#target_link_libraries( dos qwwad )
+add_executable( dos dos.cpp ${qwwad_options} ${dos_funcs} ${qwwad_fileio} )
+target_link_libraries( dos qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} )

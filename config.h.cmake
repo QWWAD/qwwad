@@ -1,0 +1,2 @@
+#define PACKAGE_VERSION "${QWWAD_VERSION}"
+#define PACKAGE_URL     "${QWWAD_URL}"
