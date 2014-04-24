@@ -27,19 +27,17 @@
    Major Modifications, July 1998
 	Move to XYZ format 
 	Reading in atomic positions from a general basis
-
-   Tweak, July 1999
-   	Include form factor file directly
+  
+   Modifications, December 1999
+   	Use of LAPACK diagonalisation routine
 								*/
 
-#include <Nag/nag.h>
 #include <stdio.h>
-#include <Nag/nag_stdlib.h>
-#include <Nag/nagf02.h>
-#include <math.h>
 #include <stdlib.h>
+#include <math.h>
 #include "struct.h"
 #include "maths.h"
+#include "const.h"
 #include "bools.h"
 
 #include "ppff.c"
@@ -52,31 +50,37 @@ typedef struct
 
 main(int argc,char *argv[])
 {
-Complex	V();		/* potential component of H_GG			*/
+complex	V();		/* potential component of H_GG			*/
 atom	*read_atoms();	/* read in atomic positions/species		*/
-void	f02axc();	/* Matrix diagonalization routine (NAG)		*/
+void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
 void	write_ank();	/* writes eigenvectors to file			*/
 vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 
-Complex	*ank;		/* coefficients of eigenvectors			*/
-Complex	*H_GG;		/* components of H_G'G (see notes)		*/
-Complex	T_GG;		/* kinetic energy component of H_GG		*/
-Complex	*V_GG;		/* potential energy of H_GG, diagonal elements	*/
+complex	*ank;		/* coefficients of eigenvectors			*/
+complex	*H_GG;		/* components of H_G'G (see notes)		*/
+complex	T_GG;		/* kinetic energy component of H_GG		*/
+complex	*V_GG;		/* potential energy of H_GG, diagonal elements	*/
 			/* stored here for efficiency			*/
+complex	*WORK;		/* LAPACK: workspace				*/
 double	A0;		/* Lattice constant				*/
 double	*E;		/* energy eigenvalues				*/
 double	m_per_au;	/* unit conversion factor, m/a.u.		*/
+double	*RWORK;		/* LAPACK: workspace				*/
 int	N;		/* number of reciprocal lattice vectors		*/
 int     n_min;          /* lowest output band				*/
 int     n_max;          /* highest output band				*/
 int	n_atoms;	/* number of atoms in (large) cell		*/
+int	INFO;		/* LAPACK: information integer			*/
 int	i;		/* loop index for matrix rows			*/
 int	iE;		/* loop index for energy eigenvalues		*/
 int	ik;		/* loop index for k-vectors			*/
 int	j;		/* loop index for matrix columns		*/
+int	LWORK;		/* LAPACK: workspace				*/
 char	filenameE[9];	/* character string for Energy output filename	*/
+char	JOBZ='V';	/* LAPACK: compute eigenvectors and eigenvalues	*/
+char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
 FILE	*Fk;		/* pointer to k.r file				*/
-FILE	*FEk;		/* pointer to k.r file				*/
+FILE	*FEk;		/* pointer to Ek.r file				*/
 atom	*atoms;		/* the type and position of the atoms		*/
 boolean	ev;		/* flag, if set output eigenvectors 		*/
 vector	*G;		/* reciprocal lattice vectors			*/
@@ -88,7 +92,7 @@ vector	q;		/* G'-G						*/
 A0=5.65e-10;
 ev=false;
 n_min=0;
-n_max=3;
+n_max=-1;
 m_per_au=4*pi*epsilon_0*sqr(hbar/e_0)/m0;
 
 while((argc>1)&&(argv[1][0]=='-'))
@@ -130,16 +134,26 @@ G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
 
 /* Allocate memory */
 
-H_GG=(Complex *)calloc(N*N,sizeof(Complex));
+LWORK=2*N;		/* LAPACK workspace definition		*/
+
+WORK=(complex *)calloc(LWORK,sizeof(complex));
+ if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+
+RWORK=(double *)calloc(3*N-2,sizeof(double));
+ if(RWORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+
+/* end of LAPACK definitions	*/
+
+H_GG=(complex *)calloc(N*N,sizeof(complex));
  if(H_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-V_GG=(Complex *)calloc(N,sizeof(Complex));
+V_GG=(complex *)calloc(N,sizeof(complex));
  if(V_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 E=(double *)calloc(N,sizeof(double));
  if(E==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-ank=(Complex *)calloc(N*N,sizeof(Complex));
+ank=(complex *)calloc(N*N,sizeof(complex));
  if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 for(i=0;i<N;i++)        /* index down rows */
@@ -171,9 +185,14 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
   ((H_GG+i*N+i)->re)+=T_GG.re;
  }
 
- /* Call NAG C routine to diagonalise matrix	*/
+for(i=0;i<N;i++) 		/* LAPACK routine zheev() writes vectors */
+ for(j=0;j<=i;j++)		/* over original matrix, so copy matrix  */
+  *(ank+i*N+j)=*(H_GG+i*N+j);	/* to eigenvector space			 */
 
- f02axc(N,H_GG,N,E,ank,N,NAGERR_DEFAULT);
+ /* call LAPACK diagonalisation routine	*/
+
+ ctranspose(ank,N);		/* because of FORTRAN LAPACK	*/
+ zheev_(&JOBZ,&UPLO,&N,ank,&N,E,WORK,&LWORK,RWORK,&INFO);
 
  /* Output eigenvalues in a separate file for each k point */
 
@@ -184,7 +203,10 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
 
  /* Output eigenvectors */
 
- if(ev)write_ank(ank,ik,N,n_min,n_max);
+ if(ev){
+	ctranspose(ank,N);		/* because of FORTRAN LAPACK	*/
+	write_ank(ank,ik,N,n_min,n_max);
+        }
 
  ik++;	/* increment loop counter	*/
  
@@ -197,6 +219,8 @@ free(V_GG);
 free(E);
 free(ank);
 free(atoms);
+
+free(WORK);free(RWORK);		/* The LAPACK definitions	*/
 
 }/* end main */
 
@@ -294,7 +318,7 @@ int     *N;
 
 
 
-Complex 
+complex 
 V(A0,m_per_au,atoms,n_atoms,q)
 
 double A0;	/* Lattice constant */
@@ -304,7 +328,7 @@ int    n_atoms; /* number of atoms in structure */
 vector q;       /* a reciprocal lattice vector, G'-G */
 {
  extern double Vf();   /* Fourier transform of potential	*/
- Complex v;     /* potential					*/
+ complex v;     /* potential					*/
  double	vf;	/* storage for returned data from Vf()		*/
  int	ia;	/* index across atoms				*/
  vector t;      /* general vertor representing atom within cell	*/
@@ -334,7 +358,7 @@ write_ank(ank,ik,N,n_min,n_max)
 
 /* This function writes the eigenvectors (a_nk(G)) to the files ank.r */
 
-Complex	*ank;
+complex	*ank;
 int	ik;		/* k point identifier				*/
 int	N;
 int     n_min;          /* lowest output band				*/

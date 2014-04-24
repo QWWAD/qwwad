@@ -29,19 +29,17 @@
 
    Modifications, March 1999
 
-   Paul Harrison.
- 
+   Modifications, January 2000
+	Use of LAPACK diagonalisation routine
+
 								*/
 
-#include <Nag/nag.h>
 #include <stdio.h>
-#include <Nag/nag_stdlib.h>
-#include <Nag/nagf02.h>
 #include <math.h>
 #include <stdlib.h>
 #include "struct.h"
 #include "maths.h"
-#include "mathnag.h"
+#include "const.h"
 #include "bools.h"
 
 #include "ppff.c"
@@ -54,27 +52,30 @@ typedef struct
 
 main(int argc,char *argv[])
 {
-Complex	V();		/* potential component of Hdash			*/
-Complex	VF();		/* field potential component of Hdash		*/
-Complex	*read_ank();	/* reads in all the bulk eigenvectors ank(G)	*/
+complex	V();		/* potential component of Hdash			*/
+complex	VF();		/* field potential component of Hdash		*/
+complex	*read_ank();	/* reads in all the bulk eigenvectors ank(G)	*/
 double	*read_Enk();	/* reads in all the bulk eigenvalues Enk	*/
 atom	*read_atoms();	/* read in atomic positions/species		*/
 void	clean_Hdash();	/* removes round-up errors => makes H' Hermitian*/
-void	f02axc();	/* Matrix diagonalization routine (NAG)		*/
+void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
 void	write_VF();	/* writes the FT of the electric field potential*/
 int	read_ank0();	/* deduces the number of bands in calculation	*/
 vector	*read_kxi();	/* reads in kxi points				*/
 vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 
-Complex	*Ank;		/* coefficients of eigenvectors			*/
-Complex	*ank;		/* coefficients of bulk eigenvectors		*/
-Complex	*Hdash;		/* components of H' (see notes)			*/
+complex	*Ank;		/* coefficients of eigenvectors			*/
+complex	*ank;		/* coefficients of bulk eigenvectors		*/
+complex	*Hdash;		/* components of H' (see notes)			*/
+complex	*WORK;		/* LAPACK: workspace				*/
 double	A0;		/* Lattice constant				*/
 double	*Enk;		/* bulk energy eigenvalues			*/
 double	*Exi;		/* energy eigenvalues				*/
 double	F;		/* the electric field strength			*/
 double	m_per_au;	/* unit conversion factor, m/a.u.		*/
 double	q;		/* the carrier charge, e=-e_0, h=+e_0		*/
+double	*RWORK;		/* LAPACK: workspace				*/
+int	INFO;		/* LAPACK: information integer			*/
 int	N;		/* number of reciprocal lattice vectors		*/
 int	Nn;		/* number of bands in calculation		*/
 int	Nkxi;		/* number of k points in calculation		*/
@@ -90,8 +91,12 @@ int	ikxidash;	/* index for kxidash 				*/
 int	in;		/* index over the bulk band n			*/
 int	indash;		/* index over the bulk band n'			*/
 int	j;		/* loop index for matrix columns		*/
+int	LWORK;		/* LAPACK: workspace				*/
+int	OH;		/* the order of Hdash				*/
 char	filename[12];	/* character string for Energy output filename	*/
+char	JOBZ='V';	/* LAPACK: compute eigenvectors and eigenvalues	*/
 char	p;		/* the particle					*/
+char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
 FILE	*FExi;		/* pointer to output energy file `Exi.r'	*/
 atom	*atoms;		/* the type and position of the atoms		*/
 atom	*atomsp;	/* the type and position of the perturbed atoms	*/
@@ -174,13 +179,23 @@ if(o) write_VF(A0,F,q,atoms,n_atoms);
 
 /* Allocate memory */
 
-Hdash=(Complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(Complex));
+LWORK=2*Nn*Nkxi;		/* LAPACK workspace definition		*/
+
+WORK=(complex *)calloc(LWORK,sizeof(complex));
+ if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+
+RWORK=(double *)calloc(3*Nn*Nkxi-2,sizeof(double));
+ if(RWORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+
+/* end of LAPACK definitions	*/
+
+Hdash=(complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex));
  if(Hdash==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 Exi=(double *)calloc(Nn*Nkxi,sizeof(double));
  if(Exi==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-Ank=(Complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(Complex));
+Ank=(complex *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(complex));
  if(Ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 
@@ -221,14 +236,14 @@ for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
     /* Add on potential term	*/
 
     *(Hdash+i*Nn*Nkxi+j)=
-                 Cadd(
+                 cadd(
                       *(Hdash+i*Nn*Nkxi+j),
-		      Cmult(
-                            Cmult(
-                                  Cconj(*(ank+ikxidash*N*Nn+iGdash*Nn+indash)),
+		      cmult(
+                            cmult(
+                                  cconj(*(ank+ikxidash*N*Nn+iGdash*Nn+indash)),
                                   *(ank+ikxi*N*Nn+iG*Nn+in)
                                  ),
-	                    Cadd(
+	                    cadd(
 				 V(A0,m_per_au,atoms,atomsp,n_atoms,g),
 				 VF(A0,F,q,atoms,n_atoms,g)
 				)
@@ -241,19 +256,25 @@ for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
  } /* end j */
 } /* end i */
 
- /* Clean up matrix H'	*/
+/* Clean up matrix H'	*/
 
- clean_Hdash(Hdash,Nn*Nkxi);
+clean_Hdash(Hdash,Nn*Nkxi);
 
- /* Call NAG C routine to diagonalise matrix	*/
+for(i=0;i<Nn*Nkxi;i++)		/* LAPACK routine zheev() writes vectors */
+ for(j=0;j<=i;j++)		/* over original matrix, so copy matrix  */
+  *(Ank+i*Nn*Nkxi+j)=*(Hdash+i*Nn*Nkxi+j);/* to eigenvector space	 */
 
- f02axc(Nn*Nkxi,Hdash,Nn*Nkxi,Exi,Ank,Nn*Nkxi,NAGERR_DEFAULT);
+/* call LAPACK diagonalisation routine	*/
 
- /* Output eigenvalues in a separate file for each k point */
+OH=Nn*Nkxi;			/* the order of Hdash	*/
+ctranspose(Ank,Nn*Nkxi);	/* because of FORTRAN LAPACK	*/
+zheev_(&JOBZ,&UPLO,&OH,Ank,&OH,Exi,WORK,&LWORK,RWORK,&INFO);
 
- FExi=fopen("Exi.r","w");
- for(iE=n_min;iE<=n_max;iE++)fprintf(FExi,"%10.6f\n",*(Exi+iE)/e_0);
- fclose(FExi);
+/* Output eigenvalues in a separate file for each k point */
+
+FExi=fopen("Exi.r","w");
+for(iE=n_min;iE<=n_max;iE++)fprintf(FExi,"%10.6f\n",*(Exi+iE)/e_0);
+fclose(FExi);
 
 
 free(G);
@@ -277,7 +298,7 @@ clean_Hdash(Hdash,O)
    H', it ensures that the imaginary components of these elements are zero	
  									*/
 
-Complex	*Hdash;	/* The matrix to be `cleaned'	*/
+complex	*Hdash;	/* The matrix to be `cleaned'	*/
 int	O;	/* the order of the matrix	*/
 
 {
@@ -377,7 +398,7 @@ return(Nn);
 }
 
 
-Complex
+complex
 *read_ank(N,Nn,Nkxi)
 
 /* This function reads the eigenvectors (a_nk(G)) from the file a_nk.r
@@ -392,12 +413,12 @@ int	Nkxi;		/* number of k points in calculation		*/
  int	ikxi;		/* index across kxi				*/
  int	n;		/* counter for number of elements in file	*/
  char	filename[9];	/* eigenfunction output filename                */
- Complex        *ank;
+ complex        *ank;
  FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
 /* Allocate memory for eigenvectors	*/
 
-ank=(Complex *)calloc(N*Nn*Nkxi,sizeof(Complex));
+ank=(complex *)calloc(N*Nn*Nkxi,sizeof(complex));
 if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
 /* Finally read eigenvectors into structure	*/
@@ -558,7 +579,7 @@ int     *Nkxi;
 
 
 
-Complex 
+complex 
 V(A0,m_per_au,atoms,atomsp,n_atoms,g)
 
 double A0;	/* Lattice constant 		*/
@@ -569,7 +590,7 @@ int    n_atoms; /* number of atoms in structure */
 vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 {
  extern double Vf();   /* Fourier transform of potential	*/
- Complex v;     /* potential					*/
+ complex v;     /* potential					*/
  double	vf;	/* storage for returned data from Vf()		*/
  double	vfdash;	/* storage for returned data from Vf()		*/
  int	ia;	/* index across atoms				*/
@@ -599,7 +620,7 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 
 
 
-Complex 
+complex 
 VF(A0,F,q,atoms,n_atoms,g)
 
 double A0;	/* Lattice constant 		*/
@@ -609,9 +630,9 @@ atom   *atoms;	/* atomic definitions		*/
 int    n_atoms; /* number of atoms in structure */
 vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 {
- Complex v;	/* potential					*/
- Complex v1;	/* first term in potential			*/
- Complex v2;	/* second term in potential			*/
+ complex v;	/* potential					*/
+ complex v1;	/* first term in potential			*/
+ complex v2;	/* second term in potential			*/
  double	z0;	/* the midpoint of the unit cell		*/
  double	zero;	/* an effective `0'				*/
  int	n_z;	/* number of lattice constants in each period	*/
@@ -640,11 +661,11 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
   {
    v1.re=1/sqr(g.z);
    v1.im=(((atoms+n_atoms-1)->r.z)-z0)/g.z;
-   v1=Cmult(v1,Cexp(-g.z*((atoms+n_atoms-1)->r.z)));
+   v1=cmult(v1,cexp(-g.z*((atoms+n_atoms-1)->r.z)));
 
    v2.re=1/sqr(g.z);
    v2.im=((atoms->r.z)-z0)/g.z;
-   v2=Cmult(v2,Cexp(-g.z*(atoms->r.z)));
+   v2=cmult(v2,cexp(-g.z*(atoms->r.z)));
   }
   else
   {
@@ -658,7 +679,7 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
 
   /* Combine the two, note v=v1-v2	*/
 
-  v=Csub(v1,v2);
+  v=csub(v1,v2);
 
   /* Multiply through by the scaling factor	*/
  
@@ -680,7 +701,7 @@ atom   *atoms;	/* atomic definitions		*/
 int    n_atoms; /* number of atoms in structure */
 
 {
- Complex	VF();	
+ complex	VF();	
  vector g;		/* the vector, g=G'-G+kxi'-kxi	*/
  FILE	*FVFg;		/* pointer to output file	*/
  int	i;		/* index			*/
@@ -690,7 +711,7 @@ int    n_atoms; /* number of atoms in structure */
  for(i=-500;i<500;i++)
  {
   g.x=0;g.y=0;g.z=((float)i*4/500)*pi/A0;
-  fprintf(FVFg,"%le %le\n",g.z/(pi/A0),Cmod(VF(A0,F,q,atoms,n_atoms,g)));
+  fprintf(FVFg,"%le %le\n",g.z/(pi/A0),cmod(VF(A0,F,q,atoms,n_atoms,g)));
  }
 
  fclose(FVFg);
