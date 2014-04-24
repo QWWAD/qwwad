@@ -1,15 +1,13 @@
-#!/bin/sh
+#! /bin/sh
 set -e
 
-# Calculates the first 3 energy level in an infinite GaAs quantum well
-# with a range of well widths. The energies are output to the file
-# "infinite-well-energy-vs-width.r" (assuming parabolic dispersion)
-# The file is laid out as follows:
+# Calculates the first 3 energy level in a 100-angstrom-wide quantum
+# well and outputs the wavefunctions
 #
-#   Column 1: Layer width [angstrom]
-#   Column 2: Energy of 1st state [meV]
-#   Column 3: Energy of 2nd state [meV]
-#   Column 4: Energy of 3rd state [meV]
+# Column 1: Position along growth axis (z) [angstrom]
+# Column 2: Wavefunction for |1> [m^{-1/2}]
+# Column 3: Wavefunction for |1> [m^{-1/2}]
+# Column 4: Wavefunction for |1> [m^{-1/2}]
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -34,31 +32,18 @@ set -e
 # You should have received a copy of the GNU General Public License
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
-# Initialise files
-outfile=infinite-well-energy-vs-width.r
+# Initialise output file
+outfile=infinite-well-wavefunctions.sh
 rm -f $outfile
 
-# Set fixed parameters
-mass=0.067 # Effective mass relative to a free electron
-nst=3      # Number of states
+# Solve Schroedinger equation
+efiw -L 100 -N 1000 -s 3
 
-# Loop for different well widths
-for i in `seq 1 0.1 2.3`
-do
-{
-    # Generate well-widths exponentially so we get a smooth curve at small
-    # widths
-    LW=`echo $i | awk '{print 10^$1}'`
+# Shift wavefunctions and scale positions to angstrom
+awk '{print $1*1e10, $2}' wf_e1.r >> $outfile
+printf "\n" >> $outfile
+awk '{print $1*1e10, $2+30000}' wf_e2.r >> $outfile
+printf "\n" >> $outfile
+awk '{print $1*1e10, $2+60000}' wf_e3.r >> $outfile
 
-    # Calculate first 3 energy levels as a function of well width for GaAs
-    efiw -L $LW -m $mass -s $nst
-
-    printf "%f\t" "$LW" >> $outfile	# write well width to file
-
-    energies=`awk '{print $2}' < Ee.r`
-    echo $energies >> $outfile
-}
-done
-
-# Clean up the workspace
 rm wf_e?.r Ee.r

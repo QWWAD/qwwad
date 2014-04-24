@@ -167,7 +167,10 @@ EXTRA_DIST += examples
 
 ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh  \
 	       $(ex2srcdir)/infinite-well-energy-vs-width.agr \
-	       $(ex2srcdir)/infinite-well-energy-vs-width.eps
+	       $(ex2srcdir)/infinite-well-energy-vs-width.eps \
+	       $(ex2srcdir)/infinite-well-wavefunctions.sh    \
+	       $(ex2srcdir)/infinite-well-wavefunctions.agr   \
+	       $(ex2srcdir)/infinite-well-wavefunctions.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
