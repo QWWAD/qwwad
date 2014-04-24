@@ -49,6 +49,9 @@ dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"
 CXXFLAGS="-Wall $CXXFLAGS"
 
+dnl Set up very strict build for development purposes
+CPPFLAGS="-W -Wall -Werror"
+
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [pow])
