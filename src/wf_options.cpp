@@ -7,7 +7,6 @@
  */
 
 #include "wf_options.h"
-#include <error.h>
 
 WfOptions::WfOptions()
 {
@@ -79,7 +78,7 @@ WfOptions::WfOptions()
  */
 std::string WfOptions::get_wf_input_path(const int ist) const{
     if(ist<1)
-        error(EXIT_FAILURE, 0, "Trying to get a wf filename with an index that is less than 1!");
+        throw std::runtime_error("Trying to get a wf filename with an index that is less than 1!");
     
     if(vm.count("input-dir"))
         return vm["input-dir"].as<std::string>() + vm["wf-input-prefix"].as<std::string>() +

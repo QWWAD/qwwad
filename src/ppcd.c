@@ -22,7 +22,6 @@
    Modifications, September 1998                              */
 
 #include <complex.h>
-#include <error.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -139,7 +138,10 @@ ank=read_ank(N,&Nn);
    required for summation						*/
 
 if((n_max-n_min+1)>Nn)
-{fprintf(stderr,"Error: Incorrect number of states in `ank.r'!\n");exit(0);}
+{
+	fprintf(stderr,"Incorrect number of states in `ank.r'!\n");
+	exit(EXIT_FAILURE);
+}
 
 /* Open file for charge density */
 
@@ -223,8 +225,8 @@ static complex double * read_ank(const int  N,
 
 if((Fank=fopen("ank.r","r"))==0)
 {
- fprintf(stderr,"Error: Cannot open input file 'ank.r'!\n");
- exit(0);
+ fprintf(stderr,"Cannot open input file 'ank.r'!\n");
+ exit(EXIT_FAILURE);
 }
 
 /* Deduce number of complexes in file and hence number of bands	*/
@@ -252,7 +254,11 @@ for(iG=0;iG<N;iG++)
   double re, im;
   int n_read = fscanf(Fank,"%lf %lf",&re,&im);
   if(n_read != 2)
-    error(EXIT_FAILURE, 0, "Data missing in ank.r");
+  {
+    fprintf(stderr, "Data missing in ank.r");
+    exit(EXIT_FAILURE);
+  }
+
   ank[iG*(*Nn)+in] = re + I*im;
  }
 
@@ -278,8 +284,8 @@ int     *N;
 
  if((FG=fopen("G.r","r"))==0)
  {
-  fprintf(stderr,"Error: Cannot open input file 'G.r'!\n");
-  exit(0);
+  fprintf(stderr,"Cannot open input file 'G.r'!\n");
+  exit(EXIT_FAILURE);
  }
 
  *N=0;

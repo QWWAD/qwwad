@@ -23,7 +23,6 @@
 
     Paul Harrison, March 1997                                   */
 
-#include <error.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -319,7 +318,10 @@ int	n;
  {
   if((system("cp v.r v1.r"))==0) Fv1=fopen("v1.r","r");
   else 
-   {printf("Error: Cannot open file 'v1.r' or find file 'v.r'!\n");exit(0);}
+   {
+      fprintf(stderr,"Cannot open file 'v1.r' or find file 'v.r'!\n");
+      exit(EXIT_FAILURE);
+   }
  }
 
  Fv=fopen("v.r","w");
@@ -330,14 +332,20 @@ int	n;
  rewind(Fv1);
 
  if(nv!=n)
- {printf("Error: number of lines in `v.r' not equal to those in `wf_??.r!\n");
-  exit(0);}
+ {fprintf(stderr, "Number of lines in `v.r' not equal to those in `wf_??.r!\n");
+  exit(EXIT_FAILURE);
+ }
 
  for(i=0;i<n;i++)
  {
   int n_read = fscanf(Fv1,"%*f %lf",&v);
+
   if(n_read != 2)
-    error(EXIT_FAILURE, 0, "Data missing in v.r");
+  {
+    fprintf(stderr, "Data missing in v.r");
+    exit(EXIT_FAILURE);
+  }
+
   fprintf(Fv,"%20.17le %20.17le\n",*(z+i),*(V+i)+v);
  }
 
@@ -360,8 +368,8 @@ static double * read_E(char p, int *s)
  sprintf(filename,"E%c.r",p);
  if((FE=fopen(filename,"r"))==0)
  {
-   fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
-   exit(0);
+   fprintf(stderr,"Cannot open input file '%s'!\n",filename);
+   exit(EXIT_FAILURE);
  }
 
  *s=0;
@@ -402,8 +410,8 @@ int	s;
 
  if((FN=fopen("Nu.r","r"))==0)
  {
-   fprintf(stderr,"Error: Cannot open input file 'Nu.r'!\n");
-   exit(0);
+   fprintf(stderr,"Cannot open input file 'Nu.r'!\n");
+   exit(EXIT_FAILURE);
  }
 
  N=(double *)calloc(s,sizeof(double));
@@ -423,9 +431,9 @@ int	s;
  /* Now check number of defined populations equals number of subband minima */
 
  if(s!=i){
-  fprintf(stderr,"Error: Number of defined populations in file 'Nu.r' is \n");
+  fprintf(stderr,"Number of defined populations in file 'Nu.r' is \n");
   fprintf(stderr,"       not equal to number of subband minima in Ep.r'\n");
-  exit(0);
+  exit(EXIT_FAILURE);
  }
 
  return(N);
@@ -453,7 +461,10 @@ int	n;
  /* Read in wave function	*/
 
   if((Fd=fopen("d.r","r"))==0)
-   {fprintf(stderr,"Error: Cannot open input file '%s'!\n","d.r");exit(0);}
+   {
+	   fprintf(stderr,"Cannot open input file '%s'!\n","d.r");
+	   exit(EXIT_FAILURE);
+   }
 
   i=0;			
   while(fscanf(Fd,"%*e %le",Nda+i)!=EOF)
@@ -492,7 +503,10 @@ char	p;
 
   sprintf(filename,"wf_%c%i.r",p,is);	/* Open each file	*/
   if((Fwf=fopen(filename,"r"))==0)
-   {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
+   {
+	   fprintf(stderr,"Cannot open input file '%s'!\n",filename);
+	   exit(EXIT_FAILURE);
+   }
 
   i=0;					
   while(fscanf(Fwf,"%*e %le",wf+i)!=EOF)
@@ -525,7 +539,10 @@ char	p;
 
  sprintf(filename,"wf_%c1.r",p);
  if((Fwf=fopen(filename,"r"))==0)
-  {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
+  {
+	  fprintf(stderr,"Cannot open input file '%s'!\n",filename);
+	  exit(EXIT_FAILURE);
+  }
  
  *n=0;	
  while(fscanf(Fwf,"%*e %*e")!=EOF)

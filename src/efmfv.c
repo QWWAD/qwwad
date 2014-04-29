@@ -161,7 +161,7 @@ for(i=0;i<n;i++)
  B=x*N0beta*Sz*B_J(J,MF,T,T0)/6;
 
 /* calculate change in potential DeltaV due to field	*/
-DeltaV=3*A; // Default value
+DeltaV=3*A; /* Default value */
 switch(p)
 {
  case 'e': 

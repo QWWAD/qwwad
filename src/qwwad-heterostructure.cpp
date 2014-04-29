@@ -10,7 +10,6 @@
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf_erf.h>
-#include <error.h>
 #include <fstream>
 
 #ifdef DEBUG

@@ -21,7 +21,6 @@
 	
    Modifications June 1998                                       */
 
-#include <error.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -223,8 +222,11 @@ static void diffuse(data         *data_start,
  int    i_z;                 /* index through z values            */
 
  newdata_start=(data *)calloc(n,sizeof(data));
- if (newdata_start==0)  
-  error(EXIT_FAILURE, 0, "Cannot allocate memory!");
+ if (newdata_start==0)
+ {
+  fprintf(stderr, "Cannot allocate memory!");
+  exit(EXIT_FAILURE);
+ }
  
  ddata=data_start;
  dnewdata=newdata_start;
@@ -318,8 +320,8 @@ diff   *dD;		/* pointer to concentration                */
 
  if((FD=fopen("D.r","r"))==0)
  {
-  fprintf(stderr,"Error: Cannot open input file 'D.r'!\n");
-  exit(0);
+  fprintf(stderr,"Cannot open input file 'D.r'!\n");
+  exit(EXIT_FAILURE);
  }
 
  while(fscanf(FD,"%le %le", &(dD->z), &(dD->D))!=EOF)
@@ -347,8 +349,8 @@ int	*n;
 
  if((Fx=fopen("x.r","r"))==0)
  {
-  fprintf(stderr,"Error: Cannot open input file 'x.r'!\n");
-  exit(0);
+  fprintf(stderr,"Cannot open input file 'x.r'!\n");
+  exit(EXIT_FAILURE);
  }
  *n=0;
  while(fscanf(Fx,"%*e %*e %*e")!=EOF)

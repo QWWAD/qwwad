@@ -93,4 +93,4 @@ double V_min(data11       *Vp,
 
     return min;
 }
-// vim: filetype=c:expandtab:shiftwidth=4:tabstop=8:softtabstop=4 :
+/* vim: set filetype=c expandtab shiftwidth=4 tabstop=8 softtabstop=4: */

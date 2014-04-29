@@ -15,7 +15,6 @@
 
    Paul Harrison, October 1996                                */
 
-#include <error.h>
 #include<math.h>
 #include<stdio.h>
 #include<stdlib.h>
@@ -35,7 +34,10 @@ FILE	*FG;		/* file pointer to wavefunction file		*/
 G=read_rlv(&N);
 
 if(system("cp G.r G.r~") != EXIT_SUCCESS)
-  error(EXIT_FAILURE, 0, "Could not copy files");
+{
+    fprintf(stderr, "Could not copy files");
+    exit(EXIT_FAILURE);
+}
 
 /* Need to repeat N times, to allow G[0] to propogate to G[N] */
 for(i=0;i<N;i++)    

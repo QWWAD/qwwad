@@ -5,7 +5,6 @@
 #ifndef EF_HELPERS_H
 #define EF_HELPERS_H
 
-#include <error.h>
 #include "struct.h"
 
 typedef
@@ -33,17 +32,26 @@ data11 * read_Egdata(const size_t  n,
  FILE         *FEg;	  /* file pointer to potential file	*/
 
  if((FEg=fopen("Eg.r","r"))==0)
-   error(EXIT_FAILURE, 0, "Cannot open input file 'Eg.r'!");
+ {
+   fprintf(stderr, "Cannot open input file 'Eg.r'!");
+   exit(EXIT_FAILURE);
+ }
 
  data_m0Eg=(data11 *)calloc(n, sizeof(data11));
  if(data_m0Eg==0)
-   error(EXIT_FAILURE, 0, "Cannot allocate memory!");
+ {
+   fprintf(stderr, "Cannot allocate memory!");
+   exit(EXIT_FAILURE);
+ }
 
  for(i=0;i<n;i++)
  {
   int n_read = fscanf(FEg,"%*e %le",&(data_m0Eg+i)->b);
   if(n_read != 2)
-    error(EXIT_FAILURE, 0, "Data missing on line %d of %s", i, "Eg.r");
+  {
+   fprintf(stderr, "Data missing on line %d of %s", i, "Eg.r");
+   exit(EXIT_FAILURE);
+  }
 
   data_m0Eg[i].a = data_start[i].mstar;
  }

@@ -18,7 +18,6 @@
 #include "qclsim-linalg.h"
 
 #include <cstdlib>
-#include <error.h>
 
 #include "qclsim-maths.h"
 #include <gsl/gsl_sort.h>
@@ -72,8 +71,9 @@ eigen_general(double       A[],
             &work[0], &lwork, &info);
 #endif
 
-    if(info!=0) error(EXIT_FAILURE, 0, "Could not solve "
-            "eigenproblem. Check all input parameters!");
+    if(info!=0)
+        throw std::runtime_error("Could not solve "
+                "eigenproblem. Check all input parameters!");
 
     // Create buffer for output data (Should never have more than N 'real' solutions since
     // 2*N solutions correspond to psi*E and psi*E^2!)
@@ -97,7 +97,7 @@ eigen_general(double       A[],
                 nst++; // Register solution found
 
                 if(nst > (unsigned int)N)
-                    error(EXIT_FAILURE, 0, "More solutions found than nz!");
+                    throw std::runtime_error("More solutions found than nz!");
             }
         }
     }
@@ -217,8 +217,9 @@ eigen_banded(double       AB[],
             &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
 #endif // HAVE_LAPACKE
 
-    if(info!=0) error(EXIT_FAILURE, 0, "Could not solve "
-            "eigenproblem. Check all input parameters!");
+    if(info!=0)
+        throw std::runtime_error("Could not solve "
+                "eigenproblem. Check all input parameters!");
 
     // Extract solutions from LAPACK output
     std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );
@@ -290,8 +291,9 @@ eigen_tridiag(double       D[],
             &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
 #endif
 
-    if(info!=0) error(EXIT_FAILURE, 0, "Could not solve "
-            "eigenproblem. Check all input parameters!");
+    if(info!=0)
+        throw std::runtime_error("Could not solve "
+                "eigenproblem. Check all input parameters!");
 
     // Extract solutions from LAPACK output
     std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );

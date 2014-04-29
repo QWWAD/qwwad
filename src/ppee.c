@@ -15,7 +15,6 @@
 
    Paul Harrison, September 1997                                 */
 
-#include <error.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +82,10 @@ for(ik=0;ik<Nk;ik++)
 {
  int n_read = fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z);
  if (n_read != 3)
-   error(EXIT_FAILURE, 0, "Data missing in k.r");
+ {
+   fprintf(stderr, "Data missing in k.r");
+   exit(EXIT_FAILURE);
+ }
 
  *(Ek+ik*(nbands+1))=vmod(k);
  sprintf(filename,"Ek%i.r",ik);
@@ -93,7 +95,10 @@ for(ik=0;ik<Nk;ik++)
  {
  int n_read = fscanf(*(FEk+ik),"%lf",(Ek+ik*(nbands+1)+in+1));
  if (n_read != 1)
-   error(EXIT_FAILURE, 0, "Data missing in k.r");
+ {
+   fprintf(stderr, "Data missing in k.r");
+   exit(EXIT_FAILURE);
+ }
  }
  fclose(*(FEk+ik));			/* close each individual file	*/
 
