@@ -165,12 +165,15 @@ ex2srcdir = examples/solutions-to-schroedingers-equation
 
 EXTRA_DIST += examples
 
-ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh  \
-	       $(ex2srcdir)/infinite-well-energy-vs-width.agr \
-	       $(ex2srcdir)/infinite-well-energy-vs-width.eps \
-	       $(ex2srcdir)/infinite-well-wavefunctions.sh    \
-	       $(ex2srcdir)/infinite-well-wavefunctions.agr   \
-	       $(ex2srcdir)/infinite-well-wavefunctions.eps
+ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh      \
+               $(ex2srcdir)/infinite-well-energy-vs-width.agr     \
+               $(ex2srcdir)/infinite-well-energy-vs-width.eps     \
+               $(ex2srcdir)/infinite-well-wavefunctions.sh        \
+               $(ex2srcdir)/infinite-well-wavefunctions.agr       \
+               $(ex2srcdir)/infinite-well-wavefunctions.eps       \
+               $(ex2srcdir)/double-barrier-transmission-width.sh  \
+               $(ex2srcdir)/double-barrier-transmission-width.agr \
+               $(ex2srcdir)/double-barrier-transmission-width.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
