@@ -36,7 +36,7 @@ char	  Material;	   /* material character		*/
 char	  p;		   /* particle (e, h, or l)		*/
 FILE      *Fx;
 FILE      *Fv;
-FILE      *FEg;		/* pointer to Eg.r file			*/
+FILE      *FEg=NULL;	/* pointer to Eg.r file			*/
 bool	  Eg_flag;	/* print bandgap or not			*/
 
 /* Define global defaults */
@@ -101,14 +101,14 @@ remove("v0.r");
 remove("v1.r");
 
 if((Fx=fopen("x.r","r"))==NULL)
- {printf("Error: Cannot open input file 'x.r'!\n");exit(EXIT_FAILURE);}
+ {fprintf(stderr,"Error: Cannot open input file 'x.r'!\n");exit(EXIT_FAILURE);}
 
 if((Fv=fopen("v.r","w"))==NULL)
- {printf("Error: Cannot open file 'v.r'!\n");exit(EXIT_FAILURE);}
+ {fprintf(stderr,"Error: Cannot open file 'v.r'!\n");exit(EXIT_FAILURE);}
 
 if(Eg_flag)
  if((FEg=fopen("Eg.r","w"))==NULL)
-  {printf("Error: Cannot open file 'Eg.r'!\n");exit(EXIT_FAILURE);}
+  {fprintf(stderr,"Error: Cannot open file 'Eg.r'!\n");exit(EXIT_FAILURE);}
 
 
 switch(Material)
