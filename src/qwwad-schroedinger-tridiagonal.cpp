@@ -8,6 +8,8 @@
 #include "qwwad-schroedinger-tridiagonal.h"
 #include <gsl/gsl_math.h>
 
+#include "qclsim-constants.h"
+
 namespace Leeds
 {
 using namespace constants;

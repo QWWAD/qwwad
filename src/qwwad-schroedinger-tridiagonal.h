@@ -9,6 +9,8 @@
 #ifndef QWWAD_SCHROEDINGER_TRIDIAGONAL_H
 #define QWWAD_SCHROEDINGER_TRIDIAGONAL_H
 
+#include "qclsim-schroedinger.h"
+
 namespace Leeds
 {
 /**

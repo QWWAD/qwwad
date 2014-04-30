@@ -113,7 +113,9 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-schroedinger-infinite-well.cpp \
 			   src/qwwad-schroedinger-infinite-well.h   \
 			   src/qwwad-schroedinger-taylor.cpp        \
-			   src/qwwad-schroedinger-taylor.h
+			   src/qwwad-schroedinger-taylor.h          \
+			   src/qwwad-schroedinger-tridiagonal.cpp   \
+			   src/qwwad-schroedinger-tridiagonal.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
