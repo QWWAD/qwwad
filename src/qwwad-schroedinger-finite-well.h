@@ -1,21 +1,19 @@
 /**
- * \file   qclsim-schroedinger-finite-well.h
+ * \file   qwwad-schroedinger-finite-well.h
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \brief  Declarations for Schroedinger solver for a single finite well
  */
 
-#ifndef QCLSIM_SCHROEDINGER_FINITE_WELL_H
-#define QCLSIM_SCHROEDINGER_FINITE_WELL_H
+#ifndef QWWAD_SCHROEDINGER_FINITE_WELL_H
+#define QWWAD_SCHROEDINGER_FINITE_WELL_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
 
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger.h"
 
-namespace Leeds
-{
-
+namespace Leeds {
 /**
  * Schroedinger solver for a finite square well with infinitely thick barriers
  */

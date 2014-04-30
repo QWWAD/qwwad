@@ -9,10 +9,9 @@
 #ifndef QWWAD_SCHROEDINGER_TRIDIAGONAL_H
 #define QWWAD_SCHROEDINGER_TRIDIAGONAL_H
 
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger.h"
 
-namespace Leeds
-{
+namespace Leeds {
 /**
  * Solver for Schroedinger's equation using a tridiagonal Hamiltonian matrix
  */

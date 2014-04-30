@@ -7,7 +7,7 @@
 #ifndef QWWAD_SCHROEDINGER_INFINITE_WELL_H
 #define QWWAD_SCHROEDINGER_INFINITE_WELL_H
 
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger.h"
 
 namespace Leeds {
 /**

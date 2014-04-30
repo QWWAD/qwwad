@@ -1,11 +1,11 @@
 /**
- *  \file     qclsim-schroedinger.cpp
+ *  \file     qwwad-schroedinger.cpp
  *  \author   Jonathan Cooper 
  *  \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
  *  \brief    Implementatation of Schrodinger solver functions for two-dimensional systems
  */
 
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger.h"
 
 #include "qclsim-constants.h"
 

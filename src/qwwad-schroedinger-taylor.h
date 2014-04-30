@@ -7,7 +7,7 @@
 #ifndef QWWAD_SCHROEDINGER_TAYLOR_H
 #define QWWAD_SCHROEDINGER_TAYLOR_H
 
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger.h"
 
 namespace Leeds {
 /**

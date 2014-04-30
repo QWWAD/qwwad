@@ -1,12 +1,12 @@
 /**
- * \file   qclsim-schroedinger.h
- * \author Jonathan Cooper
+ * \file   qwwad-schroedinger.h
+ * \author Jonathan Cooper <jdc.tas@gmail.com>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \brief  Declarations for Schroedinger solver
  */
 
-#ifndef QCLSIM_SCHROEDINGER_H
-#define QCLSIM_SCHROEDINGER_H
+#ifndef QWWAD_SCHROEDINGER_H
+#define QWWAD_SCHROEDINGER_H
 
 #include "qclsim-linalg.h"
 
