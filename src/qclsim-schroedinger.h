@@ -8,17 +8,14 @@
 #ifndef QCLSIM_SCHROEDINGER_H
 #define QCLSIM_SCHROEDINGER_H
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
 #include "qclsim-linalg.h"
 
 namespace Leeds
 {
-
 /** 
  * \brief The type of effective mass description to use in simulations.
+ *
+ * \todo Move these definitions elsewhere
  */
 enum EffectiveMassType {
     CONSTANT_ME, /**< Constant effective mass across entire structure */
@@ -78,24 +75,6 @@ protected:
 
     ///< Set of solutions to the Schroedinger equation
     std::vector<State> _solutions;
-};
-
-/**
- * Solver for Schroedinger's equation using a tridiagonal Hamiltonian matrix
- */
-class SchroedingerSolverTridiag : public SchroedingerSolver
-{
-public:
-    SchroedingerSolverTridiag(const std::valarray<double>& me,
-                              const std::valarray<double>& V,
-                              const std::valarray<double>& z,
-                              const unsigned int           nst_max=0);
-
-    std::string get_name() {return "tridiagonal";}
-private:
-    void calculate();
-    std::valarray<double> diag; ///< Diagonal elements of matrix
-    std::valarray<double> sub; ///< Sub-diagonal elements of matrix
 };
 } // namespace Leeds
 #endif
