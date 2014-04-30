@@ -81,25 +81,6 @@ protected:
 };
 
 /**
- * Schroedinger solver that uses a full generalised matrix
- */
-class SchroedingerSolverFull : public SchroedingerSolver
-{
-public:
-    SchroedingerSolverFull(const std::valarray<double>& me,
-                           const std::valarray<double>& alpha,
-                           const std::valarray<double>& V,
-                           const std::valarray<double>& z,
-                           const unsigned int           nst_max=0);
-
-    std::string get_name() {return "full";}
-
-private:
-    std::valarray<double> A;
-    void calculate();
-};
-
-/**
  * Solver for Schroedinger's equation using a tridiagonal Hamiltonian matrix
  */
 class SchroedingerSolverTridiag : public SchroedingerSolver

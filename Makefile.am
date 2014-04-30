@@ -108,6 +108,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-heterostructure.h   \
 			   src/qwwad-schroedinger-finite-well.cpp \
 			   src/qwwad-schroedinger-finite-well.h   \
+			   src/qwwad-schroedinger-full.h          \
+			   src/qwwad-schroedinger-full.cpp        \
 			   src/qwwad-schroedinger-infinite-well.cpp \
 			   src/qwwad-schroedinger-infinite-well.h   \
 			   src/qwwad-schroedinger-taylor.cpp        \
