@@ -100,25 +100,6 @@ private:
 };
 
 /**
- * Schroedinger equation solver (using Taylor approximation)
- */
-class SchroedingerSolverTaylor : public SchroedingerSolver
-{
-public:
-    SchroedingerSolverTaylor(const std::valarray<double> &me,
-                             const std::valarray<double> &alpha,
-                             const std::valarray<double> &V,
-                             const std::valarray<double> &z,
-                             const unsigned int           nst_max=0);
-    
-    std::string get_name() {return "Taylor";}
-private:
-    void calculate();
-    std::valarray<double> AB; ///< Upper triangle of Hamiltonian matrix
-    std::valarray<double> BB; ///< Lower triangle of Hamiltonian matrix
-};
-
-/**
  * Solver for Schroedinger's equation using a tridiagonal Hamiltonian matrix
  */
 class SchroedingerSolverTridiag : public SchroedingerSolver
