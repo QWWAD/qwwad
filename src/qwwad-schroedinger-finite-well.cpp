@@ -1,10 +1,10 @@
 /**
- *  \file     qclsim-schroedinger-finite-well.cpp
+ *  \file     qwwad-schroedinger-finite-well.cpp
  *  \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
  *  \brief    Implementatation of Schrodinger solver functions for finite well
  */
 
-#include "qclsim-schroedinger-finite-well.h"
+#include "qwwad-schroedinger-finite-well.h"
 
 #include <cmath>
 #include <gsl/gsl_errno.h>
