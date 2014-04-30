@@ -12,7 +12,7 @@
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
 #include "qclsim-linalg.h"
-#include "qclsim-schroedinger.h"
+#include "qwwad-schroedinger-infinite-well.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;

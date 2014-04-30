@@ -85,8 +85,8 @@ wf_options    = src/wf_options.cpp src/wf_options.h $(qwwad_options)
 qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 
 # QCLsim infrastructure (released from Leeds code)
-noinst_LIBRARIES = src/libqclsim.a
-src_libqclsim_a_SOURCES =  \
+noinst_LIBRARIES = src/libqwwad.a
+src_libqwwad_a_SOURCES =  \
 			   src/dos-functions.cpp       \
 			   src/dos-functions.h         \
 			   src/double-barrier.cpp      \
@@ -107,7 +107,9 @@ src_libqclsim_a_SOURCES =  \
 			   src/qclsim-subband.cpp      \
 			   src/qclsim-subband.h        \
 			   src/qwwad-heterostructure.cpp \
-			   src/qwwad-heterostructure.h
+			   src/qwwad-heterostructure.h   \
+			   src/qwwad-schroedinger-infinite-well.cpp \
+			   src/qwwad-schroedinger-infinite-well.h
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
@@ -115,39 +117,39 @@ src_d02D_SOURCES = src/d02D.c $(d0_helpers)
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
 
 src_dispersion_relation_SOURCES = src/dispersion_relation.cpp $(wf_options)
-src_dispersion_relation_LDADD   = src/libqclsim.a $(LDADD)
+src_dispersion_relation_LDADD   = src/libqwwad.a $(LDADD)
 
 src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(qwwad_fileio)
-src_dos_LDADD    = src/libqclsim.a $(LDADD)
+src_dos_LDADD    = src/libqwwad.a $(LDADD)
 
 src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
-src_efiw_LDADD   = src/libqclsim.a $(LDADD)
+src_efiw_LDADD   = src/libqwwad.a $(LDADD)
 
 src_efkpsl_SOURCES = src/efkpsl.cpp $(qwwad_options)
-src_efkpsl_LDADD   = src/libqclsim.a $(LDADD)
+src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
-src_efsqw_LDADD   = src/libqclsim.a $(LDADD)
+src_efsqw_LDADD   = src/libqwwad.a $(LDADD)
 
 src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
-src_find_heterostructure_LDADD   = src/libqclsim.a $(LDADD)
+src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
 
 src_ivdb_SOURCES = src/ivdb.cpp $(qwwad_options)
-src_ivdb_LDADD   = src/libqclsim.a $(LDADD)
+src_ivdb_LDADD   = src/libqwwad.a $(LDADD)
 
 src_ppvfq_SOURCES = src/ppvfq.c src/ppff.h
-src_ppvfq_LDADD   = src/libqclsim.a
+src_ppvfq_LDADD   = src/libqwwad.a
 
 src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
-src_sbp_LDADD    = src/libqclsim.a $(LDADD)
+src_sbp_LDADD    = src/libqwwad.a $(LDADD)
 
 src_tdb_SOURCES  = src/tdb.cpp $(qwwad_options) $(qwwad_fileio)
-src_tdb_LDADD    = src/libqclsim.a $(LDADD)
+src_tdb_LDADD    = src/libqwwad.a $(LDADD)
 
 src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
-src_tsb_LDADD    = src/libqclsim.a $(LDADD)
+src_tsb_LDADD    = src/libqwwad.a $(LDADD)
 
 # Build rule for installing manual pages
 dist_man1_MANS = man/dos.1
