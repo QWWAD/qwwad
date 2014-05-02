@@ -8,6 +8,7 @@ set( QWWAD_URL "https://launchpad.net/qwwad" )
 option( VERBOSE "Show information about CMake build configuration." )
 
 find_package( LAPACK REQUIRED )
+find_package( Armadillo 4.000 REQUIRED )
 find_package( Boost 1.35 COMPONENTS program_options REQUIRED )
 find_package( GSL REQUIRED )
 include( CMakeScripts/make_check_macros.cmake )
