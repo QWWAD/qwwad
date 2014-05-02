@@ -250,5 +250,6 @@ tests_tests_SOURCES = tests/some_tests.cpp
 tests_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
 tests_tests_LDADD = gtest/lib/libgtest_main.la \
                     gtest/lib/libgtest.la \
-	            $(GTEST_LIBS)
+	            $(GTEST_LIBS) \
+		    src/libqwwad.a
 

@@ -21,7 +21,7 @@ public:
                               const size_t       nz,
                               const double       alpha   = 0,
                               const double       V       = 0,
-                              const unsigned int nst_max = 0);
+                              const unsigned int nst_max = 1);
 
     std::string get_name() {return "infinite-square-well";}
 
