@@ -246,7 +246,8 @@ gtest_lib_libgtest_main_la_LIBADD = gtest/lib/libgtest.la $(GTEST_LIBS)
 ### TESTS ###
 TESTS = tests/tests
 check_PROGRAMS = tests/tests
-tests_tests_SOURCES = tests/qwwad-schroedinger-infinite-well-tests.cpp
+tests_tests_SOURCES = tests/qwwad-schroedinger-infinite-well-tests.cpp \
+		      tests/qwwad-schroedinger-tridiagonal-tests.cpp
 tests_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
 tests_tests_LDADD = gtest/lib/libgtest_main.la \
                     gtest/lib/libgtest.la \

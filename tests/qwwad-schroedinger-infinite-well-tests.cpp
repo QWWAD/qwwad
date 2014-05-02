@@ -111,6 +111,5 @@ TEST(SchroedingerSolverInfWell, nonParabolicTest)
         EXPECT_DOUBLE_EQ(0.0, PD[0]);
         EXPECT_NEAR(0.0, PD[z.size()-1], 1.0e-10);
     }
-
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
