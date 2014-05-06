@@ -2,14 +2,7 @@
 set -e
 
 # Calculates the first 3 energy level in an infinite GaAs quantum well
-# with a range of well widths. The energies are output to the file
-# "infinite-well-energy-vs-width.r" (assuming parabolic dispersion)
-# The file is laid out as follows:
-#
-#   Column 1: Layer width [angstrom]
-#   Column 2: Energy of 1st state [meV]
-#   Column 3: Energy of 2nd state [meV]
-#   Column 4: Energy of 3rd state [meV]
+# with a range of well widths assuming parabolic dispersion.
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -35,12 +28,12 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=infinite-well-energy-vs-width.r
+outfile=infinite-well-energy-vs-width.dat
 rm -f $outfile
 
 # Set fixed parameters
-mass=0.067 # Effective mass relative to a free electron
-nst=3      # Number of states
+export QWWAD_MASS=0.067 # Effective mass relative to a free electron
+export QWWAD_STATES=3   # Number of states
 
 # Loop for different well widths
 for i in `seq 1 0.1 2.3`
@@ -51,14 +44,33 @@ do
     LW=`echo $i | awk '{print 10^$1}'`
 
     # Calculate first 3 energy levels as a function of well width for GaAs
-    efiw -L $LW -m $mass -s $nst
+    efiw --width $LW
 
-    printf "%f\t" "$LW" >> $outfile	# write well width to file
+    # Write well width to output file
+    printf "%f\t" "$LW" >> $outfile
 
+    # Extract energies and write to output file
     energies=`awk '{print $2}' < Ee.r`
     echo $energies >> $outfile
 }
 done
+
+cat << EOF
+Results have been written to $outfile in the format:
+
+  COLUMN 1 - Layer width [angstrom]
+  COLUMN 2 - Energy of 1st state [meV]
+  COLUMN 3 - Energy of 2nd state [meV]
+  COLUMN 4 - Energy of 3rd state [meV]
+
+This script is part of the QWWAD software suite.
+
+(c) Copyright 1996-2014
+    Alex Valavanis <a.valavanis@leeds.ac.uk>
+    Paul Harrison  <p.harrison@leeds.ac.uk>
+
+Report bugs to https://bugs.launchpad.net/qwwad
+EOF
 
 # Clean up the workspace
 rm wf_e?.r Ee.r

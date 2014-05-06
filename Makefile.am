@@ -158,12 +158,24 @@ src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
 src_tsb_LDADD    = src/libqwwad.a $(LDADD)
 
 # Build rule for installing manual pages
-dist_man1_MANS = man/dos.1
+dist_man1_MANS = man/dispersion_relation.1 \
+		 man/dos.1                 \
+		 man/efiw.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
-	help2man --output=man/dos.1 --name="compute density of states in 1D, 2D and 3D systems" src/dos$(EXEEXT)
+	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" src/dos$(EXEEXT)
+
+man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/efiw$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" src/efiw$(EXEEXT)
+
+man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/dispersion_relation$(EXEEXT)
+	help2man --output=$@ --name="compute the dispersion relation for an energy subband" src/dispersion_relation$(EXEEXT)
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
@@ -173,7 +185,8 @@ ex2srcdir = examples/solutions-to-schroedingers-equation
 
 EXTRA_DIST += examples
 
-ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh      \
+ex2data_DATA = $(ex2srcdir)/index                                 \
+               $(ex2srcdir)/infinite-well-energy-vs-width.sh      \
                $(ex2srcdir)/infinite-well-energy-vs-width.agr     \
                $(ex2srcdir)/infinite-well-energy-vs-width.eps     \
                $(ex2srcdir)/infinite-well-wavefunctions.sh        \
@@ -181,7 +194,15 @@ ex2data_DATA = $(ex2srcdir)/infinite-well-energy-vs-width.sh      \
                $(ex2srcdir)/infinite-well-wavefunctions.eps       \
                $(ex2srcdir)/double-barrier-transmission-width.sh  \
                $(ex2srcdir)/double-barrier-transmission-width.agr \
-               $(ex2srcdir)/double-barrier-transmission-width.eps
+               $(ex2srcdir)/double-barrier-transmission-width.eps \
+	       $(ex2srcdir)/non-parabolic-dispersion.sh           \
+	       $(ex2srcdir)/non-parabolic-dispersion.agr          \
+	       $(ex2srcdir)/non-parabolic-dispersion.eps          \
+	       $(ex2srcdir)/density-of-states.sh                  \
+	       $(ex2srcdir)/density-of-states-bulk.agr            \
+	       $(ex2srcdir)/density-of-states-bulk.eps            \
+	       $(ex2srcdir)/density-of-states-2D.agr              \
+	       $(ex2srcdir)/density-of-states-2D.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
