@@ -18,10 +18,14 @@ set( qwwad_src
         qclsim-fileio.cpp
         qclsim-linalg.cpp
         qclsim-maths.cpp
-        qclsim-schroedinger.cpp
-        qclsim-schroedinger-finite-well.cpp
-        qclsim-subband.cpp
-        qwwad-heterostructure.cpp
+	qclsim-subband.cpp
+	qwwad-heterostructure.cpp
+        qwwad-schroedinger.cpp
+        qwwad-schroedinger-finite-well.cpp
+	qwwad-schroedinger-full.cpp
+	qwwad-schroedinger-infinite-well.cpp
+	qwwad-schroedinger-taylor.cpp
+	qwwad-schroedinger-tridiagonal.cpp
     )
 
 set( qwwad_h
@@ -32,10 +36,14 @@ set( qwwad_h
         qclsim-fileio.h
         qclsim-linalg.h
         qclsim-maths.h
-        qclsim-schroedinger.h
-        qclsim-schroedinger-finite-well.h
         qclsim-subband.h
         qwwad-heterostructure.h
+        qwwad-schroedinger.h
+        qwwad-schroedinger-finite-well.h
+	qwwad-schroedinger-full.h
+	qwwad-schroedinger-infinite-well.h
+	qwwad-schroedinger-taylor.h
+	qwwad-schroedinger-tridiagonal.h
     )
 
 add_library( qwwad ${qwwad_src} )
