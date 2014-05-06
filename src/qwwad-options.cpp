@@ -86,7 +86,7 @@ void Options::print_version_then_exit(char* prog_name) const
               << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015). " << std::endl
               << "in addition to any works cited in the source code." << std::endl
               << std::endl
-              << "Report bugs to " << PACKAGE_URL << std::endl; 
+              << "Report bugs to " << PACKAGE_BUGREPORT << std::endl; 
 
     exit (EXIT_SUCCESS);
 }

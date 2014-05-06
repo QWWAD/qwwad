@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.63])
 
-AC_INIT([Quantum Wells, Wires and Dots], [1.0], [a.valavanis@leeds.ac.uk], [qwwad], [https://launchpad.net/qwwad])
+AC_INIT([Quantum Wells, Wires and Dots], [1.0], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
 
 dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
 dnl manually.
@@ -11,6 +11,7 @@ dnl TODO: Get rid of this and bump the version to 2.64 in AC_PREREQ when all rea
 dnl       OSes have Autoconf >= 2.64 available
 m4_if(m4_version_compare(m4_defn([AC_AUTOCONF_VERSION]),[2.64]), [-1],
   [AC_MSG_WARN([Using an old version of Autoconf])
+   AC_DEFINE([PACKAGE_BUGREPORT], ["https://bugs.launchpad.net/qwwad"], [The address where bugs for the package should be sent])
    AC_DEFINE([PACKAGE_URL], ["https://launchpad.net/qwwad"], [The URL for the package])
   ]
 )
