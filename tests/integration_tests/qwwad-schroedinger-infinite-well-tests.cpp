@@ -22,7 +22,7 @@ TEST(SchroedingerSolverInfWell, defaultTest)
     // Check that its energy is as expected
     const double E = solutions.at(0).get_E();
     const double E_expected = hBar*hBar*pi*pi/2.0;
-    EXPECT_EQ(E_expected, E);
+    EXPECT_DOUBLE_EQ(E_expected, E);
 }
 
 TEST(SchroedingerSolverInfWell, parabolicTest)

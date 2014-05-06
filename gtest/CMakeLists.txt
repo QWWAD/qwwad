@@ -1,5 +1,5 @@
 if( VERBOSE )
-    message( "gtest" )
+    message( "-gtest" )
 endif()
 
 project( gtest )
@@ -8,6 +8,9 @@ project( gtest )
 # Therefore it needs to be exported at parent scope so it can be accessed from other
 # CMakeLists files.
 set( GTEST_INCLUDE_DIR ${gtest_SOURCE_DIR}/include PARENT_SCOPE )
+# The relevant thread options needed to be added when using gtest...
+# Add these to a standard variable so they are not forgotten!
+set( GTEST_LIBS gtest ${CMAKE_THREAD_LIBS_INIT} PARENT_SCOPE )
 
 # Since only the default main function (from gtest_main.cc) is used within the tests,
 # gtest and gtest_main are compiled into one library to link against. If in the future
