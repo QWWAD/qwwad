@@ -53,7 +53,6 @@ dnl Set up very strict build for development purposes
 CPPFLAGS="-W -Wall -Werror"
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [pow])
 
 # Check for Boost Program Options
@@ -70,24 +69,10 @@ AX_BOOST_BASE([1.35],,
 
 AX_BOOST_PROGRAM_OPTIONS
 
-# Check that BLAS/LAPACK are available
-# This is a hack to set the location of linear algebra stuff on ARC1
-# automatically
-if [[ "x$ARC_LINALG_MT_CFLAGS" != "x" ]]; then
-	with_blas=$ARC_LINALG_MT_CFLAGS
-	with_lapack="$ARC_LINALG_MT_CFLAGS"
-fi
-
+# Check for linear algebra libraries
 AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try again]))
 AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))
-
-LINALG_LIBS="$BLAS_LIBS $LAPACK_LIBS"
-
-if [[ "x$ARC_LINALG_CFLAGS" != "x" ]]; then
-	LINALG_LIBS=$ARC_LINALG_MT_CFLAGS
-fi
-
-LIBS="$LINALG_LIBS $LIBS"
+LIBS="$BLAS_LIBS $LAPACK_LIBS $LIBS"
 
 dnl Check for a CBLAS implementation
 AC_SEARCH_LIBS([cblas_dgemm], [cblas gslcblas],,
@@ -127,7 +112,7 @@ if test "x$have_armadillo" = "xno"; then
 fi
 
 # Checks for header files.
-AC_CHECK_HEADERS([malloc.h stdlib.h strings.h complex.h])
+AC_CHECK_HEADERS([stdlib.h strings.h complex.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_HEADER_STDBOOL
