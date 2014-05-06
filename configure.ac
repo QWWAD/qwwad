@@ -74,14 +74,10 @@ AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try agai
 AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))
 LIBS="$BLAS_LIBS $LAPACK_LIBS $LIBS"
 
-dnl Check for a CBLAS implementation
-AC_SEARCH_LIBS([cblas_dgemm], [cblas gslcblas],,
-	       AC_MSG_ERROR([Cannot find a CBLAS implementation]))
-
-dnl Check for the GSL library
-AC_CHECK_LIB([gsl], [gsl_blas_dgemm],,
-	     AC_MSG_ERROR([Cannot locate the GSL library.  Please
-			  install it and try again.]))
+dnl Check for GNU Scientific Library
+PKG_CHECK_MODULES(GSL, gsl)
+CPPFLAGS="$GSL_CFLAGS $CPPFLAGS"
+LIBS="$GSL_LIBS $LIBS"
 
 # Check if we have the new "official" C header for LAPACK.  Also, note that
 # there is a bug in LAPACK that causes incorrect linkage with C++11. See
