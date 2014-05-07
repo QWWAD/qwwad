@@ -41,28 +41,46 @@ struct  {
  double p;                  /* probability of separation by a     */
 } probs;
 
+static bool repeat_beta(const double  beta,
+                        double       *beta_0_lambda,
+                        const double  Eb,
+                        double       *Eb_min_beta);
+
+static bool repeat_lambda(double       *beta_0,
+                          const double  beta_0_lambda,
+                          const double  Eb_min_beta,
+                          double       *Eb_min,
+                          const double  lambda,
+                          double       *lambda_0);
+
+static double Eb_1S(files        *fdata,
+                    probs        *ppP,
+                    FILE         *FABC,
+                    const double  beta,
+                    const double  delta_a,
+                    const double  epsilon,
+                    const double  lambda,
+                    const double  m[],
+                    const double  mu_xy,
+                    const int     N_x,
+                    const int     n,
+                    const bool    output_flag);
+
 int main(int argc,char *argv[])
 {
-double Eb_1S();             /* exciton binding energy of 1S      */
 double read_delta_z();
-bool   repeat_beta();      /* repeat beta variational loop      */
-bool   repeat_lambda();    /* repeat lambda variational         */
 files  *read_data();        /* reads data from external files    */
 probs  *pP_calc();          /* calculates p(a), Pm(a) and
                                  Pmu(a)                          */
 void   input();
 
-double beta;                /* dimensionality parameter          */
 double beta_start;          /* initial beta                      */
 double beta_step;           /* beta increment                    */
 double beta_stop;           /* final beta                        */
 double beta_0;              /* beta for Eb_min                   */
-double beta_0_lambda;       /* beta for Eb_min_beta              */
 double delta_a;             /* separation of adjacent a values   */
 double delta_z;             /* z separation of input potentials  */
-double Eb;                  /* exciton binding energy (<0=bound) */
 double Eb_min;              /* minimum Eb for lambda variation   */
-double Eb_min_beta;         /* minimum Eb for beta variation     */
 double epsilon;             /* relative permittivity of material */
 double lambda;              /* Bohr radius                       */
 double lambda_start;        /* initial Bohr radius               */
@@ -78,7 +96,6 @@ int    n;		    /* length of potential file		 */
 int    N_x;                 /* number of points in x integration */
 int    state[2];	    /* electron and hole states          */
 bool   output_flag;        /* if set, write data to screen      */
-bool   repeat_flag_beta;   /* repeat variational beta loop flag */
 bool   repeat_flag_lambda; /* repeat variational lambda loop    */
 FILE   *FABC;               /* file pointer to ABC.r             */
 FILE   *Fbeta;              /* file pointer to beta.r            */
@@ -88,7 +105,6 @@ files  *data_start;    	    /* start address of wavefunction	 */
 probs  *pP_start;           /* start address of probabilities    */
 
 /* default values */
-
 state[0]=1;
 state[1]=1;
 beta_start=0.001;
@@ -101,7 +117,6 @@ lambda_stop=-1e-10;
 m[0]=0.067*me;
 m[1]=0.62*me;
 output_flag=false;
-repeat_flag_beta=true;
 repeat_flag_lambda=true;
 
 /* computational default values */
@@ -161,7 +176,7 @@ while((argc>1)&&(argv[1][0]=='-'))
            printf("            [-s starting lambda (\033[1m70\033[0mA)][-t lambda increment (\033[1m1\033[0mA)]\n");
            printf("            [-u final lambda (\033[1m-1\033[0mA)]\n");
            printf("            [-w starting beta \033[1m0.001\033[0m][-x beta increment \033[1m0.05\033[0m][-y final beta \033[1m-1\033[0m]\n");
-           exit(0);
+           exit(EXIT_FAILURE);
  }
  argv++;
  argv++;
@@ -187,34 +202,38 @@ pP_start=pP_calc(delta_z,n,data_start); /* calculates p and P's, returns start
 if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
 
 lambda=lambda_start;
+beta_0 = beta_start;
+
 do
 {
- beta=beta_start;
- Eb_min_beta=1*e;           /* i.e. 1eV ! */
- do
- {
+    /* Find minimum binding energy for beta variation */
+    double Eb_min_beta = e; /* Start with 1 eV as a huge initial estimate */
+    bool   repeat_flag_beta = true;   /* repeat variational beta loop flag */
+    double beta=beta_start;
+    double beta_0_lambda = beta; /* Value of beta that gives the minimum binding energy */
 
-Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag);
+    /* Loop through beta values and store the minimum binding energy as
+     * Eb_min_beta.  The corresponding beta value is stored as beta_0_lambda */ 
+    do
+    {
+        /* Find exciton binding energy (<0=bound) */
+        const double Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag);
 
-  repeat_flag_beta=repeat_beta(&beta,&beta_0_lambda,&Eb,&Eb_min_beta);
+        repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
-  beta+=beta_step;
+        beta+=beta_step;
+    }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
 
- }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
+    fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
+    fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
 
- fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
- fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
+    repeat_flag_lambda=repeat_lambda(&beta_0,beta_0_lambda,Eb_min_beta,&Eb_min,
+            lambda,&lambda_0);
 
- repeat_flag_lambda=repeat_lambda(&beta_0,&beta_0_lambda,&Eb_min_beta,&Eb_min,
-                                  &lambda,&lambda_0);
-
- lambda+=lambda_step;   /* increment Bohr radius */
-
+    lambda+=lambda_step;   /* increment Bohr radius */
 }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
   
-
 /* Write out final data to file	*/
-
 FEX0=fopen("EX0.r","w");
 fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
 fclose(FEX0);
@@ -229,38 +248,40 @@ free(pP_start);
 return EXIT_SUCCESS;
 } /* end main */
 
-
-
-double
-Eb_1S(fdata,ppP,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag)
-
-files  *fdata;              /* pointer to data structure         */
-probs  *ppP;                /* pointer to pP structure           */
-FILE   *FABC;               /* file pointer to ABC.r             */
-double beta;
-double delta_a;
-double epsilon;
-double lambda;
-double m[];
-double mu_xy;
-int    N_x;
-int    n;
-bool	output_flag;
+/**
+ * \brief Find binding energy of 1S exciton
+ *
+ * \param fdata pointer to data structure
+ * \param probs pointer to pP structure
+ * \param FABC  file pointer to ABC.r
+ */
+static double Eb_1S(files        *fdata,
+                    probs        *ppP,
+                    FILE         *FABC,
+                    const double  beta,
+                    const double  delta_a,
+                    const double  epsilon,
+                    const double  lambda,
+                    const double  m[],
+                    const double  mu_xy,
+                    const int     N_x,
+                    const int     n,
+                    const bool    output_flag)
 {
  double F();                 /* F(a)---see notes!                 */
  double G();                 /* G(a)---see notes!                 */
  double J();                 /* J(a)---see notes!                 */
  double K();                 /* K(a)---see notes!                 */
- double A;                   /* {\cal A}, see notes!              */
- double B;                   /* {\cal B}, see notes!              */
- double Ct;                  /* kinetic energy component of C     */
- double Cv;                  /* potential energy component of C   */
- double D;                   /* {\cal D}, see notes!              */
+ double A  = 0;              /* {\cal A}, see notes!              */
+ double B  = 0;              /* {\cal B}, see notes!              */
+ double Ct = 0;              /* kinetic energy component of C     */
+ double Cv = 0;              /* potential energy component of C   */
+ double D  = 0;              /* {\cal D}, see notes!              */
  double Eb;                  /* exciton binding energy (<0=bound) */
- double O;                   /* {\cal O}, overlap integral        */
+ double O  = 0;              /* {\cal O}, overlap integral        */
  int    i_a;                 /* index through a values            */
+ double C  = 0;              /* electron--hole interaction term */
  
- A=0;B=0;Ct=0;Cv=0;D=0;O=0;         /* initialize variables before integration */
  for(i_a=0;i_a<n;i_a++)
  {
   A+=(ppP->p)*G(ppP->a,beta,lambda,N_x)*delta_a;
@@ -283,71 +304,61 @@ bool	output_flag;
  fprintf(FABC,"%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf\n",lambda/1e-10,
          A/D/(1e-3*e),B/D/(1e-3*e),Ct/D/(1e-3*e),Cv/D/(1e-3*e));
 
- Eb=(A+B+Ct+Cv)/D;
+ C = Ct + Cv;  /* Find e--h term [QWWAD4, eq. 6.36] */
+ Eb=(A+B+C)/D; /* Binding energy [QWWAD4, eq. 6.44] */
 
  if(output_flag)
   printf("%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf %6.3le\n",lambda/1e-10,beta,
          Eb/(1e-3*e),(A+B+Ct)/D/(1e-3*e),Cv/D/(1e-3*e),gsl_pow_2(O)/D);
 
- return(Eb);
+ return Eb;
 }
 
-
-
-bool
-repeat_beta(beta,beta_0_lambda,Eb,Eb_min_beta)
-
-double *beta;
-double *beta_0_lambda;
-double *Eb;
-double *Eb_min_beta;
+/**
+ * \brief Repeat beta variational
+ */
+static bool repeat_beta(const double  beta,
+                        double       *beta_0_lambda,
+                        const double  Eb,
+                        double       *Eb_min_beta)
 {
- bool flag;
+    bool flag = false;
 
- if(*Eb<*Eb_min_beta)
- {
-  *Eb_min_beta=*Eb;
-  *beta_0_lambda=*beta;
-  flag=true;
- }
- else
- {
-  flag=false;
- }
+    if(Eb < *Eb_min_beta)
+    {
+        *Eb_min_beta   = Eb;
+        *beta_0_lambda = beta;
+        flag           = true;
+    }
 
- return(flag);
+    return flag;
 }
 
-
-
-bool
-repeat_lambda(beta_0,beta_0_lambda,Eb_min_beta,Eb_min,lambda,lambda_0)
-
-double *beta_0;
-double *beta_0_lambda;
-double *Eb_min_beta;
-double *Eb_min;
-double *lambda;
-double *lambda_0;
+/**
+ * \brief Repeat lambda variational
+ */
+static bool repeat_lambda(double       *beta_0,
+                          const double  beta_0_lambda,
+                          const double  Eb_min_beta,
+                          double       *Eb_min,
+                          const double  lambda,
+                          double       *lambda_0)
 {
- bool flag;
+    bool flag = false;
 
- if(*Eb_min_beta<*Eb_min)
- {
-  *Eb_min=*Eb_min_beta;
-  *lambda_0=*lambda;
-  *beta_0=*beta_0_lambda;
-  flag=true;
- }
- else
- {
-  flag=false;
- }
+    /* If this is the smallest binding energy
+     * so far, copy the energy, lambda and beta
+     * and flag the function for another iteration */
+    if(Eb_min_beta < *Eb_min)
+    {
+        *Eb_min   = Eb_min_beta;
+        *lambda_0 = lambda;
+        *beta_0   = beta_0_lambda;
+        flag      = true;
+    }
 
- return(flag);
+    return flag;
 }
-
-
 
 double 
 F(a,beta,lambda)

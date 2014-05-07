@@ -265,13 +265,13 @@ gtest_lib_libgtest_main_la_CXXFLAGS = $(GTEST_CXXFLAGS)
 gtest_lib_libgtest_main_la_LIBADD = gtest/lib/libgtest.la $(GTEST_LIBS)
 
 ### TESTS ###
-TESTS = tests/tests
-check_PROGRAMS = tests/tests
-tests_tests_SOURCES = tests/qwwad-schroedinger-infinite-well-tests.cpp \
-		      tests/qwwad-schroedinger-tridiagonal-tests.cpp
-tests_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
-tests_tests_LDADD = gtest/lib/libgtest_main.la \
-                    gtest/lib/libgtest.la \
-	            $(GTEST_LIBS) \
-		    src/libqwwad.a
+TESTS = tests/integration_tests/integration_tests
+check_PROGRAMS = tests/integration_tests/integration_tests
+tests_integration_tests_integration_tests_SOURCES = tests/integration_tests/qwwad-schroedinger-infinite-well-tests.cpp \
+                                                    tests/integration_tests/qwwad-schroedinger-tridiagonal-tests.cpp
+tests_integration_tests_integration_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
+tests_integration_tests_integration_tests_LDADD = gtest/lib/libgtest_main.la \
+                                                  gtest/lib/libgtest.la \
+                                                  $(GTEST_LIBS) \
+                                                  src/libqwwad.a
 

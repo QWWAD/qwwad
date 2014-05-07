@@ -22,8 +22,8 @@
 
 int main(int argc,char *argv[])
 {
-double	m;		/* effective mass 			*/
-double	mp;		/* effective mass perpendicular growth	*/
+double	m=me;		/* effective mass 			*/
+double	mp=me;		/* effective mass perpendicular growth	*/
 double	mstar;		/* constant effective mass		*/
 double	x;		/* alloy concentration `x'		*/
 double	y;		/* alloy concentration `y'		*/
@@ -80,7 +80,6 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   printf("Usage:  efxm [-M material \033[1mGa(1-x)Al(x)As\033[0m][-p particle (\033[1me\033[0m, h, or l)]\n");
 	   printf("             [-m mass (m0), if set overrides m(x,y,z) \033[1mfalse\033[0m]\n");
            exit(0);
-
  }
  argv++;
  argv++;
@@ -99,13 +98,13 @@ Fmp=fopen("m_perp.r","w");
 
 if(mstar>0) 
 {
- while(fscanf(Fx,"%lf %lf %lf",&z,&x,&y)!=EOF)
- {
- m=mstar*me;
- mp=mstar*me;
- fprintf(Fm,"%20.17le %20.17le\n",z,m);
- fprintf(Fmp,"%20.17le %20.17le\n",z,mp);
- }
+    while(fscanf(Fx,"%lf %lf %lf",&z,&x,&y)!=EOF)
+    {
+        m=mstar*me;
+        mp=mstar*me;
+        fprintf(Fm,"%20.17le %20.17le\n",z,m);
+        fprintf(Fmp,"%20.17le %20.17le\n",z,mp);
+    }
 }
 
 /* if mstar left as a default of zero then invoke usual dependencies */

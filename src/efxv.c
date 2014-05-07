@@ -27,7 +27,7 @@ int main(int argc,char *argv[])
 {
 double	  dV;		   /* Delta V, total band discontinuity */
 double	  Eg;		   /* Bandgap				*/
-double	  V;		   /* CB and VB potentials		*/
+double	  V=0;		   /* CB and VB potentials		*/
 double	  x;	           /* alloy concentration               */
 double	  y;	           /* alloy concentration               */
 double    z;               /* growth direction                  */
