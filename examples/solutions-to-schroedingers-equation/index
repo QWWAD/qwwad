@@ -1,8 +1,10 @@
 The following list shows which scripts and output files are used to generate
 each figure from the 4th edition of "Quantum Wells, Wires and Dots".
 
-Fig 2.2: infinite-well-wavefunctions.sh   => infinite-well-wavefunctions.dat
-Fig 2.3: infinite-well-energy-vs-width.sh => infinite-well-energy-vs-width.dat
-Fig 2.6: non-parabolic-dispersion.sh      => non-parabolic-dispersion.dat
-Fig 2.7: density-of-states.sh             => density-of-states-bulk.dat
-Fig 2.9: density-of-states.sh             => density-of-states-2D.dat
+Fig 2.2:  infinite-well-wavefunctions.sh   => infinite-well-wavefunctions.dat
+Fig 2.3:  infinite-well-energy-vs-width.sh => infinite-well-energy-vs-width.dat
+Fig 2.6:  non-parabolic-dispersion.sh      => non-parabolic-dispersion.dat
+Fig 2.7:  density-of-states.sh             => density-of-states-bulk.dat
+Fig 2.9:  density-of-states.sh             => density-of-states-2D.dat
+Fig 2.10: fermi-distribution-T-sweep.sh    => fermi-distribution-T-sweep.dat
+Fig 2.11: fermi-distribution-T-sweep.sh    => fermi-energy-T-sweep.dat

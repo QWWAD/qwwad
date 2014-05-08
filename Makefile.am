@@ -202,7 +202,12 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/density-of-states-bulk.agr            \
 	       $(ex2srcdir)/density-of-states-bulk.eps            \
 	       $(ex2srcdir)/density-of-states-2D.agr              \
-	       $(ex2srcdir)/density-of-states-2D.eps
+	       $(ex2srcdir)/density-of-states-2D.eps              \
+	       $(ex2srcdir)/fermi-distribution-T-sweep.sh         \
+	       $(ex2srcdir)/fermi-distribution-T-sweep.agr        \
+	       $(ex2srcdir)/fermi-distribution-T-sweep.eps        \
+	       $(ex2srcdir)/fermi-energy-T-sweep.agr              \
+	       $(ex2srcdir)/fermi-energy-T-sweep.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
