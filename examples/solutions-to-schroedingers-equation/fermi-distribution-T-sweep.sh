@@ -50,9 +50,9 @@ solve_for_alpha()
 }
 
 # Initialise files
-outfile_np=fermi-distribution-T-sweep.dat
-outfile_T=fermi-energy-T-sweep.dat
-rm -f Ef?-T*.r N.r FD*.r $outfile_np
+outfile_T=fermi-distribution-T-sweep.dat
+outfile_np=fermi-energy-T-sweep.dat
+rm -f Ef?-T*.r N.r FD*.r $outfile_np $outfile_T
 
 lw=200 # Well width
 nst=3  # Number of states
@@ -122,7 +122,7 @@ printf "\n" >> $outfile_T
 cat << EOF
 Results have been written to $outfile_np and $outfile_T.
 
-$outfile_np contains the Fermi occupation number for states as a function of
+$outfile_T contains the Fermi occupation number for states as a function of
 energy in the format:
 
   COLUMN 1 - Energy (relative to band edge) [meV]
@@ -141,7 +141,7 @@ energy in the format:
   SET 8 - Results for subband 2 at 300 K
   SET 9 - Results for subband 3 at 300 K
 
-$outfile_T contains the quasi-Fermi energy for each subband as a function of
+$outfile_np contains the quasi-Fermi energy for each subband as a function of
 temperature, both with and without nonparabolicity effects:
 
   COLUMN 1 - Temperature [K]
