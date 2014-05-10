@@ -1,0 +1,2683 @@
+# ACE/gr parameter file
+#
+#
+@version 40100
+@page 5
+@page inout 5
+@link page off
+@default linestyle 1
+@default linewidth 1
+@default color 1
+@default char size 1.000000
+@default font 4
+@default font source 0
+@default symbol size 1.000000
+@with string
+@    string on
+@    string loctype view
+@    string 0.241234221599, 0.695
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "\2V\0(\2z\0)"
+@with string
+@    string on
+@    string loctype view
+@    string 0.618513323983, 0.78
+@    string linewidth 1
+@    string color 1
+@    string rot 0
+@    string font 0
+@    string just 0
+@    string char size 1.800000
+@string def "\8y\0\s1\N"
+@with g0
+@g0 on
+@g0 label off
+@g0 hidden false
+@g0 type xy
+@g0 autoscale type AUTO
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@    world xmin 0
+@    world xmax 1160
+@    world ymin -20
+@    world ymax 250
+@    view xmin 0.220000
+@    view xmax 0.850000
+@    view ymin 0.220000
+@    view ymax 0.850000
+@    title ""
+@    title font 4
+@    title size 1.500000
+@    title color 1
+@    title linewidth 1
+@    subtitle ""
+@    subtitle font 4
+@    subtitle size 1.000000
+@    subtitle color 1
+@    subtitle linewidth 1
+@    s0 type xy
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol fill 1
+@    s0 symbol color 1
+@    s0 symbol linewidth 1
+@    s0 symbol linestyle 1
+@    s0 symbol center false
+@    s0 symbol char 0
+@    s0 skip 0
+@    s0 linestyle 1
+@    s0 linewidth 2
+@    s0 color 1
+@    s0 fill 0
+@    s0 fill with color
+@    s0 fill color 1
+@    s0 fill pattern 0
+@    s0 errorbar type BOTH
+@    s0 errorbar length 1.000000
+@    s0 errorbar linewidth 1
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser on
+@    s0 errorbar riser linewidth 1
+@    s0 errorbar riser linestyle 1
+@    s0 xyz 0.000000, 0.000000
+@    s0 comment "wf.xmgr"
+@    s1 type xy
+@    s1 symbol 0
+@    s1 symbol size 1.000000
+@    s1 symbol fill 0
+@    s1 symbol color 1
+@    s1 symbol linewidth 1
+@    s1 symbol linestyle 1
+@    s1 symbol center false
+@    s1 symbol char 0
+@    s1 skip 0
+@    s1 linestyle 1
+@    s1 linewidth 2
+@    s1 color 1
+@    s1 fill 0
+@    s1 fill with color
+@    s1 fill color 1
+@    s1 fill pattern 0
+@    s1 errorbar type BOTH
+@    s1 errorbar length 1.000000
+@    s1 errorbar linewidth 1
+@    s1 errorbar linestyle 1
+@    s1 errorbar riser on
+@    s1 errorbar riser linewidth 1
+@    s1 errorbar riser linestyle 1
+@    s1 xyz 0.000000, 0.000000
+@    s1 comment "wf.xmgr"
+@    xaxis  tick on
+@    xaxis  tick major 500
+@    xaxis  tick minor 100
+@    xaxis  tick offsetx 0.000000
+@    xaxis  tick offsety 0.000000
+@    xaxis  label "Growth (\2z\0-) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label linewidth 1
+@    xaxis  ticklabel on
+@    xaxis  ticklabel type auto
+@    xaxis  ticklabel prec 0
+@    xaxis  ticklabel format decimal
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel layout horizontal
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel op bottom
+@    xaxis  ticklabel sign normal
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  ticklabel linewidth 1
+@    xaxis  tick major on
+@    xaxis  tick minor on
+@    xaxis  tick default 6
+@    xaxis  tick in
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 1
+@    xaxis  tick major linestyle 1
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 1
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick log off
+@    xaxis  tick size 1.000000
+@    xaxis  tick minor size 0.500000
+@    xaxis  bar off
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor grid off
+@    xaxis  tick op both
+@    xaxis  tick type auto
+@    xaxis  tick spec 0
+@    yaxis  tick on
+@    yaxis  tick major 100
+@    yaxis  tick minor 20
+@    yaxis  tick offsetx 0.000000
+@    yaxis  tick offsety 0.000000
+@    yaxis  label "Energy (meV)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label linewidth 1
+@    yaxis  ticklabel on
+@    yaxis  ticklabel type auto
+@    yaxis  ticklabel prec 0
+@    yaxis  ticklabel format decimal
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel layout horizontal
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel op left
+@    yaxis  ticklabel sign normal
+@    yaxis  ticklabel start type spec
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  ticklabel linewidth 1
+@    yaxis  tick major on
+@    yaxis  tick minor on
+@    yaxis  tick default 6
+@    yaxis  tick in
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 1
+@    yaxis  tick major linestyle 1
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 1
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick log off
+@    yaxis  tick size 1.000000
+@    yaxis  tick minor size 0.500000
+@    yaxis  bar off
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor grid off
+@    yaxis  tick op both
+@    yaxis  tick type auto
+@    yaxis  tick spec 0
+@    zeroxaxis  tick on
+@    zeroxaxis  tick major 500
+@    zeroxaxis  tick minor 250
+@    zeroxaxis  tick offsetx 0.000000
+@    zeroxaxis  tick offsety 0.000000
+@    zeroxaxis  label ""
+@    zeroxaxis  label layout para
+@    zeroxaxis  label place auto
+@    zeroxaxis  label char size 1.000000
+@    zeroxaxis  label font 4
+@    zeroxaxis  label color 1
+@    zeroxaxis  label linewidth 1
+@    zeroxaxis  ticklabel off
+@    zeroxaxis  ticklabel type auto
+@    zeroxaxis  ticklabel prec 1
+@    zeroxaxis  ticklabel format exponential
+@    zeroxaxis  ticklabel append ""
+@    zeroxaxis  ticklabel prepend ""
+@    zeroxaxis  ticklabel layout horizontal
+@    zeroxaxis  ticklabel skip 0
+@    zeroxaxis  ticklabel stagger 0
+@    zeroxaxis  ticklabel op bottom
+@    zeroxaxis  ticklabel sign normal
+@    zeroxaxis  ticklabel start type auto
+@    zeroxaxis  ticklabel start 0.000000
+@    zeroxaxis  ticklabel stop type auto
+@    zeroxaxis  ticklabel stop 0.000000
+@    zeroxaxis  ticklabel char size 1.000000
+@    zeroxaxis  ticklabel font 4
+@    zeroxaxis  ticklabel color 1
+@    zeroxaxis  ticklabel linewidth 1
+@    zeroxaxis  tick major off
+@    zeroxaxis  tick minor on
+@    zeroxaxis  tick default 6
+@    zeroxaxis  tick in
+@    zeroxaxis  tick major color 1
+@    zeroxaxis  tick major linewidth 1
+@    zeroxaxis  tick major linestyle 1
+@    zeroxaxis  tick minor color 1
+@    zeroxaxis  tick minor linewidth 1
+@    zeroxaxis  tick minor linestyle 1
+@    zeroxaxis  tick log off
+@    zeroxaxis  tick size 1.000000
+@    zeroxaxis  tick minor size 0.500000
+@    zeroxaxis  bar off
+@    zeroxaxis  bar color 1
+@    zeroxaxis  bar linestyle 1
+@    zeroxaxis  bar linewidth 1
+@    zeroxaxis  tick major grid off
+@    zeroxaxis  tick minor grid off
+@    zeroxaxis  tick op both
+@    zeroxaxis  tick type auto
+@    zeroxaxis  tick spec 0
+@    zeroyaxis  tick on
+@    zeroyaxis  tick major 100
+@    zeroyaxis  tick minor 50
+@    zeroyaxis  tick offsetx 0.000000
+@    zeroyaxis  tick offsety 0.000000
+@    zeroyaxis  label ""
+@    zeroyaxis  label layout para
+@    zeroyaxis  label place auto
+@    zeroyaxis  label char size 1.000000
+@    zeroyaxis  label font 4
+@    zeroyaxis  label color 1
+@    zeroyaxis  label linewidth 1
+@    zeroyaxis  ticklabel off
+@    zeroyaxis  ticklabel type auto
+@    zeroyaxis  ticklabel prec 1
+@    zeroyaxis  ticklabel format decimal
+@    zeroyaxis  ticklabel append ""
+@    zeroyaxis  ticklabel prepend ""
+@    zeroyaxis  ticklabel layout horizontal
+@    zeroyaxis  ticklabel skip 0
+@    zeroyaxis  ticklabel stagger 0
+@    zeroyaxis  ticklabel op left
+@    zeroyaxis  ticklabel sign normal
+@    zeroyaxis  ticklabel start type auto
+@    zeroyaxis  ticklabel start 0.000000
+@    zeroyaxis  ticklabel stop type auto
+@    zeroyaxis  ticklabel stop 0.000000
+@    zeroyaxis  ticklabel char size 1.000000
+@    zeroyaxis  ticklabel font 4
+@    zeroyaxis  ticklabel color 1
+@    zeroyaxis  ticklabel linewidth 1
+@    zeroyaxis  tick major off
+@    zeroyaxis  tick minor on
+@    zeroyaxis  tick default 6
+@    zeroyaxis  tick in
+@    zeroyaxis  tick major color 1
+@    zeroyaxis  tick major linewidth 1
+@    zeroyaxis  tick major linestyle 1
+@    zeroyaxis  tick minor color 1
+@    zeroyaxis  tick minor linewidth 1
+@    zeroyaxis  tick minor linestyle 1
+@    zeroyaxis  tick log off
+@    zeroyaxis  tick size 1.000000
+@    zeroyaxis  tick minor size 0.500000
+@    zeroyaxis  bar off
+@    zeroyaxis  bar color 1
+@    zeroyaxis  bar linestyle 1
+@    zeroyaxis  bar linewidth 1
+@    zeroyaxis  tick major grid off
+@    zeroyaxis  tick minor grid off
+@    zeroyaxis  tick op both
+@    zeroyaxis  tick type auto
+@    zeroyaxis  tick spec 0
+@    legend off
+@    legend loctype view
+@    legend layout 0
+@    legend vgap 2
+@    legend hgap 1
+@    legend length 4
+@    legend box off
+@    legend box fill off
+@    legend box fill with color
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend box color 1
+@    legend box linewidth 1
+@    legend box linestyle 1
+@    legend x1 0.8
+@    legend y1 0.8
+@    legend font 4
+@    legend char size 1.000000
+@    legend linestyle 1
+@    legend linewidth 1
+@    legend color 1
+@    frame on
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 1
+@    frame color 1
+@    frame fill off
+@    frame background color 0
+@WITH G0
+@G0 ON
+@TYPE xy
+               0           66.832
+               1          66.8322
+               2          66.8325
+               3          66.8327
+               4           66.833
+               5          66.8332
+               6          66.8334
+               7          66.8337
+               8          66.8339
+               9          66.8342
+              10          66.8345
+              11          66.8347
+              12           66.835
+              13          66.8353
+              14          66.8356
+              15          66.8359
+              16          66.8362
+              17          66.8365
+              18          66.8368
+              19          66.8371
+              20          66.8375
+              21          66.8378
+              22          66.8382
+              23          66.8386
+              24           66.839
+              25          66.8394
+              26          66.8398
+              27          66.8403
+              28          66.8407
+              29          66.8412
+              30          66.8417
+              31          66.8422
+              32          66.8428
+              33          66.8434
+              34           66.844
+              35          66.8446
+              36          66.8452
+              37          66.8459
+              38          66.8466
+              39          66.8474
+              40          66.8481
+              41           66.849
+              42          66.8498
+              43          66.8507
+              44          66.8516
+              45          66.8526
+              46          66.8536
+              47          66.8547
+              48          66.8558
+              49           66.857
+              50          66.8582
+              51          66.8595
+              52          66.8608
+              53          66.8622
+              54          66.8637
+              55          66.8652
+              56          66.8668
+              57          66.8685
+              58          66.8703
+              59          66.8722
+              60          66.8741
+              61          66.8761
+              62          66.8783
+              63          66.8805
+              64          66.8828
+              65          66.8853
+              66          66.8879
+              67          66.8906
+              68          66.8934
+              69          66.8963
+              70          66.8994
+              71          66.9027
+              72          66.9061
+              73          66.9096
+              74          66.9134
+              75          66.9173
+              76          66.9214
+              77          66.9257
+              78          66.9302
+              79          66.9349
+              80          66.9399
+              81          66.9451
+              82          66.9505
+              83          66.9562
+              84          66.9622
+              85          66.9684
+              86           66.975
+              87          66.9818
+              88           66.989
+              89          66.9966
+              90          67.0045
+              91          67.0128
+              92          67.0215
+              93          67.0306
+              94          67.0401
+              95          67.0501
+              96          67.0606
+              97          67.0715
+              98           67.083
+              99          67.0951
+             100          67.1077
+             101           67.121
+             102          67.1349
+             103          67.1494
+             104          67.1646
+             105          67.1806
+             106          67.1974
+             107          67.2149
+             108          67.2333
+             109          67.2526
+             110          67.2728
+             111          67.2939
+             112          67.3161
+             113          67.3394
+             114          67.3637
+             115          67.3893
+             116           67.416
+             117          67.4441
+             118          67.4734
+             119          67.5042
+             120          67.5365
+             121          67.5704
+             122          67.6058
+             123           67.643
+             124          67.6819
+             125          67.7227
+             126          67.7655
+             127          67.8103
+             128          67.8573
+             129          67.9065
+             130          67.9581
+             131          68.0122
+             132          68.0689
+             133          68.1283
+             134          68.1905
+             135          68.2557
+             136          68.3241
+             137          68.3958
+             138          68.4708
+             139          68.5495
+             140           68.632
+             141          68.7184
+             142           68.809
+             143           68.904
+             144          69.0034
+             145          69.1077
+             146           69.217
+             147          69.3315
+             148          69.4515
+             149          69.5773
+             150          69.7091
+             151          69.8473
+             152          69.9921
+             153          70.1438
+             154          70.3028
+             155          70.4695
+             156          70.6442
+             157          70.8272
+             158          71.0191
+             159          71.2201
+             160          71.4308
+             161          71.6517
+             162          71.8831
+             163          72.1256
+             164          72.3798
+             165          72.6462
+             166          72.9254
+             167           73.218
+             168          73.5246
+             169           73.846
+             170          74.1828
+             171          74.5357
+             172          74.9057
+             173          75.2933
+             174          75.6996
+             175          76.1254
+             176          76.5717
+             177          77.0394
+             178          77.5295
+             179          78.0432
+             180          78.5815
+             181          79.1457
+             182           79.737
+             183          80.3566
+             184           81.006
+             185          81.6866
+             186          82.3999
+             187          83.1475
+             188          83.9309
+             189          84.7519
+             190          85.6124
+             191          86.5142
+             192          87.4593
+             193          88.4498
+             194          89.4878
+             195          90.5757
+             196          91.7158
+             197          92.9107
+             198          94.1629
+             199          95.4753
+             200          96.7235
+             201          97.7931
+             202          98.8263
+             203          99.8219
+             204          100.779
+             205          101.696
+             206          102.572
+             207          103.405
+             208          104.196
+             209          104.943
+             210          105.646
+             211          106.302
+             212          106.913
+             213          107.476
+             214          107.991
+             215          108.458
+             216          108.876
+             217          109.245
+             218          109.564
+             219          109.832
+             220           110.05
+             221          110.218
+             222          110.334
+             223          110.399
+             224          110.413
+             225          110.376
+             226          110.287
+             227          110.148
+             228          109.957
+             229          109.716
+             230          109.425
+             231          109.083
+             232          108.692
+             233          108.252
+             234          107.763
+             235          107.225
+             236          106.641
+             237          106.009
+             238          105.332
+             239          104.609
+             240          103.743
+             241          102.873
+             242          102.082
+             243          101.368
+             244           100.73
+             245          100.167
+             246          99.6776
+             247          99.2601
+             248           98.914
+             249          98.6384
+             250          98.4328
+             251          98.2968
+             252          98.2299
+             253          98.2322
+             254          98.3035
+             255          98.4441
+             256          98.6542
+             257          98.9343
+             258           99.285
+             259          99.7072
+             260          100.202
+             261           100.77
+             262          101.412
+             263          102.131
+             264          102.927
+             265          103.803
+             266           104.76
+             267            105.8
+             268          106.926
+             269          108.141
+             270          109.446
+             271          110.845
+             272          112.341
+             273          113.937
+             274          115.637
+             275          117.444
+             276          119.362
+             277          121.396
+             278           123.55
+             279          125.829
+             280          128.016
+             281           129.88
+             282           131.67
+             283          133.384
+             284          135.019
+             285          136.574
+             286          138.048
+             287          139.438
+             288          140.742
+             289           141.96
+             290          143.089
+             291          144.129
+             292          145.077
+             293          145.934
+             294          146.698
+             295          147.368
+             296          147.943
+             297          148.423
+             298          148.808
+             299          149.095
+             300          149.286
+             301          149.381
+             302          149.378
+             303          149.278
+             304          149.081
+             305          148.788
+             306          148.398
+             307          147.913
+             308          147.332
+             309          146.656
+             310          145.887
+             311          145.025
+             312          144.071
+             313          143.026
+             314          141.892
+             315          140.669
+             316           139.36
+             317          137.965
+             318          136.487
+             319          134.927
+             320          133.075
+             321          131.184
+             322          129.434
+             323          127.821
+             324          126.343
+             325          124.996
+             326          123.777
+             327          122.683
+             328          121.712
+             329          120.862
+             330          120.131
+             331          119.517
+             332          119.019
+             333          118.635
+             334          118.366
+             335           118.21
+             336          118.167
+             337          118.237
+             338           118.42
+             339          118.716
+             340          119.127
+             341          119.653
+             342          120.295
+             343          121.054
+             344          121.933
+             345          122.933
+             346          124.057
+             347          125.306
+             348          126.684
+             349          128.194
+             350          129.838
+             351          131.622
+             352          133.548
+             353           135.62
+             354          137.844
+             355          140.225
+             356          142.766
+             357          145.475
+             358          148.357
+             359          151.418
+             360          154.367
+             361          156.875
+             362          159.277
+             363          161.571
+             364          163.753
+             365          165.821
+             366          167.773
+             367          169.606
+             368          171.319
+             369          172.909
+             370          174.374
+             371          175.712
+             372          176.923
+             373          178.004
+             374          178.955
+             375          179.774
+             376           180.46
+             377          181.013
+             378          181.431
+             379          181.715
+             380          181.864
+             381          181.877
+             382          181.755
+             383          181.499
+             384          181.107
+             385          180.581
+             386          179.922
+             387          179.129
+             388          178.205
+             389           177.15
+             390          175.965
+             391          174.652
+             392          173.212
+             393          171.647
+             394          169.959
+             395          168.149
+             396          166.221
+             397          164.176
+             398          162.016
+             399          159.745
+             400          157.057
+             401          154.297
+             402           151.73
+             403          149.349
+             404           147.15
+             405          145.128
+             406          143.278
+             407          141.596
+             408          140.079
+             409          138.723
+             410          137.524
+             411          136.482
+             412          135.593
+             413          134.855
+             414          134.266
+             415          133.826
+             416          133.534
+             417          133.388
+             418          133.388
+             419          133.535
+             420          133.829
+             421           134.27
+             422          134.859
+             423          135.599
+             424          136.489
+             425          137.533
+             426          138.732
+             427          140.089
+             428          141.608
+             429          143.291
+             430          145.142
+             431          147.166
+             432          149.366
+             433          151.748
+             434          154.317
+             435          157.078
+             436          160.038
+             437          163.203
+             438           166.58
+             439          170.176
+             440          173.649
+             441          176.598
+             442          179.418
+             443          182.107
+             444          184.659
+             445          187.073
+             446          189.346
+             447          191.475
+             448          193.457
+             449          195.291
+             450          196.973
+             451          198.503
+             452          199.878
+             453          201.096
+             454          202.157
+             455          203.059
+             456            203.8
+             457          204.381
+             458            204.8
+             459          205.056
+             460          205.151
+             461          205.083
+             462          204.852
+             463          204.459
+             464          203.904
+             465          203.189
+             466          202.312
+             467          201.277
+             468          200.084
+             469          198.734
+             470          197.229
+             471          195.571
+             472          193.762
+             473          191.803
+             474          189.698
+             475          187.448
+             476          185.056
+             477          182.526
+             478          179.859
+             479           177.06
+             480          173.752
+             481          170.347
+             482           167.17
+             483          164.213
+             484          161.471
+             485          158.937
+             486          156.605
+             487          154.471
+             488           152.53
+             489          150.777
+             490          149.209
+             491          147.822
+             492          146.614
+             493          145.581
+             494          144.721
+             495          144.032
+             496          143.514
+             497          143.164
+             498          142.982
+             499          142.967
+             500           143.12
+             501          143.441
+             502          143.931
+             503           144.59
+             504           145.42
+             505          146.423
+             506          147.601
+             507          148.957
+             508          150.493
+             509          152.214
+             510          154.122
+             511          156.222
+             512           158.52
+             513          161.018
+             514          163.724
+             515          166.644
+             516          169.782
+             517          173.148
+             518          176.747
+             519          180.588
+             520          184.304
+             521          187.457
+             522          190.468
+             523          193.333
+             524           196.05
+             525          198.615
+             526          201.025
+             527          203.278
+             528           205.37
+             529          207.299
+             530          209.063
+             531           210.66
+             532          212.088
+             533          213.345
+             534           214.43
+             535          215.342
+             536          216.079
+             537          216.641
+             538          217.026
+             539          217.235
+             540          217.268
+             541          217.123
+             542          216.802
+             543          216.305
+             544          215.632
+             545          214.784
+             546          213.762
+             547          212.567
+             548          211.202
+             549          209.666
+             550          207.963
+             551          206.094
+             552          204.061
+             553          201.867
+             554          199.514
+             555          197.005
+             556          194.343
+             557          191.532
+             558          188.574
+             559          185.472
+             560          181.813
+             561          178.038
+             562          174.507
+             563          171.213
+             564          168.148
+             565          165.307
+             566          162.682
+             567          160.268
+             568           158.06
+             569          156.052
+             570          154.241
+             571          152.622
+             572          151.192
+             573          149.947
+             574          148.885
+             575          148.004
+             576          147.301
+             577          146.775
+             578          146.425
+             579          146.251
+             580          146.251
+             581          146.425
+             582          146.775
+             583          147.301
+             584          148.004
+             585          148.885
+             586          149.947
+             587          151.192
+             588          152.622
+             589          154.241
+             590          156.052
+             591           158.06
+             592          160.268
+             593          162.682
+             594          165.307
+             595          168.148
+             596          171.213
+             597          174.507
+             598          178.038
+             599          181.813
+             600          185.472
+             601          188.574
+             602          191.532
+             603          194.343
+             604          197.005
+             605          199.514
+             606          201.867
+             607          204.061
+             608          206.094
+             609          207.963
+             610          209.666
+             611          211.202
+             612          212.567
+             613          213.762
+             614          214.784
+             615          215.632
+             616          216.305
+             617          216.802
+             618          217.123
+             619          217.268
+             620          217.235
+             621          217.026
+             622          216.641
+             623          216.079
+             624          215.342
+             625           214.43
+             626          213.345
+             627          212.088
+             628           210.66
+             629          209.063
+             630          207.299
+             631           205.37
+             632          203.278
+             633          201.025
+             634          198.615
+             635           196.05
+             636          193.333
+             637          190.468
+             638          187.457
+             639          184.304
+             640          180.588
+             641          176.747
+             642          173.148
+             643          169.782
+             644          166.644
+             645          163.724
+             646          161.018
+             647           158.52
+             648          156.222
+             649          154.122
+             650          152.214
+             651          150.493
+             652          148.957
+             653          147.601
+             654          146.423
+             655           145.42
+             656           144.59
+             657          143.931
+             658          143.441
+             659           143.12
+             660          142.967
+             661          142.982
+             662          143.164
+             663          143.514
+             664          144.032
+             665          144.721
+             666          145.581
+             667          146.614
+             668          147.822
+             669          149.209
+             670          150.777
+             671           152.53
+             672          154.471
+             673          156.605
+             674          158.937
+             675          161.471
+             676          164.213
+             677           167.17
+             678          170.347
+             679          173.752
+             680           177.06
+             681          179.859
+             682          182.526
+             683          185.056
+             684          187.448
+             685          189.698
+             686          191.803
+             687          193.762
+             688          195.571
+             689          197.229
+             690          198.734
+             691          200.084
+             692          201.277
+             693          202.312
+             694          203.189
+             695          203.904
+             696          204.459
+             697          204.852
+             698          205.083
+             699          205.151
+             700          205.056
+             701            204.8
+             702          204.381
+             703            203.8
+             704          203.059
+             705          202.157
+             706          201.096
+             707          199.878
+             708          198.503
+             709          196.973
+             710          195.291
+             711          193.457
+             712          191.475
+             713          189.346
+             714          187.073
+             715          184.659
+             716          182.107
+             717          179.418
+             718          176.598
+             719          173.649
+             720          170.176
+             721           166.58
+             722          163.203
+             723          160.038
+             724          157.078
+             725          154.317
+             726          151.748
+             727          149.366
+             728          147.166
+             729          145.142
+             730          143.291
+             731          141.608
+             732          140.089
+             733          138.732
+             734          137.533
+             735          136.489
+             736          135.599
+             737          134.859
+             738           134.27
+             739          133.829
+             740          133.535
+             741          133.388
+             742          133.388
+             743          133.534
+             744          133.826
+             745          134.266
+             746          134.855
+             747          135.593
+             748          136.482
+             749          137.524
+             750          138.723
+             751          140.079
+             752          141.596
+             753          143.278
+             754          145.128
+             755           147.15
+             756          149.349
+             757           151.73
+             758          154.297
+             759          157.057
+             760          159.745
+             761          162.016
+             762          164.176
+             763          166.221
+             764          168.149
+             765          169.959
+             766          171.647
+             767          173.212
+             768          174.652
+             769          175.965
+             770           177.15
+             771          178.205
+             772          179.129
+             773          179.922
+             774          180.581
+             775          181.107
+             776          181.499
+             777          181.755
+             778          181.877
+             779          181.864
+             780          181.715
+             781          181.431
+             782          181.013
+             783           180.46
+             784          179.774
+             785          178.955
+             786          178.004
+             787          176.923
+             788          175.712
+             789          174.374
+             790          172.909
+             791          171.319
+             792          169.606
+             793          167.773
+             794          165.821
+             795          163.753
+             796          161.571
+             797          159.277
+             798          156.875
+             799          154.367
+             800          151.418
+             801          148.357
+             802          145.475
+             803          142.766
+             804          140.225
+             805          137.844
+             806           135.62
+             807          133.548
+             808          131.622
+             809          129.838
+             810          128.194
+             811          126.684
+             812          125.306
+             813          124.057
+             814          122.933
+             815          121.933
+             816          121.054
+             817          120.295
+             818          119.653
+             819          119.127
+             820          118.716
+             821           118.42
+             822          118.237
+             823          118.167
+             824           118.21
+             825          118.366
+             826          118.635
+             827          119.019
+             828          119.517
+             829          120.131
+             830          120.862
+             831          121.712
+             832          122.683
+             833          123.777
+             834          124.996
+             835          126.343
+             836          127.821
+             837          129.434
+             838          131.184
+             839          133.075
+             840          134.927
+             841          136.487
+             842          137.965
+             843           139.36
+             844          140.669
+             845          141.892
+             846          143.026
+             847          144.071
+             848          145.025
+             849          145.887
+             850          146.656
+             851          147.332
+             852          147.913
+             853          148.398
+             854          148.788
+             855          149.081
+             856          149.278
+             857          149.378
+             858          149.381
+             859          149.286
+             860          149.095
+             861          148.808
+             862          148.423
+             863          147.943
+             864          147.368
+             865          146.698
+             866          145.934
+             867          145.077
+             868          144.129
+             869          143.089
+             870           141.96
+             871          140.742
+             872          139.438
+             873          138.048
+             874          136.574
+             875          135.019
+             876          133.384
+             877           131.67
+             878           129.88
+             879          128.016
+             880          125.829
+             881           123.55
+             882          121.396
+             883          119.362
+             884          117.444
+             885          115.637
+             886          113.937
+             887          112.341
+             888          110.845
+             889          109.446
+             890          108.141
+             891          106.926
+             892            105.8
+             893           104.76
+             894          103.803
+             895          102.927
+             896          102.131
+             897          101.412
+             898           100.77
+             899          100.202
+             900          99.7072
+             901           99.285
+             902          98.9343
+             903          98.6542
+             904          98.4441
+             905          98.3035
+             906          98.2322
+             907          98.2299
+             908          98.2968
+             909          98.4328
+             910          98.6384
+             911           98.914
+             912          99.2601
+             913          99.6776
+             914          100.167
+             915           100.73
+             916          101.368
+             917          102.082
+             918          102.873
+             919          103.743
+             920          104.609
+             921          105.332
+             922          106.009
+             923          106.641
+             924          107.225
+             925          107.763
+             926          108.252
+             927          108.692
+             928          109.083
+             929          109.425
+             930          109.716
+             931          109.957
+             932          110.148
+             933          110.287
+             934          110.376
+             935          110.413
+             936          110.399
+             937          110.334
+             938          110.218
+             939           110.05
+             940          109.832
+             941          109.564
+             942          109.245
+             943          108.876
+             944          108.458
+             945          107.991
+             946          107.476
+             947          106.913
+             948          106.302
+             949          105.646
+             950          104.943
+             951          104.196
+             952          103.405
+             953          102.572
+             954          101.696
+             955          100.779
+             956          99.8219
+             957          98.8263
+             958          97.7931
+             959          96.7235
+             960          95.4753
+             961          94.1629
+             962          92.9107
+             963          91.7158
+             964          90.5757
+             965          89.4878
+             966          88.4498
+             967          87.4593
+             968          86.5142
+             969          85.6124
+             970          84.7519
+             971          83.9309
+             972          83.1475
+             973          82.3999
+             974          81.6866
+             975           81.006
+             976          80.3566
+             977           79.737
+             978          79.1457
+             979          78.5815
+             980          78.0432
+             981          77.5295
+             982          77.0394
+             983          76.5717
+             984          76.1254
+             985          75.6996
+             986          75.2933
+             987          74.9057
+             988          74.5357
+             989          74.1828
+             990           73.846
+             991          73.5246
+             992           73.218
+             993          72.9254
+             994          72.6462
+             995          72.3798
+             996          72.1256
+             997          71.8831
+             998          71.6517
+             999          71.4308
+            1000          71.2201
+            1001          71.0191
+            1002          70.8272
+            1003          70.6442
+            1004          70.4695
+            1005          70.3028
+            1006          70.1438
+            1007          69.9921
+            1008          69.8473
+            1009          69.7091
+            1010          69.5773
+            1011          69.4515
+            1012          69.3315
+            1013           69.217
+            1014          69.1077
+            1015          69.0034
+            1016           68.904
+            1017           68.809
+            1018          68.7184
+            1019           68.632
+            1020          68.5495
+            1021          68.4708
+            1022          68.3958
+            1023          68.3241
+            1024          68.2557
+            1025          68.1905
+            1026          68.1283
+            1027          68.0689
+            1028          68.0122
+            1029          67.9581
+            1030          67.9065
+            1031          67.8573
+            1032          67.8103
+            1033          67.7655
+            1034          67.7227
+            1035          67.6819
+            1036           67.643
+            1037          67.6058
+            1038          67.5704
+            1039          67.5365
+            1040          67.5042
+            1041          67.4734
+            1042          67.4441
+            1043           67.416
+            1044          67.3893
+            1045          67.3637
+            1046          67.3394
+            1047          67.3161
+            1048          67.2939
+            1049          67.2728
+            1050          67.2526
+            1051          67.2333
+            1052          67.2149
+            1053          67.1974
+            1054          67.1806
+            1055          67.1646
+            1056          67.1494
+            1057          67.1349
+            1058           67.121
+            1059          67.1077
+            1060          67.0951
+            1061           67.083
+            1062          67.0715
+            1063          67.0606
+            1064          67.0501
+            1065          67.0401
+            1066          67.0306
+            1067          67.0215
+            1068          67.0128
+            1069          67.0045
+            1070          66.9966
+            1071           66.989
+            1072          66.9818
+            1073           66.975
+            1074          66.9684
+            1075          66.9622
+            1076          66.9562
+            1077          66.9505
+            1078          66.9451
+            1079          66.9399
+            1080          66.9349
+            1081          66.9302
+            1082          66.9257
+            1083          66.9214
+            1084          66.9173
+            1085          66.9134
+            1086          66.9096
+            1087          66.9061
+            1088          66.9027
+            1089          66.8994
+            1090          66.8963
+            1091          66.8934
+            1092          66.8906
+            1093          66.8879
+            1094          66.8853
+            1095          66.8828
+            1096          66.8805
+            1097          66.8783
+            1098          66.8761
+            1099          66.8741
+            1100          66.8722
+            1101          66.8703
+            1102          66.8685
+            1103          66.8668
+            1104          66.8652
+            1105          66.8637
+            1106          66.8622
+            1107          66.8608
+            1108          66.8595
+            1109          66.8582
+            1110           66.857
+            1111          66.8558
+            1112          66.8547
+            1113          66.8536
+            1114          66.8526
+            1115          66.8516
+            1116          66.8507
+            1117          66.8498
+            1118           66.849
+            1119          66.8481
+            1120          66.8474
+            1121          66.8466
+            1122          66.8459
+            1123          66.8452
+            1124          66.8446
+            1125           66.844
+            1126          66.8434
+            1127          66.8428
+            1128          66.8423
+            1129          66.8417
+            1130          66.8412
+            1131          66.8407
+            1132          66.8403
+            1133          66.8398
+            1134          66.8394
+            1135           66.839
+            1136          66.8386
+            1137          66.8382
+            1138          66.8378
+            1139          66.8375
+            1140          66.8371
+            1141          66.8368
+            1142          66.8365
+            1143          66.8362
+            1144          66.8359
+            1145          66.8356
+            1146          66.8353
+            1147           66.835
+            1148          66.8347
+            1149          66.8345
+            1150          66.8342
+            1151          66.8339
+            1152          66.8337
+            1153          66.8334
+            1154          66.8332
+            1155           66.833
+            1156          66.8327
+            1157          66.8325
+            1158          66.8322
+            1159           66.832
+&
+@TYPE xy
+               0          167.098
+               1          167.098
+               2          167.098
+               3          167.098
+               4          167.098
+               5          167.098
+               6          167.098
+               7          167.098
+               8          167.098
+               9          167.098
+              10          167.098
+              11          167.098
+              12          167.098
+              13          167.098
+              14          167.098
+              15          167.098
+              16          167.098
+              17          167.098
+              18          167.098
+              19          167.098
+              20          167.098
+              21          167.098
+              22          167.098
+              23          167.098
+              24          167.098
+              25          167.098
+              26          167.098
+              27          167.098
+              28          167.098
+              29          167.098
+              30          167.098
+              31          167.098
+              32          167.098
+              33          167.098
+              34          167.098
+              35          167.098
+              36          167.098
+              37          167.098
+              38          167.098
+              39          167.098
+              40          167.098
+              41          167.098
+              42          167.098
+              43          167.098
+              44          167.098
+              45          167.098
+              46          167.098
+              47          167.098
+              48          167.098
+              49          167.098
+              50          167.098
+              51          167.098
+              52          167.098
+              53          167.098
+              54          167.098
+              55          167.098
+              56          167.098
+              57          167.098
+              58          167.098
+              59          167.098
+              60          167.098
+              61          167.098
+              62          167.098
+              63          167.098
+              64          167.098
+              65          167.098
+              66          167.098
+              67          167.098
+              68          167.098
+              69          167.098
+              70          167.098
+              71          167.098
+              72          167.098
+              73          167.098
+              74          167.098
+              75          167.098
+              76          167.098
+              77          167.098
+              78          167.098
+              79          167.098
+              80          167.098
+              81          167.098
+              82          167.098
+              83          167.098
+              84          167.098
+              85          167.098
+              86          167.098
+              87          167.098
+              88          167.098
+              89          167.098
+              90          167.098
+              91          167.098
+              92          167.098
+              93          167.098
+              94          167.098
+              95          167.098
+              96          167.098
+              97          167.098
+              98          167.098
+              99          167.098
+             100          167.098
+             101          167.098
+             102          167.098
+             103          167.098
+             104          167.098
+             105          167.098
+             106          167.098
+             107          167.098
+             108          167.098
+             109          167.098
+             110          167.098
+             111          167.098
+             112          167.098
+             113          167.098
+             114          167.098
+             115          167.098
+             116          167.098
+             117          167.098
+             118          167.098
+             119          167.098
+             120          167.098
+             121          167.098
+             122          167.098
+             123          167.098
+             124          167.098
+             125          167.098
+             126          167.098
+             127          167.098
+             128          167.098
+             129          167.098
+             130          167.098
+             131          167.098
+             132          167.098
+             133          167.098
+             134          167.098
+             135          167.098
+             136          167.098
+             137          167.098
+             138          167.098
+             139          167.098
+             140          167.098
+             141          167.098
+             142          167.098
+             143          167.098
+             144          167.098
+             145          167.098
+             146          167.098
+             147          167.098
+             148          167.098
+             149          167.098
+             150          167.098
+             151          167.098
+             152          167.098
+             153          167.098
+             154          167.098
+             155          167.098
+             156          167.098
+             157          167.098
+             158          167.098
+             159          167.098
+             160          167.098
+             161          167.098
+             162          167.098
+             163          167.098
+             164          167.098
+             165          167.098
+             166          167.098
+             167          167.098
+             168          167.098
+             169          167.098
+             170          167.098
+             171          167.098
+             172          167.098
+             173          167.098
+             174          167.098
+             175          167.098
+             176          167.098
+             177          167.098
+             178          167.098
+             179          167.098
+             180          167.098
+             181          167.098
+             182          167.098
+             183          167.098
+             184          167.098
+             185          167.098
+             186          167.098
+             187          167.098
+             188          167.098
+             189          167.098
+             190          167.098
+             191          167.098
+             192          167.098
+             193          167.098
+             194          167.098
+             195          167.098
+             196          167.098
+             197          167.098
+             198          167.098
+             199          167.098
+             200                0
+             201                0
+             202                0
+             203                0
+             204                0
+             205                0
+             206                0
+             207                0
+             208                0
+             209                0
+             210                0
+             211                0
+             212                0
+             213                0
+             214                0
+             215                0
+             216                0
+             217                0
+             218                0
+             219                0
+             220                0
+             221                0
+             222                0
+             223                0
+             224                0
+             225                0
+             226                0
+             227                0
+             228                0
+             229                0
+             230                0
+             231                0
+             232                0
+             233                0
+             234                0
+             235                0
+             236                0
+             237                0
+             238                0
+             239                0
+             240          167.098
+             241          167.098
+             242          167.098
+             243          167.098
+             244          167.098
+             245          167.098
+             246          167.098
+             247          167.098
+             248          167.098
+             249          167.098
+             250          167.098
+             251          167.098
+             252          167.098
+             253          167.098
+             254          167.098
+             255          167.098
+             256          167.098
+             257          167.098
+             258          167.098
+             259          167.098
+             260          167.098
+             261          167.098
+             262          167.098
+             263          167.098
+             264          167.098
+             265          167.098
+             266          167.098
+             267          167.098
+             268          167.098
+             269          167.098
+             270          167.098
+             271          167.098
+             272          167.098
+             273          167.098
+             274          167.098
+             275          167.098
+             276          167.098
+             277          167.098
+             278          167.098
+             279          167.098
+             280                0
+             281                0
+             282                0
+             283                0
+             284                0
+             285                0
+             286                0
+             287                0
+             288                0
+             289                0
+             290                0
+             291                0
+             292                0
+             293                0
+             294                0
+             295                0
+             296                0
+             297                0
+             298                0
+             299                0
+             300                0
+             301                0
+             302                0
+             303                0
+             304                0
+             305                0
+             306                0
+             307                0
+             308                0
+             309                0
+             310                0
+             311                0
+             312                0
+             313                0
+             314                0
+             315                0
+             316                0
+             317                0
+             318                0
+             319                0
+             320          167.098
+             321          167.098
+             322          167.098
+             323          167.098
+             324          167.098
+             325          167.098
+             326          167.098
+             327          167.098
+             328          167.098
+             329          167.098
+             330          167.098
+             331          167.098
+             332          167.098
+             333          167.098
+             334          167.098
+             335          167.098
+             336          167.098
+             337          167.098
+             338          167.098
+             339          167.098
+             340          167.098
+             341          167.098
+             342          167.098
+             343          167.098
+             344          167.098
+             345          167.098
+             346          167.098
+             347          167.098
+             348          167.098
+             349          167.098
+             350          167.098
+             351          167.098
+             352          167.098
+             353          167.098
+             354          167.098
+             355          167.098
+             356          167.098
+             357          167.098
+             358          167.098
+             359          167.098
+             360                0
+             361                0
+             362                0
+             363                0
+             364                0
+             365                0
+             366                0
+             367                0
+             368                0
+             369                0
+             370                0
+             371                0
+             372                0
+             373                0
+             374                0
+             375                0
+             376                0
+             377                0
+             378                0
+             379                0
+             380                0
+             381                0
+             382                0
+             383                0
+             384                0
+             385                0
+             386                0
+             387                0
+             388                0
+             389                0
+             390                0
+             391                0
+             392                0
+             393                0
+             394                0
+             395                0
+             396                0
+             397                0
+             398                0
+             399                0
+             400          167.098
+             401          167.098
+             402          167.098
+             403          167.098
+             404          167.098
+             405          167.098
+             406          167.098
+             407          167.098
+             408          167.098
+             409          167.098
+             410          167.098
+             411          167.098
+             412          167.098
+             413          167.098
+             414          167.098
+             415          167.098
+             416          167.098
+             417          167.098
+             418          167.098
+             419          167.098
+             420          167.098
+             421          167.098
+             422          167.098
+             423          167.098
+             424          167.098
+             425          167.098
+             426          167.098
+             427          167.098
+             428          167.098
+             429          167.098
+             430          167.098
+             431          167.098
+             432          167.098
+             433          167.098
+             434          167.098
+             435          167.098
+             436          167.098
+             437          167.098
+             438          167.098
+             439          167.098
+             440                0
+             441                0
+             442                0
+             443                0
+             444                0
+             445                0
+             446                0
+             447                0
+             448                0
+             449                0
+             450                0
+             451                0
+             452                0
+             453                0
+             454                0
+             455                0
+             456                0
+             457                0
+             458                0
+             459                0
+             460                0
+             461                0
+             462                0
+             463                0
+             464                0
+             465                0
+             466                0
+             467                0
+             468                0
+             469                0
+             470                0
+             471                0
+             472                0
+             473                0
+             474                0
+             475                0
+             476                0
+             477                0
+             478                0
+             479                0
+             480          167.098
+             481          167.098
+             482          167.098
+             483          167.098
+             484          167.098
+             485          167.098
+             486          167.098
+             487          167.098
+             488          167.098
+             489          167.098
+             490          167.098
+             491          167.098
+             492          167.098
+             493          167.098
+             494          167.098
+             495          167.098
+             496          167.098
+             497          167.098
+             498          167.098
+             499          167.098
+             500          167.098
+             501          167.098
+             502          167.098
+             503          167.098
+             504          167.098
+             505          167.098
+             506          167.098
+             507          167.098
+             508          167.098
+             509          167.098
+             510          167.098
+             511          167.098
+             512          167.098
+             513          167.098
+             514          167.098
+             515          167.098
+             516          167.098
+             517          167.098
+             518          167.098
+             519          167.098
+             520                0
+             521                0
+             522                0
+             523                0
+             524                0
+             525                0
+             526                0
+             527                0
+             528                0
+             529                0
+             530                0
+             531                0
+             532                0
+             533                0
+             534                0
+             535                0
+             536                0
+             537                0
+             538                0
+             539                0
+             540                0
+             541                0
+             542                0
+             543                0
+             544                0
+             545                0
+             546                0
+             547                0
+             548                0
+             549                0
+             550                0
+             551                0
+             552                0
+             553                0
+             554                0
+             555                0
+             556                0
+             557                0
+             558                0
+             559                0
+             560          167.098
+             561          167.098
+             562          167.098
+             563          167.098
+             564          167.098
+             565          167.098
+             566          167.098
+             567          167.098
+             568          167.098
+             569          167.098
+             570          167.098
+             571          167.098
+             572          167.098
+             573          167.098
+             574          167.098
+             575          167.098
+             576          167.098
+             577          167.098
+             578          167.098
+             579          167.098
+             580          167.098
+             581          167.098
+             582          167.098
+             583          167.098
+             584          167.098
+             585          167.098
+             586          167.098
+             587          167.098
+             588          167.098
+             589          167.098
+             590          167.098
+             591          167.098
+             592          167.098
+             593          167.098
+             594          167.098
+             595          167.098
+             596          167.098
+             597          167.098
+             598          167.098
+             599          167.098
+             600                0
+             601                0
+             602                0
+             603                0
+             604                0
+             605                0
+             606                0
+             607                0
+             608                0
+             609                0
+             610                0
+             611                0
+             612                0
+             613                0
+             614                0
+             615                0
+             616                0
+             617                0
+             618                0
+             619                0
+             620                0
+             621                0
+             622                0
+             623                0
+             624                0
+             625                0
+             626                0
+             627                0
+             628                0
+             629                0
+             630                0
+             631                0
+             632                0
+             633                0
+             634                0
+             635                0
+             636                0
+             637                0
+             638                0
+             639                0
+             640          167.098
+             641          167.098
+             642          167.098
+             643          167.098
+             644          167.098
+             645          167.098
+             646          167.098
+             647          167.098
+             648          167.098
+             649          167.098
+             650          167.098
+             651          167.098
+             652          167.098
+             653          167.098
+             654          167.098
+             655          167.098
+             656          167.098
+             657          167.098
+             658          167.098
+             659          167.098
+             660          167.098
+             661          167.098
+             662          167.098
+             663          167.098
+             664          167.098
+             665          167.098
+             666          167.098
+             667          167.098
+             668          167.098
+             669          167.098
+             670          167.098
+             671          167.098
+             672          167.098
+             673          167.098
+             674          167.098
+             675          167.098
+             676          167.098
+             677          167.098
+             678          167.098
+             679          167.098
+             680                0
+             681                0
+             682                0
+             683                0
+             684                0
+             685                0
+             686                0
+             687                0
+             688                0
+             689                0
+             690                0
+             691                0
+             692                0
+             693                0
+             694                0
+             695                0
+             696                0
+             697                0
+             698                0
+             699                0
+             700                0
+             701                0
+             702                0
+             703                0
+             704                0
+             705                0
+             706                0
+             707                0
+             708                0
+             709                0
+             710                0
+             711                0
+             712                0
+             713                0
+             714                0
+             715                0
+             716                0
+             717                0
+             718                0
+             719                0
+             720          167.098
+             721          167.098
+             722          167.098
+             723          167.098
+             724          167.098
+             725          167.098
+             726          167.098
+             727          167.098
+             728          167.098
+             729          167.098
+             730          167.098
+             731          167.098
+             732          167.098
+             733          167.098
+             734          167.098
+             735          167.098
+             736          167.098
+             737          167.098
+             738          167.098
+             739          167.098
+             740          167.098
+             741          167.098
+             742          167.098
+             743          167.098
+             744          167.098
+             745          167.098
+             746          167.098
+             747          167.098
+             748          167.098
+             749          167.098
+             750          167.098
+             751          167.098
+             752          167.098
+             753          167.098
+             754          167.098
+             755          167.098
+             756          167.098
+             757          167.098
+             758          167.098
+             759          167.098
+             760                0
+             761                0
+             762                0
+             763                0
+             764                0
+             765                0
+             766                0
+             767                0
+             768                0
+             769                0
+             770                0
+             771                0
+             772                0
+             773                0
+             774                0
+             775                0
+             776                0
+             777                0
+             778                0
+             779                0
+             780                0
+             781                0
+             782                0
+             783                0
+             784                0
+             785                0
+             786                0
+             787                0
+             788                0
+             789                0
+             790                0
+             791                0
+             792                0
+             793                0
+             794                0
+             795                0
+             796                0
+             797                0
+             798                0
+             799                0
+             800          167.098
+             801          167.098
+             802          167.098
+             803          167.098
+             804          167.098
+             805          167.098
+             806          167.098
+             807          167.098
+             808          167.098
+             809          167.098
+             810          167.098
+             811          167.098
+             812          167.098
+             813          167.098
+             814          167.098
+             815          167.098
+             816          167.098
+             817          167.098
+             818          167.098
+             819          167.098
+             820          167.098
+             821          167.098
+             822          167.098
+             823          167.098
+             824          167.098
+             825          167.098
+             826          167.098
+             827          167.098
+             828          167.098
+             829          167.098
+             830          167.098
+             831          167.098
+             832          167.098
+             833          167.098
+             834          167.098
+             835          167.098
+             836          167.098
+             837          167.098
+             838          167.098
+             839          167.098
+             840                0
+             841                0
+             842                0
+             843                0
+             844                0
+             845                0
+             846                0
+             847                0
+             848                0
+             849                0
+             850                0
+             851                0
+             852                0
+             853                0
+             854                0
+             855                0
+             856                0
+             857                0
+             858                0
+             859                0
+             860                0
+             861                0
+             862                0
+             863                0
+             864                0
+             865                0
+             866                0
+             867                0
+             868                0
+             869                0
+             870                0
+             871                0
+             872                0
+             873                0
+             874                0
+             875                0
+             876                0
+             877                0
+             878                0
+             879                0
+             880          167.098
+             881          167.098
+             882          167.098
+             883          167.098
+             884          167.098
+             885          167.098
+             886          167.098
+             887          167.098
+             888          167.098
+             889          167.098
+             890          167.098
+             891          167.098
+             892          167.098
+             893          167.098
+             894          167.098
+             895          167.098
+             896          167.098
+             897          167.098
+             898          167.098
+             899          167.098
+             900          167.098
+             901          167.098
+             902          167.098
+             903          167.098
+             904          167.098
+             905          167.098
+             906          167.098
+             907          167.098
+             908          167.098
+             909          167.098
+             910          167.098
+             911          167.098
+             912          167.098
+             913          167.098
+             914          167.098
+             915          167.098
+             916          167.098
+             917          167.098
+             918          167.098
+             919          167.098
+             920                0
+             921                0
+             922                0
+             923                0
+             924                0
+             925                0
+             926                0
+             927                0
+             928                0
+             929                0
+             930                0
+             931                0
+             932                0
+             933                0
+             934                0
+             935                0
+             936                0
+             937                0
+             938                0
+             939                0
+             940                0
+             941                0
+             942                0
+             943                0
+             944                0
+             945                0
+             946                0
+             947                0
+             948                0
+             949                0
+             950                0
+             951                0
+             952                0
+             953                0
+             954                0
+             955                0
+             956                0
+             957                0
+             958                0
+             959                0
+             960          167.098
+             961          167.098
+             962          167.098
+             963          167.098
+             964          167.098
+             965          167.098
+             966          167.098
+             967          167.098
+             968          167.098
+             969          167.098
+             970          167.098
+             971          167.098
+             972          167.098
+             973          167.098
+             974          167.098
+             975          167.098
+             976          167.098
+             977          167.098
+             978          167.098
+             979          167.098
+             980          167.098
+             981          167.098
+             982          167.098
+             983          167.098
+             984          167.098
+             985          167.098
+             986          167.098
+             987          167.098
+             988          167.098
+             989          167.098
+             990          167.098
+             991          167.098
+             992          167.098
+             993          167.098
+             994          167.098
+             995          167.098
+             996          167.098
+             997          167.098
+             998          167.098
+             999          167.098
+            1000          167.098
+            1001          167.098
+            1002          167.098
+            1003          167.098
+            1004          167.098
+            1005          167.098
+            1006          167.098
+            1007          167.098
+            1008          167.098
+            1009          167.098
+            1010          167.098
+            1011          167.098
+            1012          167.098
+            1013          167.098
+            1014          167.098
+            1015          167.098
+            1016          167.098
+            1017          167.098
+            1018          167.098
+            1019          167.098
+            1020          167.098
+            1021          167.098
+            1022          167.098
+            1023          167.098
+            1024          167.098
+            1025          167.098
+            1026          167.098
+            1027          167.098
+            1028          167.098
+            1029          167.098
+            1030          167.098
+            1031          167.098
+            1032          167.098
+            1033          167.098
+            1034          167.098
+            1035          167.098
+            1036          167.098
+            1037          167.098
+            1038          167.098
+            1039          167.098
+            1040          167.098
+            1041          167.098
+            1042          167.098
+            1043          167.098
+            1044          167.098
+            1045          167.098
+            1046          167.098
+            1047          167.098
+            1048          167.098
+            1049          167.098
+            1050          167.098
+            1051          167.098
+            1052          167.098
+            1053          167.098
+            1054          167.098
+            1055          167.098
+            1056          167.098
+            1057          167.098
+            1058          167.098
+            1059          167.098
+            1060          167.098
+            1061          167.098
+            1062          167.098
+            1063          167.098
+            1064          167.098
+            1065          167.098
+            1066          167.098
+            1067          167.098
+            1068          167.098
+            1069          167.098
+            1070          167.098
+            1071          167.098
+            1072          167.098
+            1073          167.098
+            1074          167.098
+            1075          167.098
+            1076          167.098
+            1077          167.098
+            1078          167.098
+            1079          167.098
+            1080          167.098
+            1081          167.098
+            1082          167.098
+            1083          167.098
+            1084          167.098
+            1085          167.098
+            1086          167.098
+            1087          167.098
+            1088          167.098
+            1089          167.098
+            1090          167.098
+            1091          167.098
+            1092          167.098
+            1093          167.098
+            1094          167.098
+            1095          167.098
+            1096          167.098
+            1097          167.098
+            1098          167.098
+            1099          167.098
+            1100          167.098
+            1101          167.098
+            1102          167.098
+            1103          167.098
+            1104          167.098
+            1105          167.098
+            1106          167.098
+            1107          167.098
+            1108          167.098
+            1109          167.098
+            1110          167.098
+            1111          167.098
+            1112          167.098
+            1113          167.098
+            1114          167.098
+            1115          167.098
+            1116          167.098
+            1117          167.098
+            1118          167.098
+            1119          167.098
+            1120          167.098
+            1121          167.098
+            1122          167.098
+            1123          167.098
+            1124          167.098
+            1125          167.098
+            1126          167.098
+            1127          167.098
+            1128          167.098
+            1129          167.098
+            1130          167.098
+            1131          167.098
+            1132          167.098
+            1133          167.098
+            1134          167.098
+            1135          167.098
+            1136          167.098
+            1137          167.098
+            1138          167.098
+            1139          167.098
+            1140          167.098
+            1141          167.098
+            1142          167.098
+            1143          167.098
+            1144          167.098
+            1145          167.098
+            1146          167.098
+            1147          167.098
+            1148          167.098
+            1149          167.098
+            1150          167.098
+            1151          167.098
+            1152          167.098
+            1153          167.098
+            1154          167.098
+            1155          167.098
+            1156          167.098
+            1157          167.098
+            1158          167.098
+            1159          167.098
+&
