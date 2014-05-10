@@ -1,0 +1,835 @@
+# Grace project file
+#
+@version 50123
+@page size 792, 612
+@page scroll 5%
+@page inout 5%
+@link page off
+@map font 8 to "Courier", "Courier"
+@map font 10 to "Courier-Bold", "Courier-Bold"
+@map font 11 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 9 to "Courier-Oblique", "Courier-Oblique"
+@map font 14 to "Courier-Regular", "Courier-Regular"
+@map font 15 to "Dingbats-Regular", "Dingbats-Regular"
+@map font 4 to "Helvetica", "Helvetica"
+@map font 6 to "Helvetica-Bold", "Helvetica-Bold"
+@map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
+@map font 5 to "Helvetica-Oblique", "Helvetica-Oblique"
+@map font 20 to "NimbusMonoL-Bold", "NimbusMonoL-Bold"
+@map font 21 to "NimbusMonoL-BoldOblique", "NimbusMonoL-BoldOblique"
+@map font 22 to "NimbusMonoL-Regular", "NimbusMonoL-Regular"
+@map font 23 to "NimbusMonoL-RegularOblique", "NimbusMonoL-RegularOblique"
+@map font 24 to "NimbusRomanNo9L-Medium", "NimbusRomanNo9L-Medium"
+@map font 25 to "NimbusRomanNo9L-MediumItalic", "NimbusRomanNo9L-MediumItalic"
+@map font 26 to "NimbusRomanNo9L-Regular", "NimbusRomanNo9L-Regular"
+@map font 27 to "NimbusRomanNo9L-RegularItalic", "NimbusRomanNo9L-RegularItalic"
+@map font 28 to "NimbusSansL-Bold", "NimbusSansL-Bold"
+@map font 29 to "NimbusSansL-BoldCondensed", "NimbusSansL-BoldCondensed"
+@map font 30 to "NimbusSansL-BoldCondensedItalic", "NimbusSansL-BoldCondensedItalic"
+@map font 31 to "NimbusSansL-BoldItalic", "NimbusSansL-BoldItalic"
+@map font 32 to "NimbusSansL-Regular", "NimbusSansL-Regular"
+@map font 33 to "NimbusSansL-RegularCondensed", "NimbusSansL-RegularCondensed"
+@map font 34 to "NimbusSansL-RegularCondensedItalic", "NimbusSansL-RegularCondensedItalic"
+@map font 35 to "NimbusSansL-RegularItalic", "NimbusSansL-RegularItalic"
+@map font 36 to "StandardSymbolsL-Regular", "StandardSymbolsL-Regular"
+@map font 12 to "Symbol", "Symbol"
+@map font 38 to "Symbol-Regular", "Symbol-Regular"
+@map font 2 to "Times-Bold", "Times-Bold"
+@map font 3 to "Times-BoldItalic", "Times-BoldItalic"
+@map font 1 to "Times-Italic", "Times-Italic"
+@map font 0 to "Times-Roman", "Times-Roman"
+@map font 43 to "URWBookmanL-DemiBold", "URWBookmanL-DemiBold"
+@map font 44 to "URWBookmanL-DemiBoldItalic", "URWBookmanL-DemiBoldItalic"
+@map font 45 to "URWBookmanL-Light", "URWBookmanL-Light"
+@map font 46 to "URWBookmanL-LightItalic", "URWBookmanL-LightItalic"
+@map font 47 to "URWChanceryL-MediumItalic", "URWChanceryL-MediumItalic"
+@map font 48 to "URWGothicL-Book", "URWGothicL-Book"
+@map font 49 to "URWGothicL-BookOblique", "URWGothicL-BookOblique"
+@map font 50 to "URWGothicL-Demi", "URWGothicL-Demi"
+@map font 51 to "URWGothicL-DemiOblique", "URWGothicL-DemiOblique"
+@map font 52 to "URWPalladioL-Bold", "URWPalladioL-Bold"
+@map font 53 to "URWPalladioL-BoldItalic", "URWPalladioL-BoldItalic"
+@map font 54 to "URWPalladioL-Italic", "URWPalladioL-Italic"
+@map font 55 to "URWPalladioL-Roman", "URWPalladioL-Roman"
+@map font 56 to "Utopia-Bold", "Utopia-Bold"
+@map font 57 to "Utopia-BoldItalic", "Utopia-BoldItalic"
+@map font 58 to "Utopia-Italic", "Utopia-Italic"
+@map font 59 to "Utopia-Regular", "Utopia-Regular"
+@map font 13 to "ZapfDingbats", "ZapfDingbats"
+@map color 0 to (255, 255, 255), "white"
+@map color 1 to (0, 0, 0), "black"
+@map color 2 to (255, 0, 0), "red"
+@map color 3 to (0, 255, 0), "green"
+@map color 4 to (0, 0, 255), "blue"
+@map color 5 to (255, 255, 0), "yellow"
+@map color 6 to (188, 143, 143), "brown"
+@map color 7 to (220, 220, 220), "grey"
+@map color 8 to (148, 0, 211), "violet"
+@map color 9 to (0, 255, 255), "cyan"
+@map color 10 to (255, 0, 255), "magenta"
+@map color 11 to (255, 165, 0), "orange"
+@map color 12 to (114, 33, 188), "indigo"
+@map color 13 to (103, 7, 72), "maroon"
+@map color 14 to (64, 224, 208), "turquoise"
+@map color 15 to (0, 139, 0), "green4"
+@reference date 0
+@date wrap off
+@date wrap year 1950
+@default linewidth 2.0
+@default linestyle 1
+@default color 1
+@default pattern 1
+@default font 0
+@default char size 2.000000
+@default symbol size 1.000000
+@default sformat "%.8g"
+@background color 0
+@page background fill on
+@timestamp off
+@timestamp 0.03, 0.03
+@timestamp color 1
+@timestamp rot 0
+@timestamp font 0
+@timestamp char size 2.000000
+@timestamp def "Sat May 10 21:48:05 2014"
+@r0 off
+@link r0 to g0
+@r0 type above
+@r0 linestyle 1
+@r0 linewidth 2.0
+@r0 color 1
+@r0 line 0, 0, 0, 0
+@r1 off
+@link r1 to g0
+@r1 type above
+@r1 linestyle 1
+@r1 linewidth 2.0
+@r1 color 1
+@r1 line 0, 0, 0, 0
+@r2 off
+@link r2 to g0
+@r2 type above
+@r2 linestyle 1
+@r2 linewidth 2.0
+@r2 color 1
+@r2 line 0, 0, 0, 0
+@r3 off
+@link r3 to g0
+@r3 type above
+@r3 linestyle 1
+@r3 linewidth 2.0
+@r3 color 1
+@r3 line 0, 0, 0, 0
+@r4 off
+@link r4 to g0
+@r4 type above
+@r4 linestyle 1
+@r4 linewidth 2.0
+@r4 color 1
+@r4 line 0, 0, 0, 0
+@g0 on
+@g0 hidden false
+@g0 type XY
+@g0 stacked false
+@g0 bar hgap 0.000000
+@g0 fixedpoint off
+@g0 fixedpoint type 0
+@g0 fixedpoint xy 0.000000, 0.000000
+@g0 fixedpoint format general general
+@g0 fixedpoint prec 6, 6
+@with g0
+@    world 0, -25, 500, 200
+@    stack world 0, 0, 0, 0
+@    znorm 1
+@    view 0.200000, 0.150000, 1.200000, 0.850000
+@    title ""
+@    title font 0
+@    title size 1.500000
+@    title color 1
+@    subtitle ""
+@    subtitle font 0
+@    subtitle size 1.000000
+@    subtitle color 1
+@    xaxes scale Normal
+@    yaxes scale Normal
+@    xaxes invert off
+@    yaxes invert off
+@    xaxis  on
+@    xaxis  type zero false
+@    xaxis  offset 0.000000 , 0.000000
+@    xaxis  bar on
+@    xaxis  bar color 1
+@    xaxis  bar linestyle 1
+@    xaxis  bar linewidth 2.0
+@    xaxis  label "\f{Symbol}\f{Times-Roman}Growth (\f{Times-Italic}z-\f{Time-Roman}) axis (\cE\C)"
+@    xaxis  label layout para
+@    xaxis  label place auto
+@    xaxis  label char size 2.000000
+@    xaxis  label font 0
+@    xaxis  label color 1
+@    xaxis  label place normal
+@    xaxis  tick on
+@    xaxis  tick major 100
+@    xaxis  tick minor ticks 1
+@    xaxis  tick default 6
+@    xaxis  tick place rounded true
+@    xaxis  tick in
+@    xaxis  tick major size 1.000000
+@    xaxis  tick major color 1
+@    xaxis  tick major linewidth 2.0
+@    xaxis  tick major linestyle 1
+@    xaxis  tick major grid off
+@    xaxis  tick minor color 1
+@    xaxis  tick minor linewidth 2.0
+@    xaxis  tick minor linestyle 1
+@    xaxis  tick minor grid off
+@    xaxis  tick minor size 0.500000
+@    xaxis  ticklabel on
+@    xaxis  ticklabel format general
+@    xaxis  ticklabel prec 5
+@    xaxis  ticklabel formula ""
+@    xaxis  ticklabel append ""
+@    xaxis  ticklabel prepend ""
+@    xaxis  ticklabel angle 0
+@    xaxis  ticklabel skip 0
+@    xaxis  ticklabel stagger 0
+@    xaxis  ticklabel place normal
+@    xaxis  ticklabel offset auto
+@    xaxis  ticklabel offset 0.000000 , 0.010000
+@    xaxis  ticklabel start type auto
+@    xaxis  ticklabel start 0.000000
+@    xaxis  ticklabel stop type auto
+@    xaxis  ticklabel stop 0.000000
+@    xaxis  ticklabel char size 2.000000
+@    xaxis  ticklabel font 0
+@    xaxis  ticklabel color 1
+@    xaxis  tick place both
+@    xaxis  tick spec type none
+@    yaxis  on
+@    yaxis  type zero false
+@    yaxis  offset 0.000000 , 0.000000
+@    yaxis  bar on
+@    yaxis  bar color 1
+@    yaxis  bar linestyle 1
+@    yaxis  bar linewidth 2.0
+@    yaxis  label "\f{Times-Italic}V=V\s\f{Times-Roman}CB\N+\f{Times-Italic}V\s\f{Symbol}r\N \f{Times-Roman}(meV)"
+@    yaxis  label layout para
+@    yaxis  label place auto
+@    yaxis  label char size 2.000000
+@    yaxis  label font 0
+@    yaxis  label color 1
+@    yaxis  label place normal
+@    yaxis  tick on
+@    yaxis  tick major 50
+@    yaxis  tick minor ticks 1
+@    yaxis  tick default 6
+@    yaxis  tick place rounded true
+@    yaxis  tick in
+@    yaxis  tick major size 1.000000
+@    yaxis  tick major color 1
+@    yaxis  tick major linewidth 2.0
+@    yaxis  tick major linestyle 1
+@    yaxis  tick major grid off
+@    yaxis  tick minor color 1
+@    yaxis  tick minor linewidth 2.0
+@    yaxis  tick minor linestyle 1
+@    yaxis  tick minor grid off
+@    yaxis  tick minor size 0.500000
+@    yaxis  ticklabel on
+@    yaxis  ticklabel format general
+@    yaxis  ticklabel prec 5
+@    yaxis  ticklabel formula ""
+@    yaxis  ticklabel append ""
+@    yaxis  ticklabel prepend ""
+@    yaxis  ticklabel angle 0
+@    yaxis  ticklabel skip 0
+@    yaxis  ticklabel stagger 0
+@    yaxis  ticklabel place normal
+@    yaxis  ticklabel offset auto
+@    yaxis  ticklabel offset 0.000000 , 0.010000
+@    yaxis  ticklabel start type auto
+@    yaxis  ticklabel start 0.000000
+@    yaxis  ticklabel stop type auto
+@    yaxis  ticklabel stop 0.000000
+@    yaxis  ticklabel char size 2.000000
+@    yaxis  ticklabel font 0
+@    yaxis  ticklabel color 1
+@    yaxis  tick place both
+@    yaxis  tick spec type none
+@    altxaxis  off
+@    altyaxis  off
+@    legend on
+@    legend loctype view
+@    legend 0.85, 0.8
+@    legend box color 1
+@    legend box pattern 1
+@    legend box linewidth 2.0
+@    legend box linestyle 1
+@    legend box fill color 0
+@    legend box fill pattern 1
+@    legend font 0
+@    legend char size 2.000000
+@    legend color 1
+@    legend length 4
+@    legend vgap 1
+@    legend hgap 1
+@    legend invert false
+@    frame type 0
+@    frame linestyle 1
+@    frame linewidth 2.0
+@    frame color 1
+@    frame pattern 1
+@    frame background color 0
+@    frame background pattern 0
+@    s0 hidden false
+@    s0 type xy
+@    s0 symbol 0
+@    s0 symbol size 1.000000
+@    s0 symbol color 1
+@    s0 symbol pattern 1
+@    s0 symbol fill color 1
+@    s0 symbol fill pattern 0
+@    s0 symbol linewidth 2.0
+@    s0 symbol linestyle 1
+@    s0 symbol char 65
+@    s0 symbol char font 0
+@    s0 symbol skip 0
+@    s0 line type 1
+@    s0 line linestyle 1
+@    s0 line linewidth 2.0
+@    s0 line color 1
+@    s0 line pattern 1
+@    s0 baseline type 0
+@    s0 baseline off
+@    s0 dropline off
+@    s0 fill type 0
+@    s0 fill rule 0
+@    s0 fill color 1
+@    s0 fill pattern 1
+@    s0 avalue off
+@    s0 avalue type 2
+@    s0 avalue char size 1.000000
+@    s0 avalue font 0
+@    s0 avalue color 1
+@    s0 avalue rot 0
+@    s0 avalue format general
+@    s0 avalue prec 3
+@    s0 avalue prepend ""
+@    s0 avalue append ""
+@    s0 avalue offset 0.000000 , 0.000000
+@    s0 errorbar on
+@    s0 errorbar place both
+@    s0 errorbar color 1
+@    s0 errorbar pattern 1
+@    s0 errorbar size 1.000000
+@    s0 errorbar linewidth 2.0
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser linewidth 2.0
+@    s0 errorbar riser linestyle 1
+@    s0 errorbar riser clip off
+@    s0 errorbar riser clip length 0.100000
+@    s0 comment "Vtotal.r"
+@    s0 legend  ""
+@target G0.S0
+@type xy
+0 167.325
+1 167.325
+2 167.325
+3 167.325
+4 167.325
+5 167.325
+6 167.325
+7 167.325
+8 167.325
+9 167.325
+10 167.325
+11 167.325
+12 167.325
+13 167.325
+14 167.325
+15 167.325
+16 167.325
+17 167.325
+18 167.325
+19 167.325
+20 167.325
+21 167.325
+22 167.325
+23 167.325
+24 167.325
+25 167.325
+26 167.325
+27 167.325
+28 167.325
+29 167.325
+30 167.325
+31 167.325
+32 167.325
+33 167.325
+34 167.325
+35 167.325
+36 167.325
+37 167.325
+38 167.325
+39 167.325
+40 167.325
+41 167.325
+42 167.325
+43 167.325
+44 167.325
+45 167.325
+46 167.325
+47 167.325
+48 167.325
+49 167.325
+50 167.325
+51 167.325
+52 167.325
+53 167.325
+54 167.325
+55 167.325
+56 167.325
+57 167.325
+58 167.325
+59 167.325
+60 167.325
+61 167.325
+62 167.325
+63 167.325
+64 167.325
+65 167.325
+66 167.325
+67 167.325
+68 167.325
+69 167.325
+70 167.325
+71 167.325
+72 167.325
+73 167.325
+74 167.325
+75 167.325
+76 167.325
+77 167.325
+78 167.325
+79 167.325
+80 167.325
+81 167.325
+82 167.325
+83 167.325
+84 167.325
+85 167.325
+86 167.325
+87 167.325
+88 167.325
+89 167.325
+90 167.325
+91 167.325
+92 167.325
+93 167.325
+94 167.325
+95 167.325
+96 167.325
+97 167.325
+98 167.325
+99 167.325
+100 167.325
+101 167.325
+102 167.325
+103 167.325
+104 167.325
+105 167.325
+106 167.325
+107 167.325
+108 167.325
+109 167.325
+110 167.325
+111 167.325
+112 167.325
+113 167.325
+114 167.325
+115 167.325
+116 167.325
+117 167.325
+118 167.325
+119 167.325
+120 167.325
+121 167.325
+122 167.325
+123 167.325
+124 167.325
+125 167.325
+126 167.325
+127 167.325
+128 167.325
+129 167.325
+130 167.325
+131 167.325
+132 167.325
+133 167.325
+134 167.325
+135 167.32438
+136 167.32438
+137 167.32438
+138 167.32438
+139 167.32438
+140 167.32438
+141 167.32438
+142 167.32375
+143 167.32375
+144 167.32375
+145 167.32375
+146 167.32313
+147 167.32313
+148 167.3225
+149 167.3225
+150 167.32188
+151 167.32188
+152 167.32125
+153 167.32063
+154 167.32
+155 167.32
+156 167.31938
+157 167.31813
+158 167.3175
+159 167.31688
+160 167.31563
+161 167.31438
+162 167.31313
+163 167.31187
+164 167.31063
+165 167.30875
+166 167.30688
+167 167.30438
+168 167.30188
+169 167.29938
+170 167.29625
+171 167.29313
+172 167.28938
+173 167.285
+174 167.28063
+175 167.27563
+176 167.26938
+177 167.26313
+178 167.25563
+179 167.24813
+180 167.23875
+181 167.22875
+182 167.2175
+183 167.205
+184 167.19125
+185 167.17562
+186 167.15813
+187 167.13875
+188 167.1175
+189 167.09313
+190 167.06625
+191 167.03625
+192 167.00313
+193 166.96563
+194 166.92438
+195 166.8775
+196 166.82563
+197 166.76813
+198 166.70312
+199 166.63125
+200 -0.746825
+201 -0.7811
+202 -0.7975875
+203 -0.79703125
+204 -0.78020625
+205 -0.7478875
+206 -0.700875
+207 -0.639975
+208 -0.56600438
+209 -0.47978812
+210 -0.38215625
+211 -0.27394313
+212 -0.15598625
+213 -0.029124187
+214 0.10580625
+215 0.24796938
+216 0.396535
+217 0.5506775
+218 0.70958125
+219 0.87243125
+220 1.0384375
+221 1.2068125
+222 1.376775
+223 1.547575
+224 1.718475
+225 1.8887375
+226 2.0576687
+227 2.224575
+228 2.3888
+229 2.5496938
+230 2.7066438
+231 2.8590563
+232 3.0063563
+233 3.1480125
+234 3.2835
+235 3.4123375
+236 3.5340625
+237 3.6482563
+238 3.7545063
+239 3.8524562
+240 3.9417563
+241 4.0221188
+242 4.0932625
+243 4.1549438
+244 4.2069687
+245 4.24915
+246 4.2813563
+247 4.303475
+248 4.3154438
+249 4.3172188
+250 4.3088
+251 4.2902188
+252 4.2615313
+253 4.2228438
+254 4.1742875
+255 4.1160312
+256 4.048275
+257 3.97125
+258 3.885225
+259 3.7904938
+260 3.6873938
+261 3.5762875
+262 3.4575625
+263 3.3316438
+264 3.1989938
+265 3.0600938
+266 2.91545
+267 2.7656063
+268 2.611125
+269 2.4526
+270 2.29065
+271 2.1259188
+272 1.9590625
+273 1.7907688
+274 1.62175
+275 1.4527188
+276 1.2844313
+277 1.1176375
+278 0.9531125
+279 0.79165
+280 0.63404375
+281 0.4811125
+282 0.33367125
+283 0.19255
+284 0.058583
+285 -0.067391875
+286 -0.18453375
+287 -0.29200063
+288 -0.38895125
+289 -0.4745475
+290 -0.547955
+291 -0.60834563
+292 -0.6549
+293 -0.68680625
+294 -0.7032625
+295 -0.7034875
+296 -0.6867125
+297 -0.65216875
+298 -0.599135
+299 -0.52688437
+300 166.86313
+301 166.92125
+302 166.97313
+303 167.02
+304 167.06125
+305 167.09875
+306 167.1325
+307 167.1625
+308 167.18938
+309 167.21375
+310 167.235
+311 167.25438
+312 167.27188
+313 167.2875
+314 167.30125
+315 167.31375
+316 167.325
+317 167.335
+318 167.34438
+319 167.3525
+320 167.35938
+321 167.36625
+322 167.37188
+323 167.37688
+324 167.38188
+325 167.38563
+326 167.38938
+327 167.39312
+328 167.39625
+329 167.39875
+330 167.40125
+331 167.40313
+332 167.405
+333 167.40688
+334 167.40875
+335 167.41
+336 167.41125
+337 167.4125
+338 167.41313
+339 167.41438
+340 167.415
+341 167.41563
+342 167.41625
+343 167.41688
+344 167.4175
+345 167.41813
+346 167.41813
+347 167.41875
+348 167.41875
+349 167.41938
+350 167.41938
+351 167.42
+352 167.42
+353 167.42
+354 167.42063
+355 167.42063
+356 167.42063
+357 167.42063
+358 167.42063
+359 167.42125
+360 167.42125
+361 167.42125
+362 167.42125
+363 167.42125
+364 167.42125
+365 167.42125
+366 167.42125
+367 167.42125
+368 167.42125
+369 167.42188
+370 167.42188
+371 167.42188
+372 167.42188
+373 167.42188
+374 167.42188
+375 167.42188
+376 167.42188
+377 167.42188
+378 167.42188
+379 167.42188
+380 167.42188
+381 167.42188
+382 167.42188
+383 167.42188
+384 167.42188
+385 167.42188
+386 167.42188
+387 167.42188
+388 167.42188
+389 167.42188
+390 167.42188
+391 167.42188
+392 167.42188
+393 167.42188
+394 167.42188
+395 167.42188
+396 167.42188
+397 167.42188
+398 167.42188
+399 167.42188
+400 167.42188
+401 167.42188
+402 167.42188
+403 167.42188
+404 167.42188
+405 167.42188
+406 167.42188
+407 167.42188
+408 167.42188
+409 167.42188
+410 167.42188
+411 167.42188
+412 167.42188
+413 167.42188
+414 167.42188
+415 167.42188
+416 167.42188
+417 167.42188
+418 167.42188
+419 167.42188
+420 167.42188
+421 167.42188
+422 167.42188
+423 167.42188
+424 167.42188
+425 167.42188
+426 167.42188
+427 167.42188
+428 167.42188
+429 167.42188
+430 167.42188
+431 167.42188
+432 167.42188
+433 167.42188
+434 167.42188
+435 167.42188
+436 167.42188
+437 167.42188
+438 167.42188
+439 167.42188
+440 167.42188
+441 167.42188
+442 167.42188
+443 167.42188
+444 167.42188
+445 167.42188
+446 167.42188
+447 167.42188
+448 167.42188
+449 167.42188
+450 167.42188
+451 167.42188
+452 167.42188
+453 167.42188
+454 167.42188
+455 167.42188
+456 167.42188
+457 167.42188
+458 167.42188
+459 167.42188
+460 167.42188
+461 167.42188
+462 167.42188
+463 167.42188
+464 167.42188
+465 167.42188
+466 167.42188
+467 167.42188
+468 167.42188
+469 167.42188
+470 167.42188
+471 167.42188
+472 167.42188
+473 167.42188
+474 167.42188
+475 167.42188
+476 167.42188
+477 167.42188
+478 167.42188
+479 167.42188
+480 167.42188
+481 167.42188
+482 167.42188
+483 167.42188
+484 167.42188
+485 167.42188
+486 167.42188
+487 167.42188
+488 167.42188
+489 167.42188
+490 167.42188
+491 167.42188
+492 167.42188
+493 167.42188
+494 167.42188
+495 167.42188
+496 167.42188
+497 167.42188
+498 167.42188
+499 167.42188
+&
