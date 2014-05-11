@@ -212,7 +212,10 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/fermi-distribution-concentration-sweep.agr \
 	       $(ex2srcdir)/fermi-distribution-concentration-sweep.eps \
 	       $(ex2srcdir)/fermi-energy-concentration-sweep.agr \
-	       $(ex2srcdir)/fermi-energy-concentration-sweep.eps
+	       $(ex2srcdir)/fermi-energy-concentration-sweep.eps \
+	       $(ex2srcdir)/thermalised-distribution.sh          \
+	       $(ex2srcdir)/thermalised-distribution.agr         \
+	       $(ex2srcdir)/thermalised-distribution.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
