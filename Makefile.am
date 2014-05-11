@@ -218,7 +218,10 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/thermalised-distribution.eps         \
 	       $(ex2srcdir)/finite-well-matching.sh              \
 	       $(ex2srcdir)/finite-well-matching.agr             \
-	       $(ex2srcdir)/finite-well-matching.eps
+	       $(ex2srcdir)/finite-well-matching.eps             \
+	       $(ex2srcdir)/finite-well-width.sh                 \
+	       $(ex2srcdir)/finite-well-E-L.agr                  \
+	       $(ex2srcdir)/finite-well-E-L.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
