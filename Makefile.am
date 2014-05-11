@@ -228,7 +228,12 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/finite-well-E-L.eps                  \
 	       $(ex2srcdir)/finite-well-wf.sh                    \
 	       $(ex2srcdir)/finite-well-wf.agr                   \
-	       $(ex2srcdir)/finite-well-wf.eps
+	       $(ex2srcdir)/finite-well-wf.eps                   \
+	       $(ex2srcdir)/effective-mass-mismatch.sh           \
+	       $(ex2srcdir)/effective-mass-mismatch-E-L.agr      \
+	       $(ex2srcdir)/effective-mass-mismatch-E-L.eps      \
+	       $(ex2srcdir)/effective-mass-mismatch-DE-L.agr     \
+	       $(ex2srcdir)/effective-mass-mismatch-DE-L.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
