@@ -103,7 +103,12 @@ class EFSQWOptions : public Options
                      "Effective mass in barrier (relative to that of a free electron)")
 
                     ("output-equations", po::bool_switch()->default_value(false),
-                     "Output the matching equations for the system")
+                     "Output the matching equations for the system. The left-hand "
+                     "side of the equation is output to 'lhs.r' and each branch of "
+                     "the right-hand side is output to a set of 'rhs_i.r' files, "
+                     "where 'i' is the index of the state that lies on that branch. "
+                     "An rhs file is output for all the bound states in the system and "
+                     "one additional branch (with no real solution)")
 
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
@@ -180,18 +185,40 @@ int main(int argc,char *argv[])
         const size_t nv = (nst+1)*1000;
         const double dv = v_max/(nv-1);
         std::valarray<double> v(nv);
-        std::valarray<double> rhs(nv);
         std::valarray<double> lhs(nv);
 
+        // Output lhs data in a single contiguous chunk
         for (unsigned int iv = 0; iv < nv; ++iv)
         {
-            v[iv] = iv*dv;
-            rhs[iv] = se.get_rhs(v[iv]);
+            v[iv]   = iv*dv;
             lhs[iv] = se.get_lhs(v[iv]);
         }
 
         Leeds::write_table_xy("lhs.r", v, lhs);
-        Leeds::write_table_xy("rhs.r", v, rhs);
+
+        // Output a separate file for each rhs branch
+        for (unsigned int ibranch = 0; ibranch < nst+1; ++ibranch)
+        {
+            const size_t nv_branch = 1000;
+
+            std::valarray<double> v_branch(nv_branch);
+            std::valarray<double> rhs(nv_branch);
+
+            // Set the spacing between points so that we don't quite reach the
+            // asymptote at the "end" of the branch
+            const double dv_branch = (pi/2.0*0.999999)/(nv_branch-1);
+
+            for (unsigned int iv_branch = 0; iv_branch < nv_branch; ++iv_branch)
+            {
+                v_branch[iv_branch] = pi/2.0 * ibranch  + iv_branch*dv_branch;
+                rhs[iv_branch]      = se.get_rhs(v_branch[iv_branch]);
+            }
+
+            // Set filename
+            std::ostringstream oss;
+            oss << "rhs_" << ibranch+1 << ".r";
+            Leeds::write_table_xy(oss.str().c_str(), v_branch, rhs);
+        }
     }
 
     // Dump to file
