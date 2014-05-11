@@ -110,6 +110,9 @@ class EFSQWOptions : public Options
                      "An rhs file is output for all the bound states in the system and "
                      "one additional branch (with no real solution)")
 
+                    ("output-potential", po::bool_switch()->default_value(false),
+                     "Output the potential profile for the system to V.r")
+
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
 
@@ -150,7 +153,7 @@ class EFSQWOptions : public Options
         /// \returns the effective mass in the quantum well [kg]
         double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
 
-        /// \returns the effective mass in the quantum well [kg]
+        /// \returns the effective mass in the barriers [kg]
         double get_barrier_mass() const {return vm["barrier-mass"].as<double>()*me;}
 
         /// \returns the particle ID
@@ -159,8 +162,11 @@ class EFSQWOptions : public Options
         /// \returns the number of spatial points
         size_t get_n_states() const {return vm["states"].as<size_t>();}
 
-        /// \returns the effective mass in the quantum well [J]
+        /// \returns the barrier potential [J]
         double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
+
+        /// \returns true if we are required to output the potential profile
+        bool output_potential() const {return vm["output-potential"].as<bool>();}
 };
 
 int main(int argc,char *argv[])
@@ -233,6 +239,25 @@ int main(int argc,char *argv[])
                          se.get_solutions(true),
                          se.get_z(),
                          true);
+
+    if(opt.output_potential())
+    {
+        const size_t nz = se.get_solutions()[0].size();
+        const double Lp = a + b*2;
+        const double dz = Lp/(nz-1);
+        std::valarray<double> z(nz);
+        std::valarray<double> V_out(nz);
+
+        for(unsigned int iz = 0; iz < nz; ++iz)
+        {
+            z[iz] = iz*dz;
+
+            if(z[iz] < b || z[iz] >= a+b)
+                V_out[iz] = V;
+        }
+
+        Leeds::write_table_xy("V.r", z, V_out);
+    }
 
     return EXIT_SUCCESS;
 }

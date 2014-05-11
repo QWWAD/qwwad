@@ -77,7 +77,8 @@ bin_PROGRAMS =  src/csss    \
 	       	src/srmpr   \
 	       	src/srrad   \
 	       	src/tdb     \
-	       	src/tsb
+	       	src/tsb     \
+		src/wfplot
 
 d0_helpers    = src/d0-helpers.c src/d0-helpers.h
 qwwad_options = src/qwwad-options.cpp src/qwwad-options.h
@@ -157,6 +158,9 @@ src_tdb_LDADD    = src/libqwwad.a $(LDADD)
 src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
 src_tsb_LDADD    = src/libqwwad.a $(LDADD)
 
+src_wfplot_SOURCES = src/wfplot.cpp $(wf_options)
+src_wfplot_LDADD   = src/libqwwad.a $(LDADD)
+
 # Build rule for installing manual pages
 dist_man1_MANS = man/dispersion_relation.1 \
 		 man/dos.1                 \
@@ -221,7 +225,10 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/finite-well-matching.eps             \
 	       $(ex2srcdir)/finite-well-width.sh                 \
 	       $(ex2srcdir)/finite-well-E-L.agr                  \
-	       $(ex2srcdir)/finite-well-E-L.eps
+	       $(ex2srcdir)/finite-well-E-L.eps                  \
+	       $(ex2srcdir)/finite-well-wf.sh                    \
+	       $(ex2srcdir)/finite-well-wf.agr                   \
+	       $(ex2srcdir)/finite-well-wf.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
