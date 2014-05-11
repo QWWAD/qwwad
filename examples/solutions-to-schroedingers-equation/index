@@ -8,8 +8,8 @@ Fig 2.7:  density-of-states.sh             => density-of-states-bulk.dat
 Fig 2.9:  density-of-states.sh             => density-of-states-2D.dat
 Fig 2.10: fermi-distribution-T-sweep.sh    => fermi-distribution-T-sweep.dat
 Fig 2.11: fermi-distribution-T-sweep.sh    => fermi-energy-T-sweep.dat
-Fig 2.12:
-Fig 2.13:
+Fig 2.12: fermi-distribution-concentration-sweep.sh => fermi-distribution-concentration-sweep.dat
+Fig 2.13: fermi-distribution-concentration-sweep.sh => fermi-energy-concentration-sweep.dat
 Fig 2.14:
 Fig 2.16:
 Fig 2.17:

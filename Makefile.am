@@ -207,7 +207,12 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/fermi-distribution-T-sweep.agr        \
 	       $(ex2srcdir)/fermi-distribution-T-sweep.eps        \
 	       $(ex2srcdir)/fermi-energy-T-sweep.agr              \
-	       $(ex2srcdir)/fermi-energy-T-sweep.eps
+	       $(ex2srcdir)/fermi-energy-T-sweep.eps              \
+	       $(ex2srcdir)/fermi-distribution-concentration-sweep.sh  \
+	       $(ex2srcdir)/fermi-distribution-concentration-sweep.agr \
+	       $(ex2srcdir)/fermi-distribution-concentration-sweep.eps \
+	       $(ex2srcdir)/fermi-energy-concentration-sweep.agr \
+	       $(ex2srcdir)/fermi-energy-concentration-sweep.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
