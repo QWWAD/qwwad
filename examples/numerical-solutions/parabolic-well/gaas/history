@@ -3,13 +3,8 @@
 
 efpqw -N 10 -y 1
 
-# Convert alloy concentration `x' into potential `v' 
-
-efxv
-
 # Convert alloy concentration `x' into effective mass `m'
-
-efxm -m 0.067
+efxv -m 0.067
 
 # Implement shooting technique
 

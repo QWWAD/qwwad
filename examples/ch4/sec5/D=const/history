@@ -35,7 +35,6 @@ do
 
  cp X.r x.r
  efxv		# convert x data into potential
- efxm		# convert x data into effective mass
  efshoot 	# calculate ground state electron energy
 
  # Save electron energy in file

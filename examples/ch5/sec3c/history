@@ -29,7 +29,7 @@ efsx
 
 # Generate potential profile for Cd(1-x)Mn(x)Te
 
-efxv -M cdmnte
+efxv -M cdmnte -m 0.096
 
 # Create r_d.r with single entry at centre of well
 
@@ -40,8 +40,6 @@ nawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_d.r
 d02D -e 10.6 -m 0.096
 
 # Calculate electron energy for same quantum well but without donor
-
-efxm -m 0.096			# generate constant mass data 
 
 efshoot				# calculate electron energy without donor
 

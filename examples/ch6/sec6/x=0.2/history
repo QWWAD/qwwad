@@ -14,14 +14,12 @@ do
 
  efsx				# Generate x versus z data
 
- efxv 				# Generate potential file v.r
- efxm -m 0.067			# Constant effective mass
+ efxv -m 0.067			# Constant effective mass
  efshoot 			# Solve Schrodinger equation
  efwf				# Calculate wave function
  cat Ee.r >> Ee-lw.r
 
- efxv -p h
- efxm -m 0.62 -p h
+ efxv -m 0.62 -p h
  efshoot -p h
  efwf -p h
  cat Eh.r >> Eh-lw.r

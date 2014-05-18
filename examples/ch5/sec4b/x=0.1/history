@@ -36,7 +36,7 @@ efsx
 
 # Generate potential profile for Ga(1-x)Al(x)As, can use defaults
 
-efxv 
+efxv -m 0.067 
 
 # Create r_d.r with single entry at centre of well
 
@@ -55,9 +55,6 @@ echo -n $LW >> $OUTPUT2
 nawk '{printf(" %e\n",$2)}' l.r >> $OUTPUT2
 
 # Calculate electron energy for same quantum well but without donor
-
-efxm -m 0.067			# generate constant mass data 
-
 efshoot				# calculate electron energy without donor
 
 # Store data in e-E-lw.r file, i.e. energy with donor (from e.r), energy

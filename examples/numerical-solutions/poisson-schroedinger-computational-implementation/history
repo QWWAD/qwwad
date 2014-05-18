@@ -23,7 +23,6 @@ for N in 10 5 2 1	# reverse loop and hence retain diverging wave functions
 do
 {
  efsx -N $N		# generate alloy concentration as a function of z
- efxm 			# generate mass versus z data
  efxv			# generate potential data
   
  for I in 0 1 2 3 4 5 6 7

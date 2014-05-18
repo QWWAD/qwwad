@@ -61,7 +61,6 @@ do
  # Prepare to implement Schrodinger and Poisson solution
 
  cp x0.r x.r 	# restore original quantum well definition
- efxm -p h	# generate effective mass data
  efxv -p h	# generate band edge potential data
 
  for I in 0 1 2 3 4 5 6 7	# perform several iterations

@@ -28,12 +28,27 @@ using namespace constants;
  */
 class EFXVOptions : public Options
 {
+    private:
+        bool auto_mass; ///< Calculate effective mass automatically
+
+        /**
+         * \brief Constant value of effective mass.
+         *
+         * This is only used if the constant-mass approximation is chosen 
+         */
+        double mass;
+
     public:
         EFXVOptions(int argc, char* argv[])
         {
             try
             {
                 program_specific_options->add_options()
+                    ("mass,m", po::value<std::string>()->default_value("auto"),
+                     "Set the constant effective-mass in the structure. "
+                     "If not specified, the mass is calculated automatically "
+                     "for all positions in the material.")
+
                     ("material,M", po::value<std::string>()->default_value("gaalas"),
                      "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, \"cdmnte\" "
                      "for Cd(1-x)Mn(x)Te, or \"inalgaas\" for In(1-x-y)Al(x)Ga(y)As")
@@ -55,6 +70,23 @@ class EFXVOptions : public Options
                                 "just omit the last column");
 
                 add_prog_specific_options_and_parse(argc, argv, doc);	
+
+                // Parse the effective-mass calculation type            
+                std::string mass_arg(vm["mass"].as<std::string>());
+
+                if(!strcmp(mass_arg.c_str(), "auto"))
+                    auto_mass = true;
+                else if(atof(mass_arg.c_str()) > 0.0)
+                {
+                    auto_mass = false;
+                    mass = atof(mass_arg.c_str());
+                }
+                else
+                {
+                    std::ostringstream oss;
+                    oss << "Cannot parse mass type: " << mass_arg;
+                    throw std::runtime_error(oss.str());
+                }
             }
             catch(std::exception &e)
             {
@@ -90,6 +122,16 @@ class EFXVOptions : public Options
          * \returns the particle ID
          */
         char get_particle() const {return vm["particle"].as<char>();}
+
+        /**
+         * \returns true if we calculate effective mass automatically
+         */
+        bool compute_mass() const {return auto_mass;}
+
+        /**
+         * \returns The constant effective mass in the material
+         */
+        double get_mass() const {return mass;}
 };
 
 int main(int argc,char *argv[])
@@ -124,17 +166,25 @@ int main(int argc,char *argv[])
                 {
                     case 'e':
                         {
-                            // Mass data: S. Adachi, `GaAs and related materials' */
                             V=0.67*dV;
-                            m=(0.067+0.083*x)*me;
-                            mp=(0.067+0.083*x)*me;
+
+                            // Mass data: S. Adachi, `GaAs and related materials' */
+                            if(opt.compute_mass())
+                            {
+                                m=(0.067+0.083*x)*me;
+                                mp=(0.067+0.083*x)*me;
+                            }
                         }
                         break;
                     case 'h':
                         {
                             V=0.33*dV;
-                            m=(0.62+0.14*x)*me;
-                            mp=(0.62+0.14*x)*me;
+
+                            if(opt.compute_mass())
+                            {
+                                m=(0.62+0.14*x)*me;
+                                mp=(0.62+0.14*x)*me;
+                            }
                         }
                         break;
                     case 'l':printf("Data not defined for Ga(1-x)Al(x)As light-hole\n");
@@ -160,23 +210,34 @@ int main(int argc,char *argv[])
                 {
                     case 'e':
                         {
-                            // Mass data: Long, 23rd Phys. Semicond. p1819
                             V=0.70*dV;
-                            m=(0.11+0.067*x)*me;
-                            mp=(0.11+0.067*x)*me;
+
+                            // Mass data: Long, 23rd Phys. Semicond. p1819
+                            if(opt.compute_mass())
+                            {
+                                m=(0.11+0.067*x)*me;
+                                mp=(0.11+0.067*x)*me;
+                            }
                         }
                         break;
                     case 'h':
                         {
                             V=0.30*dV;
-                            m=(0.60+0.21*x+0.15*x*x)*me;
-                            mp=(0.60+0.21*x+0.15*x*x)*me;
+
+                            if(opt.compute_mass())
+                            {
+                                m=(0.60+0.21*x+0.15*x*x)*me;
+                                mp=(0.60+0.21*x+0.15*x*x)*me;
+                            }
                         }
                         break;
                     case 'l':
                         {
-                            m=(0.18+0.14*x)*me;
-                            mp=(0.18+0.14*x)*me;
+                            if(opt.compute_mass())
+                            {
+                                m=(0.18+0.14*x)*me;
+                                mp=(0.18+0.14*x)*me;
+                            }
                             fprintf(stderr, "Warning: Potential data not defined for Cd(1-x)Mn(x)Te light-hole\n");
                         }
                 }
@@ -205,14 +266,18 @@ int main(int argc,char *argv[])
                     case 'e':
                         {
                             V=0.53*dV;
-                            m=(0.0427+0.0685*x)*me;
-                            mp=(0.0427+0.0685*x)*me;
+                            if(opt.compute_mass())
+                            {
+                                m=(0.0427+0.0685*x)*me;
+                                mp=(0.0427+0.0685*x)*me;
+                            }
                         }
                         break;  
                     case 'h':
                         {
                             V=0.47*dV;
-                            fprintf(stderr, "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
+                            if(opt.compute_mass())
+                                fprintf(stderr, "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
                         }
                         break;
                     case 'l':
@@ -232,6 +297,13 @@ int main(int argc,char *argv[])
     }
 
     write_table_xy("v.r", z, V);
+
+    if(!opt.compute_mass())
+    {
+        m = z*0.0 + opt.get_mass()*me;
+        mp = z*0.0 + opt.get_mass()*me;
+    }
+
     write_table_xy("m.r", z, m);
     write_table_xy("m_perp.r", z, mp);
 

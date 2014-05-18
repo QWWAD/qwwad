@@ -18,7 +18,6 @@ echo $LW 0.0 0.0 0.0 >> s.r
 echo 100 0.2 0.0 $D  >> s.r
  
  efsx 			# generate alloy concentration as a function of z
- efxm 			# generate mass versus z data
  efxv			# generate potential data
   
 for I in 0 1 2 3 

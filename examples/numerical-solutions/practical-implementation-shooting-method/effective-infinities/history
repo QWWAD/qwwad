@@ -18,13 +18,8 @@ echo $LB 0.2 0.0 >> s.r
 
 efsx
 
-# Create potential profile
-
-efxv
-
 # Create (constant) effective mass data
-
-efxm -m 0.067
+efxv -m 0.067
 
 # Implement shooting method
 

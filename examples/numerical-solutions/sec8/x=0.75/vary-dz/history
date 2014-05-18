@@ -43,7 +43,6 @@ do
  echo 200 0.75 0.0 >> s.r
 
  efsx	-N $N		# generate alloy concentration as a function of z
- efxm 			# generate mass versus z data
  efxv			# generate potential data
 
  efshoot  		# calculate 2 lowest energy levels

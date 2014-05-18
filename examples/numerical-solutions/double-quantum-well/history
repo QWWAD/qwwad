@@ -38,7 +38,6 @@ do
  echo 200 0.2 0.0 >> s.r
 
  efsx			# generate alloy concentration as a function of z
- efxm 			# generate mass versus z data
  efxv			# generate potential data
 
  # Need a small energy difference to split nearly degenerate levels

@@ -24,8 +24,7 @@ do
  echo 200 $X 0.0 >> s.r	# fixed barrier width
 
  efsx		# calculate structure
- efxm -m 0.067	# produce constant effective mass data
- efxv 		# produce potential data
+ efxv -m 0.067  # produce potential data
 
  # Solve Schrodinger's equation
 
