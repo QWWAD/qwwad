@@ -138,6 +138,8 @@ src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
 src_efsqw_LDADD   = src/libqwwad.a $(LDADD)
 
+src_efxv_SOURCES = src/efxv.cpp
+
 src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
 src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
 
@@ -234,6 +236,11 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/effective-mass-mismatch-E-L.eps      \
 	       $(ex2srcdir)/effective-mass-mismatch-DE-L.agr     \
 	       $(ex2srcdir)/effective-mass-mismatch-DE-L.eps
+
+exnsdatadir = $(exdatadir)/numerical-solutions
+exnssrcdir = examples/numerical-solutions
+
+exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

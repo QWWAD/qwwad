@@ -14,14 +14,13 @@
  
    Paul Harrison, December 1996				 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include "struct.h"
-#include "maths.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "qclsim-constants.h"
+
+using namespace Leeds;
+using namespace constants;
 
 int main(int argc,char *argv[])
 {
@@ -174,4 +173,4 @@ if(Eg_flag)fclose(FEg);
 
 return EXIT_SUCCESS;
 }        /* end main */
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
