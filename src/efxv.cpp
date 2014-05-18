@@ -108,6 +108,9 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z;
     std::valarray<double> x;
+    std::valarray<double> V;    // Band-edge potential
+    std::valarray<double> m;    // Effective mass
+    std::valarray<double> mp;   // Effective mass perpendicular to growth
 
     switch(Material)
     {
@@ -115,16 +118,28 @@ int main(int argc,char *argv[])
             {
                 read_table_xy("alloy-profile.dat", z, x);
 
-                std::valarray<double> dV=(1.247*x)*e;
-                std::valarray<double> V(z.size());
+                std::valarray<double> dV=(1.247*x)*e; // Total band discontinuity
+
                 switch(p)
                 {
-                    case 'e':V=0.67*dV;break;
-                    case 'h':V=0.33*dV;break;
+                    case 'e':
+                        {
+                            // Mass data: S. Adachi, `GaAs and related materials' */
+                            V=0.67*dV;
+                            m=(0.067+0.083*x)*me;
+                            mp=(0.067+0.083*x)*me;
+                        }
+                        break;
+                    case 'h':
+                        {
+                            V=0.33*dV;
+                            m=(0.62+0.14*x)*me;
+                            mp=(0.62+0.14*x)*me;
+                        }
+                        break;
                     case 'l':printf("Data not defined for Ga(1-x)Al(x)As light-hole\n");
                              exit(EXIT_FAILURE);
                 }
-                write_table_xy("v.r", z, V);
 
                 if(opt.print_bandgap())
                 {
@@ -143,13 +158,28 @@ int main(int argc,char *argv[])
 
                 switch(p)
                 {
-                    case 'e':V=0.70*dV;break;
-                    case 'h':V=0.30*dV;break;
-                    case 'l':printf("Data not defined for Cd(1-x)Mn(x)Te light-hole\n");
-                             exit(EXIT_FAILURE);
+                    case 'e':
+                        {
+                            // Mass data: Long, 23rd Phys. Semicond. p1819
+                            V=0.70*dV;
+                            m=(0.11+0.067*x)*me;
+                            mp=(0.11+0.067*x)*me;
+                        }
+                        break;
+                    case 'h':
+                        {
+                            V=0.30*dV;
+                            m=(0.60+0.21*x+0.15*x*x)*me;
+                            mp=(0.60+0.21*x+0.15*x*x)*me;
+                        }
+                        break;
+                    case 'l':
+                        {
+                            m=(0.18+0.14*x)*me;
+                            mp=(0.18+0.14*x)*me;
+                            fprintf(stderr, "Warning: Potential data not defined for Cd(1-x)Mn(x)Te light-hole\n");
+                        }
                 }
-
-                write_table_xy("v.r", z, V);
 
                 if(opt.print_bandgap())
                 {
@@ -172,13 +202,25 @@ int main(int argc,char *argv[])
                 {
                     /* 53% gives an offset with AlAs of 1.2 eV---close to that 
                        of Hirayama which takes account of strain */
-                    case 'e':V=0.53*dV;break;  
-                    case 'h':V=0.47*dV;break;
-                    case 'l':printf("Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
-                             exit(EXIT_FAILURE);
+                    case 'e':
+                        {
+                            V=0.53*dV;
+                            m=(0.0427+0.0685*x)*me;
+                            mp=(0.0427+0.0685*x)*me;
+                        }
+                        break;  
+                    case 'h':
+                        {
+                            V=0.47*dV;
+                            fprintf(stderr, "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
+                        }
+                        break;
+                    case 'l':
+                        {
+                            printf("Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
+                            exit(EXIT_FAILURE);
+                        }
                 }
-
-                write_table_xy("v.r", z, V);
 
                 if(opt.print_bandgap())
                 {
@@ -188,6 +230,10 @@ int main(int argc,char *argv[])
             }
             break;
     }
+
+    write_table_xy("v.r", z, V);
+    write_table_xy("m.r", z, m);
+    write_table_xy("m_perp.r", z, mp);
 
     return EXIT_SUCCESS;
 }

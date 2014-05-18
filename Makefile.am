@@ -49,7 +49,6 @@ bin_PROGRAMS =  src/csss    \
 		src/efsqw   \
 	       	src/efsx    \
 	       	src/efwf    \
-		src/efxm    \
 		src/efxv    \
 		src/find_heterostructure \
 		src/gde     \
