@@ -138,7 +138,8 @@ src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
 src_efsqw_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efxv_SOURCES = src/efxv.cpp
+src_efxv_SOURCES = src/efxv.cpp $(qwwad_options)
+src_efxv_LDADD   = src/libqwwad.a $(LDADD)
 
 src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
 src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)

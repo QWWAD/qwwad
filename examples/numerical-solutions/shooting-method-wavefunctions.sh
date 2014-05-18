@@ -7,4 +7,8 @@ cat > s.r << EOF
 150 0.2 0.0
 EOF
 
-find_heterostructure --alloy-file x.r
+find_heterostructure
+
+# Create alloy concentration file
+efxv
+
