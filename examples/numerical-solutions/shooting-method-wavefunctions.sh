@@ -13,4 +13,4 @@ find_heterostructure
 efxv
 
 # Implement shooting method
-efshoot 
+efshoot

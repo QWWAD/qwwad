@@ -134,6 +134,9 @@ src_efiw_LDADD   = src/libqwwad.a $(LDADD)
 src_efkpsl_SOURCES = src/efkpsl.cpp $(qwwad_options)
 src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 
+src_efshoot_SOURCES = src/efshoot.cpp $(qwwad_options)
+src_efshoot_LDADD   = src/libqwwad.a $(LDADD)
+
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
 src_efsqw_LDADD   = src/libqwwad.a $(LDADD)
 

@@ -70,7 +70,7 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
         _z[iz] = iz*_dz; // Calculate the spatial location [m]
 
         const double zp = fmod(_z[iz], Lp); // Position within period [m]
-        const unsigned int iL = zp/Lp * _x_layer.size(); // Layer index from input file
+        unsigned int iL = get_layer_from_height(zp); // Layer index
 
         if(iL != iL_cache)
         {
@@ -136,7 +136,7 @@ Heterostructure* Heterostructure::read_from_file(const std::string &layer_filena
         {
             read_line_array_u(rowtemp, stream);
             // Find number of alloy components (noting that first element on line is the
-            // thickenss and the last is the doping density)
+            // thickness and the last is the doping density)
             n_alloy = rowtemp.size() - 2;
 
             x_layer.resize(nL, std::valarray<double>(n_alloy));

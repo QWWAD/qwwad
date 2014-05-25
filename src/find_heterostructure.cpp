@@ -116,16 +116,16 @@ void HeterostructureOptions::scale_diffusion_length()
  * \param[in] argv Array of command-line arguments
  */
 HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
-    unit(UNIT_NM),
+    unit(UNIT_ANGSTROM),
     Ldiff(0.0)
 {
     try
     {
         // Specific configuration options for this program
         program_specific_options->add_options()
-            ("unit,u", po::value<std::string>()->default_value("nm"), 
+            ("unit,u", po::value<std::string>()->default_value("angstrom"), 
              "Set length unit.  Acceptable values are 'A': "
-             "Ångstroms or 'n': nanometres [default].")
+             "Ångstroms or 'n': nanometres.")
 
             ("ldiff,l", po::value(&Ldiff)->default_value(0),
              "Set diffusion length.")
