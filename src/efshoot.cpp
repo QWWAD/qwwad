@@ -1,8 +1,10 @@
-/*==================================================================
-  efshoot  Envelope Function SHOOT
-  ==================================================================*/
-
-/* This program uses a shooting technique to calculate the
+/**
+ * \file    efshoot.cpp
+ * \brief   Solve Schroedinger's equation using shooting method
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program uses a shooting technique to calculate the
    uncorrelated one particle energies of any user supplied
    potential.  The potential is read from the file v.r
 
@@ -12,7 +14,8 @@
    line and stripped down to calculate the energies only.  It now also
    includes support for non-parabolicity.
 
-   Paul Harrison, December 1996                                   */
+   Paul Harrison, December 1996
+ */
 
 #include <iostream>
 #include <cstdlib>
@@ -21,6 +24,7 @@
 #include <gsl/gsl_roots.h>
 #include "qclsim-constants.h"
 #include "qclsim-linalg.h"
+#include "qwwad-options.h"
 
 using namespace Leeds;
 using namespace constants;
@@ -45,57 +49,70 @@ double shoot_wavefunction(std::valarray<double>       &psi,
                           const std::valarray<double> &Eg,
                           const bool                   np_flag);
 
+/**
+ * Handler for command-line options
+ */
+class EFShootOptions : public Options
+{
+    public:
+        EFShootOptions(int argc, char* argv[])
+        {
+            try
+            {
+                program_specific_options->add_options()
+                    ("nonparabolic,a", po::bool_switch()->default_value(false),
+                     "Include nonparabolicity effects.  If selected, bandgap data is read "
+                     "from Eg.r.")
+
+                    ("particle,p", po::value<char>()->default_value('e'),
+                     "Particle to be used: 'e', 'h' or 'l'")
+
+                    ("states,s", po::value<size_t>()->default_value(1),
+                     "Number of states to find")
+
+                    ("dE,d", po::value<double>()->default_value(1e-3),
+                     "Minimum separation (in energy) between states [meV]")
+                    ;
+
+                std::string doc("Find the eigenstates of an arbitrary 1D potential using a "
+                                "shooting method.  The potential profile is read from "
+                                "v.r, and the band-edge effective mass (at each point) from "
+                                "m.r. "
+                                "The energies are written to the file \"E*.r\", and the "
+                                "wavefunctions are written to \"wf_*i.r\" where the '*' "
+                                "is replaced by the particle ID in each case and the "
+                                "'i' is replaced by the number of the state");
+
+                add_prog_specific_options_and_parse(argc, argv, doc);	
+            }
+            catch(std::exception &e)
+            {
+                std::cerr << e.what() << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+
+        /// \returns the particle ID
+        char get_particle() const {return vm["particle"].as<char>();}
+
+        /// \returns the number of states to find
+        size_t get_n_states() const {return vm["states"].as<size_t>();}
+
+        /// \returns the minimum energy spacing between states [J]
+        double get_dE() const {return vm["dE"].as<double>()*1e-3*e;}
+
+        /// \returns true if nonparabolicity effects are to be included
+        bool nonparabolic() const {return vm["nonparabolic"].as<bool>();}
+};
+
 int main(int argc,char *argv[])
 {
-    char   p;       /* particle				 */
-    bool   np_flag; /* Hamiltonian flag def.=1=>D(1/m)D  */
+    const EFShootOptions opt(argc, argv);
 
-    /* default values */
-    double delta_E=1e-3*e; // Small but finite energy
-    np_flag=false;
-    p='e';
-    size_t nst=1; // Number of states to find
-
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'a':
-                np_flag=true;
-                argv--;
-                argc++;
-                break;
-            case 'd':
-                delta_E=atof(argv[2])*1e-3*e;
-                break;
-            case 'p':
-                p=*argv[2];
-                switch(p)
-                {
-                    case 'e': break;
-                    case 'h': break;
-                    case 'l': break;
-                    default:  printf("Usage:  efshoot [-p particle (e, h, or l)]\n");
-                              exit(EXIT_FAILURE);
-                }
-                break;
-            case 's':
-                nst=atoi(argv[2]);
-                break;
-            default :
-                printf("Usage:  efshoot [-a include non-parabolicity \033[1mfalse\033[0m]\n");
-                printf("                [-d energy step (\033[1m1\033[0mmeV)]\n");
-                printf("                [-k use alternative KE operator (1/m)PP \033[1mP(1/m)P\033[0m]\n");
-                printf("                [-p particle (\033[1me\033[0m, h, or l)]\n");
-                printf("                [-s number of states \033[1m1\033[0m]\n");
-                exit(EXIT_FAILURE);
-
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
+    const char   p       = opt.get_particle();
+    const bool   np_flag = opt.nonparabolic();
+    const double delta_E = opt.get_dE();
+    const size_t nst     = opt.get_n_states();
 
     std::valarray<double> z;
     std::valarray<double> V;
