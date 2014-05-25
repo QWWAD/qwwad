@@ -10,7 +10,7 @@ EOF
 find_heterostructure
 
 # Create alloy concentration file
-efxv
+efxv -m 0.067
 
 # Implement shooting method
 efshoot

@@ -32,7 +32,6 @@ struct shoot_params
     const std::valarray<double> &m0;      ///< Band-edge effective mass at each point
     const std::valarray<double> &Eg;      ///< Bandgap at each point
     const bool                   np_flag; ///< True if nonparabolicity is to be used
-    const bool                   T_flag;  ///< True if alternative Hamiltonian is to be used
 };
 
 double psi_at_inf(double  E,
@@ -44,19 +43,16 @@ double shoot_wavefunction(std::valarray<double>       &psi,
                           const std::valarray<double> &V,
                           const std::valarray<double> &m0,
                           const std::valarray<double> &Eg,
-                          const bool                   np_flag,
-                          const bool                   T_flag);
+                          const bool                   np_flag);
 
 int main(int argc,char *argv[])
 {
     char   p;       /* particle				 */
-    bool   T_flag;  /* Hamiltonian flag def.=1=>D(1/m)D  */
     bool   np_flag; /* Hamiltonian flag def.=1=>D(1/m)D  */
 
     /* default values */
     double delta_E=1e-3*e; // Small but finite energy
     np_flag=false;
-    T_flag=true;
     p='e';
     size_t nst=1; // Number of states to find
 
@@ -71,11 +67,6 @@ int main(int argc,char *argv[])
                 break;
             case 'd':
                 delta_E=atof(argv[2])*1e-3*e;
-                break;
-            case 'k':
-                T_flag=false;
-                argv--;
-                argc++;
                 break;
             case 'p':
                 p=*argv[2];
@@ -124,7 +115,7 @@ int main(int argc,char *argv[])
 
     double Elo=V.min() + delta_E;    // first energy estimate
 
-    shoot_params params = {z, V, m, Eg, np_flag, T_flag};
+    shoot_params params = {z, V, m, Eg, np_flag};
     gsl_function f;
     f.function = &psi_at_inf;
     f.params   = &params;
@@ -178,7 +169,7 @@ int main(int argc,char *argv[])
         }while(status == GSL_CONTINUE);
 
         std::valarray<double> psi(z.size());
-        const double psi_inf = shoot_wavefunction(psi, E, z, V, m, Eg, np_flag, T_flag);
+        const double psi_inf = shoot_wavefunction(psi, E, z, V, m, Eg, np_flag);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
@@ -223,7 +214,7 @@ double psi_at_inf(double  E,
     const shoot_params *p = reinterpret_cast<shoot_params *>(params);
     std::valarray<double> psi(p->z.size());
 
-    const double psi_inf = shoot_wavefunction(psi, E, p->z, p->V, p->m0, p->Eg, p->np_flag, p->T_flag);
+    const double psi_inf = shoot_wavefunction(psi, E, p->z, p->V, p->m0, p->Eg, p->np_flag);
     return psi_inf;
 }
 
@@ -241,7 +232,6 @@ double psi_at_inf(double  E,
  * \param[in]  m0      Band-edge effective mass [kg]
  * \param[in]  Eg      Bandgap profile [J]
  * \param[in]  np_flag True if nonparabolicity effects are to be considered
- * \param[in]  T_flag  True if effective mass is to be calculated at adjacent spatial points
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
@@ -251,8 +241,7 @@ double shoot_wavefunction(std::valarray<double>       &wf,
                           const std::valarray<double> &V,
                           const std::valarray<double> &m0,
                           const std::valarray<double> &Eg,
-                          const bool                   np_flag,
-                          const bool                   T_flag)
+                          const bool                   np_flag)
 {
     const size_t nz = z.size();
     wf.resize(nz);
@@ -275,52 +264,36 @@ double shoot_wavefunction(std::valarray<double>       &wf,
     wf[0]   = 1.0;
     double wf_next = 1.0;
 
-    if (!T_flag)
+    for(unsigned int i=0; i < nz; i++) // last potential not used
     {
-        for(unsigned int i=0; i < nz; i++) // last potential not used
+        double wf_prev = 0;
+
+        // Compute m(z + dz/2)
+        double m_prev = 0.0;
+        double m_next = 0.0;
+
+        if(i != 0)
         {
-            double wf_prev = 0;
-
-            // Compute m(z + dz/2)
-            double m_prev = 0.0;
-            double m_next = 0.0;
-
-            if(i != 0)
-            {
-                wf_prev = wf[i-1];
-                m_prev = (m[i] + m[i-1])/2.0;
-            }
-            else
-            {
-                m_prev = m[i];
-            }
-
-            if(i != nz - 1)
-                m_next = (m[i] + m[i+1])/2.0;
-            else
-                m_next = m[i];
-
-            wf_next = (2*m_next*dz*dz/hBar/hBar*(V[i]-E)+
-                     1.0 + m_next/m_prev)*wf[i]
-                    - wf[i-1] * m_next/m_prev;
-            wf_prev += 0;
-
-            if(i != nz-1) wf[i+1] = wf_next;
-        } 
-    }
-    else
-    {
-        for(unsigned int i=0;i<nz;i++)              /* last potential not used */
-        {
-            double wf_prev = 0;
-
-            if(i != 0) wf_prev = wf[i-1];
-
-            wf_next = (2*m[i]*(V[i]-E)*gsl_pow_2(dz/hBar)+2)*wf[i] - wf_prev;
-            wf_prev+=0;
-            if(i != nz-1) wf[i+1] = wf_next;
+            wf_prev = wf[i-1];
+            m_prev = (m[i] + m[i-1])/2.0;
         }
-    }
+        else
+        {
+            m_prev = m[i];
+        }
+
+        if(i != nz - 1)
+            m_next = (m[i] + m[i+1])/2.0;
+        else
+            m_next = m[i];
+
+        wf_next = (2*m_next*dz*dz/hBar/hBar*(V[i]-E)+
+                1.0 + m_next/m_prev)*wf[i]
+                - wf_prev * m_next/m_prev;
+        wf_prev += 0;
+
+        if(i != nz-1) wf[i+1] = wf_next;
+    } 
 
     // Normalise the wavefunction
     const std::valarray<double> pd = wf*wf;
