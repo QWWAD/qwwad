@@ -112,6 +112,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-schroedinger-full.cpp        \
 			   src/qwwad-schroedinger-infinite-well.cpp \
 			   src/qwwad-schroedinger-infinite-well.h   \
+			   src/qwwad-schroedinger-shooting.cpp      \
+			   src/qwwad-schroedinger-shooting.h        \
 			   src/qwwad-schroedinger-taylor.cpp        \
 			   src/qwwad-schroedinger-taylor.h          \
 			   src/qwwad-schroedinger-tridiagonal.cpp   \
