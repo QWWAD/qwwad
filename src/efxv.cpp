@@ -55,17 +55,23 @@ class EFXVOptions : public Options
 
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
-
-                    ("print-bandgap,g", po::bool_switch()->default_value(false),
-                     "Print the bandgap profile to Eg.r")
                     ;
 
-                std::string doc("Find the band-edge profile for a heterostructure and print to. "
-                                "v.r.  The alloy profile is read from the file alloy-profile.dat "
+                std::string doc("Find the band-edge profile for a heterostructure and print data to file. "
+                                "The following output files are generated, each containing the given property "
+                                "at each spatial location within the heterostructure:\n"
+                                " v.r     - Band-edge profile [J].\n"
+                                " alpha.r - Nonparabolicity parameter [1/J].\n"
+                                " Eg.r    - Bandgap [J].\n"
+                                " m.r     - Effective mass (in growth direction) [kg].\n"
+                                " mperp.r - Effective mass (perpendicular to growth direction) [kg].\n"
+                                "\n"
+                                "The alloy profile is read from the file alloy-profile.dat "
                                 "which should contain two or three columns:\n"
                                 " * position [m]\n"
                                 " * alloy fraction 1\n"
-                                " * alloy fraction 2 (OPTIONAL)\n" 
+                                " * alloy fraction 2 (OPTIONAL)\n"
+                                "\n" 
                                 "For materials where the 2nd alloy component is not needed (E.g., AlGaAs), "
                                 "just omit the last column");
 
@@ -94,11 +100,6 @@ class EFXVOptions : public Options
                 exit(EXIT_FAILURE);
             }
         }
-
-        /**
-         * \returns True if we want to output the bandgap
-         */
-        bool print_bandgap() const {return vm["print-bandgap"].as<bool>();}
 
         /**
          * \returns The material identifier
@@ -150,9 +151,10 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z;
     std::valarray<double> x;
-    std::valarray<double> V;    // Band-edge potential
-    std::valarray<double> m;    // Effective mass
-    std::valarray<double> mp;   // Effective mass perpendicular to growth
+    std::valarray<double> V;  // Band-edge potential
+    std::valarray<double> m;  // Effective mass
+    std::valarray<double> mp; // Effective mass perpendicular to growth
+    std::valarray<double> Eg; // Bandgap
 
     switch(Material)
     {
@@ -191,11 +193,7 @@ int main(int argc,char *argv[])
                              exit(EXIT_FAILURE);
                 }
 
-                if(opt.print_bandgap())
-                {
-                    std::valarray<double> Eg = 1.426*e+dV;
-                    write_table_xy("Eg.r", z, Eg);
-                }
+                Eg = 1.426*e+dV;
             }
             break;
 
@@ -242,11 +240,7 @@ int main(int argc,char *argv[])
                         }
                 }
 
-                if(opt.print_bandgap())
-                {
-                    std::valarray<double> Eg=1.606*e+dV;
-                    write_table_xy("Eg.r", z, Eg);
-                }
+                Eg=1.606*e+dV;
             }
             break;
 
@@ -287,16 +281,13 @@ int main(int argc,char *argv[])
                         }
                 }
 
-                if(opt.print_bandgap())
-                {
-                    std::valarray<double> Eg=0.36*e+dV;
-                    write_table_xy("Eg.r",z,Eg);
-                }
+                Eg=0.36*e+dV;
             }
             break;
     }
 
     write_table_xy("v.r", z, V);
+    write_table_xy("Eg.r", z, Eg);
 
     if(!opt.compute_mass())
     {
@@ -306,6 +297,10 @@ int main(int argc,char *argv[])
 
     write_table_xy("m.r", z, m);
     write_table_xy("m_perp.r", z, mp);
+
+    // Find nonparabolicity parameter
+    std::valarray<double> alpha = 1.0/Eg;
+    write_table_xy("alpha.r", z, alpha);
 
     return EXIT_SUCCESS;
 }

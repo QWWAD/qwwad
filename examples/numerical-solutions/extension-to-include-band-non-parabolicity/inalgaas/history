@@ -36,7 +36,7 @@ do
  # Remember to switch material system
 
  efsx			# generate alloy concentration as a function of z
- efxv -M inalgaas -g	# generate potential data, and bandgap
+ efxv -M inalgaas 	# generate potential data, and bandgap
  
  echo -n $LW >> $OUT
 

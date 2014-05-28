@@ -31,10 +31,10 @@ using namespace constants;
 
 struct shoot_params
 {
-    std::valarray<double>       &z;       ///< Spatial sampling points
-    const std::valarray<double> &V;       ///< Potential profile
-    const std::valarray<double> &m0;      ///< Band-edge effective mass at each point
-    const std::valarray<double> &Eg;      ///< Bandgap at each point
+    std::valarray<double>       &z;       ///< Spatial sampling points [m]
+    const std::valarray<double> &V;       ///< Potential profile [J]
+    const std::valarray<double> &m0;      ///< Band-edge effective mass at each point [kg]
+    const std::valarray<double> &alpha;   ///< Nonparabolicity parameter at each point [1/J]
     const bool                   np_flag; ///< True if nonparabolicity is to be used
 };
 
@@ -46,7 +46,7 @@ double shoot_wavefunction(std::valarray<double>       &psi,
                           const std::valarray<double> &z,
                           const std::valarray<double> &V,
                           const std::valarray<double> &m0,
-                          const std::valarray<double> &Eg,
+                          const std::valarray<double> &alpha,
                           const bool                   np_flag);
 
 /**
@@ -61,8 +61,8 @@ class EFShootOptions : public Options
             {
                 program_specific_options->add_options()
                     ("nonparabolic,a", po::bool_switch()->default_value(false),
-                     "Include nonparabolicity effects.  If selected, bandgap data is read "
-                     "from Eg.r.")
+                     "Include nonparabolicity effects.  If selected, the nonparabolicity parameter at each point is read "
+                     "from alpha.r.")
 
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
@@ -124,15 +124,15 @@ int main(int argc,char *argv[])
 
     const size_t nz = V.size();
 
-    // Read bandgap data if needed
-    std::valarray<double> Eg(nz);
+    // Read nonparabolicity data if needed
+    std::valarray<double> alpha(nz);
 
     if(np_flag)
-        read_table_xy("Eg.r", z, Eg);
+        read_table_xy("alpha.r", z, alpha);
 
     double Elo=V.min() + delta_E;    // first energy estimate
 
-    shoot_params params = {z, V, m, Eg, np_flag};
+    shoot_params params = {z, V, m, alpha, np_flag};
     gsl_function f;
     f.function = &psi_at_inf;
     f.params   = &params;
@@ -186,7 +186,7 @@ int main(int argc,char *argv[])
         }while(status == GSL_CONTINUE);
 
         std::valarray<double> psi(z.size());
-        const double psi_inf = shoot_wavefunction(psi, E, z, V, m, Eg, np_flag);
+        const double psi_inf = shoot_wavefunction(psi, E, z, V, m, alpha, np_flag);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
@@ -231,7 +231,7 @@ double psi_at_inf(double  E,
     const shoot_params *p = reinterpret_cast<shoot_params *>(params);
     std::valarray<double> psi(p->z.size());
 
-    const double psi_inf = shoot_wavefunction(psi, E, p->z, p->V, p->m0, p->Eg, p->np_flag);
+    const double psi_inf = shoot_wavefunction(psi, E, p->z, p->V, p->m0, p->alpha, p->np_flag);
     return psi_inf;
 }
 
@@ -247,7 +247,7 @@ double psi_at_inf(double  E,
  * \param[in]  z       Spatial positions [m]
  * \param[in]  V       Potential profile [J]
  * \param[in]  m0      Band-edge effective mass [kg]
- * \param[in]  Eg      Bandgap profile [J]
+ * \param[in]  alpha   Nonparabolicity parameter [1/J]
  * \param[in]  np_flag True if nonparabolicity effects are to be considered
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
@@ -257,7 +257,7 @@ double shoot_wavefunction(std::valarray<double>       &wf,
                           const std::valarray<double> &z,
                           const std::valarray<double> &V,
                           const std::valarray<double> &m0,
-                          const std::valarray<double> &Eg,
+                          const std::valarray<double> &alpha,
                           const bool                   np_flag)
 {
     const size_t nz = z.size();
@@ -269,13 +269,7 @@ double shoot_wavefunction(std::valarray<double>       &wf,
 
     // Recalculate effective mass if non-parabolicity is specified
     if(np_flag)
-    {
-        for(unsigned int i=0; i<nz ;i++)
-        {
-            const double alpha=gsl_pow_2(1-m0[i]/me)/Eg[i]; // Non-parabolicity parameter
-            m[i] = m0[i]*(1.0+alpha*(E-V[i]));
-        }
-    }
+        m = m0*(1.0+alpha*(E-V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf[0]   = 1.0;

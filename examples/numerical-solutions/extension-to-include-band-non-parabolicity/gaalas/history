@@ -24,7 +24,7 @@ do
  echo 200 $X 0.0 >> s.r
  
  efsx			# generate alloy concentration as a function of z
- efxv -g		# generate potential data, and bandgap
+ efxv 		# generate potential data, and bandgap
  
  echo -n $LW >> $OUT
 
