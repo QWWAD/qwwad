@@ -111,7 +111,7 @@ class EFSQWOptions : public Options
                      "one additional branch (with no real solution)")
 
                     ("output-potential", po::bool_switch()->default_value(false),
-                     "Output the potential profile for the system to V.r")
+                     "Output the potential profile for the system to v.r")
 
                     ("particle,p", po::value<char>()->default_value('e'),
                      "Particle to be used: 'e', 'h' or 'l'")
@@ -256,7 +256,7 @@ int main(int argc,char *argv[])
                 V_out[iz] = V;
         }
 
-        Leeds::write_table_xy("V.r", z, V_out);
+        Leeds::write_table_xy("v.r", z, V_out);
     }
 
     return EXIT_SUCCESS;

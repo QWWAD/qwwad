@@ -164,7 +164,9 @@ int main(int argc, char* argv[])
 
     std::vector<State> states = State::read_from_file(opt.get_energy_input_path(),
                                                       opt.get_wf_input_prefix(),
-                                                      opt.get_wf_input_ext());
+                                                      opt.get_wf_input_ext(),
+                                                      1000.0/e,
+                                                      true);
 
     std::valarray<double> V;
     std::valarray<double> z;    

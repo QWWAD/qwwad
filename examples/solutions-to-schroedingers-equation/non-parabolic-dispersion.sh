@@ -44,11 +44,8 @@ awk '{print $1, mass*9.11e-31}' mass=$mass < wf_e1.r > massd.dat
 awk '{print 1}' < Ee.r > populations.dat
 cp Ee.r Ef.dat
 
-# Rescale the energy to Joules
-awk '{print $2*1.6e-19/1000}' < Ee.r > Ee.dat
-
 # Compute the dispersion relation for all states in the system
-dispersion_relation --wf-input-ext ".r" --parabolic --disp-ext "_0.dat"
+dispersion_relation --parabolic --disp-ext "_0.dat"
 
 # Output a zero potential profile to file (again, just a hack to
 # make the subband class play nicely)
@@ -60,9 +57,8 @@ for alpha in 0.7 5; do
 
     # Rescale energies to Joules for use with dispersion-relation code
     awk '{print $1, alpha/1.6e-19}' alpha=$alpha < wf_e1.r > alphad.dat
-    awk '{print $2*1.6e-19/1000}' < Ee.r > Ee.dat
 
-    dispersion_relation --wf-input-ext ".r" --disp-ext "_$alpha.dat"
+    dispersion_relation --disp-ext "_$alpha.dat"
 done
 
 # Now, glue all our output files together into one convenient data file

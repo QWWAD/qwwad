@@ -77,7 +77,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     
     std::vector<State> ground_state = State::read_from_file(energy_input_path,
                                                             wf_input_prefix,
-                                                            wf_input_ext);
+                                                            wf_input_ext,
+                                                            1000.0/e,
+                                                            true);
 
     Leeds::read_table_x(populations_filename.c_str(), P);
     Leeds::read_table_xy(fermienergy_filename.c_str(), ist_temp, Ef);
@@ -156,7 +158,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     
     std::vector<State> ground_state = State::read_from_file(energy_input_path,
                                                             wf_input_prefix,
-                                                            wf_input_ext);
+                                                            wf_input_ext,
+                                                            1000.0/e,
+                                                            true);
     Leeds::read_table_x(populations_filename.c_str(), P);
     Leeds::read_table_xy(fermienergy_filename.c_str(), ist_temp, Ef);
     Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);

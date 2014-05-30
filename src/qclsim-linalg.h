@@ -304,6 +304,10 @@ class EVP_solution {
          * \param[in]   Eigenval_name       The name of the file which holds the eigenvalues in a single column
          * \param[in]   Eigenvect_prefix    Prefix of the files holding the eigenvectors
          * \param[in]   Eigenvect_ext       Extension of the files holding the eigenvectors
+         * \param[in]   eigenvalue_scale    Value by which all eigenvalues will be divided upon
+         *                                  read
+         * \param[in]   ignore_first_column True if first column of eigenvalue file should be
+         *                                  ignored
          * 
          * \returns  A vector containing the eigen-solutions
          *
@@ -313,13 +317,24 @@ class EVP_solution {
         static std::vector< EVP_solution<T> >
             read_from_file(const std::string &Eigenval_name,
                            const std::string &Eigenvect_prefix,
-                           const std::string &Eigenvect_ext)
+                           const std::string &Eigenvect_ext,
+                           const T            eigenvalue_scale    = 1.0,
+                           const bool         ignore_first_column = false)
             {
                 std::vector < EVP_solution<T> > solutions;
 
                 // Read eigenvalues into tempory memory
                 std::valarray<T> E_temp;
-                read_table_x(Eigenval_name.c_str(), E_temp);
+
+                if(ignore_first_column)
+                {
+                    std::valarray<unsigned int> indices;
+                    read_table_xy(Eigenval_name.c_str(), indices, E_temp);
+                }
+                else
+                    read_table_x(Eigenval_name.c_str(), E_temp);
+
+                E_temp /= eigenvalue_scale;
 
                 // Set number of states
                 const size_t nst = E_temp.size();

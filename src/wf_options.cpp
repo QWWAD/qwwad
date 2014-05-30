@@ -1,8 +1,8 @@
 /**
  * \file   wf_options.cpp
- * \author Jonathan Cooper
- * \date   2012-01-31
- * \brief  Implementations of common methods for programms that access
+ * \author Jonathan Cooper <jdc.tas@gmail.com>
+ * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
+ * \brief  Implementations of common methods for programmes that access
  * 	   wavefunction and energy files.
  */
 
@@ -16,15 +16,15 @@ WfOptions::WfOptions()
          "Set prefix of wavefunction input files.")
 
         ("wf-input-ext",
-         po::value<std::string>()->default_value(".dat"),
+         po::value<std::string>()->default_value(".r"),
          "Set file extension of wavefunction input files.")
 
         ("potential-input",
-         po::value<std::string>()->default_value("Vcb.dat"),
+         po::value<std::string>()->default_value("v.r"),
          "Set filename of potential input file.")
 
         ("energy-input",
-         po::value<std::string>()->default_value("Ee.dat"),
+         po::value<std::string>()->default_value("Ee.r"),
          "Set filename of energy input file.")
 
         ("input-dir",

@@ -1,10 +1,10 @@
 /**
  * \file   wf_options.h
- * \author Jonathan Cooper
- * \date   2012-01-31
- * \brief  Decleration of WfOptions class. Used to extend the Options class
- * 	   (in qclsim_options.h) to include options for defing wanefunction
- * 	   and energy i/o files.
+ * \author Jonathan Cooper <jdc.tas@gmail.com>
+ * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
+ *
+ * \brief  Declaration of WfOptions class. Used to extend the Options class
+ * 	   to include options for defing wanefunction and energy i/o files.
  */
 
 #ifndef WF_OPTIONS_H

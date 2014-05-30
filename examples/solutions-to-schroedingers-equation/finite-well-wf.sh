@@ -32,11 +32,8 @@ outfile=finite-well-wf.dat
 # Find wave functions
 efsqw --well-width 200 --potential 100 --states 3 --output-potential
 
-# Rescale energies to J
-awk '{print $2/1000 * 1.6e-19}' Ee.r > Ee.dat
-
 # Generate plot file
-wfplot --potential-input V.r --wf-input-ext .r --plot-wf --plot-file $outfile
+wfplot --plot-wf --plot-file $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:
@@ -61,4 +58,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f V.r Ee.* wf*
+rm -f v.r Ee.* wf*
