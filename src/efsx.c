@@ -32,6 +32,8 @@ int	N;		/* number of points Angstrom         */
 int	Nel;		/* Number of elements per line in s.r */
 FILE    *Fp;		/* file pointer to input data        */
 
+fprintf(stderr, "** The efsx programme is deprecated.  Please use find_heterostructure instead **\n\n");
+
 /* default values */
 
 N=1;
