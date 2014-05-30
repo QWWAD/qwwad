@@ -41,7 +41,7 @@ do
  efxv			# generate potential data
 
  # Need a small energy difference to split nearly degenerate levels
- efshoot -s 2 -d 0.01		# calculate 2 lowest energy levels
+ efss --nst-max 2 -d 0.01		# calculate 2 lowest energy levels
  nawk '/1 /||/2 /{printf("\t%f",$2)}' Ee.r >> $OUT	
  echo -n -e "\n" >> $OUT
 }

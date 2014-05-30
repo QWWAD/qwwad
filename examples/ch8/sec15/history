@@ -61,7 +61,7 @@ do
  effv -f $F
 
  # Need a small energy difference to split nearly degenerate levels
- efshoot -s 2
+ efss --nst-max 2
 
  # Write energy to output file
 

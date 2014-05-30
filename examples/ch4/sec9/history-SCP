@@ -28,7 +28,7 @@ do
  echo -n $I >> $OUT
 
  # Calculate ground state Schroedinger solution
- efshoot
+ efss
 
  # save wave function is separate file
 

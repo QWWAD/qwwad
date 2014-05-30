@@ -43,8 +43,7 @@ do
  effv -f $F
 
  # Solve Schrodinger's equation
-
- efshoot 		# calculate ground state only
+ efss 		# calculate ground state only
 
  # Write energy to output file
 

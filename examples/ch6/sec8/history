@@ -22,11 +22,11 @@ do
 
  efxv -m 0.067			# Generate potential file v.r
  effv -f $F			# Add electric field
- efshoot -s 5			# Solve Schrodinger equation
+ efss --nst-max 5		# Solve Schrodinger equation
 
  efxv -p h -m 0.62
  effv -f $F -p h
- efshoot -s 5 -p h -d 0.001	# May need smaller step to resolve miniband
+ efss --nst-max 5 -p h -d 0.001	# May need smaller step to resolve miniband
 				#  at larger LW
 }
 done

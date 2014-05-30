@@ -69,8 +69,7 @@ do
 
  # Need a small energy difference to split nearly degenerate levels,
  # calculate three lowest levels
-
- efshoot -s 3 -d 0.1
+ efss --nst-max 3 -d 0.1
 
  # Write energy to output file
 
@@ -112,4 +111,4 @@ done
 
 effv -f 10
 
-efshoot -s 3 -d 0.1
+efss --nst-max 3 -d 0.1

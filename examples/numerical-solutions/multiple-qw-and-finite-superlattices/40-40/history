@@ -61,7 +61,7 @@ do
  echo -n $N >> $OUT
 
  # Need a small energy difference to split nearly degenerate levels
- efshoot -d 0.001		
+ efss -d 0.001		
 
  # Write energy to output file
 

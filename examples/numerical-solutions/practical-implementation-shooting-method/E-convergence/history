@@ -14,4 +14,4 @@ efsx
 efxv -m 0.067
 
 # Implement shooting method
-efshoot
+efss --solver shooting-constant-mass --mass 0.067

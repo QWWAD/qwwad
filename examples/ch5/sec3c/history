@@ -40,8 +40,7 @@ nawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_d.r
 d02D -e 10.6 -m 0.096
 
 # Calculate electron energy for same quantum well but without donor
-
-efshoot				# calculate electron energy without donor
+efss				# calculate electron energy without donor
 
 # Store data in e-E-lw.r file, i.e. energy with donor (from e.r), energy
 # without donor (from Ee.r) versus well width (lw)

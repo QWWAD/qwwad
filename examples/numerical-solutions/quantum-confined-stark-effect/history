@@ -43,7 +43,7 @@ do
  effv -f $F
 
  # Need a small energy difference to split nearly degenerate levels
- efshoot 		# calculate ground state only
+ efss		# calculate ground state only
 
  # Write energy to output file
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	

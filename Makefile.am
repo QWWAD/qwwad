@@ -45,8 +45,8 @@ bin_PROGRAMS =  src/csss    \
 		src/efpqw   \
 		src/efsdot  \
 		src/efsdwf  \
-	       	src/efshoot \
 		src/efsqw   \
+		src/efss    \
 	       	src/efsx    \
 		src/efxv    \
 		src/find_heterostructure \
@@ -135,8 +135,8 @@ src_efiw_LDADD   = src/libqwwad.a $(LDADD)
 src_efkpsl_SOURCES = src/efkpsl.cpp $(qwwad_options)
 src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efshoot_SOURCES = src/efshoot.cpp $(qwwad_options)
-src_efshoot_LDADD   = src/libqwwad.a $(LDADD)
+src_efss_SOURCES = src/efss.cpp $(qwwad_options)
+src_efss_LDADD   = src/libqwwad.a $(LDADD)
 
 src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
 src_efsqw_LDADD   = src/libqwwad.a $(LDADD)

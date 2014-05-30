@@ -46,8 +46,7 @@ do
  effv -f $F
 
  # Need a small energy difference to split nearly degenerate levels
- efshoot -s 2		# calculate ground and first excited states
-
+ efss --nst-max 2	# calculate ground and first excited states
 
  # Write energy to output file
 

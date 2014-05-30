@@ -69,7 +69,7 @@ do
   echo -n $I >> $OUT
 
   # Calculate ground state Schroedinger solution
-  efshoot -p h
+  efss -p h
 
   # Write energy to output file
 

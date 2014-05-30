@@ -45,7 +45,7 @@ do
 
  effv -f $F
 
- efshoot -s 2		# calculate ground and first excited states
+ efss --nst-max 2  # calculate ground and first excited states
 
  # Calculate overlap integral between two states and write to file
 

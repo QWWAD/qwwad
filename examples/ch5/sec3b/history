@@ -31,4 +31,4 @@ d02D -m 0.096 -e 10.6 > output
 
 # Just calculate energy of same structure without a donor, for deduction
 # of donor binding energy
-efshoot			# calculate electron energy without donor, m=constant
+efss			# calculate electron energy without donor, m=constant

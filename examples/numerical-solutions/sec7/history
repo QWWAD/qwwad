@@ -33,7 +33,7 @@ do
  echo $L 0.0 0.0 > s.r
  efsx			# generates z-data suitable for numerical solution
  efxv -m 0.067		# generate constant mass versus z data
- efshoot -s 2		# calculate 2 lowest energy levels
+ efss --nst-max 2		# calculate 2 lowest energy levels
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT
  echo -n -e "\n" >> $OUT
 }

@@ -15,11 +15,11 @@ do
  efsx				# Generate x versus z data
 
  efxv -m 0.067			# Constant effective mass
- efshoot 			# Solve Schrodinger equation
+ efss 			# Solve Schrodinger equation
  cat Ee.r >> Ee-lw.r
 
  efxv -m 0.62 -p h
- efshoot -p h
+ efss -p h
  cat Eh.r >> Eh-lw.r
 
  ebe -s 80 -w 0.501 -x 0.01	# start variational calculation

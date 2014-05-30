@@ -43,7 +43,7 @@ do
  efsx			# generate alloy concentration as a function of z
  efxv			# generate potential data
 
- efshoot -s 2		# calculate 2 lowest energy levels
+ efss --nst-max 2		# calculate 2 lowest energy levels
  nawk '/1 /||/2 /{printf("\t%f",$2)}' Ee.r >> $OUT	
  echo -n -e "\n" >> $OUT
 }

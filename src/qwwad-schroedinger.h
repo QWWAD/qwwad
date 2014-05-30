@@ -12,38 +12,6 @@
 
 namespace Leeds
 {
-/** 
- * \brief The type of effective mass description to use in simulations.
- *
- * \todo Move these definitions elsewhere
- */
-enum EffectiveMassType {
-    CONSTANT_ME, /**< Constant effective mass across entire structure */
-    VARIABLE_ME, /**< Spatially-varying effective mass through structure */
-    NONPARABOLIC, /**< Energy-dependent effective mass (nonparabolic dispersion) */ 
-
-    /**
-     * \brief	Approximate method for solving nonparabolic Schroedinger equation
-     *
-     * \details	This approximate method uses a Taylor expansion of the nonparabolic effective
-     * 		mass to simplify the eigenvalue problem obtained from the Schroedinger equation.
-     * 		(Details of which can be found in Alharbi, Opt. Quant. Electron., 40, 551-559 (2008).
-     *
-     * 		This approximation is only valid for states which are energetically close the
-     * 		conduction band edge. For states whose energy above the conduction band edge is
-     * 		comparable with the band gap the effective mass is overestimated causing the energy of
-     * 		the state to be lower than expected. Furthermore, the effective mass is increasingly
-     * 		overestimated with increasing energy to a point where, at an energy approximately
-     * 		one band gap above the conduction band edge, many states bunch together and become
-     * 		degenerate.
-     *
-     * 		Users that are simulating deep quantum wells, where the conduction band offset is
-     * 		comparable to that of the band gap, are advised to use the 'nonparabolic' option with
-     * 		'fwf' in order to stop this situation occurring.
-     */
-    TAYLOR
-};
-
 /**
  * Abstract base class for any Schroedinger-equation solver
  *

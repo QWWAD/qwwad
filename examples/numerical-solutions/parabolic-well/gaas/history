@@ -7,4 +7,4 @@ efpqw -N 10 -y 1
 efxv -m 0.067
 
 # Implement shooting technique
-efshoot -s 3
+efss --nst-max 3

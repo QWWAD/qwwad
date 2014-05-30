@@ -23,22 +23,20 @@ do
  echo $LW 0.0 0.0 >> s.r
  echo 200 $X 0.0 >> s.r
  
- efsx			# generate alloy concentration as a function of z
+ efsx		# generate alloy concentration as a function of z
  efxv 		# generate potential data, and bandgap
  
  echo -n $LW >> $OUT
 
  # Calculate ground state energy with band non-parabolicity
-
- efshoot -a
+ efss --solver shooting-nonparabolic
 
  # Write energy to output file
 
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
 
  # Calculate ground state energy without band non-parabolicity
-
- efshoot 
+ efss --solver shooting-variable-mass
 
  # Write energy to output file
 
