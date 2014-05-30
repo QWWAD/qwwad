@@ -10,7 +10,10 @@ EOF
 find_heterostructure
 
 # Create alloy concentration file
-efxv -m 0.067
+efxv
 
-# Implement shooting method
-efss
+# Find lowest two states
+efss --nst-max 2
+
+awk '{print $1*1e10 - 200, $2}' wf_e1.r > shooting-method-wavefunction-1.dat
+awk '{print $1*1e10 - 200, $2}' wf_e2.r > shooting-method-wavefunction-2.dat
