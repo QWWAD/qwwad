@@ -67,10 +67,6 @@ do
 
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
  echo -n -e "\n" >> $OUT
-
- # Calculate wave functions, but don't save
-
- efwf
 }
 done
 

@@ -77,10 +77,6 @@ do
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
  echo -n -e "\n" >> $OUT
 
- # Calculate wavefunctions
-
- efwf
-
  # Calculate subband populations
 
  sbp -T $T
@@ -117,5 +113,3 @@ done
 effv -f 10
 
 efshoot -s 3 -d 0.1
-
-efwf

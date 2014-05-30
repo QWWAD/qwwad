@@ -48,11 +48,6 @@ do
 
  nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
 
- # Calculate wave function too
-
- #efwf -a 
- #mv wf_e1.r wf_e1-LW=$LW.r
-
  # Calculate ground state energy without band non-parabolicity
 
  efshoot 

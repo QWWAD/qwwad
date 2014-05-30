@@ -31,10 +31,6 @@ do
 
  efshoot
  
- # And wave function
-
- efwf
-
  # save wave function is separate file
 
  cp wf_e1.r wf_e1-I=$I.r

@@ -22,7 +22,6 @@ efsx
 efxv -m 0.067
 
 # Implement shooting method
-
 efshoot 
 
 # Send data to file
@@ -31,9 +30,7 @@ echo -n -e "$LB\t" >> Ee-LB.r			# write well width to file
 nawk '{printf("%12.6f",$2)}' Ee.r >> Ee-LB.r	# send data to file
 echo -n -e "\n" >> Ee-LB.r
 
-# Now calculate wave functions and store
-
-efwf
+# Store wave function
 mv wf_e1.r wf-LB=$LB.r
 }
 done	# done loop over LB

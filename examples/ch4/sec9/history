@@ -68,13 +68,8 @@ do
  {
   echo -n $I >> $OUT
 
-  # Calculate ground state energy
-
+  # Calculate ground state Schroedinger solution
   efshoot -p h
-
-  # And wave function
-
-  efwf -p h
 
   # Write energy to output file
 
@@ -90,6 +85,5 @@ do
 
 mv V.r V-t=$t.r
 mv wf_h1.r wf_h1-t=$t.r
-
 }
 done

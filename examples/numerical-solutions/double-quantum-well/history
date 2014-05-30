@@ -44,9 +44,5 @@ do
  efshoot -s 2 -d 0.01		# calculate 2 lowest energy levels
  nawk '/1 /||/2 /{printf("\t%f",$2)}' Ee.r >> $OUT	
  echo -n -e "\n" >> $OUT
-
- # Calculate wavefunctions
-
- efwf
 }
 done

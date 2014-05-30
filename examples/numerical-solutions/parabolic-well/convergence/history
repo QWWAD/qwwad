@@ -8,9 +8,4 @@ efpqw -N 10 -y 10
 efxv -m 0.067
 
 # Implement shooting technique
-
 efshoot -s 10
-
-# Calculate wave functions
-
-efwf

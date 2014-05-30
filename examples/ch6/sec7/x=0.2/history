@@ -24,13 +24,11 @@ do
 
  efxv -m 0.067			# Generate potential file v.r
  efshoot 			# Solve Schrodinger equation
- efwf				# Calculate wave function
  cat Ee.r >> Ee-lw.r
  cp wf_e1.r wf=$LW\_e1.r	# Save wave functions for later analysis
 
  efxv -p h -m 0.62
  efshoot -p h -d 0.0001
- efwf -p h
  cat Eh.r >> Eh-lw.r
  cp wf_h1.r wf=$LW\_h1.r	
 

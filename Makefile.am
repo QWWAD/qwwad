@@ -48,7 +48,6 @@ bin_PROGRAMS =  src/csss    \
 	       	src/efshoot \
 		src/efsqw   \
 	       	src/efsx    \
-	       	src/efwf    \
 		src/efxv    \
 		src/find_heterostructure \
 		src/gde     \

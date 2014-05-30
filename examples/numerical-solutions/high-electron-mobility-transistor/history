@@ -25,13 +25,8 @@ do
 {
  echo -n $I >> $OUT
 
- # Calculate ground state energy
-
+ # Calculate ground state Schroedinger solution
  efshoot
- 
- # And wave function
-
- efwf
 
  # save wave function and potential in separate files
 

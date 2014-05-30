@@ -16,17 +16,14 @@ do
 
  efxv -m 0.067			# Constant effective mass
  efshoot 			# Solve Schrodinger equation
- efwf				# Calculate wave function
  cat Ee.r >> Ee-lw.r
 
  efxv -m 0.62 -p h
  efshoot -p h
- efwf -p h
  cat Eh.r >> Eh-lw.r
 
  ebe -s 80 -w 0.501 -x 0.01	# start variational calculation
  echo -n -e "$LW\t" >> EX0-lw.r	# write well width to file
  cat EX0.r >> EX0-lw.r		# send data to file
-
 }
 done

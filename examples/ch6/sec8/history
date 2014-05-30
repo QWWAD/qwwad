@@ -15,23 +15,18 @@
  echo 50 0.0 0.0 >> s.r
  echo 150 0.15 0.0 >> s.r
  
-
 for F in $1
 do
 {
-
  efsx				# Generate x versus z data
 
  efxv -m 0.067			# Generate potential file v.r
  effv -f $F			# Add electric field
  efshoot -s 5			# Solve Schrodinger equation
- efwf				# Calculate wave function
 
  efxv -p h -m 0.62
  effv -f $F -p h
  efshoot -s 5 -p h -d 0.001	# May need smaller step to resolve miniband
 				#  at larger LW
- efwf -p h
-
 }
 done
