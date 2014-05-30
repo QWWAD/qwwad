@@ -27,12 +27,32 @@ struct shoot_params
 double psi_at_inf(double  E,
                   void   *params); 
 
-double shoot_wavefunction(std::valarray<double>       &psi,
-                          const double                 E,
-                          const std::valarray<double> &z,
-                          const std::valarray<double> &V,
-                          const std::valarray<double> &m0,
-                          const std::valarray<double> &alpha);
+static double shoot_wavefunction(std::valarray<double>       &psi,
+                                 const double                 E,
+                                 const std::valarray<double> &z,
+                                 const std::valarray<double> &V,
+                                 const std::valarray<double> &m0,
+                                 const std::valarray<double> &alpha);
+
+/**
+ * \brief Generate a trial wavefunction at a given energy
+ *
+ * \param[in] E Energy at which to compute the trial wavefunction
+ *
+ * \returns Wavefunction amplitude at each spatial point
+ *
+ * \details Note that the "correct" wavefunction will be tightly
+ *          bound at both ends of the structure, and will correspond
+ *          to the eigenstates of the system. Other energies will
+ *          result in a wavefunction that diverges at the right-hand
+ *          side of the system.
+ */
+std::valarray<double> SchroedingerSolverShooting::trial_wavefunction(const double E)
+{
+    std::valarray<double> psi(_z.size());
+    shoot_wavefunction(psi, E, _z, _V, _me, _alpha);
+    return psi;
+}
 
 /**
  * Set system parameters for solver
@@ -164,12 +184,12 @@ double psi_at_inf(double  E,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-double shoot_wavefunction(std::valarray<double>       &wf,
-                          const double                 E,
-                          const std::valarray<double> &z,
-                          const std::valarray<double> &V,
-                          const std::valarray<double> &m0,
-                          const std::valarray<double> &alpha)
+static double shoot_wavefunction(std::valarray<double>       &wf,
+                                 const double                 E,
+                                 const std::valarray<double> &z,
+                                 const std::valarray<double> &V,
+                                 const std::valarray<double> &m0,
+                                 const std::valarray<double> &alpha)
 {
     const size_t nz = z.size();
     wf.resize(nz);

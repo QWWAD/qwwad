@@ -23,6 +23,8 @@ public:
                                const double                 dE,
                                const unsigned int           nst_max=0);
 
+    std::valarray<double> trial_wavefunction(const double E);
+
     std::string get_name() {return "shooting";}
 
 private:

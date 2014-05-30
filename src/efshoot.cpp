@@ -51,6 +51,10 @@ class EFShootOptions : public Options
 
                     ("dE,d", po::value<double>()->default_value(1e-3),
                      "Minimum separation (in energy) between states [meV]")
+
+                    ("try-energy", po::value<double>(),
+                     "Calculate a trial wavefunction at a given energy [meV] and write to "
+                     "file.")
                     ;
 
                 std::string doc("Find the eigenstates of an arbitrary 1D potential using a "
@@ -60,7 +64,10 @@ class EFShootOptions : public Options
                                 "The energies are written to the file \"E*.r\", and the "
                                 "wavefunctions are written to \"wf_*i.r\" where the '*' "
                                 "is replaced by the particle ID in each case and the "
-                                "'i' is replaced by the number of the state");
+                                "'i' is replaced by the number of the state.\n"
+                                "\n"
+                                "Alternatively, the wavefunction can be calculated at a specified "
+                                "trial energy and dumpted to file \"wf_*E.r\".");
 
                 add_prog_specific_options_and_parse(argc, argv, doc);	
             }
@@ -82,6 +89,12 @@ class EFShootOptions : public Options
 
         /// \returns true if nonparabolicity effects are to be included
         bool nonparabolic() const {return vm["nonparabolic"].as<bool>();}
+
+        /// \returns true if we want to just calculate a trial wavefunction at a given energy
+        bool try_energy() const {return (vm.count("try-energy") == 1);}
+
+        /// \returns the energy at which to calculate a trial wavefunction [J]
+        double get_trial_energy() const {return vm["try-energy"].as<double>() * 1e-3*e;}
 };
 
 int main(int argc,char *argv[])
@@ -110,20 +123,33 @@ int main(int argc,char *argv[])
         read_table_xy("alpha.r", z, alpha);
 
     SchroedingerSolverShooting se(m, alpha, V, z, delta_E, nst);
-    std::vector<State> solutions = se.get_solutions(true);
 
-    // Output energies to file
-    char energy_filename[9];
-    sprintf(energy_filename,"E%c.r",p);
+    if (opt.try_energy())
+    {
+        const double E_trial = opt.get_trial_energy();
+        const std::valarray<double> psi = se.trial_wavefunction(E_trial);
 
-    char wf_prefix[9];
-    sprintf(wf_prefix,"wf_%c",p);
-    State::write_to_file(energy_filename,
-                         wf_prefix,
-                         ".r",
-                         solutions,
-                         z,
-                         true);
+        char wf_filename[9];
+        sprintf(wf_filename, "wf_%cE.r",p);
+        write_table_xy(wf_filename, z, psi);
+    }
+    else
+    {
+        std::vector<State> solutions = se.get_solutions(true);
+
+        // Output energies to file
+        char energy_filename[9];
+        sprintf(energy_filename,"E%c.r",p);
+
+        char wf_prefix[9];
+        sprintf(wf_prefix,"wf_%c",p);
+        State::write_to_file(energy_filename,
+                wf_prefix,
+                ".r",
+                solutions,
+                z,
+                true);
+    }
 
     return EXIT_SUCCESS;
 }
