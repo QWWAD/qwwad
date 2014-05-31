@@ -16,19 +16,17 @@ Fig 2.17: finite-well-width.sh             => finite-well-E-L.dat
 Fig 2.18: finite-well-wf.sh                => finite-well-wf.dat
 Fig 2.19: effective-mass-mismatch.sh       => effective-mismatich-E-L.dat
 Fig 2.20: effective-mass-mismatch.sh       => effective-mismatich-DE-L.dat
-Fig 2.21:
-Fig 2.22:
-Fig 2.23:
-Fig 2.24:
-Fig 2.27:
-Fig 2.29:
-Fig 2.30:
+Fig 2.21: infinite-barrier-height-limit.sh => infinite-barrier-height-limit.dat
+Fig 2.22: infinite-barrier-mass-limit.sh   => infinite-barrier-mass-limit.dat
+Fig 2.23: large-barrier-mass-wf.sh         => large-barrier-mass-wf.dat
+Fig 2.28: infinite-SL-40-40-E-k.sh         => infinite-SL-40-40-E-k.dat
+Fig 2.29: infinite-SL-60-60-E-k.sh         => infinite-SL-60-60-E-k.dat
+Fig 2.30: infinite-SL-miniband-width.sh    => infinite-SL-miniband-width.dat
 Fig 2.31:
-Fig 2.32:
+Fig 2.33:
 Fig 2.34:
-Fig 2.35:
+Fig 2.36:
 Fig 2.37:
-Fig 2.38:
+Fig 2.39:
 Fig 2.40:
 Fig 2.41:
-Fig 2.42:

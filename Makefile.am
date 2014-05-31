@@ -239,7 +239,26 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/effective-mass-mismatch-E-L.agr      \
 	       $(ex2srcdir)/effective-mass-mismatch-E-L.eps      \
 	       $(ex2srcdir)/effective-mass-mismatch-DE-L.agr     \
-	       $(ex2srcdir)/effective-mass-mismatch-DE-L.eps
+	       $(ex2srcdir)/effective-mass-mismatch-DE-L.eps     \
+	       $(ex2srcdir)/infinite-barrier-height-limit.sh     \
+	       $(ex2srcdir)/infinite-barrier-height-limit.agr    \
+	       $(ex2srcdir)/infinite-barrier-height-limit.eps    \
+	       $(ex2srcdir)/infinite-barrier-mass-limit.sh       \
+	       $(ex2srcdir)/infinite-barrier-mass-limit.agr      \
+	       $(ex2srcdir)/infinite-barrier-mass-limit.eps      \
+	       $(ex2srcdir)/large-barrier-mass-wf.sh             \
+	       $(ex2srcdir)/large-barrier-mass-wf.agr            \
+	       $(ex2srcdir)/large-barrier-mass-wf.eps            \
+	       $(ex2srcdir)/infinite-SL-40-40-E-k.sh             \
+	       $(ex2srcdir)/infinite-SL-40-40-E-k.agr            \
+	       $(ex2srcdir)/infinite-SL-40-40-E-k.eps            \
+	       $(ex2srcdir)/infinite-SL-60-60-E-k.sh             \
+	       $(ex2srcdir)/infinite-SL-miniband-width.sh        \
+	       $(ex2srcdir)/infinite-SL-miniband-width.agr       \
+	       $(ex2srcdir)/infinite-SL-miniband-width.eps       \
+	       $(ex2srcdir)/infinite-SL-mass.sh                  \
+	       $(ex2srcdir)/infinite-SL-mass.agr                 \
+	       $(ex2srcdir)/infinite-SL-mass.eps
 
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
