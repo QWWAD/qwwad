@@ -22,9 +22,9 @@ Fig 2.23: large-barrier-mass-wf.sh         => large-barrier-mass-wf.dat
 Fig 2.28: infinite-SL-40-40-E-k.sh         => infinite-SL-40-40-E-k.dat
 Fig 2.29: infinite-SL-60-60-E-k.sh         => infinite-SL-60-60-E-k.dat
 Fig 2.30: infinite-SL-miniband-width.sh    => infinite-SL-miniband-width.dat
-Fig 2.31:
-Fig 2.33:
-Fig 2.34:
+Fig 2.31: infinite-SL-mass.sh              => infinite-SL-mass.dat
+Fig 2.33: single-barrier-tx-width.sh       => single-barrier-tx-width.dat
+Fig 2.34: single-barrier-tx-height.sh      => single-barrier-tx-height.dat
 Fig 2.36:
 Fig 2.37:
 Fig 2.39:

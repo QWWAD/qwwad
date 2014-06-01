@@ -258,7 +258,13 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/infinite-SL-miniband-width.eps       \
 	       $(ex2srcdir)/infinite-SL-mass.sh                  \
 	       $(ex2srcdir)/infinite-SL-mass.agr                 \
-	       $(ex2srcdir)/infinite-SL-mass.eps
+	       $(ex2srcdir)/infinite-SL-mass.eps                 \
+	       $(ex2srcdir)/single-barrier-tx-width.sh           \
+	       $(ex2srcdir)/single-barrier-tx-width.agr          \
+	       $(ex2srcdir)/single-barrier-tx-width.eps          \
+	       $(ex2srcdir)/single-barrier-tx-height.sh          \
+	       $(ex2srcdir)/single-barrier-tx-height.agr         \
+	       $(ex2srcdir)/single-barrier-tx-height.eps
 
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
