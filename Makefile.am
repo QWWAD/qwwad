@@ -202,9 +202,6 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
                $(ex2srcdir)/infinite-well-wavefunctions.sh        \
                $(ex2srcdir)/infinite-well-wavefunctions.agr       \
                $(ex2srcdir)/infinite-well-wavefunctions.eps       \
-               $(ex2srcdir)/double-barrier-transmission-width.sh  \
-               $(ex2srcdir)/double-barrier-transmission-width.agr \
-               $(ex2srcdir)/double-barrier-transmission-width.eps \
 	       $(ex2srcdir)/non-parabolic-dispersion.sh           \
 	       $(ex2srcdir)/non-parabolic-dispersion.agr          \
 	       $(ex2srcdir)/non-parabolic-dispersion.eps          \
@@ -264,7 +261,23 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 	       $(ex2srcdir)/single-barrier-tx-width.eps          \
 	       $(ex2srcdir)/single-barrier-tx-height.sh          \
 	       $(ex2srcdir)/single-barrier-tx-height.agr         \
-	       $(ex2srcdir)/single-barrier-tx-height.eps
+	       $(ex2srcdir)/single-barrier-tx-height.eps         \
+               $(ex2srcdir)/double-barrier-tx-width.sh           \
+               $(ex2srcdir)/double-barrier-tx-width.agr          \
+               $(ex2srcdir)/double-barrier-tx-width.eps          \
+               $(ex2srcdir)/double-barrier-tx-height.sh          \
+               $(ex2srcdir)/double-barrier-tx-height.agr         \
+               $(ex2srcdir)/double-barrier-tx-height.eps         \
+               $(ex2srcdir)/double-barrier-IV-temperature.sh     \
+               $(ex2srcdir)/double-barrier-IV-temperature.agr    \
+               $(ex2srcdir)/double-barrier-IV-temperature.eps    \
+               $(ex2srcdir)/double-barrier-IV-width.sh           \
+               $(ex2srcdir)/double-barrier-IV-width.agr          \
+               $(ex2srcdir)/double-barrier-IV-width.eps          \
+               $(ex2srcdir)/landau-quantisation.sh               \
+               $(ex2srcdir)/landau-quantisation.agr              \
+               $(ex2srcdir)/landau-quantisation.eps
+
 
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions

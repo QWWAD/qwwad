@@ -25,8 +25,8 @@ Fig 2.30: infinite-SL-miniband-width.sh    => infinite-SL-miniband-width.dat
 Fig 2.31: infinite-SL-mass.sh              => infinite-SL-mass.dat
 Fig 2.33: single-barrier-tx-width.sh       => single-barrier-tx-width.dat
 Fig 2.34: single-barrier-tx-height.sh      => single-barrier-tx-height.dat
-Fig 2.36:
-Fig 2.37:
-Fig 2.39:
-Fig 2.40:
-Fig 2.41:
+Fig 2.36: double-barrier-tx-width.sh       => double-barrier-tx-width.dat
+Fig 2.37: double-barrier-tx-height.sh      => double-barrier-tx-height.dat
+Fig 2.39: double-barrier-IV-temperature.sh => double-barrier-IV-temperature.dat
+Fig 2.40: double-barrier-IV-width.sh       => double-barrier-IV-width.dat
+Fig 2.41: landau-quantisation.sh           => landau-quantisation.dat

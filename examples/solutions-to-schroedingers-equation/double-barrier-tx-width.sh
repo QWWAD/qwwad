@@ -3,13 +3,7 @@ set -e
 
 # Calculates the transmission coefficient as a function of the energy
 # through a double barrier of width 100 angstrom and height 100 meV.
-# Data is generated three different well widths: 20, 50 and 100 angstrom.
-#
-# The output file contains three data sets (for each well width in
-# ascending order). Each data set is separated by a blank line and contains
-# two columns of data:
-#   Column 1: Energy [meV]
-#   Column 2: Transmission coefficient
+# Data is generated for three different well widths: 20, 50 and 100 angstrom.
 # 
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -35,18 +29,39 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise output file
-outfile=double-barrier-transmission-width.r
+outfile=double-barrier-tx-width.dat
 rm -f $outfile
 
 # Loop for well widths, use default parameters otherwise
 for L2 in 20 50 100
 do
-{
- tdb -b $L2 
- #mv T.r TL2=$L2.r
- cat T.r >> $outfile
- printf "\n" >> $outfile
-} done
+    tdb -b $L2 
+    cat T.r >> $outfile
+    printf "\n" >> $outfile
+done
+
+cat << EOF
+Results have been written to $outfile in the format:
+
+  COLUMN 1 - Energy of incident electron [meV]
+  COLUMN 2 - Transmission coefficient
+
+The file contains three data sets representing barriers
+separated by different widths.  Each set is separated by a blank
+line.
+
+  SET 1 - 20 angstrom gap
+  SET 2 - 50 angstrom gap
+  SET 3 - 100 angstrom gap
+
+This script is part of the QWWAD software suite.
+
+(c) Copyright 1996-2014
+    Alex Valavanis <a.valavanis@leeds.ac.uk>
+    Paul Harrison  <p.harrison@leeds.ac.uk>
+
+Report bugs to https://bugs.launchpad.net/qwwad
+EOF
 
 # Clean up the workspace
 rm T.r
