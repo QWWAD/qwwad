@@ -16,6 +16,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
