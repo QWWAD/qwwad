@@ -1,20 +1,35 @@
 # Grace project file
 #
-@version 50123
+@version 50122
 @page size 792, 612
 @page scroll 5%
 @page inout 5%
 @link page off
+@map font 10 to "Century-Schoolbook-L-Italic", "Century-Schoolbook-L-Italic"
+@map font 11 to "Century-Schoolbook-L-Bold-Italic", "Century-Schoolbook-L-Bold-Italic"
+@map font 9 to "ZapfDingbats", "ZapfDingbats"
 @map font 4 to "Helvetica", "Helvetica"
 @map font 5 to "Helvetica-Bold", "Helvetica-Bold"
-@map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
 @map font 6 to "Helvetica-Oblique", "Helvetica-Oblique"
-@map font 8 to "Symbol", "Symbol"
-@map font 1 to "Times-Bold", "Times-Bold"
-@map font 3 to "Times-BoldItalic", "Times-BoldItalic"
-@map font 2 to "Times-Italic", "Times-Italic"
+@map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
+@map font 17 to "Nimbus-Sans-L-Regular-Condensed", "Nimbus-Sans-L-Regular-Condensed"
+@map font 18 to "Nimbus-Sans-L-Bold-Condensed", "Nimbus-Sans-L-Bold-Condensed"
+@map font 19 to "Nimbus-Sans-L-Regular-Condensed-Italic", "Nimbus-Sans-L-Regular-Condensed-Italic"
+@map font 20 to "Nimbus-Sans-L-Bold-Condensed-Italic", "Nimbus-Sans-L-Bold-Condensed-Italic"
 @map font 0 to "Times-Roman", "Times-Roman"
-@map font 9 to "ZapfDingbats", "ZapfDingbats"
+@map font 1 to "Times-Bold", "Times-Bold"
+@map font 2 to "Times-Italic", "Times-Italic"
+@map font 3 to "Times-BoldItalic", "Times-BoldItalic"
+@map font 25 to "Courier", "Courier"
+@map font 26 to "Courier-Bold", "Courier-Bold"
+@map font 27 to "Courier-Oblique", "Courier-Oblique"
+@map font 28 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 29 to "URW-Palladio-L-Roman", "URW-Palladio-L-Roman"
+@map font 30 to "URW-Palladio-L-Bold", "URW-Palladio-L-Bold"
+@map font 31 to "URW-Palladio-L-Italic", "URW-Palladio-L-Italic"
+@map font 32 to "URW-Palladio-L-Bold-Italic", "URW-Palladio-L-Bold-Italic"
+@map font 8 to "Symbol", "Symbol"
+@map font 34 to "URW-Chancery-L-Medium-Italic", "URW-Chancery-L-Medium-Italic"
 @map color 0 to (255, 255, 255), "white"
 @map color 1 to (0, 0, 0), "black"
 @map color 2 to (255, 0, 0), "red"
@@ -50,29 +65,7 @@
 @timestamp rot 0
 @timestamp font 0
 @timestamp char size 2.000000
-@timestamp def "Sun Apr 13 18:01:37 2014"
-@with line
-@    line on
-@    line loctype view
-@    line 0.283144955037, 0.305, 1.09990924841, 0.305
-@    line linewidth 2.0
-@    line linestyle 4
-@    line color 1
-@    line arrow 0
-@    line arrow type 0
-@    line arrow length 2.000000
-@    line arrow layout 1.000000, 1.000000
-@line def
-@with string
-@    string on
-@    string loctype view
-@    string 0.32670571735, 0.341666666667
-@    string color 1
-@    string rot 0
-@    string font 0
-@    string just 0
-@    string char size 1.800000
-@    string def "bulk"
+@timestamp def "Thu Jun  5 14:00:51 2014"
 @r0 off
 @link r0 to g0
 @r0 type above
@@ -175,8 +168,8 @@
 @    xaxis  ticklabel skip 0
 @    xaxis  ticklabel stagger 0
 @    xaxis  ticklabel place normal
-@    xaxis  ticklabel offset auto
-@    xaxis  ticklabel offset 0.000000 , 0.010000
+@    xaxis  ticklabel offset spec
+@    xaxis  ticklabel offset 0.000000 , 0.020000
 @    xaxis  ticklabel start type auto
 @    xaxis  ticklabel start 0.000000
 @    xaxis  ticklabel stop type auto
