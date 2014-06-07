@@ -22,66 +22,50 @@ using namespace Leeds;
 using namespace constants;
 
 /**
- * Handler for command-line options
+ * Configure command-line options for the program
  */
-class DOSOptions : public Options
+Options configure_options(int argc, char* argv[])
 {
-    public:
-        DOSOptions(int argc, char* argv[])
-        {
-            try
-            {
-                program_specific_options->add_options()
-                    ("mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass (relative to that of a free electron)")
+    Options opt;
 
-                    ("band-edge", po::value<double>()->default_value(0),
-                     "Band edge potential [eV]")
+    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
+    opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
+    opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
 
-                    ("alpha", po::value<double>()->default_value(0),
-                     "Nonparabolicity parameter [eV^{-1}]")
+    std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
 
-                    ("particle,p", po::value<char>()->default_value('e'),
-                     "Particle to be used: 'e', 'h' or 'l'")
-                    ;
+    std::string details("Input file:\n"
+                        "  'E*.r'   \tEnergies of subband minima:\n"
+                        "           \tCOLUMN 1: state index.\n"
+                        "           \tCOLUMN 2: energy [meV].\n\n"
+                        "Output file:\n"
+                        "  'rho.r'  \tDensity of states:\n"
+                        "           \tCOLUMN 1: energy [meV]\n"
+                        "           \tCOLUMN 2: 3D d.o.s. [J^{-1}m^{-3}]\n"
+                        "           \tCOLUMN 3: 2D d.o.s. [J^{-1}m^{-2}]\n"
+                        "           \tCOLUMN 4: 1D d.o.s. [J^{-1}m^{-1}]\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Compute the density of electron states in system with effective mass = 0.1m0:\n\n"
+                        "   dos --mass 0.1\n"
+                        "\n"
+                        "   Compute the density of heavy-hole states with mass = 0.62 m0 and non-parabolicity = 10 eV^{-1}\n\n"
+                        "   dos --mass 0.62 --alpha 10");
 
-                std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
-                std::string details("Energies of subband minima are read from the file `Ee.r', or `Eh.r'.\n"
-                                    "Data is written to the file `rho.r' in the format: \n"
-                                    "Column 1 = energy (meV)\n"
-                                    "Column 2 = 3D density of states (J^{-1}m^{-3})\n"
-                                    "Column 3 = 2D density of states (J^{-1}m^{-2})\n"
-                                    "Column 4 = 1D density of states (J^{-1}m^{-1})");
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-                add_prog_specific_options_and_parse(argc, argv, summary, details);
-            }
-            catch(std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        /// \returns the effective mass [kg]
-        double get_mass() const {return vm["mass"].as<double>()*me;}
-
-        /// \returns the band edge [J]
-        double get_band_edge() const {return vm["band-edge"].as<double>()*e;}
-
-        /// \returns the nonparabolicity parameter [J^{-1}]
-        double get_alpha() const {return vm["alpha"].as<double>()/e;}
-
-        /// \returns the particle ID
-        char get_particle() const {return vm["particle"].as<char>();}
+    return opt;
 };
 
 int main(int argc,char *argv[])
 {
-    DOSOptions opt(argc, argv);
-    const char   p = opt.get_particle();  // particle (e, h or l)
-    const double m = opt.get_mass();      // effective mass [kg]
-    const double V = opt.get_band_edge(); // band-edge potential [J]
-    const double alpha = opt.get_alpha(); // Nonparabolicity parameter [1/J]
+    Options opt = configure_options(argc, argv);
+
+    const char   p     = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const double m     = opt.get_numeric_option("mass") * me;     // effective mass [kg]
+    const double V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
+    const double alpha = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
 
     const size_t n=1000; // Number of output energies
 
