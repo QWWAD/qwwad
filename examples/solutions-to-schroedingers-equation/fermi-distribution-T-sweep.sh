@@ -58,7 +58,7 @@ lw=200 # Well width
 nst=3  # Number of states
 
 # Solve single quantum well
-efiw -L $lw -s $nst
+efiw --width $lw --nst $nst
 
 # Generate table of populations
 N=1

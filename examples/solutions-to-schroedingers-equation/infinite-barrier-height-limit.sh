@@ -41,7 +41,7 @@ LW=100
 
 # Calculate the infinite well solution and store ground
 # state energy as Einf
-efiw -L $LW -m $MW
+efiw --width $LW --mass $MW
 Einf=`awk '{printf("%8.3f", $2)}' Ee.r`
 
 # Loop for different barrier heights

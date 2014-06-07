@@ -33,7 +33,7 @@ rm -f $outfile
 
 # Set fixed parameters
 export QWWAD_MASS=0.067 # Effective mass relative to a free electron
-export QWWAD_STATES=3   # Number of states
+export QWWAD_NST=3   # Number of states
 
 # Loop for different well widths
 for i in `seq 1 0.1 2.3`

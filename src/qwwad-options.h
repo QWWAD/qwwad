@@ -46,6 +46,27 @@ class Options
          */
         po::variables_map vm;
 
+        double get_numeric_option(const std::string &name) const;
+        size_t get_size_option(const std::string &name) const;
+        char   get_char_option(const std::string &name) const;
+
+        void add_numeric_option(const std::string &name,
+                                const double       default_value,
+                                const std::string &description);
+
+        void add_size_option(const std::string &name,
+                             const size_t       default_value,
+                             const std::string &description);
+
+        void add_char_option(const std::string &name,
+                             const char         default_value,
+                             const std::string &description);
+
+        // Common options for all programs
+        void add_prog_specific_options_and_parse(int          argc,
+                                                 char        *argv[],
+                                                 std::string  summary,
+                                                 std::string  details="");
     protected:
         /**
          * \brief The additional options for a specific program
@@ -57,11 +78,6 @@ class Options
          */
         po::options_description* program_specific_options;
 
-        // Common options for all programs
-        void add_prog_specific_options_and_parse(int          argc,
-                                                 char        *argv[],
-                                                 std::string  summary,
-                                                 std::string  details="");
     public:
         Options();
         Options(const Options &options);

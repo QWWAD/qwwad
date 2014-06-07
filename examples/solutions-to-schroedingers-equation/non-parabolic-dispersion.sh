@@ -36,7 +36,7 @@ LW=200
 nst=2  # Number of subbands to find
 
 # Find parabolic solution first
-efiw --width $LW --mass $mass --states $nst
+efiw --width $LW --mass $mass --nst $nst
 awk '{print $1, mass*9.11e-31}' mass=$mass < wf_e1.r > massd.dat
 
 # A little hack needed to provide the subband class with the necessary
@@ -53,7 +53,7 @@ awk '{print $1, 0}' < wf_e1.r > Vtotal.dat
 
 # Repeat the calculation using nonparabolicity
 for alpha in 0.7 5; do
-    efiw --width $LW --mass $mass --states $nst --alpha $alpha
+    efiw --width $LW --mass $mass --nst $nst --alpha $alpha
 
     # Rescale energies to Joules for use with dispersion-relation code
     awk '{print $1, alpha/1.6e-19}' alpha=$alpha < wf_e1.r > alphad.dat

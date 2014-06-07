@@ -34,7 +34,7 @@ rm -f $outfile_f_E $outfile_Ef_N
 rm -f v.r N.r Ef-N.r Ef-N-np.r
 
 # Solve single quantum well
-efiw -L 200 -s 1
+efiw --width 200 --nst 1
 
 # Need to artificially create a file v.r containing the barrier height,
 # this used later in numerical solutions of Schrodinger's equation

@@ -32,7 +32,7 @@ outfile=infinite-well-wavefunctions.dat
 rm -f $outfile
 
 # Solve Schroedinger equation
-efiw --width 100 --npoint 1000 --states 3
+efiw --width 100 --nz 1000 --nst 3
 
 # Shift wavefunctions and scale positions to angstrom
 awk '{printf("%3.5f    %.12e\n", $1*1e10, $2)}' wf_e1.r >> $outfile

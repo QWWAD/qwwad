@@ -36,7 +36,7 @@ L=200 # Well-width (angstrom)
 nst=3 # Number of states to find
 
 # Find first three states in an infinite well
-efiw --width $L --states $nst
+efiw --width $L --nst $nst
 
 # Find density of states for bulk and 2D system
 dos
@@ -46,7 +46,7 @@ awk '{print $1, $3*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
 
 # Repeat for a nonparabolic well
 alpha=0.7
-efiw -L $L -s $nst --alpha $alpha
+efiw --width $L --nst $nst --alpha $alpha
 dos --alpha $alpha
 
 printf "\n" >> $outfile_bulk

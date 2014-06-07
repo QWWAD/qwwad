@@ -31,7 +31,7 @@ outfile=thermalised-distribution.dat
 rm -f Ef-T*.r N.r FD*.r N?-T.r $outfile
 
 # Solve single quantum well
-efiw -L 200 -s 6 --alpha=0.701
+efiw --width 200 --nst 6 --alpha 0.701
 
 # Set the global population
 N=10
