@@ -21,18 +21,17 @@ class Subband
 {
     public:
         Subband(State                 ground_state,
-                double                Ef,
-                double                population,
                 double                m_d,
                 std::valarray<double> z);
         
         Subband(State                 ground_state,
-                double                Ef,
-                double                population,
                 double                m_d,
                 std::valarray<double> z,
                 double                alphad,
                 double                condband_edge);
+
+        void set_distribution(const double Ef,
+                              const double population);
 
         inline State                       get_ground() const {return ground_state;}
         inline std::valarray<double>       z_array()    const {return _z;}
@@ -56,16 +55,12 @@ class Subband
         static std::vector<Subband> read_from_file(const std::string& energy_input_path,
                                                    const std::string& wf_input_prefix,
                                                    const std::string& wf_input_ext,
-                                                   const std::string& populations_filename,
-                                                   const std::string& fermienergy_filename,
                                                    const std::string& m_d_filename);
 
         // Read from file (including nonparabolicity)
         static std::vector<Subband> read_from_file(const std::string& energy_input_path,
                                                    const std::string& wf_input_prefix,
                                                    const std::string& wf_input_ext,
-                                                   const std::string& populations_filename,
-                                                   const std::string& fermienergy_filename,
                                                    const std::string& m_d_filename,
                                                    const std::string& alphad_filename,
                                                    const std::string& potential_filename);
@@ -93,11 +88,13 @@ class Subband
     private:
         State  ground_state;        ///< State at bottom of subband
         std::valarray<double> _z;   ///< Spatial profile of subband
-        double Ef;                  ///< Quasi-Fermi energy [J]
-        double population;          ///< Sheet-density of carriers [m^{-2}]
         double md_0;                ///< Density of states effective mass
         double alphad;              ///< In-plane nonparabolicity parameter
         double condband_edge;       ///< Energy of the conduction band located below 'most populated' region of subband.
+
+        bool   distribution_known;  ///< True if the carrier distribution is set
+        double Ef;                  ///< Quasi-Fermi energy [J]
+        double population;          ///< Sheet-density of carriers [m^{-2}]
 };
 
 } // namespace Leeds

@@ -32,8 +32,6 @@ class DispersionOptions : public WfOptions
 	std::string get_m_d_filename() const {return vm["massd-file"].as<std::string>();}
         std::string get_alphad_filename() const {return vm["alphad-file"].as<std::string>();}
         std::string get_potential_filename() const {return vm["potential-file"].as<std::string>();}
-        std::string get_populations_filename() const {return vm["population-file"].as<std::string>();}		
-        std::string get_fermi_energy_filename() const {return vm["fermienergy-file"].as<std::string>();}		
         bool get_parabolic() const {return vm["parabolic"].as<bool>();}
 
         DispersionOptions(int argc, char* argv[])
@@ -51,7 +49,7 @@ class DispersionOptions : public WfOptions
                 ("disp-prefix", po::value<std::string>()->default_value("dr_e"),
                  "Set filename prefix to which the dispersion curves for all states will be written")
 
-                ("disp-ext", po::value<std::string>()->default_value(".dat"),
+                ("disp-ext", po::value<std::string>()->default_value(".r"),
                  "Set filename ext to which the dispersion curves for all states will be written")
 
                 ("parabolic", po::bool_switch()->default_value(false),
@@ -61,24 +59,16 @@ class DispersionOptions : public WfOptions
                  "Output dispersions relative to the subband minima. If this is not specified, "
                  "the dispersion curve is given relative to the band edge.")
 
-                ("fermienergy-file",
-                 po::value<std::string>()->default_value("Ef.dat"),
-                 "Set filename from which fermi energies will be read from.")
-
-                ("population-file",
-                 po::value<std::string>()->default_value("populations.dat"),
-                 "Set filename from which subband populations will be read from.")
-
                 ("massd-file",
-                 po::value<std::string>()->default_value("massd.dat"),
-                 "Set filename from which to read the d.o.s. mass for one period of the strucutre")
+                 po::value<std::string>()->default_value("m_perp.r"),
+                 "Set filename from which to read the in-plane mass profile for the material")
 
                 ("alphad-file",
-                 po::value<std::string>()->default_value("alphad.dat"),
+                 po::value<std::string>()->default_value("alpha.r"),
                  "Set filename from which to read the in-plane nonparabolicity parameter.")
 
                 ("potential-file",
-                 po::value<std::string>()->default_value("Vtotal.dat"),
+                 po::value<std::string>()->default_value("v.r"),
                  "Set filename from which to read the conduction band profile.")
             ;
 
@@ -99,8 +89,6 @@ int main (int argc, char* argv[])
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_populations_filename(),
-                                                  opt.get_fermi_energy_filename(),
                                                   opt.get_m_d_filename());
     }
     else
@@ -108,8 +96,6 @@ int main (int argc, char* argv[])
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_populations_filename(),
-                                                  opt.get_fermi_energy_filename(),
                                                   opt.get_m_d_filename(),
                                                   opt.get_alphad_filename(),
                                                   opt.get_potential_filename());

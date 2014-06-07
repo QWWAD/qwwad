@@ -13,35 +13,47 @@ namespace Leeds {
 using namespace constants;
 
 Subband::Subband(State ground_state,
-                 double Ef,
-                 double population,
                  double md_0,
                  std::valarray<double> z) :
     ground_state(ground_state),
     _z(z),
-    Ef(Ef),
-    population(population),
     md_0(md_0),
     alphad(0.0),
-    condband_edge(0.0)
+    condband_edge(0.0),
+    distribution_known(false),
+    Ef(ground_state.get_E()),
+    population(0.0)
 {
 }
 
 Subband::Subband(State ground_state,
-                 double Ef,
-                 double population,
                  double md_0,
                  std::valarray<double> z,
                  double alphad,
                  double condband_edge) :
     ground_state(ground_state),
     _z(z),
-    Ef(Ef),
-    population(population),
     md_0(md_0),
     alphad(alphad),
-    condband_edge(condband_edge)
+    condband_edge(condband_edge),
+    distribution_known(false),
+    Ef(ground_state.get_E()),
+    population(0.0)
 {
+}
+
+/**
+ * \brief Sets the carrier distribution function in subband
+ *
+ * \param[in] Ef         Quasi-Fermi energy [J]
+ * \param[in] population Total carrier population [m^{-2}]
+ */
+void Subband::set_distribution(const double Ef,
+                               const double population)
+{
+    this->distribution_known = true;
+    this->population         = population;
+    this->Ef                 = Ef;
 }
 
 /** Find Fermi wave-vector [1/m] */
@@ -56,22 +68,16 @@ double Subband::get_k_fermi() const
  * \param[in] energy_input_path     Path for energy and wavefunction files
  * \param[in] wf_input_prefix       Prefix for wavefunction filenames
  * \param[in] wf_input_ext          Extension for wavefunction filenames
- * \param[in] populations_filename  Name of data file containing populations
- * \param[in] fermienergy_filename  Name of data file containing Fermi energies
  * \param[in] m_d_filename          Name of data file containing density-of-states
  *                                  effective mass.
  */
 std::vector<Subband> Subband::read_from_file(const std::string& energy_input_path,
                                              const std::string& wf_input_prefix,
                                              const std::string& wf_input_ext,
-                                             const std::string& populations_filename,
-                                             const std::string& fermienergy_filename,
                                              const std::string& m_d_filename)
 {
     // Read subband data
     std::valarray<double> ist_temp;
-    std::valarray<double> Ef;
-    std::valarray<double> P;
     std::valarray<double> z;
     std::valarray<double> m_d_z;
     
@@ -81,28 +87,13 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             1000.0/e,
                                                             true);
 
-    Leeds::read_table_x(populations_filename.c_str(), P);
-    Leeds::read_table_xy(fermienergy_filename.c_str(), ist_temp, Ef);
     Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);
     
     const size_t nst = ground_state.size();
 
-    // Check that all state input files contain same amount of data
-    if(P.size() != nst or Ef.size() != nst)
-    {
-        std::ostringstream oss;
-        oss << "Incorrect amount of data in " << populations_filename
-            << " (" << P.size()  << " lines) or " << fermienergy_filename
-            << " (" << Ef.size() << " lines). Expected " << nst << " lines.";
-        throw std::runtime_error(oss.str());
-    }
-
     std::valarray<unsigned int> psi_max_iz(nst);
 
-    // Check that populations look sensible
     for(unsigned int ist = 0; ist < nst; ist++){
-        Leeds::check_positive(&P[ist]);
-
         // Use the value of in-plane mass where wavefunction has max. magnitude
         // (I.e. in the well!)
         // TODO Is there a better way way of doing this?
@@ -119,7 +110,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     std::vector<Subband> subbands;
 
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], Ef[ist], P[ist], m_d_z[psi_max_iz[ist]], z));
+        subbands.push_back(Subband(ground_state[ist], m_d_z[psi_max_iz[ist]], z));
 
     return subbands;
 }
@@ -130,8 +121,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
  * \param[in] energy_input_path     Path for energy and wavefunction files
  * \param[in] wf_input_prefix       Prefix for wavefunction filenames
  * \param[in] wf_input_ext          Extension for wavefunction filenames
- * \param[in] populations_filename  Name of data file containing populations
- * \param[in] fermienergy_filename  Name of data file containing Fermi energies
  * \param[in] m_d_filename          Name of data file containing density-of-states effective mass.
  * \param[in] alphad_filename       Name of data file containing dispersion nonparabolicity profile
  * \param[in] potential_filename    Name of data file containing band edge potential.
@@ -139,8 +128,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
 std::vector<Subband> Subband::read_from_file(const std::string& energy_input_path,
                                              const std::string& wf_input_prefix,
                                              const std::string& wf_input_ext,
-                                             const std::string& populations_filename,
-                                             const std::string& fermienergy_filename,
                                              const std::string& m_d_filename,
                                              const std::string& alphad_filename,
                                              const std::string& potential_filename)
@@ -149,8 +136,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     
     // Read subband data
     std::valarray<double> ist_temp;
-    std::valarray<double> Ef;
-    std::valarray<double> P;
     std::valarray<double> z;
     std::valarray<double> m_d_z;
     std::valarray<double> alphad;
@@ -161,18 +146,15 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             wf_input_ext,
                                                             1000.0/e,
                                                             true);
-    Leeds::read_table_x(populations_filename.c_str(), P);
-    Leeds::read_table_xy(fermienergy_filename.c_str(), ist_temp, Ef);
     Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);
     Leeds::read_table_xy(alphad_filename.c_str(), z, alphad);
     Leeds::read_table_xy(potential_filename.c_str(), z, V);
 
     const size_t nst = ground_state.size();
     std::valarray<unsigned int> psi_max_iz(nst);    
-    // Check that populations look sensible
-    for(unsigned int ist = 0; ist < nst; ist++){
-        Leeds::check_positive(&P[ist]);
 
+    for(unsigned int ist = 0; ist < nst; ist++)
+    {
         // Use the value of in-plane mass where wavefunction has max. magnitude
         // (I.e. in the well!)
         // TODO Is there a better way way of doding this?
@@ -185,19 +167,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         }
     }
     
-    // Check that all state input files contain same amount of data
-    if(P.size() != nst or Ef.size() != nst)
-    {
-        std::ostringstream oss;
-        oss << "Incorrect amount of data in " << populations_filename
-            << " (" << P.size()  << " lines) or " << fermienergy_filename
-            << " (" << Ef.size() << " lines). Expected " << nst << " lines.";
-        throw std::runtime_error(oss.str());
-    }
-    
     // Copy subband data to vector
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], Ef[ist], P[ist], m_d_z[psi_max_iz[ist]], z,
+        subbands.push_back(Subband(ground_state[ist], m_d_z[psi_max_iz[ist]], z,
                                 alphad[psi_max_iz[ist]], V[psi_max_iz[ist]]));
 
     return subbands;
