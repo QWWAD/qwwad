@@ -306,4 +306,65 @@ void Options::add_char_option(const std::string &name,
          po::value<char>()->default_value(default_value),
          description.c_str());
 }
+
+/**
+ * \brief Get the value of a string option
+ *
+ * \param[in] name The long name of the option
+ *
+ * \return The value of the option as a string
+ */
+std::string Options::get_string_option(const std::string &name) const
+{
+    const std::string val = vm[name].as<std::string>();
+    return val;
+}
+
+/**
+ * \brief Adds a string option to the program
+ *
+ * \param[in] name          The name of the option ("<long form>,<short form>")
+ * \param[in] default_value The default value of the option
+ * \param[in] description   A short description of what the option does
+ */
+void Options::add_string_option(const std::string &name,
+                                const std::string &default_value,
+                                const std::string &description)
+{
+    program_specific_options->add_options()
+        (name.c_str(),
+         po::value<std::string>()->default_value(default_value),
+         description.c_str());
+}
+
+/**
+ * \brief Get the value of a switch
+ *
+ * \param[in] name The long name of the option
+ *
+ * \return True if the option was specified
+ */
+bool Options::get_switch(const std::string &name) const
+{
+    const bool val = vm[name].as<bool>();
+    return val;
+
+}
+
+/**
+ * \brief Adds a switch option to the program
+ *
+ * \param[in] name          The name of the option ("<long form>,<short form>")
+ * \param[in] description   A short description of what the option does
+ *
+ * \details The switch is FALSE unless the option is specified
+ */
+void Options::add_switch(const std::string &name,
+                         const std::string &description)
+{
+    program_specific_options->add_options()
+        (name.c_str(),
+         po::bool_switch()->default_value(false),
+         description.c_str());
+}
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

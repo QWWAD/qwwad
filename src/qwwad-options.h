@@ -46,9 +46,11 @@ class Options
          */
         po::variables_map vm;
 
-        double get_numeric_option(const std::string &name) const;
-        size_t get_size_option(const std::string &name) const;
-        char   get_char_option(const std::string &name) const;
+        double      get_numeric_option(const std::string &name) const;
+        size_t      get_size_option(const std::string &name) const;
+        char        get_char_option(const std::string &name) const;
+        std::string get_string_option(const std::string &name) const;
+        bool        get_switch(const std::string &name) const;
 
         void add_numeric_option(const std::string &name,
                                 const double       default_value,
@@ -61,6 +63,13 @@ class Options
         void add_char_option(const std::string &name,
                              const char         default_value,
                              const std::string &description);
+
+        void add_string_option(const std::string &name,
+                               const std::string &default_value,
+                               const std::string &description);
+
+        void add_switch(const std::string &name,
+                        const std::string &description);
 
         // Common options for all programs
         void add_prog_specific_options_and_parse(int          argc,

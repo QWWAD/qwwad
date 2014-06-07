@@ -1,8 +1,8 @@
 /**
  * \file    dispersion_relation.cpp
  * \brief   Prints out the dispersion relations for each subband
- * \author  Jonathan Cooper <el06jdc@leeds.ac.uk>
- * \date    2013-02-14
+ * \author  Alex Valavanis  <a.valavanis@leeds.ac.uk>
+ * \author  Jonathan Cooper <jdc.tas@gmail.com>
  */
 
 #include <iostream>
@@ -16,105 +16,91 @@ using namespace Leeds;
 #include "qclsim-constants.h"
 using namespace constants;
 
-class DispersionOptions : public WfOptions
+/**
+ * Configure command-line options for the program
+ */
+WfOptions configure_options(int argc, char* argv[])
 {
-    public:
-        void print() const{};
-        inline bool use_relative_energy_scale() const {return vm["relative"].as<bool>();}
-        inline double get_nkbt()                const {return vm["nkbt"].as<double>();}
-        inline double get_Te()                  const {return vm["Te"].as<double>();}
-        inline unsigned int get_nk()            const {return vm["nk"].as<unsigned int>();}
-        inline std::string get_disp_prefix()    const {return vm["disp-prefix"].as<std::string>();}
-        inline std::string get_disp_ext()       const {return vm["disp-ext"].as<std::string>();}
+    WfOptions opt;
 
-        // TODO All this should be in some generic program options class and not defined in every
-        // program that uses them!
-	std::string get_m_d_filename() const {return vm["massd-file"].as<std::string>();}
-        std::string get_alphad_filename() const {return vm["alphad-file"].as<std::string>();}
-        std::string get_potential_filename() const {return vm["potential-file"].as<std::string>();}
-        bool get_parabolic() const {return vm["parabolic"].as<bool>();}
+    opt.add_numeric_option("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
+    opt.add_numeric_option("Te",             100,        "Electron temperature [K].");
+    opt.add_size_option   ("nk",             100,        "Number of k-space points to print out");
+    opt.add_string_option ("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
+    opt.add_string_option ("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
+    opt.add_switch        ("nonparabolic",               "Use non-parabolic dispersion relation.");
+    opt.add_switch        ("relative",                   "Output dispersion relative to subband minima. If not specified, "
+                                                         "the dispersion is given relative to the band edge.");
+    opt.add_string_option ("mass-file",      "m_perp.r", "Filename from which to read in-plane mass profile.");
+    opt.add_string_option ("alpha-file",     "alpha.r",  "Filename from which to read in-plane non-parabolicity profile.");
+    opt.add_string_option ("potential-file", "v.r",      "Filename from which to read conduction band profile.");
 
-        DispersionOptions(int argc, char* argv[])
-        {
-            program_specific_options->add_options()
-                ("nkbt", po::value<double>()->default_value(5.0),
-                 "Set the maximum energy to print out for the subband")
+    std::string summary = "Compute the dispersion relation for a set of subbands.";
 
-                ("Te", po::value<double>()->default_value(100),
-                 "Set the electron temperature.")
+    std::string details("Input files:\n"
+                        "  'E*.r'   \tEnergy of each state:\n"
+                        "           \tCOLUMN 1: state index.\n"
+                        "           \tCOLUMN 2: energy [meV].\n"
+                        "  'wf_*i.r'\tWave function amplitude at each position\n"
+                        "           \tCOLUMN 1: position [m].\n"
+                        "           \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
+                        "\n"
+                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Compute the ground state in a 150-angstrom well with effective mass = 0.1 m0:\n\n"
+                        "   efiw --width 150 --mass 0.1\n"
+                        "\n"
+                        "   Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:\n\n"
+                        "   efiw --width 200 --mass 0.62 --particle h");
 
-                ("nk", po::value<unsigned int>()->default_value(100),
-                 "Set the number of k-space points to print out")
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-                ("disp-prefix", po::value<std::string>()->default_value("dr_e"),
-                 "Set filename prefix to which the dispersion curves for all states will be written")
-
-                ("disp-ext", po::value<std::string>()->default_value(".r"),
-                 "Set filename ext to which the dispersion curves for all states will be written")
-
-                ("parabolic", po::bool_switch()->default_value(false),
-                 "Use parabolic dispersion relation.  If this flag is not set, we use nonparabolic dispersion.")
-
-                ("relative", po::bool_switch(),
-                 "Output dispersions relative to the subband minima. If this is not specified, "
-                 "the dispersion curve is given relative to the band edge.")
-
-                ("massd-file",
-                 po::value<std::string>()->default_value("m_perp.r"),
-                 "Set filename from which to read the in-plane mass profile for the material")
-
-                ("alphad-file",
-                 po::value<std::string>()->default_value("alpha.r"),
-                 "Set filename from which to read the in-plane nonparabolicity parameter.")
-
-                ("potential-file",
-                 po::value<std::string>()->default_value("v.r"),
-                 "Set filename from which to read the conduction band profile.")
-            ;
-
-            std::string doc = "Prints the dispersion relations for all states.";
-
-            add_prog_specific_options_and_parse(argc, argv, doc);
-        }
+    return opt;
 };
 
 int main (int argc, char* argv[])
 {
-    DispersionOptions opt(argc, argv);
+    WfOptions opt = configure_options(argc, argv);
+
+    const size_t nk   = opt.get_size_option("nk");
+    const double nkbt = opt.get_numeric_option("nkbt");
+    const double Te   = opt.get_numeric_option("Te");
 
     std::vector<Leeds::Subband> subbands;
 
-    if(opt.get_parabolic())
+    if(!opt.get_switch("nonparabolic"))
     {
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_m_d_filename());
+                                                  opt.get_string_option("mass-file"));
     }
     else
     {
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_m_d_filename(),
-                                                  opt.get_alphad_filename(),
-                                                  opt.get_potential_filename());
+                                                  opt.get_string_option("mass-file"),
+                                                  opt.get_string_option("alpha-file"),
+                                                  opt.get_string_option("potential-file"));
     }
 
     // Loop over subbands
     unsigned int ist = 1;
     for(std::vector<Leeds::Subband>::iterator subband = subbands.begin(); subband < subbands.end(); ++subband)
     {
-        std::valarray<double> k(opt.get_nk());
-        std::valarray<double> Ek(opt.get_nk());
+        std::valarray<double> k(nk);
+        std::valarray<double> Ek(nk);
 
         // Calculate maximum wavevector
-        double k_max = subband->k(opt.get_nkbt()*kB*opt.get_Te());
+        double k_max = subband->k(nkbt*kB*Te);
+
         // Calculate wavevector spacing
-        double dk = k_max/opt.get_nk();
+        double dk = k_max/nk;
 
         // Loop over wavevectors and find corresponding energies
-        for(unsigned int ik=0; ik<opt.get_nk(); ik++)
+        for(unsigned int ik=0; ik<nk; ik++)
         {
             // Calculate wavevector
             k[ik] = ik*dk;
@@ -124,9 +110,8 @@ int main (int argc, char* argv[])
 
         // If absolute energies are required then offset energies by the energy of the subband
         // minima
-        if(!opt.use_relative_energy_scale()){
+        if(!opt.get_switch("relative"))
             Ek += subband->get_E();
-        }
 
         Ek *= 1/(1e-3*e);
 
@@ -136,13 +121,13 @@ int main (int argc, char* argv[])
             std::cout << "Subband " << ist << " at " << subband->get_E()/(1e-3*e) << "eV." << std::endl;
             std::cout << "D.o.s effective mass: " << subband->get_md_0() << std::endl;
             std::cout << "D.o.s nonparabolicity parameter: " << subband->get_alphad() << std::endl;
-            std::cout << "Wavevector at " << opt.get_nkbt() << "*kB*Te: " << k_max << std::endl;
+            std::cout << "Wavevector at " << nkbt << "*kB*Te: " << k_max << std::endl;
             std::cout << std::endl;
         }
 
         // Construct filename and output
         std::stringstream filename;
-        filename << opt.get_disp_prefix() << ist << opt.get_disp_ext();
+        filename << opt.get_string_option("disp-prefix") << ist << opt.get_string_option("disp-ext");
         Leeds::write_table_xy(filename.str().c_str(), k, Ek);
 
         // Increment state counter
