@@ -97,4 +97,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f dr_*.dat Vtotal.dat alphad.dat Ee.* wf_* populations.dat massd.dat Ef.dat
+rm -f dr_*.dat v.r alpha.r Ee.* wf_* m_perp.r
