@@ -36,10 +36,6 @@ rm -f v.r N.r Ef-N.r Ef-N-np.r
 # Solve single quantum well
 efiw --width 200 --nst 1
 
-# Need to artificially create a file v.r containing the barrier height,
-# this used later in numerical solutions of Schrodinger's equation
-echo 0.00000 1.60219e-19 > v.r	# i.e., 1eV
-
 # Loop for different concentrations
 for N in 0.1 0.2 0.5 1 2 5 10 20 50 100
 do
@@ -47,7 +43,7 @@ do
     echo 1 $N > N.r
 
     # Calculate Fermi energies and population distribution
-    sbp -f -T 77
+    sbp --fd --Te 77
     mv FD1.r FD1N=$N.r
 
     # Write Fermi energy to file

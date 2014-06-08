@@ -36,17 +36,13 @@ efiw --width 200 --nst 6 --alpha 0.701
 # Set the global population
 N=10
 
-# Need to artificially create a file v.r containing a barrier height.
-# This is used as a cut-off energy for population calculations
-echo 0.00000 1.60219e-19 > v.r	# i.e., 1eV
-
 alpha=0.701 # Nonparabolicity parameter for GaAs [1/eV]
 
 # Loop for different temperatures
 for T in `seq 10 10 1000`
 do
     # Calculate the global Fermi energy for the system
-    sbp --global-population $N -T $T --alpha $alpha
+    sbp --global-population $N --Te $T --alpha $alpha
 
     # Get the populations of each state from the data file 
     N1=`awk '/1\t/{printf("%8.3f\n", $2)}' N-out.r`

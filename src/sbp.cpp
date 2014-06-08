@@ -48,46 +48,47 @@ class SBPOptions : public Options
         {
             try
             {
-                program_specific_options->add_options()
-                    ("fd,f", po::bool_switch()->default_value(false),
-                     "Output Fermi-Dirac distribution.")
+                add_switch        ("fd,f",                      "Output Fermi-Dirac distribution.");
+                add_numeric_option("mass,m",             0.067, "Effective mass (relative to free electron)");
+                add_numeric_option("vcb",                 0.00, "Band-edge potential [eV]");
+                add_numeric_option("alpha",               0.00, "Non-parabolicity parameter [eV^{-1}]");
+                add_char_option   ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+                add_numeric_option("Te",                  300,  "Carrier temperature [K].");
+                add_size_option   ("nenergy,n",           1000, "Number of energy samples to print out");
+                add_numeric_option("global-population,N", 0.0,  "Use equilibrium population for the entire system instead of reading subband "
+                                                                "populations from file [x1e10 cm^{-2}]");
 
-                    ("mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass at the band edge (relative to that of a free electron)")
+                std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
 
-                    ("band-edge", po::value<double>()->default_value(0),
-                     "Band edge potential [eV]")
+                std::string details("Default input files:\n"
+                                    "  'E*.r'    \tEnergy of each state:\n"
+                                    "            \tCOLUMN 1: state index.\n"
+                                    "            \tCOLUMN 2: energy [meV].\n"
+                                    "  'N.r'     \tPopulation of each state (not used if --global-population is specified):\n"
+                                    "            \tCOLUMN 1: state index.\n"
+                                    "            \tCOLUMN 2: subband population [x10^10 cm^{-2}]\n"
+                                    "\n"
+                                    "Default output files:\n"
+                                    "  'Ef.r'    \tQuasi-Fermi energy of each subband:\n"
+                                    "            \tCOLUMN 1: subband index.\n"
+                                    "            \tCOLUMN 2: energy [meV].\n"
+                                    "  'FDi.r'   \tDispersion relation for subband i (if --fd option is used)\n"
+                                    "            \tCOLUMN 1: In-plane wave-vector [1/m]\n"
+                                    "            \tCOLUMN 2: Energy [meV]\n"
+                                    "\n"
+                                    "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
+                                    "\n"
+                                    "It is assumed that all subbands have the same temperature. If the --global-population flag is used, the "
+                                    "subbands are assumed to be in thermal equilibrium with a single Fermi energy for the entire system.\n"
+                                    "\n"
+                                    "Examples:\n"
+                                    "   Compute the global Fermi energy for a system with total population 10e10 cm^{-2} and carrier temperature 20 K:\n\n"
+                                    "   sbp --global-population 10 --Te 20\n"
+                                    "\n"
+                                    "   Compute the quasi-Fermi energies and carrier distributions using non-parabolic mass (alpha = 0.7 eV^{-1}):\n\n"
+                                    "   sbp --fd --alpha 0.7");
 
-                    ("alpha", po::value<double>()->default_value(0),
-                     "Nonparabolicity parameter [eV^{-1}]")
-
-                    ("nenergy,n", po::value<size_t>()->default_value(1000),
-                     "Number of energy samples for output file")
-
-                    ("particle,p", po::value<char>()->default_value('e'),
-                     "Particle to be used: 'e', 'h' or 'l'")
-
-                    ("temperature,T", po::value<double>()->default_value(300),
-                     "Temperature of carrier distribution [K]")
-
-                    ("global-population,N", po::value<double>(),
-                     "Use equilibrium population for the entire system instead of reading subband "
-                     "populations from file [x1e10 cm^{-2}]")
-                    ;
-
-                std::string doc("Find the Fermi-Dirac distribution functions for each "
-                                "subband in the system given the population and temperature."
-                                "The subband minimum is read from the file \"E*.r\", "
-                                "and the distribution is written to \"FDi.r\" where the '*' "
-                                "is replaced by the particle ID in each case and the "
-                                "'i' is replaced by the number of the state. "
-                                "It is assumed that all subbands have the same temperature. "
-                                "If the --global-population flag is used, then the subbands "
-                                "are assumed to be in thermal equilibrium, with a single Fermi "
-                                "energy for the entire system. Otherwise, the populations are "
-                                "read from the N.r file.");
-
-                add_prog_specific_options_and_parse(argc, argv, doc);
+                add_prog_specific_options_and_parse(argc, argv, summary, details);
             }
             catch(std::exception &e)
             {
@@ -96,45 +97,24 @@ class SBPOptions : public Options
             }
         }
 
-        /// \returns the effective mass [kg]
-        bool get_fd_flag() const {return vm["fd"].as<bool>();}
-
-        /// \returns the effective mass [kg]
-        double get_mass() const {return vm["mass"].as<double>()*me;}
-
-        /// \returns the band edge [J]
-        double get_band_edge() const {return vm["band-edge"].as<double>()*e;}
-
-        /// \returns the nonparabolicity parameter [J^{-1}]
-        double get_alpha() const {return vm["alpha"].as<double>()/e;}
-
-        /// \returns the particle ID
-        char get_particle() const {return vm["particle"].as<char>();}
-
-        /// \returns the number of energy samples
-        size_t get_n_energy() const {return vm["nenergy"].as<size_t>();}
-
-        /// \returns the temperature of the carrier distribution [K]
-        double get_temperature() const {return vm["temperature"].as<double>();}
-
         /// \returns the global population [m^{-2}]
-        double get_global_pop() const {return vm["global-population"].as<double>() * 10000 *1e10;}
+        double get_global_pop() const {return get_numeric_option("global-population") * 10000 *1e10;}
 
         /// \returns true if the system is in thermal equilibrium
-        bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(vm["global-population"].as<double>(),0,1e-6));}
+        bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
 };
 
 int main(int argc,char *argv[])
 {
     SBPOptions opt(argc, argv);
 
-    const bool   FD_flag = opt.get_fd_flag();
-    const double m       = opt.get_mass();
-    const double alpha   = opt.get_alpha();
-    const double V       = opt.get_band_edge();
-    const size_t nE      = opt.get_n_energy();
-    const char   p       = opt.get_particle();
-    const double T       = opt.get_temperature();
+    const bool   FD_flag = opt.get_switch("fd");
+    const double m       = opt.get_numeric_option("mass") * me;
+    const double alpha   = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
+    const double V       = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
+    const char   p       = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const double T       = opt.get_numeric_option("Te");
+    const size_t nE      = opt.get_size_option("nenergy");
 
     std::valarray<double> E = read_E(p); // Reads subband energy file [J]
     const size_t n = E.size();
@@ -204,11 +184,9 @@ static double calc_dist(const double       Emin,
     char   filename[9]; // output filename for FD distribs
     sprintf(filename,"FD%i.r",s+1);
 
-    double vmax=Vmax(); // Maximum potential
     double Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
 
     if(Emax<Emin) Emax=Emin+10*kB*T;
-    if(Emax>vmax) Emax=vmax;
 
     std::valarray<double> E(nE); // Array of energies for plot
     std::valarray<double> f(nE); // Occupation probabilities

@@ -170,7 +170,8 @@ src_wfplot_LDADD   = src/libqwwad.a $(LDADD)
 # Build rule for installing manual pages
 dist_man1_MANS = man/dispersion_relation.1 \
 		 man/dos.1                 \
-		 man/efiw.1
+		 man/efiw.1                \
+		 man/sbp.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -186,6 +187,11 @@ man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.a
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dispersion_relation$(EXEEXT)
 	help2man --output=$@ --name="compute the dispersion relation for an energy subband" src/dispersion_relation$(EXEEXT)
+
+man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/sbp$(EXEEXT)
+	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" src/sbp$(EXEEXT)
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

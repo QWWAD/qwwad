@@ -35,7 +35,7 @@ set -e
 solve_for_alpha()
 {
     # Calculate Fermi energies and population distributions
-    sbp -f -T $T --alpha $1
+    sbp --fd --Te $T --alpha $1
     mv FD1.r FD1T=$T-np-alpha$1.r
     mv FD2.r FD2T=$T-np-alpha$1.r
     mv FD3.r FD3T=$T-np-alpha$1.r
@@ -65,10 +65,6 @@ N=1
 for i in `seq 1 $nst`; do
     echo $i $N >> N.r
 done
-
-# Need to artificially create a file v.r containing a barrier height.
-# This is used as a cut-off energy for population calculations
-echo 0.00000 1.60219e-19 > v.r	# i.e., 1eV
 
 # Loop for different temperatures
 for T in 2 20 40 60 77 100 140 180 220 260 300

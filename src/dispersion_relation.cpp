@@ -24,7 +24,7 @@ WfOptions configure_options(int argc, char* argv[])
     WfOptions opt;
 
     opt.add_numeric_option("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
-    opt.add_numeric_option("Te",             100,        "Electron temperature [K].");
+    opt.add_numeric_option("Te",             100,        "Carrier temperature [K].");
     opt.add_size_option   ("nk",             100,        "Number of k-space points to print out");
     opt.add_string_option ("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
     opt.add_string_option ("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
@@ -53,7 +53,7 @@ WfOptions configure_options(int argc, char* argv[])
                         "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
                         "\n"
                         "Examples:\n"
-                        "   Compute the dispersion relation up to 10 kT with an electron temperature of 10 K:\n\n"
+                        "   Compute the dispersion relation up to 10 kT with a carrier temperature of 10 K:\n\n"
                         "   dispersion_relation --nkbt 10 --Te 10\n"
                         "\n"
                         "   Compute the non-parabolic dispersion relation using 1000 data points and dispersion of 0.7 eV^{-1}:\n\n"
