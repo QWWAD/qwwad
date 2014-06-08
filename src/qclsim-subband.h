@@ -51,19 +51,29 @@ class Subband
 
         double                             get_k_fermi() const;
 
-        // Read from file (not including nonparabolicity)
-        static std::vector<Subband> read_from_file(const std::string& energy_input_path,
-                                                   const std::string& wf_input_prefix,
-                                                   const std::string& wf_input_ext,
-                                                   const std::string& m_d_filename);
+        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                                   const std::string &wf_input_prefix,
+                                                   const std::string &wf_input_ext,
+                                                   const std::string &m_d_filename);
 
-        // Read from file (including nonparabolicity)
-        static std::vector<Subband> read_from_file(const std::string& energy_input_path,
-                                                   const std::string& wf_input_prefix,
-                                                   const std::string& wf_input_ext,
-                                                   const std::string& m_d_filename,
-                                                   const std::string& alphad_filename,
-                                                   const std::string& potential_filename);
+        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                                   const std::string &wf_input_prefix,
+                                                   const std::string &wf_input_ext,
+                                                   const double       m_d);
+
+        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                                   const std::string &wf_input_prefix,
+                                                   const std::string &wf_input_ext,
+                                                   const std::string &m_d_filename,
+                                                   const std::string &alphad_filename,
+                                                   const std::string &potential_filename);
+
+        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                                   const std::string &wf_input_prefix,
+                                                   const std::string &wf_input_ext,
+                                                   const double       m_d,
+                                                   const double       alphad,
+                                                   const double       V);
 
         double Ek(double k) const;
         double k(double Ek) const;

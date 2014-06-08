@@ -38,24 +38,14 @@ nst=2  # Number of subbands to find
 # Find parabolic solution first
 efiw --width $LW --mass $mass --nst $nst
 
-# Generate a table of effective mass at each point in the structure
-awk '{print $1, mass*9.11e-31}' mass=$mass < wf_e1.r > m_perp.r
-
 # Compute the dispersion relation for all states in the system
 dispersion_relation --disp-ext "_0.dat"
-
-# Output a zero potential profile to file (again, just a hack to
-# make the subband class play nicely)
-awk '{print $1, 0}' < wf_e1.r > v.r
 
 # Repeat the calculation using nonparabolicity
 for alpha in 0.7 5; do
     efiw --width $LW --mass $mass --nst $nst --alpha $alpha
 
-    # Rescale energies to Joules for use with dispersion-relation code
-    awk '{print $1, alpha/1.6e-19}' alpha=$alpha < wf_e1.r > alpha.r
-
-    dispersion_relation --nonparabolic --disp-ext "_$alpha.dat"
+    dispersion_relation --nonparabolic --disp-ext "_$alpha.dat" --alpha $alpha
 done
 
 # Now, glue all our output files together into one convenient data file

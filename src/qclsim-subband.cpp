@@ -116,6 +116,40 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
 }
 
 /**
+ * Reads a set of subbands from data files (not including nonparabolic dispersion)
+ *
+ * \param[in] energy_input_path     Path for energy and wavefunction files
+ * \param[in] wf_input_prefix       Prefix for wavefunction filenames
+ * \param[in] wf_input_ext          Extension for wavefunction filenames
+ * \param[in] m_d                   Density-of-states effective mass [kg]
+ */
+std::vector<Subband> Subband::read_from_file(const std::string& energy_input_path,
+                                             const std::string& wf_input_prefix,
+                                             const std::string& wf_input_ext,
+                                             const double       m_d)
+{
+    // Read subband data
+    std::valarray<double> ist_temp;
+    std::valarray<double> z;
+    
+    std::vector<State> ground_state = State::read_from_file(energy_input_path,
+                                                            wf_input_prefix,
+                                                            wf_input_ext,
+                                                            1000.0/e,
+                                                            true);
+
+    const size_t nst = ground_state.size();
+
+    // Copy subband data to vector
+    std::vector<Subband> subbands;
+
+    for (unsigned int ist = 0; ist < nst; ist++)
+        subbands.push_back(Subband(ground_state[ist], m_d, z));
+
+    return subbands;
+}
+
+/**
  * Reads a set of subbands from data files (including nonparabolic dispersion)
  *
  * \param[in] energy_input_path     Path for energy and wavefunction files
@@ -171,6 +205,44 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     for (unsigned int ist = 0; ist < nst; ist++)
         subbands.push_back(Subband(ground_state[ist], m_d_z[psi_max_iz[ist]], z,
                                 alphad[psi_max_iz[ist]], V[psi_max_iz[ist]]));
+
+    return subbands;
+}
+
+/**
+ * Reads a set of subbands from data files (including nonparabolic dispersion)
+ *
+ * \param[in] energy_input_path     Path for energy and wavefunction files
+ * \param[in] wf_input_prefix       Prefix for wavefunction filenames
+ * \param[in] wf_input_ext          Extension for wavefunction filenames
+ * \param[in] m_d                   Density-of-states effective mass [kg]
+ * \param[in] alphad                Dispersion nonparabolicity profile [1/J]
+ * \param[in] V                     Band edge potential [J]
+ */
+std::vector<Subband> Subband::read_from_file(const std::string& energy_input_path,
+                                             const std::string& wf_input_prefix,
+                                             const std::string& wf_input_ext,
+                                             const double       m_d,
+                                             const double       alphad,
+                                             const double       V)
+{
+    std::vector<Subband> subbands; // Output structure
+    
+    // Read subband data
+    std::valarray<double> ist_temp;
+    std::valarray<double> z;
+    
+    std::vector<State> ground_state = State::read_from_file(energy_input_path,
+                                                            wf_input_prefix,
+                                                            wf_input_ext,
+                                                            1000.0/e,
+                                                            true);
+
+    const size_t nst = ground_state.size();
+    
+    // Copy subband data to vector
+    for (unsigned int ist = 0; ist < nst; ist++)
+        subbands.push_back(Subband(ground_state[ist], m_d, z, alphad, V));
 
     return subbands;
 }

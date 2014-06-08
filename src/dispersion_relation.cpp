@@ -31,9 +31,9 @@ WfOptions configure_options(int argc, char* argv[])
     opt.add_switch        ("nonparabolic",               "Use non-parabolic dispersion relation.");
     opt.add_switch        ("relative",                   "Output dispersion relative to subband minima. If not specified, "
                                                          "the dispersion is given relative to the band edge.");
-    opt.add_string_option ("mass-file",      "m_perp.r", "Filename from which to read in-plane mass profile.");
-    opt.add_string_option ("alpha-file",     "alpha.r",  "Filename from which to read in-plane non-parabolicity profile.");
-    opt.add_string_option ("potential-file", "v.r",      "Filename from which to read conduction band profile.");
+    opt.add_numeric_option("mass",           0.067,      "In-plane effective mass (relative to free electron).");
+    opt.add_numeric_option("alpha",          0.0,        "In-plane non-parabolicity parameter [1/eV].");
+    opt.add_numeric_option("vcb",            0.0,        "Conduction band edge [eV].");
 
     std::string summary = "Compute the dispersion relation for a set of subbands.";
 
@@ -44,15 +44,6 @@ WfOptions configure_options(int argc, char* argv[])
                         "  'wf_*i.r' \tWave function amplitude at each position\n"
                         "            \tCOLUMN 1: position [m].\n"
                         "            \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "  'm_perp.r'\tEffective mass profile\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: in-plane effective mass at that position [kg].\n"
-                        "  'alpha.r' \tNon-parabolicity parameter at each point (only with --nonparabolic option)\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: Band nonparabolicity at that position [1/J].\n"
-                        "  'v.r'     \tBand-edge profile at each point (only with --nonparabolic option)\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: Band-edge profile [J].\n"                  
                         "\n"
                         "Default output files:\n"
                         "  'dr_*i.r' \tDispersion relation for subband i\n"
@@ -88,16 +79,16 @@ int main (int argc, char* argv[])
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_string_option("mass-file"));
+                                                  opt.get_numeric_option("mass") * me);
     }
     else
     {
         subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
                                                   opt.get_wf_input_prefix(),
                                                   opt.get_wf_input_ext(),
-                                                  opt.get_string_option("mass-file"),
-                                                  opt.get_string_option("alpha-file"),
-                                                  opt.get_string_option("potential-file"));
+                                                  opt.get_numeric_option("mass") * me,
+                                                  opt.get_numeric_option("alpha") / e,
+                                                  opt.get_numeric_option("vcb") * e);
     }
 
     // Loop over subbands
