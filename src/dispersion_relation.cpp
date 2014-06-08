@@ -56,8 +56,8 @@ WfOptions configure_options(int argc, char* argv[])
                         "   Compute the dispersion relation up to 10 kT with an electron temperature of 10 K:\n\n"
                         "   dispersion_relation --nkbt 10 --Te 10\n"
                         "\n"
-                        "   Compute the non-parabolic dispersion relation using 1000 data points:\n\n"
-                        "   dispersion_relation --nk 1000 --nonparabolic");
+                        "   Compute the non-parabolic dispersion relation using 1000 data points and dispersion of 0.7 eV^{-1}:\n\n"
+                        "   dispersion_relation --nk 1000 --nonparabolic --alpha 0.7");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
