@@ -33,7 +33,7 @@ rm -f $outfile
 
 # Find first two states in an infinite well
 nst=2
-efsqw --well-width 200 --potential 100 --states 2
+efsqw --well-width 200 --potential 100 --nst 2
 E1=`sed -n 1p < Ee.r | awk '{print $2}'`
 E2=`sed -n 2p < Ee.r | awk '{print $2}'`
 

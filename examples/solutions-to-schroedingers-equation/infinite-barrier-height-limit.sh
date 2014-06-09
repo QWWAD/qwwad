@@ -56,11 +56,11 @@ do
  printf "%f\t%f\t" "$V" "$Einf" >> $outfile
 
  # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
- efsqw -a $LW -m $MW -n $MW --potential $V
+ efsqw --well-width $LW --well-mass $MW --barrier-mass $MW --potential $V
  awk '{printf("%8.3f",$2)}' Ee.r >> $outfile # send data to file
 
  # Calculate ground state energy for different well and barrier masses
- efsqw -a $LW -m $MW -n $MB --potential $V
+ efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
  awk '{printf("%8.3f\n",$2)}' Ee.r >> $outfile # send data to file
 }
 done

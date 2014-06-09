@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 # Calculates the ground state energy in a finite GaAs quantum well
 # with a range of barrier heights; both with and without effective mass
@@ -30,7 +31,7 @@
 # Initialise files
 outfile=effective-mass-mismatch-E-L.dat
 outfile_DE=effective-mass-mismatch-DE-L.dat
-rm $outfile $outfile_DE
+rm -f $outfile $outfile_DE
 
 # Sweeps through a range of well widths and calculates
 # ground state energy.
@@ -69,11 +70,11 @@ sweep_well_width_using_alloy()
         printf "%e\t" "$LW" >> Ee-lw.r	# write well width to file
 
         # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
-        efsqw -a $LW -m $MW -n $MW --potential $V
+        efsqw --well-width $LW --well-mass $MW --barrier-mass $MW --potential $V
         awk '{printf("%8.3f",$2)}' Ee.r >> Ee-lw.r	# send data to file
 
         # Calculate ground state energy for correct barrier mass 
-        efsqw -a $LW -m $MW -n $MB --potential $V
+        efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
         awk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-lw.r  # send data to file
     done
 

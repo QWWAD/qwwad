@@ -53,7 +53,7 @@ calculate_plot_using_well_width()
             printf "%8.3e\t" "$MB" >> $tempfile	# write potential to file
 
             # Calculate ground state energy for different well and barrier masses
-            efsqw -a $LW -m $MW -n $MB --potential $V
+            efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
             awk '{printf("%8.3f\n",$2)}' Ee.r >> $tempfile   # send data to file
         }
     done

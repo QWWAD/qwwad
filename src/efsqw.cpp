@@ -68,122 +68,83 @@
 using namespace Leeds;
 using namespace constants;
 
-#define   N  1001      /* number of wavefunction sampling
-                          points, must be odd to provide an
-                          even number of strips for numerical 
-                          integration.                            */
-
 /**
- * Handler for command-line options
+ * Configure command-line options for the program
  */
-class EFSQWOptions : public Options
+Options configure_options(int argc, char* argv[])
 {
-    public:
-        EFSQWOptions(int argc, char* argv[])
-        {
-            try
-            {
-                program_specific_options->add_options()
-                    ("well-width,a", po::value<double>()->default_value(100),
-                     "Width of quantum well [angstrom].")
-                    
-                    ("barrier-width,b", po::value<double>()->default_value(200),
-                     "Width of barrier [angstrom]. Note that this is only used "
-                     "for the purposes of outputting the data. The calculation here "
-                     "assumes that the barriers are infinitely thick.  As such, the "
-                     "wavefunctions do not decay to precisely zero at the boundaries.")
+    Options opt;
+    opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
+    opt.add_numeric_option("barrier-width,b", 200,   "Width of barrier [angstrom]. Note that this is only used "
+                                                     "for the purposes of outputting the data. The calculation here "
+                                                     "assumes that the barriers are infinitely thick.  As such, the "
+                                                     "wavefunctions do not decay to precisely zero at the boundaries.");
+    opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
+    opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
+    opt.add_switch        ("alt-KE,k",               "Use alternative kinetic energy operator (1/m)PP");
+    opt.add_switch        ("output-equations",       "Output the matching equations for the system. The left-hand "
+                                                     "side of the equation is output to 'lhs.r' and each branch of "
+                                                     "the right-hand side is output to a set of 'rhs_i.r' files, "
+                                                     "where 'i' is the index of the state that lies on that branch. "
+                                                     "An rhs file is output for all the bound states in the system and "
+                                                     "one additional branch (with no real solution)");
+    opt.add_switch        ("output-potential",       "Output the potential profile for the system to v.r");
+    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_size_option   ("nz,N",             1000, "Number of spatial points for output file.");
+    opt.add_size_option   ("nst,s",              1,  "Number of states to find");
+    opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
 
-                    ("alt-KE,k", po::bool_switch()->default_value(false),
-                     "Use alternative kinetic energy operator (1/m)PP")
+    std::string summary("Find the eigenstates of a single finite quantum well. ");
+    std::string details("The following output text files are created:\n"
+                        "  'E*.r'   \tEnergy of each state:\n"
+                        "           \tCOLUMN 1: state index.\n"
+                        "           \tCOLUMN 2: energy [meV].\n"
+                        "  'wf_*i.r'\tWave function amplitude at each position\n"
+                        "           \tCOLUMN 1: position [m].\n"
+                        "           \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
+                        "  'v.r'    \tPotential profile (if --output-potential flag is used)\n"
+                        "           \tCOLUMN 1: position [m].\n"
+                        "           \tCOLUMN 2: potential [J].\n"
+                        "  'lhs.r'  \tLeft-hand side of matching function (if --output-equations flag is used)\n"
+                        "           \tCOLUMN 1: Normalised well wave-vector\n"
+                        "           \tCOLUMN 2: Normalised barrier decay constant\n"
+                        "  'rhs_i.r'\tRight-hand side of matching function for branch i (if --output-equations flag is used)\n"
+                        "           \tCOLUMN 1: Normalised well wave-vector\n"
+                        "           \tCOLUMN 2: Normalised barrier decay constant\n"
+                        "\n"
+                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Compute the first three states in a 150-angstrom well with 100 meV confining potential:\n\n"
+                        "   efsqw --well-width 150 --potential 100 --nst 3\n"
+                        "\n"
+                        "   Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:\n\n"
+                        "   efsqw --well-width 200 --well-mass 0.62 --particle h\n"
+                        "\n"
+                        "   Compute the ground state in a 200 angstrom well with 100 meV barriers, and dump plots of the matching equations to file:\n\n"
+                        "   efsqw --well-width 200 --potential 100 --output-equations");
 
-                    ("well-mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass in well (relative to that of a free electron)")
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-                    ("barrier-mass,n", po::value<double>()->default_value(0.067),
-                     "Effective mass in barrier (relative to that of a free electron)")
-
-                    ("output-equations", po::bool_switch()->default_value(false),
-                     "Output the matching equations for the system. The left-hand "
-                     "side of the equation is output to 'lhs.r' and each branch of "
-                     "the right-hand side is output to a set of 'rhs_i.r' files, "
-                     "where 'i' is the index of the state that lies on that branch. "
-                     "An rhs file is output for all the bound states in the system and "
-                     "one additional branch (with no real solution)")
-
-                    ("output-potential", po::bool_switch()->default_value(false),
-                     "Output the potential profile for the system to v.r")
-
-                    ("particle,p", po::value<char>()->default_value('e'),
-                     "Particle to be used: 'e', 'h' or 'l'")
-
-                    ("states,s", po::value<size_t>()->default_value(1),
-                     "Number of states to find")
-
-                    ("potential", po::value<double>()->default_value(100),
-                     "Barrier potential [meV]")
-                    ;
-
-                std::string doc("Find the eigenstates of a single finite quantum well. "
-                                "The energies are written to the file \"E*.r\", and the "
-                                "wavefunctions are written to \"wf_*i.r\" where the '*' "
-                                "is replaced by the particle ID in each case and the "
-                                "'i' is replaced by the number of the state");
-
-                add_prog_specific_options_and_parse(argc, argv, doc);	
-            }
-            catch(std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        /// \returns the width of the quantum well [m]
-        double get_well_width() const {return vm["well-width"].as<double>()*1e-10;}
-        
-        /// \returns the width of the barriers [m]
-        double get_barrier_width() const {return vm["barrier-width"].as<double>()*1e-10;}
-
-        /// \returns true if normal kinetic energy operator is to be used
-        bool get_T_flag() const {return !vm["alt-KE"].as<bool>();}
-
-        /// \returns true if we are required to output the matching equations for the system
-        bool output_equations() const {return vm["output-equations"].as<bool>();}
-
-        /// \returns the effective mass in the quantum well [kg]
-        double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
-
-        /// \returns the effective mass in the barriers [kg]
-        double get_barrier_mass() const {return vm["barrier-mass"].as<double>()*me;}
-
-        /// \returns the particle ID
-        char get_particle() const {return vm["particle"].as<char>();}
-
-        /// \returns the number of spatial points
-        size_t get_n_states() const {return vm["states"].as<size_t>();}
-
-        /// \returns the barrier potential [J]
-        double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
-
-        /// \returns true if we are required to output the potential profile
-        bool output_potential() const {return vm["output-potential"].as<bool>();}
-};
+    return opt;
+}
 
 int main(int argc,char *argv[])
 {
-    EFSQWOptions opt(argc, argv);
-    const double a      = opt.get_well_width();
-    const double b      = opt.get_barrier_width();
-    const double m_w    = opt.get_well_mass();
-    const double m_b    = opt.get_barrier_mass();
-    const char   p      = opt.get_particle();
-    const double V      = opt.get_potential();   
-    const size_t state  = opt.get_n_states();
-    const bool   T_flag = opt.get_T_flag();
+    Options opt = configure_options(argc, argv);
+    const double a      = opt.get_numeric_option("well-width") * 1e-10;
+    const double b      = opt.get_numeric_option("barrier-width") * 1e-10;
+    const double m_w    = opt.get_numeric_option("well-mass") * me;
+    const double m_b    = opt.get_numeric_option("barrier-mass") * me;
+    const char   p      = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const double V      = opt.get_numeric_option("potential") * e / 1000;
+    const size_t state  = opt.get_size_option("nst");
+    const size_t N      = opt.get_size_option("nz");               // number of spatial steps
+    const bool   T_flag = !opt.get_switch("alt-KE");
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, T_flag,state);
 
-    if(opt.output_equations())
+    if(opt.get_switch("output-equations"))
     {
         const size_t nst    = se.get_n_bound();
         const double v_max  = (nst+1)*pi/2;
@@ -240,7 +201,8 @@ int main(int argc,char *argv[])
                          se.get_z(),
                          true);
 
-    if(opt.output_potential())
+    // Write potential profile to file if wanted
+    if(opt.get_switch("output-potential"))
     {
         const size_t nz = se.get_solutions()[0].size();
         const double Lp = a + b*2;

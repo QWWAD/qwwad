@@ -30,7 +30,7 @@ set -e
 outfile=finite-well-wf.dat
 
 # Find wave functions
-efsqw --well-width 200 --potential 100 --states 3 --output-potential
+efsqw --well-width 200 --potential 100 --nst 3 --output-potential
 
 # Generate plot file
 wfplot --plot-wf --plot-file $outfile

@@ -56,7 +56,7 @@ for LW in `seq 20 5 200`; do
     done	# done loop over k
 
     # Compare with energy of single quantum well
-    efsqw -a $LW -m 0.067 -n $MB --potential $V -s $S
+    efsqw --well-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --nst $S
     awk '{printf("%9.3f\n",$2)}' Ee.r >> $outfile	# send data to file
 done	# loop over LW
 

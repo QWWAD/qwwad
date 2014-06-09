@@ -42,7 +42,7 @@ LW=100
 for MB in 0.1002 1 10 100
 do
     # Calculate ground state energy for different well and barrier masses
-    efsqw -a $LW -m 0.067 -n $MB --potential $V
+    efsqw --well-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V
     mv wf_e1.r wf_e1-${MB}.r
 done
 

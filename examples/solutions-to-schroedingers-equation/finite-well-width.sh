@@ -56,7 +56,7 @@ do
  LW=`echo $i | awk '{print 10^$1}'`
 
  # Calculate energy levels
- efsqw -a $LW -s $nst
+ efsqw --well-width $LW --nst $nst
 
  # Output energies to file
  for state in `seq 1 $nst`; do
