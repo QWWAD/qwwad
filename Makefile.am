@@ -172,7 +172,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/dos.1                 \
 		 man/efiw.1                \
 		 man/sbp.1                 \
-		 man/efsqw.1
+		 man/efsqw.1               \
+		 man/wfplot.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -198,6 +199,11 @@ man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/efsqw$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" src/efsqw$(EXEEXT)
+
+man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/wfplot$(EXEEXT)
+	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." src/wfplot$(EXEEXT)
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

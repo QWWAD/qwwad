@@ -22,46 +22,58 @@ using namespace Leeds;
 using namespace Leeds::constants;
 
 /**
- * \brief User-settings for wavefunction plotter
+ * Configure command-line options for the program
  */
-class WfPlotOptions : public WfOptions
+WfOptions configure_options(int argc, char* argv[])
 {
-    public:
-        WfPlotOptions(int argc, char* argv[]);
-        std::string get_plot_file() const {return vm["plot-file"].as<std::string>();}
-        inline unsigned int get_upper() const {return vm["upper-state"].as<unsigned int>();}
-        bool plot_wf() const {return vm["plot-wf"].as<bool>();}
+    WfOptions opt;
+    opt.add_string_option("plot-file", "vwf.r", "Name of file to which plottable data will be written.");
+    opt.add_size_option  ("nst-max",   10,      "Maximum number of states to plot.");
+    opt.add_switch       ("plot-wf",            "Plot wavefunctions rather than probability density.");
 
-        void print() const {}
-};
+    std::string summary("Translate wavefunction data into a prettier plottable form.");
+    std::string details("Default input files:\n"
+                        "  'E*.r'    \tEnergy of each state:\n"
+                        "            \tCOLUMN 1: state index.\n"
+                        "            \tCOLUMN 2: energy [meV].\n"
+                        "  'wf_*i.r' \tWave function amplitude at each position\n"
+                        "            \tCOLUMN 1: position [m].\n"
+                        "            \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
+                        "  'v.r'     \tPotential profile.\n"
+                        "            \tCOLUMN 1: position [m].\n"
+                        "            \tCOLUMN 2: potential [J].\n"
+                        "\n"
+                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
+                        "\n"
+                        "Default output files:\n"
+                        "  'vwf.r'   \tPlottable date file.\n"
+                        "            \tCOLUMN 1: position [angstrom].\n"
+                        "            \tCOLUMN 2: plottable function [meV].\n\n"
+                        "\tThe plottable functions in this file are contained in distinct\n"
+                        "\tdata sets, each being separated by a blank line.  The first set\n"
+                        "\tcontains the confining potential in meV.  Subsequent sets contain\n"
+                        "\teither the probability density (default) or wavefunction amplitude\n"
+                        "\t(if --plot-wf is specified).  These sets are placed in ascending\n"
+                        "\torder, such that state |1> data is in data set 2, state |2> in\n"
+                        "\tset 3, state |3> in set 4 and so on.\n"
+                        "\n"
+                        "\tThe probability density (or wavefunction) plots are positioned on\n"
+                        "\tthe y-axis such that they lie at the energy of the associated state.\n"
+                        "\tThey are automatically scaled such that they fit neatly on the plot.\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Generate plottable data for all states in the input files:\n\n"
+                        "   wfplot\n"
+                        "\n"
+                        "   Generate plottable data, using wavefunctions instead of probability densities:\n\n"
+                        "   wfplot --plot-wf\n"
+                        "\n"
+                        "   Generate plottable data, using only the first three states in the input files:\n\n"
+                        "   wfplot --nst-max 3");
 
-/**
- * \brief Constructor: Define and parse all user options
- *
- * \param[in] argc Number of command-line arguments
- * \param[in] argv Array of command-line arguments
- */
-WfPlotOptions::WfPlotOptions(int argc, char* argv[])
-{
-    program_specific_options->add_options()
-        ("plot-file",
-         po::value<std::string>()->default_value("Vwf.dat"),
-         "Name of file to which pretty plot of probability densities "
-         "will be written.")
-        
-        ("upper-state,u", po::value<unsigned int>()->default_value(10),
-         "Maximum number of states to plot")
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-        ("plot-wf", po::bool_switch()->default_value(false),
-         "Plot the wavefunctions rather than the probability density in each state")
-        ;
-
-    static char doc[] = 
-        "Generates plot of wavefunction data.";
-
-    add_prog_specific_options_and_parse(argc, argv, doc);
-
-    if(get_verbose()) print();		
+    return opt;
 }
 
 /** 
@@ -94,7 +106,7 @@ static double scaling_factor(const std::vector<State>    &states,
  * 	  quantum well system
  * \todo  Add option to to control how much/if any of the wavefunction tales to cut off
  */
-static void output_plot(const WfPlotOptions         &opt,
+static void output_plot(const WfOptions             &opt,
                         const std::vector<State>    &states,
                         const std::valarray<double> &V,
                         const std::valarray<double> &z)
@@ -102,13 +114,14 @@ static void output_plot(const WfPlotOptions         &opt,
     const double dz    = z[1] - z[0];
     const double scale = scaling_factor(states, V);
     const size_t nz    = V.size();
+    std::string plot_file = opt.get_string_option("plot-file");
 
     // Open plot file
-    FILE* plot_stream = fopen(opt.get_plot_file().c_str(), "w");
+    FILE* plot_stream = fopen(plot_file.c_str(), "w");
     if(plot_stream==NULL)
     {
         std::ostringstream oss;
-        oss << "Cannot create plot output file " << opt.get_plot_file().c_str() << std::endl;
+        oss << "Cannot create plot output file " << plot_file << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -118,10 +131,13 @@ static void output_plot(const WfPlotOptions         &opt,
 
     unsigned int nst_plotted=0; // Counter to limit number of plotted states
 
+    const size_t nst_max = opt.get_size_option("nst-max");
+    const bool   plot_wf = opt.get_switch("plot-wf");
+
     // Output the probability densities
     for(std::vector<State>::const_iterator ist = states.begin(); ist != states.end(); ++ist)
     {
-        if(nst_plotted < opt.get_upper())
+        if(nst_plotted < nst_max)
         {
             fprintf(plot_stream, "\n"); // Separate each PD plot by a blank line
             const std::valarray<double> PD  = ist->psi_squared(); // Probability density at each point
@@ -139,7 +155,7 @@ static void output_plot(const WfPlotOptions         &opt,
                 // TODO: Make this configurable
                 if(P_left>0.0001 && P_left<0.9999)
                 {
-                    if (opt.plot_wf())
+                    if (plot_wf)
                     {
                         double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size());
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
@@ -160,7 +176,7 @@ static void output_plot(const WfPlotOptions         &opt,
 
 int main(int argc, char* argv[])
 {
-    const WfPlotOptions opt(argc, argv);
+    const WfOptions opt = configure_options(argc, argv);
 
     std::vector<State> states = State::read_from_file(opt.get_energy_input_path(),
                                                       opt.get_wf_input_prefix(),
