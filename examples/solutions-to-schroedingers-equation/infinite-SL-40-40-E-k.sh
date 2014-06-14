@@ -49,7 +49,7 @@ do
     printf "%e\t" $K >> $outfile	# write wave vector to file
 
     # Calculate energies for different wave vectors
-    efkpsl -a $LW -b $LB -m 0.067 -n $MB --potential $V -k $K -s 1
+    efkpsl --well-width $LW --barrier-width $LB --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst 1
     awk '{printf("%9.3f\n",$2)}' Ee.r >> $outfile		# send data to file
 done
 

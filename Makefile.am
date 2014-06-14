@@ -173,7 +173,10 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/efiw.1                \
 		 man/sbp.1                 \
 		 man/efsqw.1               \
-		 man/wfplot.1
+		 man/wfplot.1              \
+		 man/efkpsl.1              \
+		 man/tsb.1                 \
+		 man/tdb.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -204,6 +207,21 @@ man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/wfplot$(EXEEXT)
 	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." src/wfplot$(EXEEXT)
+
+man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/efkpsl$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." src/efkpsl$(EXEEXT)
+
+man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/tsb$(EXEEXT)
+	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." src/tsb$(EXEEXT)
+
+man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/tdb$(EXEEXT)
+	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." src/tdb$(EXEEXT)
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

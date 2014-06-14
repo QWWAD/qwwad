@@ -41,7 +41,7 @@ for X in 0.1 0.2 0.3 0.4; do
     # Use MB=0.067+0.083*x
     MB=`echo $X | awk '{print 0.067+0.083*$1}'`
 
-    tdb -b $L2 --potential $V -n $MB
+    tdb --well-width $L2 --potential $V --barrier-mass $MB
     cat T.r >> $outfile
     printf "\n" >> $outfile
 done

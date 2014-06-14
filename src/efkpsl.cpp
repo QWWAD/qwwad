@@ -62,112 +62,51 @@ static double f(double  energy,
                 void   *params);
 
 /**
- * Handler for command-line options
+ * Configure command-line options for the program
  */
-class EFKPSLOptions : public Options
+Options configure_options(int argc, char* argv[])
 {
-    public:
-        EFKPSLOptions(int argc, char* argv[])
-        {
-            try
-            {
-                program_specific_options->add_options()
-                    ("well-width,a", po::value<double>()->default_value(100),
-                     "Width of quantum well [angstrom].")
-                    
-                    ("barrier-width,b", po::value<double>()->default_value(100),
-                     "Width of barrier [angstrom].")
+    Options opt;
 
-                    ("wave-vector,k", po::value<double>()->default_value(0),
-                     "Wave-vector expressed relative to pi/L, where L is "
-                     "the period length")
+    opt.add_numeric_option("wave-vector,k",     0,   "Wave-vector expressed relative to pi/L, where L is period length");
+    opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
+    opt.add_numeric_option("barrier-width,b", 100,   "Width of barrier [angstrom].");
+    opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
+    opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
+    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_size_option   ("nst,s",              1,  "Number of states to find");
+    opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
 
-                    ("well-mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass in well (relative to that of a free electron)")
+    std::string summary("Find the eigenstates of an infinite Kronig-Penney superlattice.");
+    std::string details("The following output text file is created:\n"
+                        "  'E*.r'   \tEnergy of each state:\n"
+                        "           \tCOLUMN 1: state index.\n"
+                        "           \tCOLUMN 2: energy [meV].\n"
+                        "\tThe '*' is replaced by the particle ID.\n"
+                        "Examples:\n"
+                        "   Compute the first three states at Gamma (k = 0) using 150-angstrom wells and barriers with 100 meV confining potential:\n\n"
+                        "   efkpsl --well-width 150 --barrier-width 150 --potential 100 --nst 3 --wave-vector 0\n"
+                        "\n"
+                        "   Compute the ground state at X (k = pi/L) using 100-angstrom wells, 200-angstrom barriers and 100 meV confining potential:\n\n"
+                        "   efkpsl --well-width 100 --barrier-width 200 --potential 100 --wave-vector 1");
 
-                    ("barrier-mass,n", po::value<double>()->default_value(0.067),
-                     "Effective mass in barrier (relative to that of a free electron)")
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-//                    ("output-equations", po::bool_switch()->default_value(false),
-//                     "Output the matching equations for the system")
-
-                    ("particle,p", po::value<char>()->default_value('e'),
-                     "Particle to be used: 'e', 'h' or 'l'")
-
-                    ("states,s", po::value<size_t>()->default_value(1),
-                     "Number of states to find")
-
-                    ("potential", po::value<double>()->default_value(100),
-                     "Barrier potential [meV]")
-                    ;
-
-                std::string doc("Find the eigenstate of an infinite Kronig-Penney superlattice "
-                                "that corresponds to the specified wave-vector. "
-                                "The energies are written to the file \"E*.r\", "
-//                                "and the "
-//                                "wavefunctions are written to \"wf_*i.r\" "
-                                "where the '*' "
-                                "is replaced by the particle ID in each case "
-//                                "and the "
-//                                "'i' is replaced by the number of the state"
-                        );
-
-                add_prog_specific_options_and_parse(argc, argv, doc);	
-            }
-            catch(std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        /// \returns the width of the quantum well [m]
-        double get_well_width() const {return vm["well-width"].as<double>()*1e-10;}
-        
-        /// \returns the width of the barriers [m]
-        double get_barrier_width() const {return vm["barrier-width"].as<double>()*1e-10;}
-        
-        /// \returns the wave vector [1/m]
-        double get_wave_vector() const {
-            const double k = vm["wave-vector"].as<double>();
-            const double a = get_well_width();
-            const double b = get_barrier_width();
-            const double L = a + b; // Total period length [m]
-
-            return k * pi/L;
-        }
-
-//        /// \returns true if we are required to output the matching equations for the system
-//        bool output_equations() const {return vm["output-equations"].as<bool>();}
-
-        /// \returns the effective mass in the quantum well [kg]
-        double get_well_mass() const {return vm["well-mass"].as<double>()*me;}
-
-        /// \returns the effective mass in the quantum well [kg]
-        double get_barrier_mass() const {return vm["barrier-mass"].as<double>()*me;}
-
-        /// \returns the particle ID
-        char get_particle() const {return vm["particle"].as<char>();}
-
-        /// \returns the number of spatial points
-        size_t get_n_states() const {return vm["states"].as<size_t>();}
-
-        /// \returns the effective mass in the quantum well [J]
-        double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
-};
+    return opt;
+}
 
 int main(int argc,char *argv[])
 {
-    const EFKPSLOptions opt(argc, argv);
+    const Options opt = configure_options(argc, argv);
 
-    const double a   = opt.get_well_width();    // [m]
-    const double b   = opt.get_barrier_width(); // [m]
-    const double k   = opt.get_wave_vector();   // [1/m]
-    const double m_w = opt.get_well_mass();     // [kg]
-    const double m_b = opt.get_barrier_mass();  // [kg]
-    const double V   = opt.get_potential();     // [J]
-    const size_t nst = opt.get_n_states();
-    const char   p   = opt.get_particle();
+    const double a    = opt.get_numeric_option("well-width") * 1e-10;
+    const double b    = opt.get_numeric_option("barrier-width") * 1e-10;
+    const double m_w  = opt.get_numeric_option("well-mass") * me;
+    const double m_b  = opt.get_numeric_option("barrier-mass") * me;
+    const char   p    = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const double V    = opt.get_numeric_option("potential") * e / 1000;
+    const size_t nst  = opt.get_size_option("nst");
+    const double k    = opt.get_numeric_option("wave-vector") * pi/(a+b);   // [1/m]
 
     kpsl_params params = {a, b, m_w, m_b, V, k};
     gsl_function F;

@@ -47,7 +47,7 @@ MB=0.1002
 for K in `seq -2.0 0.01 2.0`
 do
     # Calculate energies for different wave vectors
-    efkpsl -a $LW -b $LB -m 0.067 -n $MB --potential $V -k $K -s 2
+    efkpsl --well-width $LW --barrier-width $LB --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst 2
     E1=`sed -n 1p < Ee.r | awk '{print $2}'`
     E2=`sed -n 2p < Ee.r | awk '{print $2}'`
     printf "%e\t%9.3f\t%9.3f\n" $K $E1 $E2 >> $outfile

@@ -52,7 +52,7 @@ do
     # calculate E(k) at points near Gamma for 2nd derivative
     for K in -0.01 0.0 0.01 	
     do
-        efkpsl -a $LW -b $LW -m 0.067 -n $MB --potential $V -k $K -s $S
+        efkpsl --well-width $LW --barrier-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst $S
 
         # Send E(K) to file, in meV
         awk '{E = $2 * 1.60219e-22;

@@ -17,63 +17,43 @@ using namespace Leeds;
 using namespace constants;
 
 /**
- * Handler for command-line options
+ * Configure command-line options for the program
  */
-class TSBOptions : public Options
+Options configure_options(int argc, char* argv[])
 {
-    public:
-        TSBOptions(int argc, char* argv[])
-        {
-            try
-            {
-                program_specific_options->add_options()
-                    ("barrier-width,L", po::value<double>()->default_value(100),
-                     "Width of barrier [angstrom].")
+    Options opt;
+    opt.add_numeric_option("barrier-width,L",    100,   "Width of barrier [angstrom].");
+    opt.add_numeric_option("mass,m",             0.067, "Effective mass in barrier (relative to that of a free electron). "
+                                                        "This is assumed to be constant throughout the whole system.");
+    opt.add_numeric_option("potential",           100,  "Barrier potential [meV]");
+    opt.add_numeric_option("energy-step,d",        0.1, "Energy step [meV]");
 
-                    ("mass,m", po::value<double>()->default_value(0.067),
-                     "Effective mass (relative to that of a free electron). This is "
-                     "assumed to be constant throughout the system")
+    std::string summary("Find the transmission coefficient through a single tunnelling barrier.");
+    std::string details("The following output text file is created:\n"
+                        "  'T.r'    \tTransmission coefficient as a function of energy:\n"
+                        "           \tCOLUMN 1: energy of incident carrier [meV].\n"
+                        "           \tCOLUMN 2: transmission coefficient."
+                        "\n"
+                        "Examples:\n"
+                        "   Compute the transmission coefficient through a 100-meV barrier, with 200-angstrom width:\n\n"
+                        "   tsb --barrier-width 200 --potential 100\n"
+                        "\n"
+                        "   Compute the transmission coefficient through a 1-eV barrier, with default width and effective mass = 0.1 m0 using resolution of 1 meV:\n\n"
+                        "   tsb --potential 1000 --mass 0.1 --energy-step 1\n");
 
-                    ("potential", po::value<double>()->default_value(100),
-                     "Barrier potential [meV]")
+    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
 
-                    ("energy-step,d", po::value<double>()->default_value(0.1),
-                     "Energy step [meV]")
-                    ;
-
-                std::string doc("Find the transmission coefficient through a single tunnelling barrier. "
-                                "The values are written as a function of energy to the file T.r.");
-
-                add_prog_specific_options_and_parse(argc, argv, doc);	
-            }
-            catch(std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
-            }
-        }
-
-        /// \returns the step in energy required for the output file [J]
-        double get_energy_step() const {return vm["energy-step"].as<double>()*1e-3*e;}
-
-        /// \returns the width of the barriers [m]
-        double get_barrier_width() const {return vm["barrier-width"].as<double>()*1e-10;}
-
-        /// \returns the effective mass [kg]
-        double get_mass() const {return vm["mass"].as<double>()*me;}
-
-        /// \returns the effective mass in the quantum well [J]
-        double get_potential() const {return vm["potential"].as<double>()*1e-3*e;}
-};
+    return opt;
+}
 
 int main(int argc,char *argv[])
 {
-    const TSBOptions opt(argc, argv);
+    const Options opt = configure_options(argc, argv);
 
-    const double dE = opt.get_energy_step();   // [J]
-    const double L  = opt.get_barrier_width(); // [m]
-    const double m  = opt.get_mass();          // [kg]
-    const double V  = opt.get_potential();     // [J]
+    const double dE = opt.get_numeric_option("energy-step") * 1e-3*e;   // [J]
+    const double L  = opt.get_numeric_option("barrier-width") * 1e-10;
+    const double m  = opt.get_numeric_option("mass") * me;
+    const double V  = opt.get_numeric_option("potential") * e / 1000;
 
     const double E_cutoff = V * 10; // Cut-off energy for plot
     const size_t nE = floor(E_cutoff/dE); // Number of points in plot

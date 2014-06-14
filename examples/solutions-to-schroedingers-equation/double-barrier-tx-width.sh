@@ -35,7 +35,7 @@ rm -f $outfile
 # Loop for well widths, use default parameters otherwise
 for L2 in 20 50 100
 do
-    tdb -b $L2 
+    tdb --well-width $L2 
     cat T.r >> $outfile
     printf "\n" >> $outfile
 done

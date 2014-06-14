@@ -51,7 +51,7 @@ for LW in `seq 20 5 200`; do
     for K in 0.0 1.0; do
         # Calculate energies for different wave vectors
 
-        efkpsl -a $LW -b $LW -m 0.067 -n $MB --potential $V -k $K -s $S
+        efkpsl --well-width $LW --barrier-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst $S
         awk '{printf("%9.3f",$2)}' Ee.r >> $outfile	# send data to file
     done	# done loop over k
 
