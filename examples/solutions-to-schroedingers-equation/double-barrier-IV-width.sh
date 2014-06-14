@@ -50,7 +50,7 @@ T=70
 # Loop over a range of barrier widths
 for L1 in 30 40 50
 do
-    ivdb -a $L1 -b $L2 --right-barrier-width $L1 --potential $V -n $MB -T $T
+    ivdb --left-barrier-width $L1 --well-width $L2 --right-barrier-width $L1 --potential $V --barrier-mass $MB --temperature $T
     cat IV.r >> $outfile
     printf "\n" >> $outfile
 done

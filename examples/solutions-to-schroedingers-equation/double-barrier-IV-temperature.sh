@@ -29,7 +29,7 @@ set -e
 
 # Initialise files
 outfile=double-barrier-IV-temperature.dat
-rm $outfile
+rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 X=0.2
@@ -48,7 +48,7 @@ L3=100
 
 for T in 2 77 300
 do
-    ivdb -a $L1 -b $L2 --right-barrier-width $L3 --potential $V -n $MB -T $T
+    ivdb --left-barrier-width $L1 --well-width $L2 --right-barrier-width $L3 --potential $V --barrier-mass $MB --temperature $T
     cat IV.r >> $outfile
     printf "\n" >> $outfile
 done

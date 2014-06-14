@@ -176,7 +176,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/wfplot.1              \
 		 man/efkpsl.1              \
 		 man/tsb.1                 \
-		 man/tdb.1
+		 man/tdb.1                 \
+		 man/ivdb.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -222,6 +223,11 @@ man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/tdb$(EXEEXT)
 	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." src/tdb$(EXEEXT)
+
+man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/ivdb$(EXEEXT)
+	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." src/ivdb$(EXEEXT)
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
