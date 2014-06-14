@@ -1,5 +1,5 @@
 /*==================================================================
-                    scp Self-Consistent Poisson 
+                    scps Self-Consistent Poisson--Schroedinger
   ==================================================================*/
 
 /* This program calculates the potential due to a one-dimensional 

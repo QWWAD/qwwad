@@ -37,6 +37,6 @@ do
 
  # Implement self consistent Poisson calculation
 
- scp
+ scps
 }
 done # X

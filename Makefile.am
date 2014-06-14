@@ -66,7 +66,7 @@ bin_PROGRAMS =  src/csss    \
 		src/rlv-sc  \
 		src/rlv-ss  \
 	       	src/sbp     \
-		src/scp     \
+		src/scps    \
 		src/sfr     \
 		src/slk     \
 		src/sradp   \

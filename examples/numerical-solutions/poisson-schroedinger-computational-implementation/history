@@ -40,7 +40,7 @@ do
   nawk '{printf("\t%20.17e\n",$2)}' Ee.r >> $OUT	
 
   # Implement self consistent Poisson calculation
-  scp
+  scps
  }
  done # X
  

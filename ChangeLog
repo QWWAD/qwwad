@@ -1,3 +1,6 @@
+2014-06-14 Alex Valavanis <a.valavanis@leeds.ac.uk>
+        * [AV] (lp:1328142) scp renamed to scps to fix naming conflict.
+
 2014-02-02 Alex Valavanis <a.valavanis@leeds.ac.uk>
 	* Changes for this project are tracked in the Bazaar repository at
 	  http://bazaar.launchpad.net/~valavanisalex/qwwad/trunk/changes

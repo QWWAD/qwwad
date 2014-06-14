@@ -77,7 +77,7 @@ do
 
   # Implement self consistent Poisson calculation
 
-  scp -p h
+  scps -p h
  }
  done # I
 
