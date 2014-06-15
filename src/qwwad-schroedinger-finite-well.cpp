@@ -269,6 +269,11 @@ void SchroedingerSolverFiniteWell::calculate()
 
         const double k = 2.0*v/_l_w;
         const double E = hBar*hBar*k*k/(2.0*_m_w);
+
+        // Stop if we've exceeded the cut-off energy
+        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+            break;
+
         std::valarray<double> psi = wavef(E,parity_flag);
         _solutions.push_back(State(E, psi));
         gsl_root_fsolver_free(solver);

@@ -93,6 +93,7 @@ Options configure_options(int argc, char* argv[])
     opt.add_size_option   ("nz,N",             1000, "Number of spatial points for output file.");
     opt.add_size_option   ("nst,s",              1,  "Number of states to find");
     opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
+    opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
 
     std::string summary("Find the eigenstates of a single finite quantum well. ");
     std::string details("The following output text files are created:\n"
@@ -143,6 +144,10 @@ int main(int argc,char *argv[])
     const bool   T_flag = !opt.get_switch("alt-KE");
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, T_flag,state);
+
+    // Set cut-off energy if desired
+    if(opt.vm.count("E-cutoff") > 0)
+        se.set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
     if(opt.get_switch("output-equations"))
     {
