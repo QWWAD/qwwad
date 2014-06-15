@@ -242,8 +242,9 @@ void SchroedingerSolverFiniteWell::calculate()
         gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
         // Normally, the root needs to lie within each pi/2 cell so we
-        // set the limits for the root accordingly.
-        double vlo = ist * pi/2.0;
+        // set the limits for the root accordingly. Note the tiny increments
+        // here so that we avoid the asymptote.
+        double vlo = (ist+0.000000001) * pi/2.0;
         double vhi = (ist+0.999999999) * pi/2.0;
 
         // If this is the highest state in the well, then we need to
