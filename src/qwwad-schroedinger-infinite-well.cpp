@@ -35,7 +35,6 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
 void SchroedingerSolverInfWell::calculate()
 {
     double nz = _z.size();
-    _solutions.resize(_nst_max, State(nz));
 
     // Loop over all required states
     for(unsigned int is=1; is<=_nst_max; is++)
@@ -54,6 +53,10 @@ void SchroedingerSolverInfWell::calculate()
         else
             E = gsl_pow_2(pi*hBar*is/_L)/(2*_me) + _V;
 
+        // Stop if we've exceeded the cut-off energy
+        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+            break;
+
         std::valarray<double> psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         // Loop over spatial locations and find wavefunction
@@ -61,7 +64,7 @@ void SchroedingerSolverInfWell::calculate()
         for(unsigned int i=0;i<nz;i++)
             psi=sqrt(2/_L)*sin(is*pi*_z/_L); // Wavefunction [m^{-0.5}]
 
-        _solutions[is-1] = State(E, psi);
+        _solutions.push_back(State(E, psi));
     }
 }
 } // namespace Leeds

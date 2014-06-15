@@ -34,12 +34,35 @@ public:
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() {};
 
+    /**
+     * \brief Set the cut-off energy
+     *
+     * \param[in] E The new cut-off energy
+     */
+    inline void set_E_cutoff(double E)
+    {
+        _E_cutoff = E;
+        _E_cutoff_set = true;
+    }
+
+    /**
+     * \brief Turn off filtering of solutions by energy
+     */
+    inline void unset_E_cutoff()
+    {
+        _E_cutoff_set = false;
+    }
+
 protected:
     virtual void calculate() = 0;
 
     std::valarray<double> _V; ///< Confining potential [J]
     std::valarray<double> _z; ///< Spatial points [m]
     unsigned int    _nst_max; ///< Maximum number of states to find
+
+    // Options for specifying cut-off energy
+    double _E_cutoff;     ///< Cut-off energy for solutions
+    bool   _E_cutoff_set; ///< True if a cut-off energy has been set
 
     ///< Set of solutions to the Schroedinger equation
     std::vector<State> _solutions;

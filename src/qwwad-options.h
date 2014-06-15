@@ -53,6 +53,9 @@ class Options
         bool        get_switch(const std::string &name) const;
 
         void add_numeric_option(const std::string &name,
+                                const std::string &description);
+
+        void add_numeric_option(const std::string &name,
                                 const double       default_value,
                                 const std::string &description);
 

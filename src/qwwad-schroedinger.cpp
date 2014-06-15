@@ -25,6 +25,12 @@ std::vector<State> SchroedingerSolver::get_solutions(const bool convert_to_meV)
     {
         calculate();
 
+        // Delete any states that are out of the desired energy range
+        // Ideally, sub-classes should never compute anything outside this
+        // range!
+        while(_E_cutoff_set && !_solutions.empty() && gsl_fcmp(_solutions.back().get_E(), _E_cutoff, e*1e-12) == 1)
+            _solutions.pop_back();
+
         // Normalise wavefunctions
         for(std::vector<State>::iterator ist = _solutions.begin(); ist != _solutions.end(); ++ist)
             ist->normalise(_z);
@@ -57,6 +63,8 @@ SchroedingerSolver::SchroedingerSolver(const std::valarray<double> &V,
     _V(V),
     _z(z),
     _nst_max(nst_max),
+    _E_cutoff(0.0),
+    _E_cutoff_set(false),
     _solutions()
 {}
 } // namespace Leeds

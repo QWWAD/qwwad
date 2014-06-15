@@ -231,6 +231,21 @@ double Options::get_numeric_option(const std::string &name) const
  * \brief Adds a floating-point option to the program
  *
  * \param[in] name          The name of the option ("<long form>,<short form>")
+ * \param[in] description   A short description of what the option does
+ */
+void Options::add_numeric_option(const std::string &name,
+                                 const std::string &description)
+{
+    program_specific_options->add_options()
+        (name.c_str(),
+         po::value<std::string>(),
+         description.c_str());
+}
+
+/**
+ * \brief Adds a floating-point option to the program
+ *
+ * \param[in] name          The name of the option ("<long form>,<short form>")
  * \param[in] default_value The default value of the option
  * \param[in] description   A short description of what the option does
  */

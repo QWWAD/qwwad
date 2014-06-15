@@ -32,6 +32,7 @@ Options configure_options(int argc, char* argv[])
     opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
     opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
     opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
 
     std::string doc("Find the eigenstates of an infinite quantum well.");
 
@@ -70,6 +71,10 @@ int main(int argc, char *argv[])
     const double V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
 
     SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
+
+    // Set cut-off energy if desired
+    if(opt.vm.count("E-cutoff") > 0)
+        se.set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
     std::vector<State> solutions = se.get_solutions(true);
 
