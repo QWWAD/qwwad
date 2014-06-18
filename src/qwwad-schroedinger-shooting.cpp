@@ -134,6 +134,10 @@ void SchroedingerSolverShooting::calculate()
             status = gsl_root_test_interval(Elo, Ehi, 1e-12*e, 0);
         }while(status == GSL_CONTINUE);
 
+        // Stop if we've exceeded the cut-off energy
+        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+            break;
+
         std::valarray<double> psi(_z.size());
         const double psi_inf = shoot_wavefunction(psi, E, _z, _V, _me, _alpha);
 

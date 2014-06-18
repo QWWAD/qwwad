@@ -80,7 +80,6 @@ enum SolverType {
     SHOOTING_NONPARABOLIC   ///< Shooting-method using nonparabolic dispersion
 };
 
-
 /** 
  * \brief Store for command line inputs
  * \todo  Use qclsim options class instead
@@ -113,6 +112,8 @@ class FwfOptions : public Options {
         FwfOptions(int argc, char* argv[]) :
             type(MATRIX_VARIABLE_MASS)
         {
+            add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
+
             program_specific_options->add_options()
                 ("solver", po::value<std::string>()->default_value("matrix-variable-mass"),
                  "Set the way in which the Schroedinger equation is solved.  You can "
@@ -343,6 +344,10 @@ int main(int argc, char *argv[]){
                                                 opt.get_dE(),
                                                 nst_max);
     }
+
+    // Set cut-off energy if desired
+    if(opt.vm.count("E-cutoff") > 0)
+        se->set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
     if (opt.try_energy() && (opt.get_type() == SHOOTING_CONSTANT_MASS || opt.get_type() == SHOOTING_VARIABLE_MASS))
     {
