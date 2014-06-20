@@ -282,7 +282,7 @@ int main(int argc, char *argv[]){
     unsigned int nst_max=0;
 
     // If we have a flat potential, we need to take care!
-    if(gsl_fcmp(V.max(), V.min(), 1e-6*e))
+    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0)
     {
         nst_max = opt.get_nst_max();
 

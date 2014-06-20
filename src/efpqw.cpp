@@ -84,7 +84,4 @@ int main(int argc,char *argv[])
     write_table_xy("x.r", z, x);
 
     return EXIT_SUCCESS;
-}/* end main */
-
-
-
+}
