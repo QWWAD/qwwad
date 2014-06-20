@@ -16,11 +16,55 @@
 using namespace Leeds;
 using namespace constants;
 
+/**
+ * Configure command-line options for the program
+ */
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+
+    opt.add_numeric_option("alpha,a",    0.1,   "Width parameter [1/angstrom].");
+    opt.add_numeric_option("lambda,l",   2.0,   "Depth parameter.");
+    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
+    opt.add_size_option   ("nz,N",       100,   "Number of spatial points for output file.");
+    opt.add_size_option   ("nst,s",      1,     "Number of states to find.");
+    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
+    opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
+
+    std::string doc("Generate a Poeschl--Teller potential profile.");
+
+    std::string details("The following output text files are created:\n"
+                        "  'E*.r'   \tEnergy of each state:\n"
+                        "           \tCOLUMN 1: state index.\n"
+                        "           \tCOLUMN 2: energy [meV].\n"
+                        "  'wf_*i.r'\tWave function amplitude at each position\n"
+                        "           \tCOLUMN 1: position [m].\n"
+                        "           \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
+                        "\n"
+                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Compute the ground state in a 150-angstrom well with effective mass = 0.1 m0:\n\n"
+                        "   efiw --width 150 --mass 0.1\n"
+                        "\n"
+                        "   Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:\n\n"
+                        "   efiw --width 200 --mass 0.62 --particle h");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+
+    return opt;
+};
+
 int main(int argc,char *argv[])
 {
-double	alpha;		/* with parameter			*/
+    const Options opt = configure_options(argc, argv);
+
+    const double alpha  = opt.get_numeric_option("alpha") * 1e10; // Width parameter [1/m]
+    const double lambda = opt.get_numeric_option("lambda");       // Depth parameter
+
 double	E;		/* energy				*/
-double	lambda;		/* depth parameter			*/
 double	L;		/* length of potential			*/
 double	m;		/* effective mass			*/
 double	V;		/* potential				*/
@@ -34,8 +78,6 @@ FILE	*FE;		/* pointer to energy file 		*/
 FILE	*FV;		/* pointer to potential file 		*/
 
 /* default values, appropriate to GaAs-GaAlAs */
-
-alpha=0.1*1e+10;	/* Convert A^-1->m^-1	*/
 lambda=2.0;
 L=300e-10;
 m=0.067*me;
@@ -46,9 +88,6 @@ while((argc>1)&&(argv[1][0]=='-'))
 {
  switch(argv[1][1])
  {
-  case 'a':
-	   alpha=atof(argv[2])*1e+10;
-	   break;
   case 'l':
 	   lambda=atof(argv[2]);
 	   break;
@@ -121,5 +160,4 @@ while((lambda-1-n)>=0)
 fclose(FE);
 
 return EXIT_SUCCESS;
-}        /* end main */
-
+}
