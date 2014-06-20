@@ -15,13 +15,9 @@
    
    Major modifications, 15th May 1998                      */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "struct.h"
-#include "maths.h"
 
 int main(int argc,char *argv[])
 {
