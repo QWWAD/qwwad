@@ -158,6 +158,9 @@ src_ppvfq_LDADD   = src/libqwwad.a
 
 src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
+src_pth_SOURCES = src/pth.cpp $(qwwad_options)
+src_pth_LDADD   = src/libqwwad.a $(LDADD)
+
 src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
 src_sbp_LDADD    = src/libqwwad.a $(LDADD)
 
