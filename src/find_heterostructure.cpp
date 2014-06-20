@@ -144,7 +144,7 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
              "Set filename for interface locations.")
 
             ("alloy-file,x",
-             po::value<std::string>()->default_value("alloy-profile.dat"),
+             po::value<std::string>()->default_value("x.r"),
              "Set filename for alloy profile.")
 
             ("doping-file,d",

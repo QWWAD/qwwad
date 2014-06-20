@@ -67,7 +67,7 @@ class EFXVOptions : public Options
                                 " m.r     - Effective mass (in growth direction) [kg].\n"
                                 " mperp.r - Effective mass (perpendicular to growth direction) [kg].\n"
                                 "\n"
-                                "The alloy profile is read from the file alloy-profile.dat "
+                                "The alloy profile is read from the file x.r "
                                 "which should contain two or three columns:\n"
                                 " * position [m]\n"
                                 " * alloy fraction 1\n"
@@ -161,7 +161,11 @@ int main(int argc,char *argv[])
     {
         case 'a':	/* Ga(1-x)Al(x)As	*/
             {
-                read_table_xy("alloy-profile.dat", z, x);
+                read_table_xy("x.r", z, x);
+                V.resize(z.size());
+                Eg.resize(z.size());
+                m.resize(z.size());
+                mp.resize(z.size());
 
                 std::valarray<double> dV=(1.247*x)*e; // Total band discontinuity
 
@@ -200,7 +204,11 @@ int main(int argc,char *argv[])
 
         case 'b':	/* Cd(1-x)Mn(x)Te	*/
             {
-                read_table_xy("alloy-profile.dat", z, x);
+                read_table_xy("x.r", z, x);
+                V.resize(z.size());
+                Eg.resize(z.size());
+                m.resize(z.size());
+                mp.resize(z.size());
 
                 std::valarray<double> dV=(1.587*x)*e;
                 std::valarray<double> V(z.size());
@@ -249,7 +257,12 @@ int main(int argc,char *argv[])
             {
                 std::valarray<double> y;
 
-                read_table_xyz("alloy-profile.dat", z, x, y);
+                read_table_xyz("x.r", z, x, y);
+                V.resize(z.size());
+                Eg.resize(z.size());
+                m.resize(z.size());
+                mp.resize(z.size());
+
                 std::valarray<double> dV=(2.093*x+0.629*y+0.577*x*x+0.436*y*y+1.013*x*y
                         +2.0*x*x*(x+y-1))*e;
                 std::valarray<double> V(z.size());

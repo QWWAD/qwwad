@@ -157,7 +157,7 @@ static void output_plot(const WfOptions             &opt,
                 {
                     if (plot_wf)
                     {
-                        double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size());
+                        double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size() * 2);
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
                                 (psi[iz]*scale_wf + ist->get_E())/(1e-3*e));
                     }

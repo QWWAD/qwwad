@@ -18,81 +18,72 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
+#include "qclsim-fileio.h"
+#include "qwwad-options.h"
+
+using namespace Leeds;
+
+/**
+ * Configure command-line options for the program
+ */
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+
+    opt.add_numeric_option("well-width,a",    100, "Width at top of quantum well [angstrom].");
+    opt.add_numeric_option("barrier-width,b", 100, "Width of barriers [angstrom].");
+    opt.add_size_option   ("nz,N",            301, "Number of spatial points for output file.");
+    opt.add_numeric_option("xmin,x",          0,   "Minimum alloy fraction.");
+    opt.add_numeric_option("xmax,y",          0.1, "Maximum alloy fraction.");
+
+    std::string doc("Generate a parabolic alloy profile surrounded by thick barriers.");
+
+    std::string details("The following output text files are created:\n"
+                        "  'x.r'   \tAlloy at each point:\n"
+                        "          \tCOLUMN 1: spatial position [m].\n"
+                        "          \tCOLUMN 2: alloy fraction.\n"
+                        "\n"
+                        "Examples:\n"
+                        "   Generate 100-angstrom-wide parabolic-graded alloy with values ranging from 0 to 0.4, surrounded by 200-angstrom barriers:\n\n"
+                        "   efpqw --well-width 100 --xmin 0 --xmax 0.4 --barrier-width 200\n"
+                        "\n"
+                        "   Generate 100-angstrom-wide parabolic-graded alloy with values ranging from 0.1 to 0.3, surrounded by 500-angstrom barriers using 500 points in output file:\n\n"
+                        "   efpqw --well-width 100 --xmin 0.1 --xmax 0.3 --barrier-width 500 --nz 500");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+
+    return opt;
+};
 
 int main(int argc,char *argv[])
 {
-double  a;             /* length a                          */
-double  b;             /* end cap width                     */
-double  N;             /* number of points per unit length  */
-double  x;             /* alloy concentration               */
-double  x_min;         /* minimum x value                   */
-double  x_max;         /* maximum x value                   */
-double  y=0;           /* quaternary alloy concentration
-                          note not used, compatibility only */
-double  z;             /* displacement                      */ 
-FILE   *Fx;            /* file pointer to x versus z data   */
+    Options opt = configure_options(argc, argv);
 
+    const double a     = opt.get_numeric_option("well-width") * 1e-10;    // [m]
+    const double b     = opt.get_numeric_option("barrier-width") * 1e-10; // [m]
+    const size_t nz    = opt.get_size_option("nz");      // Number of points for output file
+    const double x_min = opt.get_numeric_option("xmin"); // Minimum alloy fraction
+    const double x_max = opt.get_numeric_option("xmax"); // Maximum alloy fraction
 
-/* default values */
+    const double dz = (a+2*b)/(nz-1); // Find width of each spatial interval [m]
 
-a=100e-10;          
-b=100e-10;
-N=1e+10;
-x_min=0.0;
-x_max=0.100;
+    std::valarray<double> z(nz); // array of spatial points [m]
+    std::valarray<double> x(nz); // alloy concentration at each point
 
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'a':
-	   a=atof(argv[2])*1e-10;
-	   break;
-  case 'b':
-	   b=atof(argv[2])*1e-10;
-	   break;
-  case 'N':
-	   N=atof(argv[2])*1e+10;
-	   break;
-  case 'x':
-	   x_min=atof(argv[2]);
-	   break;
-  case 'y':
-	   x_max=atof(argv[2]);
-	   break;
-  default:
-	   printf("Usage:  efpqw [-a width at top of well (\033[1m100\033[0mA)][-b barrier width (\033[1m100\033[0mA)]\n");
-	   printf("              [-N number of points per Angstrom \033[1m1\033[0m]\n");
-	   printf("              [-x minimum alloy concentration x \033[1m0.0\033[0m]\n");
-	   printf("              [-y maximum alloy concentration x \033[1m0.1\033[0m]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
+    // Loop through spatial points and compute alloy fractions
+    for(unsigned int iz = 0; iz < nz; ++iz)
+    {
+        z[iz] = iz*dz;
 
+        if(gsl_fcmp(z[iz], b, dz/10) == -1 || gsl_fcmp(z[iz], b+a, dz/10) == 1) // Barriers
+            x[iz] = x_max;
+        else
+            x[iz] = x_min+gsl_pow_2(z[iz]-(b+a/2))*(x_max-x_min)/gsl_pow_2(a/2);
+    }
 
-Fx=fopen("x.r","w");
-z=0;
-while(z<(2*b+a))
-{
- if((z<b)||(z>b+a))
- {
-  x=x_max;
- }
- else
- {
-  x=x_min+gsl_pow_2(z-(b+a/2))*(x_max-x_min)/gsl_pow_2(a/2);
- }
- fprintf(Fx,"%20.17le %le %le\n",z,x,y);
- z+=1/N;               /* z incremented by distance between points */
-}/* end while */
+    write_table_xy("x.r", z, x);
 
-fclose(Fx);
-
-return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }/* end main */
 
 

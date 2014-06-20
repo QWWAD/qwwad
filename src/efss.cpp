@@ -119,17 +119,13 @@ class FwfOptions : public Options {
                  "Set the way in which the Schroedinger equation is solved.  You can "
                  "use one of the following methods:\n"
                  "\n"
-                 "    --solver matrix-variable-mass   " 
-                 "\n"
-                 "2) \tA spatially-varying mass whose value is taken from an input file\n"
-                 "\n"
-                 "   --mass matrix-variable \tEnergy-independent mass (gives a fast solution)\n"
-                 "\n"
-                 "   --mass nonparabolic \tEnergy-dependent mass. This gives a very slow but accurate solution\n"
-                 "\n"
-                 "   --mass taylor       \tEnergy-dependent mass, using a Taylor approximation to simplify the "
-                                          "maths.  This is quite fast, and accurate for states near the band edge, "
-                                          "but breaks down as E(state) - E(band edge) approaches the bandgap")
+                 "    matrix-variable-mass       \tMatrix solver, with spatially varying, energy-independent effective mass\n\n"
+                 "    matrix-constant-mass       \tMatrix solver, with constant effective mass\n\n"
+                 "    matrix-full-nonparabolic   \tMatrix solver, using slow, but very accounting for nonparabolic dispersion\n\n"
+                 "    matrix-taylor-nonparabolic \tMatrix solver, using fast accounting for nonparabolic dispersion, but breaks down as E(state) - E(band edge) approaches the bandgap\n\n"
+                 "    shooting-variable-mass     \tShooting solver, with spatially varying, energy-independent effective mass\n\n"
+                 "    shooting-constant-mass     \tShooting solver, using constant effective mass\n\n"
+                 "    shooting-nonparabolic      \tShooting solver, using nonparabolic dispersion\n\n")
 
                 ("mass",
                  po::value<double>()->default_value(0.067),

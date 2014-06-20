@@ -1,7 +1,7 @@
 #!/bin/sh
 # Calculate alloy profile along z-axis, choose artificially high potential
 
-efpqw -N 10 -y 10
+efpqw --xmax 10 --nz 1000
 
 # Convert alloy concentration `x' into effective mass `m', specify constant
 # mass
