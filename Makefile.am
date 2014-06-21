@@ -331,7 +331,10 @@ exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
 exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh   \
-		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh
+		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh \
+		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat   \
+		$(exnssrcdir)/poeschl-teller-hole-V.agr          \
+		$(exnssrcdir)/poeschl-teller-hole-V.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
