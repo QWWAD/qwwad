@@ -89,7 +89,10 @@ void SchroedingerSolverShooting::calculate()
     f.params   = &params;
     gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
-    for(unsigned int ist=0; ist < _nst_max; ++ist)  
+    for(unsigned int ist=0;
+            (_nst_max > 0  && ist < _nst_max) || // Continue if max. states is specified & not exceeded
+            (_nst_max == 0 && gsl_fcmp(Elo, _V.max(), e/1e12) == -1); // Or if max. states is NOT specified and we're below the max potential
+    ++ist)
     {
         // Shift the lower estimate up past the last state we found
         if(ist > 0)

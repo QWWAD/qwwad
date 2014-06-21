@@ -330,13 +330,15 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
-exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh   \
-		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh \
-		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat   \
-		$(exnssrcdir)/poeschl-teller-hole-V.agr          \
-		$(exnssrcdir)/poeschl-teller-hole-V.eps          \
-		$(exnssrcdir)/poeschl-teller-hole-convergence.sh \
-		$(exnssrcdir)/poeschl-teller-hole-convergence.dat
+exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
+		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
+		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
+		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
+		$(exnssrcdir)/poeschl-teller-hole-V.eps           \
+		$(exnssrcdir)/poeschl-teller-hole-convergence.sh  \
+		$(exnssrcdir)/poeschl-teller-hole-convergence.dat \
+		$(exnssrcdir)/variable-mass-0.2-alloy.sh          \
+		$(exnssrcdir)/variable-mass-0.2-alloy.dat
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
