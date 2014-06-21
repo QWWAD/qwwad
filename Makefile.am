@@ -338,7 +338,11 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/poeschl-teller-hole-convergence.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-convergence.dat \
 		$(exnssrcdir)/variable-mass-0.2-alloy.sh          \
-		$(exnssrcdir)/variable-mass-0.2-alloy.dat
+		$(exnssrcdir)/variable-mass-0.2-alloy.dat         \
+		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.sh  \
+		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.dat \
+		$(exnssrcdir)/variable-mass-0.75-alloy-dz.sh  \
+		$(exnssrcdir)/variable-mass-0.75-alloy-dz.dat
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
