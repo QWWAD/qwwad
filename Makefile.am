@@ -334,7 +334,9 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh   \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat   \
 		$(exnssrcdir)/poeschl-teller-hole-V.agr          \
-		$(exnssrcdir)/poeschl-teller-hole-V.eps
+		$(exnssrcdir)/poeschl-teller-hole-V.eps          \
+		$(exnssrcdir)/poeschl-teller-hole-convergence.sh \
+		$(exnssrcdir)/poeschl-teller-hole-convergence.dat
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

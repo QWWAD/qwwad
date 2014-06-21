@@ -29,7 +29,7 @@ Options configure_options(int argc, char* argv[])
 
     opt.add_numeric_option("alpha,a",    0.1,   "Width parameter [1/angstrom].");
     opt.add_numeric_option("lambda,l",   2.0,   "Depth parameter.");
-    opt.add_numeric_option("length,l",   300,   "Length of potential profile [angstrom].");
+    opt.add_numeric_option("length,L",   300,   "Length of potential profile [angstrom].");
     opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
     opt.add_size_option   ("nz,N",       301,   "Number of spatial points for output file.");
     opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
