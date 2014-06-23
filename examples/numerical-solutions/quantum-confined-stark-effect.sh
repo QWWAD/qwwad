@@ -1,24 +1,21 @@
 #!/bin/sh
-# Define output file
+set -e
 
+# Define output file
 OUT=E-F.r
 
 # Initialise files
-
 rm -f $OUT
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.2
-
 V=167.0985
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x, keep x=0.2
-
 MB=0.0836
 
 # Define well width here
-
 LW=60
 
 # perform numerical solution
@@ -28,7 +25,7 @@ echo 200 0.2 0.0 > s.r
 echo $LW 0.0 0.0 >> s.r
 echo 200 0.2 0.0 >> s.r
 
-efsx			# generate alloy concentration as a function of z
+find_heterostructure --nz 1841	# generate alloy concentration as a function of z
 efxv			# generate potential data
 
 # Loop over electric field 
@@ -36,20 +33,14 @@ efxv			# generate potential data
 for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70
 do
 {
- echo -n $F >> $OUT
-
  # Add electric field to potential
+ find_poisson_potential --uncharged --field $F --centred
+ paste v.r v_p.r | awk '{print $1, $2+$4}' > v_t.r
 
- effv -f $F
-
- # Need a small energy difference to split nearly degenerate levels
- efss		# calculate ground state only
+ efss --nst-max 1 --v-file v_t.r # calculate ground state only
 
  # Write energy to output file
- nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
- echo -n -e "\n" >> $OUT
-
- # Keep wavefunction file
- mv wf_e1.r wf_e1-F=$F.r
+ E1=`awk '/^1/{print $2}' Ee.r`
+ echo $F $E1 >> $OUT
 }
 done

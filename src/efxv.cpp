@@ -61,11 +61,12 @@ class EFXVOptions : public Options
                 std::string doc("Find the band-edge profile for a heterostructure and print data to file. "
                                 "The following output files are generated, each containing the given property "
                                 "at each spatial location within the heterostructure:\n"
-                                " v.r     - Band-edge profile [J].\n"
-                                " alpha.r - Nonparabolicity parameter [1/J].\n"
-                                " Eg.r    - Bandgap [J].\n"
-                                " m.r     - Effective mass (in growth direction) [kg].\n"
-                                " mperp.r - Effective mass (perpendicular to growth direction) [kg].\n"
+                                " v.r      - Band-edge profile [J].\n"
+                                " alpha.r  - Nonparabolicity parameter [1/J].\n"
+                                " Eg.r     - Bandgap [J].\n"
+                                " eps_dc.r - Low-frequency permittivity [F/m].\n"
+                                " m.r      - Effective mass (in growth direction) [kg].\n"
+                                " mperp.r  - Effective mass (perpendicular to growth direction) [kg].\n"
                                 "\n"
                                 "The alloy profile is read from the file x.r "
                                 "which should contain two or three columns:\n"
@@ -152,10 +153,11 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z;
     std::valarray<double> x;
-    std::valarray<double> V;  // Band-edge potential
-    std::valarray<double> m;  // Effective mass
-    std::valarray<double> mp; // Effective mass perpendicular to growth
-    std::valarray<double> Eg; // Bandgap
+    std::valarray<double> V;      // Band-edge potential
+    std::valarray<double> m;      // Effective mass
+    std::valarray<double> mp;     // Effective mass perpendicular to growth
+    std::valarray<double> Eg;     // Bandgap
+    std::valarray<double> eps_dc; // Low-frequency permittivity [F/m]
 
     switch(Material)
     {
@@ -166,6 +168,7 @@ int main(int argc,char *argv[])
                 Eg.resize(z.size());
                 m.resize(z.size());
                 mp.resize(z.size());
+                eps_dc.resize(z.size());
 
                 std::valarray<double> dV=(1.247*x)*e; // Total band discontinuity
 
@@ -198,7 +201,8 @@ int main(int argc,char *argv[])
                              exit(EXIT_FAILURE);
                 }
 
-                Eg = 1.426*e+dV;
+                Eg     = 1.426*e+dV;
+                eps_dc = ((x-1.0)*(-12.9) + x*10.06)*eps0;
             }
             break;
 
@@ -209,6 +213,7 @@ int main(int argc,char *argv[])
                 Eg.resize(z.size());
                 m.resize(z.size());
                 mp.resize(z.size());
+                eps_dc.resize(z.size());
 
                 std::valarray<double> dV=(1.587*x)*e;
                 std::valarray<double> V(z.size());
@@ -250,6 +255,7 @@ int main(int argc,char *argv[])
                 }
 
                 Eg=1.606*e+dV;
+                eps_dc = 10.2*eps0; // Just use CdTe value - can't immediately find MnTe in literature (AV)
             }
             break;
 
@@ -262,6 +268,7 @@ int main(int argc,char *argv[])
                 Eg.resize(z.size());
                 m.resize(z.size());
                 mp.resize(z.size());
+                eps_dc.resize(z.size());
 
                 std::valarray<double> dV=(2.093*x+0.629*y+0.577*x*x+0.436*y*y+1.013*x*y
                         +2.0*x*x*(x+y-1))*e;
@@ -296,12 +303,14 @@ int main(int argc,char *argv[])
                 }
 
                 Eg=0.36*e+dV;
+                std::cerr << "Warning: Unknown dc permittivity for InAlGaAs" << std::endl;
             }
             break;
     }
 
     write_table_xy("v.r", z, V);
     write_table_xy("Eg.r", z, Eg);
+    write_table_xy("eps-dc.r", z, eps_dc);
 
     if(!opt.compute_mass())
     {

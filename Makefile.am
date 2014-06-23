@@ -50,6 +50,7 @@ bin_PROGRAMS =  src/csss    \
 	       	src/efsx    \
 		src/efxv    \
 		src/find_heterostructure \
+		src/find_poisson_potential \
 		src/gde     \
 		src/hup     \
 		src/ivdb    \
@@ -99,6 +100,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qclsim-linalg.h         \
 			   src/qclsim-maths.cpp        \
 			   src/qclsim-maths.h          \
+			   src/qclsim_poisson_solver.cpp \
+			   src/qclsim_poisson_solver.h   \
 			   src/qclsim-subband.cpp      \
 			   src/qclsim-subband.h        \
 			   src/qwwad-heterostructure.cpp \
@@ -149,6 +152,9 @@ src_efxv_LDADD   = src/libqwwad.a $(LDADD)
 
 src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
 src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
+
+src_find_poisson_potential_SOURCES = src/find_poisson_potential.cpp $(qwwad_options)
+src_find_poisson_potential_LDADD   = src/libqwwad.a $(LDADD)
 
 src_ivdb_SOURCES = src/ivdb.cpp $(qwwad_options)
 src_ivdb_LDADD   = src/libqwwad.a $(LDADD)
@@ -355,7 +361,10 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/multiple-qw-40-40-wf.eps        \
 		$(exnssrcdir)/multiple-qw-100-100.sh          \
 		$(exnssrcdir)/multiple-qw-100-100-wf.agr      \
-		$(exnssrcdir)/multiple-qw-100-100-wf.eps
+		$(exnssrcdir)/multiple-qw-100-100-wf.eps      \
+		$(exnssrcdir)/quantum-confined-stark-effect.sh \
+		$(exnssrcdir)/quantum-confined-stark-effect-E-F.agr \
+		$(exnssrcdir)/quantum-confined-stark-effect-E-F.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
