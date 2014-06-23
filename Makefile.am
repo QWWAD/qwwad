@@ -364,7 +364,9 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/multiple-qw-100-100-wf.eps      \
 		$(exnssrcdir)/quantum-confined-stark-effect.sh \
 		$(exnssrcdir)/quantum-confined-stark-effect-E-F.agr \
-		$(exnssrcdir)/quantum-confined-stark-effect-E-F.eps
+		$(exnssrcdir)/quantum-confined-stark-effect-E-F.eps \
+		$(exnssrcdir)/field-induced-anti-crossings.sh
+
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

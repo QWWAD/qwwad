@@ -31,26 +31,23 @@ echo 60 0.2 0.0 >> s.r
 echo $LW2 0.0 0.0 >> s.r
 echo 200 0.2 0.0 >> s.r
 
-efsx			# generate alloy concentration as a function of z
+find_heterostructure --nz 2281	# generate alloy concentration as a function of z
 efxv			# generate potential data
 
-# Loop over electric field 
-
+# Loop over electric field
 for F in 0 1 2 3 4 5 6 7 8 9 10 11 12 15 20 25 30 40
 do
 {
- echo -n $F >> $OUT
-
  # Add electric field to potential
+ find_poisson_potential --centred --field $F --uncharged
+ paste v.r v_p.r | awk '{print $1, $2+$4}' > v_t.r
 
- effv -f $F
-
- # Need a small energy difference to split nearly degenerate levels
- efss --nst-max 2	# calculate ground and first excited states
+ efss --nst-max 2 --v-file v_t.r # calculate ground and first excited states
 
  # Write energy to output file
+ E1=`awk '/^1/{print $2}' Ee.r`
+ E2=`awk '/^2/{print $2}' Ee.r`
 
- nawk '{printf("\t%f",$2)}' Ee.r >> $OUT	
- echo -n -e "\n" >> $OUT
+ echo $F $E1 $E2 >> $OUT
 }
 done

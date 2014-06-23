@@ -28,6 +28,7 @@ FILE	*Fv;		/* pointer to input potential file	*/
 FILE	*FvF;		/* pointer to v.r with field		*/
 data11	*V0;		/* pointer to potential data		*/
 
+fprintf(stderr, "** The effv programme is deprecated.  Please use find_poisson_potential instead **\n\n");
 /* Define global defaults */
 
 F=0.0;
