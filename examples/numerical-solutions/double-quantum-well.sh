@@ -41,14 +41,6 @@ for LB in 10 20 30 40 50 60 70 80 90 100 120 140 160 180 200; do
  E1_numerical=`awk '/^1/{print $2}' Ee.r`
  E2_numerical=`awk '/^2/{print $2}' Ee.r`
 
- if [ x$E1_numerical = "x" ]; then
-     E1_numerical="--"
- fi
-
- if [ x$E2_numerical = "x" ]; then
-     E2_numerical="--"
- fi
-
  # Save files
  mv Ee.r    Ee-$LB.r
  mv v.r     v-$LB.r

@@ -347,7 +347,15 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/double-quantum-well-E-vs-LB.agr \
 		$(exnssrcdir)/double-quantum-well-E-vs-LB.eps \
 		$(exnssrcdir)/double-quantum-well-wf.agr      \
-		$(exnssrcdir)/double-quantum-well-wf.eps
+		$(exnssrcdir)/double-quantum-well-wf.eps      \
+		$(exnssrcdir)/multiple-qw-40-40.sh            \
+		$(exnssrcdir)/multiple-qw-40-40-E-N.agr       \
+		$(exnssrcdir)/multiple-qw-40-40-E-N.eps       \
+		$(exnssrcdir)/multiple-qw-40-40-wf.agr        \
+		$(exnssrcdir)/multiple-qw-40-40-wf.eps        \
+		$(exnssrcdir)/multiple-qw-100-100.sh          \
+		$(exnssrcdir)/multiple-qw-100-100-wf.agr      \
+		$(exnssrcdir)/multiple-qw-100-100-wf.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
