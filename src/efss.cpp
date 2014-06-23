@@ -112,6 +112,8 @@ class FwfOptions : public Options {
         FwfOptions(int argc, char* argv[]) :
             type(MATRIX_VARIABLE_MASS)
         {
+            // No default can be set here... we want the confining potential to be used
+            // by default rather than a manually-specified number!
             add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
 
             program_specific_options->add_options()
@@ -156,8 +158,10 @@ class FwfOptions : public Options {
                  "Set filename from which the confining potential is read.")
 
                 ("nst-max",
-                 po::value<size_t>()->default_value(1),
-                 "Set maximum number of subbands to find.")
+                 po::value<size_t>()->default_value(0),
+                 "Set maximum number of subbands to find.  The default (0) means "
+                 "that all states will be found up to maximum confining potential, "
+                 "or the cut-off energy (if specified).")
 
                 ("try-energy", po::value<double>(),
                  "Calculate a trial wavefunction at a given energy [meV] and write to "
@@ -279,13 +283,11 @@ int main(int argc, char *argv[]){
 
     // By default, we set the number of states automatically
     // within the range of the potential profile
-    unsigned int nst_max=0;
+    const size_t nst_max = opt.get_nst_max();
 
     // If we have a flat potential, we need to take care!
-    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0)
+    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0)
     {
-        nst_max = opt.get_nst_max();
-
         if(opt.get_verbose())
             std::cout << "Flat potential in " << opt.get_potential_filename()
                       << ".  Will assume this is an infinite quantum well " << std::endl;
