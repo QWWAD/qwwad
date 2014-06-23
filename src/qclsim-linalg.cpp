@@ -20,6 +20,7 @@
 #include <cstdlib>
 
 #include "qclsim-maths.h"
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_sort.h>
 
 namespace Leeds
@@ -261,6 +262,15 @@ eigen_tridiag(double       D[],
 
     // Specify range of solutions by value, unless n_max is given
     char range = (n_max==0) ? 'V' : 'I';
+
+    // If we're checking by range by value, make sure that the upper and lower
+    // bounds make sense
+    if(n_max == 0 && gsl_fcmp(VL, VU, VL*1e-6) != -1)
+    {
+        std::ostringstream oss;
+        oss << "Range of eigenvalue search is invalid. Lower limit: " << VL << " is greater than upper limit: " << VU;
+        throw std::domain_error(oss.str());
+    }
 
     // TODO: Once all supported platforms can provide LAPACK > 3.4, kill this conditional code!
 #if HAVE_LAPACKE

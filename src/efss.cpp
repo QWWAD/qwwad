@@ -285,12 +285,15 @@ int main(int argc, char *argv[]){
     // within the range of the potential profile
     const size_t nst_max = opt.get_nst_max();
 
-    // If we have a flat potential, we need to take care!
-    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0)
+    // If we have a flat potential, the user needs to specify either
+    // a cut-off energy or a number of states, otherwise we can't
+    // proceed
+    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.vm.count("E-cutoff") == 0)
     {
-        if(opt.get_verbose())
-            std::cout << "Flat potential in " << opt.get_potential_filename()
-                      << ".  Will assume this is an infinite quantum well " << std::endl;
+        std::cerr << "Flat potential detected in " << opt.get_potential_filename()
+                  << ".  You must either specify a cut-off energy using --E-cutoff "
+                  << "or a number of states using --nst-max" << std::endl;
+        exit(EXIT_FAILURE);
     }
 
     // Print out some information about the calculation if requested

@@ -67,5 +67,23 @@ SchroedingerSolver::SchroedingerSolver(const std::valarray<double> &V,
     _E_cutoff_set(false),
     _solutions()
 {}
+
+/**
+ * \brief Set the cut-off energy
+ *
+ * \param[in] E The new cut-off energy
+ */
+void SchroedingerSolver::set_E_cutoff(const double E)
+{
+    if(gsl_fcmp(_V.min(), E, _V.min()/1e6) != -1)
+    {
+        std::ostringstream oss;
+        oss << "Invalid cut-off energy: " << E * 1000/e << " meV is lower than band-edge potential: " << _V.min() * 1000/e << " meV.";
+        throw std::domain_error(oss.str());
+    }
+
+    _E_cutoff = E;
+    _E_cutoff_set = true;
+}
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

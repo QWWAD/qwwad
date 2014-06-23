@@ -34,16 +34,7 @@ public:
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() {};
 
-    /**
-     * \brief Set the cut-off energy
-     *
-     * \param[in] E The new cut-off energy
-     */
-    inline void set_E_cutoff(double E)
-    {
-        _E_cutoff = E;
-        _E_cutoff_set = true;
-    }
+    void set_E_cutoff(const double E);
 
     /**
      * \brief Turn off filtering of solutions by energy

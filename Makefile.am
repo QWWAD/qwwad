@@ -343,7 +343,11 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.dat \
 		$(exnssrcdir)/variable-mass-0.75-alloy-dz.sh  \
 		$(exnssrcdir)/variable-mass-0.75-alloy-dz.dat \
-		$(exnssrcdir)/double-quantum-well.sh
+		$(exnssrcdir)/double-quantum-well.sh          \
+		$(exnssrcdir)/double-quantum-well-E-vs-LB.agr \
+		$(exnssrcdir)/double-quantum-well-E-vs-LB.eps \
+		$(exnssrcdir)/double-quantum-well-wf.agr      \
+		$(exnssrcdir)/double-quantum-well-wf.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

@@ -30,8 +30,8 @@ for LB in 10 20 30 40 50 60 70 80 90 100 120 140 160 180 200; do
  echo $LW 0.0 0.0 >> s.r
  echo 200 0.2 0.0 >> s.r
 
- # Work out how many points we need for a 1-angstrom sampling period
- nz=`echo $LW $LB | awk '{print $1*2 + $2 + 401}'`
+ # Work out how many points we need for a 4-point-per-angstrom sampling period
+ nz=`echo $LW $LB | awk '{print $1*8 + $2*4 + 1601}'`
 
  find_heterostructure --nz $nz
  efxv # generate potential data
@@ -50,11 +50,12 @@ for LB in 10 20 30 40 50 60 70 80 90 100 120 140 160 180 200; do
  fi
 
  # Save files
- mv Ee.r Ee-$LB.r
+ mv Ee.r    Ee-$LB.r
+ mv v.r     v-$LB.r
  mv wf_e1.r wf_e1-$LB.r
  mv wf_e2.r wf_e2-$LB.r
 
  printf "%e\t%s\t%s\n" $LB $E1_numerical $E2_numerical >> $outfile
 done
 
-wfplot --energy-input Ee-40.r --wf-input-ext "-40.r"
+wfplot --plot-wf --energy-input Ee-40.r --wf-input-ext "-40.r" --potential-input "v-40.r"
