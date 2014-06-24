@@ -54,7 +54,6 @@ bin_PROGRAMS =  src/csss    \
 		src/gde     \
 		src/hup     \
 		src/ivdb    \
-		src/ovl     \
 		src/ppcd    \
 		src/ppee    \
 		src/pplb    \
@@ -367,7 +366,10 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/quantum-confined-stark-effect-E-F.eps \
 		$(exnssrcdir)/field-induced-anti-crossings.sh \
 		$(exnssrcdir)/field-induced-anti-crossings-E-F.agr \
-		$(exnssrcdir)/field-induced-anti-crossings-E-F.eps
+		$(exnssrcdir)/field-induced-anti-crossings-E-F.eps \
+		$(exnssrcdir)/symmetry-and-selection-rules.sh \
+		$(exnssrcdir)/symmetry-and-selection-rules.agr \
+		$(exnssrcdir)/symmetry-and-selection-rules.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

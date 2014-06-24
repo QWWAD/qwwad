@@ -31,7 +31,7 @@ echo 60 0.2 0.0 >> s.r
 echo $LW2 0.0 0.0 >> s.r
 echo 200 0.2 0.0 >> s.r
 
-efsx			# generate alloy concentration as a function of z
+find_heterostructure --nz 2281		# generate alloy concentration as a function of z
 efxv			# generate potential data
 
 # Loop over electric field 
@@ -39,16 +39,28 @@ efxv			# generate potential data
 for F in 0 1 2 3 4 5 6 7 8 9 10 11 12 15 20 25 30 40
 do
 {
- echo -n $F >> $OUT
 
  # Add electric field to potential
+ find_poisson_potential --field $F --centred --uncharged
+ paste v.r v_p.r | awk '{print $1, $2+$4}' > v_t.r
 
- effv -f $F
-
- efss --nst-max 2  # calculate ground and first excited states
+ efss --nst-max 2 --v-file v_t.r # calculate ground and first excited states
 
  # Calculate overlap integral between two states and write to file
 
- ovl wf_e1.r wf_e2.r | awk '{printf("\t%f\n",$4)}' >> $OUT
+ ovl=` paste wf_e1.r wf_e2.r | awk '
+ function abs(value)
+ {
+     return (value<0 ? -value : value);
+ }
+ BEGIN {dz=0.25e-10; sum=0}
+ {
+     sum+=abs($2)*abs($4);
+ }
+ END {print sum * dz}'`
+
+ echo $F $ovl >> $OUT
+
+# ovl wf_e1.r wf_e2.r | awk '{printf("\t%f\n",$4)}' >> $OUT
 }
 done
