@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
                     phi -= V_drop/2.0;
         }
     }
-    else if( opt.get_mixed() == false )
+    else
     {
         Poisson poisson(_eps, dz, DIRICHLET);
         if(opt.field_applied())

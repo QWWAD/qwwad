@@ -16,7 +16,6 @@
 
 #include "qclsim-linalg.h"
 
-#include <error.h>
 #include <stdexcept>
 #include <iostream>
 
@@ -26,13 +25,15 @@ namespace Leeds
  * Create a Poisson solver
  *
  * \param[in] eps Permittivity at each point
- * \param[in] dx  Spatial step
+ * \param[in] dx  Spatial step [m]
  * \param[in] bt  Poisson boundary condition type
  */
 Poisson::Poisson(const std::valarray<double> &eps,
                  const double                 dx,
                  PoissonBoundaryType          bt) :
+    _dx(dx),
     n(eps.size()),
+    _L(n*_dx),
     diag(std::valarray<double>(n)),
     sub_diag(std::valarray<double>(n-1)),
     corner_point(0.0),
@@ -41,20 +42,20 @@ Poisson::Poisson(const std::valarray<double> &eps,
     switch(boundary_type)
     {
         case DIRICHLET:
-            factorise_dirichlet(eps, dx);
+            factorise_dirichlet(eps);
             break;
         case MIXED:
-            factorise_mixed(eps, dx);
+            factorise_mixed(eps);
             break;
         case ZERO_FIELD:
-            factorise_zerofield(eps, dx);
+            factorise_zerofield(eps);
             break;
         default:
             throw std::runtime_error("Unknown boundary condition type used to instansiate Poisson solver.");
    }
 }
 
-void Poisson::factorise_dirichlet(const std::valarray<double>& eps, const double dx)
+void Poisson::factorise_dirichlet(const std::valarray<double>& eps)
 {
     // Half indexed eps points
     double eps_i_minus;
@@ -82,11 +83,11 @@ void Poisson::factorise_dirichlet(const std::valarray<double>& eps, const double
         }
 
         // Diagonal elemnts
-        diag[i] = (1/(dx*dx))*(eps_i_plus + eps_i_minus);
+        diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(dx*dx))*eps_i_minus;
+            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_minus;
     }
 
     // Factorise matrix
@@ -98,10 +99,14 @@ void Poisson::factorise_dirichlet(const std::valarray<double>& eps, const double
 #endif
 
     if(info != 0)
-        error(EXIT_FAILURE, 0, "Cannot factorise Poisson equation. (Lapack error code: %i)", info);	
+    {
+        std::ostringstream oss;
+        oss << "Cannot factorise Poisson equation. (Lapack error code: " << info << ")";
+        throw std::runtime_error(oss.str());
+    }
 } // End Poisson::factorise_hardwall()
 
-void Poisson::factorise_mixed(const std::valarray<double>& eps, const double dx)
+void Poisson::factorise_mixed(const std::valarray<double>& eps)
 {
     // Half indexed eps points
     double eps_i_minus;
@@ -130,20 +135,20 @@ void Poisson::factorise_mixed(const std::valarray<double>& eps, const double dx)
 
         // Diagonal elements
         if(i<ni-1)
-            diag[i] = (1/(dx*dx))*(eps_i_plus + eps_i_minus);
+            diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
         else
         {
-            diag[i] = (1/(dx*dx))*eps_i_minus;
-            corner_point = (1/(dx*dx))*eps_i_plus;
+            diag[i] = (1/(_dx*_dx))*eps_i_minus;
+            corner_point = (1/(_dx*_dx))*eps_i_plus;
         }
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(dx*dx))*eps_i_minus;
+            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_minus;
     }
 }
 
-void Poisson::factorise_zerofield(const std::valarray<double>& eps, const double dx)
+void Poisson::factorise_zerofield(const std::valarray<double>& eps)
 {
     // Half indexed eps points
     double eps_i_minus;
@@ -172,15 +177,15 @@ void Poisson::factorise_zerofield(const std::valarray<double>& eps, const double
 
         // Diagonal elements
         if(i==0)
-            diag[i] = (1/(dx*dx))*eps_i_plus;
+            diag[i] = (1/(_dx*_dx))*eps_i_plus;
         else if(i==ni-1)
-            diag[i] = (1/(dx*dx))*eps_i_minus;
+            diag[i] = (1/(_dx*_dx))*eps_i_minus;
         else
-            diag[i] = (1/(dx*dx))*(eps_i_plus + eps_i_minus);
+            diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(dx*dx))*eps_i_plus;
+            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_plus;
     }
 }
 
@@ -200,7 +205,11 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
                 dpttrs_(&n, &nrhs, &diag[0], &sub_diag[0], &rho[0], &n, &info);
 #endif
                 if(info != 0)
-                    error(EXIT_FAILURE, 0, "Cannot solve Poisson equation. (Lapack error code: %i)", info);
+                {
+                    std::ostringstream oss;
+                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
+                    throw std::runtime_error(oss.str());
+                }
 
                 phi = rho;
             }
@@ -210,7 +219,7 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
             phi = solve_cyclic_matrix(sub_diag, diag, corner_point, rho);
             
             if(phi.size() != static_cast<size_t>(n))
-                    error(EXIT_FAILURE, 0, "Cannot solve Poisson equation.");	
+                    throw std::runtime_error("Cannot solve Poisson equation.");
             break;
     }
 
@@ -234,15 +243,19 @@ std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
                 dpttrs_(&n, &nrhs, &diag[0], &sub_diag[0], &phi[0], &n, &info);
 #endif
                 if(info != 0)
-                    error(EXIT_FAILURE, 0, "Cannot solve Poisson equation. (Lapack error code: %i)", info);
+                {
+                    std::ostringstream oss;
+                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
+                    throw std::runtime_error(oss.str());
+                }
             }
             break;
         case MIXED:
-            error(EXIT_FAILURE, 0, "Cannot apply bias directly when solving the Poisson equation with "
-                    "mixed bounradries. Instead solve cyclic problem without bias, then solve Laplace "
-                    "equation and sum the result.");
+            throw std::runtime_error("Cannot apply bias directly when solving the Poisson equation with "
+                                     "mixed bounradries. Instead solve cyclic problem without bias, then solve Laplace "
+                                     "equation and sum the result.");
         default:
-            error(EXIT_FAILURE, 0, "Unregonised boundary type for Poisson solver.");
+            throw std::runtime_error("Unregonised boundary type for Poisson solver.");
     }
 
     return phi; 
@@ -266,13 +279,17 @@ std::valarray<double> Poisson::solve_laplace(double V_drop)
                 dpttrs_(&n, &nrhs, &diag[0], &sub_diag[0], &phi[0], &n, &info);
 #endif
                 if(info != 0)
-                    error(EXIT_FAILURE, 0, "Cannot solve Poisson equation. (Lapack error code: %i)", info);
+                {
+                    std::ostringstream oss;
+                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
+                    throw std::runtime_error(oss.str());
+                }
             }
             break;
         case MIXED:
-            error(EXIT_FAILURE, 0, "Cannot solve the Lapalace equation with mixed boundary conditions.");
+            throw std::runtime_error("Cannot solve the Laplace equation with mixed boundary conditions.");
         default:
-            error(EXIT_FAILURE, 0, "Unregonised boundary type for Poisson solver.");
+            throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
     }
 
     return phi; 

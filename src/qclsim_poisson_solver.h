@@ -22,14 +22,14 @@ namespace Leeds {
  */
 enum PoissonBoundaryType
 {
-    /// Zero potential at both ends of the system
+    /** Zero potential at both ends of the system */
     DIRICHLET,
 
-    /// Zero potential at the start of the system
-    /// Electric-field identical at each end
+    /** Zero potential at the start of the system
+     *  Electric-field identical at each end */
     MIXED,
 
-    /// Electric field is zero at both ends of the system
+    /** Electric field is zero at both ends of the system */
     ZERO_FIELD
 };
 
@@ -40,19 +40,20 @@ public:
     
     std::valarray<double> solve(std::valarray<double> phi);
     std::valarray<double> solve(std::valarray<double> phi, double V_drop);
-    std::valarray<double> solve_laplace(double V_drop);
+    std::valarray<double> solve_laplace(const double V_drop);
 
 private:
-    void factorise_dirichlet(const std::valarray<double>& eps, const double dx);
-    void factorise_mixed(const std::valarray<double>& eps, const double dx);
-    void factorise_zerofield(const std::valarray<double>& eps, const double dx);
+    void factorise_dirichlet(const std::valarray<double>& eps);
+    void factorise_mixed(const std::valarray<double>& eps);
+    void factorise_zerofield(const std::valarray<double>& eps);
 
-    int n; ///< Number of spatial samples
-    
+    double _dx;    ///< Spatial step size [m]
+    int n;         ///< Number of spatial samples
+    double _L;     ///< Total length of structure [m]
+        
     std::valarray<double> diag; ///< Diagonal of Poisson matrix
     std::valarray<double> sub_diag; ///< Sub-diagonal of Poisson matrix
-    double corner_point; ///< Value of corner point in matrix resulting form mixed boundary
-                         //   conditions
+    double corner_point; ///< Value of corner point in matrix resulting from mixed boundary conditions
 
     PoissonBoundaryType boundary_type; ///< Boundary condition type for Poisson solver
 };
