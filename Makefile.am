@@ -378,7 +378,10 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/field-effect-variable-epsilon.agr \
 		$(exnssrcdir)/uncertainty-principle-finite-well.sh  \
 		$(exnssrcdir)/uncertainty-principle-finite-well.eps \
-		$(exnssrcdir)/uncertainty-principle-finite-well.agr
+		$(exnssrcdir)/uncertainty-principle-finite-well.agr \
+		$(exnssrcdir)/uncertainty-principle-mass-limit.sh  \
+		$(exnssrcdir)/uncertainty-principle-mass-limit.eps \
+		$(exnssrcdir)/uncertainty-principle-mass-limit.agr
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
