@@ -372,7 +372,8 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/symmetry-and-selection-rules.eps \
 		$(exnssrcdir)/field-effect-variable-epsilon.sh  \
 		$(exnssrcdir)/field-effect-variable-epsilon.eps \
-		$(exnssrcdir)/field-effect-variable-epsilon.agr
+		$(exnssrcdir)/field-effect-variable-epsilon.agr \
+		$(exnssrcdir)/uncertainty-principle-finite-well.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
