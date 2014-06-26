@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
         Poisson poisson(_eps, dz, DIRICHLET);
         if(opt.field_applied())
         {
-            const double V_drop = opt.get_field() * e * (z[nz-1] - z[0]) - phi[nz-1];
+            const double V_drop = opt.get_field() * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
             if(opt.get_verbose())
                 std::cout << "Voltage drop per period: " << V_drop << "V\n";
             phi = poisson.solve(rho, V_drop);

@@ -369,7 +369,10 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/field-induced-anti-crossings-E-F.eps \
 		$(exnssrcdir)/symmetry-and-selection-rules.sh \
 		$(exnssrcdir)/symmetry-and-selection-rules.agr \
-		$(exnssrcdir)/symmetry-and-selection-rules.eps
+		$(exnssrcdir)/symmetry-and-selection-rules.eps \
+		$(exnssrcdir)/field-effect-variable-epsilon.sh  \
+		$(exnssrcdir)/field-effect-variable-epsilon.eps \
+		$(exnssrcdir)/field-effect-variable-epsilon.agr
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
