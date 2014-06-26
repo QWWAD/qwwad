@@ -155,6 +155,9 @@ src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
 src_find_poisson_potential_SOURCES = src/find_poisson_potential.cpp $(qwwad_options)
 src_find_poisson_potential_LDADD   = src/libqwwad.a $(LDADD)
 
+src_hup_SOURCES = src/hup.cpp $(wf_options)
+src_hup_LDADD   = src/libqwwad.a $(LDADD)
+
 src_ivdb_SOURCES = src/ivdb.cpp $(qwwad_options)
 src_ivdb_LDADD   = src/libqwwad.a $(LDADD)
 
@@ -373,7 +376,9 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/field-effect-variable-epsilon.sh  \
 		$(exnssrcdir)/field-effect-variable-epsilon.eps \
 		$(exnssrcdir)/field-effect-variable-epsilon.agr \
-		$(exnssrcdir)/uncertainty-principle-finite-well.sh
+		$(exnssrcdir)/uncertainty-principle-finite-well.sh  \
+		$(exnssrcdir)/uncertainty-principle-finite-well.eps \
+		$(exnssrcdir)/uncertainty-principle-finite-well.agr
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
