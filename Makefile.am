@@ -27,7 +27,8 @@ noinst_HEADERS = src/d0-helpers.h    \
 		 src/ppff.h          \
 		 src/struct.h 
 
-bin_PROGRAMS =  src/csss    \
+bin_PROGRAMS =  src/chargedensity \
+                src/csss    \
 		src/cszb    \
 		src/d0      \
 		src/d02D    \
@@ -119,6 +120,9 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-schroedinger-taylor.h          \
 			   src/qwwad-schroedinger-tridiagonal.cpp   \
 			   src/qwwad-schroedinger-tridiagonal.h
+
+src_chargedensity_SOURCES = src/chargedensity.cpp $(wf_options)
+src_chargedensity_LDADD   = src/libqwwad.a $(LDADD)
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
@@ -381,7 +385,13 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/uncertainty-principle-finite-well.agr \
 		$(exnssrcdir)/uncertainty-principle-mass-limit.sh  \
 		$(exnssrcdir)/uncertainty-principle-mass-limit.eps \
-		$(exnssrcdir)/uncertainty-principle-mass-limit.agr
+		$(exnssrcdir)/uncertainty-principle-mass-limit.agr \
+		$(exnssrcdir)/nonparabolic-dE-vs-width.sh \
+		$(exnssrcdir)/nonparabolic-dE-vs-width.agr \
+		$(exnssrcdir)/nonparabolic-dE-vs-width.eps \
+		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.sh \
+		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.agr \
+		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

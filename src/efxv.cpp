@@ -216,7 +216,6 @@ int main(int argc,char *argv[])
                 eps_dc.resize(z.size());
 
                 std::valarray<double> dV=(1.587*x)*e;
-                std::valarray<double> V(z.size());
 
                 switch(p)
                 {
@@ -272,7 +271,6 @@ int main(int argc,char *argv[])
 
                 std::valarray<double> dV=(2.093*x+0.629*y+0.577*x*x+0.436*y*y+1.013*x*y
                         +2.0*x*x*(x+y-1))*e;
-                std::valarray<double> V(z.size());
 
                 switch(p)
                 {
