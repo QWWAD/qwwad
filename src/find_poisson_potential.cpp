@@ -126,7 +126,7 @@ int main(int argc, char* argv[])
         Poisson poisson(_eps, dz, MIXED);
         phi = poisson.solve(rho);
 
-        // Only fix the voltage across the strucutre if an applied field is specified.
+        // Only fix the voltage across the structure if an applied field is specified.
         // (Otherwise just return the cyclic solution!)
         if(opt.field_applied())
         {

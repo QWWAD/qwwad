@@ -2,30 +2,29 @@
 set -e
 
 # Define output file
-outfile=poisson-schroedinger-E-I.dat
+outfile=modulation-doping-E-I.dat
 
 # Initialise files
-
 rm -f $outfile wf_e1*.r
 
 # First generate structure definition `s.r' file
-echo 200 0.2 0.0  > s.r
-echo 100 0.0 2e18 >> s.r
-echo 200 0.2 0.0  >> s.r
+echo 100 0.2 2e17 > s.r
+echo 100 0.0 0.0  >> s.r
+echo 100 0.2 2e17 >> s.r
  
 find_heterostructure	# generate alloy concentration as a function of z
 efxv			# generate potential data
 
 cp v.r vcb.r # Save conduction-band energy
   
-for I in `seq 0 7`; do
- # Calculate ground state energy
+for I in 0 1 2 3; do
+ # Calculate ground state Schroedinger solution
  efss --nst-max 1
 
  densityinput # Generate an estimate of the population density
  chargedensity # Compute charge density profile
- 
- # save wave function in separate file
+
+ # save wave function is separate file
  cp wf_e1.r wf_e1-I=$I.r
 
  # Write energy to output file

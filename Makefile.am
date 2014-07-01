@@ -407,7 +407,15 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/poisson-schroedinger-V.eps \
 		$(exnssrcdir)/poisson-schroedinger-comp.sh \
 		$(exnssrcdir)/poisson-schroedinger-comp-E-I.agr \
-		$(exnssrcdir)/poisson-schroedinger-comp-E-I.eps
+		$(exnssrcdir)/poisson-schroedinger-comp-E-I.eps \
+		$(exnssrcdir)/modulation-doping.sh \
+		$(exnssrcdir)/modulation-doping-V.agr \
+		$(exnssrcdir)/modulation-doping-V.eps \
+		$(exnssrcdir)/high-electron-mobility-transistor.sh \
+		$(exnssrcdir)/high-electron-mobility-transistor-v-I.agr \
+		$(exnssrcdir)/high-electron-mobility-transistor-v-I.eps \
+		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.agr \
+		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
