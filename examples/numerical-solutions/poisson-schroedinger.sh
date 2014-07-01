@@ -8,14 +8,10 @@ outfile=poisson-schroedinger-E-I.dat
 
 rm -f $outfile wf_e1*.r
 
-# Define well width and doping density
-LW=100
-D=-1		# Note -ve implies `n-type' doping
-
 # First generate structure definition `s.r' file
 echo 200 0.2 0.0  > s.r
-echo $LW 0.0 2e18  >> s.r
-echo 200 0.2 0.0 >> s.r
+echo 100 0.0 2e18 >> s.r
+echo 200 0.2 0.0  >> s.r
  
 find_heterostructure	# generate alloy concentration as a function of z
 efxv			# generate potential data
@@ -40,5 +36,4 @@ for I in `seq 0 7`; do
  # Implement self consistent Poisson calculation
  find_poisson_potential
  paste vcb.r v_p.r | awk '{print $1, $2+$4}' > v.r
-# scps
 done # X

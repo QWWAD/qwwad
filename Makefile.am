@@ -404,7 +404,10 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/poisson-schroedinger-sigma.agr \
 		$(exnssrcdir)/poisson-schroedinger-sigma.eps \
 		$(exnssrcdir)/poisson-schroedinger-V.agr \
-		$(exnssrcdir)/poisson-schroedinger-V.eps
+		$(exnssrcdir)/poisson-schroedinger-V.eps \
+		$(exnssrcdir)/poisson-schroedinger-comp.sh \
+		$(exnssrcdir)/poisson-schroedinger-comp-E-I.agr \
+		$(exnssrcdir)/poisson-schroedinger-comp-E-I.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
