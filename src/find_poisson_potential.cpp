@@ -67,7 +67,7 @@ PoissonOptions::PoissonOptions(int argc, char* argv[]) :
          "Use mixed boundary conditions.  By default, the space-charge effect is assumed to give zero-field boundary conditions.  By supplying this option, nonzero boundary fields can exist.")
 
         ("charge-file",
-         po::value<std::string>()->default_value("charge-density.dat"),
+         po::value<std::string>()->default_value("sigma.r"),
          "Set filename from which to read charge density profile.")
 
         ("potential-file",
@@ -170,8 +170,14 @@ int main(int argc, char* argv[])
 
     // Invert potential as we output in electron potential instead of absolute potential.
     phi *= -1;
-
     write_table_xy(opt.get_potential_filename().c_str(), z, phi);
+
+    // Get field profile
+    std::valarray<double> F(z.size());
+    for(unsigned int iz = 1; iz < nz-1; ++iz)
+        F[iz] = (phi[iz+1] - phi[iz-1])/dz;
+
+    write_table_xy("field.r", z, F);
 
     return EXIT_SUCCESS;
 }

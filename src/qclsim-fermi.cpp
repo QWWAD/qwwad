@@ -228,6 +228,33 @@ double find_fermi(const double Esb,
 /** 
  * \brief Find Fermi energy for an entire 2D system with many subbands, a known total population and temperature
  *
+ * \param states Array of states in system
+ * \param m0     Mass of carriers at band edge [kg]
+ * \param N      Population density of system [m^{-2}]
+ * \param Te     Temperature of carrier distribution [K]
+ * \param alpha  Nonparabolicity parameter [1/J]
+ * \param V      Band-edge [J]
+ *
+ * \returns The Fermi energy for the entire system [J]
+ */
+double find_fermi_global(const std::vector<State> &states,
+                         const double              m0,
+                         const double              N,
+                         const double              Te,
+                         const double              alpha,
+                         const double              V)
+{
+    std::valarray<double> E(states.size());
+
+    for(unsigned int ist = 0; ist < E.size(); ++ist)
+        E[ist] = states[ist].get_E();
+
+    return find_fermi_global(E, m0, N, Te, alpha, V);
+}
+
+/** 
+ * \brief Find Fermi energy for an entire 2D system with many subbands, a known total population and temperature
+ *
  * \param Esb   Array of subband minima [J]
  * \param m0    Mass of carriers at band edge [kg]
  * \param N     Population density of system [m^{-2}]

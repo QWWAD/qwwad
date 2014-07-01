@@ -33,6 +33,7 @@ bin_PROGRAMS =  src/chargedensity \
 		src/d0      \
 		src/d02D    \
 		src/d03D    \
+		src/densityinput \
 		src/dispersion_relation \
 		src/dos     \
 		src/ebe     \
@@ -123,6 +124,9 @@ src_libqwwad_a_SOURCES =  \
 
 src_chargedensity_SOURCES = src/chargedensity.cpp $(wf_options)
 src_chargedensity_LDADD   = src/libqwwad.a $(LDADD)
+
+src_densityinput_SOURCES = src/densityinput.cpp $(wf_options)
+src_densityinput_LDADD   = src/libqwwad.a $(LDADD)
 
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
@@ -391,7 +395,16 @@ exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/nonparabolic-dE-vs-width.eps \
 		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.sh \
 		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.agr \
-		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.eps
+		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.eps \
+		$(exnssrcdir)/poisson-schroedinger.sh \
+		$(exnssrcdir)/poisson-schroedinger-E-I.agr \
+		$(exnssrcdir)/poisson-schroedinger-E-I.eps \
+		$(exnssrcdir)/poisson-schroedinger-field.agr \
+		$(exnssrcdir)/poisson-schroedinger-field.eps \
+		$(exnssrcdir)/poisson-schroedinger-sigma.agr \
+		$(exnssrcdir)/poisson-schroedinger-sigma.eps \
+		$(exnssrcdir)/poisson-schroedinger-V.agr \
+		$(exnssrcdir)/poisson-schroedinger-V.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

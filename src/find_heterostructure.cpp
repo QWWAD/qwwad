@@ -148,7 +148,7 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
              "Set filename for alloy profile.")
 
             ("doping-file,d",
-             po::value<std::string>()->default_value("doping-profile.dat"),
+             po::value<std::string>()->default_value("d.r"),
              "Set filename for doping profile.")
             ;
 

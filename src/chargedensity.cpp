@@ -69,20 +69,22 @@ class ChargeDensityData
 
 ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
 {
+    add_switch("degenerate", "Some states are degenerate and the degeneracy should be read from file");
+
     program_specific_options->add_options()
         ("nper,p", po::value<size_t>()->default_value(1),
          "Number of periods the wavefunctions cross")
 
         ("doping-file", 
-         po::value<std::string>()->default_value("doping-profile.dat"),
+         po::value<std::string>()->default_value("d.r"),
          "Filename from which to read volume doping profile [m^{-3}]")
 
         ("alloy-1per-file", 
-         po::value<std::string>()->default_value("alloy-profile_1per.dat"),
+         po::value<std::string>()->default_value("x.r"),
          "Filename from which to read alloy profile")
         
         ("population-file",
-         po::value<std::string>()->default_value("populations.dat"),
+         po::value<std::string>()->default_value("N.r"),
          "Filename from which to read subband populations [m^{-2}]")
 
         ("degeneracy-file",
@@ -90,7 +92,7 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
          "Filename from which to read subband degeneracies")
 
         ("charge-file",
-         po::value<std::string>()->default_value("charge-density.dat"),
+         po::value<std::string>()->default_value("sigma.r"),
          "Filename to which charge density profile will be written")
 
         ("edensity-file",
@@ -140,7 +142,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     x(states[0].psi_array().size()/opt.get_nper()),
     pop(states.size()),
     n3D(states[0].psi_array().size()),
-    nval(states.size()),
+    nval(1, states.size()),
     nz_1per(z.size()/opt.get_nper())
 {
     std::valarray<double> V(states[0].psi_array().size());
@@ -150,7 +152,10 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
 
     // Read data for each subband
     read_table_x(opt.get_population_filename().c_str(), pop);
-    read_table_x(opt.get_degeneracy_filename().c_str(), nval);
+
+    if(opt.get_switch("degenerate"))
+        read_table_x(opt.get_degeneracy_filename().c_str(), nval);
+
     read_table_xy(opt.get_doping_filename().c_str(), z_n3D, n3D);
     read_table_xy(opt.get_alloy_1per_filename().c_str(), z_1per, x);
 

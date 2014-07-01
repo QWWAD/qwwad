@@ -8,6 +8,8 @@
 #define QCLSIM_FERMI_H
 
 #include <valarray>
+#include <vector>
+#include "qclsim-linalg.h"
 
 namespace Leeds {
 double f_FD(const double E_F, const double Ek, const double Te);
@@ -29,6 +31,13 @@ double find_fermi(const double Esb,
                   const double V=0);
 
 double find_fermi_global(const std::valarray<double> &Esb,
+                         const double                 m0,
+                         const double                 N,
+                         const double                 Te,
+                         const double                 alpha=0,
+                         const double                 V=0);
+
+double find_fermi_global(const std::vector<State>    &states,
                          const double                 m0,
                          const double                 N,
                          const double                 Te,
