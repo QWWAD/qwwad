@@ -26,7 +26,6 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <error.h>
 #include "qwwad-options.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
@@ -89,84 +88,43 @@ class FwfOptions : public Options {
         SolverType type; ///< The type of Schroedinger solver to use
 
     public:
-        void print() const {};
         SolverType get_type() const {return type;}
-        double get_mass() const {return vm["mass"].as<double>() * me;}
-        std::string get_mass_filename() const {return vm["mass-file"].as<std::string>();}
-        std::string get_alpha_filename() const {return vm["alpha-file"].as<std::string>();}
-        std::string get_potential_filename() const {return vm["v-file"].as<std::string>();}
-        size_t      get_nst_max() const {return vm["nst-max"].as<size_t>();}
-
-        /// \returns the particle ID
-        char get_particle() const {return vm["particle"].as<char>();}
-
-        /// \returns the minimum energy spacing between states [J]
-        double get_dE() const {return vm["dE"].as<double>()*1e-3*e;}
-
-        /// \returns true if we want to just calculate a trial wavefunction at a given energy
-        bool try_energy() const {return (vm.count("try-energy") == 1);}
-
-        /// \returns the energy at which to calculate a trial wavefunction [J]
-        double get_trial_energy() const {return vm["try-energy"].as<double>() * 1e-3*e;}
 
         FwfOptions(int argc, char* argv[]) :
             type(MATRIX_VARIABLE_MASS)
         {
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!
-            add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
+            add_numeric_option("E-cutoff",              "Cut-off energy for solutions [meV]");
+            add_numeric_option("mass",       0.067,     "The constant effective mass to use across the entire structure. "
+                                                        "This option only has an effect when used with the matrix-constant-mass "
+                                                        "or shooting-constant-mass solvers.");
+            add_numeric_option("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
+                                                        "This is only used with the shooting-method solvers.");
+            add_string_option ("mass-file",  "m.r",     "Filename from which effective mass profile is read. "
+                                                        "This is only needed if you are not using constant effective "
+                                                        "mass.");
+            add_char_option   ("particle,p", 'e',       "Particle to be used: 'e', 'h' or 'l'");
+            add_string_option ("alpha-file", "alpha.r", "Filename from which nonparabolicity parameter profile is read.");
+            add_string_option ("v-file",     "v.r",     "Filename from which confining potential is read.");
+            add_size_option   ("nst-max",     0,        "Maximum number of subbands to find.  The default (0) means "
+                                                        "that all states will be found up to maximum confining potential, "
+                                                        "or the cut-off energy (if specified).");
+            add_numeric_option("try-energy",            "Calculate a trial wavefunction at a given energy [meV] and write to file. "
+                                                        "This only works with Shooting solvers");
 
-            program_specific_options->add_options()
-                ("solver", po::value<std::string>()->default_value("matrix-variable-mass"),
-                 "Set the way in which the Schroedinger equation is solved.  You can "
-                 "use one of the following methods:\n"
-                 "\n"
-                 "    matrix-variable-mass       \tMatrix solver, with spatially varying, energy-independent effective mass\n\n"
-                 "    matrix-constant-mass       \tMatrix solver, with constant effective mass\n\n"
-                 "    matrix-full-nonparabolic   \tMatrix solver, using slow, but very accounting for nonparabolic dispersion\n\n"
-                 "    matrix-taylor-nonparabolic \tMatrix solver, using fast accounting for nonparabolic dispersion, but breaks down as E(state) - E(band edge) approaches the bandgap\n\n"
-                 "    shooting-variable-mass     \tShooting solver, with spatially varying, energy-independent effective mass\n\n"
-                 "    shooting-constant-mass     \tShooting solver, using constant effective mass\n\n"
-                 "    shooting-nonparabolic      \tShooting solver, using nonparabolic dispersion\n\n")
-
-                ("mass",
-                 po::value<double>()->default_value(0.067),
-                 "The constant effective mass to use across the entire structure. "
-                 "This option only has an effect when used with the matrix-constant-mass "
-                 "or shooting-constant-mass solvers.")
-
-                ("dE,d", po::value<double>()->default_value(1e-3),
-                 "Minimum separation (in energy) between states [meV]. "
-                 "This is only used with the shooting-method solvers.")
-
-                ("mass-file", 
-                 po::value<std::string>()->default_value("m.r"),
-                 "Set filename from which effective mass profile is read. "
-                 "This is only needed if you are not using constant effective "
-                 "mass.")
-
-                ("particle,p", po::value<char>()->default_value('e'),
-                 "Particle to be used: 'e', 'h' or 'l'")
-
-                ("alpha-file",
-                 po::value<std::string>()->default_value("alpha.r"),
-                 "Set filename from which nonparabolicity parameter profile "
-                 "is read.")
-
-                ("v-file",
-                 po::value<std::string>()->default_value("v.r"),
-                 "Set filename from which the confining potential is read.")
-
-                ("nst-max",
-                 po::value<size_t>()->default_value(0),
-                 "Set maximum number of subbands to find.  The default (0) means "
-                 "that all states will be found up to maximum confining potential, "
-                 "or the cut-off energy (if specified).")
-
-                ("try-energy", po::value<double>(),
-                 "Calculate a trial wavefunction at a given energy [meV] and write to "
-                 "file.")
-                ;
+            add_string_option ("solver",     "matrix-variable-mass", "Set the way in which the Schroedinger equation is solved.  You can "
+                                                                     "use one of the following methods:\n"
+                                                                     "\n"
+                                                                     "matrix-variable-mass       \tMatrix solver, with spatially varying, energy-independent effective mass\n\n"
+                                                                     "matrix-constant-mass       \tMatrix solver, with constant effective mass\n\n"
+                                                                     "matrix-full-nonparabolic   \tMatrix solver, using slow, but very accounting for nonparabolic dispersion\n\n"
+                                                                     "matrix-taylor-nonparabolic \tMatrix solver, using fast accounting for "
+                                                                                                  "nonparabolic dispersion, but breaks down as "
+                                                                                                  "E(state) - E(band edge) approaches the bandgap\n\n"
+                                                                     "shooting-variable-mass     \tShooting solver, with spatially varying, energy-independent effective mass\n\n"
+                                                                     "shooting-constant-mass     \tShooting solver, using constant effective mass\n\n"
+                                                                     "shooting-nonparabolic      \tShooting solver, using nonparabolic dispersion\n\n");
 
             std::string doc = "Solve the 1D Schroedinger equation with "
                 "the effective mass/envelope function approximations.";
@@ -196,8 +154,6 @@ class FwfOptions : public Options {
                 oss << "Cannot parse solver type: " << solver_arg;
                 throw std::runtime_error(oss.str());
             }
-
-            if(get_verbose()) print();	
         }
 };
 
@@ -220,26 +176,26 @@ static void output(const std::vector<State>    &solutions,
 {
     // Check solutions were found
     if(solutions.empty())
-        printf("No solutions found!!!\n");
+        std::cerr << "No solutions found!" << std::endl;
     else
     {
         if(opt.get_verbose())
         {
-            printf("Energy solutions:\n");
+            std::cout << "Energy solutions:" << std::endl;
 
             // Output all solutions to screen
             for(unsigned int ist=0; ist < solutions.size(); ist++)
-                printf("%u\t%9.3f meV\n", ist, solutions[ist].get_E()/(1e-3*e));
+                std::cout << ist << "\t" << std::fixed << solutions[ist].get_E() * 1000/e << " meV" << std::endl;
         }
 
-        const char   p       = opt.get_particle();
-        char energy_filename[9];
-        sprintf(energy_filename,"E%c.r",p);
-        char wf_prefix[9];
-        sprintf(wf_prefix,"wf_%c",p);
+        const char p = opt.get_char_option("particle");
+        std::ostringstream energy_filename;
+        energy_filename << "E" << p << ".r";
+        std::ostringstream wf_prefix;
+        wf_prefix << "wf_" << p;
 
-        State::write_to_file(energy_filename,
-                             wf_prefix,
+        State::write_to_file(energy_filename.str(),
+                             wf_prefix.str(),
                              ".r",
                              solutions,
                              z,
@@ -253,7 +209,7 @@ int main(int argc, char *argv[]){
     // Read data from file
     std::valarray<double> z; // Spatial locations [m]
     std::valarray<double> V; // Potential profile [J]
-    read_table_xy(opt.get_potential_filename().c_str(), z, V);
+    read_table_xy(opt.get_string_option("v-file").c_str(), z, V);
 
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
@@ -268,29 +224,26 @@ int main(int argc, char *argv[]){
         case MATRIX_TAYLOR_NONPARABOLIC:
         case MATRIX_FULL_NONPARABOLIC:
         case SHOOTING_NONPARABOLIC:
-            read_table_xy(opt.get_alpha_filename().c_str(), z_tmp, alpha);
+            read_table_xy(opt.get_string_option("alpha-file").c_str(), z_tmp, alpha);
         case MATRIX_VARIABLE_MASS:
         case SHOOTING_VARIABLE_MASS:
-            read_table_xy(opt.get_mass_filename().c_str(), z_tmp, m);
+            read_table_xy(opt.get_string_option("mass-file").c_str(), z_tmp, m);
             break;
         case MATRIX_CONSTANT_MASS:
         case SHOOTING_CONSTANT_MASS:
-            m += opt.get_mass();
-            break;
-        default:
-            error(EXIT_FAILURE, 0, "Unrecognised effective mass type");
+            m += opt.get_numeric_option("mass") * me;
     }
 
     // By default, we set the number of states automatically
     // within the range of the potential profile
-    const size_t nst_max = opt.get_nst_max();
+    const size_t nst_max = opt.get_size_option("nst-max");
 
     // If we have a flat potential, the user needs to specify either
     // a cut-off energy or a number of states, otherwise we can't
     // proceed
     if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.vm.count("E-cutoff") == 0)
     {
-        std::cerr << "Flat potential detected in " << opt.get_potential_filename()
+        std::cerr << "Flat potential detected in " << opt.get_string_option("v-file")
                   << ".  You must either specify a cut-off energy using --E-cutoff "
                   << "or a number of states using --nst-max" << std::endl;
         exit(EXIT_FAILURE);
@@ -342,7 +295,7 @@ int main(int argc, char *argv[]){
                                                 alpha,
                                                 V,
                                                 z,
-                                                opt.get_dE(),
+                                                opt.get_numeric_option("dE") * e/1000,
                                                 nst_max);
     }
 
@@ -350,16 +303,17 @@ int main(int argc, char *argv[]){
     if(opt.vm.count("E-cutoff") > 0)
         se->set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
-    if (opt.try_energy() && (opt.get_type() == SHOOTING_CONSTANT_MASS || opt.get_type() == SHOOTING_VARIABLE_MASS))
+    // Output a single trial wavefunction
+    if (opt.vm.count("try-energy") != 0 && (opt.get_type() == SHOOTING_CONSTANT_MASS || opt.get_type() == SHOOTING_VARIABLE_MASS))
     {
-        const double E_trial = opt.get_trial_energy();
+        const double E_trial = opt.get_numeric_option("try-energy") * e/1000;
         const std::valarray<double> psi = dynamic_cast<SchroedingerSolverShooting *>(se)->trial_wavefunction(E_trial);
 
-        char wf_filename[9];
-        sprintf(wf_filename, "wf_%cE.r", opt.get_particle());
-        write_table_xy(wf_filename, z, psi);
+        std::ostringstream wf_filename;
+        wf_filename << "wf_" << opt.get_char_option("particle") << "E.r";
+        write_table_xy(wf_filename.str().c_str(), z, psi);
     }
-    else
+    else // Output all wavefunctions
     {
         std::vector<State> solutions = se->get_solutions(true);
         output(solutions, z, opt);
