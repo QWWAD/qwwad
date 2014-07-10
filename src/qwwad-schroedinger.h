@@ -12,11 +12,13 @@
 
 namespace Leeds
 {
+
 /**
  * Abstract base class for any Schroedinger-equation solver
  *
  * \todo Cache the solutions and only calculate on first request
  */
+
 class SchroedingerSolver
 {
 public:
@@ -58,6 +60,8 @@ protected:
     ///< Set of solutions to the Schroedinger equation
     std::vector<State> _solutions;
 };
+
 } // namespace Leeds
+
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

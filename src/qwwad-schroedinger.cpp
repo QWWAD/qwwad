@@ -11,7 +11,9 @@
 
 namespace Leeds
 {
+
 using namespace constants;
+
 /**
  * Get the solutions to the Schroedinger equation.
  *
