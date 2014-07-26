@@ -456,10 +456,10 @@ EXTRA_DIST += \
 
 # Modifies compiler and linker flags for pthreads compatibility.
 if HAVE_PTHREADS
-  GTEST_CXXFLAGS = @PTHREAD_CFLAGS@ -DGTEST_HAS_PTHREAD=1
+  GTEST_CXXFLAGS = @PTHREAD_CFLAGS@ -DGTEST_HAS_PTHREAD=1 -I $(srcdir)/src/
   GTEST_LIBS = @PTHREAD_LIBS@
 else
-  GTEST_CXXFLAGS = -DGTEST_HAS_PTHREAD=0
+  GTEST_CXXFLAGS = -DGTEST_HAS_PTHREAD=0 -I $(srcdir)/src
 endif
 
 # We define the global AM_CPPFLAGS as everything we compile includes from these
@@ -479,13 +479,17 @@ gtest_lib_libgtest_main_la_CXXFLAGS = $(GTEST_CXXFLAGS)
 gtest_lib_libgtest_main_la_LIBADD = gtest/lib/libgtest.la $(GTEST_LIBS)
 
 ### TESTS ###
-TESTS = tests/integration_tests/integration_tests
-check_PROGRAMS = tests/integration_tests/integration_tests
-tests_integration_tests_integration_tests_SOURCES = tests/integration_tests/qwwad-schroedinger-infinite-well-tests.cpp \
-                                                    tests/integration_tests/qwwad-schroedinger-tridiagonal-tests.cpp
-tests_integration_tests_integration_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
-tests_integration_tests_integration_tests_LDADD = gtest/lib/libgtest_main.la \
-                                                  gtest/lib/libgtest.la \
-                                                  $(GTEST_LIBS) \
-                                                  src/libqwwad.a
+TESTS = tests/run-all-tests
+
+check_PROGRAMS = tests/run-all-tests
+
+tests_run_all_tests_SOURCES = tests/integration_tests/qwwad-schroedinger-infinite-well-tests.cpp \
+			      tests/integration_tests/qwwad-schroedinger-tridiagonal-tests.cpp \
+			      tests/microtests/schroedinger_solver_tests/abstract_schroedinger_solver_tests.cpp
+
+tests_run_all_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
+tests_run_all_tests_LDADD = gtest/lib/libgtest_main.la \
+			    gtest/lib/libgtest.la \
+			    $(GTEST_LIBS) \
+			    src/libqwwad.a
 
