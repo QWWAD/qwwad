@@ -1,0 +1,81 @@
+The subfolders here contain example scripts for use with the QWWAD
+simulation suite.  Full documentation is available at:
+
+https://sourceforge.net/p/qwwad/wiki/Example%20Scripts/
+
+These scripts, typically, run one or more of the QWWAD programs
+to produce a data file that can be plotted using a graph package
+(such as Xmgrace or ORIGIN). Generally speaking, each script will
+generate the data for one or more of the figures in the textbook.
+You should, therefore, be able to reproduce (almost) everything
+you see in the book by running an appropriate script!
+
+== Finding the examples ==
+Each subfolder represents a different chapter of the latest edition
+of the textbook.
+
+Each folder contains an 'index' file that states which script generates
+each figure in the book. For example, solutions-to-schroedingers-equation/index
+contains lines that look like:
+
+  Fig 2.2:  infinite-well-wavefunctions.sh   => infinite-well-wavefunctions.dat
+  Fig 2.3:  infinite-well-energy-vs-width.sh => infinite-well-energy-vs-width.dat
+
+This means that if we want to reproduce Fig. 2.2 from the book,
+we need to run the infinite-well-wavefunctions.sh script and this
+will produce a data file called infinite-well-wavefunctions.dat.
+
+== Running the examples ==
+We recommend creating a new folder in your home directory to provide a
+clean environment for running the scripts:
+
+  mkdir -p ~/qwwad-examples
+  cd ~/qwwad-examples
+
+Copy the script you wish to run into the folder you created (either by using
+the 'cp' command or by using a file browser). You can then run the script
+using the 'sh' command, for example:
+
+  sh ./finite-well-wavefunctions.sh
+
+The script will display a chunk of text containing:
+
+ * A brief list of the data file(s) that have been created.
+   In this example, finite-well-wavefunctions.dat.
+
+ * An explanation of the data contained in each column of the data file(s).
+
+ * A copyright notice
+
+ * An address to report bugs (hopefully you won't need it!)
+
+== Looking at the data files ==
+The script prints a message explaining the format of the output data files
+upon completion. You should be able to plot the file using any decent
+graph package
+
+You can check that the data files are correct by inspecting the appropriate
+figure in the textbook, or by looking at the EPS figure with the same name in
+the examples folder. e.g.,
+
+  solutions-to-schroedingers-equation/finite-well-wavefunctions.eps
+
+This folder also contains an AGR file that contains a labelled and formatted
+graph, for use with the Xmgrace plotting tool. If you find that your data
+file doesn't look like the EPS figure, please let us know on our bug-reporting
+page!
+
+== Playing with the scripts ==
+We provide these scripts as starting points for you to investigate the physical
+systems we discuss in the book. As such, we actively encourage you to edit them,
+play with the parameters and find their breaking points... what happens if you
+put a 1 kg particle in a quantum well? What happens if you make the well 1 km
+wide? Find out!
+
+If you want to edit the script, then make a copy of it in your local folder as
+discussed previously. Use this as your guinea pig and keep the original script
+in its original pristine condition. This means that if you break the script you
+always have a clean copy to return to!
+
+If you find something interesting, please get in touch.  We may include it in
+future versions of the software package or even the textbook!

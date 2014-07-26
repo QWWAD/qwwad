@@ -253,6 +253,9 @@ man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
+
+exdata_DATA = examples/README \
+	      examples/template.sh
  
 ex2datadir = $(exdatadir)/solutions-to-schroedingers-equation
 ex2srcdir = examples/solutions-to-schroedingers-equation
@@ -346,7 +349,8 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
-exnsdata_DATA = $(exnssrcdir)/shooting-method-wavefunctions.sh    \
+exnsdata_DATA = $(exnssrcdir)/index \
+		$(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
 		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
