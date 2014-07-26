@@ -5,4 +5,5 @@ Fig 3.1:  bisect-example.sh                => bisect-example.dat
 Fig 3.3:  shooting-method-wavefunctions.sh => shooting-method-wavefunction-odd.dat
 Fig 3.4:  shooting-method-wavefunctions.sh => shooting-method-wavefunction-even.dat
 Fig 3.6:  shooting-convergence.sh          => shooting-convergence.dat
-Fig 3.8:  shooting-convergence-E.sh        => shooting-convergence-E.dat
+Fig 3.8:  shooting-convergence-LB.sh       => shooting-convergence-LB-E.dat
+Fig 3.9:  shooting-convergence-LB.sh       => shooting-convergence-LB-wf.dat
