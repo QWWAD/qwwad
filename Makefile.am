@@ -361,6 +361,11 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/shooting-convergence.sh             \
 		$(exnssrcdir)/shooting-convergence.eps             \
 		$(exnssrcdir)/shooting-convergence.agr            \
+		$(exnssrcdir)/shooting-convergence-LB.sh           \
+		$(exnssrcdir)/shooting-convergence-LB-E.agr           \
+		$(exnssrcdir)/shooting-convergence-LB-E.eps           \
+		$(exnssrcdir)/shooting-convergence-LB-wf.agr           \
+		$(exnssrcdir)/shooting-convergence-LB-wf.eps           \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
 		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
