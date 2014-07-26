@@ -1,7 +1,7 @@
-#! /bin/sh
+#!/bin/sh
 set -e
 
-# Calculates the wavefunctions for the first two states in a quantum well
+# Calculates the shooting method wavefunction at either side of correct eigenvalue
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -26,14 +26,14 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile_odd=shooting-method-wavefunction-odd.dat
-outfile_even=shooting-method-wavefunction-even.dat
+outfile=shooting-convergence.dat
+rm -f $outfile
 
 # Describe square well structure (thickness, alloy, doping)
 cat > s.r << EOF
-150 0.2 0.0
-100 0.0 0.0
-150 0.2 0.0
+150 0.2 0
+100 0.0 0
+150 0.2 0
 EOF
 
 # Create alloy concentration file
@@ -42,22 +42,35 @@ find_heterostructure
 # Find band-edge parameters
 efxv
 
-# Find lowest two states
-efss --nst-max 2
+# Find correct wavefunction
+efss --solver shooting-constant-mass --nst-max 1
 
-# Rescale to angstrom units and centre at zero
-awk '{print $1*1e10 - 200, $2}' wf_e1.r > $outfile_even
-awk '{print $1*1e10 - 200, $2}' wf_e2.r > $outfile_odd
+# Rescale to angstrom and send to output file
+awk '{print $1*1e10, $2}' wf_e1.r > $outfile
+
+# Find trial wavefunction just below state
+efss --solver shooting-constant-mass --try-energy 29.3
+printf "\n" >> $outfile
+awk '{print $1*1e10, $2}' wf_eE.r >> $outfile
+
+# Find trial wavefunction just above state
+efss --solver shooting-constant-mass --try-energy 29.5
+printf "\n" >> $outfile
+awk '{print $1*1e10, $2}' wf_eE.r >> $outfile
 
 cat << EOF
-Results have been written to $outfile_even and $outfile_odd
-in the format:
+Results have been written to $outfile in the format:
 
-  COLUMN 1 - Spatial location [Angstrom]
+  COLUMN 1 - Spatial location [angstrom]
   COLUMN 2 - Wavefunction amplitude [m^{-0.5}]
 
-$outfile_even contains the (even parity) ground state and
-$outfile_odd contains the (odd parity) first excited state
+  The file contains 3 data sets, each set being separated
+  by a blank line, representing the trial wavefunction at
+  a different energy:
+
+  SET 1 - Energy = E1 (i.e., the correct value)
+  SET 2 - Energy 1 meV below eigenvalue
+  SET 3 - Energy 1 meV above eigenvalue
 
 This script is part of the QWWAD software suite.
 
@@ -69,5 +82,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-# <Delete all temporary files you created>
 rm -f *.r

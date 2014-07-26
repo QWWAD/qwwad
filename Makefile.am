@@ -358,6 +358,9 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/shooting-method-wavefunction-even.eps    \
 		$(exnssrcdir)/shooting-method-wavefunction-odd.agr    \
 		$(exnssrcdir)/shooting-method-wavefunction-odd.eps    \
+		$(exnssrcdir)/shooting-convergence.sh             \
+		$(exnssrcdir)/shooting-convergence.eps             \
+		$(exnssrcdir)/shooting-convergence.agr            \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
 		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
