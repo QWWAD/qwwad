@@ -350,6 +350,9 @@ exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
 exnsdata_DATA = $(exnssrcdir)/index \
+		$(exnssrcdir)/bisect-example.sh \
+		$(exnssrcdir)/bisect-example.agr \
+		$(exnssrcdir)/bisect-example.eps \
 		$(exnssrcdir)/shooting-method-wavefunctions.sh    \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
