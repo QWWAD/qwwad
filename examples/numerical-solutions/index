@@ -2,3 +2,5 @@ The following list shows which scripts and output files are used to generate
 each figure from the 4th edition of "Quantum Wells, Wires and Dots".
 
 Fig 3.1:  bisect-example.sh                => bisect-example.dat
+Fig 3.3:  shooting-method-wavefunctions.sh => shooting-method-wavefunction-odd.dat
+Fig 3.4:  shooting-method-wavefunctions.sh => shooting-method-wavefunction-even.dat

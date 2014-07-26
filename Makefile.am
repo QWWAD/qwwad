@@ -354,6 +354,10 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/bisect-example.agr \
 		$(exnssrcdir)/bisect-example.eps \
 		$(exnssrcdir)/shooting-method-wavefunctions.sh    \
+		$(exnssrcdir)/shooting-method-wavefunction-even.agr    \
+		$(exnssrcdir)/shooting-method-wavefunction-even.eps    \
+		$(exnssrcdir)/shooting-method-wavefunction-odd.agr    \
+		$(exnssrcdir)/shooting-method-wavefunction-odd.eps    \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
 		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
