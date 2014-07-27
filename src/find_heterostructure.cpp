@@ -1,7 +1,6 @@
 /**
  * \file     find_heterostructure.cpp
  * \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date     2012-08-03
  * 
  * \brief    Front-end for Heterostructure class
  *
@@ -33,38 +32,8 @@ class HeterostructureOptions : public Options
 {
     private:
         Unit unit;       ///< Length unit for calculation
-        double Ldiff;    ///< Diffusion length [m]
-        void scale_diffusion_length(); // Scale the diffusion length to metres 
     public:
         HeterostructureOptions(int argc, char* argv[]);
-
-        /**
-         * \brief Returns the filename for the input data
-         *
-         * \returns The filename for the input data
-         */
-        std::string get_input_filename() const {return vm["infile"].as<std::string>();}
-
-        /**
-         * \brief Returns the filename for alloy profile
-         *
-         * \returns The filename for the alloy profile
-         */
-        std::string get_alloy_filename() const {return vm["alloy-file"].as<std::string>();}
-
-        /**
-         * \brief Returns the filename for doping profile
-         *
-         * \returns The filename for the doping profile
-         */
-        std::string get_doping_filename() const {return vm["doping-file"].as<std::string>();}
-
-        /**
-         * \brief Returns the filename for interface locations
-         *
-         * \returns The filename for the interface locations
-         */
-        std::string get_interfaces_filename() const {return vm["interfaces-file"].as<std::string>();}
 
         /**
          * \brief Returns the unit of measurement for lengths
@@ -77,37 +46,30 @@ class HeterostructureOptions : public Options
          * \brief Returns the diffusion length [m]
          *
          * \returns The diffusion length in metres
+         *
+         * \details The length is scaled by the appropriate unit
          */
-        double get_Ldiff() const {return Ldiff;}
+        double get_Ldiff() const
+        {
+            double result = get_numeric_option("ldiff");
 
-        /**
-         * \returns The number of spatial points (per period) to output
-         */
-        size_t get_nz_1per() const {return vm["nz-1per"].as<size_t>();}
+            if (result < 0)
+                throw std::domain_error("Diffusion length must be positive.");
 
-        /**
-         * \brief Returns the number of periods
-         */
-        size_t get_nper() const {return vm["nper"].as<size_t>();}
+            switch(unit)
+            {
+                case UNIT_NM: 
+                    result*=1.0e-9; 
+                    break;
+                case UNIT_ANGSTROM:  
+                    result*=1.0e-10;
+            }
+
+            return result;
+        }
 
         void print() const;
 };
-
-/**
- * \brief Scales the diffusion length according to user-selected measurement unit
- */
-void HeterostructureOptions::scale_diffusion_length() 
-{
-    // Now scale the diffusion length
-    switch(unit)
-    {
-        case UNIT_NM: 
-            Ldiff*=1.0e-9; 
-            break;
-        case UNIT_ANGSTROM:  
-            Ldiff*=1.0e-10;
-    }
-}
 
 /**
  * \brief Constructor: Define and parse all user options
@@ -116,47 +78,29 @@ void HeterostructureOptions::scale_diffusion_length()
  * \param[in] argv Array of command-line arguments
  */
 HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
-    unit(UNIT_ANGSTROM),
-    Ldiff(0.0)
+    unit(UNIT_ANGSTROM)
 {
+    std::string doc("Generate spatial mesh and output alloy & doping profiles.");
+
+    add_numeric_option("ldiff,l",             0.0,            "Diffusion length.");
+    add_size_option   ("nz-1per",            1000,            "Number of points (per period) within the structure");
+    add_size_option   ("nper,p",                1,            "Number of periods to output");
+    add_string_option ("infile,i",          "s.r",            "Filename from which to read input data.");
+    add_string_option ("interfaces-file,f", "interfaces.dat", "Filename to which interface locations are written.");
+    add_string_option ("alloy-file,x",      "x.r",            "Filename to which alloy profile is written.");
+    add_string_option ("doping-file,d",     "d.r",            "Filename to which doping profile is written.");
+
+    std::string details = "Interdiffusion of alloys across interfaces may be specified.";
+
     try
     {
         // Specific configuration options for this program
         program_specific_options->add_options()
             ("unit,u", po::value<std::string>()->default_value("angstrom"), 
              "Set length unit.  Acceptable values are 'A': "
-             "Ångstroms or 'n': nanometres.")
+             "Ångstroms or 'n': nanometres.");
 
-            ("ldiff,l", po::value(&Ldiff)->default_value(0),
-             "Set diffusion length.")
-
-            ("nz-1per", po::value<size_t>()->default_value(1000),
-             "Number of points (per period) within the structure")
-
-            ("nper,p", po::value<size_t>()->default_value(1),
-             "Number of periods to output")
-
-            ("infile,i", po::value<std::string>()->default_value("s.r"),
-             "Set filename from which to read input data.")
-
-            ("interfaces-file,f", 
-             po::value<std::string>()->default_value("interfaces.dat"),
-             "Set filename for interface locations.")
-
-            ("alloy-file,x",
-             po::value<std::string>()->default_value("x.r"),
-             "Set filename for alloy profile.")
-
-            ("doping-file,d",
-             po::value<std::string>()->default_value("d.r"),
-             "Set filename for doping profile.")
-            ;
-
-        std::string doc = "Create alloy and doping profiles for "
-            "a specified semiconductor heterostructure.  Interdiffusion "
-            "of alloys across interfaces may also be specified.";
-
-        add_prog_specific_options_and_parse(argc, argv, doc);	
+        add_prog_specific_options_and_parse(argc, argv, doc, details);
 
         // Perform a bit of post-processing on the options
         {
@@ -178,10 +122,7 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
                     unit = UNIT_NM; // Sets unit to [nm]
             }
 
-            if (Ldiff < 0)
-                throw std::domain_error("Diffusion length must be positive.");
-
-            if (vm["nper"].as<size_t>() < 1)
+            if (get_size_option("nper") < 1)
                 throw std::domain_error("Number of periods must be positive.");
         }
     }
@@ -193,8 +134,6 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
 
     if(get_verbose())
         print();
-
-    scale_diffusion_length();
 }
 
 /**
@@ -213,20 +152,17 @@ void HeterostructureOptions::print() const
             break;
         case UNIT_ANGSTROM:
             unit_string="angstroms";
-            break;
-        default:
-            unit_string="unknown";
     }
 
-    printf(" * Unit of length for input: %s\n", unit_string);
-    printf(" * Diffusion length: %f %s\n",Ldiff,unit_string);
-    printf(" * Number of points per period: %i\n", (int)get_nz_1per());
-    printf(" * Number of periods to output: %i\n", (int)get_nper());
-    printf(" * Filename of input structure: %s\n", get_input_filename().c_str());
-    printf(" * Filename for interface locations: %s\n",get_interfaces_filename().c_str());
-    printf(" * Filename for alloy profile: %s\n", get_alloy_filename().c_str());
-    printf(" * Filename for doping profile: %s\n", get_doping_filename().c_str());
-    printf("\n");
+    std::cout << " * Unit of length for input: " << unit_string << std::endl;
+    std::cout << " * Diffusion length: " << get_Ldiff() << " " << unit_string << std::endl;
+    std::cout << " * Number of points per period: " << get_size_option("nz-1per") << std::endl;
+    std::cout << " * Number of periods to output: " << get_size_option("nper") << std::endl;
+    std::cout << " * Filename of input structure: " << get_string_option("infile") << std::endl;
+    std::cout << " * Filename for interface locations: " << get_string_option("interfaces-file") << std::endl;
+    std::cout << " * Filename for alloy profile: " << get_string_option("alloy-file") << std::endl;
+    std::cout << " * Filename for doping profile: " << get_string_option("doping-file") << std::endl;
+    std::cout << std::endl;
 }
 
 int main(int argc, char* argv[])
@@ -235,10 +171,10 @@ int main(int argc, char* argv[])
     const HeterostructureOptions opt(argc,argv);
 
     // Create a new heterostructure using input data
-    const Heterostructure *het = Heterostructure::read_from_file(opt.get_input_filename(),
+    const Heterostructure *het = Heterostructure::read_from_file(opt.get_string_option("infile"),
                                                                  opt.get_unit(),
-                                                                 opt.get_nz_1per(),
-                                                                 opt.get_nper(),
+                                                                 opt.get_size_option("nz-1per"),
+                                                                 opt.get_size_option("nper"),
                                                                  opt.get_Ldiff());
 
     if(opt.get_verbose())
@@ -252,9 +188,9 @@ int main(int argc, char* argv[])
     }
     
     // Output the index of each interface to file
-    write_table_x(opt.get_interfaces_filename().c_str(), het->get_layer_top_indices());
+    write_table_x(opt.get_string_option("interfaces-file").c_str(), het->get_layer_top_indices());
 
-    std::ofstream stream(opt.get_alloy_filename().c_str());
+    std::ofstream stream(opt.get_string_option("alloy-file").c_str());
     for(unsigned int iz = 0; iz < het->get_z().size(); ++iz)
     {
         stream << std::setprecision(20) << std::scientific << het->get_z()[iz] << "\t";
@@ -265,7 +201,7 @@ int main(int argc, char* argv[])
         stream << std::endl;
     }
 
-    write_table_xy(opt.get_doping_filename().c_str(), het->get_z(), het->get_n3D_array());
+    write_table_xy(opt.get_string_option("doping-file").c_str(), het->get_z(), het->get_n3D_array());
 
     delete het;
 
