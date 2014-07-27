@@ -43,9 +43,7 @@ for N in 1 2 3 4 5 6 7 8 9 10; do
  echo $LW 0.0 0.0 >> s.r
  echo 200 0.2 0.0 >> s.r
 
- # Find number of points needed to give spatial resolution of 4-point-per-angstrom
- nz=`echo $N $LW $LB | awk '{Nwells=$1; LW=$2; LB=$3; print 4*((Nwells-1)*(LW+LB) + LW + 400) + 1}'`
- find_heterostructure --nz $nz	# generate alloy concentration as a function of z
+ find_heterostructure --dz-max 0.25 # generate alloy concentration as a function of z
  efxv			# generate potential data
 
  efss --nst-max 1

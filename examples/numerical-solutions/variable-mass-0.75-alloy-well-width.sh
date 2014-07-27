@@ -41,10 +41,7 @@ for LW in 20 40 60 80 100 120 160 200; do
     echo $LW 0.0 0.0 >> s.r
     echo 200 0.75 0.0 >> s.r
 
-    # Work out how many points we need for a 1-angstrom sampling period
-    nz=`echo $LW | awk '{print $1 + 401}'`
-
-    find_heterostructure --nz $nz # generate alloy concentration as a function of z
+    find_heterostructure --dz-max 1 # generate alloy concentration as a function of z
     efxv			  # generate potential data
 
     efss --nst-max 2 --solver matrix-variable-mass # calculate 2 lowest energy levels

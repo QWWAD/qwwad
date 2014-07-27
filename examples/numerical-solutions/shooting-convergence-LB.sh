@@ -40,10 +40,8 @@ $LB 0.2 0
 $LB 0.2 0
 EOF
 
-nz=`echo $LB | awk '{print 5*$1*2 + 501}'`
-
 # Create alloy concentration file
-find_heterostructure --nz-1per $nz
+find_heterostructure --dz-max 0.2
 
 # Find band-edge parameters
 efxv

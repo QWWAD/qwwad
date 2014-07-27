@@ -40,7 +40,7 @@ for N in 2 4 6 8 10 12; do
     # Work out how many points we need for the desired sampling period
     nz=`echo $LW $N | awk '{print ($1 + 400) * $2 + 1}'`
 
-    find_heterostructure --nz $nz # generate alloy concentration as a function of z
+    find_heterostructure --nz-1per $nz # generate alloy concentration as a function of z
     efxv			  # generate potential data
 
     efss --nst-max 1 --solver matrix-variable-mass # calculate lowest energy level
