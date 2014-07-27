@@ -68,6 +68,28 @@ class HeterostructureOptions : public Options
             return result;
         }
 
+        double get_dz_max() const
+        {
+            if(vm.count("dz-max") == 0)
+                throw std::runtime_error("Spatial separation not specified");
+
+            double result = get_numeric_option("dz-max");
+
+            if (result < 0)
+                throw std::domain_error("Spatial separation must be positive.");
+
+            switch(unit)
+            {
+                case UNIT_NM:
+                    result*=1.0e-9;
+                    break;
+                case UNIT_ANGSTROM:
+                    result*=1.e-10;
+            }
+
+            return result;
+        }
+
         void print() const;
 };
 
@@ -83,7 +105,9 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
     std::string doc("Generate spatial mesh and output alloy & doping profiles.");
 
     add_numeric_option("ldiff,l",             0.0,            "Diffusion length.");
-    add_size_option   ("nz-1per",            1000,            "Number of points (per period) within the structure");
+    add_numeric_option("dz-max",              0.1,            "Maximum separation between spatial points.");
+    add_size_option   ("nz-1per",               0,            "Number of points (per period) within the structure. If specified, "
+                                                              "this overrides the --dz-max option");
     add_size_option   ("nper,p",                1,            "Number of periods to output");
     add_string_option ("infile,i",          "s.r",            "Filename from which to read input data.");
     add_string_option ("interfaces-file,f", "interfaces.dat", "Filename to which interface locations are written.");
@@ -171,11 +195,18 @@ int main(int argc, char* argv[])
     const HeterostructureOptions opt(argc,argv);
 
     // Create a new heterostructure using input data
-    const Heterostructure *het = Heterostructure::read_from_file(opt.get_string_option("infile"),
-                                                                 opt.get_unit(),
-                                                                 opt.get_size_option("nz-1per"),
-                                                                 opt.get_size_option("nper"),
-                                                                 opt.get_Ldiff());
+    const Heterostructure *het = (opt.get_size_option("nz-1per") != 0) ?  // Force the number of points per period if specified
+                                 Heterostructure::create_from_file(opt.get_string_option("infile"),
+                                                                   opt.get_unit(),
+                                                                   opt.get_size_option("nz-1per"),
+                                                                   opt.get_size_option("nper"),
+                                                                   opt.get_Ldiff())
+                                 :
+                                 Heterostructure::create_from_file_auto_nz(opt.get_string_option("infile"),
+                                                                           opt.get_unit(),
+                                                                           opt.get_size_option("nper"),
+                                                                           opt.get_Ldiff(),
+                                                                           opt.get_dz_max());
 
     if(opt.get_verbose())
     {

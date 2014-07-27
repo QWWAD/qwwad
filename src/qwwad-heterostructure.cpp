@@ -89,40 +89,24 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
     }
 }
 
-/**
- * Create a heterostructure using data from an input file containing data for each layer
- *
- * \param[in] layer_filename Name of input file
- * \param[in] thickness_unit The unit of measurement for the layer thicknesses
- * \param[in] nz_1per        The number of points to be used in mapping out a single
- *                           period of the structure
- * \param[in] n_periods      Number of periods to generate
- * \param[in] L_diff         Alloy diffusion length [m]
- *
- * \return A new heterostructure object for the system.  Remember to delete it after use!
- */
-Heterostructure* Heterostructure::read_from_file(const std::string &layer_filename,
-                                                 const Unit         thickness_unit,
-                                                 const size_t       nz_1per,
-                                                 const size_t       n_periods,
-                                                 const double       L_diff)
+void Heterostructure::read_layers_from_file(const std::string     &filename,
+                                            alloy_vector          &x_layer,
+                                            std::valarray<double> &W_layer,
+                                            std::valarray<double> &n3D_layer,
+                                            const Unit             thickness_unit)
 {
-    alloy_vector          x_layer;   // Alloy fraction for each layer
-    std::valarray<double> W_layer;   // Thickness of each layer
-    std::valarray<double> n3D_layer; // Doping density of each layer
-
     std::valarray<double> coltemp; // A temporary vector containing the first column of the input file
-    read_table_x(layer_filename.c_str(), coltemp);
+    read_table_x(filename.c_str(), coltemp);
     const size_t nL = coltemp.size();
 
     std::valarray<double> rowtemp; // A temporary vector containing the first row of the input file
 
-    std::ifstream stream(layer_filename.c_str());
+    std::ifstream stream(filename.c_str());
 
     if(!stream.is_open())
     {
         std::ostringstream oss;
-        oss << "Could not open " << layer_filename;
+        oss << "Could not open " << filename;
         throw std::runtime_error(oss.str());
     }
 
@@ -188,6 +172,62 @@ Heterostructure* Heterostructure::read_from_file(const std::string &layer_filena
     }
 
     n3D_layer *= 1000000.0; // Scale doping to m^{-3}
+}
+
+/**
+ * Create a heterostructure using data from an input file, with the number of spatial points
+ * per period calculated automatically
+ *
+ * \param[in] layer_filename Name of input file
+ * \param[in] thickness_unit The unit of measurement for the layer thicknesses
+ * \param[in] n_periods      Number of periods to generate
+ * \param[in] L_diff         Alloy diffusion length [m]
+ * \param[in] dz_max         The maximum allowable separation between spatial points [m]
+ *
+ * \return A new heterostructure object for the system.  Remember to delete it after use!
+ */
+Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &layer_filename,
+                                                           const Unit         thickness_unit,
+                                                           const size_t       n_periods,
+                                                           const double       L_diff,
+                                                           const double       dz_max)
+{
+    alloy_vector          x_layer;   // Alloy fraction for each layer
+    std::valarray<double> W_layer;   // Thickness of each layer
+    std::valarray<double> n3D_layer; // Doping density of each layer
+
+    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer, thickness_unit);
+
+    const double period_length = W_layer.sum();
+    const size_t nz_1per = ceil(period_length/dz_max) + 1;
+
+    // Pack input data into a heterostructure object
+    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods, L_diff);
+}
+
+/**
+ * Create a heterostructure using data from an input file containing data for each layer
+ *
+ * \param[in] layer_filename Name of input file
+ * \param[in] thickness_unit The unit of measurement for the layer thicknesses
+ * \param[in] nz_1per        The number of points to be used in mapping out a single
+ *                           period of the structure
+ * \param[in] n_periods      Number of periods to generate
+ * \param[in] L_diff         Alloy diffusion length [m]
+ *
+ * \return A new heterostructure object for the system.  Remember to delete it after use!
+ */
+Heterostructure* Heterostructure::create_from_file(const std::string &layer_filename,
+                                                   const Unit         thickness_unit,
+                                                   const size_t       nz_1per,
+                                                   const size_t       n_periods,
+                                                   const double       L_diff)
+{
+    alloy_vector          x_layer;   // Alloy fraction for each layer
+    std::valarray<double> W_layer;   // Thickness of each layer
+    std::valarray<double> n3D_layer; // Doping density of each layer
+
+    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer, thickness_unit);
 
     // Pack input data into a heterostructure object
     return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods, L_diff);

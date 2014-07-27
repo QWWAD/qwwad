@@ -33,6 +33,12 @@ enum Unit {
 class Heterostructure
 {
     private:
+        static void read_layers_from_file(const std::string     &filename,
+                                          alloy_vector          &x_layer,
+                                          std::valarray<double> &W_layer,
+                                          std::valarray<double> &n3D_layer,
+                                          const Unit             thickness_unit = UNIT_NM);
+
         // Parameters for each individual layer of the structure
         size_t                _n_alloy;   ///< Number of alloy components
         alloy_vector          _x_layer;   ///< Alloy fractions in each layer
@@ -63,11 +69,18 @@ class Heterostructure
                         const size_t                 n_periods = 1,
                         const double                 L_diff    = 0.0);
 
-        static Heterostructure* read_from_file(const std::string &layer_filename,
-                                               const Unit         thickness_unit,
-                                               const size_t       nz_1per,
-                                               const size_t       n_periods,
-                                               const double       L_diff = 0.0);
+        
+        static Heterostructure* create_from_file_auto_nz(const std::string &layer_filename,
+                                                       const Unit         thickness_unit,
+                                                       const size_t       n_periods,
+                                                       const double       L_diff = 0.0,
+                                                       const double       dz_max = 1e-10);
+
+        static Heterostructure* create_from_file(const std::string &layer_filename,
+                                                 const Unit         thickness_unit,
+                                                 const size_t       nz_1per,
+                                                 const size_t       n_periods,
+                                                 const double       L_diff = 0.0);
 
         /** Return the number of sampling points in one period of the structure */
         size_t get_nz_1per() const {return _nz_1per;}
