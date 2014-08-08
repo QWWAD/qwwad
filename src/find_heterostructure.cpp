@@ -75,6 +75,10 @@ class HeterostructureOptions : public Options
 
             double result = get_numeric_option("dz-max");
 
+            // Override result use spatial resolution setting if specified
+            if (vm.count("res-min") == 1)
+                result = 1.0 / get_numeric_option("res-min");
+
             if (result < 0)
                 throw std::domain_error("Spatial separation must be positive.");
 
@@ -84,7 +88,7 @@ class HeterostructureOptions : public Options
                     result*=1.0e-9;
                     break;
                 case UNIT_ANGSTROM:
-                    result*=1.e-10;
+                    result*=1.0e-10;
             }
 
             return result;
@@ -106,8 +110,9 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
 
     add_numeric_option("ldiff,l",             0.0,            "Diffusion length.");
     add_numeric_option("dz-max",              0.1,            "Maximum separation between spatial points.");
+    add_numeric_option("res-min",                             "Minimum spatial resolution. Overrides the --dz-max option");
     add_size_option   ("nz-1per",               0,            "Number of points (per period) within the structure. If specified, "
-                                                              "this overrides the --dz-max option");
+                                                              "this overrides the --dz-max and --res-min options");
     add_size_option   ("nper,p",                1,            "Number of periods to output");
     add_string_option ("infile,i",          "s.r",            "Filename from which to read input data.");
     add_string_option ("interfaces-file,f", "interfaces.dat", "Filename to which interface locations are written.");

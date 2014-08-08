@@ -25,8 +25,8 @@ echo 200 0.2 0.0 > s.r
 echo $LW 0.0 0.0 >> s.r
 echo 200 0.2 0.0 >> s.r
 
-find_heterostructure --nz 1841	# generate alloy concentration as a function of z
-efxv			# generate potential data
+find_heterostructure # generate alloy concentration as a function of z
+efxv		     # generate potential data
 
 # Loop over electric field 
 

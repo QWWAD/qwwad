@@ -13,10 +13,8 @@ echo 100 0.0 0.0 4e18 >> s.r
 echo 200 0.2 0.0 0.0  >> s.r
  
 # Loop over number of points along z-axis
-for N in 10 5 1; do	# reverse loop and hence retain diverging wave functions
-    nz=`echo $N | awk '{print 500*$1 + 1}'`
-
-    find_heterostructure --nz-1per $nz	# generate alloy concentration as a function of z
+for res in 10 5 1; do	# reverse loop and hence retain diverging wave functions
+    find_heterostructure --res-min $res	# generate alloy concentration as a function of z
     efxv			# generate potential data
     cp v.r vcb.r # Save conduction-band energy
   

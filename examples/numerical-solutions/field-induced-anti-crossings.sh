@@ -1,4 +1,6 @@
 #!/bin/sh
+set -e
+
 # Define output file
 
 OUT=E-F.r
@@ -31,7 +33,7 @@ echo 60 0.2 0.0 >> s.r
 echo $LW2 0.0 0.0 >> s.r
 echo 200 0.2 0.0 >> s.r
 
-find_heterostructure --nz 2281	# generate alloy concentration as a function of z
+find_heterostructure 	# generate alloy concentration as a function of z
 efxv			# generate potential data
 
 # Loop over electric field
