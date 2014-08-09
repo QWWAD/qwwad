@@ -18,23 +18,23 @@ MB=0.0836
 # perform numerical solution
 #
 # First generate structure definition `s.r' file
-echo 200 0.2 0.0 > s.r
-echo 60  0.0 0.0 >> s.r
-echo 60  0.2 0.0 >> s.r
-echo 50  0.0 0.0 >> s.r
-echo 200 0.2 0.0 >> s.r
+cat > s.r << EOF
+200 0.2 0.0
+60  0.0 0.0
+60  0.2 0.0
+50  0.0 0.0
+200 0.2 0.0
+EOF
 
 find_heterostructure 	# generate alloy concentration as a function of z
 efxv			# generate potential data
 
 # Loop over electric field 
-
 for F in 0 1 2 3 4 5 6 7 8 `seq 9 0.1 12` 14 16 20 25 30 40; do
  printf "\rSolving for field = %.2f kV/cm" $F
 
  # Add electric field to potential
- find_poisson_potential --field $F --centred --uncharged
- paste v.r v_p.r | awk '{print $1, $2+$4}' > v_t.r
+ find_poisson_potential --field $F --centred --uncharged --Vbasefile v.r --potential-file v_t.r
 
  efss --nst-max 2 --v-file v_t.r # calculate ground and first excited states
 

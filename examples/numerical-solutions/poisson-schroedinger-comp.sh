@@ -35,8 +35,7 @@ for res in 10 5 1; do	# reverse loop and hence retain diverging wave functions
         echo $I $E1 >> $outfile
 
         # Implement self consistent Poisson calculation
-        find_poisson_potential
-        paste vcb.r v_p.r | awk '{print $1, $2+$4}' > v.r
+        find_poisson_potential --Vbasefile vcb.r --potential-file v.r
     done # X
 
    printf "\n" >> $outfile 

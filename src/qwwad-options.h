@@ -70,6 +70,8 @@ class Options
         void add_string_option(const std::string &name,
                                const std::string &default_value,
                                const std::string &description);
+        void add_string_option(const std::string &name,
+                               const std::string &description);
 
         void add_switch(const std::string &name,
                         const std::string &description);

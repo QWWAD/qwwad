@@ -33,6 +33,5 @@ for I in 0 1 2 3 4 5 6 7 8; do
  echo $I $E1 >> $outfile
 
  # Implement self consistent Poisson calculation
- find_poisson_potential --mixed
- paste vcb.r v_p.r | awk '{print $1, $2+$4}' > v.r
+ find_poisson_potential --mixed --Vbasefile vcb.r --potential-file v.r
 done # X

@@ -30,17 +30,13 @@ efxv		     # generate potential data
 
 # Loop over electric field 
 
-for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70
-do
-{
+for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70; do
  # Add electric field to potential
- find_poisson_potential --uncharged --field $F --centred
- paste v.r v_p.r | awk '{print $1, $2+$4}' > v_t.r
+ find_poisson_potential --uncharged --field $F --centred --Vbasefile v.r --potential-file v_t.r
 
  efss --nst-max 1 --v-file v_t.r # calculate ground state only
 
  # Write energy to output file
  E1=`awk '/^1/{print $2}' Ee.r`
  echo $F $E1 >> $OUT
-}
 done

@@ -24,7 +24,7 @@ for I in 0 1 2 3; do
  densityinput # Generate an estimate of the population density
  chargedensity # Compute charge density profile
 
- # save wave function is separate file
+ # save wave function in separate file
  cp wf_e1.r wf_e1-I=$I.r
 
  # Write energy to output file
@@ -33,6 +33,5 @@ for I in 0 1 2 3; do
  echo $I $E1 >> $outfile
 
  # Implement self consistent Poisson calculation
- find_poisson_potential
- paste vcb.r v_p.r | awk '{print $1, $2+$4}' > v.r
+ find_poisson_potential --Vbasefile vcb.r --potential-file v.r
 done # X

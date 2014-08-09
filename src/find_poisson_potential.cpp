@@ -39,7 +39,6 @@ class PoissonOptions : public Options
         double get_offset() const {return offset;}
         bool get_mixed() const {return vm["mixed"].as<bool>();}
         std::string get_charge_density_filename() const {return vm["charge-file"].as<std::string>();}
-        std::string get_potential_filename() const {return vm["potential-file"].as<std::string>();}
         bool field_applied() const {return vm.count("field");}
 };
 
@@ -53,8 +52,10 @@ PoissonOptions::PoissonOptions(int argc, char* argv[]) :
     E(0.0),
     offset(0.0)
 {
-    add_switch("uncharged", "True if there is no charge in the structure");
-    add_switch("centred",   "True if the potential should be pivoted around the centre of the structure");
+    add_switch       ("uncharged",               "True if there is no charge in the structure");
+    add_switch       ("centred",                 "True if the potential should be pivoted around the centre of the structure");
+    add_string_option("Vbasefile",               "File containing baseline potential to be added to Poisson potential");
+    add_string_option("potential-file", "v_p.r", "Filename to which the Poisson potential is written.");
 
     program_specific_options->add_options()
         ("field,E", po::value<double>(),
@@ -69,10 +70,6 @@ PoissonOptions::PoissonOptions(int argc, char* argv[]) :
         ("charge-file",
          po::value<std::string>()->default_value("sigma.r"),
          "Set filename from which to read charge density profile.")
-
-        ("potential-file",
-         po::value<std::string>()->default_value("v_p.r"),
-         "Set filename to output the calculated potential to.")
         ;
 
     std::string doc = "Find the space-charge induced potential for a "
@@ -170,7 +167,27 @@ int main(int argc, char* argv[])
 
     // Invert potential as we output in electron potential instead of absolute potential.
     phi *= -1;
-    write_table_xy(opt.get_potential_filename().c_str(), z, phi);
+
+    // Add on the baseline potential if desired
+    std::valarray<double> Vbase(phi.size());
+
+    if (opt.vm.count("Vbasefile"))
+    {
+        std::valarray<double> zbase(phi.size());
+        read_table_xy(opt.get_string_option("Vbasefile").c_str(), zbase, Vbase);
+
+        // TODO: Add more robust checking of z, zbase identicality here
+        if(zbase.size() != z.size())
+        {
+            std::ostringstream oss;
+            oss << "Baseline and Poisson potential profiles have different lengths (" << zbase.size() << ") and (" << z.size() << " respectively";
+            throw std::runtime_error(oss.str());
+        }
+
+        phi += Vbase;
+    }
+
+    write_table_xy(opt.get_string_option("potential-file").c_str(), z, phi);
 
     // Get field profile
     std::valarray<double> F(z.size());
