@@ -434,7 +434,12 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/high-electron-mobility-transistor-v-I.agr \
 		$(exnssrcdir)/high-electron-mobility-transistor-v-I.eps \
 		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.agr \
-		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.eps
+		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.eps \
+		$(exnssrcdir)/parabolic-well-solutions.sh \
+		$(exnssrcdir)/parabolic-well-solutions.agr \
+		$(exnssrcdir)/parabolic-well-solutions.eps \
+		$(exnssrcdir)/parabolic-well-energies.agr \
+		$(exnssrcdir)/parabolic-well-energies.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
