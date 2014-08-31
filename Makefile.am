@@ -439,7 +439,9 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/parabolic-well-solutions.agr \
 		$(exnssrcdir)/parabolic-well-solutions.eps \
 		$(exnssrcdir)/parabolic-well-energies.agr \
-		$(exnssrcdir)/parabolic-well-energies.eps
+		$(exnssrcdir)/parabolic-well-energies.eps \
+		$(exnssrcdir)/parabolic-well-E-10.sh \
+		$(exnssrcdir)/parabolic-well-E-10.dat
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
