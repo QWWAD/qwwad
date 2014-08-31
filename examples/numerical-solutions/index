@@ -10,6 +10,11 @@ Fig 3.9:  shooting-convergence-LB.sh         => shooting-convergence-LB-wf.dat
 Fig 3.14: parabolic-well-solutions.sh        => parabolic-well-solutions.dat
 Fig 3.15: parabolic-well-energies.sh         => parabolic-well-energies.dat
 Fig 3.16: poeschl-teller-hole-vary-lambda.sh => poeschl-teller-hole-V.dat
+Fig 3.18: double-quantum-well.sh             => double-quantum-well-E-vs-LB.dat
+Fig 3.19: double-quantum-well.sh             => double-quantum-well-wf.dat
+Fig 3.20: multiple-qw-40-40.sh               => multiple-qw-40-40-E-N.dat
+Fig 3.21: multiple-qw-40-40.sh               => multiple-qw-40-40-wf.dat
+Fig 3.22: multiple-qw-100-100.sh             => multiple-qw-100-100-wf.dat
 
 Tbl 3.1:  parabolic-well-E-10.sh                 => parabolic-well-E-10.dat
 Tbl 3.3:  poeschl-teller-hole-vary-lambda.sh     => poeschl-teller-hole-E-lambda.dat
