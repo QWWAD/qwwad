@@ -1,6 +1,35 @@
 #!/bin/sh
 set -e
 
+# Computes error in ground-state energy when nonparabolicity is ignored
+# in an InGaAs/InAlAs well
+#
+# This script is part of the QWWAD software suite. Any use of this code
+# or its derivatives in published work must be accompanied by a citation
+# of:
+#   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
+#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#
+# (c) Copyright 1996-2014
+#     Alex Valavanis <a.valavanis@leeds.ac.uk>
+#
+# QWWAD is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# QWWAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
+
+# Initialise files
+outfile=nonparabolic-dE-vs-width-inalgaas.dat
+rm -f $outfile
+
 # Define alloy components X and Y in In(1-x-y)Al(x)Ga(y)As for both well
 # and barrier
 
@@ -12,10 +41,6 @@ Xw=0.0
 Yb=0.0
 Xb=0.48
 
-# Define output file
-outfile=nonparabolic-dE-vs-width-inalgaas.dat
-rm -f $outfile
-
 # Loop over well width
 for LW in 20 30 40 50 60 80 100 120 140 160 180 200; do
  # First generate structure definition `s.r' file
@@ -24,23 +49,41 @@ for LW in 20 30 40 50 60 80 100 120 140 160 180 200; do
  echo 200 $Xb $Yb 0 >> s.r
  
  # Remember to switch material system
- find_heterostructure	  # generate alloy concentration as a function of z
+ find_heterostructure --dz-max 0.25  # generate alloy concentration as a function of z
  efxv --material inalgaas # generate potential data, and bandgap
  
  # Calculate ground state energy with band non-parabolicity
- efss --solver shooting-nonparabolic
+ efss --solver shooting-nonparabolic --nst-max 1
 
- # Write energy to output file
- E_np=`awk '{printf("\t%f",$2)}' Ee.r`
+ # Get energy from file
+ E_np=`awk '/^1/{printf $2}' Ee.r`
 
  # Calculate ground state energy without band non-parabolicity
- efss --solver shooting-variable-mass
+ efss --solver matrix-variable-mass --nst-max 1
 
- # Write energy to output file
- E_parab=`awk '{printf("\t%f",$2)}' Ee.r`
+ # Get energy from file
+ E_parab=`awk '/^1/{printf $2}' Ee.r`
 
  # Now calculate difference between `with' and `without' band non-parabolicity
- dE=`echo $E_parab - $E_np | awk '{print $1 - $2}'`
+ dE=`echo $E_parab $E_np | awk '{print $2 - $1}'`
 
  echo $LW $dE >> $outfile
 done # LW
+
+cat << EOF
+Results have been written to $outfile in the format:
+
+  COLUMN 1 - Well width [angstrom]
+  COLUMN 2 - Error in ground-state energy [meV]
+
+This script is part of the QWWAD software suite.
+
+(c) Copyright 1996-2014
+    Alex Valavanis <a.valavanis@leeds.ac.uk>
+    Paul Harrison  <p.harrison@leeds.ac.uk>
+
+Report bugs to https://bugs.launchpad.net/qwwad
+EOF
+
+# Clean up workspace
+rm -f *.r

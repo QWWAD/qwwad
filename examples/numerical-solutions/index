@@ -21,8 +21,8 @@ Fig 3.26: field-induced-anti-crossings.sh      => field-induced-anti-crossings-E
 Fig 3.27: symmetry-and-selection-rules.sh      => symmetry-and-selection-rules.dat
 Fig 3.28: uncertainty-principle-finite-well.sh => uncertainty-principle-finite-well.dat
 Fig 3.29: uncertainty-principle-mass-limit.sh  => uncertainty-principle-mass-limit.dat
-Fig 3.30:
-Fig 3.31:
+Fig 3.30: nonparabolic-dE-vs-width.sh          => nonparabolic-dE-vs-width.dat
+Fig 3.31: nonparabolic-dE-vs-width-inalgaas.sh => nonparabolic-dE-vs-width-inalgaas.dat
 Fig 3.32:
 Fig 3.34:
 Fig 3.35:

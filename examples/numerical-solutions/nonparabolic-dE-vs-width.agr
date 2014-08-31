@@ -5,15 +5,56 @@
 @page scroll 5%
 @page inout 5%
 @link page off
+@map font 10 to "Courier-BoldItalic", "Courier-BoldItalic"
+@map font 11 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 12 to "Courier-Italic", "Courier-Italic"
+@map font 13 to "Courier-Oblique", "Courier-Oblique"
+@map font 14 to "Courier-Regular", "Courier-Regular"
+@map font 15 to "Dingbats-Regular", "Dingbats-Regular"
 @map font 4 to "Helvetica", "Helvetica"
 @map font 5 to "Helvetica-Bold", "Helvetica-Bold"
 @map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
 @map font 6 to "Helvetica-Oblique", "Helvetica-Oblique"
+@map font 20 to "NimbusMonoL-Bold", "NimbusMonoL-Bold"
+@map font 21 to "NimbusMonoL-BoldOblique", "NimbusMonoL-BoldOblique"
+@map font 22 to "NimbusMonoL-Regular", "NimbusMonoL-Regular"
+@map font 23 to "NimbusMonoL-RegularOblique", "NimbusMonoL-RegularOblique"
+@map font 24 to "NimbusRomanNo9L-Medium", "NimbusRomanNo9L-Medium"
+@map font 25 to "NimbusRomanNo9L-MediumItalic", "NimbusRomanNo9L-MediumItalic"
+@map font 26 to "NimbusRomanNo9L-Regular", "NimbusRomanNo9L-Regular"
+@map font 27 to "NimbusRomanNo9L-RegularItalic", "NimbusRomanNo9L-RegularItalic"
+@map font 28 to "NimbusSansL-Bold", "NimbusSansL-Bold"
+@map font 29 to "NimbusSansL-BoldCondensed", "NimbusSansL-BoldCondensed"
+@map font 30 to "NimbusSansL-BoldCondensedItalic", "NimbusSansL-BoldCondensedItalic"
+@map font 31 to "NimbusSansL-BoldItalic", "NimbusSansL-BoldItalic"
+@map font 32 to "NimbusSansL-Regular", "NimbusSansL-Regular"
+@map font 33 to "NimbusSansL-RegularCondensed", "NimbusSansL-RegularCondensed"
+@map font 34 to "NimbusSansL-RegularCondensedItalic", "NimbusSansL-RegularCondensedItalic"
+@map font 35 to "NimbusSansL-RegularItalic", "NimbusSansL-RegularItalic"
+@map font 36 to "StandardSymbolsL-Regular", "StandardSymbolsL-Regular"
 @map font 8 to "Symbol", "Symbol"
+@map font 38 to "Symbol-Regular", "Symbol-Regular"
 @map font 1 to "Times-Bold", "Times-Bold"
 @map font 3 to "Times-BoldItalic", "Times-BoldItalic"
 @map font 2 to "Times-Italic", "Times-Italic"
 @map font 0 to "Times-Roman", "Times-Roman"
+@map font 43 to "URWBookmanL-DemiBold", "URWBookmanL-DemiBold"
+@map font 44 to "URWBookmanL-DemiBoldItalic", "URWBookmanL-DemiBoldItalic"
+@map font 45 to "URWBookmanL-Light", "URWBookmanL-Light"
+@map font 46 to "URWBookmanL-LightItalic", "URWBookmanL-LightItalic"
+@map font 47 to "URWChanceryL-MediumItalic", "URWChanceryL-MediumItalic"
+@map font 48 to "URWGothicL-Book", "URWGothicL-Book"
+@map font 49 to "URWGothicL-BookOblique", "URWGothicL-BookOblique"
+@map font 50 to "URWGothicL-Demi", "URWGothicL-Demi"
+@map font 51 to "URWGothicL-DemiOblique", "URWGothicL-DemiOblique"
+@map font 52 to "URWPalladioL-Bold", "URWPalladioL-Bold"
+@map font 53 to "URWPalladioL-BoldItalic", "URWPalladioL-BoldItalic"
+@map font 54 to "URWPalladioL-Italic", "URWPalladioL-Italic"
+@map font 55 to "URWPalladioL-Roman", "URWPalladioL-Roman"
+@map font 56 to "Utopia-Bold", "Utopia-Bold"
+@map font 57 to "Utopia-BoldItalic", "Utopia-BoldItalic"
+@map font 58 to "Utopia-Italic", "Utopia-Italic"
+@map font 59 to "Utopia-Regular", "Utopia-Regular"
 @map font 9 to "ZapfDingbats", "ZapfDingbats"
 @map color 0 to (255, 255, 255), "white"
 @map color 1 to (0, 0, 0), "black"
@@ -50,7 +91,7 @@
 @timestamp rot 0
 @timestamp font 4
 @timestamp char size 1.000000
-@timestamp def "Sat May 10 20:42:54 2014"
+@timestamp def "Sun Aug 31 17:32:11 2014"
 @with string
 @    string on
 @    string loctype view
@@ -74,7 +115,7 @@
 @with string
 @    string on
 @    string loctype view
-@    string 0.313725490196, 0.609452736318
+@    string 0.308823529412, 0.616805677494
 @    string color 1
 @    string rot 0
 @    string font 0
@@ -137,7 +178,7 @@
 @g0 fixedpoint format general general
 @g0 fixedpoint prec 6, 6
 @with g0
-@    world 0, 0, 200, 8
+@    world 0, 0, 200, 12
 @    stack world 0, 0, 0, 0
 @    znorm 1
 @    view 0.284706, 0.220000, 1.100000, 0.850000
@@ -280,251 +321,279 @@
 @    frame pattern 1
 @    frame background color 0
 @    frame background pattern 0
-@    s0 hidden false
-@    s0 type xy
-@    s0 symbol 0
-@    s0 symbol size 1.000000
-@    s0 symbol color 1
-@    s0 symbol pattern 1
-@    s0 symbol fill color 1
-@    s0 symbol fill pattern 0
-@    s0 symbol linewidth 1.0
-@    s0 symbol linestyle 1
-@    s0 symbol char 0
-@    s0 symbol char font 4
-@    s0 symbol skip 0
-@    s0 line type 1
-@    s0 line linestyle 1
-@    s0 line linewidth 1.0
-@    s0 line color 1
-@    s0 line pattern 1
-@    s0 baseline type 0
-@    s0 baseline off
-@    s0 dropline off
-@    s0 fill type 0
-@    s0 fill rule 0
-@    s0 fill color 1
-@    s0 fill pattern 1
-@    s0 avalue off
-@    s0 avalue type 2
-@    s0 avalue char size 1.000000
-@    s0 avalue font 4
-@    s0 avalue color 1
-@    s0 avalue rot 0
-@    s0 avalue format general
-@    s0 avalue prec 3
-@    s0 avalue prepend ""
-@    s0 avalue append ""
-@    s0 avalue offset 0.000000 , 0.000000
-@    s0 errorbar on
-@    s0 errorbar place both
-@    s0 errorbar color 1
-@    s0 errorbar pattern 1
-@    s0 errorbar size 2.000000
-@    s0 errorbar linewidth 1.0
-@    s0 errorbar linestyle 1
-@    s0 errorbar riser linewidth 1.0
-@    s0 errorbar riser linestyle 1
-@    s0 errorbar riser clip off
-@    s0 errorbar riser clip length 0.100000
-@    s0 comment "/usr/people/eenph/wrk/bkex/chns/sec16/gaalas/DE-X=0.4.r"
-@    s0 legend  ""
-@    s1 hidden false
-@    s1 type xy
-@    s1 symbol 0
-@    s1 symbol size 1.000000
-@    s1 symbol color 2
-@    s1 symbol pattern 1
-@    s1 symbol fill color 2
-@    s1 symbol fill pattern 0
-@    s1 symbol linewidth 1.0
-@    s1 symbol linestyle 1
-@    s1 symbol char 0
-@    s1 symbol char font 4
-@    s1 symbol skip 0
-@    s1 line type 1
-@    s1 line linestyle 1
-@    s1 line linewidth 1.0
-@    s1 line color 1
-@    s1 line pattern 1
-@    s1 baseline type 0
-@    s1 baseline off
-@    s1 dropline off
-@    s1 fill type 0
-@    s1 fill rule 0
-@    s1 fill color 1
-@    s1 fill pattern 1
-@    s1 avalue off
-@    s1 avalue type 2
-@    s1 avalue char size 1.000000
-@    s1 avalue font 4
-@    s1 avalue color 1
-@    s1 avalue rot 0
-@    s1 avalue format general
-@    s1 avalue prec 3
-@    s1 avalue prepend ""
-@    s1 avalue append ""
-@    s1 avalue offset 0.000000 , 0.000000
-@    s1 errorbar on
-@    s1 errorbar place both
-@    s1 errorbar color 2
-@    s1 errorbar pattern 1
-@    s1 errorbar size 2.000000
-@    s1 errorbar linewidth 1.0
-@    s1 errorbar linestyle 1
-@    s1 errorbar riser linewidth 1.0
-@    s1 errorbar riser linestyle 1
-@    s1 errorbar riser clip off
-@    s1 errorbar riser clip length 0.100000
-@    s1 comment "/usr/people/eenph/wrk/bkex/chns/sec16/gaalas/DE-X=0.6.r"
-@    s1 legend  ""
-@    s2 hidden false
-@    s2 type xy
-@    s2 symbol 0
-@    s2 symbol size 1.000000
-@    s2 symbol color 3
-@    s2 symbol pattern 1
-@    s2 symbol fill color 3
-@    s2 symbol fill pattern 0
-@    s2 symbol linewidth 1.0
-@    s2 symbol linestyle 1
-@    s2 symbol char 0
-@    s2 symbol char font 4
-@    s2 symbol skip 0
-@    s2 line type 1
-@    s2 line linestyle 1
-@    s2 line linewidth 1.0
-@    s2 line color 1
-@    s2 line pattern 1
-@    s2 baseline type 0
-@    s2 baseline off
-@    s2 dropline off
-@    s2 fill type 0
-@    s2 fill rule 0
-@    s2 fill color 1
-@    s2 fill pattern 1
-@    s2 avalue off
-@    s2 avalue type 2
-@    s2 avalue char size 1.000000
-@    s2 avalue font 4
-@    s2 avalue color 1
-@    s2 avalue rot 0
-@    s2 avalue format general
-@    s2 avalue prec 3
-@    s2 avalue prepend ""
-@    s2 avalue append ""
-@    s2 avalue offset 0.000000 , 0.000000
-@    s2 errorbar on
-@    s2 errorbar place both
-@    s2 errorbar color 3
-@    s2 errorbar pattern 1
-@    s2 errorbar size 2.000000
-@    s2 errorbar linewidth 1.0
-@    s2 errorbar linestyle 1
-@    s2 errorbar riser linewidth 1.0
-@    s2 errorbar riser linestyle 1
-@    s2 errorbar riser clip off
-@    s2 errorbar riser clip length 0.100000
-@    s2 comment "/usr/people/eenph/wrk/bkex/chns/sec16/gaalas/DE-X=0.8.r"
-@    s2 legend  ""
-@    s3 hidden false
-@    s3 type xy
-@    s3 symbol 0
-@    s3 symbol size 1.000000
-@    s3 symbol color 4
-@    s3 symbol pattern 1
-@    s3 symbol fill color 4
-@    s3 symbol fill pattern 0
-@    s3 symbol linewidth 1.0
-@    s3 symbol linestyle 1
-@    s3 symbol char 0
-@    s3 symbol char font 4
-@    s3 symbol skip 0
-@    s3 line type 1
-@    s3 line linestyle 1
-@    s3 line linewidth 1.0
-@    s3 line color 1
-@    s3 line pattern 1
-@    s3 baseline type 0
-@    s3 baseline off
-@    s3 dropline off
-@    s3 fill type 0
-@    s3 fill rule 0
-@    s3 fill color 1
-@    s3 fill pattern 1
-@    s3 avalue off
-@    s3 avalue type 2
-@    s3 avalue char size 1.000000
-@    s3 avalue font 4
-@    s3 avalue color 1
-@    s3 avalue rot 0
-@    s3 avalue format general
-@    s3 avalue prec 3
-@    s3 avalue prepend ""
-@    s3 avalue append ""
-@    s3 avalue offset 0.000000 , 0.000000
-@    s3 errorbar on
-@    s3 errorbar place both
-@    s3 errorbar color 4
-@    s3 errorbar pattern 1
-@    s3 errorbar size 2.000000
-@    s3 errorbar linewidth 1.0
-@    s3 errorbar linestyle 1
-@    s3 errorbar riser linewidth 1.0
-@    s3 errorbar riser linestyle 1
-@    s3 errorbar riser clip off
-@    s3 errorbar riser clip length 0.100000
-@    s3 comment "/usr/people/eenph/wrk/bkex/chns/sec16/gaalas/DE-X=1.0.r"
-@    s3 legend  ""
-@target G0.S0
+@    s4 hidden false
+@    s4 type xy
+@    s4 symbol 0
+@    s4 symbol size 1.000000
+@    s4 symbol color 1
+@    s4 symbol pattern 1
+@    s4 symbol fill color 1
+@    s4 symbol fill pattern 0
+@    s4 symbol linewidth 1.0
+@    s4 symbol linestyle 1
+@    s4 symbol char 65
+@    s4 symbol char font 4
+@    s4 symbol skip 0
+@    s4 line type 1
+@    s4 line linestyle 1
+@    s4 line linewidth 2.0
+@    s4 line color 1
+@    s4 line pattern 1
+@    s4 baseline type 0
+@    s4 baseline off
+@    s4 dropline off
+@    s4 fill type 0
+@    s4 fill rule 0
+@    s4 fill color 1
+@    s4 fill pattern 1
+@    s4 avalue off
+@    s4 avalue type 2
+@    s4 avalue char size 1.000000
+@    s4 avalue font 4
+@    s4 avalue color 1
+@    s4 avalue rot 0
+@    s4 avalue format general
+@    s4 avalue prec 3
+@    s4 avalue prepend ""
+@    s4 avalue append ""
+@    s4 avalue offset 0.000000 , 0.000000
+@    s4 errorbar on
+@    s4 errorbar place both
+@    s4 errorbar color 1
+@    s4 errorbar pattern 1
+@    s4 errorbar size 1.000000
+@    s4 errorbar linewidth 1.0
+@    s4 errorbar linestyle 1
+@    s4 errorbar riser linewidth 1.0
+@    s4 errorbar riser linestyle 1
+@    s4 errorbar riser clip off
+@    s4 errorbar riser clip length 0.100000
+@    s4 comment "/home/alex/Simulations/qwwad-examples/nonparabolic-dE-vs-width.dat"
+@    s4 legend  ""
+@    s5 hidden false
+@    s5 type xy
+@    s5 symbol 0
+@    s5 symbol size 1.000000
+@    s5 symbol color 1
+@    s5 symbol pattern 1
+@    s5 symbol fill color 1
+@    s5 symbol fill pattern 0
+@    s5 symbol linewidth 1.0
+@    s5 symbol linestyle 1
+@    s5 symbol char 65
+@    s5 symbol char font 4
+@    s5 symbol skip 0
+@    s5 line type 1
+@    s5 line linestyle 1
+@    s5 line linewidth 2.0
+@    s5 line color 1
+@    s5 line pattern 1
+@    s5 baseline type 0
+@    s5 baseline off
+@    s5 dropline off
+@    s5 fill type 0
+@    s5 fill rule 0
+@    s5 fill color 1
+@    s5 fill pattern 1
+@    s5 avalue off
+@    s5 avalue type 2
+@    s5 avalue char size 1.000000
+@    s5 avalue font 4
+@    s5 avalue color 1
+@    s5 avalue rot 0
+@    s5 avalue format general
+@    s5 avalue prec 3
+@    s5 avalue prepend ""
+@    s5 avalue append ""
+@    s5 avalue offset 0.000000 , 0.000000
+@    s5 errorbar on
+@    s5 errorbar place both
+@    s5 errorbar color 1
+@    s5 errorbar pattern 1
+@    s5 errorbar size 1.000000
+@    s5 errorbar linewidth 1.0
+@    s5 errorbar linestyle 1
+@    s5 errorbar riser linewidth 1.0
+@    s5 errorbar riser linestyle 1
+@    s5 errorbar riser clip off
+@    s5 errorbar riser clip length 0.100000
+@    s5 comment "/home/alex/Simulations/qwwad-examples/nonparabolic-dE-vs-width.dat"
+@    s5 legend  ""
+@    s6 hidden false
+@    s6 type xy
+@    s6 symbol 0
+@    s6 symbol size 1.000000
+@    s6 symbol color 1
+@    s6 symbol pattern 1
+@    s6 symbol fill color 1
+@    s6 symbol fill pattern 0
+@    s6 symbol linewidth 1.0
+@    s6 symbol linestyle 1
+@    s6 symbol char 65
+@    s6 symbol char font 4
+@    s6 symbol skip 0
+@    s6 line type 1
+@    s6 line linestyle 1
+@    s6 line linewidth 2.0
+@    s6 line color 1
+@    s6 line pattern 1
+@    s6 baseline type 0
+@    s6 baseline off
+@    s6 dropline off
+@    s6 fill type 0
+@    s6 fill rule 0
+@    s6 fill color 1
+@    s6 fill pattern 1
+@    s6 avalue off
+@    s6 avalue type 2
+@    s6 avalue char size 1.000000
+@    s6 avalue font 4
+@    s6 avalue color 1
+@    s6 avalue rot 0
+@    s6 avalue format general
+@    s6 avalue prec 3
+@    s6 avalue prepend ""
+@    s6 avalue append ""
+@    s6 avalue offset 0.000000 , 0.000000
+@    s6 errorbar on
+@    s6 errorbar place both
+@    s6 errorbar color 1
+@    s6 errorbar pattern 1
+@    s6 errorbar size 1.000000
+@    s6 errorbar linewidth 1.0
+@    s6 errorbar linestyle 1
+@    s6 errorbar riser linewidth 1.0
+@    s6 errorbar riser linestyle 1
+@    s6 errorbar riser clip off
+@    s6 errorbar riser clip length 0.100000
+@    s6 comment "/home/alex/Simulations/qwwad-examples/nonparabolic-dE-vs-width.dat"
+@    s6 legend  ""
+@    s7 hidden false
+@    s7 type xy
+@    s7 symbol 0
+@    s7 symbol size 1.000000
+@    s7 symbol color 1
+@    s7 symbol pattern 1
+@    s7 symbol fill color 1
+@    s7 symbol fill pattern 0
+@    s7 symbol linewidth 1.0
+@    s7 symbol linestyle 1
+@    s7 symbol char 65
+@    s7 symbol char font 4
+@    s7 symbol skip 0
+@    s7 line type 1
+@    s7 line linestyle 1
+@    s7 line linewidth 2.0
+@    s7 line color 1
+@    s7 line pattern 1
+@    s7 baseline type 0
+@    s7 baseline off
+@    s7 dropline off
+@    s7 fill type 0
+@    s7 fill rule 0
+@    s7 fill color 1
+@    s7 fill pattern 1
+@    s7 avalue off
+@    s7 avalue type 2
+@    s7 avalue char size 1.000000
+@    s7 avalue font 4
+@    s7 avalue color 1
+@    s7 avalue rot 0
+@    s7 avalue format general
+@    s7 avalue prec 3
+@    s7 avalue prepend ""
+@    s7 avalue append ""
+@    s7 avalue offset 0.000000 , 0.000000
+@    s7 errorbar on
+@    s7 errorbar place both
+@    s7 errorbar color 1
+@    s7 errorbar pattern 1
+@    s7 errorbar size 1.000000
+@    s7 errorbar linewidth 1.0
+@    s7 errorbar linestyle 1
+@    s7 errorbar riser linewidth 1.0
+@    s7 errorbar riser linestyle 1
+@    s7 errorbar riser clip off
+@    s7 errorbar riser clip length 0.100000
+@    s7 comment "/home/alex/Simulations/qwwad-examples/nonparabolic-dE-vs-width.dat"
+@    s7 legend  ""
+@target G0.S4
 @type xy
-20 1.22394
-40 1.54996
-60 1.17213
-80 0.82837
-100 0.588979
-120 0.428034
-140 0.318666
-160 0.242693
-180 0.188645
-200 0.149305
+20 1.67023
+22 1.82934
+24 1.95157
+26 2.04098
+28 2.1015
+30 2.13725
+35 2.1438
+40 2.07183
+50 1.8237
+60 1.54763
+80 1.08412
+100 0.765696
+120 0.553577
+140 0.410426
+160 0.310494
+180 0.242208
+200 0.190843
 &
-@target G0.S1
+@target G0.S5
 @type xy
-20 2.87281
-40 2.65094
-60 1.77729
-80 1.1788
-100 0.805658
-120 0.569827
-140 0.415886
-160 0.311958
-180 0.239585
-200 0.187779
+20 4.23054
+22 4.39285
+24 4.47499
+26 4.49452
+28 4.4656
+30 4.40003
+35 4.13403
+40 3.79693
+50 3.10343
+60 2.50146
+80 1.63829
+100 1.10914
+120 0.778742
+140 0.565069
+160 0.420399
+180 0.323779
+200 0.252382
 &
-@target G0.S2
+@target G0.S6
 @type xy
-20 4.64763
-40 3.55898
-60 2.23111
-80 1.42911
-100 0.955908
-120 0.666202
-140 0.481023
-160 0.357863
-180 0.273061
-200 0.212894
+20 7.39796
+22 7.43131
+24 7.35957
+26 7.21328
+28 7.01552
+30 6.78375
+35 6.13305
+40 5.46818
+50 4.28157
+60 3.35002
+80 2.11057
+100 1.3944
+120 0.962619
+140 0.689863
+160 0.508311
+180 0.388606
+200 0.301035
 &
-@target G0.S3
+@target G0.S7
 @type xy
-20 6.26182
-40 4.24757
-60 2.55326
-80 1.60073
-100 1.05671
-120 0.729892
-140 0.523589
-160 0.387605
-180 0.294602
-200 0.228962
+20 10.8025
+22 10.6096
+24 10.3092
+26 9.94008
+28 9.53077
+30 9.10129
+35 8.02094
+40 7.01238
+50 5.33722
+60 4.09488
+80 2.5146
+100 1.63472
+120 1.11598
+140 0.793211
+160 0.580738
+180 0.441812
+200 0.340845
 &
