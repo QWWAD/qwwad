@@ -63,4 +63,4 @@ EOF
 
 # Clean up workspace
 # <Delete all temporary files you created>
-rm -f files.r
+rm -f *.r

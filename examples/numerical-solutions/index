@@ -11,5 +11,9 @@ Fig 3.14: parabolic-well-solutions.sh        => parabolic-well-solutions.dat
 Fig 3.15: parabolic-well-energies.sh         => parabolic-well-energies.dat
 Fig 3.16: poeschl-teller-hole-vary-lambda.sh => poeschl-teller-hole-V.dat
 
-Tbl 3.1:  parabolic-well-E-10.sh             => parabolic-well-E-10.dat
-Tbl 3.3:  poeschl-teller-hole-vary-lambda.sh => poeschl-teller-hole-E-lambda.dat
+Tbl 3.1:  parabolic-well-E-10.sh                 => parabolic-well-E-10.dat
+Tbl 3.3:  poeschl-teller-hole-vary-lambda.sh     => poeschl-teller-hole-E-lambda.dat
+Tbl 3.4:  poeschl-teller-hole-convergence.sh     => poeschl-teller-hole-convergence.dat
+Tbl 3.5:  variable-mass-0.2-alloy.sh             => variable-mass-0.2-alloy.dat
+Tbl 3.6:  variable-mass-0.75-alloy-well-width.sh => variable-mass-0.75-alloy-well-width.dat
+Tbl 3.7:  variable-mass-0.75-alloy-dz.sh         => variable-mass-0.75-alloy-dz.dat

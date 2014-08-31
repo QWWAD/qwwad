@@ -1,10 +1,33 @@
 #!/bin/sh
 set -e
 
-# Define output file
-outfile=variable-mass-0.75-alloy-dz.dat
+# Computes the states in a square well with spatially-variable effective mass
+# as a function of spatial resolution
+#
+# This script is part of the QWWAD software suite. Any use of this code
+# or its derivatives in published work must be accompanied by a citation
+# of:
+#   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
+#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#
+# (c) Copyright 1996-2014
+#     Alex Valavanis <a.valavanis@leeds.ac.uk>
+#
+# QWWAD is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# QWWAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
+outfile=variable-mass-0.75-alloy-dz.dat
 rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
@@ -53,3 +76,22 @@ for N in 2 4 6 8 10 12; do
 
     printf "%e\t%s\t%s\n" $N $E1_analytical $E1_numerical >> $outfile
 done
+
+cat << EOF
+Results have been written to $outfile in the format:
+
+  COLUMN 1 - Well width [angstrom]
+  COLUMN 2 - Analytical solution for |1> [meV]
+  COLUMN 3 - Numerical solution for |1> [meV]
+
+This script is part of the QWWAD software suite.
+
+(c) Copyright 1996-2014
+    Alex Valavanis <a.valavanis@leeds.ac.uk>
+    Paul Harrison  <p.harrison@leeds.ac.uk>
+
+Report bugs to https://bugs.launchpad.net/qwwad
+EOF
+
+# Clean up workspace
+rm -f *.r
