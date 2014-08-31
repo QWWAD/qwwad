@@ -1,20 +1,38 @@
 The following list shows which scripts and output files are used to generate
-each figure from the 4th edition of "Quantum Wells, Wires and Dots".
+each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
 
-Fig 3.1:  bisect-example.sh                  => bisect-example.dat
-Fig 3.3:  shooting-method-wavefunctions.sh   => shooting-method-wavefunction-odd.dat
-Fig 3.4:  shooting-method-wavefunctions.sh   => shooting-method-wavefunction-even.dat
-Fig 3.6:  shooting-convergence.sh            => shooting-convergence.dat
-Fig 3.8:  shooting-convergence-LB.sh         => shooting-convergence-LB-E.dat
-Fig 3.9:  shooting-convergence-LB.sh         => shooting-convergence-LB-wf.dat
-Fig 3.14: parabolic-well-solutions.sh        => parabolic-well-solutions.dat
-Fig 3.15: parabolic-well-energies.sh         => parabolic-well-energies.dat
-Fig 3.16: poeschl-teller-hole-vary-lambda.sh => poeschl-teller-hole-V.dat
-Fig 3.18: double-quantum-well.sh             => double-quantum-well-E-vs-LB.dat
-Fig 3.19: double-quantum-well.sh             => double-quantum-well-wf.dat
-Fig 3.20: multiple-qw-40-40.sh               => multiple-qw-40-40-E-N.dat
-Fig 3.21: multiple-qw-40-40.sh               => multiple-qw-40-40-wf.dat
-Fig 3.22: multiple-qw-100-100.sh             => multiple-qw-100-100-wf.dat
+Fig 3.1:  bisect-example.sh                    => bisect-example.dat
+Fig 3.3:  shooting-method-wavefunctions.sh     => shooting-method-wavefunction-odd.dat
+Fig 3.4:  shooting-method-wavefunctions.sh     => shooting-method-wavefunction-even.dat
+Fig 3.6:  shooting-convergence.sh              => shooting-convergence.dat
+Fig 3.8:  shooting-convergence-LB.sh           => shooting-convergence-LB-E.dat
+Fig 3.9:  shooting-convergence-LB.sh           => shooting-convergence-LB-wf.dat
+Fig 3.14: parabolic-well-solutions.sh          => parabolic-well-solutions.dat
+Fig 3.15: parabolic-well-energies.sh           => parabolic-well-energies.dat
+Fig 3.16: poeschl-teller-hole-vary-lambda.sh   => poeschl-teller-hole-V.dat
+Fig 3.18: double-quantum-well.sh               => double-quantum-well-E-vs-LB.dat
+Fig 3.19: double-quantum-well.sh               => double-quantum-well-wf.dat
+Fig 3.20: multiple-qw-40-40.sh                 => multiple-qw-40-40-E-N.dat
+Fig 3.21: multiple-qw-40-40.sh                 => multiple-qw-40-40-wf.dat
+Fig 3.22: multiple-qw-100-100.sh               => multiple-qw-100-100-wf.dat
+Fig 3.24: field-effect-variable-epsilon.sh     => field-effect-variable-epsilon.dat
+Fig 3.25: quantum-confined-stark-effect.sh     => quantum-confined-stark-effect-E-F.dat
+Fig 3.26: field-induced-anti-crossings.sh      => field-induced-anti-crossings-E-F.dat
+Fig 3.27: symmetry-and-selection-rules.sh      => symmetry-and-selection-rules.dat
+Fig 3.28: uncertainty-principle-finite-well.sh => uncertainty-principle-finite-well.dat
+Fig 3.29: uncertainty-principle-mass-limit.sh  => uncertainty-principle-mass-limit.dat
+Fig 3.30:
+Fig 3.31:
+Fig 3.32:
+Fig 3.34:
+Fig 3.35:
+Fig 3.36:
+Fig 3.38:
+Fig 3.39:
+Fig 3.40:
+Fig 3.41:
+Fig 3.42:
+Fig 3.43:
 
 Tbl 3.1:  parabolic-well-E-10.sh                 => parabolic-well-E-10.dat
 Tbl 3.3:  poeschl-teller-hole-vary-lambda.sh     => poeschl-teller-hole-E-lambda.dat
