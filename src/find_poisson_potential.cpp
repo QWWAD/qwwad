@@ -56,6 +56,7 @@ PoissonOptions::PoissonOptions(int argc, char* argv[]) :
     add_switch       ("centred",                 "True if the potential should be pivoted around the centre of the structure");
     add_string_option("Vbasefile",               "File containing baseline potential to be added to Poisson potential");
     add_string_option("potential-file", "v_p.r", "Filename to which the Poisson potential is written.");
+    add_string_option("Vtotalfile",     "v.r",   "Filename to which the total potential is written.");
 
     program_specific_options->add_options()
         ("field,E", po::value<double>(),
@@ -168,7 +169,17 @@ int main(int argc, char* argv[])
     // Invert potential as we output in electron potential instead of absolute potential.
     phi *= -1;
 
-    // Add on the baseline potential if desired
+    // Get field profile [V/m]
+    std::valarray<double> F(z.size());
+    for(unsigned int iz = 1; iz < nz-1; ++iz)
+        F[iz] = (phi[iz+1] - phi[iz-1])/(dz*e);
+
+    write_table_xy("field.r", z, F);
+    write_table_xy(opt.get_string_option("potential-file").c_str(), z, phi);
+
+    // Calculate total potential and add on the baseline
+    // potential if desired
+    std::valarray<double> Vtotal = phi;
     std::valarray<double> Vbase(phi.size());
 
     if (opt.vm.count("Vbasefile"))
@@ -184,18 +195,11 @@ int main(int argc, char* argv[])
             throw std::runtime_error(oss.str());
         }
 
-        phi += Vbase;
+        Vtotal = phi + Vbase;
     }
 
-    write_table_xy(opt.get_string_option("potential-file").c_str(), z, phi);
-
-    // Get field profile
-    std::valarray<double> F(z.size());
-    for(unsigned int iz = 1; iz < nz-1; ++iz)
-        F[iz] = (phi[iz+1] - phi[iz-1])/dz;
-
-    write_table_xy("field.r", z, F);
-
+    write_table_xy(opt.get_string_option("Vtotalfile").c_str(), z, Vtotal);
+    
     return EXIT_SUCCESS;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

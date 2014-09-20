@@ -23,8 +23,7 @@ Fig 3.28: uncertainty-principle-finite-well.sh => uncertainty-principle-finite-w
 Fig 3.29: uncertainty-principle-mass-limit.sh  => uncertainty-principle-mass-limit.dat
 Fig 3.30: nonparabolic-dE-vs-width.sh          => nonparabolic-dE-vs-width.dat
 Fig 3.31: nonparabolic-dE-vs-width-inalgaas.sh => nonparabolic-dE-vs-width-inalgaas.dat
-Fig 3.32:
-Fig 3.34:
+Fig 3.34: poisson-schroedinger.sh              => poisson-schroedinger-sigma.dat
 Fig 3.35:
 Fig 3.36:
 Fig 3.38:

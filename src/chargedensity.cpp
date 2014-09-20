@@ -26,39 +26,18 @@ class ChargeDensityOptions : public WfOptions
 {
     public:
         ChargeDensityOptions(int argc, char* argv[]);
-        void print() const {};
-
-        size_t get_nper() const {
-            return vm["nper"].as<size_t>();}
-
-        std::string get_population_filename() const {
-            return vm["population-file"].as<std::string>();}
-
-        std::string get_doping_filename() const {
-            return vm["doping-file"].as<std::string>();}
-
-        std::string get_alloy_1per_filename() const {
-            return vm["alloy-1per-file"].as<std::string>();}
-        
-        std::string get_degeneracy_filename() const {
-            return vm["degeneracy-file"].as<std::string>();}
-
-        std::string get_charge_filename() const {
-            return vm["charge-file"].as<std::string>();}
-
-        std::string get_edensity_filename() const {
-            return vm["edensity-file"].as<std::string>();}
 };
 
 /** Holds standard-input data */
 class ChargeDensityData
 {
+    private:
+        size_t _nper;   ///< Number of periods crossed by wavefunction
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
         std::vector<Leeds::State> states;  ///< Wf and energy data
         std::valarray<double> z;   ///< Spatial profile
         std::valarray<double> z_1per;   ///< Spatial profile
-        std::valarray<double> x;   ///< alloy profile
         std::valarray<double> pop; ///< Subband population [m^{-2}]
         std::valarray<double> n3D; ///< Spatial profile of doping in structure [Cm^{-3}]
         std::valarray<unsigned int> nval; ///< Degeneracy of subbands
@@ -69,36 +48,12 @@ class ChargeDensityData
 
 ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
 {
-    add_switch("degenerate", "Some states are degenerate and the degeneracy should be read from file");
-
-    program_specific_options->add_options()
-        ("nper,p", po::value<size_t>()->default_value(1),
-         "Number of periods the wavefunctions cross")
-
-        ("doping-file", 
-         po::value<std::string>()->default_value("d.r"),
-         "Filename from which to read volume doping profile [m^{-3}]")
-
-        ("alloy-1per-file", 
-         po::value<std::string>()->default_value("x.r"),
-         "Filename from which to read alloy profile")
-        
-        ("population-file",
-         po::value<std::string>()->default_value("N.r"),
-         "Filename from which to read subband populations [m^{-2}]")
-
-        ("degeneracy-file",
-         po::value<std::string>()->default_value("degeneracy.dat"),
-         "Filename from which to read subband degeneracies")
-
-        ("charge-file",
-         po::value<std::string>()->default_value("sigma.r"),
-         "Filename to which charge density profile will be written")
-
-        ("edensity-file",
-         po::value<std::string>()->default_value("edensity.dat"),
-         "Filename to which electron density profile will be written")
-        ;
+    add_size_option  ("nper,p",                  1, "Number of periods crossed by the wavefunction");
+    add_string_option("doping-file",         "d.r", "File from which to read volume doping profile [m^{-3}]");
+    add_string_option("population-file",     "N.r", "File from which to read subband populations [m^{-2}]");
+    add_string_option("degeneracy-file",            "File from which to read subband degeneracies");
+    add_string_option("charge-file",     "sigma.r", "File to which charge density profile will be written");
+    add_string_option("edensity-file",   "edens.r", "File to which electron density profile will be written");
 
     std::string doc = 
         "Find charge density in a 2D heterostructure.  "
@@ -113,70 +68,53 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
 
     if(vm["nper"].as<size_t>() < 1)
         throw std::domain_error("Number of periods must be one or more.");
-
-    if(get_verbose()) print();
-}
-
-/** Checks that number of valleys is valid */
-static void check_nval(unsigned int* pnval)
-{
-    if(*pnval != 1 and
-       *pnval != 2 and
-       *pnval != 3 and
-       *pnval != 4 and
-       *pnval != 6)
-    {
-        std::ostringstream oss;
-        oss << "Invalid number of equivalent valleys (" << *pnval << ") detected."
-            " It must be one of {1,2,3,4,6}";
-        throw std::domain_error(oss.str());
-    }
 }
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
+    _nper(opt.get_size_option("nper")),
     states(State::read_from_file(opt.get_energy_input_path(),
                                  opt.get_wf_input_prefix(),
                                  opt.get_wf_input_ext())),
     z(states[0].psi_array().size()),
-    z_1per(states[0].psi_array().size()/opt.get_nper()),
-    x(states[0].psi_array().size()/opt.get_nper()),
+    z_1per(states[0].psi_array().size()/_nper),
     pop(states.size()),
     n3D(states[0].psi_array().size()),
     nval(1, states.size()),
-    nz_1per(z.size()/opt.get_nper())
+    nz_1per(z.size()/_nper)
 {
     std::valarray<double> V(states[0].psi_array().size());
     read_table_xy(opt.get_potential_input_path().c_str(), z, V);
 
     std::valarray<double> z_n3D;
 
-    // Read data for each subband
-    read_table_x(opt.get_population_filename().c_str(), pop);
-
-    if(opt.get_switch("degenerate"))
-        read_table_x(opt.get_degeneracy_filename().c_str(), nval);
-
-    read_table_xy(opt.get_doping_filename().c_str(), z_n3D, n3D);
-    read_table_xy(opt.get_alloy_1per_filename().c_str(), z_1per, x);
-
-    // Check that all input files have same size
+    // Read population of each subband
+    const char *population_file = opt.get_string_option("population-file").c_str();
+    read_table_x(population_file, pop);
     const size_t nst = pop.size();
-
-    if(nval.size() != nst)
-    {
-        std::ostringstream oss;
-        oss << "Different lengths of data were read from " << opt.get_population_filename()
-            << " (" << nst << " lines) and " << opt.get_degeneracy_filename()
-            << " (" << nval.size() << " lines).";
-        throw std::length_error(oss.str());
-    }
-
-    // Loop through subbands and check that data is sensible
+    
+    // Check that populations are all positive
     for(unsigned int ist=0; ist < nst; ist++)
-    {
         check_positive(&pop[ist]);
-        check_nval(&nval[ist]);
+
+    // Read subband degeneracy from file if specified
+    if(opt.vm.count("degeneracy-file"))
+    {
+        const char *degeneracy_file = opt.get_string_option("degeneracy-file").c_str();
+        read_table_x(degeneracy_file, nval);
+
+        // Check that all input files have same size
+        if(nval.size() != nst)
+        {
+            std::ostringstream oss;
+            oss << "Different lengths of data were read from " << population_file
+                << " (" << nst << " lines) and " << degeneracy_file
+                << " (" << nval.size() << " lines).";
+            throw std::length_error(oss.str());
+        }
     }
+
+    // Read doping profile and alloy composition
+    read_table_xy(opt.get_string_option("doping-file").c_str(), z_n3D, n3D);
 
     // Check that doping profile looks sensible
     for(unsigned int iz=0; iz<nz_1per; iz++)
@@ -195,7 +133,7 @@ int main(int argc, char* argv[])
 {
     const ChargeDensityOptions opt(argc, argv);
     const ChargeDensityData data(opt);
-    const size_t nper    = opt.get_nper();     // Number of periods over which wavefunction spreads
+    const size_t nper    = opt.get_size_option("nper"); // Number of periods over which wavefunction spreads
     const size_t nz_1per = data.get_nz_1per(); // Number of points in a single period
     const size_t nst     = data.states.size(); // Number of states localised in one period
 
@@ -217,8 +155,8 @@ int main(int argc, char* argv[])
     const std::valarray<double> rho_1per = e * data.n3D[std::slice(0, nz_1per, 1)] - edensity_1per;
 
     // Output position, charge density and electron density for a single period [Cm^-3]
-    write_table_xy(opt.get_charge_filename().c_str(), data.z_1per, rho_1per);
-    write_table_xy(opt.get_edensity_filename().c_str(), data.z_1per, edensity_1per);
+    write_table_xy(opt.get_string_option("charge-file").c_str(), data.z_1per, rho_1per);
+    write_table_xy(opt.get_string_option("edensity-file").c_str(), data.z_1per, edensity_1per);
 
     return EXIT_SUCCESS;
 }
