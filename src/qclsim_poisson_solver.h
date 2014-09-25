@@ -43,17 +43,21 @@ public:
     std::valarray<double> solve_laplace(const double V_drop);
 
 private:
-    void factorise_dirichlet(const std::valarray<double>& eps);
-    void factorise_mixed(const std::valarray<double>& eps);
-    void factorise_zerofield(const std::valarray<double>& eps);
+    void factorise_dirichlet();
+    void factorise_mixed();
+    void factorise_zerofield();
+    void compute_half_index_permittivity();
+
+    std::valarray<double> _eps;       ///< Permittivity at each point [F/m]
+    std::valarray<double> _eps_minus; ///< Permittivity half a point to left [F/m]
+    std::valarray<double> _eps_plus;  ///< Permittivity half a point to right [F/m]
 
     double _dx;    ///< Spatial step size [m]
-    int n;         ///< Number of spatial samples
     double _L;     ///< Total length of structure [m]
         
-    std::valarray<double> diag; ///< Diagonal of Poisson matrix
+    std::valarray<double> diag;     ///< Diagonal of Poisson matrix
     std::valarray<double> sub_diag; ///< Sub-diagonal of Poisson matrix
-    double corner_point; ///< Value of corner point in matrix resulting from mixed boundary conditions
+    double corner_point;            ///< Corner point in matrix resulting from mixed boundary conditions
 
     PoissonBoundaryType boundary_type; ///< Boundary condition type for Poisson solver
 };

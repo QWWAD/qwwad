@@ -62,26 +62,18 @@ class ChargeDensityData
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
         std::vector<Leeds::State> states;  ///< Wf and energy data
-        std::valarray<double> z;   ///< Spatial profile
-        std::valarray<double> z_1per;   ///< Spatial profile
+    public:
         std::valarray<double> pop; ///< Subband population [m^{-2}]
         std::valarray<unsigned int> nval; ///< Degeneracy of subbands
-        size_t get_nz_1per() const {return nz_1per;};
-    private:
-        size_t nz_1per; ///< Number of spatial points in a single period
 };
-
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     _nper(opt.get_size_option("nper")),
     states(State::read_from_file(opt.get_energy_input_path(),
                                  opt.get_wf_input_prefix(),
                                  opt.get_wf_input_ext())),
-    z(states[0].psi_array().size()),
-    z_1per(states[0].psi_array().size()/_nper),
     pop(states.size()),
-    nval(1, states.size()),
-    nz_1per(z.size()/_nper)
+    nval(1, states.size())
 {
     // Read population of each subband
     const char *population_file = opt.get_string_option("population-file").c_str();
@@ -91,6 +83,23 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     // Check that populations are all positive
     for(unsigned int ist=0; ist < nst; ist++)
         check_positive(&pop[ist]);
+
+    // Read state degeneracy if specified
+    if(opt.vm.count("degeneracy-file"))
+    {
+        const char *degeneracy_file = opt.get_string_option("degeneracy-file").c_str();
+        read_table_x(degeneracy_file, nval);
+
+        // Check that all input files have same size
+        if(nval.size() != nst)
+        {
+            std::ostringstream oss;
+            oss << "Different lengths of data were read from " << population_file
+                << " (" << nst << " lines) and " << degeneracy_file
+                << " (" << nval.size() << " lines).";
+            throw std::length_error(oss.str());
+        }
+    }
 }
 
 /**
@@ -106,16 +115,19 @@ int main(int argc, char* argv[])
     const ChargeDensityOptions opt(argc, argv);
     const ChargeDensityData data(opt);
     const size_t nper    = opt.get_size_option("nper"); // Number of periods over which wavefunction spreads
-    const size_t nz_1per = data.get_nz_1per();          // Number of points in a single period
     const size_t nst     = data.states.size();          // Number of states localised in one period
 
-    // Read doping profile
-    std::valarray<double> z_n3D;
-    std::valarray<double> n3D; // Spatial profile of doping in structure [Cm^{-3}]
-    read_table_xy(opt.get_string_option("doping-file").c_str(), z_n3D, n3D);
+    // Read doping profile (for entire multi-period structure)
+    std::valarray<double> z;
+    std::valarray<double> d; // Spatial profile of doping in structure [Cm^{-3}]
+    read_table_xy(opt.get_string_option("doping-file").c_str(), z, d);
+
+    // Compute the spatial points for a single period
+    const size_t nz_1per = z.size() / nper; // Number of points in a single period
 
     // Get doping for one period by slicing it from total profile
-    const std::valarray<double> d = n3D[std::slice(0, nz_1per, 1)];
+    const std::valarray<double> z_1per = z[std::slice(0, nz_1per, 1)];
+    const std::valarray<double> d_1per = d[std::slice(0, nz_1per, 1)];
 
     // Find electron density at each point in a single period
     // by summing the "tails" of wavefunctions in each period.
@@ -142,8 +154,8 @@ int main(int argc, char* argv[])
     const std::valarray<double> rho_1per = d * e - edensity_1per;
 
     // Output position, charge density and electron density for a single period [Cm^-3]
-    write_table_xy(opt.get_string_option("charge-file").c_str(), data.z_1per, rho_1per);
-    write_table_xy(opt.get_string_option("edensity-file").c_str(), data.z_1per, edensity_1per);
+    write_table_xy(opt.get_string_option("charge-file").c_str(), z_1per, rho_1per);
+    write_table_xy(opt.get_string_option("edensity-file").c_str(), z_1per, edensity_1per);
 
     return EXIT_SUCCESS;
 }

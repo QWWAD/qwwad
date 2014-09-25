@@ -36,51 +36,25 @@ class DensityinputOptions : public WfOptions
         DistributionType distType; ///< The type of carrier distribution to use
     public:
         DensityinputOptions(int argc, char* argv[]);
-        void print() const {}
 
         // Program options
-        inline double get_temp() const {return vm["temperature"].as<double>();}
-        inline double get_Ef() const {return vm["Ef"].as<double>();}
-        inline size_t get_nval() const {return vm["nval"].as<size_t>();}
         DistributionType get_dist_type() const {return distType;}
-
-        bool use_fixed_Ef() const {return vm["fixed-Ef"].as<bool>();}
-
-        // Output file
-        std::string get_population_filename() const {return vm["population-file"].as<std::string>();}		
 };
 
 DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
     distType(DIST_EVEN)
 {
-    add_string_option ("doping-file", "d.r", "Filename from which doping profile is read [m^{-3}]");
-    add_numeric_option("mass",        0.067, "In-plane effective mass (relative to free electron)");
+    std::string doc("Generate an approximate carrier energy distribution for a set of subbands");
 
-    program_specific_options->add_options()
-        // Output files
-        ("population-file",
-         po::value<std::string>()->default_value("N.r"),
-         "Set filename to which subband populations are written [m^{-2}]")
+    add_string_option ("doping-file",     "d.r", "Filename from which doping profile is read [m^{-3}]");
+    add_numeric_option("mass",            0.067, "In-plane effective mass (relative to free electron)");
+    add_numeric_option("temperature,T",     100, "Temperature of carrier distribution [K]");
+    add_string_option ("population-file", "N.r", "Set filename to which subband populations are written [m^{-2}]");
+    add_size_option   ("nval",                1, "Split population between a number of equivalent valleys");
+    add_numeric_option("Ef,f",                   "Fermi energy offset [eV]");
+    add_string_option ("type",           "even", "Type of carrier distribution across states. Permitted "
+                                                 "options are: fermi, ground or even");
 
-        // Program options
-        ("temperature,T", po::value<double>()->default_value(100),
-         "Temperature of electron distribution [K]")
-
-        ("nval",
-         po::value<size_t>()->default_value(1),
-         "Split population between a number of equivalent valleys")
-
-        ("type", po::value<std::string>()->default_value("even"),
-         "Type of carrier distribution across states")
-        
-         ("fixed-Ef,e", po::bool_switch()->default_value(false),
-         "Define a fixed fermi energy (eV) relative to potential at top of stack")
-
-        ("Ef,f", po::value<double>()->default_value(-0.5),
-         "Fermi energy offset [eV]")
-        ;
-
-    std::string doc = "Generate an approximate carrier energy distribution (even, thermal or all in ground-state)";
     add_prog_specific_options_and_parse(argc, argv, doc);
 
     // Parse the distribution type parameter
@@ -109,12 +83,11 @@ DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
             exit(EXIT_FAILURE);
         }
     }
-
-    if(get_verbose()) print();
 }
 
 int main(int argc, char *argv[]){
     DensityinputOptions opt(argc, argv);
+    const size_t nval = opt.get_size_option("nval");
     const double _md = opt.get_numeric_option("mass") * me; // Density-of-states mass [kg]
 
     std::vector<State> states = State::read_from_file(opt.get_energy_input_path(),
@@ -143,35 +116,31 @@ int main(int argc, char *argv[]){
         // Split sheet density evenly over subbands
         case DIST_EVEN:
             for(unsigned int i=0; i < nst; i++)
-                pop[i] = n2D/(nst*opt.get_nval());
+                pop[i] = n2D/(nst*nval);
             break;
 
         // Thermal distribution of subband populations
         case DIST_FERMI:
             {
-                // Fermi energy for entire system
+                const double T = opt.get_numeric_option("temperature");
+
+                // Fermi energy for entire system [J]
                 double Ef = 0.0;
-                if(opt.use_fixed_Ef()==0)
-                    Ef = find_fermi_global(states, _md, n2D, opt.get_temp());
-                else
-                    Ef = V[nz-1]+opt.get_Ef()*e;
+                if(opt.vm.count("Ef")) // Use specified Ef
+                    Ef = V[nz-1] + opt.get_numeric_option("Ef") * e;
+                else // Compute Ef
+                    Ef = find_fermi_global(states, _md, n2D, T);
 
                 if(opt.get_verbose())
                     printf("Fermi energy = %g J\n",Ef);
 
                 for(unsigned int i=0; i<nst; i++)
-                {
-                    double temp = find_pop(states[i].get_E(), Ef, _md, opt.get_temp()) / opt.get_nval();
-                    if(temp>1)
-                        pop[i] = temp;
-                    else
-                        pop[i] = 1.0;
-                }
+                    pop[i] = find_pop(states[i].get_E(), Ef, _md, T) / nval;
             }
             break;
 
         case DIST_GROUND:
-            pop[0] = n2D/opt.get_nval();
+            pop[0] = n2D/nval;
 
             // For all excited states, use a population of 1 electron/cm^2
             // i.e. a ridiculously low value.  This prevents the
@@ -180,13 +149,9 @@ int main(int argc, char *argv[]){
             for(unsigned int i=1;i<nst;i++)
                 pop[i] = 1.0;
             break;
-
-        default:
-            std::cerr << "Unknown distribution type" << std::endl;
-            exit(EXIT_FAILURE);
     }
 
-    write_table_x(opt.get_population_filename().c_str(), pop);
+    write_table_x(opt.get_string_option("population-file").c_str(), pop);
 
     return EXIT_SUCCESS;
 }

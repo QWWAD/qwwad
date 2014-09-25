@@ -34,9 +34,11 @@ outfile_Vt=poisson-schroedinger-Vt.dat
 rm -f $outfile wf_e1*.r
 
 # First generate structure definition `s.r' file
-echo 200 0.2 0.0   > s.r
-echo 100 0.0 2e18 >> s.r
-echo 200 0.2 0.0  >> s.r
+cat > s.r << EOF
+200 0.2 0.0
+100 0.0 2e18
+200 0.2 0.0
+EOF
  
 find_heterostructure	# generate alloy concentration as a function of z
 efxv			# generate potential data
@@ -47,7 +49,7 @@ for I in `seq 0 7`; do
  # Calculate ground state energy
  efss --nst-max 1
 
- densityinput # Generate an estimate of the population density
+ densityinput  # Estimate the population density in each state
  chargedensity # Compute charge density profile
  
  # save wave function in separate file
@@ -68,19 +70,36 @@ awk '{print $1*1e10, $2*1000/1.6e-19}' v_p.r > $outfile_Vp
 awk '{print $1*1e10, $2*1000/1.6e-19}' v.r > $outfile_Vt
 
 cat << EOF
-Results have been written to $outfile in the format:
+Results have been written to $outfile,
+$outfile_sigma,
+$outfile_field,
+$outfile_Vp and
+$outfile_Vt.
 
-  COLUMN 1 - <Whatever>
-  COLUMN 2 - <Something>
-  <...>
+$outfile contains the convergence of energy in the format:
 
-  <Remove this chunk if only 1 data set is in the file>
-  The file contains <x> data sets, each set being separated
-  by a blank line, representing <whatever>:
+  COLUMN 1 - iteration number
+  COLUMN 2 - energy of ground state [meV]
 
-  SET 1 - <Description of the 1st set>
-  SET 2 - <Description of the 2nd set>
-  <...>
+$outfile_sigma contains the charge density profile in the format:
+
+  COLUMN 1 - spatial location [Angstrom]
+  COLUMN 2 - charge density [10^{14} e m^{-2}]
+
+$outfile_field contains the electric field profile in the format:
+
+  COLUMN 1 - spatial location [Angstrom]
+  COLUMN 2 - electric field [10^6 V/m]
+
+$outfile_Vp contains the Poisson potential profile in the format:
+
+  COLUMN 1 - spatial location [Angstrom]
+  COLUMN 2 - potential [meV]
+
+$outfile_Vt contains the total potential profile in the format:
+
+  COLUMN 1 - spatial location [Angstrom]
+  COLUMN 2 - potential [meV]
 
 This script is part of the QWWAD software suite.
 
@@ -92,4 +111,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-#rm -f *.r
+rm -f *.r

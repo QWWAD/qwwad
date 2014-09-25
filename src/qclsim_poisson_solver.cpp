@@ -31,71 +31,80 @@ namespace Leeds
 Poisson::Poisson(const std::valarray<double> &eps,
                  const double                 dx,
                  PoissonBoundaryType          bt) :
+    _eps(eps),
+    _eps_minus(eps), // Set the half-index permittivities
+    _eps_plus(eps),  // to a default for now
     _dx(dx),
-    n(eps.size()),
-    _L(n*_dx),
-    diag(std::valarray<double>(n)),
-    sub_diag(std::valarray<double>(n-1)),
+    _L(_eps.size()*_dx),
+    diag(std::valarray<double>(_eps.size())),
+    sub_diag(std::valarray<double>(_eps.size()-1)),
     corner_point(0.0),
     boundary_type(bt)
 {
+    compute_half_index_permittivity();
+
     switch(boundary_type)
     {
         case DIRICHLET:
-            factorise_dirichlet(eps);
+            factorise_dirichlet();
             break;
         case MIXED:
-            factorise_mixed(eps);
+            factorise_mixed();
             break;
         case ZERO_FIELD:
-            factorise_zerofield(eps);
+            factorise_zerofield();
             break;
-        default:
-            throw std::runtime_error("Unknown boundary condition type used to instansiate Poisson solver.");
    }
 }
 
-void Poisson::factorise_dirichlet(const std::valarray<double>& eps)
+/**
+ * \brief Find the permittivity at half-index points
+ */
+void Poisson::compute_half_index_permittivity()
 {
-    // Half indexed eps points
-    double eps_i_minus;
-    double eps_i_plus;
+    const size_t ni = _eps.size();
 
-    // Fill matrix to solve
-    unsigned int ni = eps.size();
+    if (_eps_minus.size() != ni && _eps_plus.size() != ni)
+        throw std::runtime_error("Permittivity array not initialized");
+
     for(unsigned int i=0; i < ni; i++)
     {
-        // Set eps_plus/minus_half values
+        // Assume that start and end values of permittivity are identical
+        // (i.e., a periodic structure). This might not be ideal for structures
+        // e.g., contained within a cladding material.
         if(i==0)
-        {
-            eps_i_minus = (eps[i]+eps[ni-1])/2;
-            eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
-        else if(i==ni-1)
-        {
-            eps_i_minus = (eps[i]+eps[i-1])/2;
-            eps_i_plus = (eps[0]+eps[i])/2;
-        }
+            _eps_minus[i] = (_eps[i]   + _eps[ni-1]) / 2.0;
         else
-        {
-            eps_i_minus = (eps[i]+eps[i-1])/2;
-            eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
+            _eps_minus[i] = (_eps[i]   + _eps[i-1] ) / 2.0;
 
-        // Diagonal elemnts
-        diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
+        if(i==ni-1)
+            _eps_plus[i]  = (_eps[0]   + _eps[i]   ) / 2.0;
+        else
+            _eps_plus[i]  = (_eps[i+1] + _eps[i]   ) / 2.0;
+    }
+}
 
-        // Sub-diagonal elements
+void Poisson::factorise_dirichlet()
+{
+    // Fill matrix to solve
+    const size_t ni = _eps.size();
+
+    for(unsigned int i=0; i < ni; i++)
+    {
+        // Diagonal elements b_i [QWWAD4, 3.80]
+        diag[i] = (_eps_plus[i] + _eps_minus[i]) / (_dx * _dx);
+
+        // Sub-diagonal elements a_(i+1], c_i [QWWAD4, 3.80]
         if(i>0)
-            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_minus;
+            sub_diag[i-1] = -_eps_minus[i] / (_dx * _dx);
     }
 
     // Factorise matrix
     int info = 0;
 #if HAVE_LAPACKE
-    info = LAPACKE_dpttrf(n, &diag[0], &sub_diag[0]);
+    info = LAPACKE_dpttrf(ni, &diag[0], &sub_diag[0]);
 #else
-    dpttrf_(&n, &diag[0], &sub_diag[0], &info);
+    dpttrf_(&ni, &diag[0], &sub_diag[0], &info);
 #endif
 
     if(info != 0)
@@ -106,92 +115,51 @@ void Poisson::factorise_dirichlet(const std::valarray<double>& eps)
     }
 } // End Poisson::factorise_hardwall()
 
-void Poisson::factorise_mixed(const std::valarray<double>& eps)
+void Poisson::factorise_mixed()
 {
-    // Half indexed eps points
-    double eps_i_minus;
-    double eps_i_plus;
-
     // Fill matrix to solve
-    unsigned int ni = eps.size();
+    unsigned int ni = _eps.size();
     for(unsigned int i=0; i < ni; i++)
     {
-        // Set eps_plus/minus_half values
-        if(i==0)
-        {
-                eps_i_minus = (eps[i]+eps[ni-1])/2;
-                eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
-        else if(i==ni-1)
-        {
-                eps_i_minus = (eps[i]+eps[i-1])/2;
-                eps_i_plus = (eps[0]+eps[i])/2;
-        }
-        else
-        {
-                eps_i_minus = (eps[i]+eps[i-1])/2;
-                eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
-
         // Diagonal elements
         if(i<ni-1)
-            diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
+            diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
         else
         {
-            diag[i] = (1/(_dx*_dx))*eps_i_minus;
-            corner_point = (1/(_dx*_dx))*eps_i_plus;
+            diag[i] = (1/(_dx*_dx))*_eps_minus[i];
+            corner_point = (1/(_dx*_dx))*_eps_plus[i];
         }
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_minus;
+            sub_diag[i-1] = -(1/(_dx*_dx))*_eps_minus[i];
     }
 }
 
-void Poisson::factorise_zerofield(const std::valarray<double>& eps)
+void Poisson::factorise_zerofield()
 {
-    // Half indexed eps points
-    double eps_i_minus;
-    double eps_i_plus;
-
     // Fill matrix to solve
-    unsigned int ni = eps.size();
+    unsigned int ni = _eps.size();
     for(unsigned int i=0; i < ni; i++)
     {
-        // Set eps_plus/minus_half values
-        if(i==0)
-        {
-                eps_i_minus = (eps[i]+eps[ni-1])/2;
-                eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
-        else if(i==ni-1)
-        {
-                eps_i_minus = (eps[i]+eps[i-1])/2;
-                eps_i_plus = (eps[0]+eps[i])/2;
-        }
-        else
-        {
-                eps_i_minus = (eps[i]+eps[i-1])/2;
-                eps_i_plus = (eps[i+1]+eps[i])/2;
-        }
-
         // Diagonal elements
         if(i==0)
-            diag[i] = (1/(_dx*_dx))*eps_i_plus;
+            diag[i] = (1/(_dx*_dx))*_eps_plus[i];
         else if(i==ni-1)
-            diag[i] = (1/(_dx*_dx))*eps_i_minus;
+            diag[i] = (1/(_dx*_dx))*_eps_minus[i];
         else
-            diag[i] = (1/(_dx*_dx))*(eps_i_plus + eps_i_minus);
+            diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(_dx*_dx))*eps_i_plus;
+            sub_diag[i-1] = -(1/(_dx*_dx))*_eps_plus[i];
     }
 }
 
 std::valarray<double> Poisson::solve(std::valarray<double> rho)
 {
     std::valarray<double> phi(rho.size());
+    const size_t n = _eps.size();
 
     switch(boundary_type)
     {
@@ -228,6 +196,8 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
 
 std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
 {
+    const size_t n = _eps.size();
+
     switch(boundary_type)
     {
         case DIRICHLET:
@@ -255,15 +225,15 @@ std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
                                      "mixed bounradries. Instead solve cyclic problem without bias, then solve Laplace "
                                      "equation and sum the result.");
         default:
-            throw std::runtime_error("Unregonised boundary type for Poisson solver.");
+            throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
     }
 
     return phi; 
 }
 
-
 std::valarray<double> Poisson::solve_laplace(double V_drop)
 {
+    const size_t n = _eps.size();
     std::valarray<double> phi(0.0, n);
     switch(boundary_type)
     {

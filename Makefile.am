@@ -422,8 +422,10 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/poisson-schroedinger-field.eps \
 		$(exnssrcdir)/poisson-schroedinger-sigma.agr \
 		$(exnssrcdir)/poisson-schroedinger-sigma.eps \
-		$(exnssrcdir)/poisson-schroedinger-V.agr \
-		$(exnssrcdir)/poisson-schroedinger-V.eps \
+		$(exnssrcdir)/poisson-schroedinger-Vp.agr \
+		$(exnssrcdir)/poisson-schroedinger-Vp.eps \
+		$(exnssrcdir)/poisson-schroedinger-Vt.agr \
+		$(exnssrcdir)/poisson-schroedinger-Vt.eps \
 		$(exnssrcdir)/poisson-schroedinger-comp.sh \
 		$(exnssrcdir)/poisson-schroedinger-comp-E-I.agr \
 		$(exnssrcdir)/poisson-schroedinger-comp-E-I.eps \

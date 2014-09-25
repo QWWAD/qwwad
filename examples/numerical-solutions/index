@@ -24,10 +24,10 @@ Fig 3.29: uncertainty-principle-mass-limit.sh  => uncertainty-principle-mass-lim
 Fig 3.30: nonparabolic-dE-vs-width.sh          => nonparabolic-dE-vs-width.dat
 Fig 3.31: nonparabolic-dE-vs-width-inalgaas.sh => nonparabolic-dE-vs-width-inalgaas.dat
 Fig 3.34: poisson-schroedinger.sh              => poisson-schroedinger-sigma.dat
-Fig 3.35:
-Fig 3.36:
-Fig 3.38:
-Fig 3.39:
+Fig 3.35: poisson-schroedinger.sh              => poisson-schroedinger-field.dat
+Fig 3.36: poisson-schroedinger.sh              => poisson-schroedinger-Vp.dat
+Fig 3.38: poisson-schroedinger.sh              => poisson-schroedinger-Vt.dat
+Fig 3.39: poisson-schroedinger.sh              => poisson-schroedinger-E-I.dat
 Fig 3.40:
 Fig 3.41:
 Fig 3.42:
