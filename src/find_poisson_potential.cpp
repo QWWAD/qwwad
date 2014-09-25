@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
     // Get field profile [V/m]
     std::valarray<double> F(z.size());
     for(unsigned int iz = 1; iz < nz-1; ++iz)
-        F[iz] = (phi[iz+1] - phi[iz-1])/(dz*e);
+        F[iz] = (phi[iz+1] - phi[iz-1])/(2*dz*e);
 
     write_table_xy("field.r", z, F);
     write_table_xy(opt.get_string_option("potential-file").c_str(), z, phi);
