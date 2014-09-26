@@ -10,8 +10,6 @@
 #endif
 
 #include <iostream>
-#include <fstream>
-#include <cstdio>
 #include <cstdlib>
 #include <valarray>
 
@@ -24,81 +22,46 @@ using namespace Leeds;
 using namespace Leeds::constants;
 
 /**
- * \brief User-settings for Poisson solver
- */
-class PoissonOptions : public Options 
-{
-    private:
-        double E; ///< External field [J/m]
-        double offset; ///< Value of potential at spatial point closest to origin [V]
-
-    public:
-        PoissonOptions(int argc, char* argv[]);
-
-        double get_field() const {return E;}
-        double get_offset() const {return offset;}
-        bool get_mixed() const {return vm["mixed"].as<bool>();}
-        std::string get_charge_density_filename() const {return vm["charge-file"].as<std::string>();}
-        bool field_applied() const {return vm.count("field");}
-};
-
-/**
- * \brief Constructor: Define and parse all user options
+ * \brief Get user options
  *
  * \param[in] argc Number of command-line arguments
  * \param[in] argv Array of command-line arguments
+ *
+ * \return The user options
  */
-PoissonOptions::PoissonOptions(int argc, char* argv[]) :
-    E(0.0),
-    offset(0.0)
+Options get_options(int argc, char* argv[])
 {
-    add_switch       ("uncharged",               "True if there is no charge in the structure");
-    add_switch       ("centred",                 "True if the potential should be pivoted around the centre of the structure");
-    add_string_option("Vbasefile",               "File containing baseline potential to be added to Poisson potential");
-    add_string_option("potential-file", "v_p.r", "Filename to which the Poisson potential is written.");
-    add_string_option("Vtotalfile",     "v.r",   "Filename to which the total potential is written.");
+    Options opt;
 
-    program_specific_options->add_options()
-        ("field,E", po::value<double>(),
-         "Set external electric field [kV/cm]. Only specify if the voltage drop needs to be fixed. Otherwise will be equal to inbuilt potential from zero-field Poisson solution.")
+    const std::string doc("Find the Poisson potential induced by given charge profile");
 
-        ("offset", po::value<double>(),
-         "Set value of potential at spatial point closest to origin. Will be zero by default.")
+    opt.add_switch        ("uncharged",                 "True if there is no charge in the structure");
+    opt.add_switch        ("centred",                   "True if the potential should be pivoted "
+                                                        "around the centre of the structure");
+    opt.add_switch        ("mixed",                     "Use mixed boundary conditions.  By default, "
+                                                        "the space-charge effect is assumed to give "
+                                                        "zero-field boundary conditions.  By supplying "
+                                                        "this option, nonzero boundary fields can exist.");
+    opt.add_string_option ("Vbasefile",                 "File containing baseline potential to be added to Poisson potential");
+    opt.add_string_option ("potential-file", "v_p.r",   "Filename to which the Poisson potential is written.");
+    opt.add_string_option ("Vtotalfile",     "v.r",     "Filename to which the total potential is written.");
+    opt.add_string_option ("charge-file",    "sigma.r", "Set filename from which to read charge density profile.");
+    opt.add_numeric_option("field,E",                   "Set external electric field [kV/cm]. Only specify if "
+                                                        "the voltage drop needs to be fixed. Otherwise will be "
+                                                        "equal to inbuilt potential from zero-field Poisson solution.");
+    opt.add_numeric_option("offset",              0,    "Set potential at spatial point closest to origin.");
 
-        ("mixed", po::bool_switch(),
-         "Use mixed boundary conditions.  By default, the space-charge effect is assumed to give zero-field boundary conditions.  By supplying this option, nonzero boundary fields can exist.")
+    std::string details("The charge density is read from an input file, and the Poisson potential [V] is "
+                        "written to the output.");
 
-        ("charge-file",
-         po::value<std::string>()->default_value("sigma.r"),
-         "Set filename from which to read charge density profile.")
-        ;
+    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
 
-    std::string doc = "Find the space-charge induced potential for a "
-        "one-dimensional charge profile [C/m^3].  The charge density "
-        "is read from an input file, and the Poisson potential [V] is "
-        "written to the output.";
-
-    add_prog_specific_options_and_parse(argc, argv, doc);
-
-    // Rescale external field to J/m if field specified
-    if(vm.count("field"))
-        E = vm["field"].as<double>() * 1000.0 * 100.0;
-
-    if(vm.count("offset"))
-        offset = vm["offset"].as<double>();
+    return opt;
 }
 
-/**
- * \brief     main function for program
- *
- * \param[in] argc The number of command-line arguments
- * \param[in] argv Array of command-line arguments
- * 
- * \returns   Exit code of 0 signifies successful completion
- */
 int main(int argc, char* argv[])
 {
-    PoissonOptions opt(argc, argv);
+    Options opt = get_options(argc, argv);
 
     std::valarray<double> z;
     std::valarray<double> _eps; // Low-frequency permittivity [F/m]
@@ -111,7 +74,7 @@ int main(int argc, char* argv[])
 
     // Read space-charge profile, if desired
     if(!opt.get_switch("uncharged"))
-        read_table_xy(opt.get_charge_density_filename().c_str(), z2, rho);
+        read_table_xy(opt.get_string_option("charge-file").c_str(), z2, rho);
 
     // Convert charge density into S.I. units
     rho *= e;
@@ -119,21 +82,22 @@ int main(int argc, char* argv[])
     // Calculate Poisson potential due to charge within structure using cyclic boundary conditions
     const double dz = z[1] - z[0];
     std::valarray<double> phi(nz);
-    if(opt.get_mixed() == true)
+    if(opt.get_switch("mixed"))
     {
         Poisson poisson(_eps, dz, MIXED);
         phi = poisson.solve(rho);
 
         // Only fix the voltage across the structure if an applied field is specified.
         // (Otherwise just return the cyclic solution!)
-        if(opt.field_applied())
+        if(opt.vm.count("field"))
         {
             // Now solve the Laplace equation to find the contribution due to applied bias
             // Find voltage drop per period and take off the voltage drop from the charge discontinuity
             // within the structure. This will ensure that the voltage drop is equal to that specified
             // rather than being the sum of applied bias and voltage due to charge which is an unknown
             // quantity.
-            const double V_drop = opt.get_field() * e * (z[nz-1] - z[0]) - phi[nz-1];
+            const double field  = opt.get_numeric_option("field") * 1000.0 * 100.0; // V/m
+            const double V_drop = field * e * (z[nz-1] - z[0]) - phi[nz-1];
 
             if(opt.get_verbose())
                 std::cout << "Voltage drop per period: " << V_drop << "V\n";
@@ -149,9 +113,10 @@ int main(int argc, char* argv[])
     else
     {
         Poisson poisson(_eps, dz, DIRICHLET);
-        if(opt.field_applied())
+        if(opt.vm.count("field"))
         {
-            const double V_drop = opt.get_field() * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
+            const double field  = opt.get_numeric_option("field") * 1000.0 * 100.0; // V/m
+            const double V_drop = field * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
             if(opt.get_verbose())
                 std::cout << "Voltage drop per period: " << V_drop << "V\n";
             phi = poisson.solve(rho, V_drop);
@@ -162,8 +127,7 @@ int main(int argc, char* argv[])
         else
             phi = poisson.solve(rho);
 
-        if(opt.vm.count("offset"))
-            phi -= opt.get_offset(); // Minus offset since potential has not yet been inverted
+        phi -= opt.get_numeric_option("offset"); // Minus offset since potential has not yet been inverted
     }
 
     // Invert potential as we output in electron potential instead of absolute potential.
