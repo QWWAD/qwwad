@@ -111,8 +111,9 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
     add_numeric_option("ldiff,l",             0.0,            "Diffusion length.");
     add_numeric_option("dz-max",              0.1,            "Maximum separation between spatial points.");
     add_numeric_option("res-min",                             "Minimum spatial resolution. Overrides the --dz-max option");
-    add_size_option   ("nz-1per",               0,            "Number of points (per period) within the structure. If specified, "
-                                                              "this overrides the --dz-max and --res-min options");
+    add_size_option   ("nz-1per",               0,            "Number of points (per period) within the structure. "
+                                                              "If specified, this overrides the --dz-max and "
+                                                              "--res-min options");
     add_size_option   ("nper,p",                1,            "Number of periods to output");
     add_string_option ("infile,i",          "s.r",            "Filename from which to read input data.");
     add_string_option ("interfaces-file,f", "interfaces.dat", "Filename to which interface locations are written.");

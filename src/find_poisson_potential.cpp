@@ -112,9 +112,9 @@ int main(int argc, char* argv[])
     }
     else
     {
-        Poisson poisson(_eps, dz, DIRICHLET);
         if(opt.vm.count("field"))
         {
+            Poisson poisson(_eps, dz, DIRICHLET);
             const double field  = opt.get_numeric_option("field") * 1000.0 * 100.0; // V/m
             const double V_drop = field * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
             if(opt.get_verbose())
@@ -125,7 +125,10 @@ int main(int argc, char* argv[])
                     phi -= V_drop/2.0;
         }
         else
+        {
+            Poisson poisson(_eps, dz, ZERO_FIELD);
             phi = poisson.solve(rho);
+        }
 
         phi -= opt.get_numeric_option("offset"); // Minus offset since potential has not yet been inverted
     }

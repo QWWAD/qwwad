@@ -57,21 +57,30 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
     _x_diffuse(_z.size(), std::valarray<double>(_n_alloy)),
     _n3D(_z.size())
 {
-    const double Lp = _W_layer.sum(); // Length of one period [m]
-    _dz = Lp/(_nz_1per - 1);
+    const double Lp = _W_layer.sum();    // Length of one period [m]
+    const size_t n_cell_1per = _nz_1per - 1; // Number of spatial intervals in a period
+    _dz = Lp/n_cell_1per; // Separation between points [m]
 
     // TODO: Check that no layer is thinner than dz and throw an error if it is
 
     // Calculate spatial points
     unsigned int iL_cache = 0;
     unsigned int idx = 0;
-    for (unsigned int iz = 0; iz < _z.size(); ++iz)
+    const size_t nz = _z.size(); // Total points in structure
+
+    for (unsigned int iz = 0; iz < nz; ++iz)
     {
         _z[iz] = iz*_dz; // Calculate the spatial location [m]
 
         const double zp = fmod(_z[iz], Lp); // Position within period [m]
         unsigned int iL = get_layer_from_height(zp); // Layer index
 
+        // If this is the last point in the structure, don't go into a
+        // new period
+        if (iz == nz-1)
+            iL = _x_layer.size() - 1;
+
+        // Only recalculate if we're in a new period
         if(iL != iL_cache)
         {
             // TODO: Add some kind of bounds checking
