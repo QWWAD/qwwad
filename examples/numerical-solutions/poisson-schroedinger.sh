@@ -41,7 +41,7 @@ cat > s.r << EOF
 EOF
  
 find_heterostructure --dz-max 1	# generate alloy concentration as a function of z
-efxv			# generate potential data
+efxv                            # generate potential data
 
 cp v.r vcb.r     # Save conduction-band potential for use as a baseline
 

@@ -26,16 +26,18 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=modulation-doping-E-I.dat
+outfile=modulation-doping-V.dat
 rm -f $outfile wf_e1*.r
 
 # First generate structure definition `s.r' file
-echo 100 0.2 2e17 > s.r
-echo 100 0.0 0.0  >> s.r
-echo 100 0.2 2e17 >> s.r
+cat > s.r << EOF
+100 0.2 2e17
+100 0.0 0.0
+100 0.2 2e17
+EOF
  
-find_heterostructure	# generate alloy concentration as a function of z
-efxv			# generate potential data
+find_heterostructure --dz-max 1	# generate alloy concentration as a function of z
+efxv                            # generate potential data
 
 cp v.r vcb.r # Save conduction-band energy
   
@@ -46,32 +48,26 @@ for I in 0 1 2 3; do
  densityinput # Generate an estimate of the population density
  chargedensity # Compute charge density profile
 
- # save wave function in separate file
- cp wf_e1.r wf_e1-I=$I.r
-
- # Write energy to output file
- E1=`awk '{printf("\t%20.17e\n",$2)}' Ee.r`
-
- echo $I $E1 >> $outfile
-
  # Implement self consistent Poisson calculation
- find_poisson_potential --Vbasefile vcb.r --potential-file v.r
-done # X
+ find_poisson_potential --Vbasefile vcb.r
+done
+
+# Save data to output file [meV]
+awk '{print $1*1e10, $2/1.6e-19 * 1000}' vcb.r  > $outfile # band-edge potential
+printf "\n"                                    >> $outfile # blank line
+awk '{print $1*1e10, $2/1.6e-19 * 1000}' v.r   >> $outfile # total potential
 
 cat << EOF
 Results have been written to $outfile in the format:
 
-  COLUMN 1 - <Whatever>
-  COLUMN 2 - <Something>
-  <...>
+  COLUMN 1 - Spatial location [Angstrom]
+  COLUMN 2 - Potential [meV]
 
-  <Remove this chunk if only 1 data set is in the file>
-  The file contains <x> data sets, each set being separated
-  by a blank line, representing <whatever>:
+  The file contains 2 data sets, each set being separated
+  by a blank line, representing:
 
-  SET 1 - <Description of the 1st set>
-  SET 2 - <Description of the 2nd set>
-  <...>
+  SET 1 - The conduction band edge
+  SET 2 - The total potential, including charge effects
 
 This script is part of the QWWAD software suite.
 
@@ -83,4 +79,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-#rm -f *.r
+rm -f *.r
