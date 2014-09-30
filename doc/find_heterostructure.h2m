@@ -1,0 +1,87 @@
+[DESCRIPTION]
+This program generates a mesh (i.e., a set of spatial points) and tabulates the composition of a heterostructure at each point.
+Normally, this will be the very first step in performing a numerical simulation of a system.
+The user should create an input file first, containing a table describing the system, and then run this program.
+
+Multi-period structures can be generated if desired, or diffuse heterostructures (with annealed interfaces) can also be generated.
+
+[FILES]
+.SB The following input text file is read:
+   's.r'    Structure specification:
+            Column  1:         thickness of layer [UNIT]
+            Columns 2...(n-1): alloy fraction(s)
+            Column  n:         doping [cm^{-3}]
+
+   See the examples below for some hints for how to describe the heterostructure.
+
+.SB The following output files are created:
+   'interfaces.r' Locations of interfaces between layers:
+                  COLUMN 1: Line numbers in 'x.r' etc at which interfaces are found.
+
+   'x.r'          Alloy content at each position:
+                  Column 1:         position [m].
+                  Column 2...(n-1): alloy fraction(s).
+
+   'd.r'          Doping concentration at each position:
+                  Column 1: position [m].
+                  Column 2: doping [m^{-3}].
+
+All filenames are configurable using option flags.
+
+[EXAMPLES]
+
+.SB Example input files:
+    A 200-angstrom layer of GaAs surrounded by 50-angstrom Al(0.15)Ga(0.85)As barriers, with 1e17 cm^{-3} doping:
+
+    s.r
+    ---
+    50   0.15  1e17
+    200  0.00  0
+    50   0.15  1e17
+
+Here, the units of thickness (1st column) are taken to be Angstrom by default, although this can be changed using the --unit option.
+
+An important `trick' can be used to specify doped regions within layers.
+Simply split the appropriate layer into multiple lines within the file.
+For example, to define a 20-Angstrom-thick layer inside the middle layer of the structure, with 2e16 cm^{-3} doping:
+
+    s.r
+    ---
+    50   0.15  1e17
+    90   0.00  0
+    20   0.00  2e16
+    90   0.00  0
+    50   0.15  1e17
+
+If the material system is more complicated (e.g., quaternary alloys), it may be necessary to use multiple columns to describe the alloys.
+For example, the In(1-x-y)Al(x)Ga(y)As system is described by two variables (
+.I x
+,
+.I y
+).
+To specify a layer of In(0.52)Al(0.48)As followed by a layer of In(0.53)Ga(0.47)As, put the x values in column 2 and the y values in column 3:
+
+    s.r
+    ---
+    50  0.48  0.00  0.0
+    50  0.00  0.47  0.0
+
+.SB Example usage:
+
+Generate structure data for 3 periods of the structure in the input file:
+    find_heterostructure --nper 3
+
+Generate structure data, reading the lengths in nanometres (i.e., structure will be 10x thicker):
+    find_heterostructure --unit nm
+
+Generate structure data, using resolution of at least 10 samples per angstrom:
+    find_heterostructure --res-min 10
+
+Generate structure data, using maximum of 1 angstrom separation between samples:
+    find_heterostructure --dz-max 1
+
+Generate structure data, using a fixed 2000 points per period:
+    find_heterostructure --nz-1per 2000
+
+Generate structure data, and apply 20-angstrom diffusion-length at interfaces:
+    find_heterostructure --ldiff 20

@@ -81,7 +81,6 @@ bin_PROGRAMS =  src/chargedensity \
 		src/wfplot
 
 d0_helpers    = src/d0-helpers.c src/d0-helpers.h
-qwwad_options = src/qwwad-options.cpp src/qwwad-options.h
 wf_options    = src/wf_options.cpp src/wf_options.h $(qwwad_options)
 qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
 
@@ -107,6 +106,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qclsim-subband.h        \
 			   src/qwwad-heterostructure.cpp \
 			   src/qwwad-heterostructure.h   \
+			   src/qwwad-options.cpp         \
+			   src/qwwad-options.h           \
 			   src/qwwad-schroedinger.cpp    \
 			   src/qwwad-schroedinger.h      \
 			   src/qwwad-schroedinger-finite-well.cpp \
@@ -199,7 +200,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/efkpsl.1              \
 		 man/tsb.1                 \
 		 man/tdb.1                 \
-		 man/ivdb.1
+		 man/ivdb.1                \
+		 man/find_heterostructure.1
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -250,6 +252,12 @@ man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/ivdb$(EXEEXT)
 	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." src/ivdb$(EXEEXT)
+
+man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/find_heterostructure.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/find_heterostructure$(EXEEXT)
+	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/find_heterostructure.h2m src/find_heterostructure$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
@@ -520,4 +528,3 @@ tests_run_all_tests_LDADD = gtest/lib/libgtest_main.la \
 			    gtest/lib/libgtest.la \
 			    $(GTEST_LIBS) \
 			    src/libqwwad.a
-

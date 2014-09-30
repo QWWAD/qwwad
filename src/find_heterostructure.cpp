@@ -108,59 +108,43 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
 {
     std::string doc("Generate spatial mesh and output alloy & doping profiles.");
 
-    add_numeric_option("ldiff,l",             0.0,            "Diffusion length.");
-    add_numeric_option("dz-max",              0.1,            "Maximum separation between spatial points.");
-    add_numeric_option("res-min",                             "Minimum spatial resolution. Overrides the --dz-max option");
-    add_size_option   ("nz-1per",               0,            "Number of points (per period) within the structure. "
-                                                              "If specified, this overrides the --dz-max and "
-                                                              "--res-min options");
-    add_size_option   ("nper,p",                1,            "Number of periods to output");
-    add_string_option ("infile,i",          "s.r",            "Filename from which to read input data.");
-    add_string_option ("interfaces-file,f", "interfaces.dat", "Filename to which interface locations are written.");
-    add_string_option ("alloy-file,x",      "x.r",            "Filename to which alloy profile is written.");
-    add_string_option ("doping-file,d",     "d.r",            "Filename to which doping profile is written.");
+    add_numeric_option("ldiff,l",             0.0,          "Diffusion length.");
+    add_numeric_option("dz-max",              0.1,          "Maximum separation between spatial points.");
+    add_numeric_option("res-min",                           "Minimum spatial resolution. Overrides the --dz-max option");
+    add_size_option   ("nz-1per",               0,          "Number of points (per period) within the structure. "
+                                                            "If specified, this overrides the --dz-max and "
+                                                            "--res-min options");
+    add_size_option   ("nper,p",                1,          "Number of periods to output");
+    add_string_option ("infile,i",          "s.r",          "Filename from which to read input data.");
+    add_string_option ("interfaces-file,f", "interfaces.r", "Filename to which interface locations are written.");
+    add_string_option ("alloy-file,x",      "x.r",          "Filename to which alloy profile is written.");
+    add_string_option ("doping-file,d",     "d.r",          "Filename to which doping profile is written.");
+    add_string_option ("unit,u",            "angstrom",     "Set length unit.  Acceptable values are 'A': "
+                                                            "Angstroms or 'n': nanometres.");
 
-    std::string details = "Interdiffusion of alloys across interfaces may be specified.";
+    add_prog_specific_options_and_parse(argc, argv, doc);
 
-    try
+    // Parse which unit we're using
+    if (vm.count("unit"))
     {
-        // Specific configuration options for this program
-        program_specific_options->add_options()
-            ("unit,u", po::value<std::string>()->default_value("angstrom"), 
-             "Set length unit.  Acceptable values are 'A': "
-             "Ångstroms or 'n': nanometres.");
-
-        add_prog_specific_options_and_parse(argc, argv, doc, details);
-
-        // Perform a bit of post-processing on the options
-        {
-            if (vm.count("unit"))
-            {
-                const char* arg = vm["unit"].as<std::string>().c_str();
-                if(!strcmp (arg, "A") ||
-                        !strcmp(arg, "angstrom") ||
-                        !strcmp(arg, "Angstrom") ||
-                        !strcmp(arg, "angstroms") ||
-                        !strcmp(arg, "Angstroms"))
-                    unit = UNIT_ANGSTROM; // Sets unit to [Å]
-                else if(!strcmp(arg, "n") ||
-                        !strcmp(arg, "nm") ||
-                        !strcmp(arg, "nanometre") ||
-                        !strcmp(arg, "nanometer") ||
-                        !strcmp(arg, "nanometres") ||
-                        !strcmp(arg, "nanometers"))
-                    unit = UNIT_NM; // Sets unit to [nm]
-            }
-
-            if (get_size_option("nper") < 1)
-                throw std::domain_error("Number of periods must be positive.");
-        }
+        const char* arg = vm["unit"].as<std::string>().c_str();
+        if(!strcmp (arg, "A") ||
+                !strcmp(arg, "angstrom") ||
+                !strcmp(arg, "Angstrom") ||
+                !strcmp(arg, "angstroms") ||
+                !strcmp(arg, "Angstroms"))
+            unit = UNIT_ANGSTROM; // Sets unit to [Å]
+        else if(!strcmp(arg, "n") ||
+                !strcmp(arg, "nm") ||
+                !strcmp(arg, "nanometre") ||
+                !strcmp(arg, "nanometer") ||
+                !strcmp(arg, "nanometres") ||
+                !strcmp(arg, "nanometers"))
+            unit = UNIT_NM; // Sets unit to [nm]
     }
-    catch(std::exception& e)
-    {
-        std::cerr << e.what() << std::endl;
-        exit(EXIT_FAILURE);
-    }
+
+    if (get_size_option("nper") < 1)
+        throw std::domain_error("Number of periods must be positive.");
 
     if(get_verbose())
         print();

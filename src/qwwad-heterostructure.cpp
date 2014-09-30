@@ -73,12 +73,17 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
         _z[iz] = iz*_dz; // Calculate the spatial location [m]
 
         const double zp = fmod(_z[iz], Lp); // Position within period [m]
-        unsigned int iL = get_layer_from_height(zp); // Layer index
+        unsigned int iL = 0; // Layer index
 
-        // If this is the last point in the structure, don't go into a
-        // new period
-        if (iz == nz-1)
-            iL = _x_layer.size() - 1;
+        // If this is the last point in the structure, insist that we stay
+        // inside the last layer
+        if (iz < nz-1)
+            iL = get_layer_from_height(zp); // Layer index
+        else
+        {
+            iL = iL_cache;
+            _layer_top_index[_x_layer.size()-1] = _z.size();
+        }
 
         // Only recalculate if we're in a new period
         if(iL != iL_cache)
@@ -91,10 +96,13 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
         _n3D[iz]       = get_n3D_in_layer(iL);
 
         for(unsigned int ialloy = 0; ialloy < _x_layer[0].size(); ++ialloy)
-        {
             _x_nominal.at(iz)[ialloy] = get_x_in_layer_nominal(iL, ialloy);
+    }
+
+    for (unsigned int iz = 0; iz < nz; ++iz)
+    {
+        for(unsigned int ialloy = 0; ialloy < _x_layer[0].size(); ++ialloy)
             _x_diffuse.at(iz)[ialloy] = calculate_x_annealed_at_point(iz, ialloy);
-        }
     }
 }
 
@@ -353,7 +361,8 @@ double Heterostructure::calculate_x_annealed_at_point(const unsigned int iz,
     if (_L_diff > 0)
     {
         // Find contribution from each layer
-        for(unsigned int iL = 0; iL < _W_layer.size(); iL++){
+        for(unsigned int iL = 0; iL < _W_layer.size(); iL++)
+        {
             // Find top of layer
             const double zi = _dz*get_layer_top_index(iL);
 
