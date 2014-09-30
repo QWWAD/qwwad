@@ -204,6 +204,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/ivdb.1                \
 		 man/find_heterostructure.1
 
+EXTRA_DIST = doc/find_heterostructure.h2m
+
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
@@ -266,8 +268,8 @@ exdatadir = $(datadir)/qwwad/examples
 exdata_DATA = examples/README \
 	      examples/template.sh
  
-ex2datadir = $(exdatadir)/solutions-to-schroedingers-equation
-ex2srcdir = examples/solutions-to-schroedingers-equation
+ex2datadir = $(exdatadir)/schroedinger-solutions
+ex2srcdir = examples/schroedinger-solutions
 
 EXTRA_DIST += examples
 
@@ -522,6 +524,7 @@ check_PROGRAMS = tests/run-all-tests
 
 tests_run_all_tests_SOURCES = tests/integration_tests/qwwad-schroedinger-infinite-well-tests.cpp \
 			      tests/integration_tests/qwwad-schroedinger-tridiagonal-tests.cpp \
+			      tests/microtests/schroedinger_solver_tests/testable_abstract_schroedinger_solver.h \
 			      tests/microtests/schroedinger_solver_tests/abstract_schroedinger_solver_tests.cpp
 
 tests_run_all_tests_CXXFLAGS = $(GTEST_CXXFLAGS)
