@@ -75,7 +75,7 @@ Options::~Options()
  */
 void Options::print_version_then_exit(char* prog_name) const
 {
-    std::cout << prog_name << " " << PACKAGE_VERSION << std::endl
+    std::cout << prog_name << " (" << PACKAGE_NAME << ") " << PACKAGE_VERSION << std::endl
               << "Copyright (c) 2014 Paul Harrison and Alex Valavanis." << std::endl
               << "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>." << std::endl
               << "This is free software: you are free to change and redistribute it." << std::endl
@@ -83,7 +83,7 @@ void Options::print_version_then_exit(char* prog_name) const
               << std::endl
               << "Any use of this software in published work must be accompanied by a " << std::endl
               << "citation of the textbook: \"Quantum Wells, Wires and Dots\" (4th edition), " << std::endl
-              << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015). " << std::endl
+              << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015), " << std::endl
               << "in addition to any works cited in the source code." << std::endl;
 
     exit (EXIT_SUCCESS);
@@ -138,10 +138,10 @@ void Options::print_version_then_exit(char* prog_name) const
  * \todo It would be better to use a smarter parser that ignores undesired options
  *       and unknown options.
  */
-void Options::add_prog_specific_options_and_parse(int          argc,
-                                                  char        *argv[],
-                                                  std::string  summary,
-                                                  std::string  details)
+void Options::add_prog_specific_options_and_parse(const int     argc,
+                                                  char ** const argv,
+                                                  std::string   summary,
+                                                  std::string   details)
 {
     try {
         // Allow all options to be given on the command-line
@@ -182,10 +182,15 @@ void Options::add_prog_specific_options_and_parse(int          argc,
         po::store(po::parse_environment(config_options, "QWWAD_"), vm);
         po::notify(vm);
 
+        // TODO: Make this configurable
+        std::ostringstream oss;
+        oss << "Usage: " << argv[0] << " [OPTION]...";
+
         // Post-processing for default options...
         if(vm.count("help"))
         {
-            std::cout << summary << std::endl
+            std::cout << oss.str() << std::endl
+                      << summary << std::endl
                       << command_line_options << std::endl
                       << details << std::endl
                       << std::endl

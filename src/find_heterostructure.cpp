@@ -106,7 +106,7 @@ class HeterostructureOptions : public Options
 HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
     unit(UNIT_ANGSTROM)
 {
-    std::string doc("Generate spatial mesh and output alloy & doping profiles.");
+    std::string doc("Generate spatial mesh and output alloy and doping profiles.");
 
     add_numeric_option("ldiff,l",             0.0,          "Diffusion length.");
     add_numeric_option("dz-max",              0.1,          "Maximum separation between spatial points.");

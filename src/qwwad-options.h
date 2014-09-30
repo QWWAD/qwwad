@@ -77,10 +77,10 @@ class Options
                         const std::string &description);
 
         // Common options for all programs
-        void add_prog_specific_options_and_parse(int          argc,
-                                                 char        *argv[],
-                                                 std::string  summary,
-                                                 std::string  details="");
+        void add_prog_specific_options_and_parse(const int     argc,
+                                                 char ** const argv,
+                                                 std::string   summary,
+                                                 std::string   details="");
     protected:
         /**
          * \brief The additional options for a specific program
