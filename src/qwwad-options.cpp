@@ -191,6 +191,8 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         {
             std::cout << oss.str() << std::endl
                       << summary << std::endl
+                      << std::endl
+                      << "Options: " << std::endl
                       << command_line_options << std::endl
                       << details << std::endl
                       << std::endl

@@ -1,10 +1,3 @@
-[DESCRIPTION]
-This program generates a mesh (i.e., a set of spatial points) and tabulates the composition of a heterostructure at each point.
-Normally, this will be the very first step in performing a numerical simulation of a system.
-The user should create an input file first, containing a table describing the system, and then run this program.
-
-Multi-period structures can be generated if desired, or diffuse heterostructures (with annealed interfaces) can also be generated.
-
 [FILES]
 .SB The following input text file is read:
    's.r'    Structure specification:

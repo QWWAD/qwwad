@@ -106,7 +106,13 @@ class HeterostructureOptions : public Options
 HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
     unit(UNIT_ANGSTROM)
 {
-    std::string doc("Generate spatial mesh and output alloy and doping profiles.");
+    std::string description("This program generates a mesh (i.e., a set of spatial points)\n"
+                            "and tabulates the composition of a heterostructure at each point.\n"
+                            "Normally, this will be the very first step in performing a numerical\n"
+                            "simulation of a system. The user should create an input file first,\n"
+                            "containing a table describing the system, and then run this program.\n"
+                            "Multi-period structures can be generated if desired, or diffuse\n"
+                            "heterostructures (with annealed interfaces) can also be generated.");
 
     add_numeric_option("ldiff,l",             0.0,          "Diffusion length.");
     add_numeric_option("dz-max",              0.1,          "Maximum separation between spatial points.");
@@ -122,7 +128,7 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
     add_string_option ("unit,u",            "angstrom",     "Set length unit.  Acceptable values are 'A': "
                                                             "Angstroms or 'n': nanometres.");
 
-    add_prog_specific_options_and_parse(argc, argv, doc);
+    add_prog_specific_options_and_parse(argc, argv, description);
 
     // Parse which unit we're using
     if (vm.count("unit"))
