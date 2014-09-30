@@ -202,9 +202,11 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/tsb.1                 \
 		 man/tdb.1                 \
 		 man/ivdb.1                \
-		 man/find_heterostructure.1
+		 man/find_heterostructure.1 \
+		 man/efxv.1
 
-EXTRA_DIST = doc/find_heterostructure.h2m
+EXTRA_DIST += doc/find_heterostructure.h2m \
+	      doc/efxv.htm
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -261,6 +263,12 @@ man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/find_heterostructure$(EXEEXT)
 	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/find_heterostructure.h2m src/find_heterostructure$(EXEEXT) 
+
+man/efxv.1: src/efxv.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/efxv.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/efxv$(EXEEXT)
+	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/efxv.h2m src/efxv$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

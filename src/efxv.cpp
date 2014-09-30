@@ -1,18 +1,18 @@
-/*=========================================================
-  efxv Envelope Function x to v
-  =========================================================*/
-
-/* 
-   This program converts the structure as defined in terms
-   of alloy components into a potential profile for either 
-   electron, light- or heavy-hole.  It has support for multiple 
-   material systems, ternaries as well as quaternaries.
-
-   In addition generation of the bandgap allows for band
-   non-parabolicity in efshoot.
-
-
-   Paul Harrison, December 1996				 */
+/**
+ * \file   efxv.cpp
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \brief Envelope Function x to v
+ *
+ * \details Converts the structure as defined in terms
+ *          of alloy components into a potential profile for either 
+ *          electron, light- or heavy-hole.  It has support for multiple 
+ *          material systems, ternaries as well as quaternaries.
+ *
+ *          In addition generation of the bandgap allows for band
+ *          non-parabolicity in efshoot.
+ */ 
 
 #include <cstdio>
 #include <cstdlib>
@@ -42,64 +42,36 @@ class EFXVOptions : public Options
     public:
         EFXVOptions(int argc, char* argv[])
         {
-            try
+            add_string_option("mass,m",     "auto",   "Set a constant effective-mass across the structure "
+                                                      "(relative to free electron). "
+                                                      "If not specified, the mass is calculated automatically "
+                                                      "for all positions in the material.");
+            add_string_option("material,M", "gaalas", "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, "
+                                                      "\"cdmnte\" for Cd(1-x)Mn(x)Te, or "
+                                                      "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
+            add_char_option  ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
+
+            std::string doc("Find material parameters for a given heterostructure. "
+                            "The alloy data is read for each point in the system and used to tabulate "
+                            "the band-edge profile, effective mass and permittivity.");
+
+            add_prog_specific_options_and_parse(argc, argv, doc);	
+
+            // Parse the effective-mass calculation type            
+            std::string mass_arg(vm["mass"].as<std::string>());
+
+            if(!strcmp(mass_arg.c_str(), "auto"))
+                auto_mass = true;
+            else if(atof(mass_arg.c_str()) > 0.0)
             {
-                program_specific_options->add_options()
-                    ("mass,m", po::value<std::string>()->default_value("auto"),
-                     "Set the constant effective-mass in the structure. "
-                     "If not specified, the mass is calculated automatically "
-                     "for all positions in the material.")
-
-                    ("material,M", po::value<std::string>()->default_value("gaalas"),
-                     "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, \"cdmnte\" "
-                     "for Cd(1-x)Mn(x)Te, or \"inalgaas\" for In(1-x-y)Al(x)Ga(y)As")
-
-                    ("particle,p", po::value<char>()->default_value('e'),
-                     "Particle to be used: 'e', 'h' or 'l'")
-                    ;
-
-                std::string doc("Find the band-edge profile for a heterostructure and print data to file. "
-                                "The following output files are generated, each containing the given property "
-                                "at each spatial location within the heterostructure:\n"
-                                " v.r      - Band-edge profile [J].\n"
-                                " alpha.r  - Nonparabolicity parameter [1/J].\n"
-                                " Eg.r     - Bandgap [J].\n"
-                                " eps_dc.r - Low-frequency permittivity [F/m].\n"
-                                " m.r      - Effective mass (in growth direction) [kg].\n"
-                                " mperp.r  - Effective mass (perpendicular to growth direction) [kg].\n"
-                                "\n"
-                                "The alloy profile is read from the file x.r "
-                                "which should contain two or three columns:\n"
-                                " * position [m]\n"
-                                " * alloy fraction 1\n"
-                                " * alloy fraction 2 (OPTIONAL)\n"
-                                "\n" 
-                                "For materials where the 2nd alloy component is not needed (E.g., AlGaAs), "
-                                "just omit the last column");
-
-                add_prog_specific_options_and_parse(argc, argv, doc);	
-
-                // Parse the effective-mass calculation type            
-                std::string mass_arg(vm["mass"].as<std::string>());
-
-                if(!strcmp(mass_arg.c_str(), "auto"))
-                    auto_mass = true;
-                else if(atof(mass_arg.c_str()) > 0.0)
-                {
-                    auto_mass = false;
-                    mass = atof(mass_arg.c_str());
-                }
-                else
-                {
-                    std::ostringstream oss;
-                    oss << "Cannot parse mass type: " << mass_arg;
-                    throw std::runtime_error(oss.str());
-                }
+                auto_mass = false;
+                mass = atof(mass_arg.c_str());
             }
-            catch(std::exception &e)
+            else
             {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
+                std::ostringstream oss;
+                oss << "Cannot parse mass type: " << mass_arg;
+                throw std::runtime_error(oss.str());
             }
         }
 
