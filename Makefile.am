@@ -80,11 +80,7 @@ bin_PROGRAMS =  src/chargedensity \
 	       	src/tsb     \
 		src/wfplot
 
-d0_helpers    = src/d0-helpers.c src/d0-helpers.h
-wf_options    = src/wf_options.cpp src/wf_options.h $(qwwad_options)
-qwwad_fileio  = src/qwwad-fileio.cpp src/qwwad-fileio.h
-
-# QCLsim infrastructure (released from Leeds code)
+# Build most functionality into library infrastructure
 noinst_LIBRARIES = src/libqwwad.a
 src_libqwwad_a_SOURCES =  \
 			   src/dos-functions.cpp       \
@@ -106,6 +102,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qclsim-subband.h        \
 			   src/qwwad-heterostructure.cpp \
 			   src/qwwad-heterostructure.h   \
+			   src/qwwad-fileio.cpp          \
+			   src/qwwad-fileio.h            \
 			   src/qwwad-options.cpp         \
 			   src/qwwad-options.h           \
 			   src/qwwad-schroedinger.cpp    \
@@ -121,53 +119,56 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-schroedinger-taylor.cpp        \
 			   src/qwwad-schroedinger-taylor.h          \
 			   src/qwwad-schroedinger-tridiagonal.cpp   \
-			   src/qwwad-schroedinger-tridiagonal.h
+			   src/qwwad-schroedinger-tridiagonal.h     \
+			   src/wf_options.cpp                       \
+			   src/wf_options.h
 
-src_chargedensity_SOURCES = src/chargedensity.cpp $(wf_options)
+src_chargedensity_SOURCES = src/chargedensity.cpp
 src_chargedensity_LDADD   = src/libqwwad.a $(LDADD)
 
-src_densityinput_SOURCES = src/densityinput.cpp $(wf_options)
+src_densityinput_SOURCES = src/densityinput.cpp
 src_densityinput_LDADD   = src/libqwwad.a $(LDADD)
 
+d0_helpers = src/d0-helpers.c src/d0-helpers.h
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
 src_d02D_SOURCES = src/d02D.c $(d0_helpers)
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
 
-src_dispersion_relation_SOURCES = src/dispersion_relation.cpp $(wf_options)
+src_dispersion_relation_SOURCES = src/dispersion_relation.cpp
 src_dispersion_relation_LDADD   = src/libqwwad.a $(LDADD)
 
-src_dos_SOURCES  = src/dos.cpp $(qwwad_options) $(qwwad_fileio)
+src_dos_SOURCES  = src/dos.cpp
 src_dos_LDADD    = src/libqwwad.a $(LDADD)
 
-src_efiw_SOURCES = src/efiw.cpp $(qwwad_options)
+src_efiw_SOURCES = src/efiw.cpp
 src_efiw_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efkpsl_SOURCES = src/efkpsl.cpp $(qwwad_options)
+src_efkpsl_SOURCES = src/efkpsl.cpp
 src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efpqw_SOURCES = src/efpqw.cpp $(qwwad_options)
+src_efpqw_SOURCES = src/efpqw.cpp
 src_efpqw_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efss_SOURCES = src/efss.cpp $(qwwad_options)
+src_efss_SOURCES = src/efss.cpp
 src_efss_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efsqw_SOURCES = src/efsqw.cpp $(qwwad_options)
+src_efsqw_SOURCES = src/efsqw.cpp
 src_efsqw_LDADD   = src/libqwwad.a $(LDADD)
 
-src_efxv_SOURCES = src/efxv.cpp $(qwwad_options)
+src_efxv_SOURCES = src/efxv.cpp
 src_efxv_LDADD   = src/libqwwad.a $(LDADD)
 
-src_find_heterostructure_SOURCES = src/find_heterostructure.cpp $(qwwad_options)
+src_find_heterostructure_SOURCES = src/find_heterostructure.cpp
 src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
 
-src_find_poisson_potential_SOURCES = src/find_poisson_potential.cpp $(qwwad_options)
+src_find_poisson_potential_SOURCES = src/find_poisson_potential.cpp
 src_find_poisson_potential_LDADD   = src/libqwwad.a $(LDADD)
 
-src_hup_SOURCES = src/hup.cpp $(wf_options)
+src_hup_SOURCES = src/hup.cpp
 src_hup_LDADD   = src/libqwwad.a $(LDADD)
 
-src_ivdb_SOURCES = src/ivdb.cpp $(qwwad_options)
+src_ivdb_SOURCES = src/ivdb.cpp
 src_ivdb_LDADD   = src/libqwwad.a $(LDADD)
 
 src_ppvfq_SOURCES = src/ppvfq.c src/ppff.h
@@ -175,19 +176,19 @@ src_ppvfq_LDADD   = src/libqwwad.a
 
 src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
-src_pth_SOURCES = src/pth.cpp $(qwwad_options)
+src_pth_SOURCES = src/pth.cpp
 src_pth_LDADD   = src/libqwwad.a $(LDADD)
 
-src_sbp_SOURCES  = src/sbp.cpp $(qwwad_options) $(qwwad_fileio)
+src_sbp_SOURCES  = src/sbp.cpp
 src_sbp_LDADD    = src/libqwwad.a $(LDADD)
 
-src_tdb_SOURCES  = src/tdb.cpp $(qwwad_options) $(qwwad_fileio)
+src_tdb_SOURCES  = src/tdb.cpp
 src_tdb_LDADD    = src/libqwwad.a $(LDADD)
 
-src_tsb_SOURCES  = src/tsb.cpp $(qwwad_options) $(qwwad_fileio)
+src_tsb_SOURCES  = src/tsb.cpp
 src_tsb_LDADD    = src/libqwwad.a $(LDADD)
 
-src_wfplot_SOURCES = src/wfplot.cpp $(wf_options)
+src_wfplot_SOURCES = src/wfplot.cpp
 src_wfplot_LDADD   = src/libqwwad.a $(LDADD)
 
 # Build rule for installing manual pages
