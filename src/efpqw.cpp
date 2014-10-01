@@ -30,27 +30,15 @@ Options configure_options(int argc, char* argv[])
 {
     Options opt;
 
+    std::string doc("Generate a parabolic alloy profile surrounded by thick barriers.");
+
     opt.add_numeric_option("well-width,a",    100, "Width at top of quantum well [angstrom].");
     opt.add_numeric_option("barrier-width,b", 100, "Width of barriers [angstrom].");
     opt.add_size_option   ("nz,N",            301, "Number of spatial points for output file.");
     opt.add_numeric_option("xmin,x",          0,   "Minimum alloy fraction.");
     opt.add_numeric_option("xmax,y",          0.1, "Maximum alloy fraction.");
 
-    std::string doc("Generate a parabolic alloy profile surrounded by thick barriers.");
-
-    std::string details("The following output text files are created:\n"
-                        "  'x.r'   \tAlloy at each point:\n"
-                        "          \tCOLUMN 1: spatial position [m].\n"
-                        "          \tCOLUMN 2: alloy fraction.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Generate 100-angstrom-wide parabolic-graded alloy with values ranging from 0 to 0.4, surrounded by 200-angstrom barriers:\n\n"
-                        "   efpqw --well-width 100 --xmin 0 --xmax 0.4 --barrier-width 200\n"
-                        "\n"
-                        "   Generate 100-angstrom-wide parabolic-graded alloy with values ranging from 0.1 to 0.3, surrounded by 500-angstrom barriers using 500 points in output file:\n\n"
-                        "   efpqw --well-width 100 --xmin 0.1 --xmax 0.3 --barrier-width 500 --nz 500");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     return opt;
 };

@@ -204,11 +204,13 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/ivdb.1                \
 		 man/find_heterostructure.1 \
 		 man/efxv.1 \
-		 man/efss.1
+		 man/efss.1 \
+		 man/efpqw.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m \
 	      doc/efxv.h2m                 \
-	      doc/efss.h2m
+	      doc/efss.h2m                 \
+	      doc/efpqw.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -278,7 +280,12 @@ man/efss.1: src/efss.cpp $(top_srcdir)/configure.ac \
 	$(MAKE) $(AM_MAKEFLAGS) src/efss$(EXEEXT)
 	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/efss.h2m src/efss$(EXEEXT) 
 
-# Install examples
+man/efpqw.1: src/efpqw.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/efpqw.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/efpqw$(EXEEXT)
+	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/efpqw.h2m src/efpqw$(EXEEXT) 
+
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
 
