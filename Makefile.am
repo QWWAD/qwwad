@@ -203,7 +203,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/tdb.1                 \
 		 man/ivdb.1                \
 		 man/find_heterostructure.1 \
-		 man/efxv.1
+		 man/efxv.1 \
+		 man/efss.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m \
 	      doc/efxv.htm
@@ -270,6 +271,13 @@ man/efxv.1: src/efxv.cpp $(top_srcdir)/configure.ac \
 	$(MAKE) $(AM_MAKEFLAGS) src/efxv$(EXEEXT)
 	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/efxv.h2m src/efxv$(EXEEXT) 
 
+man/efss.1: src/efss.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/efss.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/efss$(EXEEXT)
+	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/efss.h2m src/efss$(EXEEXT) 
+
+# Install examples
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
 

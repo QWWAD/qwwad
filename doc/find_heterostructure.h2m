@@ -1,5 +1,5 @@
 [FILES]
-.SB The following input text file is read:
+.SS Input files
    's.r'    Structure specification:
             Column  1:         thickness of layer [UNIT]
             Columns 2...(n-1): alloy fraction(s)
@@ -7,7 +7,7 @@
 
    See the examples below for some hints for how to describe the heterostructure.
 
-.SB The following output files are created:
+.SS Output files
    'interfaces.r' Locations of interfaces between layers:
                   COLUMN 1: Line numbers in 'x.r' etc at which interfaces are found.
 
@@ -23,8 +23,8 @@ All filenames are configurable using option flags.
 
 [EXAMPLES]
 
-.SB Example input files:
-    A 200-angstrom layer of GaAs surrounded by 50-angstrom Al(0.15)Ga(0.85)As barriers, with 1e17 cm^{-3} doping:
+.SS Example input files
+A 200-angstrom layer of GaAs surrounded by 50-angstrom Al(0.15)Ga(0.85)As barriers, with 1e17 cm^{-3} doping:
 
     s.r
     ---
@@ -59,8 +59,7 @@ To specify a layer of In(0.52)Al(0.48)As followed by a layer of In(0.53)Ga(0.47)
     50  0.48  0.00  0.0
     50  0.00  0.47  0.0
 
-.SB Example usage:
-
+.SS Example usage
 Generate structure data for 3 periods of the structure in the input file:
     find_heterostructure --nper 3
 

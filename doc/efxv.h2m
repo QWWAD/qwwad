@@ -1,5 +1,5 @@
 [FILES]
-.SB The following input text file is read:
+.SS Input files
 
     'x.r' Alloy composition:
           Column 1: Spatial location [m]
@@ -8,7 +8,7 @@
 
 For materials where the 2nd alloy component is not needed (E.g., AlGaAs), just omit the last column
 
-.SB The following output text files are created:
+.SS Output files
 
     'v.r'      Band-edge profile [J]
     'alpha.r'  Nonparabolicity parameter [1/J]

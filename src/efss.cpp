@@ -97,7 +97,8 @@ class FwfOptions : public Options {
             // by default rather than a manually-specified number!
             add_numeric_option("E-cutoff",              "Cut-off energy for solutions [meV]");
             add_numeric_option("mass",       0.067,     "The constant effective mass to use across the entire structure. "
-                                                        "This option only has an effect when used with the matrix-constant-mass "
+                                                        "This option only has an effect when used with the "
+                                                        "matrix-constant-mass "
                                                         "or shooting-constant-mass solvers.");
             add_numeric_option("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
                                                         "This is only used with the shooting-method solvers.");
@@ -110,22 +111,13 @@ class FwfOptions : public Options {
             add_size_option   ("nst-max",     0,        "Maximum number of subbands to find.  The default (0) means "
                                                         "that all states will be found up to maximum confining potential, "
                                                         "or the cut-off energy (if specified).");
-            add_numeric_option("try-energy",            "Calculate a trial wavefunction at a given energy [meV] and write to file. "
-                                                        "This only works with Shooting solvers");
-
-            add_string_option ("solver",     "matrix-variable-mass", "Set the way in which the Schroedinger equation is solved.  You can "
-                                                                     "use one of the following methods:\n"
-                                                                     "\n"
-                                                                     "matrix-variable-mass       \tMatrix solver, with spatially varying, energy-independent effective mass\n\n"
-                                                                     "matrix-constant-mass       \tMatrix solver, with constant effective mass\n\n"
-                                                                     "matrix-full-nonparabolic   \tMatrix solver, using slow, but very accounting for nonparabolic dispersion\n\n"
-                                                                     "matrix-taylor-nonparabolic \tMatrix solver, using fast accounting for "
-                                                                                                  "nonparabolic dispersion, but breaks down as "
-                                                                                                  "E(state) - E(band edge) approaches the bandgap\n\n"
-                                                                     "shooting-variable-mass     \tShooting solver, with spatially varying, energy-independent effective mass\n\n"
-                                                                     "shooting-constant-mass     \tShooting solver, using constant effective mass\n\n"
-                                                                     "shooting-nonparabolic      \tShooting solver, using nonparabolic dispersion\n\n");
-
+            add_numeric_option("try-energy",            "Calculate a trial wavefunction at a given energy [meV] and "
+                                                        "write to file. "
+                                                        "This only works with Shooting solvers.");
+            add_string_option ("solver",     "matrix-variable-mass",
+                                                        "Set the way in which the Schroedinger "
+                                                        "equation is solved. See the manual for "
+                                                        "a detailed list of the options");
             std::string doc = "Solve the 1D Schroedinger equation with "
                 "the effective mass/envelope function approximations.";
 
