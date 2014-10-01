@@ -1,0 +1,19 @@
+[FILES]
+.SS Output files
+   'E*.r'    Energy of each state:
+             Column 1: state index.
+             Column 2: energy [meV].
+
+   'v.r'     Confining potential:
+             Column 1: Spatial location [m]
+             Column 2: Potential [J]
+
+The '*' is replaced by the particle ID.
+
+[EXAMPLES]
+Compute the potential and state energies for Poeschl--Teller hole with depth parameter 2, and width parameter 0.05/angstrom:
+    pth --alpha 0.05 --lambda 2
+
+Compute solutions for a Poeschl--Teller hole with depth 2, width 0.1/angstrom and effective mass 0.1me:
+    pth --alpha 0.1 --mass 0.1 --lambda 2
+

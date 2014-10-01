@@ -1,12 +1,9 @@
-/*=========================================================
-                           pth
-  =========================================================*/
-
-/* this programme calculates the confined energy levels of a 
-   Poschl Teller potential hole and writes the potential to a 
-   file (v.r) suitable for solution with the shooting method.
-
-   Paul Harrison, May 1998				*/
+/**
+ * \file   pth.cpp
+ * \brief  Calculate the eigenstates of a Poschl-Teller hole
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
 #include <cstdio>
 #include <cstdlib>
@@ -27,6 +24,8 @@ Options configure_options(int argc, char* argv[])
 {
     Options opt;
 
+    std::string doc("Generate a Poeschl--Teller potential profile and finds eigenstate energies analytically.");
+
     opt.add_numeric_option("alpha,a",    0.1,   "Width parameter [1/angstrom].");
     opt.add_numeric_option("lambda,l",   2.0,   "Depth parameter.");
     opt.add_numeric_option("length,L",   300,   "Length of potential profile [angstrom].");
@@ -34,26 +33,7 @@ Options configure_options(int argc, char* argv[])
     opt.add_size_option   ("nz,N",       301,   "Number of spatial points for output file.");
     opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
 
-    std::string doc("Generate a Poeschl--Teller potential profile and finds eigenstate energies analytically.");
-
-    std::string details("The following output text files are created:\n"
-                        "  'E*.r'   \tEnergy of each state:\n"
-                        "           \tCOLUMN 1: state index.\n"
-                        "           \tCOLUMN 2: energy [meV].\n"
-                        "  'v.r'    \tPotential at each position\n"
-                        "           \tCOLUMN 1: position [m].\n"
-                        "           \tCOLUMN 2: confining potential [J].\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the potential and state energies for Poeschl--Teller hole with depth parameter 2, and width parameter 0.05/angstrom:\n\n"
-                        "   pth --alpha 0.05 --lambda 2\n"
-                        "\n"
-                        "   Compute solutions for a Poeschl--Teller hole with depth 2, width 0.1/angstrom and effective mass 0.1me:\n\n"
-                        "   pth --alpha 0.1 --mass 0.1 --lambda 2");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     return opt;
 };
