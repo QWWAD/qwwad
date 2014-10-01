@@ -1,19 +1,19 @@
-/*=========================================================
-      efpqw 
-  =========================================================*/
-
-/* This program produces the function of alloy concentration
-   x with displacement z for a parabolic quantum well,
-   the output is in a format suitable for conversion into
-   electron and hole potentials using efxv.      
-
-   ----------b----------+ a +----------b---------- x_max
-                        |   |
-                        \___/  x_min
-
-   Paul Harrison,  October 1995                            
-   
-   Major modifications, 15th May 1998                      */
+/**
+ * \file  efpqw.cpp
+ * \brief Generate parabolic alloy profile
+ *
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program produces the function of alloy concentration
+ *          x with displacement z for a parabolic quantum well,
+ *          the output is in a format suitable for conversion into
+ *          electron and hole potentials using efxv.      
+ *
+ *  ----------b----------+ a +----------b---------- x_max
+ *                       |   |
+ *                       \___/  x_min
+ */
 
 #include <cstdio>
 #include <cstdlib>
