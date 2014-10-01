@@ -207,7 +207,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/efss.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m \
-	      doc/efxv.htm
+	      doc/efxv.h2m                 \
+	      doc/efss.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
