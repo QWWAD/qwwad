@@ -47,7 +47,7 @@ find_heterostructure --dz-max 0.2
 efxv
 
 # Find ground-state solution
-efss --solver shooting-constant-mass --nst-max 1
+efss --solver shooting --mass 0.067 --nst-max 1
 
 E=`cut -f2 Ee.r`
 echo $LB $E >> $outfile_E

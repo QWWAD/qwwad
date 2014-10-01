@@ -4,24 +4,12 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \author Jonathan Cooper <el06jdc@leeds.ac.uk>
  *
- * \details  This program solves the Schrodinger equation for any 
- *            two-dimensional nonrelativistic quantum-well system (QWS).
+ * \details  This program solves the nonrelativistic Schrodinger equation
+ *           for any one-dimensional nonrelativistic potential profile.
  *
- *            It takes inputs in the form of the conduction band profile,
- *            effective mass profile, and non-parabolicity (alpha) profile
- *            all in SI units, and all taken from the files Ve.dat, Me.dat,
- *            and alpha.dat respectively.
- *
- *            The output consists of the energy solutions being outputted to the
- *            command line (for inital inspection) and the following output files
- *            being generated:
- *            - Energy solutions: Ee.r (in meV)
- *            - WF's in numbered files i.e:
- *              - wf_e1.r
- *              - wf_e2.r...etc.
- *
- *            The effective mass can be treated as either a constant value,
- *            a spatially-varying value, or a nonparabolic effective masses.
+ *           It takes inputs in the form of the conduction band profile,
+ *           effective mass profile, and non-parabolicity (alpha) profile
+ *           all in SI units.
  */
 
 #include <iostream>
@@ -42,8 +30,7 @@ using namespace Leeds::constants;
  * \brief The type of solver to use
  */
 enum SolverType {
-    MATRIX_CONSTANT_MASS,  ///< Matrix method using constant effective mass across entire structure
-    MATRIX_VARIABLE_MASS,  ///< Matrix method using Spatially-varying effective mass through structure (parabolic)
+    MATRIX_PARABOLIC,  ///< Matrix method (parabolic bands)
 
     /**
      * \brief   Energy and spatially-dependent effective mass (nonparabolic dispersion)
@@ -74,9 +61,8 @@ enum SolverType {
      */
     MATRIX_TAYLOR_NONPARABOLIC,
 
-    SHOOTING_CONSTANT_MASS, ///< Shooting method using constant mass
-    SHOOTING_VARIABLE_MASS, ///< Shooting-method using spatially-varying mass
-    SHOOTING_NONPARABOLIC   ///< Shooting-method using nonparabolic dispersion
+    SHOOTING_PARABOLIC,   ///< Shooting method (parabolic dispersion)
+    SHOOTING_NONPARABOLIC ///< Shooting-method using nonparabolic dispersion
 };
 
 /** 
@@ -91,15 +77,13 @@ class FwfOptions : public Options {
         SolverType get_type() const {return type;}
 
         FwfOptions(int argc, char* argv[]) :
-            type(MATRIX_VARIABLE_MASS)
+            type(MATRIX_PARABOLIC)
         {
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!
             add_numeric_option("E-cutoff",              "Cut-off energy for solutions [meV]");
-            add_numeric_option("mass",       0.067,     "The constant effective mass to use across the entire structure. "
-                                                        "This option only has an effect when used with the "
-                                                        "matrix-constant-mass "
-                                                        "or shooting-constant-mass solvers.");
+            add_numeric_option("mass",                  "The constant effective mass to use across the entire structure. "
+                                                        "If unspecified, the mass profile will be read from file.");
             add_numeric_option("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
                                                         "This is only used with the shooting-method solvers.");
             add_string_option ("mass-file",  "m.r",     "Filename from which effective mass profile is read. "
@@ -114,8 +98,7 @@ class FwfOptions : public Options {
             add_numeric_option("try-energy",            "Calculate a trial wavefunction at a given energy [meV] and "
                                                         "write to file. "
                                                         "This only works with Shooting solvers.");
-            add_string_option ("solver",     "matrix-variable-mass",
-                                                        "Set the way in which the Schroedinger "
+            add_string_option ("solver",     "matrix",  "Set the way in which the Schroedinger "
                                                         "equation is solved. See the manual for "
                                                         "a detailed list of the options");
             std::string doc = "Solve the 1D Schroedinger equation with "
@@ -126,18 +109,14 @@ class FwfOptions : public Options {
             // Parse the calculation type
             std::string solver_arg(vm["solver"].as<std::string>());
 
-            if     (!strcmp(solver_arg.c_str(), "matrix-constant-mass"))
-                type = MATRIX_CONSTANT_MASS;
-            else if(!strcmp(solver_arg.c_str(), "matrix-variable-mass"))
-                type = MATRIX_VARIABLE_MASS;
+            if     (!strcmp(solver_arg.c_str(), "matrix"))
+                type = MATRIX_PARABOLIC;
             else if(!strcmp(solver_arg.c_str(), "matrix-full-nonparabolic"))
                 type = MATRIX_FULL_NONPARABOLIC;
             else if(!strcmp(solver_arg.c_str(), "matrix-taylor-nonparabolic"))
                 type = MATRIX_TAYLOR_NONPARABOLIC;
-            else if(!strcmp(solver_arg.c_str(), "shooting-constant-mass"))
-                type = SHOOTING_CONSTANT_MASS;
-            else if(!strcmp(solver_arg.c_str(), "shooting-variable-mass"))
-                type = SHOOTING_VARIABLE_MASS;
+            else if(!strcmp(solver_arg.c_str(), "shooting"))
+                type = SHOOTING_PARABOLIC;
             else if(!strcmp(solver_arg.c_str(), "shooting-nonparabolic"))
                 type = SHOOTING_NONPARABOLIC;
             else
@@ -210,21 +189,18 @@ int main(int argc, char *argv[]){
     std::valarray<double> m(nz); // Band-edge effective mass [kg]
     std::valarray<double> alpha(nz); // Nonparabolicity parameter [1/J]
 
-    // Decide whether to read mass and nonparabolicity data depending on
-    // the solver we're using
-    switch(opt.get_type()) {
-        case MATRIX_TAYLOR_NONPARABOLIC:
-        case MATRIX_FULL_NONPARABOLIC:
-        case SHOOTING_NONPARABOLIC:
-            read_table_xy(opt.get_string_option("alpha-file").c_str(), z_tmp, alpha);
-        case MATRIX_VARIABLE_MASS:
-        case SHOOTING_VARIABLE_MASS:
-            read_table_xy(opt.get_string_option("mass-file").c_str(), z_tmp, m);
-            break;
-        case MATRIX_CONSTANT_MASS:
-        case SHOOTING_CONSTANT_MASS:
-            m += opt.get_numeric_option("mass") * me;
-    }
+    // Read nonparabolicity data from file if needed
+    if(opt.get_type() == MATRIX_TAYLOR_NONPARABOLIC ||
+       opt.get_type() == MATRIX_FULL_NONPARABOLIC   ||
+       opt.get_type() == SHOOTING_NONPARABOLIC)
+        read_table_xy(opt.get_string_option("alpha-file").c_str(), z_tmp, alpha);
+
+    // Set a constant effective mass if specified.
+    // Read spatially-varying profile from file if not.
+    if(opt.vm.count("mass"))
+        m += opt.get_numeric_option("mass") * me;
+    else
+        read_table_xy(opt.get_string_option("mass-file").c_str(), z_tmp, m);
 
     // By default, we set the number of states automatically
     // within the range of the potential profile
@@ -259,8 +235,7 @@ int main(int argc, char *argv[]){
 
     switch(opt.get_type())
     {
-        case MATRIX_CONSTANT_MASS:
-        case MATRIX_VARIABLE_MASS:
+        case MATRIX_PARABOLIC:
             se = new SchroedingerSolverTridiag(m,
                                                V,
                                                z,
@@ -280,8 +255,7 @@ int main(int argc, char *argv[]){
                                               z,
                                               nst_max);
             break;
-        case SHOOTING_CONSTANT_MASS:
-        case SHOOTING_VARIABLE_MASS:
+        case SHOOTING_PARABOLIC:
         case SHOOTING_NONPARABOLIC:
             se = new SchroedingerSolverShooting(m,
                                                 alpha,
@@ -296,7 +270,7 @@ int main(int argc, char *argv[]){
         se->set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
     // Output a single trial wavefunction
-    if (opt.vm.count("try-energy") != 0 && (opt.get_type() == SHOOTING_CONSTANT_MASS || opt.get_type() == SHOOTING_VARIABLE_MASS))
+    if (opt.vm.count("try-energy") != 0 && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
     {
         const double E_trial = opt.get_numeric_option("try-energy") * e/1000;
         const std::valarray<double> psi = dynamic_cast<SchroedingerSolverShooting *>(se)->trial_wavefunction(E_trial);

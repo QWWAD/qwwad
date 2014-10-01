@@ -43,18 +43,18 @@ find_heterostructure
 efxv
 
 # Find correct wavefunction
-efss --solver shooting-constant-mass --nst-max 1
+efss --solver shooting --mass 0.067 --nst-max 1
 
 # Rescale to angstrom and send to output file
 awk '{print $1*1e10, $2}' wf_e1.r > $outfile
 
 # Find trial wavefunction just below state
-efss --solver shooting-constant-mass --try-energy 29.3
+efss --solver shooting --mass 0.067 --try-energy 29.3
 printf "\n" >> $outfile
 awk '{print $1*1e10, $2}' wf_eE.r >> $outfile
 
 # Find trial wavefunction just above state
-efss --solver shooting-constant-mass --try-energy 29.5
+efss --solver shooting --mass 0.067 --try-energy 29.5
 printf "\n" >> $outfile
 awk '{print $1*1e10, $2}' wf_eE.r >> $outfile
 

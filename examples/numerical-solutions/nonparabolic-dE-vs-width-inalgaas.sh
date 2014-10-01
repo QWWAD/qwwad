@@ -59,7 +59,7 @@ for LW in 20 30 40 50 60 80 100 120 140 160 180 200; do
  E_np=`awk '/^1/{printf $2}' Ee.r`
 
  # Calculate ground state energy without band non-parabolicity
- efss --solver matrix-variable-mass --nst-max 1
+ efss --nst-max 1
 
  # Get energy from file
  E_parab=`awk '/^1/{printf $2}' Ee.r`

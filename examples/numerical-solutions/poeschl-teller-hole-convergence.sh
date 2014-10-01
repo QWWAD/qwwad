@@ -55,7 +55,7 @@ for N in 1 2 5 10 20 50 100; do
     fi
 
     # Now perform numerical solution
-    efss --nst-max 2 --mass 0.067 --solver matrix-constant-mass	# calculate 2 lowest energy levels
+    efss --nst-max 2 --mass 0.067 # calculate 2 lowest energy levels
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
     E2_numerical=`awk '/^2/{print $2}' Ee.r`

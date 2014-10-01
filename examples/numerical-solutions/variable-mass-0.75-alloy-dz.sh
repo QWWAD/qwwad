@@ -66,7 +66,7 @@ for N in 2 4 6 8 10 12; do
     find_heterostructure --nz-1per $nz # generate alloy concentration as a function of z
     efxv			  # generate potential data
 
-    efss --nst-max 1 --solver matrix-variable-mass # calculate lowest energy level
+    efss --nst-max 1 # calculate lowest energy level
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
 

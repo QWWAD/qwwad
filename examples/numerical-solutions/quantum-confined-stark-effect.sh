@@ -1,42 +1,72 @@
 #!/bin/sh
 set -e
 
-# Define output file
-OUT=E-F.r
+# Find ground state of a quantum well in a variable electric field
+#
+# This script is part of the QWWAD software suite. Any use of this code
+# or its derivatives in published work must be accompanied by a citation
+# of:
+#   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
+#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#
+# (c) Copyright 1996-2014
+#     Alex Valavanis <a.valavanis@leeds.ac.uk>
+#
+# QWWAD is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# QWWAD is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-rm -f $OUT
+outfile=quantum-confined-stark-effect-E-F.dat
+rm -f $outfile
 
-# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
-# Use V=0.67*1247*x, keep x=0.2
-V=167.0985
-
-# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
-# Use MB=0.067+0.083*x, keep x=0.2
-MB=0.0836
-
-# Define well width here
-LW=60
-
-# perform numerical solution
-#
 # First generate structure definition `s.r' file
-echo 200 0.2 0.0 > s.r
-echo $LW 0.0 0.0 >> s.r
-echo 200 0.2 0.0 >> s.r
+cat > s.r << EOF
+200 0.2 0.0
+ 60 0.0 0.0
+200 0.2 0.0
+EOF
 
 find_heterostructure # generate alloy concentration as a function of z
 efxv		     # generate potential data
 
-# Loop over electric field 
+cp v.r vcb.r # Save conduction band energy for use as baseline
 
+# Loop over electric field 
 for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70; do
  # Add electric field to potential
- find_poisson_potential --uncharged --field $F --centred --Vbasefile v.r --potential-file v_t.r
+ find_poisson_potential --uncharged --field $F --centred --Vbasefile vcb.r
 
- efss --nst-max 1 --v-file v_t.r # calculate ground state only
+ efss --nst-max 1 # calculate ground state only
 
  # Write energy to output file
  E1=`awk '/^1/{print $2}' Ee.r`
- echo $F $E1 >> $OUT
+ echo $F $E1 >> $outfile
 done
+
+cat << EOF
+Results have been written to $outfile in the format:
+
+  COLUMN 1 - Electric field [kV/cm]
+  COLUMN 2 - Energy of ground state [meV]
+
+This script is part of the QWWAD software suite.
+
+(c) Copyright 1996-2014
+    Alex Valavanis <a.valavanis@leeds.ac.uk>
+    Paul Harrison  <p.harrison@leeds.ac.uk>
+
+Report bugs to https://bugs.launchpad.net/qwwad
+EOF
+
+# Clean up workspace
+rm -f *.r

@@ -64,7 +64,7 @@ for LW in 20 40 60 80 100 120 160 200; do
     find_heterostructure --dz-max 1 # generate alloy concentration as a function of z
     efxv			    # generate potential data
 
-    efss --nst-max 2 --solver matrix-variable-mass # calculate 2 lowest energy levels
+    efss --nst-max 2  # calculate 2 lowest energy levels
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
     E2_numerical=`awk '/^2/{print $2}' Ee.r`

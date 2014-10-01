@@ -50,7 +50,7 @@ for X in 0.4 0.6 0.8 1.0; do
      E1_np=`awk '/^1/{printf $2}' Ee.r`
 
      # Calculate ground state energy without band non-parabolicity
-     efss --solver matrix-variable-mass --nst-max 1
+     efss --nst-max 1
 
      # Get energy from file
      E1_parab=`awk '/^1/{printf $2}' Ee.r`
