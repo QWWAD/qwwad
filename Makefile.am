@@ -211,12 +211,17 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/pth.1                  \
 		 man/find_poisson_potential.1
 
-EXTRA_DIST += doc/find_heterostructure.h2m \
-	      doc/efxv.h2m                 \
-	      doc/efss.h2m                 \
-	      doc/efpqw.h2m                \
-	      doc/pth.h2m                  \
-	      doc/find_poisson_potential.h2m
+EXTRA_DIST += doc/find_heterostructure.h2m   \
+	      doc/efxv.h2m                   \
+	      doc/efss.h2m                   \
+	      doc/efpqw.h2m                  \
+	      doc/pth.h2m                    \
+	      doc/find_poisson_potential.h2m \
+              doc/efiw.h2m                   \
+	      doc/dispersion_relation.h2m    \
+	      doc/dos.h2m                    \
+	      doc/sbp.h2m                    \
+	      doc/efsqw.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -238,10 +243,10 @@ man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m
 	$(MAKE) $(AM_MAKEFLAGS) src/sbp$(EXEEXT)
 	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/sbp.h2m src/sbp$(EXEEXT)
 
-man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac
+man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/efsqw$(EXEEXT)
-	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" src/efsqw$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/efsqw.h2m src/efsqw$(EXEEXT)
 
 man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man

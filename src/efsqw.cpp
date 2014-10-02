@@ -74,6 +74,9 @@ using namespace constants;
 Options configure_options(int argc, char* argv[])
 {
     Options opt;
+
+    std::string summary("Find the eigenstates of a single finite quantum well. ");
+
     opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
     opt.add_numeric_option("barrier-width,b", 200,   "Width of barrier [angstrom]. Note that this is only used "
                                                      "for the purposes of outputting the data. The calculation here "
@@ -89,43 +92,14 @@ Options configure_options(int argc, char* argv[])
                                                      "An rhs file is output for all the bound states in the system and "
                                                      "one additional branch (with no real solution)");
     opt.add_switch        ("output-potential",       "Output the potential profile for the system to v.r");
-    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, "
+                                                     "heavy holes or light holes respectively.");
     opt.add_size_option   ("nz,N",             1000, "Number of spatial points for output file.");
     opt.add_size_option   ("nst,s",              1,  "Number of states to find");
     opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
-    opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
+    opt.add_numeric_option("E-cutoff",               "Cut-off energy for solutions [meV]");
 
-    std::string summary("Find the eigenstates of a single finite quantum well. ");
-    std::string details("The following output text files are created:\n"
-                        "  'E*.r'   \tEnergy of each state:\n"
-                        "           \tCOLUMN 1: state index.\n"
-                        "           \tCOLUMN 2: energy [meV].\n"
-                        "  'wf_*i.r'\tWave function amplitude at each position\n"
-                        "           \tCOLUMN 1: position [m].\n"
-                        "           \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "  'v.r'    \tPotential profile (if --output-potential flag is used)\n"
-                        "           \tCOLUMN 1: position [m].\n"
-                        "           \tCOLUMN 2: potential [J].\n"
-                        "  'lhs.r'  \tLeft-hand side of matching function (if --output-equations flag is used)\n"
-                        "           \tCOLUMN 1: Normalised well wave-vector\n"
-                        "           \tCOLUMN 2: Normalised barrier decay constant\n"
-                        "  'rhs_i.r'\tRight-hand side of matching function for branch i (if --output-equations flag is used)\n"
-                        "           \tCOLUMN 1: Normalised well wave-vector\n"
-                        "           \tCOLUMN 2: Normalised barrier decay constant\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the first three states in a 150-angstrom well with 100 meV confining potential:\n\n"
-                        "   efsqw --well-width 150 --potential 100 --nst 3\n"
-                        "\n"
-                        "   Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:\n\n"
-                        "   efsqw --well-width 200 --well-mass 0.62 --particle h\n"
-                        "\n"
-                        "   Compute the ground state in a 200 angstrom well with 100 meV barriers, and dump plots of the matching equations to file:\n\n"
-                        "   efsqw --well-width 200 --potential 100 --output-equations");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }
