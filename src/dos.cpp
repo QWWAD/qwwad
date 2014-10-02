@@ -1,6 +1,6 @@
 /**
- * \file   dos.c Density of states calculator
- *
+ * \file   dos.cpp
+ * \brief  Density of states calculator
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
@@ -28,32 +28,14 @@ Options configure_options(int argc, char* argv[])
 {
     Options opt;
 
+    std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
+
     opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
     opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
     opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
     opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
 
-    std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
-
-    std::string details("Input file:\n"
-                        "  'E*.r'   \tEnergies of subband minima:\n"
-                        "           \tCOLUMN 1: state index.\n"
-                        "           \tCOLUMN 2: energy [meV].\n\n"
-                        "Output file:\n"
-                        "  'rho.r'  \tDensity of states:\n"
-                        "           \tCOLUMN 1: energy [meV]\n"
-                        "           \tCOLUMN 2: 3D d.o.s. [J^{-1}m^{-3}]\n"
-                        "           \tCOLUMN 3: 2D d.o.s. [J^{-1}m^{-2}]\n"
-                        "           \tCOLUMN 4: 1D d.o.s. [J^{-1}m^{-1}]\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the density of electron states in system with effective mass = 0.1m0:\n\n"
-                        "   dos --mass 0.1\n"
-                        "\n"
-                        "   Compute the density of heavy-hole states with mass = 0.62 m0 and non-parabolicity = 10 eV^{-1}\n\n"
-                        "   dos --mass 0.62 --alpha 10");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 };

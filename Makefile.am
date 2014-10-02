@@ -218,17 +218,17 @@ EXTRA_DIST += doc/find_heterostructure.h2m \
 	      doc/pth.h2m                  \
 	      doc/find_poisson_potential.h2m
 
-man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
+man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dos$(EXEEXT)
-	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" src/dos$(EXEEXT)
+	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/dos.h2m src/dos$(EXEEXT)
 
-man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac
+man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efiw.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/efiw$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/efiw.h2m src/efiw$(EXEEXT)
 
-man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac
+man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dispersion_relation.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/dispersion_relation$(EXEEXT)
 	help2man --output=$@ --name="compute the dispersion relation for an energy subband" --include $(top_srcdir)/doc/dispersion_relation.h2m src/dispersion_relation$(EXEEXT)
