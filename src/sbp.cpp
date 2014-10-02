@@ -48,47 +48,21 @@ class SBPOptions : public Options
         {
             try
             {
+                std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
+
                 add_switch        ("fd,f",                      "Output Fermi-Dirac distribution.");
                 add_numeric_option("mass,m",             0.067, "Effective mass (relative to free electron)");
                 add_numeric_option("vcb",                 0.00, "Band-edge potential [eV]");
                 add_numeric_option("alpha",               0.00, "Non-parabolicity parameter [eV^{-1}]");
-                add_char_option   ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+                add_char_option   ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                                "electrons, heavy holes or light holes respectively.");
                 add_numeric_option("Te",                  300,  "Carrier temperature [K].");
                 add_size_option   ("nenergy,n",           1000, "Number of energy samples to print out");
-                add_numeric_option("global-population,N", 0.0,  "Use equilibrium population for the entire system instead of reading subband "
+                add_numeric_option("global-population,N", 0.0,  "Use equilibrium population for the entire system "
+                                                                "instead of reading subband "
                                                                 "populations from file [x1e10 cm^{-2}]");
 
-                std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
-
-                std::string details("Default input files:\n"
-                                    "  'E*.r'    \tEnergy of each state:\n"
-                                    "            \tCOLUMN 1: state index.\n"
-                                    "            \tCOLUMN 2: energy [meV].\n"
-                                    "  'N.r'     \tPopulation of each state (not used if --global-population is specified):\n"
-                                    "            \tCOLUMN 1: state index.\n"
-                                    "            \tCOLUMN 2: subband population [x10^10 cm^{-2}]\n"
-                                    "\n"
-                                    "Default output files:\n"
-                                    "  'Ef.r'    \tQuasi-Fermi energy of each subband:\n"
-                                    "            \tCOLUMN 1: subband index.\n"
-                                    "            \tCOLUMN 2: energy [meV].\n"
-                                    "  'FDi.r'   \tDispersion relation for subband i (if --fd option is used)\n"
-                                    "            \tCOLUMN 1: In-plane wave-vector [1/m]\n"
-                                    "            \tCOLUMN 2: Energy [meV]\n"
-                                    "\n"
-                                    "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                                    "\n"
-                                    "It is assumed that all subbands have the same temperature. If the --global-population flag is used, the "
-                                    "subbands are assumed to be in thermal equilibrium with a single Fermi energy for the entire system.\n"
-                                    "\n"
-                                    "Examples:\n"
-                                    "   Compute the global Fermi energy for a system with total population 10e10 cm^{-2} and carrier temperature 20 K:\n\n"
-                                    "   sbp --global-population 10 --Te 20\n"
-                                    "\n"
-                                    "   Compute the quasi-Fermi energies and carrier distributions using non-parabolic mass (alpha = 0.7 eV^{-1}):\n\n"
-                                    "   sbp --fd --alpha 0.7");
-
-                add_prog_specific_options_and_parse(argc, argv, summary, details);
+                add_prog_specific_options_and_parse(argc, argv, summary);
             }
             catch(std::exception &e)
             {

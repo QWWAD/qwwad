@@ -233,10 +233,10 @@ man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.a
 	$(MAKE) $(AM_MAKEFLAGS) src/dispersion_relation$(EXEEXT)
 	help2man --output=$@ --name="compute the dispersion relation for an energy subband" --include $(top_srcdir)/doc/dispersion_relation.h2m src/dispersion_relation$(EXEEXT)
 
-man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac
+man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/sbp$(EXEEXT)
-	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" src/sbp$(EXEEXT)
+	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/sbp.h2m src/sbp$(EXEEXT)
 
 man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
