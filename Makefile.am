@@ -226,7 +226,7 @@ man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/efiw$(EXEEXT)
-	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" src/efiw$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/efiw.h2m src/efiw$(EXEEXT)
 
 man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man

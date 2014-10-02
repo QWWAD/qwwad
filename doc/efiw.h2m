@@ -1,0 +1,19 @@
+[FILES]
+
+.SS Output files:
+   'E*.r'    Energy of each state:
+             Column 1: state index.
+             Column 2: energy [meV].
+
+   'wf_*i.r' Wave function amplitude at each position:
+             Column 1: position [m].
+             Column 2: wave function amplitude [m^{-1/2}].
+
+In each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.
+
+[EXAMPLES]
+Compute the ground state in a 150-angstrom well with effective mass = 0.1 m0:
+   efiw --width 150 --mass 0.1
+                        
+Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:
+   efiw --width 200 --mass 0.62 --particle h

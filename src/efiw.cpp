@@ -25,35 +25,19 @@ Options configure_options(int argc, char* argv[])
 {
     Options opt;
 
+    std::string doc("Find the eigenstates of an infinite quantum well.");
+
     opt.add_numeric_option("width,L",    100,   "Width of quantum well [angstrom].");
     opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
     opt.add_size_option   ("nz,N",       100,   "Number of spatial points for output file.");
     opt.add_size_option   ("nst,s",      1,     "Number of states to find.");
-    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                "electrons, heavy holes or light holes respectively.");
     opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
     opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
     opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
 
-    std::string doc("Find the eigenstates of an infinite quantum well.");
-
-    std::string details("The following output text files are created:\n"
-                        "  'E*.r'   \tEnergy of each state:\n"
-                        "           \tCOLUMN 1: state index.\n"
-                        "           \tCOLUMN 2: energy [meV].\n"
-                        "  'wf_*i.r'\tWave function amplitude at each position\n"
-                        "           \tCOLUMN 1: position [m].\n"
-                        "           \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the ground state in a 150-angstrom well with effective mass = 0.1 m0:\n\n"
-                        "   efiw --width 150 --mass 0.1\n"
-                        "\n"
-                        "   Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:\n\n"
-                        "   efiw --width 200 --mass 0.62 --particle h");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     return opt;
 };
