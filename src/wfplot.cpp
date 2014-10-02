@@ -26,7 +26,7 @@ using namespace Leeds::constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt;
+    WfOptions opt(WF_OPTION_MODE_IN);
     opt.add_string_option("plot-file", "vwf.r", "Name of file to which plottable data will be written.");
     opt.add_size_option  ("nst-max",   10,      "Maximum number of states to plot.");
     opt.add_switch       ("plot-wf",            "Plot wavefunctions rather than probability density.");

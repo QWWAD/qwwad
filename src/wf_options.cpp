@@ -8,75 +8,59 @@
 
 #include "wf_options.h"
 
-WfOptions::WfOptions()
+/**
+ * \brief Default constructor
+ *
+ * \param[in] mode Whether to include input/output options
+ */
+WfOptions::WfOptions(WfOptionMode mode) :
+    _mode(mode)
 {
-    program_specific_options->add_options()
-        ("wf-input-prefix",
-         po::value<std::string>()->default_value("wf_e"),
-         "Set prefix of wavefunction input files.")
+    // Add all input options
+    if(_mode != WF_OPTION_MODE_OUT)
+    {
+        add_string_option("wf-input-prefix", "wf_e", "Set prefix of wavefunction input files.");
+        add_string_option("wf-input-ext",    ".r",   "Set file extension of wavefunction input files.");
+        add_string_option("potential-input", "v.r",  "Set filename of potential input file.");
+        add_string_option("energy-input",    "Ee.r", "Set filename of energy input file.");
+        add_string_option("input-dir",               "Select directory containing input files.");
+    }
 
-        ("wf-input-ext",
-         po::value<std::string>()->default_value(".r"),
-         "Set file extension of wavefunction input files.")
-
-        ("potential-input",
-         po::value<std::string>()->default_value("v.r"),
-         "Set filename of potential input file.")
-
-        ("energy-input",
-         po::value<std::string>()->default_value("Ee.r"),
-         "Set filename of energy input file.")
-
-        ("input-dir",
-         po::value<std::string>(),
-         "Select directory containing input files.")
-
-        ("wf-output-prefix",
-         po::value<std::string>(),
-         "Set prefix of wavefunction output files.")
-
-        ("wf-output-ext",
-         po::value<std::string>(),
-         "Set file extension of wavefunction output files.")
-
-        ("potential-output",
-         po::value<std::string>(),
-         "Set filename of potential output file.")
-
-        ("energy-output",
-         po::value<std::string>(),
-         "Set filename of energy output file.")
-
-        ("output-dir",
-         po::value<std::string>(),
-         "Select directory containing output files.")
-
-        ("output-ext",
-         po::value<std::string>()->default_value(".out"),
-         "Set default output extension.")
-        ;
+    // Add all output options
+    if(_mode != WF_OPTION_MODE_IN)
+    {
+        add_string_option("wf-output-prefix",         "Set prefix of wavefunction output files.");
+        add_string_option("wf-output-ext",            "Set file extension of wavefunction output files.");
+        add_string_option("potential-output",         "Set filename of potential output file.");
+        add_string_option("energy-output",            "Set filename of energy output file.");
+        add_string_option("output-dir",               "Select directory containing output files.");
+        add_string_option("output-ext",       ".out", "Set default output extension.");
+    }
 }
-
 
 /*
  * \brief Constructs the output filenames with paths according to the details below
  *
  * \details
- * 	  Ouputs new the selected energys and wfs into a new directory 
- *	  <ouput_dir> with the filenames <energy_output_file> and
+ * 	  Outputs new the selected energies and wfs into a new directory 
+ *	  <output_dir> with the filenames <energy_output_file> and
  *	  <wf_out_prefix>i<wf_out_ext>; for i= 1,2,3...
  *	  If no output directory is specified then the files are
  *	  written to the current directory with the new output filenames.
  *	  If no output filenames are specified then the files are
  *	  written to the output directory with the same input filenames.
- *	  If niether are specified but the input file directory is specified
+ *	  If neither are specified but the input file directory is specified
  *	  (and is not '.') then the files are written to the cwd.
  *	  If none of the above are specified then the file are written to the
  *	  cwd with the same filenames only with '.out' appened to the end.
  *
  * \TODO Add check to make sure output directory exist and if not create it!
  */
-std::string WfOptions::get_wf_input_path(const int ist) const{
+std::string WfOptions::get_wf_input_path(const int ist) const
+{
+    if(_mode == WF_OPTION_MODE_OUT)
+        throw std::runtime_error("Cannot retrieve input path");
+
     if(ist<1)
         throw std::runtime_error("Trying to get a wf filename with an index that is less than 1!");
     
@@ -88,14 +72,27 @@ std::string WfOptions::get_wf_input_path(const int ist) const{
             boost::lexical_cast<std::string>(ist) + vm["wf-input-ext"].as<std::string>();
 }
 
-std::string WfOptions::get_wf_input_prefix() const{
+std::string WfOptions::get_wf_input_prefix() const
+{
+    if(_mode == WF_OPTION_MODE_OUT)
+        throw std::runtime_error("Cannot retrieve input path");
+
     if(vm.count("input-dir"))
         return vm["input-dir"].as<std::string>() + vm["wf-input-prefix"].as<std::string>();
     else
         return vm["wf-input-prefix"].as<std::string>();
 }
+        
+std::string WfOptions::get_wf_input_ext() const
+{
+    if(_mode == WF_OPTION_MODE_OUT)
+        throw std::runtime_error("Cannot retrieve input path");
+    return vm["wf-input-ext"].as<std::string>();
+}
 
 std::string WfOptions::get_energy_input_path() const{
+    if(_mode == WF_OPTION_MODE_OUT)
+        throw std::runtime_error("Cannot retrieve input path");
     if(vm.count("input-dir"))
         return vm["input-dir"].as<std::string>() + vm["energy-input"].as<std::string>();
     else
@@ -103,6 +100,8 @@ std::string WfOptions::get_energy_input_path() const{
 }
 
 std::string WfOptions::get_potential_input_path() const{
+    if(_mode == WF_OPTION_MODE_OUT)
+        throw std::runtime_error("Cannot retrieve input path");
     if(vm.count("input-dir"))
         return vm["input-dir"].as<std::string>() + vm["potential-input"].as<std::string>();
     else
@@ -110,6 +109,8 @@ std::string WfOptions::get_potential_input_path() const{
 }
 
 std::string WfOptions::get_wf_output_path(const int ist) const{
+    if(_mode == WF_OPTION_MODE_IN)
+        throw std::runtime_error("Cannot retrieve output path");
 
     std::string wf_output_path;
     std::string default_wf_output_ext = vm["output-ext"].as<std::string>();
@@ -151,6 +152,8 @@ std::string WfOptions::get_wf_output_path(const int ist) const{
 }
 
 std::string WfOptions::get_wf_output_prefix() const{
+    if(_mode == WF_OPTION_MODE_IN)
+        throw std::runtime_error("Cannot retrieve output path");
 
     std::string wf_output_prefix;
 
@@ -168,6 +171,8 @@ std::string WfOptions::get_wf_output_prefix() const{
 }
 
 std::string WfOptions::get_wf_output_ext() const{
+    if(_mode == WF_OPTION_MODE_IN)
+        throw std::runtime_error("Cannot retrieve output path");
 
     std::string wf_output_ext;
     std::string default_wf_output_ext = vm["output-ext"].as<std::string>();
@@ -199,6 +204,8 @@ std::string WfOptions::get_wf_output_ext() const{
 }
 
 std::string WfOptions::get_energy_output_path() const{
+    if(_mode == WF_OPTION_MODE_IN)
+        throw std::runtime_error("Cannot retrieve output path");
 
     std::string energy_output_path;
     std::string default_energy_output_ext = vm["output-ext"].as<std::string>();
@@ -232,6 +239,8 @@ std::string WfOptions::get_energy_output_path() const{
 }
 
 std::string WfOptions::get_potential_output_path() const{
+    if(_mode == WF_OPTION_MODE_IN)
+        throw std::runtime_error("Cannot retrieve output path");
 
     std::string potential_output_path;
     std::string default_potential_output_ext = vm["output-ext"].as<std::string>();

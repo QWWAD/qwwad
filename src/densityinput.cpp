@@ -42,6 +42,7 @@ class DensityinputOptions : public WfOptions
 };
 
 DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
+    WfOptions(WF_OPTION_MODE_IN),
     distType(DIST_EVEN)
 {
     std::string doc("Generate an approximate carrier energy distribution for a set of subbands");

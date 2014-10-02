@@ -21,7 +21,7 @@ using namespace constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt;
+    WfOptions opt(WF_OPTION_MODE_IN);
 
     opt.add_numeric_option("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
     opt.add_numeric_option("Te",             100,        "Carrier temperature [K].");
