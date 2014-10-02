@@ -10,9 +10,11 @@
 #include <valarray>
 
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_sf_hyperg.h>
 #include "qwwad-options.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
+#include "qclsim-linalg.h"
 
 using namespace Leeds;
 using namespace constants;
@@ -69,23 +71,99 @@ int main(int argc,char *argv[])
         V[iz] = -gsl_pow_2(hBar*alpha/cosh(alpha*z[iz]))*lambda*(lambda-1)/(2*m);
     }
 
+    const std::valarray<double> sinh_alpha_z = sinh(alpha*z);
+    const std::valarray<double> _x = -pow(sinh_alpha_z,2.0);
+
     write_table_xy("v.r", z, V); // Write potential profile to file
 
     // Number of bound states
     size_t nst = ceil(lambda-1); // principal quantum number
 
-    std::valarray<double> E(nst); // Energy of each state
+    std::vector<State> _solutions;
 
-    // Compute energy of state analytically
+    // Compute solutions analytically
     for(unsigned int ist = 0; ist < nst; ++ist)
-        E[ist] = -gsl_pow_2(hBar*alpha*(lambda-1-(float)ist))/(2*m);
+    {
+        // Energy is found using [QWWAD4, 3.60]
+        const double kappa = alpha * (lambda-1-ist);
+        const double E = -gsl_pow_2(hBar * kappa) / (2.0*m);
 
-    E *= 1000/e; // Convert to meV
+        // Wavefunction is taken from "Practical Quantum Mechanics", Flugge (1970).
+        // The solution is a hypergeometric function, whose arguments and scaling
+        // factor depend on whether the state has odd or even parity.
+        
+        double arg1, arg2, arg3;    // Arguments for hypergeometric function
+        std::valarray<double> fact; // Prefactor for hypergeometric function
+
+        // Flugge, 39.24
+        const double a = 0.5 * (lambda - kappa/alpha);
+        const double b = 0.5 * (lambda + kappa/alpha);
+
+        if(ist % 2) // Odd-parity states
+        {
+            // From Flugge, 39.10b
+            arg1 = a+0.5;
+            arg2 = b+0.5;
+            arg3 = 1.5;
+            fact = pow(cosh(alpha*z),lambda) * sinh_alpha_z;
+        }
+        else // Even-parity states
+        {
+            // From Flugge, 39.10a
+            arg1 = a;
+            arg2 = b;
+            arg3 = 0.5;
+            fact = pow(cosh(alpha*z),lambda);
+        }
+
+        std::valarray<double> psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+
+        for(unsigned int iz = 0; iz < nz; ++iz)
+        {
+            if(abs(_x[iz]) < 1)
+            {
+                psi[iz] = fact[iz] *
+                          gsl_sf_hyperg_2F1(arg1, arg2, arg3, _x[iz]);
+            }
+            // If the argument is too large, we need to apply a linear
+            // transformation such that |_x| < 1
+            else if(gsl_fcmp(_x[iz]/(_x[iz]-1), 1, 0.0025) == -1)
+            {
+                psi[iz] = fact[iz] *
+                          pow(1-_x[iz],-arg2) *
+                          gsl_sf_hyperg_2F1(arg2, arg3-arg1, arg3, _x[iz]/(_x[iz]-1));
+            }
+            // In case we're *very* close to _x = 1, GSL can't cope, so we
+            // need to simplify things further, and just pass a large number
+            // as the argument.
+            // This seems to be OK, but might need a little investigation
+            else
+            {
+                psi[iz] = fact[iz] *
+                          pow(1-_x[iz],-arg2) *
+                          gsl_sf_hyperg_2F1(arg2, arg3-arg1, arg3, 0.99);
+            }
+        }
+
+        _solutions.push_back(State(E * 1000/e, psi));
+        _solutions.back().normalise(z);
+    }
 
     // Write energy to file
-    char filename[9];
-    sprintf(filename,"E%c.r",p);
-    write_table_x(filename, E, true);
+    char energy_filename[9];
+    sprintf(energy_filename,"E%c.r",p);
+
+    char wf_prefix[9];
+    sprintf(wf_prefix,"wf_%c",p);
+
+    State::write_to_file(energy_filename,
+                         wf_prefix,
+                         ".r",
+                         _solutions,
+                         z,
+                         true);
+
+//    write_table_x(filename, E, true);
 
     return EXIT_SUCCESS;
 }
