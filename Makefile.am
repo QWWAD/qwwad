@@ -221,7 +221,8 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/dispersion_relation.h2m    \
 	      doc/dos.h2m                    \
 	      doc/sbp.h2m                    \
-	      doc/efsqw.h2m
+	      doc/efsqw.h2m                  \
+	      doc/wfplot.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -248,10 +249,10 @@ man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2
 	$(MAKE) $(AM_MAKEFLAGS) src/efsqw$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/efsqw.h2m src/efsqw$(EXEEXT)
 
-man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac
+man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/wfplot$(EXEEXT)
-	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." src/wfplot$(EXEEXT)
+	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/wfplot.h2m src/wfplot$(EXEEXT)
 
 man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man

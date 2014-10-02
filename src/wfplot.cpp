@@ -27,51 +27,14 @@ using namespace Leeds::constants;
 WfOptions configure_options(int argc, char* argv[])
 {
     WfOptions opt(WF_OPTION_MODE_IN);
+
+    std::string summary("Translate wavefunction data into a prettier plottable form.");
+
     opt.add_string_option("plot-file", "vwf.r", "Name of file to which plottable data will be written.");
     opt.add_size_option  ("nst-max",   10,      "Maximum number of states to plot.");
     opt.add_switch       ("plot-wf",            "Plot wavefunctions rather than probability density.");
 
-    std::string summary("Translate wavefunction data into a prettier plottable form.");
-    std::string details("Default input files:\n"
-                        "  'E*.r'    \tEnergy of each state:\n"
-                        "            \tCOLUMN 1: state index.\n"
-                        "            \tCOLUMN 2: energy [meV].\n"
-                        "  'wf_*i.r' \tWave function amplitude at each position\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "  'v.r'     \tPotential profile.\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: potential [J].\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Default output files:\n"
-                        "  'vwf.r'   \tPlottable date file.\n"
-                        "            \tCOLUMN 1: position [angstrom].\n"
-                        "            \tCOLUMN 2: plottable function [meV].\n\n"
-                        "\tThe plottable functions in this file are contained in distinct\n"
-                        "\tdata sets, each being separated by a blank line.  The first set\n"
-                        "\tcontains the confining potential in meV.  Subsequent sets contain\n"
-                        "\teither the probability density (default) or wavefunction amplitude\n"
-                        "\t(if --plot-wf is specified).  These sets are placed in ascending\n"
-                        "\torder, such that state |1> data is in data set 2, state |2> in\n"
-                        "\tset 3, state |3> in set 4 and so on.\n"
-                        "\n"
-                        "\tThe probability density (or wavefunction) plots are positioned on\n"
-                        "\tthe y-axis such that they lie at the energy of the associated state.\n"
-                        "\tThey are automatically scaled such that they fit neatly on the plot.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Generate plottable data for all states in the input files:\n\n"
-                        "   wfplot\n"
-                        "\n"
-                        "   Generate plottable data, using wavefunctions instead of probability densities:\n\n"
-                        "   wfplot --plot-wf\n"
-                        "\n"
-                        "   Generate plottable data, using only the first three states in the input files:\n\n"
-                        "   wfplot --nst-max 3");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }
