@@ -1,0 +1,23 @@
+[FILES]
+.SS Input files:
+   'E*.r'    Energy of each state:
+             Column 1: state index.
+             Column 2: energy [meV].
+
+   'wf_*i.r' Wave function amplitude at each position:
+             Column 1: position [m].
+             Column 2: wave function amplitude [m^{-1/2}].
+
+.SS Output files:
+   'dr_*i.r' Dispersion relation for subband i
+             Column 1: In-plane wave-vector [1/m]
+             Column 2: Energy [meV]
+
+In each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.
+
+[EXAMPLES]
+Compute the dispersion relation up to 10 kT with a carrier temperature of 10 K:
+    dispersion_relation --nkbt 10 --Te 10
+
+Compute the non-parabolic dispersion relation using 1000 data points and dispersion of 0.7 eV^{-1}:
+    dispersion_relation --nk 1000 --nonparabolic --alpha 0.7

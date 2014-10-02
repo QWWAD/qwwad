@@ -23,6 +23,8 @@ WfOptions configure_options(int argc, char* argv[])
 {
     WfOptions opt(WF_OPTION_MODE_IN);
 
+    std::string summary = "Compute the dispersion relation for a set of subbands.";
+
     opt.add_numeric_option("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
     opt.add_numeric_option("Te",             100,        "Carrier temperature [K].");
     opt.add_size_option   ("nk",             100,        "Number of k-space points to print out");
@@ -35,31 +37,7 @@ WfOptions configure_options(int argc, char* argv[])
     opt.add_numeric_option("alpha",          0.0,        "In-plane non-parabolicity parameter [1/eV].");
     opt.add_numeric_option("vcb",            0.0,        "Conduction band edge [eV].");
 
-    std::string summary = "Compute the dispersion relation for a set of subbands.";
-
-    std::string details("Default input files:\n"
-                        "  'E*.r'    \tEnergy of each state:\n"
-                        "            \tCOLUMN 1: state index.\n"
-                        "            \tCOLUMN 2: energy [meV].\n"
-                        "  'wf_*i.r' \tWave function amplitude at each position\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "\n"
-                        "Default output files:\n"
-                        "  'dr_*i.r' \tDispersion relation for subband i\n"
-                        "            \tCOLUMN 1: In-plane wave-vector [1/m]\n"
-                        "            \tCOLUMN 2: Energy [meV]\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the dispersion relation up to 10 kT with a carrier temperature of 10 K:\n\n"
-                        "   dispersion_relation --nkbt 10 --Te 10\n"
-                        "\n"
-                        "   Compute the non-parabolic dispersion relation using 1000 data points and dispersion of 0.7 eV^{-1}:\n\n"
-                        "   dispersion_relation --nk 1000 --nonparabolic --alpha 0.7");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 };
