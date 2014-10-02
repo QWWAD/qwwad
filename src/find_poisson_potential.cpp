@@ -33,7 +33,7 @@ Options get_options(int argc, char* argv[])
 {
     Options opt;
 
-    const std::string doc("Find the Poisson potential induced by given charge profile");
+    const std::string doc("Find the Poisson potential induced by a given charge profile");
 
     opt.add_switch        ("uncharged",                 "True if there is no charge in the structure");
     opt.add_switch        ("centred",                   "True if the potential should be pivoted "
@@ -45,16 +45,13 @@ Options get_options(int argc, char* argv[])
     opt.add_string_option ("Vbasefile",                 "File containing baseline potential to be added to Poisson potential");
     opt.add_string_option ("potential-file", "v_p.r",   "Filename to which the Poisson potential is written.");
     opt.add_string_option ("Vtotalfile",     "v.r",     "Filename to which the total potential is written.");
-    opt.add_string_option ("charge-file",    "sigma.r", "Set filename from which to read charge density profile.");
+    opt.add_string_option ("charge-file",    "rho.r",   "Set filename from which to read charge density profile.");
     opt.add_numeric_option("field,E",                   "Set external electric field [kV/cm]. Only specify if "
                                                         "the voltage drop needs to be fixed. Otherwise will be "
                                                         "equal to inbuilt potential from zero-field Poisson solution.");
-    opt.add_numeric_option("offset",              0,    "Set potential at spatial point closest to origin.");
+    opt.add_numeric_option("offset",              0,    "Set potential at spatial point closest to origin [meV].");
 
-    std::string details("The charge density is read from an input file, and the Poisson potential [V] is "
-                        "written to the output.");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, doc, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     return opt;
 }
@@ -130,7 +127,7 @@ int main(int argc, char* argv[])
             phi = poisson.solve(rho);
         }
 
-        phi -= opt.get_numeric_option("offset"); // Minus offset since potential has not yet been inverted
+        phi -= opt.get_numeric_option("offset") * e/1000; // Minus offset since potential has not yet been inverted
     }
 
     // Invert potential as we output in electron potential instead of absolute potential.

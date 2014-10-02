@@ -205,16 +205,18 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/tdb.1                 \
 		 man/ivdb.1                \
 		 man/find_heterostructure.1 \
-		 man/efxv.1 \
-		 man/efss.1 \
-		 man/efpqw.1 \
-		 man/pth.1
+		 man/efxv.1                 \
+		 man/efss.1                 \
+		 man/efpqw.1                \
+		 man/pth.1                  \
+		 man/find_poisson_potential.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m \
 	      doc/efxv.h2m                 \
 	      doc/efss.h2m                 \
 	      doc/efpqw.h2m                \
-	      doc/pth.h2m
+	      doc/pth.h2m                  \
+	      doc/find_poisson_potential.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac
 	$(MKDIR_P) man
@@ -295,6 +297,12 @@ man/pth.1: src/pth.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/pth$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/pth.h2m src/pth$(EXEEXT) 
+
+man/find_poisson_potential.1: src/find_poisson_potential.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/find_poisson_potential.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/find_poisson_potential$(EXEEXT)
+	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/find_poisson_potential.h2m src/find_poisson_potential$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
