@@ -33,6 +33,11 @@ public:
      */
     std::valarray<double> get_z() const {return _z;}
 
+    /**
+     * \returns the potential profile [J]
+     */
+    std::valarray<double> get_V() const {return _V;}
+
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() {};
 

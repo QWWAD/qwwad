@@ -208,24 +208,9 @@ int main(int argc,char *argv[])
 
     // Write potential profile to file if wanted
     if(opt.get_switch("output-potential"))
-    {
-        const size_t nz = se.get_solutions()[0].size();
-        const double Lp = a + b*2;
-        const double dz = Lp/(nz-1);
-        std::valarray<double> z(nz);
-        std::valarray<double> V_out(nz);
-
-        for(unsigned int iz = 0; iz < nz; ++iz)
-        {
-            z[iz] = iz*dz;
-
-            if(z[iz] < b || z[iz] >= a+b)
-                V_out[iz] = V;
-        }
-
-        Leeds::write_table_xy("v.r", z, V_out);
-    }
+        Leeds::write_table_xy("v.r", se.get_z(), se.get_V());
 
     return EXIT_SUCCESS;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
+

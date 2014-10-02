@@ -18,7 +18,7 @@ using namespace constants;
 
 SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                                                            const double l_b,
-                                                           const double V,
+                                                           const double V0,
                                                            const double m_w,
                                                            const double m_b,
                                                            const size_t nz,
@@ -28,13 +28,19 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                        std::valarray<double>(nz),
                        nst_max),
     _l_w(l_w),
-    _V(V),
+    _V0(V0),
     _m_w(m_w),
     _m_b(m_b),
     _m_B(alt_KE?m_b:m_w)
 {
-    for (unsigned int i_z=0; i_z<nz; i_z++)
-        _z[i_z]=i_z*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
+    // Generate potential profile
+    for (unsigned int iz=0; iz<nz; iz++)
+    {
+        _z[iz]=iz*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
+
+        if(_z[iz] < -l_w/2 || _z[iz] >= l_w/2)
+            _V[iz] = _V0;
+    }
 }
 
 /// Parameters needed for computing square-well eigenstates
@@ -108,7 +114,7 @@ static double SchroedingerSolverFiniteWell_lhs(const double v,
 
 double SchroedingerSolverFiniteWell::get_lhs(const double v) const
 {
-    return SchroedingerSolverFiniteWell_lhs(v, _l_w, _m_w, _m_B, _V);
+    return SchroedingerSolverFiniteWell_lhs(v, _l_w, _m_w, _m_B, _V0);
 }
 
 /**
@@ -156,7 +162,7 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
 {
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
-    const double K=sqrt(2*_m_b/hBar*(_V-E)/hBar); // decay constant in barrier
+    const double K=sqrt(2*_m_b/hBar*(_V0-E)/hBar); // decay constant in barrier
 
     const size_t N = _z.size();
     std::valarray<double> psi(N); // wavefunction
@@ -211,7 +217,7 @@ std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
 
 double SchroedingerSolverFiniteWell::get_u0_max() const
 {
-    return sqrt(_V*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
+    return sqrt(_V0*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
 }
 
 /**
@@ -235,7 +241,7 @@ void SchroedingerSolverFiniteWell::calculate()
         // deduce parity: false if even parity
         const bool parity_flag = (ist%2 == 1);
 
-        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V};
+        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V0};
         gsl_function F;
         F.function = &SchroedingerSolverFiniteWell_f;
         F.params   = &params;
