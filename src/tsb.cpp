@@ -22,26 +22,16 @@ using namespace constants;
 Options configure_options(int argc, char* argv[])
 {
     Options opt;
+
+    std::string summary("Find the transmission coefficient through a single tunnelling barrier.");
+
     opt.add_numeric_option("barrier-width,L",    100,   "Width of barrier [angstrom].");
     opt.add_numeric_option("mass,m",             0.067, "Effective mass in barrier (relative to that of a free electron). "
                                                         "This is assumed to be constant throughout the whole system.");
     opt.add_numeric_option("potential",           100,  "Barrier potential [meV]");
     opt.add_numeric_option("energy-step,d",        0.1, "Energy step [meV]");
 
-    std::string summary("Find the transmission coefficient through a single tunnelling barrier.");
-    std::string details("The following output text file is created:\n"
-                        "  'T.r'    \tTransmission coefficient as a function of energy:\n"
-                        "           \tCOLUMN 1: energy of incident carrier [meV].\n"
-                        "           \tCOLUMN 2: transmission coefficient."
-                        "\n"
-                        "Examples:\n"
-                        "   Compute the transmission coefficient through a 100-meV barrier, with 200-angstrom width:\n\n"
-                        "   tsb --barrier-width 200 --potential 100\n"
-                        "\n"
-                        "   Compute the transmission coefficient through a 1-eV barrier, with default width and effective mass = 0.1 m0 using resolution of 1 meV:\n\n"
-                        "   tsb --potential 1000 --mass 0.1 --energy-step 1\n");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }

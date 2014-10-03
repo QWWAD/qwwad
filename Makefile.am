@@ -222,7 +222,11 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/dos.h2m                    \
 	      doc/sbp.h2m                    \
 	      doc/efsqw.h2m                  \
-	      doc/wfplot.h2m
+	      doc/wfplot.h2m                 \
+	      doc/efkpsl.h2m                 \
+	      doc/tsb.h2m                    \
+	      doc/tdb.h2m                    \
+	      doc/ivdb.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -254,25 +258,25 @@ man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot
 	$(MAKE) $(AM_MAKEFLAGS) src/wfplot$(EXEEXT)
 	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/wfplot.h2m src/wfplot$(EXEEXT)
 
-man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac
+man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efkpsl.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/efkpsl$(EXEEXT)
-	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." src/efkpsl$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/efkpsl.h2m src/efkpsl$(EXEEXT)
 
-man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac
+man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tsb.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/tsb$(EXEEXT)
-	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." src/tsb$(EXEEXT)
+	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." --include $(top_srcdir)/doc/tsb.h2m src/tsb$(EXEEXT) 
 
-man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac
+man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tdb.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/tdb$(EXEEXT)
-	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." src/tdb$(EXEEXT)
+	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." --include $(top_srcdir)/doc/tdb.h2m src/tdb$(EXEEXT)
 
-man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac
+man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/ivdb.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/ivdb$(EXEEXT)
-	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." src/ivdb$(EXEEXT)
+	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/ivdb.h2m src/ivdb$(EXEEXT)
 
 man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/find_heterostructure.h2m

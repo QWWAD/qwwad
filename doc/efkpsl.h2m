@@ -1,0 +1,14 @@
+[FILES]
+.SS Input files:
+   'E*.r' Energy of each state:
+          Column 1: state index.
+          Column 2: energy [meV].
+
+The '*' is replaced by the particle ID.
+
+[EXAMPLES]
+Compute the first three states at Gamma (k = 0) using 150-angstrom wells and barriers with 100 meV confining potential:
+   efkpsl --well-width 150 --barrier-width 150 --potential 100 --nst 3 --wave-vector 0
+
+Compute the ground state at X (k = pi/L) using 100-angstrom wells, 200-angstrom barriers and 100 meV confining potential:
+   efkpsl --well-width 100 --barrier-width 200 --potential 100 --wave-vector 1

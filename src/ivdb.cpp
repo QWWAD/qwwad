@@ -31,32 +31,22 @@ using namespace constants;
 Options configure_options(int argc, char* argv[])
 {
     Options opt;
+
+    std::string summary("Find the current through a double barrier structure as a function of bias voltage.");
+
     opt.add_numeric_option("left-barrier-width,l",    100, "Width of left barrier [angstrom].");
     opt.add_numeric_option("well-width,b",            100, "Width of well [angstrom].");
     opt.add_numeric_option("right-barrier-width,r",   100, "Width of right barrier [angstrom].");
-    opt.add_numeric_option("well-mass,m",           0.067, "Effective mass in well (relative to that of a free electron). This is used to compute the distribution of carriers at the input.");
-    opt.add_numeric_option("barrier-mass,n",        0.067, "Effective mass in barrier (relative to that of a free electron).");
+    opt.add_numeric_option("well-mass,m",           0.067, "Effective mass in well (relative to that "
+                                                           "of a free electron). This is used to "
+                                                           "compute the distribution of carriers at the input.");
+    opt.add_numeric_option("barrier-mass,n",        0.067, "Effective mass in barrier (relative to "
+                                                           "that of a free electron).");
     opt.add_numeric_option("potential",               100, "Barrier potential [meV]");
     opt.add_numeric_option("temperature",             300, "Temperature of carrier distribution [K]");
     opt.add_numeric_option("energy-step,d",          0.01, "Energy step [meV]");
 
-    std::string summary("Find the current through a double barrier structure as a function of bias voltage.");
-    std::string details("The following output text file is created:\n"
-                        "  'IV.r'   \tCurrent--voltage characteristics:\n"
-                        "           \tCOLUMN 1: voltage [V].\n"
-                        "           \tCOLUMN 2: current [a.u.].\n"
-                        "  'T.r'    \tTransmission coefficient as a function of energy:\n"
-                        "           \tCOLUMN 1: energy of incident carrier [meV].\n"
-                        "           \tCOLUMN 2: transmission coefficient.\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Compute current--voltage characteristics through a pair of 100-meV, 200-angstrom barriers separated by a 50-angstrom well at 50 K temperature:\n\n"
-                        "   ivdb --left-barrier-width 200 --right-barrier-width 200 --potential 100 --well-width 50 --temperature 50\n"
-                        "\n"
-                        "   Compute current--voltage characteristics through a pair of 1-eV, 100-angstrom barrier, with effective mass = 0.1 m0, using resolution of 1 meV:\n\n"
-                        "   ivdb --potential 1000 --left-barrier-width 100 --right-barrier-width 100 --barrier-mass 0.1 --energy-step 1\n");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }

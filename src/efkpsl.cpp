@@ -68,29 +68,19 @@ Options configure_options(int argc, char* argv[])
 {
     Options opt;
 
+    std::string summary("Find the eigenstates of an infinite Kronig-Penney superlattice.");
+
     opt.add_numeric_option("wave-vector,k",     0,   "Wave-vector expressed relative to pi/L, where L is period length");
     opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
     opt.add_numeric_option("barrier-width,b", 100,   "Width of barrier [angstrom].");
     opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
     opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
-    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                     "electrons, heavy holes or light holes respectively.");
     opt.add_size_option   ("nst,s",              1,  "Number of states to find");
     opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
-
-    std::string summary("Find the eigenstates of an infinite Kronig-Penney superlattice.");
-    std::string details("The following output text file is created:\n"
-                        "  'E*.r'   \tEnergy of each state:\n"
-                        "           \tCOLUMN 1: state index.\n"
-                        "           \tCOLUMN 2: energy [meV].\n"
-                        "\tThe '*' is replaced by the particle ID.\n"
-                        "Examples:\n"
-                        "   Compute the first three states at Gamma (k = 0) using 150-angstrom wells and barriers with 100 meV confining potential:\n\n"
-                        "   efkpsl --well-width 150 --barrier-width 150 --potential 100 --nst 3 --wave-vector 0\n"
-                        "\n"
-                        "   Compute the ground state at X (k = pi/L) using 100-angstrom wells, 200-angstrom barriers and 100 meV confining potential:\n\n"
-                        "   efkpsl --well-width 100 --barrier-width 200 --potential 100 --wave-vector 1");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }
