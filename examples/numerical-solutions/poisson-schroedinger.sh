@@ -64,7 +64,9 @@ for I in `seq 0 7`; do
  find_poisson_potential --Vbasefile vcb.r
 done # X
 
-awk '{print $1*1e10, $2/(1e14*1.6e-19) * 1e-10}' sigma.r > $outfile_sigma
+# Convert volume density to sheet density within slices
+awk '{print $1*1e10, $2/(1e14*1.6e-19) * 1e-10}' rho.r > $outfile_sigma
+
 awk '{print $1*1e10, $2/1e6}' field.r > $outfile_field
 awk '{print $1*1e10, $2*1000/1.6e-19}' v_p.r > $outfile_Vp
 awk '{print $1*1e10, $2*1000/1.6e-19}' v.r > $outfile_Vt

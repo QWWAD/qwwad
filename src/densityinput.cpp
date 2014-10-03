@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
             break;
     }
 
-    write_table_x(opt.get_string_option("population-file").c_str(), pop);
+    write_table_x(opt.get_string_option("populationfile").c_str(), pop);
 
     return EXIT_SUCCESS;
 }
