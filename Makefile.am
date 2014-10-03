@@ -211,7 +211,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/pth.1                  \
 		 man/find_poisson_potential.1 \
 		 man/hup.1                    \
-		 man/densityinput.1
+		 man/densityinput.1           \
+		 man/chargedensity.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
@@ -230,7 +231,8 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/tdb.h2m                    \
 	      doc/ivdb.h2m                   \
 	      doc/hup.h2m                    \
-	      doc/densityinput.h2m
+	      doc/densityinput.h2m           \
+	      doc/chargedensity.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -329,6 +331,12 @@ man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/densityinput$(EXEEXT)
 	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/densityinput.h2m src/densityinput$(EXEEXT) 
+
+man/chargedensity.1: src/chargedensity.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/chargedensity.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/chargedensity$(EXEEXT)
+	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/chargedensity.h2m src/chargedensity$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

@@ -1,7 +1,7 @@
-/** \file   chargedensity.cpp
- *  \brief  Calculates charge density profile for a 2D heterostructure
- *  \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- *  \date   2012-02-08
+/** 
+ * \file   chargedensity.cpp
+ * \brief  Calculates charge density profile for a 2D heterostructure
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #if HAVE_CONFIG_H
@@ -28,27 +28,21 @@ public:
     ChargeDensityOptions(int argc, char* argv[]);
 };
 
-ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
+ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[]) :
+    WfOptions(WF_OPTION_MODE_IN)
 {
     std::string doc("Find charge density in a 2D heterostructure.");
 
-    add_size_option  ("nper,p",                  1, "Number of periods crossed by the wavefunction. This is "
-                                                    "only relevant for periodic heterostructures.");
-    add_string_option("doping-file",         "d.r", "File from which to read volume doping profile [m^{-3}]");
-    add_string_option("population-file",     "N.r", "File from which to read subband populations [m^{-2}]");
-    add_string_option("degeneracy-file",            "File from which to read subband degeneracies. If not "
-                                                    "specified, all states are taken to be non-degenerate");
-    add_string_option("charge-file",     "sigma.r", "File to which charge density profile will be written");
-    add_string_option("edensity-file",   "edens.r", "File to which electron density profile will be written");
+    add_size_option  ("nper,p",                 1, "Number of periods crossed by the wavefunction. This is "
+                                                   "only relevant for periodic heterostructures.");
+    add_string_option("dopingfile",         "d.r", "File from which to read volume doping profile [m^{-3}]");
+    add_string_option("populationfile",     "N.r", "File from which to read subband populations [m^{-2}]");
+    add_string_option("degeneracyfile",            "File from which to read subband degeneracies. If not "
+                                                   "specified, all states are taken to be non-degenerate");
+    add_string_option("chargefile",       "rho.r", "File to which charge density profile will be written");
+    add_string_option("edensityfile",   "edens.r", "File to which electron density profile will be written");
 
-    std::string details("Input data should be provided for ONE period of the doping "
-                        "profile, and for all wavefunctions localised in that period. "
-                        "If the wavefunctions have tails that extend over multiple periods "
-                        "of a heterostructure, then use the --nper flag to specify how many. "
-                        "A table of charge density and electron density [m^-3] at each position [m] "
-                        "is given as the output.");
-
-    add_prog_specific_options_and_parse(argc, argv, doc, details);
+    add_prog_specific_options_and_parse(argc, argv, doc);
 
     if(vm["nper"].as<size_t>() < 1)
         throw std::domain_error("Number of periods must be one or more.");
@@ -76,7 +70,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     nval(1, states.size())
 {
     // Read population of each subband
-    const char *population_file = opt.get_string_option("population-file").c_str();
+    const char *population_file = opt.get_string_option("populationfile").c_str();
     read_table_x(population_file, pop);
     const size_t nst = pop.size();
     
@@ -85,9 +79,9 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
         check_positive(&pop[ist]);
 
     // Read state degeneracy if specified
-    if(opt.vm.count("degeneracy-file"))
+    if(opt.vm.count("degeneracyfile"))
     {
-        const char *degeneracy_file = opt.get_string_option("degeneracy-file").c_str();
+        const char *degeneracy_file = opt.get_string_option("degeneracyfile").c_str();
         read_table_x(degeneracy_file, nval);
 
         // Check that all input files have same size
@@ -120,7 +114,7 @@ int main(int argc, char* argv[])
     // Read doping profile (for entire multi-period structure)
     std::valarray<double> z;
     std::valarray<double> d; // Spatial profile of doping in structure [Cm^{-3}]
-    read_table_xy(opt.get_string_option("doping-file").c_str(), z, d);
+    read_table_xy(opt.get_string_option("dopingfile").c_str(), z, d);
 
     // Compute the spatial points for a single period
     const size_t nz_1per = z.size() / nper; // Number of points in a single period
@@ -154,8 +148,8 @@ int main(int argc, char* argv[])
     const std::valarray<double> rho_1per = d * e - edensity_1per;
 
     // Output position, charge density and electron density for a single period [Cm^-3]
-    write_table_xy(opt.get_string_option("charge-file").c_str(), z_1per, rho_1per);
-    write_table_xy(opt.get_string_option("edensity-file").c_str(), z_1per, edensity_1per);
+    write_table_xy(opt.get_string_option("chargefile").c_str(), z_1per, rho_1per);
+    write_table_xy(opt.get_string_option("edensityfile").c_str(), z_1per, edensity_1per);
 
     return EXIT_SUCCESS;
 }

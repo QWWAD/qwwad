@@ -4,7 +4,7 @@
              Column 1: state index.
              Column 2: energy [meV].
 
-   'd.r'     Doping propfile:
+   'd.r'     Doping profile:
              Column 1: spatial location [m]
              Column 2: volume doping [m^{-3}]
 
