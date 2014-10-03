@@ -172,7 +172,7 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
                 info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &rho[0], n);
 #else
                 const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &rho[0], &n, &info);
+                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &rho[0], &_N, &info);
 #endif
                 if(info != 0)
                 {
@@ -213,7 +213,7 @@ std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
                 info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &phi[0], n);
 #else
                 const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &n, &info);
+                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &_N, &info);
 #endif
                 if(info != 0)
                 {
@@ -250,7 +250,7 @@ std::valarray<double> Poisson::solve_laplace(double V_drop)
                 info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &phi[0], n);
 #else
                 const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &n, &info);
+                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &_N, &info);
 #endif
                 if(info != 0)
                 {

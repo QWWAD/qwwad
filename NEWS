@@ -1,3 +1,35 @@
+2014-10-03 (QWWAD 1.1.0):
+        * This preview release adds the numerical Poisson and Schroedinger
+          solvers from Chapter 3 of the textbook ("Numerical solutions").
+          It also provides a number of usability improvements and better
+          documentation. The most significant changes are listed as follows:
+        * efsqw: Cut-off energy added
+        * efsqw: Algorithm improved to avoid hitting asymptotes
+        * efss: Now allows flat potentials to be specified
+        * efss: Shooting method made more robust
+        * effv: Replaced by find_poisson_potential program
+        * ovl: Replaced by simple AWK script
+        * chargedensity: New program for computing charge profile
+        * Tests: microtest infrastructure added
+        * find_heterostructure: added more options for resolution
+        * options: improved output formatting
+        * wf_options: Not supports in/out modes
+        * pth: Analytical calculation of wavefunctions added
+
+2014-06-14 (QWWAD 1.0.2):
+        * This bug-fix version fixes an issue in which QWWAD tried to install
+          a program called "scp".  Bad idea, since this is a core system program
+          on most UNIX systems!! Thanks to alkamid for reporting on Launchpad.
+
+2014-06-14 (QWWAD 1.0.1):
+        * This preview release provides the analytical solutions from Chapter 2
+          of the textbook ("Solutions to Schroedinger's Equation")
+        * Online help is now available at https://sourceforge.net/p/qwwad/wiki/Home/
+        * Manual pages are now provided for Chapter 2 programs
+        * Example scripts for Chapter 2 are now provided
+        * Programs for later chapters are also provided, but have not been
+          tested!  These will be delivered in later preview releases!
+
 2014-02-02:
         * AV steps in to maintain PH's original code
         * Released under GPL3 license!  Please email p.harrison@shu.ac.uk for
