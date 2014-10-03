@@ -1,18 +1,13 @@
-/*====================================================================
-                  hup Heisenberg's Uncertainty Principle
-  ====================================================================*/
-
-/* This program calculates the uncertainty in the position and the
-   momentum of any user supplied wave function.  The data is written 
-   to the standard output.
-
-   Input files:       wf_ps.r		p=particle (e, h or l)
-					s=state
-
-   Output files:    
-
-   Paul Harrison, April 1998						*/
-                                                               
+/**
+ * \file   hup.cpp
+ * \brief  Heisenberg's Uncertainty Principle
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program calculates the uncertainty in the position and the
+ *          momentum of any user supplied wave function.  The data is written 
+ *          to the standard output.
+ */
 
 #include <cstdio>
 #include <cstdlib>
@@ -29,27 +24,13 @@ using namespace Leeds::constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt;
+    WfOptions opt(WF_OPTION_MODE_IN);
+    
+    std::string summary("Compute the uncertainty relation for a given state.");
+
     opt.add_size_option("state",  1, "Number of state to analyse.");
 
-    std::string summary("Compute the uncertainty relation for a given state.");
-    std::string details("Default input files:\n"
-                        "  'E*.r'    \tEnergy of each state:\n"
-                        "            \tCOLUMN 1: state index.\n"
-                        "            \tCOLUMN 2: energy [meV].\n"
-                        "  'wf_*i.r' \tWave function amplitude at each position\n"
-                        "            \tCOLUMN 1: position [m].\n"
-                        "            \tCOLUMN 2: wave function amplitude [m^{-1/2}].\n"
-                        "\n"
-                        "\tIn each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.\n"
-                        "\n"
-                        "Default output files:\n"
-                        "\n"
-                        "Examples:\n"
-                        "   Calculate uncertainty in <z><p> for state 3:\n\n"
-                        "   hup --state 3\n");
-
-    opt.add_prog_specific_options_and_parse(argc, argv, summary, details);
+    opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
     return opt;
 }

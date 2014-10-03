@@ -209,7 +209,9 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/efss.1                 \
 		 man/efpqw.1                \
 		 man/pth.1                  \
-		 man/find_poisson_potential.1
+		 man/find_poisson_potential.1 \
+		 man/hup.1                    \
+		 man/densityinput.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
@@ -226,7 +228,9 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efkpsl.h2m                 \
 	      doc/tsb.h2m                    \
 	      doc/tdb.h2m                    \
-	      doc/ivdb.h2m
+	      doc/ivdb.h2m                   \
+	      doc/hup.h2m                    \
+	      doc/densityinput.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -313,6 +317,18 @@ man/find_poisson_potential.1: src/find_poisson_potential.cpp $(top_srcdir)/confi
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/find_poisson_potential$(EXEEXT)
 	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/find_poisson_potential.h2m src/find_poisson_potential$(EXEEXT) 
+
+man/hup.1: src/hup.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/hup.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/hup$(EXEEXT)
+	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/hup.h2m src/hup$(EXEEXT) 
+
+man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/densityinput.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/densityinput$(EXEEXT)
+	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/densityinput.h2m src/densityinput$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

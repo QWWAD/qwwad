@@ -1,75 +1,39 @@
 [FILES]
-.SS Input files
-   'E*.r'    Energy of each state:
+.SS Input files:
+   'Ee.r'    Energy of each state:
              Column 1: state index.
              Column 2: energy [meV].
 
-   'wf_*i.r' Wave function amplitude at each position:
-             Column 1: position [m]
-             Column 2: wave function amplitude [m^{-1/2}].
-   
-   'v.r'     Confining potential:
-             Column 1: Spatial location [m]
-             Column 2: Potential [J]
+   'd.r'     Doping propfile:
+             Column 1: spatial location [m]
+             Column 2: volume doping [m^{-3}]
 
-In each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.
+.SS Output files:
 
-   'eps-dc.r' Static permittivity of material:
-              Column 1: spatial location [m]
-              Column 2: permittivity [F/m]
+   'N.r' Populations of subbands:
+         Column 1: Population [m^{-2}]
 
-   'rho.r'    Charge profile:
-              Column 1: spatial location [m]
-              Column 2: charge density [C m^{-3}]
+These filenames can be configured using command-line options.
 
-   'v_b.r'    Baseline potential:
-              Column 1: spatial location [m]
-              Column 2: potential [J]
+[DISTRIBUTION TYPES]
+Three types of carrier distribution are available, which can be specified using the --type option.
 
-.SS Output files
-   'v_p.r'    Poisson potential:
-              Column 1: Spatial location [m]
-              Column 2: Potential [J]
-   
-   'v_t.r'    Total potential (v_b + v_p):
-              Column 1: Spatial location [m]
-              Column 2: Potential [J]
+.SS ground
+With this option, all carriers are in the ground state.
+This is a good approximation for very cold systems.
+A negligible population (1 m^{-2}) is assigned to the higher states, since it is physically impossible to have a completely empty subband.
 
-   'field.r'  Charge-induced electric field:
-              Column 1: Spatial location [m]
-              Column 2: Electric field [V/m]
+.SS even
+With this option, each subband contains an identical population (i.e., carriers are distributed equally between states).
+This is a reasonable approximation for e.g., periodic multi-quantum-well systems in an external electric field.
 
-Most of these filenames can be configured using command-line options.
-The charge profile is not required if the --uncharged option is selected.
-
-The baseline potential is entirely optional, and represents the part of
-the Hamiltonian that does not depend upon bulk charge density.
-For example, this could be the conduction band potential.
-The Poisson potential is written to the v_p.r file.
-If a baseline potential was specified, it is added to v_p.r and written to v_t.r.
-
-[BOUNDARY CONDITIONS]
-Two sets of boundary conditions are available.
-By default, the left side of the structure is pinned to zero potential, and a fixed bias is applied to the right side of the structure, which is determined from the --field option.
-
-The potential at the left side of the structure can be pinned to a different potential, specified using the --offset option.
-
-Alternatively, the output potential can be 'pivoted' around the centre (i.e., the centre of the structure is pinned at zero potential) and the potential at the edges is fixed by the --field option.
-
-As another alternative, the --mixed option can be used.
-This ensures that the electric-field is identical at both ends of the structure.
-In this case, the potential at the end of the structure is 'free'.
-This may be the most suitable option for cases such as periodic structures, in which the internal potentials are not directly pinned to the contact potentials.
+.SS fermi
+With this option, carriers follow a thermalised Fermi-Dirac energy distribution.
+The Fermi energy for the entire system is computed automatically, using the carrier temperature and effective mass specified by the --temperature and --mass options.
 
 [EXAMPLES]
-Compute the Poisson potential for a fixed bias of 10 kV/cm and add it to the potential stored in vcb.r
-    find_poisson_potential --field 10 --Vbasefile vcb.r
+Put all carriers into the ground state
+    densityinput --type ground
 
-Compute the Poisson potential under no external bias, without pinning to the contact potential
-    find_poisson_potential --mixed
-
-Compute the Poisson potential for a structure with no internal charge, under 5 kV/cm bias
-    find_poisson_potential --uncharged --field 5
-
-Compute the Poisson potential under 10 kV/cm bias, with the left side pinned at 2 meV.
-    find_poisson_potential --field 10 --offset 2
+Generate a Fermi-Dirac distribution with carrier temperature = 200 K 
+    densityinput --temperature 200
