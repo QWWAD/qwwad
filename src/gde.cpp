@@ -19,10 +19,6 @@
  *
  *  Output files:
  *    X.r           final (diffused) concentration profile 
- *
- *  Paul Harrison, July 1994
- *	
- *  Modifications June 1998
  */
 
 #include <iostream>
@@ -42,6 +38,21 @@ static void   diffuse    (const std::valarray<double> &z,
                           std::valarray<double>       &x,
                           const std::valarray<double> &D,
                           const double                delta_t);
+
+void check_stability(const double dt,
+                     const double dz,
+                     const double D)
+{
+    const double dt_max = dz*dz/(2*D);
+
+    if (dt > dt_max)
+    {
+        std::cerr << "User-specified time step (dt = " << dt << " s) exceeds stability criterion (dt < " << dt_max << " s). "
+                  << "You can fix this by choosing a lower value using the --dt option, or by increasing the spatial-step size in your "
+                  << "input data files." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+}
 
 int main(int argc,char *argv[])
 {
@@ -146,6 +157,8 @@ static void diffuse(const std::valarray<double> &z,
 {
     const double dz = z[1] - z[0];
     const size_t nz = z.size();
+
+    check_stability(delta_t, dz, D.max());
 
     std::valarray<double> x_new(nz); // Modified diffusion profile
 
