@@ -49,8 +49,10 @@ for LW in `seq 1 1 60`
 do
     printf "%f\t" "$LW" >> $tempfile # write well width to file [angstrom]
 
-    # calculate E(k) at points near Gamma for 2nd derivative
-    for K in -0.01 0.0 0.01 	
+    # calculate E(k) at k=0 and k=dk for 2nd derivative near Gamma
+    # Note that we only need to evaluate one side of the dispersion curve
+    # since it is even-symmetric about k=0
+    for K in 0.0 0.01
     do
         efkpsl --well-width $LW --barrier-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst $S
 
@@ -68,15 +70,14 @@ awk '{
         m0=9.109534e-31;
         pi = 3.14159;
 
-        # Compute second derivative using three samples of E at nearby k points
-        E_m=$2
-        E_0=$3
-        E_p=$4
+        # Compute second derivative using E(0) and E(dk)
+        E_0  = $2;
+        E_dk = $3;
 
         # Step size in wave-vector [1/m]
         dk = 0.01*pi / ($1 * 1e-10)
 
-        D2=(E_m - 2*E_0 + E_p) / (dk*dk);
+        D2 = 2*(E_dk - E_0) / (dk*dk);
         mstar = hBar*hBar/D2/m0;
         printf("%f %f\n",$1,mstar)
      }' $tempfile >> $outfile

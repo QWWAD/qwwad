@@ -167,6 +167,9 @@ src_find_heterostructure_LDADD   = src/libqwwad.a $(LDADD)
 src_find_poisson_potential_SOURCES = src/find_poisson_potential.cpp
 src_find_poisson_potential_LDADD   = src/libqwwad.a $(LDADD)
 
+src_gde_SOURCES = src/gde.cpp
+src_gde_LDADD   = src/libqwwad.a $(LDADD)
+
 src_hup_SOURCES = src/hup.cpp
 src_hup_LDADD   = src/libqwwad.a $(LDADD)
 
