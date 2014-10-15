@@ -535,6 +535,10 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/parabolic-well-E-10.sh \
 		$(exnssrcdir)/parabolic-well-E-10.dat
 
+exdiffdatadir = $(exdatadir)/diffusion
+exdiffsrcdir = examples/diffusion
+
+exdiffdata_DATA = $(exdiffsrcdir)/index
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
