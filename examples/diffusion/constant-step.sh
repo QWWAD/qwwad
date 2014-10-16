@@ -1,11 +1,6 @@
-#!/bin/sh
-set -e
+#!/bin/sh -e
 
-# <This is a template for creating example scripts for QWWAD>
-# <The lines that are enclosed in '< >' symbols contain instructions>
-# <and should be removed in the final version>
-# <>
-# <Insert a brief (one-line) description of what this script calculates here>
+# Computes a simple step diffusion profile with constant diff. coeff.
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -14,7 +9,6 @@ set -e
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
 # (c) Copyright 1996-2014
-#     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -31,27 +25,44 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-# <Use a separate output file for each plot>
-outfile=whatever.dat
+outfile=constant-step.dat
 rm -f $outfile
 
-# <Insert commands here to generate each output file>
+# Create structure definition file
+cat > s.r << EOF
+200 0.1 0.0
+200 0.0 0.0
+EOF
 
-# <Edit accordingly, to describe each output file>
+# Generate alloy concentration (diffusant) profile
+find_heterostructure --dz-max 1
+
+# Run diffusion `simulation' for various times
+for t in 0 1 10 100 1000 10000
+do
+    # Use constant diffusion coefficient
+    gde --coeff 10 --time $t
+
+    # Store diffusion profiles
+    awk '{print $1*1e10, $2}' X.r >> $outfile
+    printf "\n" >> $outfile
+done
+
 cat << EOF
 Results have been written to $outfile in the format:
 
-  COLUMN 1 - <Whatever>
-  COLUMN 2 - <Something>
-  <...>
+  COLUMN 1 - Spatial location [Angstrom]
+  COLUMN 2 - Alloy concentration
 
-  <Remove this chunk if only 1 data set is in the file>
-  The file contains <x> data sets, each set being separated
-  by a blank line, representing <whatever>:
+  The file contains 6 data sets, each set being separated
+  by a blank line, representing different diffusion times:
 
-  SET 1 - <Description of the 1st set>
-  SET 2 - <Description of the 2nd set>
-  <...>
+  SET 1 - t = 0 s
+  SET 2 - t = 1 s
+  SET 3 - t = 10 s
+  SET 4 - t = 100 s
+  SET 5 - t = 1000 s
+  SET 6 - t = 10000 s
 
 This script is part of the QWWAD software suite.
 
@@ -63,5 +74,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-# <Delete all temporary files you created>
 rm -f *.r

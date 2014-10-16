@@ -1,7 +1,7 @@
 The following list shows which scripts and output files are used to generate
 each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
 
-Fig 4.3:
+Fig 4.3:  constant-step.sh => constant-step.eps
 Fig 4.4:
 Fig 4.5:
 Fig 4.6:

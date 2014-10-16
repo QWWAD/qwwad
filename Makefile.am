@@ -538,7 +538,10 @@ exnsdata_DATA = $(exnssrcdir)/index \
 exdiffdatadir = $(exdatadir)/diffusion
 exdiffsrcdir = examples/diffusion
 
-exdiffdata_DATA = $(exdiffsrcdir)/index
+exdiffdata_DATA = $(exdiffsrcdir)/index \
+		  $(exdiffsrcdir)/constant-step.sh \
+		  $(exdiffsrcdir)/constant-step.eps \
+		  $(exdiffsrcdir)/constant-step.agr
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
