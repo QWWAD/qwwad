@@ -544,7 +544,16 @@ exdiffdata_DATA = $(exdiffsrcdir)/index \
 		  $(exdiffsrcdir)/constant-step.agr \
 		  $(exdiffsrcdir)/error-function.sh \
 		  $(exdiffsrcdir)/error-function.eps \
-		  $(exdiffsrcdir)/error-function.agr
+		  $(exdiffsrcdir)/error-function.agr \
+		  $(exdiffsrcdir)/constant-Dt.sh     \
+		  $(exdiffsrcdir)/constant-Dt.eps    \
+		  $(exdiffsrcdir)/constant-Dt.agr    \
+		  $(exdiffsrcdir)/constant-D.sh      \
+		  $(exdiffsrcdir)/constant-D.eps     \
+		  $(exdiffsrcdir)/constant-D.agr     \
+		  $(exdiffsrcdir)/constant-D-E-t.eps \
+		  $(exdiffsrcdir)/constant-D-E-t.agr
+
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

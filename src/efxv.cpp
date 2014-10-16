@@ -50,6 +50,7 @@ class EFXVOptions : public Options
                                                       "\"cdmnte\" for Cd(1-x)Mn(x)Te, or "
                                                       "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
             add_char_option  ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
+            add_string_option("alloyfile",     "x.r", "File from which alloy is read");
 
             std::string doc("Find material parameters for a given heterostructure. "
                             "The alloy data is read for each point in the system and used to tabulate "
@@ -131,11 +132,13 @@ int main(int argc,char *argv[])
     std::valarray<double> Eg;     // Bandgap
     std::valarray<double> eps_dc; // Low-frequency permittivity [F/m]
 
+    const char *alloyfile = opt.get_string_option("alloyfile").c_str();
+
     switch(Material)
     {
         case 'a':	/* Ga(1-x)Al(x)As	*/
             {
-                read_table_xy("x.r", z, x);
+                read_table_xy(alloyfile, z, x);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
@@ -180,7 +183,7 @@ int main(int argc,char *argv[])
 
         case 'b':	/* Cd(1-x)Mn(x)Te	*/
             {
-                read_table_xy("x.r", z, x);
+                read_table_xy(alloyfile, z, x);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
@@ -234,7 +237,7 @@ int main(int argc,char *argv[])
             {
                 std::valarray<double> y;
 
-                read_table_xyz("x.r", z, x, y);
+                read_table_xyz(alloyfile, z, x, y);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
