@@ -1,15 +1,13 @@
 The following list shows which scripts and output files are used to generate
 each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
 
-Fig 4.3:  constant-step.sh  => constant-step.eps
-Fig 4.4:  error-function.sh => error-function.eps
-Fig 4.5:  constant-Dt.sh    => constant-Dt.eps
-Fig 4.6:  constant-D.sh     => constant-D.eps
-Fig 4.7:  constant-D.sh     => constant-D-E-t.eps
-Fig 4.8:
-Fig 4.9:
-Fig 4.10:
-Fig 4.11:
+Fig 4.3:  constant-step.sh           => constant-step.eps
+Fig 4.4:  error-function.sh          => error-function.eps
+Fig 4.5:  constant-Dt.sh             => constant-Dt.eps
+Fig 4.6:  constant-D.sh              => constant-D.eps
+Fig 4.7:  constant-D.sh              => constant-D-E-t.eps
+Fig 4.8:  concentration-dependent.sh => concentration-dependent.eps
+Fig 4.11: depth-dependent.sh         => depth-dependent.eps
 Fig 4.12:
 Fig 4.14:
 Fig 4.15:

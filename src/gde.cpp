@@ -75,14 +75,13 @@ int main(int argc,char *argv[])
     std::valarray<double> x; // Initial diffusant profile
     read_table_xy("x.r", z, x);
 
-    const size_t n  = z.size(); // Number of spatial points
+    const size_t nz = z.size(); // Number of spatial points
 
-    std::valarray<double> D(n); // Diffusion coefficient
+    std::valarray<double> D(nz); // Diffusion coefficient
 
     if (mode == "constant")
     {
-        for(unsigned int iz=0; iz<n; ++iz)
-            D[iz] = D0;	// set constant diffusion coeff.
+        D = D0;	// set constant diffusion coeff.
 
         for(double t=dt; t<=t_final; t+=dt)
             diffuse(z, x, D, dt);
@@ -94,11 +93,33 @@ int main(int argc,char *argv[])
         for(double t=dt; t<=t_final; t+=dt)
             diffuse(z, x, D, dt);
     }
-    else if(mode == "general")
+    else if(mode == "concentration-dependent")
     {
+        // TODO: Make this configurable
+        const double k = 1e-20; // Concentration factor [Angstrom^2/s]
+
         for(double t=dt; t<=t_final; t+=dt)
         {
-            calculate_D(z, x, D, t);	/* calculate D using `dox.c'	*/
+            // Find concentration-dependent diffusion coefficient
+            // [4.14, QWWAD4]
+            D = k*x*x;
+
+            diffuse(z, x, D, dt);
+        }
+    }
+    else if(mode == "depth-dependent")
+    {
+        // TODO: Make this configurable
+        const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
+        const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
+        const double sigma = 600*1e-10;  // Width of distribution [m]
+
+        for(double t=dt; t<=t_final; t+=dt)
+        {
+            // Find depth-dependent diffusion coefficient
+            // [4.16, QWWAD4]
+            D = D0*exp(-pow((z-z0)/sigma, 2)/2);
+
             diffuse(z, x, D, dt);
         }
     }
@@ -108,7 +129,7 @@ int main(int argc,char *argv[])
 
         for(double t=dt; t<=t_final; t+=dt)
         {
-            calculate_D(z, x, D, t);	/* calculate subsequent D */
+            calculate_D(z, x, D, t);	// calculate subsequent D
             diffuse(z, x, D, dt);
         }
     }

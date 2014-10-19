@@ -552,7 +552,13 @@ exdiffdata_DATA = $(exdiffsrcdir)/index \
 		  $(exdiffsrcdir)/constant-D.eps     \
 		  $(exdiffsrcdir)/constant-D.agr     \
 		  $(exdiffsrcdir)/constant-D-E-t.eps \
-		  $(exdiffsrcdir)/constant-D-E-t.agr
+		  $(exdiffsrcdir)/constant-D-E-t.agr \
+		  $(exdiffsrcdir)/concentration-dependent.sh  \
+		  $(exdiffsrcdir)/concentration-dependent.agr \
+		  $(exdiffsrcdir)/concentration-dependent.eps \
+		  $(exdiffsrcdir)/depth-dependent.sh          \
+		  $(exdiffsrcdir)/depth-dependent.agr         \
+		  $(exdiffsrcdir)/depth-dependent.eps
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

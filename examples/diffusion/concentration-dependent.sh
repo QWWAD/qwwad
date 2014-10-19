@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Computes a diffusion profile for QW with constant diff. coeff. and varying time
+# Computes a diffusion profile for step with conc. dependent diff. coeff.
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -26,63 +26,46 @@
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile_D=constant-D.dat
-outfile_E=constant-D-E-t.dat
-rm -f $outfile_D $outfile_E
+outfile=concentration-dependent.dat
+rm -f $outfile
 
-# Create structure definition file
+# Define initial diffusant profile
 cat > s.r << EOF
-200 0.1 0.0
+200 1.0 0.0
 200 0.0 0.0
-200 0.1 0.0
 EOF
 
 find_heterostructure --dz-max 1
 
 # Run diffusion `simulation' for various times
-for t in 0 10 20 50 100 200 500 1000; do
-
-    # Generate diffusion profile
-    gde --coeff 10 --time $t
-
+for t in 0 10 20 50 100 200 500 1000 2000 5000; do
+    # Use diffusion coefficient defined in function `dox'
+    gde --mode concentration-dependent --time $t
+ 
     # Store diffusion profiles
-    awk '{print $1*1e10, $2}' X.r >> $outfile_D
-    printf "\n" >> $outfile_D
-
-    # Now solve for the electron energy
-    efxv --alloyfile X.r    # Find potential profile
-    efss                    # calculate ground state electron energy
-
-    # Save electron energy in file
-    E1=`awk '/^1/{printf("\t%e\n",$2)}' Ee.r`
-    echo $t $E1 >> $outfile_E
+    awk '{print $1*1e10, $2}' X.r >> $outfile
+    printf "\n" >> $outfile
 done
 
 cat << EOF
-Results have been written to $outfile_D and $outfile_E.
-
-$outfile_D contains the diffusion profiles in the format:
+Results have been written to $outfile in the format:
 
   COLUMN 1 - Spatial location [Angstrom]
   COLUMN 2 - Alloy concentration
 
-  The file contains 8 data sets, each set being separated
+  The file contains 10 data sets, each set being separated
   by a blank line, representing different diffusion times:
 
-  SET 1 - t = 0 s
-  SET 2 - t = 10 s
-  SET 3 - t = 20 s
-  SET 4 - t = 50 s
-  SET 5 - t = 100 s
-  SET 6 - t = 200 s
-  SET 7 - t = 500 s
-  SET 8 - t = 1000 s
-
-$outfile_E contains the variation in ground-state energy with
-respect to diffusion time, in the format:
-
-  COLUMN 1 - Diffusion time [s]
-  COLUMN 2 - Energy [meV]
+  SET 1  - t = 0 s
+  SET 2  - t = 10 s
+  SET 3  - t = 20 s
+  SET 4  - t = 50 s
+  SET 5  - t = 100 s
+  SET 6  - t = 200 s
+  SET 7  - t = 500 s
+  SET 8  - t = 1000 s
+  SET 9  - t = 2000 s
+  SET 10 - t = 5000 s
 
 This script is part of the QWWAD software suite.
 
