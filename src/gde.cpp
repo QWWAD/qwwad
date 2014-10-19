@@ -24,24 +24,21 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <gsl/gsl_math.h>
+
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
-#include "dox.h"
 
 using namespace Leeds;
 
-void          calculate_D(const std::valarray<double> &z,
-                          const std::valarray<double> &x,
-                          std::valarray<double>       &D,
-                          double                       t);
-static void   diffuse    (const std::valarray<double> &z,
-                          std::valarray<double>       &x,
-                          const std::valarray<double> &D,
-                          const double                delta_t);
+static void diffuse(const std::valarray<double> &z,
+                    std::valarray<double>       &x,
+                    const std::valarray<double> &D,
+                    const double                delta_t);
 
-void check_stability(const double dt,
-                     const double dz,
-                     const double D)
+static void check_stability(const double dt,
+                            const double dz,
+                            const double D)
 {
     const double dt_max = dz*dz/(2*D);
 
@@ -81,106 +78,56 @@ int main(int argc,char *argv[])
 
     std::valarray<double> D(nz); // Diffusion coefficient
 
-    if (mode == "constant")
+    for(double t=dt; t<=t_final; t+=dt)
     {
-        D = D0;	// set constant diffusion coeff.
-
-        for(double t=dt; t<=t_final; t+=dt)
-            diffuse(z, x, D, dt);
-    }
-    else if(mode == "from-file")
-    {
-        read_table_xy("D.r", z, D); // read D from file
-
-        for(double t=dt; t<=t_final; t+=dt)
-            diffuse(z, x, D, dt);
-    }
-    else if(mode == "concentration-dependent")
-    {
-        // TODO: Make this configurable
-        const double k = 1e-20; // Concentration factor [Angstrom^2/s]
-
-        for(double t=dt; t<=t_final; t+=dt)
+        if (mode == "constant")
         {
+            D = D0;	// set constant diffusion coeff.
+        }
+        else if(mode == "concentration-dependent")
+        {
+            // TODO: Make this configurable
+            const double k = 1e-20; // Concentration factor [m^2/s]
+
             // Find concentration-dependent diffusion coefficient
             // [4.14, QWWAD4]
             D = k*x*x;
-
-            diffuse(z, x, D, dt);
         }
-    }
-    else if(mode == "depth-dependent")
-    {
-        // TODO: Make this configurable
-        const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
-        const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
-        const double sigma = 600*1e-10;  // Width of distribution [m]
-
-        for(double t=dt; t<=t_final; t+=dt)
+        else if(mode == "depth-dependent")
         {
+            // TODO: Make this configurable
+            const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
+            const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
+            const double sigma = 600*1e-10;  // Width of distribution [m]
+
             // Find depth-dependent diffusion coefficient
             // [4.16, QWWAD4]
             D = D0*exp(-pow((z-z0)/sigma, 2)/2);
-
-            diffuse(z, x, D, dt);
         }
-    }
-    else if(mode == "time-dependent")
-    {
-        // TODO: Make this configurable
-        const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
-        const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
-        const double sigma = 600*1e-10;  // Width of distribution [m]
-        const double tau   = 100;        // Decay time-constant for diffusion [s]
-
-        for(double t=dt; t<=t_final; t+=dt)
+        else if(mode == "time-dependent")
         {
+            // TODO: Make this configurable
+            const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
+            const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
+            const double sigma = 600*1e-10;  // Width of distribution [m]
+            const double tau   = 100;        // Decay time-constant for diffusion [s]
+
             // Find time and depth-dependent diffusion coefficient
             // [4.18, QWWAD4]
             D = D0*exp(-pow((z-z0)/sigma, 2)/2)*exp(-t/tau);
-
-            diffuse(z, x, D, dt);
         }
-    }
-
-    else if(mode == "initialise-from-file")
-    {
-        read_table_xy("D.r", z, D); // read D at t=0 from file
-
-        for(double t=dt; t<=t_final; t+=dt)
+        else
         {
-            calculate_D(z, x, D, t);	// calculate subsequent D
-            diffuse(z, x, D, dt);
+            std::cerr << "Diffusion mode: " << mode << " not recognised" << std::endl;
+            exit(EXIT_FAILURE);
         }
-    }
-    else
-    {
-        std::cerr << "Diffusion mode: " << mode << " not recognised" << std::endl;
-        exit(EXIT_FAILURE);
+
+        diffuse(z, x, D, dt);
     }
 
     write_table_xy(opt.get_string_option("outfile").c_str(), z, x);
 
     return EXIT_SUCCESS;
-}
-
-/**
- * \brief recalculates the diffusion coefficient
- *
- * \param[in]     z spatial profile [m]
- * \param[in]     x diffusant profile
- * \param[in,out] D diffusion coefficient at each point [m^2/s]
- * \param[in]     t time
- *
- * \details recalculates D for all points along the z-axis when D is a function of the concentration
- */
-void calculate_D(const std::valarray<double> &z,
-                 const std::valarray<double> &x,
-                 std::valarray<double>       &D,
-                 double                       t)
-{
-    for(unsigned int iz=0; iz<z.size(); ++iz)
-        D[iz] = D_of_x(D[iz], x[iz], z[iz], t);
 }
 
 /**

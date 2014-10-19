@@ -1,0 +1,60 @@
+[FILES]
+.SS Input files:
+   'x.r'    Input diffusant profile:
+            Column 1: spatial location [m]
+            Column 2: diffusant value [a.u.]
+
+.SS Output files:
+   'X.r'    Output diffusant profile:
+            Column 1: spatial location [m]
+            Column 2: diffusant value [a.u.]
+
+[DIFFUSION MODES]
+The program supports four different modes for computing the diffusion coefficient.
+The mode can be selected from the following list using the --mode option.
+ 
+.SS constant
+The diffusion coefficient is a constant value, D = D0, which can be specified using the --coeff option
+
+.SS concentration-dependent
+The diffusion coefficient is dependent on concentration according to D = k c^2, where k = 1 Angstrom^2/s.
+At present, the value of k cannot be user specified.
+
+.SS depth-dependent
+The diffusion coefficient is dependent on the depth into the structure, according to the Gaussian form:
+
+    D = D0 exp[- (z - z0)^2/(2 sigma^2)],
+
+where D0 = 10 Angstrom^2/s, z0 = 1800 Angstrom and sigma = 600 Angstrom.
+At present, the coefficients cannot be user-specified.
+
+.SS time-dependent
+The diffusion coefficient is dependent on the depth into the structure and the elapsed time, according to the decaying Gaussian form:
+
+    D = D0 exp[- (z - z0)^2/(2 sigma^2)] exp(-t/tau),
+
+where D0 = 10 Angstrom^2/s, z0 = 1800 Angstrom, sigma = 600 Angstrom and tau = 100 s.
+At present, the coefficients cannot be user-specified
+
+[STABILITY]
+This program uses a Forward-Time Central Space (FTCS) algorithm to compute the diffusion profile.
+This only generates a stable solution when:
+
+    D0 dt / dz^2 <= 0.5,
+
+where D0 is the diffusion coefficient, dt is the time-step and dz is the spatial step.
+The program will exit with an error message if this condition is not met.
+It can be rectified by selecting an appropriately small value of dt using the --dt option.
+
+[EXAMPLES]
+Find a diffusion profile using a constant diffusion coefficient of 10 Angstrom^2/s and a time of 100 s:
+    gde --coeff 10 --time 100
+
+As above, but with a time-step of 0.0001 seconds:
+    gde --coeff 10 --time 100 --dt 0.0001
+
+Compute the diffusion profile using the file `d.r' as the input, and `D.r' as the output
+    gde --coeff 10 --time 100 --infile d.r --outfile D.r
+
+Compute the diffusion profile using a time-dependent diffusion coefficient:
+    gde --mode time-dependent

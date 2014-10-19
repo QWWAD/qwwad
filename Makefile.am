@@ -21,7 +21,6 @@ LDADD = $(BOOST_LDFLAGS)             \
 
 noinst_HEADERS = src/d0-helpers.h    \
 		 src/dos-functions.h \
-		 src/dox.h           \
 		 src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/ppff.h          \
@@ -215,7 +214,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/find_poisson_potential.1 \
 		 man/hup.1                    \
 		 man/densityinput.1           \
-		 man/chargedensity.1
+		 man/chargedensity.1          \
+		 man/gde.1
 
 EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
@@ -235,7 +235,8 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/ivdb.h2m                   \
 	      doc/hup.h2m                    \
 	      doc/densityinput.h2m           \
-	      doc/chargedensity.h2m
+	      doc/chargedensity.h2m          \
+	      doc/gde.h2m
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -340,6 +341,12 @@ man/chargedensity.1: src/chargedensity.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/chargedensity$(EXEEXT)
 	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/chargedensity.h2m src/chargedensity$(EXEEXT) 
+
+man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/gde.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/gde$(EXEEXT)
+	help2man --output=$@ --name="generate a diffusion profile for a 2D system." --include $(top_srcdir)/doc/gde.h2m src/gde$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
