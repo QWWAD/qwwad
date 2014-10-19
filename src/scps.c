@@ -76,6 +76,8 @@ epsilon=13.18*eps0;/* low frequency dielectric constant for GaAs	*/
 p='e';			/* electron			*/
 q=-e;
 
+fprintf(stderr, "** The scps programme is deprecated.  Please use find_poisson_potential instead **\n\n");
+
 /* default values for numerical calculations	*/
 
 /* calculate step lengths	*/

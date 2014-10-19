@@ -561,8 +561,14 @@ exdiffdata_DATA = $(exdiffsrcdir)/index \
 		  $(exdiffsrcdir)/depth-dependent.eps         \
 		  $(exdiffsrcdir)/time-dependent.sh           \
 		  $(exdiffsrcdir)/time-dependent.agr          \
-		  $(exdiffsrcdir)/time-dependent.eps
-
+		  $(exdiffsrcdir)/time-dependent.eps          \
+		  $(exdiffsrcdir)/delta-doping.sh             \
+		  $(exdiffsrcdir)/delta-doping-d.agr          \
+		  $(exdiffsrcdir)/delta-doping-d.eps          \
+		  $(exdiffsrcdir)/delta-doping-vp.agr         \
+		  $(exdiffsrcdir)/delta-doping-vp.eps         \
+		  $(exdiffsrcdir)/delta-doping-E.agr          \
+		  $(exdiffsrcdir)/delta-doping-E.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

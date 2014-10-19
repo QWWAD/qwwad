@@ -9,6 +9,6 @@ Fig 4.7:  constant-D.sh              => constant-D-E-t.eps
 Fig 4.8:  concentration-dependent.sh => concentration-dependent.eps
 Fig 4.11: depth-dependent.sh         => depth-dependent.eps
 Fig 4.12: time-dependent.sh          => time-dependent.eps
-Fig 4.14:
-Fig 4.15:
-Fig 4.16:
+Fig 4.14: delta-doping.sh            => delta-doping-d.eps
+Fig 4.15: delta-doping.sh            => delta-doping-vp.eps
+Fig 4.16: delta-doping.sh            => delta-doping-E.eps

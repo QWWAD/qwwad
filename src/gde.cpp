@@ -63,6 +63,8 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("coeff,D",        1.0, "Diffusion coefficient [Angstrom^2/s]");
     opt.add_numeric_option("time,t",         1.0, "End time for simulation [s]");
     opt.add_string_option ("mode,a",  "constant", "Form of diffusion coefficient");
+    opt.add_string_option ("infile",       "x.r", "File from which input profile of diffusant will be read");
+    opt.add_string_option ("outfile",      "X.r", "File to which output profile of diffusant will be written");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -73,7 +75,7 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> x; // Initial diffusant profile
-    read_table_xy("x.r", z, x);
+    read_table_xy(opt.get_string_option("infile").c_str(), z, x);
 
     const size_t nz = z.size(); // Number of spatial points
 
@@ -157,7 +159,7 @@ int main(int argc,char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    write_table_xy("X.r", z, x);
+    write_table_xy(opt.get_string_option("outfile").c_str(), z, x);
 
     return EXIT_SUCCESS;
 }

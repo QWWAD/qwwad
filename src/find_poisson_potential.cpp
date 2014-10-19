@@ -50,6 +50,8 @@ Options get_options(int argc, char* argv[])
                                                         "the voltage drop needs to be fixed. Otherwise will be "
                                                         "equal to inbuilt potential from zero-field Poisson solution.");
     opt.add_numeric_option("offset",              0,    "Set potential at spatial point closest to origin [meV].");
+    opt.add_switch        ("ptype",                     "Dopants are to be treated as acceptors, and wavefunctions "
+                                                        "treated as hole states");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -75,6 +77,11 @@ int main(int argc, char* argv[])
 
     // Convert charge density into S.I. units
     rho *= e;
+
+    // If we're using a p-type system, invert the charge profile so we have
+    // a positive energy scale
+    if(opt.get_switch("ptype"))
+        rho *= -1;
 
     // Calculate Poisson potential due to charge within structure using cyclic boundary conditions
     const double dz = z[1] - z[0];
