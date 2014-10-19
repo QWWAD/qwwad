@@ -33,14 +33,16 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[]) :
 {
     std::string doc("Find charge density in a 2D heterostructure.");
 
-    add_size_option  ("nper,p",                 1, "Number of periods crossed by the wavefunction. This is "
-                                                   "only relevant for periodic heterostructures.");
-    add_string_option("dopingfile",         "d.r", "File from which to read volume doping profile [m^{-3}]");
-    add_string_option("populationfile",     "N.r", "File from which to read subband populations [m^{-2}]");
-    add_string_option("degeneracyfile",            "File from which to read subband degeneracies. If not "
-                                                   "specified, all states are taken to be non-degenerate");
-    add_string_option("chargefile",       "rho.r", "File to which charge density profile will be written");
-    add_string_option("edensityfile",   "edens.r", "File to which electron density profile will be written");
+    add_size_option  ("nper,p",                   1,  "Number of periods crossed by the wavefunction. This is "
+                                                      "only relevant for periodic heterostructures.");
+    add_string_option("dopingfile",         "d.r",    "File from which to read volume doping profile [m^{-3}]");
+    add_string_option("populationfile",     "N.r",    "File from which to read subband populations [m^{-2}]");
+    add_string_option("degeneracyfile",               "File from which to read subband degeneracies. If not "
+                                                      "specified, all states are taken to be non-degenerate");
+    add_string_option("chargefile",         "rho.r",  "File to which charge density profile will be written");
+    add_string_option("carrierdensityfile", "dens.r", "File to which electron density profile will be written");
+    add_switch       ("ptype",                        "Dopants are to be treated as acceptors, and wavefunctions "
+                                                      "treated as hole states");
 
     add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -96,14 +98,6 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     }
 }
 
-/**
- * \brief     main function for program
- *
- * \param[in] argc The number of command-line arguments
- * \param[in] argv Array of command-line arguments
- * 
- * \returns   Exit code of 0 signifies successful completion
- */
 int main(int argc, char* argv[])
 {
     const ChargeDensityOptions opt(argc, argv);
@@ -112,7 +106,7 @@ int main(int argc, char* argv[])
     const size_t nst     = data.states.size();          // Number of states localised in one period
 
     // Read doping profile (for entire multi-period structure)
-    std::valarray<double> z;
+    std::valarray<double> z; // Spatial location [m]
     std::valarray<double> d; // Spatial profile of doping in structure [Cm^{-3}]
     read_table_xy(opt.get_string_option("dopingfile").c_str(), z, d);
 
@@ -123,10 +117,11 @@ int main(int argc, char* argv[])
     const std::valarray<double> z_1per = z[std::slice(0, nz_1per, 1)];
     const std::valarray<double> d_1per = d[std::slice(0, nz_1per, 1)];
 
-    // Find electron density at each point in a single period
+    // Find carrier density at each point in a single period
     // by summing the "tails" of wavefunctions in each period.
     // This implements the summation in [QWWAD4, 3.108]
-    std::valarray<double> edensity_1per(0.0, nz_1per);
+    // [m^{-3}]
+    std::valarray<double> carrier_density_1per(0.0, nz_1per);
 
     for(unsigned int iper = 0; iper < nper; iper++)
     {
@@ -138,18 +133,22 @@ int main(int argc, char* argv[])
             // Grab the part of the PDF that lies in this period
             std::valarray<double> PD_per = PD[std::slice(iper*nz_1per, nz_1per, 1)];
 
-            // Add this into the total electron density profile
-            edensity_1per += e * data.pop[ist] * data.nval[ist] * PD_per;
+            // Add this into the total carrier density profile
+            carrier_density_1per += data.pop[ist] * data.nval[ist] * PD_per;
         }
     }
 
-    // Charge density is obtained by subtracting electron density from doping density
-    // [QWWAD4, 3.108]. Note q = -e.
-    const std::valarray<double> rho_1per = d * e - edensity_1per;
+    // Charge density is obtained by subtracting carrier density from doping density
+    // [QWWAD4, 3.108]. Note q = -e by default (for electrons). [C m^{-3}]
+    std::valarray<double> rho_1per = e*(d - carrier_density_1per);
 
-    // Output position, charge density and electron density for a single period [Cm^-3]
+    // Invert charge profile if it's a p-type system
+    if (opt.get_switch("ptype"))
+        rho_1per *= -1;
+
+    // Output position, charge density [Cm^{-3}] and carrier density [m^{-3}] for a single period
     write_table_xy(opt.get_string_option("chargefile").c_str(), z_1per, rho_1per);
-    write_table_xy(opt.get_string_option("edensityfile").c_str(), z_1per, edensity_1per);
+    write_table_xy(opt.get_string_option("carrierdensityfile").c_str(), z_1per, carrier_density_1per);
 
     return EXIT_SUCCESS;
 }

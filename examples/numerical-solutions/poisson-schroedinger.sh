@@ -10,6 +10,7 @@ set -e
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
 # (c) Copyright 1996-2014
+#     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
