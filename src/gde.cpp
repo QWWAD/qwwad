@@ -86,7 +86,7 @@ int main(int argc,char *argv[])
         for(double t=dt; t<=t_final; t+=dt)
             diffuse(z, x, D, dt);
     }
-    else if(mode == "file")
+    else if(mode == "from-file")
     {
         read_table_xy("D.r", z, D); // read D from file
 
@@ -123,7 +123,25 @@ int main(int argc,char *argv[])
             diffuse(z, x, D, dt);
         }
     }
-    else if(mode == "time")
+    else if(mode == "time-dependent")
+    {
+        // TODO: Make this configurable
+        const double D0    = 10*1e-20;   // Magnitude of distribution [m^2/s]
+        const double z0    = 1800*1e-10; // Centre of diff. coeff. distribution [m]
+        const double sigma = 600*1e-10;  // Width of distribution [m]
+        const double tau   = 100;        // Decay time-constant for diffusion [s]
+
+        for(double t=dt; t<=t_final; t+=dt)
+        {
+            // Find time and depth-dependent diffusion coefficient
+            // [4.18, QWWAD4]
+            D = D0*exp(-pow((z-z0)/sigma, 2)/2)*exp(-t/tau);
+
+            diffuse(z, x, D, dt);
+        }
+    }
+
+    else if(mode == "initialise-from-file")
     {
         read_table_xy("D.r", z, D); // read D at t=0 from file
 

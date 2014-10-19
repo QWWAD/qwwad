@@ -1,6 +1,6 @@
 #!/bin/sh -e
 
-# Computes a diffusion profile for MQW system with depth dependent diff. coeff.
+# Computes a diffusion profile for MQW system with time-dependent diff. coeff.
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -26,10 +26,10 @@
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=depth-dependent.dat
+outfile=time-dependent.dat
 rm -f $outfile
 
-# Define initial diffusant profile
+# Use t=200 s depth-dependent diffusant profile as the input
 cat > s.r << EOF
 960 0.1 0.0
 50  0.0 0.0
@@ -56,11 +56,14 @@ EOF
 
 # Generate initial alloy concentration (diffusant) profile
 find_heterostructure --dz-max 1 
+gde --mode depth-dependent --time 200
+mv X.r x.r
 
 # Run diffusion `simulation' for various times
-for t in 0 200; do
-    gde --mode depth-dependent --time $t
+for t in 0 50 100 200; do
+    gde --mode time-dependent --time $t
 
+    # Store diffusion profiles
     awk '{print $1*1e10, $2}' X.r >> $outfile
     printf '\n' >> $outfile
 done
@@ -71,11 +74,13 @@ Results have been written to $outfile in the format:
   COLUMN 1 - Spatial location [Angstrom]
   COLUMN 2 - Alloy concentration
 
-  The file contains 2 data sets, each set being separated
+  The file contains 4 data sets, each set being separated
   by a blank line, representing different diffusion times:
 
-  SET 1  - t = 0 s
-  SET 2  - t = 200 s
+  SET 1 - t = 0 s
+  SET 2 - t = 50 s
+  SET 3 - t = 100 s
+  SET 4 - t = 200 s
 
 This script is part of the QWWAD software suite.
 
