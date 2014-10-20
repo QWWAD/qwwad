@@ -346,7 +346,7 @@ man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/gde.h2m
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/gde$(EXEEXT)
-	help2man --output=$@ --name="generate a diffusion profile for a 2D system." --include $(top_srcdir)/doc/gde.h2m src/gde$(EXEEXT) 
+	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/gde.h2m src/gde$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
