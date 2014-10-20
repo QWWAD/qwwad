@@ -1,3 +1,13 @@
+2014-10-20 (QWWAD 1.2.0):
+        * This preview release adds a solver for the generalised diffusion
+          equation to accompany Chapter 4 of the textbook ("Diffusion").
+          It also adds basic support for p-type systems
+        * gde: New program for solving Generalised Diffusion Equation
+        * chargedensity: Enable p-type systems (LP: #1377134)
+        * find_poisson_potential: Enable p-type systems
+        * efvx: Alloy input file can now be specified using --alloyfile
+          option
+
 2014-10-03 (QWWAD 1.1.0):
         * This preview release adds the numerical Poisson and Schroedinger
           solvers from Chapter 3 of the textbook ("Numerical solutions").

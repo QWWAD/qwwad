@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.63])
 
-AC_INIT([Quantum Wells, Wires and Dots], [1.1+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
+AC_INIT([Quantum Wells, Wires and Dots], [1.2+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
 
 dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
 dnl manually.
@@ -21,6 +21,16 @@ AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
+dnl Libtool needs access to the "ar" archiver so check that it exists.
+dnl TODO: This macro is new in Automake 1.12 so we can apply this
+dnl       check by default once we update our Automake dependency.
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+
+# Set up libtool
+AC_PROG_LIBTOOL
+LT_PREREQ([2.2])
+LT_INIT
+
 # The number in the options list here refers to the minimum version
 # of Automake that can be accepted
 AM_INIT_AUTOMAKE([-W -Wall 1.11 subdir-objects])
@@ -35,16 +45,6 @@ AC_PROG_CC
 AC_PROG_F77
 AM_PROG_CC_C_O
 AC_PROG_CXX
-
-dnl Libtool needs access to the "ar" archiver so check that it exists.
-dnl TODO: This macro is new in Automake 1.12 so we can apply this
-dnl       check by default once we update our Automake dependency.
-m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-
-# Set up libtool
-AC_PROG_LIBTOOL
-LT_PREREQ([2.2])
-LT_INIT
 
 dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"
