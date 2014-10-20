@@ -102,7 +102,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
 
         for(unsigned int iz = 0; iz < nz; ++iz)
         {
-            if(abs(_x[iz]) < 1)
+            if(std::abs(_x[iz]) < 1)
             {
                 psi[iz] = fact[iz] *
                           gsl_sf_hyperg_2F1(arg1, arg2, arg3, _x[iz]);
