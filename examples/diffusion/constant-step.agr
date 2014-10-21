@@ -5,15 +5,65 @@
 @page scroll 5%
 @page inout 5%
 @link page off
+@map font 10 to "Courier-BoldItalic", "Courier-BoldItalic"
+@map font 11 to "Courier-BoldOblique", "Courier-BoldOblique"
+@map font 12 to "Courier-Italic", "Courier-Italic"
+@map font 13 to "Courier-Oblique", "Courier-Oblique"
+@map font 14 to "Courier-Regular", "Courier-Regular"
+@map font 15 to "Dingbats-Regular", "Dingbats-Regular"
 @map font 4 to "Helvetica", "Helvetica"
 @map font 5 to "Helvetica-Bold", "Helvetica-Bold"
 @map font 7 to "Helvetica-BoldOblique", "Helvetica-BoldOblique"
 @map font 6 to "Helvetica-Oblique", "Helvetica-Oblique"
+@map font 20 to "Hershey-Gothic-English-Regular", "Hershey-Gothic-English-Regular"
+@map font 21 to "Hershey-Gothic-German-Regular", "Hershey-Gothic-German-Regular"
+@map font 22 to "Hershey-Gothic-Italian-Regular", "Hershey-Gothic-Italian-Regular"
+@map font 23 to "Hershey-Plain-Duplex-Italic-Regular", "Hershey-Plain-Duplex-Italic-Regular"
+@map font 24 to "Hershey-Plain-Duplex-Regular", "Hershey-Plain-Duplex-Regular"
+@map font 25 to "Hershey-Plain-Triplex-Italic-Regular", "Hershey-Plain-Triplex-Italic-Regular"
+@map font 26 to "Hershey-Plain-Triplex-Regular", "Hershey-Plain-Triplex-Regular"
+@map font 27 to "Hershey-Script-Complex-Regular", "Hershey-Script-Complex-Regular"
+@map font 28 to "Hershey-Script-Simplex-Regular", "Hershey-Script-Simplex-Regular"
+@map font 29 to "NimbusMonoL-Bold", "NimbusMonoL-Bold"
+@map font 30 to "NimbusMonoL-BoldOblique", "NimbusMonoL-BoldOblique"
+@map font 31 to "NimbusMonoL-Regular", "NimbusMonoL-Regular"
+@map font 32 to "NimbusMonoL-RegularOblique", "NimbusMonoL-RegularOblique"
+@map font 33 to "NimbusRomanNo9L-Medium", "NimbusRomanNo9L-Medium"
+@map font 34 to "NimbusRomanNo9L-MediumItalic", "NimbusRomanNo9L-MediumItalic"
+@map font 35 to "NimbusRomanNo9L-Regular", "NimbusRomanNo9L-Regular"
+@map font 36 to "NimbusRomanNo9L-RegularItalic", "NimbusRomanNo9L-RegularItalic"
+@map font 37 to "NimbusSansL-Bold", "NimbusSansL-Bold"
+@map font 38 to "NimbusSansL-BoldCondensed", "NimbusSansL-BoldCondensed"
+@map font 39 to "NimbusSansL-BoldCondensedItalic", "NimbusSansL-BoldCondensedItalic"
+@map font 40 to "NimbusSansL-BoldItalic", "NimbusSansL-BoldItalic"
+@map font 41 to "NimbusSansL-Regular", "NimbusSansL-Regular"
+@map font 42 to "NimbusSansL-RegularCondensed", "NimbusSansL-RegularCondensed"
+@map font 43 to "NimbusSansL-RegularCondensedItalic", "NimbusSansL-RegularCondensedItalic"
+@map font 44 to "NimbusSansL-RegularItalic", "NimbusSansL-RegularItalic"
+@map font 45 to "StandardSymbolsL-Regular", "StandardSymbolsL-Regular"
 @map font 8 to "Symbol", "Symbol"
+@map font 47 to "Symbol-Regular", "Symbol-Regular"
 @map font 1 to "Times-Bold", "Times-Bold"
 @map font 3 to "Times-BoldItalic", "Times-BoldItalic"
 @map font 2 to "Times-Italic", "Times-Italic"
 @map font 0 to "Times-Roman", "Times-Roman"
+@map font 52 to "URWBookmanL-DemiBold", "URWBookmanL-DemiBold"
+@map font 53 to "URWBookmanL-DemiBoldItalic", "URWBookmanL-DemiBoldItalic"
+@map font 54 to "URWBookmanL-Light", "URWBookmanL-Light"
+@map font 55 to "URWBookmanL-LightItalic", "URWBookmanL-LightItalic"
+@map font 56 to "URWChanceryL-MediumItalic", "URWChanceryL-MediumItalic"
+@map font 57 to "URWGothicL-Book", "URWGothicL-Book"
+@map font 58 to "URWGothicL-BookOblique", "URWGothicL-BookOblique"
+@map font 59 to "URWGothicL-Demi", "URWGothicL-Demi"
+@map font 60 to "URWGothicL-DemiOblique", "URWGothicL-DemiOblique"
+@map font 61 to "URWPalladioL-Bold", "URWPalladioL-Bold"
+@map font 62 to "URWPalladioL-BoldItalic", "URWPalladioL-BoldItalic"
+@map font 63 to "URWPalladioL-Italic", "URWPalladioL-Italic"
+@map font 64 to "URWPalladioL-Roman", "URWPalladioL-Roman"
+@map font 65 to "Utopia-Bold", "Utopia-Bold"
+@map font 66 to "Utopia-BoldItalic", "Utopia-BoldItalic"
+@map font 67 to "Utopia-Italic", "Utopia-Italic"
+@map font 68 to "Utopia-Regular", "Utopia-Regular"
 @map font 9 to "ZapfDingbats", "ZapfDingbats"
 @map color 0 to (255, 255, 255), "white"
 @map color 1 to (0, 0, 0), "black"
@@ -50,7 +100,7 @@
 @timestamp rot 0
 @timestamp font 0
 @timestamp char size 2.000000
-@timestamp def "Wed Oct 15 23:45:40 2014"
+@timestamp def "Tue Oct 21 23:06:26 2014"
 @with string
 @    string on
 @    string loctype view
@@ -84,7 +134,7 @@
 @with string
 @    string on
 @    string loctype view
-@    string 0.292220113852, 0.501666666667
+@    string 0.300798545225, 0.48818627451
 @    string color 1
 @    string rot 0
 @    string font 0
@@ -327,7 +377,7 @@
 @    s0 errorbar riser linestyle 1
 @    s0 errorbar riser clip off
 @    s0 errorbar riser clip length 0.100000
-@    s0 comment "x-t.agr"
+@    s0 comment "constant-step.agr"
 @    s0 legend  ""
 @    s1 hidden false
 @    s1 type xy
@@ -376,7 +426,7 @@
 @    s1 errorbar riser linestyle 1
 @    s1 errorbar riser clip off
 @    s1 errorbar riser clip length 0.100000
-@    s1 comment "x-t.agr"
+@    s1 comment "constant-step.agr"
 @    s1 legend  ""
 @    s2 hidden false
 @    s2 type xy
@@ -425,7 +475,7 @@
 @    s2 errorbar riser linestyle 1
 @    s2 errorbar riser clip off
 @    s2 errorbar riser clip length 0.100000
-@    s2 comment "x-t.agr"
+@    s2 comment "constant-step.agr"
 @    s2 legend  ""
 @    s3 hidden false
 @    s3 type xy
@@ -474,7 +524,7 @@
 @    s3 errorbar riser linestyle 1
 @    s3 errorbar riser clip off
 @    s3 errorbar riser clip length 0.100000
-@    s3 comment "x-t.agr"
+@    s3 comment "constant-step.agr"
 @    s3 legend  ""
 @    s4 hidden false
 @    s4 type xy
@@ -523,7 +573,7 @@
 @    s4 errorbar riser linestyle 1
 @    s4 errorbar riser clip off
 @    s4 errorbar riser clip length 0.100000
-@    s4 comment "x-t.agr"
+@    s4 comment "constant-step.agr"
 @    s4 legend  ""
 @    s5 hidden false
 @    s5 type xy
@@ -572,7 +622,7 @@
 @    s5 errorbar riser linestyle 1
 @    s5 errorbar riser clip off
 @    s5 errorbar riser clip length 0.100000
-@    s5 comment "x-t.agr"
+@    s5 comment "constant-step.agr"
 @    s5 legend  ""
 @target G0.S0
 @type xy
