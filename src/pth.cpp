@@ -6,6 +6,7 @@
  */
 
 #include <cstdlib>
+#include <iostream>
 
 #include "qwwad-options.h"
 #include "qclsim-constants.h"
