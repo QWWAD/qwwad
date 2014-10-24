@@ -133,7 +133,9 @@ src_densityinput_LDADD   = src/libqwwad.a $(LDADD)
 d0_helpers = src/d0-helpers.c src/d0-helpers.h
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
-src_d02D_SOURCES = src/d02D.c $(d0_helpers)
+src_d02D_SOURCES = src/d02D.cpp $(d0_helpers)
+src_d02D_LDADD   = src/libqwwad.a
+
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
 
 src_dispersion_relation_SOURCES = src/dispersion_relation.cpp
@@ -576,6 +578,12 @@ exdiffdata_DATA = $(exdiffsrcdir)/index \
 		  $(exdiffsrcdir)/delta-doping-vp.eps         \
 		  $(exdiffsrcdir)/delta-doping-E.agr          \
 		  $(exdiffsrcdir)/delta-doping-E.eps
+
+eximpdatadir = $(exdatadir)/impurities
+eximpsrcdir = examples/impurities
+
+eximpdata_DATA = $(eximpsrcdir)/index \
+		 $(eximpsrcdir)/E-variational-2D.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

@@ -29,33 +29,49 @@
 
    Paul Harrison, February 1998					*/
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
-#include "d0-helpers.h"
+#include "qclsim-fileio.h"
 #include "struct.h"
-#include "maths.h"
 
-static double I_1(const double  lambda);
-static double I_2(const double  lambda);
-static double I_3(const double  lambda);
-static double I_4(const double  lambda,
-                  const double  z_dash,
-                  const size_t  N_w);
+using namespace Leeds;
+using namespace constants;
+
+static double I_1        (const double  lambda);
+static double I_2        (const double  lambda);
+static double I_3        (const double  lambda);
+static double I_4        (const double  lambda,
+                          const double  z_dash,
+                          const size_t  N_w);
+static double psi_at_inf(const double                 E,
+                         const std::valarray<double> &z,
+                         const double                 epsilon,
+                         const double                 lambda,
+                         const double                 mstar,
+                         const double                 r_d,
+                         const std::valarray<double> &Vp,
+                         const size_t                 N_w);
+static bool repeat_lambda(double       *lambda,
+                          double       *lambda_0,
+                          const double  x,
+                          double       *x_min);
+static void wavefunctions(const std::valarray<double> &z,
+                          const double                 E,
+                          const double                 epsilon,
+                          const double                 lambda,
+                          const double                 mstar,
+                          const double                 r_d,
+                          const int                    i_d,
+                          const std::valarray<double> &Vp,
+                          const size_t                 N_w);
 
 int main(int argc,char *argv[])
 {
-double psi_at_inf();
-void   wavefunctions();
-bool    repeat_lambda();    
-
 double d_E;                 /* infinitesmal energy               */
 double delta_E;             /* small but finite energy           */
-double delta_z;             /* z separation of input potentials  */
 double dy;                  /* derivative of function            */
 double E;                   /* electron (or hole) energies       */
 double epsilon;             /* permitivity of material           */
@@ -75,16 +91,12 @@ double y1;                  /* temporary y value                 */
 double y2;                  /* temporary y value                 */
 int    i_d;                 /* donor (or acceptor) index         */
 int    N_w;                 /* number of strips in w integration */
-size_t n;		    /* number of lines of potential file */
 bool   repeat_flag_lambda; /* variational flag=>new lambda      */
-data11  *Vstart;             /* start address of potential        */
 FILE   *fe;                 /* file pointer for energies         */
 FILE   *fl;                 /* file pointer for lambda_0         */
 FILE   *fr_d;               /* file pointer to donor positions   */
  
-
 /* default values */
-
 delta_E=1e-3*e;
 epsilon=13.18*eps0;
 lambda_start=50.0e-10;
@@ -93,7 +105,6 @@ lambda_stop=-1.0e-10;
 mstar=0.067*me;
 
 /* computational default values */
-
 i_d=0;          
 d_E=delta_E/1e+6;
 N_w=100;
@@ -133,12 +144,11 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-  Vstart = read_v(&n);                  /* reads potential file */
-
-  delta_z=read_delta_z(Vstart);
+  std::valarray<double> z; // Spatial location [m]
+  std::valarray<double> V; // Confining potential [J]
+  read_table_xy("v.r", z, V);
 
   /* Open files for output of data */
-
   fe=fopen("e.r","w");           /* E versus r_d	*/
   fl=fopen("l.r","w");           /* lambda versus r_d	*/
 
@@ -166,17 +176,17 @@ while((argc>1)&&(argv[1][0]=='-'))
     /* initial energy estimate=minimum potential-binding energy
                                of particle to free ionised dopant */
 
-    x=V_min(Vstart,n)-gsl_pow_2(e)/(4*pi*epsilon*lambda);   
+    x = V.min() - e*e/(4*pi*epsilon*lambda);   
 
     /* increment energy-search for f(x)=0 */
 
-    y2=psi_at_inf(x,delta_z,epsilon,lambda,mstar,r_d,Vstart,n,N_w);
+    y2=psi_at_inf(x,z,epsilon,lambda,mstar,r_d,V,N_w);
 
     do
     {
      y1=y2;
      x+=delta_E;
-     y2=psi_at_inf(x,delta_z,epsilon,lambda,mstar,r_d,Vstart,n,N_w);
+     y2=psi_at_inf(x,z,epsilon,lambda,mstar,r_d,V,N_w);
     }while(y1*y2>0);
 
    /* improve estimate using midpoint rule */
@@ -187,9 +197,9 @@ while((argc>1)&&(argv[1][0]=='-'))
 
     do
     {
-     y=psi_at_inf(x,delta_z,epsilon,lambda,mstar,r_d,Vstart,n,N_w);
-     dy=(psi_at_inf(x+d_E,delta_z,epsilon,lambda,mstar,r_d,Vstart,n,N_w)-
-         psi_at_inf(x-d_E,delta_z,epsilon,lambda,mstar,r_d,Vstart,n,N_w))/
+     y=psi_at_inf(x,z,epsilon,lambda,mstar,r_d,V,N_w);
+     dy=(psi_at_inf(x+d_E,z,epsilon,lambda,mstar,r_d,V,N_w)-
+         psi_at_inf(x-d_E,z,epsilon,lambda,mstar,r_d,V,N_w))/
         (2.0*d_E);
      x-=y/dy;
 
@@ -211,7 +221,7 @@ while((argc>1)&&(argv[1][0]=='-'))
    fprintf(fe,"%le %le\n",r_d/1e-10,E/(1e-3*e));
    fprintf(fl,"%le %le\n",r_d/1e-10,lambda_0/1e-10);
 
-   wavefunctions(delta_z,E,epsilon,lambda_0,mstar,r_d,i_d,Vstart,n,N_w);
+   wavefunctions(z,E,epsilon,lambda_0,mstar,r_d,i_d,V,N_w);
 
    i_d++;            /* donor index */
 
@@ -220,21 +230,19 @@ while((argc>1)&&(argv[1][0]=='-'))
   fclose(fr_d);
   fclose(fe);
   fclose(fl);
-  free(Vstart);
 
   return EXIT_SUCCESS;
 } /* end main */
 
-bool
-repeat_lambda(lambda,lambda_0,x,x_min)
-
-/* This function compares minimum value of energy for this lambda,
-   if it is a new true minima, then repeat for new lambda	*/
-
-double *lambda;
-double *lambda_0;
-double x;
-double *x_min;
+/**
+ * \brief compares minimum value of energy for this lambda
+ *
+ * \details If it is a new true minimum, then repeat for new lambda
+ */
+static bool repeat_lambda(double       *lambda,
+                          double       *lambda_0,
+                          const double  x,
+                          double       *x_min)
 {
  bool flag;
 
@@ -251,175 +259,149 @@ double *x_min;
  return(flag);
 }
 
-
-
-double
-psi_at_inf(E,delta_z,epsilon,lambda,mstar,r_d,Vp,n,N_w)     
-
-/* This function returns the value of the wavefunction (psi)
-   at +infinity for a given value of the energy.  The solution
-   to the energy occurs for psi(+infinity)=0.                      */
-
-double E;
-double delta_z;
-double epsilon;
-double lambda;
-double mstar;
-double r_d;
-int n;
-data11 *Vp;
-size_t N_w;
+/**
+ * \brief Finds the value of the wavefunction at +infinity for a given energy.
+ *
+ * \details The solution to the energy occurs for psi(+infinity)=0.
+ *
+ * \returns The wavefunction at \f$\psi(\infty)\f$
+ */
+static double psi_at_inf(const double                 E,
+                         const std::valarray<double> &z,
+                         const double                 epsilon,
+                         const double                 lambda,
+                         const double                 mstar,
+                         const double                 r_d,
+                         const std::valarray<double> &Vp,
+                         const size_t                 N_w)
 {
- double alpha;		     /* coefficient of second derivative, see notes */
- double beta;                /* coefficient of first derivative            */
- double gamma;               /* coefficient of function                    */
- double delta_psi;           /* initial wavefunction value                 */
- double I1,I2,I3,I4;         /* particular values of the functions         */
- double kappa;     
- double psi[3];              /* wavefunction at z-delta_z, z, z+delta_z    */
- int i;			     /* index			                   */
+    const size_t nz = z.size();
+    const double dz = z[1] - z[0];
 
+    std::valarray<double> psi(3); // Wavefunction amplitude at 3 adjacent points
 
- /* ignore potential V corresponding to psi[0] and psi[1] */
+    /* boundary conditions */
+    const double kappa=sqrt(2*mstar*(Vp[1]-E))/hBar;
 
- Vp++;
+    const double delta_psi = 1.e-10;
+    psi[0] = delta_psi; // Initial wave function value (arbitrarily small)
+    psi[1] = psi[0]*exp(kappa*dz); // exponential growth
 
- /* boundary conditions */
+    // Compute coefficients for Schroedinger equation [QWWAD3, 5.23]
+    // Note that these are all constants so they can be computed outside
+    // the loop
+    const double I1=I_1(lambda);
+    const double I3=I_3(lambda);
+    const double alpha = I1;                // Coeff. of 2nd derivative
+    const double beta  = 2.0 * I_2(lambda); // Coeff. of 1st deriviative
 
- kappa=sqrt(2*mstar/hBar*(Vp->b-E)/hBar);
+    // Loop over spatial points (ignore first)
+    for(unsigned int iz = 1; iz < nz; ++iz)
+    {
+        const double I4 = I_4(lambda, z[iz] - r_d, N_w);
 
- delta_psi=1.0e-10;
+        const double gamma = I3 + (2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
+                             - 2*mstar/hBar * (Vp[iz]-E) * I1/hBar;
 
- psi[0]=delta_psi;                 /* arbitrary number close to zero */
- psi[1]=psi[0]*exp(kappa*delta_z); /* exponential growth produce by  */
+        psi[2]=((-1+beta*dz/(2*alpha))*psi[0]
+                +(2-dz*dz*gamma/alpha)*psi[1]
+               )/(1+beta*dz/(2*alpha));
 
- for(i=1;i<n;i++)
- {
-  I1=I_1(lambda);
-  I2=I_2(lambda);
-  I3=I_3(lambda);
-  I4=I_4(lambda,(Vp->a)-r_d,N_w);
+        psi[0]=psi[1];
+        psi[1]=psi[2];
+    }
 
-  alpha=I1;
-  beta=2*I2;
-  gamma=I3+(2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
-          -(2*mstar/hBar)*((Vp->b)-E)*I1/hBar;
-
-  psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
-         )/(1+beta*delta_z/(2*alpha));
-
-  psi[0]=psi[1];
-  psi[1]=psi[2];
-  Vp++;
- } /* end for */
-
- return(psi[0]-delta_psi);
+    return psi[0]-delta_psi;
 }
 
-void
-wavefunctions(delta_z,E,epsilon,lambda,mstar,r_d,i_d,Vp,n,N_w)
-
-/* This function calculates and writes the wavefunctions
-   both psi(z) and chi(z) to the external file wf(n).r.		*/
-
-double delta_z;
-double E;
-double epsilon;
-double lambda;
-double mstar;
-double r_d;
-int    i_d;
-size_t n;
-data11  *Vp;
-size_t  N_w;
+/**
+ * \brief Calculates and writes the wavefunctions
+ *
+ * \details Both psi(z) and chi(z) are written to the external file wf(n).r
+ */
+static void wavefunctions(const std::valarray<double> &z,
+                          const double                 E,
+                          const double                 epsilon,
+                          const double                 lambda,
+                          const double                 mstar,
+                          const double                 r_d,
+                          const int                    i_d,
+                          const std::valarray<double> &Vp,
+                          const size_t                 N_w)
 {
- double alpha;		 /* coefficient of second derivative, see notes */
- double beta;            /* coefficient of first derivative             */
- double gamma;           /* coefficient of function                     */
  double delta_psi;       /* initial wavefunction value                  */
- double I1,I2,I3,I4;     /* particular values of the functions	        */
  double kappa;
  double Npsi=0;          /* normalisation integral for psi              */
  double Nchi=0;          /* normalisation integral for chi              */
  double psi[3];          /* wavefunctions at z-d_z,z,z+d_z              */
- unsigned int    i;               /* index                                       */
  char   filename[9];     /* character string for wavefunction filename  */
  FILE   *fw;             /* file wf.r                                   */
  data12  *wf_start;      /* pointer to start of w.f                     */
  data12  *wf;		 /* wavefunction pointer, note b[0]=psi, 
                             b[1]=chi, see notes                         */
 
- wf_start=(data12 *)calloc(n,sizeof(data12)); /* allocates memory for wavefunctions */
- if (wf_start==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
+ const size_t nz = z.size();
+ const size_t dz = z[1] - z[0];
+
+ wf_start = new data12[nz]; // allocates memory for wavefunctions
  wf=wf_start;
 
  /* boundary conditions */
-
- kappa=sqrt(2*mstar/hBar*((Vp->b)-E)/hBar);
+ kappa=sqrt(2*mstar/hBar*(Vp[0]-E)/hBar);
 
  delta_psi=1.0e-10;
 
  psi[0]=delta_psi;                 /* arbitrary number close to zero */
- psi[1]=psi[0]*exp(kappa*delta_z); /* exponential growth produce by  */
+ psi[1]=psi[0]*exp(kappa*dz); /* exponential growth produce by  */
 
  /* write first value of wavefunction */ 
-
- wf->a=Vp->a;
+ wf->a=z[0];
  wf->b[0]=psi[0]; 
  wf->b[1]=psi[0]; 
 
  wf++;
- Vp++;
- wf->a=Vp->a;
+ wf->a=z[1];
  wf->b[0]=psi[1]; 
  wf->b[1]=psi[1]; 
  
- /* calculate unnormalised wavefunction */
+ const double I1=I_1(lambda);
+ const double I2=I_2(lambda);
+ const double I3=I_3(lambda);
+ const double alpha = I1;   // Coefficient of second derivative, see notes
+ const double beta  = 2*I2; // Coefficient of first derivative
 
- for(i=2;i<n;i++) /* points 0 and 1 defined	*/
+ // calculate unnormalised wavefunction
+ // Note that points 0 and 1 were already defined before the loop
+ for(unsigned int iz = 2; iz<nz; ++iz)
  {
-  I1=I_1(lambda);
-  I2=I_2(lambda);
-  I3=I_3(lambda);
-  I4=I_4(lambda,(Vp->a)-r_d,N_w);
+  const double I4=I_4(lambda, z[iz-1]-r_d, N_w);
 
-  alpha=I1;
-  beta=2*I2;
-  gamma=I3+(2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
-          -(2*mstar/hBar)*((Vp->b)-E)*I1/hBar;
+  // Coefficient of function
+  const double gamma=I3+(2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
+          -(2*mstar/hBar)*(Vp[iz-1]-E)*I1/hBar;
 
-  psi[2]=((-1+beta*delta_z/(2*alpha))*psi[0]
-          +(2-gsl_pow_2(delta_z)*gamma/alpha)*psi[1]
-         )/(1+beta*delta_z/(2*alpha));
+  psi[2]=((-1+beta*dz/(2*alpha))*psi[0]
+          +(2-dz*dz*gamma/alpha)*psi[1]
+         )/(1+beta*dz/(2*alpha));
 
+  // write wavefunction point corresponding to current z and V
 
-  /* write wavefunction point corresponding to current z and V */
+  wf++;	// increment pointer ready for writing
 
-  wf++;		/* increment pointer ready for writing */
-  Vp++;		/* increment pointer for next loop, note increment first
-                   as wf derives z from Vp                       */
-
-  wf->a=Vp->a;
+  wf->a=z[iz];
   wf->b[0]=psi[1];
   wf->b[1]=psi[1];
 
-
   psi[0]=psi[1];       
   psi[1]=psi[2];
-
  }
 
- /* calculate normalisation integral	*/
-
+ // calculate normalisation integral
  wf=wf_start;
- for(i=0;i<n;i++)
+ for(unsigned int iz=0; iz<nz; iz++)
  {
-  Npsi+=gsl_pow_2(wf->b[0])*delta_z;
-  Nchi+=gsl_pow_2(wf->b[1])*delta_z;
+  Npsi+=gsl_pow_2(wf->b[0])*dz;
+  Nchi+=gsl_pow_2(wf->b[1])*dz;
   wf++;
  }
 
@@ -427,7 +409,7 @@ size_t  N_w;
     of normalisation integral                       */
  
  wf=wf_start;
- for(i=0;i<n;i++)
+ for(unsigned int iz=0; iz<nz; iz++)
  {
   wf->b[0]=wf->b[0]/sqrt(Npsi);
   wf->b[1]=wf->b[1]/sqrt(Nchi);
@@ -444,7 +426,7 @@ size_t  N_w;
 
  wf=wf_start;
 
- for(i=0;i<n;i++)
+ for(unsigned int iz=0;iz<nz;iz++)
  {
   fprintf(fw,"%20.17le %le %le\n",wf->a,wf->b[0],wf->b[1]);
   wf++;
@@ -520,15 +502,16 @@ static double I_4(const double lambda,
                   const double z_dash,
                   const size_t N_w)
 {
- double I_40=0.0; /* Integral term */
- double w;
- double delta_w=(1.0-0.0)/(float)N_w;
+    double I_40=0.0; /* Integral term */
+    double w;
+    double delta_w=(1.0-0.0)/(float)N_w;
 
- for (w=delta_w/2;w<1;w+=delta_w)
- {
-  I_40+=exp(-fabs(z_dash)*(1/w-w)/lambda)*fabs(z_dash)
-        *(1-gsl_pow_2(w))/(2*gsl_pow_2(w))*delta_w;
- }
+    for (w=delta_w/2;w<1;w+=delta_w)
+    {
+        I_40+=exp(-fabs(z_dash)*(1/w-w)/lambda)*fabs(z_dash)
+            *(1-gsl_pow_2(w))/(2*gsl_pow_2(w))*delta_w;
+    }
 
- return 2*pi*I_40;
+    return 2*pi*I_40;
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
