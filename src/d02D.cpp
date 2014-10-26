@@ -33,6 +33,8 @@
 #include <cmath>
 #include <iostream>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_roots.h>
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
@@ -46,27 +48,35 @@ static double I_3        (const double                 lambda);
 static double I_4        (const double                 lambda,
                           const double                 z_dash,
                           const size_t                 N_w);
-static double psi_at_inf (const double                  E,
-                          const std::valarray<double>  &z,
-                          const double                  epsilon,
-                          const double                  lambda,
-                          const double                  mstar,
-                          const double                  r_d,
-                          const std::valarray<double>  &Vp,
-                          const size_t                  N_w);
+
+/// Parameters used for Shooting method
+struct shoot_params
+{
+    const std::valarray<double>  &z;
+    const double                  epsilon;
+    const double                  lambda;
+    const double                  mstar;
+    const double                  r_d;
+    const std::valarray<double>  &Vp;
+    const size_t                  N_w;
+};
+
+static double psi_at_inf (double  E,
+                          void   *params);
 static bool repeat_lambda(const double                  lambda,
                           double                       &lambda_0,
                           const double                  E,
                           double                       &E0);
-static void wavefunctions(const std::valarray<double> &z,
-                          const double                 E,
-                          const double                 epsilon,
-                          const double                 lambda,
-                          const double                 mstar,
-                          const double                 r_d,
-                          const int                    i_d,
-                          const std::valarray<double> &Vp,
-                          const size_t                 N_w);
+static double shoot_wavefunction(std::valarray<double>       &psi,
+                                 std::valarray<double>       &chi,
+                                 const std::valarray<double> &z,
+                                 const double                 E,
+                                 const double                 epsilon,
+                                 const double                 lambda,
+                                 const double                 mstar,
+                                 const double                 r_d,
+                                 const std::valarray<double> &Vp,
+                                 const size_t                 N_w);
 
 int main(int argc,char *argv[])
 {
@@ -83,7 +93,7 @@ int main(int argc,char *argv[])
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     /* computational default values */
-    int N_w=100;             // Number of strips in w integration
+    const size_t N_w=100;             // Number of strips in w integration
 
     const double delta_E = opt.get_numeric_option("dE") * 1e-3*e;    // Energy increment [J]
     const double epsilon = opt.get_numeric_option("epsilon") * eps0; // Permittivity [F/m]
@@ -115,45 +125,62 @@ int main(int argc,char *argv[])
         double lambda_0 = 0;        /* Bohr radius of electron (or hole) */
         bool   repeat_flag_lambda;  /* variational flag=>new lambda      */
 
-        /* Variational calculation */
+        /* Variational calculation (search over lambda) */
         do
         {
+            shoot_params params = {z, epsilon, lambda, mstar, r_d[i_d], V, N_w};
+            gsl_function f;
+            f.function = &psi_at_inf;
+            f.params   = &params;
+            gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+
             /* initial energy estimate=minimum potential-binding energy
                of particle to free ionised dopant */
-            double x = V.min() - e*e/(4*pi*epsilon*lambda);   
-            double y1;                  /* temporary y value                 */
+            double Elo = V.min() - e*e/(4*pi*epsilon*lambda);
 
-            /* increment energy-search for f(x)=0 */
-            double y2=psi_at_inf(x,z,epsilon,lambda,mstar,r_d[i_d],V,N_w);
+            // Value for y=f(x) at bottom of search range
+            const double y1 = GSL_FN_EVAL(&f,Elo);
 
+            // Find the range in which the solution lies by incrementing the
+            // upper limit of the search range until the function changes sign.
+            // Since this coarse search can require many iterations, we keep the
+            // lower limit fixed to minimise the amount of computation at each step.
+            // The Brent algorithm is extremely fast, so it really doesn't matter that
+            // the range we find here is large.
+            //
+            // Note the end stop to prevent infinite loop in absence of solution
+            //
+            // TODO: Make the cut-off configurable
+            double y2 = y1;
+            double Ehi = Elo;
             do
             {
-                y1=y2;
-                x+=delta_E;
-                y2=psi_at_inf(x,z,epsilon,lambda,mstar,r_d[i_d],V,N_w);
+                Ehi += delta_E;
+                y2=GSL_FN_EVAL(&f, Ehi);
             }while(y1*y2>0);
 
-            /* improve estimate using midpoint rule */
+            double E = (Elo + Ehi)/2;
+            gsl_root_fsolver_set(solver, &f, Elo, Ehi);
+            int status = 0;
 
-            x-=fabs(y2)/(fabs(y1)+fabs(y2))*delta_E;
-
-            /* implement Newton-Raphson method */
-            double y;  // function (psi at infinity)
-            double d_E=delta_E/1e+6; // Infinitesimal energy
-            double dy; // Derivative
+            // Improve the estimate of the solution using the Brent algorithm
+            // until we hit a desired level of precision
             do
             {
-                y=psi_at_inf(x,z,epsilon,lambda,mstar,r_d[i_d],V,N_w);
-                std::cout << y << std::endl;
-                dy=(psi_at_inf(x+d_E,z,epsilon,lambda,mstar,r_d[i_d],V,N_w)-
-                    psi_at_inf(x-d_E,z,epsilon,lambda,mstar,r_d[i_d],V,N_w))/
-                    (2.0*d_E);
-                x-=y/dy;
-            }while(fabs(y/dy)>1e-9*e);
+                status = gsl_root_fsolver_iterate(solver);
+                E   = gsl_root_fsolver_root(solver);
+                Elo = gsl_root_fsolver_x_lower(solver);
+                Ehi = gsl_root_fsolver_x_upper(solver);
+                status = gsl_root_test_interval(Elo, Ehi, 1e-12*e, 0);
+            }while(status == GSL_CONTINUE);
 
-            printf("r_d %le lambda %le energy %le meV\n",r_d[i_d],lambda,x/(1e-3*e));
+            // Stop if we've exceeded the cut-off energy
+            if(gsl_fcmp(E, V.max(), e*1e-12) == 1)
+                std::cerr << "Exceeded Vmax" << std::endl;
 
-            repeat_flag_lambda=repeat_lambda(lambda,lambda_0,x,x_min);
+            printf("r_d %le lambda %le energy %le meV\n",r_d[i_d],lambda,E/(1e-3*e));
+
+            repeat_flag_lambda=repeat_lambda(lambda,lambda_0,E,x_min);
 
             lambda+=lambda_step;     /* increments Bohr radius */
         }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
@@ -166,7 +193,21 @@ int main(int argc,char *argv[])
         fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
         fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda_0/1e-10);
 
-        wavefunctions(z,E,epsilon,lambda_0,mstar,r_d[i_d],i_d,V,N_w);
+        std::valarray<double> psi(z.size());
+        std::valarray<double> chi(z.size());
+        const double psi_inf = shoot_wavefunction(psi, chi, z, E,epsilon,lambda_0,mstar,r_d[i_d],V,N_w);
+
+        // Check that wavefunction is tightly bound
+        // TODO: Implement a better check
+        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
+            throw "Warning: Wavefunction is not tightly bound";
+
+        /* generate output filename (and open file for writing) using 
+           the basis wf%i.r where the integer %i is the donor index i_d  */
+        char   filename[9];     /* character string for wavefunction filename  */
+        sprintf(filename,"wf%i.r",i_d);
+
+        write_table_xyz(filename, z, psi, chi);
     }/* end loop over r_d */
 
     fclose(fe);
@@ -215,74 +256,50 @@ static bool repeat_lambda(const double  lambda,
  *
  * \returns The wavefunction at \f$\psi(\infty)\f$
  */
-static double psi_at_inf(const double                 E,
-        const std::valarray<double> &z,
-        const double                 epsilon,
-        const double                 lambda,
-        const double                 mstar,
-        const double                 r_d,
-        const std::valarray<double> &Vp,
-        const size_t                 N_w)
+static double psi_at_inf (double  E,
+                          void   *params)
 {
-    const size_t nz = z.size();
-    const double dz = z[1] - z[0];
+    const shoot_params *p = reinterpret_cast<shoot_params *>(params);
+    std::valarray<double> psi(p->z.size()); // Wavefunction amplitude
+    std::valarray<double> chi(p->z.size()); // Wavefunction envelope amplitude
+    const double psi_inf = shoot_wavefunction(psi, chi, p->z, E, p->epsilon,p->lambda,p->mstar,p->r_d,p->Vp,p->N_w);
 
-    std::valarray<double> psi(3); // Wavefunction amplitude at 3 adjacent points
-
-    // boundary conditions
-    const double kappa=sqrt(2*mstar*(Vp[1]-E))/hBar;
-
-    const double delta_psi = 1.e-10;
-    psi[0] = delta_psi; // Initial wave function value (arbitrarily small)
-    psi[1] = psi[0]*exp(kappa*dz); // exponential growth
-
-    // Compute coefficients for Schroedinger equation [QWWAD3, 5.23]
-    // Note that these are all constants so they can be computed outside
-    // the loop
-    const double I1=I_1(lambda);
-    const double I3=I_3(lambda);
-    const double alpha = I1;                // Coeff. of 2nd derivative
-    const double beta  = 2.0 * I_2(lambda); // Coeff. of 1st deriviative
-
-    // Loop over spatial points (ignore first)
-    for(unsigned int iz = 1; iz < nz; ++iz)
-    {
-        const double I4 = I_4(lambda, z[iz] - r_d, N_w);
-
-        const double gamma = I3 + (2*mstar*gsl_pow_2(e/hBar)/(4*pi*epsilon))*I4
-            - 2*mstar/hBar * (Vp[iz]-E) * I1/hBar;
-
-        psi[2]=((-1+beta*dz/(2*alpha))*psi[0]
-                +(2-dz*dz*gamma/alpha)*psi[1]
-               )/(1+beta*dz/(2*alpha));
-
-        psi[0]=psi[1];
-        psi[1]=psi[2];
-    }
-
-    return psi[0]-delta_psi;
+    return psi_inf;
 }
 
 /**
- * \brief Calculates and writes the wavefunctions
+ * \brief Calculates a wavefunction iteratively from left to right of structure
  *
- * \details Both psi(z) and chi(z) are written to the external file wf(n).r
+ * \details The value of the wavefunction is taken to be zero at the point
+ *          immediately to the left of the potential profile. Subsequent
+ *          values are computed using QWWAD3, Eq. 5.28.
+ *
+ * \param[out] psi     Array to which complete wavefunction will be written [m^{-1/2}]
+ * \param[out] chi     Array to which wavefunction envelope will be written [m^{-1/2}]
+ * \param[in]  E       Energy at which to compute wavefunction
+ * \param[in]  z       Spatial positions [m]
+ * \param[in]  V       Potential profile [J]
+ * \param[in]  m0      Band-edge effective mass [kg]
+ * \param[in]  alpha   Nonparabolicity parameter [1/J]
+ *
+ * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-static void wavefunctions(const std::valarray<double> &z,
-                          const double                 E,
-                          const double                 epsilon,
-                          const double                 lambda,
-                          const double                 mstar,
-                          const double                 r_d,
-                          const int                    i_d,
-                          const std::valarray<double> &Vp,
-                          const size_t                 N_w)
+static double shoot_wavefunction(std::valarray<double>       &psi,
+                                 std::valarray<double>       &chi,
+                                 const std::valarray<double> &z,
+                                 const double                 E,
+                                 const double                 epsilon,
+                                 const double                 lambda,
+                                 const double                 mstar,
+                                 const double                 r_d,
+                                 const std::valarray<double> &Vp,
+                                 const size_t                 N_w)
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
-    std::valarray<double> psi(nz); // Complete expression for wavefunction [m^{-1/2}]
-    std::valarray<double> chi(nz); // Wavefunction envelope [m^{-1/2}]
+    psi.resize(nz);
+    chi.resize(nz);
 
     // boundary conditions
     psi[0] = 1;
@@ -335,12 +352,7 @@ static void wavefunctions(const std::valarray<double> &z,
     psi /= sqrt(Npsi);
     chi /= sqrt(Nchi);
 
-    /* generate output filename (and open file for writing) using 
-       the basis wf%i.r where the integer %i is the donor index i_d  */
-    char   filename[9];     /* character string for wavefunction filename  */
-    sprintf(filename,"wf%i.r",i_d);
-
-    write_table_xyz(filename, z, psi, chi);
+    return chi_next/sqrt(Npsi);
 }
 
 /**
