@@ -134,7 +134,7 @@ d0_helpers = src/d0-helpers.c src/d0-helpers.h
 src_d0_SOURCES   = src/d0.c $(d0_helpers)
 
 src_d02D_SOURCES = src/d02D.cpp $(d0_helpers)
-src_d02D_LDADD   = src/libqwwad.a
+src_d02D_LDADD   = src/libqwwad.a $(LDADD)
 
 src_d03D_SOURCES = src/d03D.c $(d0_helpers)
 
