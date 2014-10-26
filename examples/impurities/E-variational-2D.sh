@@ -23,7 +23,7 @@ echo "230e-10" > r_d.r
 # Start donor binding energy calculation,
 # force output of energy E versus lambda data for lambda=40 to 90A in 2A steps
 # in order to illustrate the variational principle
-d02D -s 40 -t 2 -u 90 -e 10.6 -m 0.096 > output
+d02D --lambdastart 40 --lambdastep 2 --lambdastop 90 --epsilon 10.6 --mass 0.096 > output
 
 # Filter `output' file to give energy versus lambda data
 awk '{printf("%e %e\n",$4,$6)}' output > e-lambda.r

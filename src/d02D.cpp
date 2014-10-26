@@ -37,6 +37,7 @@
 #include <gsl/gsl_roots.h>
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
+#include "qclsim-maths.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
@@ -93,7 +94,7 @@ int main(int argc,char *argv[])
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     /* computational default values */
-    const size_t N_w=100;             // Number of strips in w integration
+    const size_t N_w=99;             // Number of strips in w integration
 
     const double delta_E = opt.get_numeric_option("dE") * 1e-3*e;    // Energy increment [J]
     const double epsilon = opt.get_numeric_option("epsilon") * eps0; // Permittivity [F/m]
@@ -107,25 +108,23 @@ int main(int argc,char *argv[])
     std::valarray<double> V; // Confining potential [J]
     read_table_xy("v.r", z, V);
 
-    /* Open files for output of data */
-    FILE *fe=fopen("e.r","w");           // E versus r_d
-    FILE *fl=fopen("l.r","w");           // lambda versus r_d
-
     // Read list of donor (or acceptor) positions
     std::valarray<double> r_d; // [m]
     read_table_x("r_d.r", r_d);
+
+    // Solutions for each donor position
+    std::valarray<double> E0(r_d.size());       // Binding energy [J]
+    std::valarray<double> lambda_0(r_d.size()); // Bohr radius [m]
 
     // Perform variational calculation for each donor/acceptor position
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
     {
         double lambda=lambda_start; // Initial Bohr radius value [m]
-        double x_min=e;             // Minimum energy of single donor 1eV
+        E0[i_d] = e;             // Minimum energy of single donor 1eV
 
-        // TODO: lambda_0 is found iteratively. Check that this is a sensible initial value
-        double lambda_0 = 0;        /* Bohr radius of electron (or hole) */
         bool   repeat_flag_lambda;  /* variational flag=>new lambda      */
 
-        /* Variational calculation (search over lambda) */
+        // Variational calculation (search over lambda)
         do
         {
             shoot_params params = {z, epsilon, lambda, mstar, r_d[i_d], V, N_w};
@@ -180,22 +179,22 @@ int main(int argc,char *argv[])
 
             printf("r_d %le lambda %le energy %le meV\n",r_d[i_d],lambda,E/(1e-3*e));
 
-            repeat_flag_lambda=repeat_lambda(lambda,lambda_0,E,x_min);
+            repeat_flag_lambda=repeat_lambda(lambda,lambda_0[i_d],E,E0[i_d]);
 
-            lambda+=lambda_step;     /* increments Bohr radius */
+            lambda+=lambda_step; // increments Bohr radius
         }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
-
-        const double E=x_min; // assign the energy E to the minimum x_min
 
         /* Output neutral dopant binding energies (E) and 
            Bohr radii (lambda) in meV and Angstrom respectively */
-
-        fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
-        fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda_0/1e-10);
+        const std::valarray<double> E_out = E0*1000.0/e;
+        const std::valarray<double> r_d_out = r_d/1e-10;
+        const std::valarray<double> lambda_out = lambda_0*1.0e10;
+        write_table_xy("e.r", r_d_out, E_out);
+        write_table_xy("l.r", r_d_out, lambda_out);
 
         std::valarray<double> psi(z.size());
         std::valarray<double> chi(z.size());
-        const double psi_inf = shoot_wavefunction(psi, chi, z, E,epsilon,lambda_0,mstar,r_d[i_d],V,N_w);
+        const double psi_inf = shoot_wavefunction(psi, chi, z, E0[i_d], epsilon,lambda_0[i_d],mstar,r_d[i_d],V,N_w);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
@@ -209,9 +208,6 @@ int main(int argc,char *argv[])
 
         write_table_xyz(filename, z, psi, chi);
     }/* end loop over r_d */
-
-    fclose(fe);
-    fclose(fl);
 
     return EXIT_SUCCESS;
 }
@@ -344,8 +340,8 @@ static double shoot_wavefunction(std::valarray<double>       &psi,
     }
 
     // calculate normalisation integral
-    double Npsi=pow(psi,2.0).sum() * dz; // normalisation integral for psi
-    double Nchi=pow(chi,2.0).sum() * dz; // normalisation integral for chi
+    double Npsi=integral(pow(psi,2.0),dz); // normalisation integral for psi
+    double Nchi=integral(pow(chi,2.0),dz); // normalisation integral for chi
 
     /* divide unnormalised wavefunction by square root
        of normalisation integral                       */
@@ -426,17 +422,20 @@ static double I_4(const double lambda,
     const double dw = 1.0 /(float)(nw-1);   // Step size in w variable
     const double z_dash_abs = fabs(z_dash); // Magnitude of displacement [m]
 
-    double I_40=0.0; // Integral term
+    std::valarray<double> dI4_dw(nw); // Function to be integrated
 
     // Exclude w = 0 point to avoid singularity
     for (unsigned int iw = 1; iw < nw; ++iw)
     {
         const double w = iw * dw;
 
-        I_40 += exp(-z_dash_abs * (1/w-w)/lambda) *
-                (1-w*w)/(2*w*w)*dw;
+        dI4_dw[iw] = exp(-z_dash_abs * (1/w-w)/lambda) *
+                (1-w*w)/(2*w*w);
     }
 
-    return 2*pi*z_dash_abs * I_40;
+    // Compute integral [QWWAD3, Eq. 5.59]
+    const double I4=2.0*pi*z_dash_abs * integral(dI4_dw, dw);
+
+    return I4;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -14,6 +14,8 @@
 namespace Leeds
 {
 
+double integral(const std::valarray<double>& y, const double dx);
+
 double simps(const std::valarray<double>& y, const double dx);
 
 double trapz(const std::valarray<double>& y, const double dx);

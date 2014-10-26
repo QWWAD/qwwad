@@ -15,9 +15,40 @@ namespace Leeds
 {
 
 /**
- * Integrate using Simpson's rule
+ * \brief Compute a numerical integral using a sensible solver
+ *
  * \param[in] y  Samples of the function to be integrated
  * \param[in] dx Spatial step between samples
+ *
+ * \details If the number of samples is odd, and >=3, a Simpson's rule solver
+ *          will be used. This gives higher precision than the fallback
+ *          trapezium rule solver. The method is selected automatically, based
+ *          on the number of samples in the function. This should only result
+ *          in a small time overhead, so it should generally be fine to use
+ *          this function instead of directly calling trapz or simps.
+ */
+double integral(const std::valarray<double>& y, const double dx)
+{
+    const size_t n = y.size();
+
+    if(n < 2)
+        throw std::runtime_error("Need at least two points for numerical integration.");
+
+    if(GSL_IS_ODD(n) && n >= 3)
+        return simps(y, dx);
+    else
+        return trapz(y, dx);
+}
+
+/**
+ * \brief Integrate using Simpson's rule
+ *
+ * \param[in] y  Samples of the function to be integrated
+ * \param[in] dx Spatial step between samples
+ *
+ * \details The number of samples must be odd, and >= 3
+ *
+ * \returns The integral
  */
 double simps(const std::valarray<double>& y, const double dx)
 {
@@ -43,9 +74,14 @@ double simps(const std::valarray<double>& y, const double dx)
 
 
 /**
- * Integrate using the trapezium rule
+ * \brief Integrate using the trapezium rule
+ *
  * \param[in] y  Samples of the function to be integrated
  * \param[in] dx Spatial step between samples
+ *
+ * \details The number of samples must be >= 2
+ *
+ * \returns The integral
  */
 double trapz(const std::valarray<double>& y, const double dx)
 {
