@@ -582,8 +582,10 @@ exdiffdata_DATA = $(exdiffsrcdir)/index \
 eximpdatadir = $(exdatadir)/impurities
 eximpsrcdir = examples/impurities
 
-eximpdata_DATA = $(eximpsrcdir)/index \
-		 $(eximpsrcdir)/E-variational-2D.sh
+eximpdata_DATA = $(eximpsrcdir)/index                \
+		 $(eximpsrcdir)/E-variational-2D.sh  \
+		 $(eximpsrcdir)/E-variational-2D.agr \
+		 $(eximpsrcdir)/E-variational-2D.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
