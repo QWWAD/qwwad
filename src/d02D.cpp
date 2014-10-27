@@ -33,6 +33,7 @@
 #include <cmath>
 #include <iostream>
 #include <gsl/gsl_math.h>
+#include <gsl/gsl_min.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_roots.h>
 #include "qclsim-constants.h"
@@ -79,6 +80,179 @@ static double shoot_wavefunction(std::valarray<double>       &psi,
                                  const std::valarray<double> &Vp,
                                  const size_t                 N_w);
 
+struct lambda_search_params
+{
+    const std::valarray<double>  &z;
+    const double                  epsilon;
+    const double                  mstar;
+    const double                  r_d;
+    const std::valarray<double>  &Vp;
+    const size_t                  N_w;
+    const double                  delta_E;
+};
+
+/**
+ * \brief Find the energy of a carrier using a given Bohr radius
+ */
+static double find_E_at_lambda(double  lambda,
+                               void   *params)
+{
+    const lambda_search_params *p = reinterpret_cast<lambda_search_params *>(params);
+
+    shoot_params s_params = {p->z, p->epsilon, lambda, p->mstar, p->r_d, p->Vp, p->N_w};
+    gsl_function f;
+    f.function = &psi_at_inf;
+    f.params   = &s_params;
+    gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+
+    /* initial energy estimate=minimum potential-binding energy
+       of particle to free ionised dopant */
+    double Elo = p->Vp.min() - e*e/(4*pi*p->epsilon*lambda);
+
+    // Value for y=f(x) at bottom of search range
+    const double y1 = GSL_FN_EVAL(&f,Elo);
+
+    // Find the range in which the solution lies by incrementing the
+    // upper limit of the search range until the function changes sign.
+    // Since this coarse search can require many iterations, we keep the
+    // lower limit fixed to minimise the amount of computation at each step.
+    // The Brent algorithm is extremely fast, so it really doesn't matter that
+    // the range we find here is large.
+    //
+    // Note the end stop to prevent infinite loop in absence of solution
+    //
+    // TODO: Make the cut-off configurable
+    double y2 = y1;
+    double Ehi = Elo;
+    do
+    {
+        Ehi += p->delta_E;
+        y2=GSL_FN_EVAL(&f, Ehi);
+    }while(y1*y2>0);
+
+    double E = (Elo + Ehi)/2;
+    gsl_root_fsolver_set(solver, &f, Elo, Ehi);
+    int status = 0;
+
+    // Improve the estimate of the solution using the Brent algorithm
+    // until we hit a desired level of precision
+    do
+    {
+        status = gsl_root_fsolver_iterate(solver);
+        E   = gsl_root_fsolver_root(solver);
+        Elo = gsl_root_fsolver_x_lower(solver);
+        Ehi = gsl_root_fsolver_x_upper(solver);
+        status = gsl_root_test_interval(Elo, Ehi, 1e-12*e, 0);
+    }while(status == GSL_CONTINUE);
+
+    // Stop if we've exceeded the cut-off energy
+    if(gsl_fcmp(E, p->Vp.max(), e*1e-12) == 1)
+        std::cerr << "Exceeded Vmax" << std::endl;
+
+    return E;
+}
+
+/**
+ * Find the minimum carrier energy, and corresponding Bohr radius using a fast search algorithm
+ */
+static void find_E_min_fast(double                      &E0,
+                            double                      &lambda0,
+                            const double                 lambda_start,
+                            const double                 lambda_stop,
+                            const std::valarray<double> &z,
+                            const double                 epsilon,
+                            const double                 mstar,
+                            const double                 r_d,
+                            const std::valarray<double> &V,
+                            const size_t                 N_w,
+                            const double                 delta_E)
+{
+    double _lambda_start = lambda_start;
+
+    // Set up the numerical solver using GSL
+    lambda_search_params params = {z, epsilon, mstar, r_d, V, N_w, delta_E};
+    gsl_function f;
+    f.function = &find_E_at_lambda;
+    f.params   = &params;
+
+    // First perform a very coarse search for a suitable estimate of a starting point
+    const double Elo = GSL_FN_EVAL(&f, _lambda_start);
+    const double Ehi = GSL_FN_EVAL(&f, lambda_stop);
+
+    E0 = Elo + Ehi; // Set initial estimate as being higher than Elo and Ehi
+    lambda0 = lambda_start;
+
+    const double dlambda = (lambda_stop - lambda_start)/4; // Separation between endpoints [m]
+
+    // Search for a suitable lambda value until we find which quadrant the mimimum lies in
+    do
+    {
+        lambda0 += dlambda; // Increment the Bohr radius
+        if(lambda0 >= lambda_stop)
+        {
+            std::cerr << "Can't find a minimum in this range" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+        E0 = GSL_FN_EVAL(&f, lambda0);
+    }
+    while((E0 > Elo) || (E0 > Ehi));
+    _lambda_start = lambda0 - dlambda;
+    
+    gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
+    gsl_min_fminimizer_set(s, &f, lambda0, lambda_start, lambda_stop);
+
+    size_t max_iter = 100; // Maximum number of iterations before giving up
+    int status = 0;        // Error flag for GSL
+    unsigned int iter=0;   // The number of iterations attempted so far
+
+    // Variational calculation (search over lambda)
+    do
+    {
+        ++iter;
+        status  = gsl_min_fminimizer_iterate(s);
+        lambda0 = gsl_min_fminimizer_x_minimum(s);
+        E0      = gsl_min_fminimizer_f_minimum(s);
+        const double lambda_lo = gsl_min_fminimizer_x_lower(s);
+        const double lambda_hi = gsl_min_fminimizer_x_upper(s);
+        status  = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
+        printf("r_d %le lambda %le energy %le meV\n",r_d,lambda0,E0/(1e-3*e));
+    }while((status == GSL_CONTINUE) && (iter < max_iter));
+
+    gsl_min_fminimizer_free(s);
+}
+
+/**
+ * Find the minimum carrier energy using a linear search
+ */
+static void find_E_min_linear(double &E0,
+                              double &lambda0,
+                              const double lambda_start,
+                              const double lambda_step,
+                              const double lambda_stop,
+                              const std::valarray<double> &z,
+                              const double epsilon,
+                              const double mstar,
+                              const double r_d,
+                              const std::valarray<double> &V,
+                              const size_t N_w,
+                              const double delta_E)
+{
+    double lambda=lambda_start; // Initial Bohr radius value [m]
+    E0 = e;                     // Minimum energy of single donor 1eV
+
+    lambda_search_params params = {z, epsilon, mstar, r_d, V, N_w, delta_E};
+    bool solution_not_found = true; // True if we haven't found the solution yet
+
+    // Variational calculation (search over lambda)
+    do
+    {
+        const double E = find_E_at_lambda(lambda, &params);
+        printf("r_d %le lambda %le energy %le meV\n",r_d,lambda,E/(1e-3*e));
+        solution_not_found = repeat_lambda(lambda,lambda0,E,E0);
+        lambda+=lambda_step; // increments Bohr radius
+    }while((solution_not_found && lambda_stop < 0) || lambda<lambda_stop);
+}
+
 int main(int argc,char *argv[])
 {
     Options opt;
@@ -90,6 +264,7 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
+    opt.add_string_option ("lambdasearch",  "fast", "Method to use for locating Bohr radius (\"fast\" or \"linear\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -119,70 +294,23 @@ int main(int argc,char *argv[])
     // Perform variational calculation for each donor/acceptor position
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
     {
-        double lambda=lambda_start; // Initial Bohr radius value [m]
-        E0[i_d] = e;             // Minimum energy of single donor 1eV
-
-        bool   repeat_flag_lambda;  /* variational flag=>new lambda      */
-
-        // Variational calculation (search over lambda)
-        do
+        if(opt.get_string_option("lambdasearch") == "linear")
+            find_E_min_linear(E0[i_d], lambda_0[i_d], lambda_start, lambda_step, lambda_stop, z, epsilon, mstar, r_d[i_d], V, N_w, delta_E);
+        else if (opt.get_string_option("lambdasearch") == "fast")
         {
-            shoot_params params = {z, epsilon, lambda, mstar, r_d[i_d], V, N_w};
-            gsl_function f;
-            f.function = &psi_at_inf;
-            f.params   = &params;
-            gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
-
-            /* initial energy estimate=minimum potential-binding energy
-               of particle to free ionised dopant */
-            double Elo = V.min() - e*e/(4*pi*epsilon*lambda);
-
-            // Value for y=f(x) at bottom of search range
-            const double y1 = GSL_FN_EVAL(&f,Elo);
-
-            // Find the range in which the solution lies by incrementing the
-            // upper limit of the search range until the function changes sign.
-            // Since this coarse search can require many iterations, we keep the
-            // lower limit fixed to minimise the amount of computation at each step.
-            // The Brent algorithm is extremely fast, so it really doesn't matter that
-            // the range we find here is large.
-            //
-            // Note the end stop to prevent infinite loop in absence of solution
-            //
-            // TODO: Make the cut-off configurable
-            double y2 = y1;
-            double Ehi = Elo;
-            do
+            if(lambda_stop < 0)
             {
-                Ehi += delta_E;
-                y2=GSL_FN_EVAL(&f, Ehi);
-            }while(y1*y2>0);
+                std::cerr << "Upper limit on Bohr radius must be set to a positive value using --lambdastop" << std::endl;
+                exit(EXIT_FAILURE);
+            }
 
-            double E = (Elo + Ehi)/2;
-            gsl_root_fsolver_set(solver, &f, Elo, Ehi);
-            int status = 0;
-
-            // Improve the estimate of the solution using the Brent algorithm
-            // until we hit a desired level of precision
-            do
-            {
-                status = gsl_root_fsolver_iterate(solver);
-                E   = gsl_root_fsolver_root(solver);
-                Elo = gsl_root_fsolver_x_lower(solver);
-                Ehi = gsl_root_fsolver_x_upper(solver);
-                status = gsl_root_test_interval(Elo, Ehi, 1e-12*e, 0);
-            }while(status == GSL_CONTINUE);
-
-            // Stop if we've exceeded the cut-off energy
-            if(gsl_fcmp(E, V.max(), e*1e-12) == 1)
-                std::cerr << "Exceeded Vmax" << std::endl;
-
-            printf("r_d %le lambda %le energy %le meV\n",r_d[i_d],lambda,E/(1e-3*e));
-
-            repeat_flag_lambda=repeat_lambda(lambda,lambda_0[i_d],E,E0[i_d]);
-
-            lambda+=lambda_step; // increments Bohr radius
-        }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
+            find_E_min_fast(E0[i_d], lambda_0[i_d], lambda_start, lambda_stop, z, epsilon, mstar, r_d[i_d], V, N_w, delta_E);
+        }
+        else
+        {
+            std::cerr << "Unrecognised search type: " << opt.get_string_option("lambdasearch") << std::endl;
+            exit(EXIT_FAILURE);
+        }
 
         /* Output neutral dopant binding energies (E) and 
            Bohr radii (lambda) in meV and Angstrom respectively */
@@ -220,7 +348,7 @@ int main(int argc,char *argv[])
  * \param[in]     E        The new binding energy [J]
  * \param[in,out] E0       The previous estimate of the binding energy [J]
  *
- * \returns True is the binding energy is lower than the previous estimate
+ * \returns True if the binding energy is lower than the previous estimate
  *
  * \details The new binding energy is compared with the previous value. If it
  *          is lower, then the Bohr radius and binding energy are overwritten

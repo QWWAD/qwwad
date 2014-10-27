@@ -1,17 +1,18 @@
 #!/bin/sh
 
 # Define structure
+cat > s.r << EOF
+200 0.1 0.0
+60  0.0 0.0
+200 0.1 0.0
+EOF
 
-echo 200 0.1 0.0  > s.r
-echo 60 0.0 0.0  >> s.r
-echo 200 0.1 0.0 >> s.r
-
-efsx			# generates x.r file
-efxv -M cdmnte -m 0.096	# converts x.r into v.r appropriate to Cd(1-x)Mn(x)Te
+find_heterostructure    # generates x.r file
+efxv --material cdmnte --mass 0.096	# converts x.r into v.r appropriate to Cd(1-x)Mn(x)Te
 
 # Define donor positions
-
-echo '0.0e-10
+cat > r_d.r << EOF
+0.0e-10
 2.0e-9
 4.0e-9
 6.0e-9
@@ -23,10 +24,10 @@ echo '0.0e-10
 1.8e-8 
 2.0e-8 
 2.2e-8 
-2.3e-8' > r_d.r
+2.3e-8
+EOF
 
-# Inititiate donor binding energy calculation
-
+# Initiate donor binding energy calculation
 d02D -m 0.096 -e 10.6 > output
 
 # Just calculate energy of same structure without a donor, for deduction

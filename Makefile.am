@@ -585,7 +585,8 @@ eximpsrcdir = examples/impurities
 eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-variational-2D.sh  \
 		 $(eximpsrcdir)/E-variational-2D.agr \
-		 $(eximpsrcdir)/E-variational-2D.eps
+		 $(eximpsrcdir)/E-variational-2D.eps \
+		 $(eximpsrcdir)/E-donor-2D.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
