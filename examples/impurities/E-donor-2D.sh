@@ -29,6 +29,7 @@ set -e
 # Initialise files
 outfile_E=E-donor-2D-total.dat
 outfile_ED=E-donor-2D-binding.dat
+outfile_lambda=E-donor-2D-lambda.dat
 rm -f $outfile_E $outfile_ED
 
 # Define structure
@@ -71,8 +72,10 @@ d02D --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 > garbage.r
 awk '{print $1, $2, E1}' E1=$E1 < e.r > $outfile_E
 awk '{print $1, E1-$2}' E1=$E1 < $outfile_E > $outfile_ED
 
+mv l.r $outfile_lambda
+
 cat << EOF
-Results have been written to $outfile_E and ${outfile_ED}.
+Results have been written to $outfile_E, ${outfile_ED} and ${outfile_lambda}.
 
 $outfile_E is in the format:
 
@@ -84,6 +87,11 @@ $outfile_ED is in the format:
 
   COLUMN 1 - Donor position [Angstrom]
   COLUMN 2 - Binding energy [meV]
+
+$outfile_lambda is in the format:
+
+  COLUMN 1 - Donor position [Angstrom]
+  COLUMN 2 - Bohr radius [Angstrom]
 
 This script is part of the QWWAD software suite.
 

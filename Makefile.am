@@ -586,7 +586,13 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-variational-2D.sh  \
 		 $(eximpsrcdir)/E-variational-2D.agr \
 		 $(eximpsrcdir)/E-variational-2D.eps \
-		 $(eximpsrcdir)/E-donor-2D.sh
+		 $(eximpsrcdir)/E-donor-2D.sh        \
+		 $(eximpsrcdir)/E-donor-2D-total.eps \
+		 $(eximpsrcdir)/E-donor-2D-total.agr \
+		 $(eximpsrcdir)/E-donor-2D-binding.eps \
+		 $(eximpsrcdir)/E-donor-2D-binding.agr \
+		 $(eximpsrcdir)/E-donor-2D-lambda.eps  \
+		 $(eximpsrcdir)/E-donor-2D-lambda.agr
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

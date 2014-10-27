@@ -2,9 +2,9 @@ The following list shows which scripts and output files are used to generate
 each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
 
 Fig 5.4:  E-variational-2D.sh => E-variational-2D.dat
-Fig 5.5:
-Fig 5.6:
-Fig 5.7:
+Fig 5.5:  E-donor-2D.sh       => E-donor-2D-total.dat
+Fig 5.6:  E-donor-2D.sh       => E-donor-2D-binding.dat
+Fig 5.7:  E-donor-2D.sh       => E-donor-2D-lambda.dat
 Fig 5.8:
 Fig 5.9:
 Fig 5.10:
