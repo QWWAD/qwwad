@@ -33,6 +33,10 @@ public:
     std::string get_name() {return "donor-2D";}
 
     std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
+
+    static double psi_at_inf(double  E,
+                             void   *params);
+
     double shoot_wavefunction(const double E,
                               std::valarray<double> &psi,
                               std::valarray<double> &chi) const;

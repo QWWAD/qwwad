@@ -196,8 +196,8 @@ double SchroedingerSolverDonor2D::shoot_wavefunction(const double           E,
  *
  * \returns The wavefunction at \f$\psi(\infty)\f$
  */
-static double psi_at_inf (double  E,
-                          void   *params)
+double SchroedingerSolverDonor2D::psi_at_inf (double  E,
+                                              void   *params)
 {
     const SchroedingerSolverDonor2D *se = reinterpret_cast<SchroedingerSolverDonor2D *>(params);
     std::valarray<double> psi(se->get_z().size()); // Wavefunction amplitude
