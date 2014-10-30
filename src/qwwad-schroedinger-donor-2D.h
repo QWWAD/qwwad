@@ -11,13 +11,13 @@
 # include "config.h"
 #endif
 
-#include "qwwad-schroedinger.h"
+#include "qwwad-schroedinger-donor.h"
 
 namespace Leeds {
 /**
  * Schroedinger solver for a donor in a 1D potential with a 2D hydrogenic wavefunction
  */
-class SchroedingerSolverDonor2D : public SchroedingerSolver
+class SchroedingerSolverDonor2D : public SchroedingerSolverDonor
 {
 public:
     SchroedingerSolverDonor2D(const double                 m,
@@ -31,29 +31,10 @@ public:
 
     std::string get_name() {return "donor-2D";}
 
-    std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
-
-    static double psi_at_inf(double  E,
-                             void   *params);
-
-    double shoot_wavefunction(const double E,
-                              std::valarray<double> &psi,
-                              std::valarray<double> &chi) const;
-
 private:
-    double _me;     ///< Effective mass at band-edge [kg]
-    double _eps;    ///< Permittivity [F/m]
-    double _r_d;    ///< Position of donor, relative to lhs [m]
-    double _lambda; ///< Donor Bohr radius [m]
-    double _dE;     ///< Minimum energy separation between states [J]
-
-    ///< Set of solutions to the Schroedinger equation excluding hydrogenic component
-    std::vector<State> _solutions_chi;
-
-    void calculate();
-    double I_1() const;
-    double I_2() const;
-    double I_3() const;
+    double I_1(const double z_dash) const;
+    double I_2(const double z_dash) const;
+    double I_3(const double z_dash) const;
     double I_4(const double z_dash) const;
 };
 } // namespace Leeds

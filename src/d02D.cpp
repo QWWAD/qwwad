@@ -186,7 +186,7 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
-    opt.add_string_option ("lambdasearch",  "fast", "Method to use for locating Bohr radius (\"fast\" or \"linear\")");
+    opt.add_string_option ("lambdasearch", "fast", "Method to use for locating Bohr radius (\"fast\" or \"linear\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 

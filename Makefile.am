@@ -107,6 +107,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-options.h           \
 			   src/qwwad-schroedinger.cpp    \
 			   src/qwwad-schroedinger.h      \
+			   src/qwwad-schroedinger-donor.h      \
+			   src/qwwad-schroedinger-donor.cpp    \
 			   src/qwwad-schroedinger-donor-2D.h      \
 			   src/qwwad-schroedinger-donor-2D.cpp    \
 			   src/qwwad-schroedinger-finite-well.cpp \
