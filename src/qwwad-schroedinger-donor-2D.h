@@ -27,7 +27,6 @@ public:
                               const double                 r_d,
                               const double                 lambda,
                               const double                 dE,
-                              const size_t                 N_w,
                               const unsigned int           nst_max = 0);
 
     std::string get_name() {return "donor-2D";}
@@ -47,7 +46,6 @@ private:
     double _r_d;    ///< Position of donor, relative to lhs [m]
     double _lambda; ///< Donor Bohr radius [m]
     double _dE;     ///< Minimum energy separation between states [J]
-    size_t _N_w;    ///< Number of slices in integration over donor location
 
     ///< Set of solutions to the Schroedinger equation excluding hydrogenic component
     std::vector<State> _solutions_chi;

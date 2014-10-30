@@ -8,6 +8,7 @@
 
 #include <cmath>
 #include <gsl/gsl_errno.h>
+#include <gsl/gsl_integration.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
 #include <gsl/gsl_roots.h>
@@ -24,7 +25,6 @@ SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double               
                                                      const double                 r_d,
                                                      const double                 lambda,
                                                      const double                 dE,
-                                                     const size_t                 N_w,
                                                      const unsigned int           nst_max) :
     SchroedingerSolver(V, z, nst_max),
     _me(m),
@@ -32,7 +32,6 @@ SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double               
     _r_d(r_d),
     _lambda(lambda),
     _dE(dE),
-    _N_w(N_w),
     _solutions_chi()
 {}
 
@@ -79,6 +78,25 @@ double SchroedingerSolverDonor2D::I_3() const
 }
 
 /**
+ * \brief Parameters (except w) that appear in Eq. 5.59, QWWAD3
+ */
+struct I_4_integrand_params
+{
+    double z_dash_abs; ///< Absolute value of displacement from donor to carrier [m]
+    double lambda;     ///< Bohr radius [m]
+};
+
+/**
+ * \brief Computes the integrand in Eq. 5.59, QWWAD3
+ */
+double I_4_integrand(double w, void *params)
+{
+    I_4_integrand_params *p = reinterpret_cast<I_4_integrand_params *>(params);
+    return 2*pi*p->z_dash_abs * exp(-p->z_dash_abs * (1/w-w)/p->lambda) *
+        (1-w*w)/(2*w*w);
+}
+
+/**
  * \brief Computes the binding energy integral \f$I_4\f$ for a 2D trial wavefunction
  *
  * \param[in] z_dash displacement between electron and donor in z-direction [m]
@@ -92,22 +110,25 @@ double SchroedingerSolverDonor2D::I_3() const
  */
 double SchroedingerSolverDonor2D::I_4(const double z_dash) const
 {
-    const double dw = 1.0 /(float)(_N_w-1);   // Step size in w variable
     const double z_dash_abs = fabs(z_dash); // Magnitude of displacement [m]
 
-    std::valarray<double> dI4_dw(_N_w); // Function to be integrated
+    // Set up function to be integrated [QWWAD3, 5.59]
+    gsl_function f;
+    f.function = &I_4_integrand;
+    I_4_integrand_params p = {z_dash_abs, _lambda};
+    f.params   = &p;
 
-    // Exclude w = 0 point to avoid singularity
-    for (unsigned int iw = 1; iw < _N_w; ++iw)
-    {
-        const double w = iw * dw;
+    // Configure integration algorithm
+    const double limit_lo   = 0.0;  // Lower limit for integral
+    const double limit_hi   = 1.0;  // Upper limit for integral
+    double I4               = 0.0;  // Result of integral
+    const double abserr_max = 100;  // Maximum permitted absolute error
+    const double relerr_max = 1e-7; // Maximum permitted relative error
+    double abserr           = 0.0;  // Absolute error (after calculation)
+    size_t neval            = 0;    // Number of times integrand was evaluated
 
-        dI4_dw[iw] = exp(-z_dash_abs * (1/w-w)/_lambda) *
-                (1-w*w)/(2*w*w);
-    }
-
-    // Compute integral [QWWAD3, Eq. 5.59]
-    const double I4=2.0*pi*z_dash_abs * integral(dI4_dw, dw);
+    // Perform the integral
+    gsl_integration_qng(&f, limit_lo, limit_hi, abserr_max, relerr_max, &I4, &abserr, &neval);
 
     return I4;
 }

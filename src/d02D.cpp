@@ -68,7 +68,7 @@ static double find_E_at_lambda(double  lambda,
                                void   *params)
 {
     const lambda_search_params *p = reinterpret_cast<lambda_search_params *>(params);
-    SchroedingerSolverDonor2D se(p->mstar, p->Vp, p->z, p->epsilon, p->r_d, lambda, p->delta_E, p->N_w, 1);
+    SchroedingerSolverDonor2D se(p->mstar, p->Vp, p->z, p->epsilon, p->r_d, lambda, p->delta_E, 1);
     std::vector<State> solutions = se.get_solutions();
 
     return solutions[0].get_E();
@@ -234,7 +234,7 @@ int main(int argc,char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        SchroedingerSolverDonor2D se(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, N_w, 1);
+        SchroedingerSolverDonor2D se(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
         std::vector<State> solutions     = se.get_solutions();
         std::vector<State> solutions_chi = se.get_solutions_chi();
 
