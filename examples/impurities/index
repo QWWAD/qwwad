@@ -5,8 +5,8 @@ Fig 5.4:  E-variational-2D.sh => E-variational-2D.dat
 Fig 5.5:  E-donor-2D.sh       => E-donor-2D-total.dat
 Fig 5.6:  E-donor-2D.sh       => E-donor-2D-binding.dat
 Fig 5.7:  E-donor-2D.sh       => E-donor-2D-lambda.dat
-Fig 5.8:
-Fig 5.9:
+Fig 5.8:  E-binding-2D.sh     => E-binding-2D.dat
+Fig 5.9:  E-binding-2D.sh     => E-binding-2D-ED0.dat
 Fig 5.10:
 Fig 5.11:
 Fig 5.12:

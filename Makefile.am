@@ -107,6 +107,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qwwad-options.h           \
 			   src/qwwad-schroedinger.cpp    \
 			   src/qwwad-schroedinger.h      \
+			   src/qwwad-schroedinger-donor-2D.h      \
+			   src/qwwad-schroedinger-donor-2D.cpp    \
 			   src/qwwad-schroedinger-finite-well.cpp \
 			   src/qwwad-schroedinger-finite-well.h   \
 			   src/qwwad-schroedinger-full.h          \
@@ -592,7 +594,12 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-2D-binding.eps \
 		 $(eximpsrcdir)/E-donor-2D-binding.agr \
 		 $(eximpsrcdir)/E-donor-2D-lambda.eps  \
-		 $(eximpsrcdir)/E-donor-2D-lambda.agr
+		 $(eximpsrcdir)/E-donor-2D-lambda.agr  \
+		 $(eximpsrcdir)/E-binding-2D.sh        \
+		 $(eximpsrcdir)/E-binding-2D.eps       \
+		 $(eximpsrcdir)/E-binding-2D.agr       \
+		 $(eximpsrcdir)/E-binding-2D-ED0.eps   \
+		 $(eximpsrcdir)/E-binding-2D-ED0.agr
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

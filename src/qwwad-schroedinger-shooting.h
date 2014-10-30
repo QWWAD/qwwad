@@ -27,6 +27,8 @@ public:
 
     std::string get_name() {return "shooting";}
 
+    std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
+
 private:
     std::valarray<double> _me;    ///< Band-edge effective mass [kg]
     std::valarray<double> _alpha; ///< Nonparabolicity parameter [J^{-1}]
