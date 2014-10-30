@@ -15,47 +15,8 @@ namespace Leeds
 {
 using namespace constants;
 
-/** Parameters needed for solving Shooting method */
-struct shoot_params
-{
-    std::valarray<double>       &z;       ///< Spatial sampling points [m]
-    const std::valarray<double> &V;       ///< Potential profile [J]
-    const std::valarray<double> &m0;      ///< Band-edge effective mass at each point [kg]
-    const std::valarray<double> &alpha;   ///< Nonparabolicity parameter at each point [1/J]
-};
-
-double psi_at_inf(double  E,
-                  void   *params); 
-
-static double shoot_wavefunction(std::valarray<double>       &psi,
-                                 const double                 E,
-                                 const std::valarray<double> &z,
-                                 const std::valarray<double> &V,
-                                 const std::valarray<double> &m0,
-                                 const std::valarray<double> &alpha);
-
 /**
- * \brief Generate a trial wavefunction at a given energy
- *
- * \param[in] E Energy at which to compute the trial wavefunction
- *
- * \returns Wavefunction amplitude at each spatial point
- *
- * \details Note that the "correct" wavefunction will be tightly
- *          bound at both ends of the structure, and will correspond
- *          to the eigenstates of the system. Other energies will
- *          result in a wavefunction that diverges at the right-hand
- *          side of the system.
- */
-std::valarray<double> SchroedingerSolverShooting::trial_wavefunction(const double E)
-{
-    std::valarray<double> psi(_z.size());
-    shoot_wavefunction(psi, E, _z, _V, _me, _alpha);
-    return psi;
-}
-
-/**
- * Set system parameters for solver
+ * \brief Set system parameters for solver
  *
  * \param[in] me      Band-edge effective mass [kg]
  * \param[in] alpha   Nonparabolicity parameter [1/J]
@@ -83,10 +44,9 @@ void SchroedingerSolverShooting::calculate()
 {
     double Elo=_V.min() + _dE;    // first energy estimate
 
-    shoot_params params = {_z, _V, _me, _alpha};
     gsl_function f;
     f.function = &psi_at_inf;
-    f.params   = &params;
+    f.params   = this;
     gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
     for(unsigned int ist=0;
@@ -142,7 +102,7 @@ void SchroedingerSolverShooting::calculate()
             break;
 
         std::valarray<double> psi(_z.size());
-        const double psi_inf = shoot_wavefunction(psi, E, _z, _V, _me, _alpha);
+        const double psi_inf = shoot_wavefunction(psi, E);
 
         _solutions.push_back(State(E,psi));
 
@@ -161,17 +121,17 @@ void SchroedingerSolverShooting::calculate()
  *          to the energy occurs for psi(+infinity)=0.
  *
  * \param[in] E      Energy [J]
- * \param[in] params System parameters (type ShootParams)
+ * \param[in] params SchroedingerSolverShooting object for which to solve
  *
  * \returns The wavefunction amplitude immediately to the right of the structure
  */
-double psi_at_inf(double  E,
-                  void   *params)
+double SchroedingerSolverShooting::psi_at_inf(double  E,
+                                              void   *params)
 {
-    const shoot_params *p = reinterpret_cast<shoot_params *>(params);
-    std::valarray<double> psi(p->z.size());
+    const SchroedingerSolverShooting *se = reinterpret_cast<SchroedingerSolverShooting *>(params);
+    std::valarray<double> psi(se->get_z().size());
 
-    const double psi_inf = shoot_wavefunction(psi, E, p->z, p->V, p->m0, p->alpha);
+    const double psi_inf = se->shoot_wavefunction(psi, E);
     return psi_inf;
 }
 
@@ -184,26 +144,18 @@ double psi_at_inf(double  E,
  *
  * \param[out] wf      Array to which wavefunction will be written [m^{-1/2}]
  * \param[in]  E       Energy at which to compute wavefunction
- * \param[in]  z       Spatial positions [m]
- * \param[in]  V       Potential profile [J]
- * \param[in]  m0      Band-edge effective mass [kg]
- * \param[in]  alpha   Nonparabolicity parameter [1/J]
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-static double shoot_wavefunction(std::valarray<double>       &wf,
-                                 const double                 E,
-                                 const std::valarray<double> &z,
-                                 const std::valarray<double> &V,
-                                 const std::valarray<double> &m0,
-                                 const std::valarray<double> &alpha)
+double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
+                                                      const double           E) const
 {
-    const size_t nz = z.size();
+    const size_t nz = _z.size();
     wf.resize(nz);
-    const double dz = z[1] - z[0];
+    const double dz = _z[1] - _z[0];
 
     // Recalculate effective mass with non-parabolicity at this energy
-    std::valarray<double> m = m0*(1.0+alpha*(E-V));
+    std::valarray<double> m = _me*(1.0+_alpha*(E-_V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf[0]   = 1.0;
@@ -232,7 +184,7 @@ static double shoot_wavefunction(std::valarray<double>       &wf,
         else
             m_next = m[i];
 
-        wf_next = (2*m_next*dz*dz/hBar/hBar*(V[i]-E)+
+        wf_next = (2*m_next*dz*dz/hBar/hBar*(_V[i]-E)+
                 1.0 + m_next/m_prev)*wf[i]
                 - wf_prev * m_next/m_prev;
         wf_prev += 0;

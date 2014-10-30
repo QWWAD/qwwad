@@ -22,7 +22,6 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                                                            const double m_w,
                                                            const double m_b,
                                                            const size_t nz,
-                                                           const bool   alt_KE,
                                                            const unsigned int nst_max) :
     SchroedingerSolver(std::valarray<double>(nz),
                        std::valarray<double>(nz),
@@ -30,8 +29,7 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
     _l_w(l_w),
     _V0(V0),
     _m_w(m_w),
-    _m_b(m_b),
-    _m_B(alt_KE?m_b:m_w)
+    _m_b(m_b)
 {
     // Generate potential profile
     for (unsigned int iz=0; iz<nz; iz++)
@@ -43,16 +41,6 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
     }
 }
 
-/// Parameters needed for computing square-well eigenstates
-struct sqw_params
-{
-    double a;           ///< Well width [m]
-    double m_B;         ///< Boundary mass [kg]
-    double m_b;         ///< Barrier mass [kg]
-    double m_w;         ///< Well mass [kg]
-    double V;           ///< Barrier potential [J]
-};
-
 /**
  * \brief Finds the right-hand side of the matching equation for a finite well
  *
@@ -60,7 +48,7 @@ struct sqw_params
  *
  * \returns The right-hand side of the matching equation
  */
-static double SchroedingerSolverFiniteWell_rhs(const double v)
+double SchroedingerSolverFiniteWell::get_rhs(const double v) const
 {
     double result = 0;
 
@@ -78,31 +66,18 @@ static double SchroedingerSolverFiniteWell_rhs(const double v)
     return result;
 }
 
-double SchroedingerSolverFiniteWell::get_rhs(const double v) const
-{
-    return SchroedingerSolverFiniteWell_rhs(v);
-}
-
 /**
- * \brief Finds the left-hand side of the matching equation for a finite well
+ * \brief Finds the left-hand side of the matching equation
  *
  * \param[in] v    Normalised wave-vector for the well region
- * \param[in] a    Well width [m]
- * \param[in] m_w  Effective mass in well region [kg]
- * \param[in] m_b  Effective mass in barrier region [kg]
- * \param[in] V    Barrier potential [J]
  *
  * \returns the left-hand side of the matching equation
  */
-static double SchroedingerSolverFiniteWell_lhs(const double v,
-                                               const double a,
-                                               const double m_w,
-                                               const double m_b,
-                                               const double V)
+double SchroedingerSolverFiniteWell::get_lhs(const double v) const
 {
-    const double k = 2.0*v/a;
-    const double E = hBar*hBar*k*k/(2.0*m_w);
-    const double u_0_sq = a*a*m_w/(2.0*hBar*hBar)*(m_w*V/m_b + E*(1.0-m_w/m_b));
+    const double k = 2.0*v/_l_w;
+    const double E = hBar*hBar*k*k/(2.0*_m_w);
+    const double u_0_sq = _l_w*_l_w*_m_w/(2.0*hBar*hBar)*(_m_w*_V0/_m_b + E*(1.0-_m_w/_m_b));
 
     double result = 0.0;
 
@@ -110,11 +85,6 @@ static double SchroedingerSolverFiniteWell_lhs(const double v,
         result = sqrt(u_0_sq - v*v);
 
     return result;
-}
-
-double SchroedingerSolverFiniteWell::get_lhs(const double v) const
-{
-    return SchroedingerSolverFiniteWell_lhs(v, _l_w, _m_w, _m_B, _V0);
 }
 
 /**
@@ -131,23 +101,19 @@ double SchroedingerSolverFiniteWell::get_lhs(const double v) const
  *            f(E) = k\cot\left(\frac{kl_w}{2}\right) + \kappa
  *          \f]
  *
- * \param[in] energy local energy
- * \param[in] params square-well parameters
+ * \param[in] v      Normalised wave-vector
+ * \param[in] params A SchroedingerSolverFiniteWell object for which to solve
  *
  * \returns The value of the characteristic equation for the well.
  *          This is zero when the energy equals the an eigenvalue.
  */
-double SchroedingerSolverFiniteWell_f(double  v,
-                                      void   *params)
+double SchroedingerSolverFiniteWell::test_matching(double  v,
+                                                   void   *params)
 {
-    const sqw_params *p = reinterpret_cast<sqw_params *>(params);
-    const double a   = p->a;
-    const double m_B = p->m_B;
-    const double m_w = p->m_w;
-    const double V   = p->V;
+    const SchroedingerSolverFiniteWell *se = reinterpret_cast<SchroedingerSolverFiniteWell *>(params);
 
-    const double lhs = SchroedingerSolverFiniteWell_lhs(v, a, m_w, m_B, V);
-    const double rhs = SchroedingerSolverFiniteWell_rhs(v);
+    const double lhs = se->get_lhs(v);
+    const double rhs = se->get_rhs(v);
     return lhs - rhs;
 }
 
@@ -157,8 +123,8 @@ double SchroedingerSolverFiniteWell_f(double  v,
  * \param[in] E           local energy
  * \param[in] odd_parity  true for odd states, false for even
  */
-std::valarray<double> SchroedingerSolverFiniteWell::wavef(const double E,
-                                                          const bool   odd_parity)
+std::valarray<double> SchroedingerSolverFiniteWell::get_wavefunction(const double E,
+                                                                     const bool   odd_parity) const
 {
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
@@ -241,10 +207,9 @@ void SchroedingerSolverFiniteWell::calculate()
         // deduce parity: false if even parity
         const bool parity_flag = (ist%2 == 1);
 
-        sqw_params params = {_l_w, _m_B, _m_b, _m_w, _V0};
         gsl_function F;
-        F.function = &SchroedingerSolverFiniteWell_f;
-        F.params   = &params;
+        F.function = &test_matching;
+        F.params   = this;
         gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
         // Normally, the root needs to lie within each pi/2 cell so we
@@ -281,7 +246,7 @@ void SchroedingerSolverFiniteWell::calculate()
         if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
             break;
 
-        std::valarray<double> psi = wavef(E,parity_flag);
+        std::valarray<double> psi = get_wavefunction(E,parity_flag);
         _solutions.push_back(State(E, psi));
         gsl_root_fsolver_free(solver);
     }

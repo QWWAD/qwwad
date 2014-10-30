@@ -84,7 +84,6 @@ Options configure_options(int argc, char* argv[])
                                                      "wavefunctions do not decay to precisely zero at the boundaries.");
     opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
     opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
-    opt.add_switch        ("alt-KE,k",               "Use alternative kinetic energy operator (1/m)PP");
     opt.add_switch        ("output-equations",       "Output the matching equations for the system. The left-hand "
                                                      "side of the equation is output to 'lhs.r' and each branch of "
                                                      "the right-hand side is output to a set of 'rhs_i.r' files, "
@@ -115,9 +114,8 @@ int main(int argc,char *argv[])
     const double V      = opt.get_numeric_option("potential") * e / 1000;
     const size_t state  = opt.get_size_option("nst");
     const size_t N      = opt.get_size_option("nz");               // number of spatial steps
-    const bool   T_flag = !opt.get_switch("alt-KE");
 
-    SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, T_flag,state);
+    SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
     // Set cut-off energy if desired
     if(opt.vm.count("E-cutoff") > 0)

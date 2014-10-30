@@ -23,11 +23,15 @@ public:
                                const double                 dE,
                                const unsigned int           nst_max=0);
 
-    std::valarray<double> trial_wavefunction(const double E);
-
     std::string get_name() {return "shooting";}
 
     std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
+
+    static double psi_at_inf(double  E,
+                             void   *params);
+
+    double shoot_wavefunction(std::valarray<double> &wf,
+                              const double           E) const;
 
 private:
     std::valarray<double> _me;    ///< Band-edge effective mass [kg]

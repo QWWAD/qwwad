@@ -273,7 +273,13 @@ int main(int argc, char *argv[]){
     if (opt.vm.count("try-energy") != 0 && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
     {
         const double E_trial = opt.get_numeric_option("try-energy") * e/1000;
-        const std::valarray<double> psi = dynamic_cast<SchroedingerSolverShooting *>(se)->trial_wavefunction(E_trial);
+        std::valarray<double> psi;
+        const double psi_inf = dynamic_cast<SchroedingerSolverShooting *>(se)->shoot_wavefunction(psi, E_trial);
+
+        // Check that wavefunction is tightly bound
+        // TODO: Implement a better check
+        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
+            std::cerr << "Warning: Wavefunction is not tightly bound" << std::endl;
 
         std::ostringstream wf_filename;
         wf_filename << "wf_" << opt.get_char_option("particle") << "E.r";

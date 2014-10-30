@@ -26,13 +26,16 @@ public:
                                  const double m_w,
                                  const double m_b,
                                  const size_t nz,
-                                 const bool   alt_KE  = false,
                                  const unsigned int nst_max = 0);
 
     std::string get_name() {return "finite-square-well";}
 
     double get_u0_max() const;
     size_t get_n_bound() const;
+
+    static double test_matching(double v,
+                                void   *params);
+
     double get_lhs(const double v) const;
     double get_rhs(const double v) const;
 private:
@@ -40,12 +43,11 @@ private:
     double _V0;  ///< Well depth [J]
     double _m_w; ///< Effective mass in well [kg]
     double _m_b; ///< Effective mass in barriers [kg]
-    double _m_B; ///< Effective mass for use in boundary conditions [kg]
 
     void calculate();
     
-    std::valarray<double> wavef(const double E,
-                                const bool   parity_flag);
+    std::valarray<double> get_wavefunction(const double E,
+                                           const bool   parity_flag) const;
 };
 } // namespace Leeds
 #endif
