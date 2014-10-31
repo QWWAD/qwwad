@@ -1,7 +1,8 @@
 /**
- *  \file     qwwad-schroedinger-donor-2D.cpp
- *  \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
- *  \brief    Schrodinger solver functions for donor with 2D hydrogenic wavefunction
+ * \file     qwwad-schroedinger-donor-2D.cpp
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
+ * \brief    Schrodinger solver functions for donor with 2D hydrogenic wavefunction
  */
 
 #include "qwwad-schroedinger-donor-2D.h"

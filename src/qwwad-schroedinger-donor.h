@@ -40,6 +40,10 @@ public:
                               std::valarray<double> &psi,
                               std::valarray<double> &chi) const;
 
+    void   set_lambda(const double lambda) {_lambda = lambda; _solutions.clear(); calculate();}
+    double get_lambda() const {return _lambda;}
+    double get_r_d   () const {return _r_d;}
+
 private:
     double _me;     ///< Effective mass at band-edge [kg]
     double _eps;    ///< Permittivity [F/m]

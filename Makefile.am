@@ -99,6 +99,8 @@ src_libqwwad_a_SOURCES =  \
 			   src/qclsim_poisson_solver.h   \
 			   src/qclsim-subband.cpp      \
 			   src/qclsim-subband.h        \
+			   src/qwwad-donor-energy-minimiser.cpp \
+			   src/qwwad-donor-energy-minimiser.h   \
 			   src/qwwad-heterostructure.cpp \
 			   src/qwwad-heterostructure.h   \
 			   src/qwwad-fileio.cpp          \

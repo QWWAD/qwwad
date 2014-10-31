@@ -30,150 +30,15 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
 #include <iostream>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_min.h>
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_roots.h>
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
-#include "qclsim-maths.h"
 #include "qwwad-options.h"
+#include "qwwad-donor-energy-minimiser.h"
 #include "qwwad-schroedinger-donor-2D.h"
 
 using namespace Leeds;
 using namespace constants;
-
-static bool repeat_lambda(const double                  lambda,
-                          double                       &lambda_0,
-                          const double                  E,
-                          double                       &E0);
-
-struct lambda_search_params
-{
-    const std::valarray<double>  &z;
-    const double                  epsilon;
-    const double                  mstar;
-    const double                  r_d;
-    const std::valarray<double>  &Vp;
-    const size_t                  N_w;
-    const double                  delta_E;
-};
-
-/**
- * \brief Find the energy of a carrier using a given Bohr radius
- */
-static double find_E_at_lambda(double  lambda,
-                               void   *params)
-{
-    const lambda_search_params *p = reinterpret_cast<lambda_search_params *>(params);
-    SchroedingerSolverDonor2D se(p->mstar, p->Vp, p->z, p->epsilon, p->r_d, lambda, p->delta_E, 1);
-    std::vector<State> solutions = se.get_solutions();
-
-    return solutions[0].get_E();
-}
-
-/**
- * Find the minimum carrier energy, and corresponding Bohr radius using a fast search algorithm
- */
-static void find_E_min_fast(double                      &E0,
-                            double                      &lambda0,
-                            const double                 lambda_start,
-                            const double                 lambda_stop,
-                            const std::valarray<double> &z,
-                            const double                 epsilon,
-                            const double                 mstar,
-                            const double                 r_d,
-                            const std::valarray<double> &V,
-                            const size_t                 N_w,
-                            const double                 delta_E)
-{
-    double _lambda_start = lambda_start;
-
-    // Set up the numerical solver using GSL
-    lambda_search_params params = {z, epsilon, mstar, r_d, V, N_w, delta_E};
-    gsl_function f;
-    f.function = &find_E_at_lambda;
-    f.params   = &params;
-
-    // First perform a very coarse search for a suitable estimate of a starting point
-    const double Elo = GSL_FN_EVAL(&f, _lambda_start);
-    const double Ehi = GSL_FN_EVAL(&f, lambda_stop);
-
-    E0 = Elo + Ehi; // Set initial estimate as being higher than Elo and Ehi
-    lambda0 = lambda_start;
-
-    const double dlambda = (lambda_stop - lambda_start)/4; // Separation between endpoints [m]
-
-    // Search for a suitable lambda value until we find which quadrant the mimimum lies in
-    do
-    {
-        lambda0 += dlambda; // Increment the Bohr radius
-        if(lambda0 >= lambda_stop)
-        {
-            std::cerr << "Can't find a minimum in this range" << std::endl;
-            exit(EXIT_FAILURE);
-        }
-        E0 = GSL_FN_EVAL(&f, lambda0);
-    }
-    while((E0 > Elo) || (E0 > Ehi));
-    _lambda_start = lambda0 - dlambda;
-    
-    gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-    gsl_min_fminimizer_set(s, &f, lambda0, lambda_start, lambda_stop);
-
-    size_t max_iter = 100; // Maximum number of iterations before giving up
-    int status = 0;        // Error flag for GSL
-    unsigned int iter=0;   // The number of iterations attempted so far
-
-    // Variational calculation (search over lambda)
-    do
-    {
-        ++iter;
-        status  = gsl_min_fminimizer_iterate(s);
-        lambda0 = gsl_min_fminimizer_x_minimum(s);
-        E0      = gsl_min_fminimizer_f_minimum(s);
-        const double lambda_lo = gsl_min_fminimizer_x_lower(s);
-        const double lambda_hi = gsl_min_fminimizer_x_upper(s);
-        status  = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-        printf("r_d %le lambda %le energy %le meV\n",r_d,lambda0,E0/(1e-3*e));
-    }while((status == GSL_CONTINUE) && (iter < max_iter));
-
-    gsl_min_fminimizer_free(s);
-}
-
-/**
- * Find the minimum carrier energy using a linear search
- */
-static void find_E_min_linear(double &E0,
-                              double &lambda0,
-                              const double lambda_start,
-                              const double lambda_step,
-                              const double lambda_stop,
-                              const std::valarray<double> &z,
-                              const double epsilon,
-                              const double mstar,
-                              const double r_d,
-                              const std::valarray<double> &V,
-                              const size_t N_w,
-                              const double delta_E)
-{
-    double lambda=lambda_start; // Initial Bohr radius value [m]
-    E0 = e;                     // Minimum energy of single donor 1eV
-
-    lambda_search_params params = {z, epsilon, mstar, r_d, V, N_w, delta_E};
-    bool solution_not_found = true; // True if we haven't found the solution yet
-
-    // Variational calculation (search over lambda)
-    do
-    {
-        const double E = find_E_at_lambda(lambda, &params);
-        printf("r_d %le lambda %le energy %le meV\n",r_d,lambda,E/(1e-3*e));
-        solution_not_found = repeat_lambda(lambda,lambda0,E,E0);
-        lambda+=lambda_step; // increments Bohr radius
-    }while((solution_not_found && lambda_stop < 0) || lambda<lambda_stop);
-}
 
 int main(int argc,char *argv[])
 {
@@ -191,8 +56,6 @@ int main(int argc,char *argv[])
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     /* computational default values */
-    const size_t N_w=99;             // Number of strips in w integration
-
     const double delta_E = opt.get_numeric_option("dE") * 1e-3*e;    // Energy increment [J]
     const double epsilon = opt.get_numeric_option("epsilon") * eps0; // Permittivity [F/m]
     const double mstar   = opt.get_numeric_option("mass") * me;      // Effective mass [kg]
@@ -216,29 +79,33 @@ int main(int argc,char *argv[])
     // Perform variational calculation for each donor/acceptor position
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
     {
-        if(opt.get_string_option("lambdasearch") == "linear")
-            find_E_min_linear(E0[i_d], lambda_0[i_d], lambda_start, lambda_step, lambda_stop, z, epsilon, mstar, r_d[i_d], V, N_w, delta_E);
-        else if (opt.get_string_option("lambdasearch") == "fast")
-        {
-            if(lambda_stop < 0)
-            {
-                std::cerr << "Upper limit on Bohr radius must be set to a positive value using --lambdastop" << std::endl;
-                exit(EXIT_FAILURE);
-            }
+        // Create an initial estimate of the Schroedinger solution using a guess at lambda
+        SchroedingerSolverDonor2D se(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
 
-            find_E_min_fast(E0[i_d], lambda_0[i_d], lambda_start, lambda_stop, z, epsilon, mstar, r_d[i_d], V, N_w, delta_E);
-        }
+        // Now, use a minimisation technique to correct the Bohr radius and find the minimum energy
+        // solution
+        DonorEnergyMinimiser minimiser(&se, lambda_start, lambda_step, lambda_stop);
+
+        if(opt.get_string_option("lambdasearch") == "linear")
+            minimiser.minimise(MINIMISE_LINEAR);
+        else if (opt.get_string_option("lambdasearch") == "fast")
+            minimiser.minimise(MINIMISE_FAST);
         else
         {
             std::cerr << "Unrecognised search type: " << opt.get_string_option("lambdasearch") << std::endl;
             exit(EXIT_FAILURE);
         }
 
-        SchroedingerSolverDonor2D se(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
-        std::vector<State> solutions     = se.get_solutions();
-        std::vector<State> solutions_chi = se.get_solutions_chi();
+        // Read out the solutions now that we've minimised the energy
+        std::vector<State> solutions = se.get_solutions();
+        E0[i_d]                      = solutions[0].get_E();
+        lambda_0[i_d]                = se.get_lambda();
 
+        // Get the complete wavefunction
         std::valarray<double> psi(solutions[0].psi_array());
+
+        // Get the wavefunction (without the hydrogenic factor)
+        std::vector<State> solutions_chi = se.get_solutions_chi();
         std::valarray<double> chi(solutions_chi[0].psi_array());
 
         /* generate output filename (and open file for writing) using 
@@ -258,38 +125,5 @@ int main(int argc,char *argv[])
     write_table_xy("l.r", r_d_out, lambda_out);
 
     return EXIT_SUCCESS;
-}
-
-/**
- * \brief compares minimum value of energy for this lambda
- *
- * \param[in]     lambda   The new Bohr radius to be tested [m]
- * \param[in,out] lambda_0 The previous estimate of the Bohr radius [m]
- * \param[in]     E        The new binding energy [J]
- * \param[in,out] E0       The previous estimate of the binding energy [J]
- *
- * \returns True if the binding energy is lower than the previous estimate
- *
- * \details The new binding energy is compared with the previous value. If it
- *          is lower, then the Bohr radius and binding energy are overwritten
- *          and the function returns "true" to indicate that we haven't yet
- *          found the absolute minimum.
- */
-static bool repeat_lambda(const double  lambda,
-                          double       &lambda_0,
-                          const double  E,
-                          double       &E0)
-{
-    bool flag = false; // True if we find a new minimum 
-
-    // Set new minimum if required
-    if(E < E0)
-    {
-        E0       = E;
-        lambda_0 = lambda;
-        flag=true;
-    }
-
-    return flag;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
