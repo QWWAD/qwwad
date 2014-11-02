@@ -166,8 +166,8 @@ void SchroedingerSolverDonor::calculate()
     }while(status == GSL_CONTINUE);
 
     // Stop if we've exceeded the cut-off energy
-    if(gsl_fcmp(E, _V.max(), e*1e-12) == 1)
-        throw "Exceeded Vmax";
+    if(gsl_fcmp(E, _V.max()+0.1*e, e*1e-12) == 1)
+        throw std::runtime_error("Energy exceeded Vmax");
 
     std::valarray<double> chi(_z.size());
     const double chi_inf = shoot_wavefunction(E, chi);

@@ -606,7 +606,8 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-binding-2D.agr       \
 		 $(eximpsrcdir)/E-binding-2D-ED0.eps   \
 		 $(eximpsrcdir)/E-binding-2D-ED0.agr   \
-		 $(eximpsrcdir)/E-donor-3D.sh
+		 $(eximpsrcdir)/E-donor-3D.sh \
+		 $(eximpsrcdir)/E-binding-3D.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
