@@ -49,17 +49,14 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double                 m,
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
 double SchroedingerSolverDonor::shoot_wavefunction(const double           E,
-                                                   std::valarray<double> &psi,
                                                    std::valarray<double> &chi) const
 {
     const size_t nz = _z.size();
     const double dz = _z[1] - _z[0];
 
-    psi.resize(nz);
     chi.resize(nz);
 
     // boundary conditions
-    psi[0] = 1;
     chi[0] = 1;
     double chi_next = 1.0; 
 
@@ -92,50 +89,39 @@ double SchroedingerSolverDonor::shoot_wavefunction(const double           E,
                    )/(1.0+beta*dz/(2.0*alpha));
 
         if (iz != nz - 1)
-        {
             chi[iz+1] = chi_next;
-
-            // The complete wave function at (x,y) = 0
-            // is just the same as the envelope when we're considering
-            // the 2D symmetrical case
-            psi[iz+1] = chi[iz+1];
-        }
     }
 
     // calculate normalisation integral
-    double Npsi=integral(pow(psi,2.0),dz); // normalisation integral for psi
     double Nchi=integral(pow(chi,2.0),dz); // normalisation integral for chi
 
     /* divide unnormalised wavefunction by square root
        of normalisation integral                       */
-    psi /= sqrt(Npsi);
     chi /= sqrt(Nchi);
 
-    return chi_next/sqrt(Npsi);
+    return chi_next/sqrt(Nchi);
 }
 
 /**
  * \brief Finds the value of the wavefunction at +infinity for a given energy.
  *
- * \details The solution to the energy occurs for psi(+infinity)=0.
+ * \details The solution to the energy occurs for chi(+infinity)=0.
  *
- * \returns The wavefunction at \f$\psi(\infty)\f$
+ * \returns The wavefunction at \f$\chi(\infty)\f$
  */
-double SchroedingerSolverDonor::psi_at_inf (double  E,
+double SchroedingerSolverDonor::chi_at_inf (double  E,
                                             void   *params)
 {
     const SchroedingerSolverDonor *se = reinterpret_cast<SchroedingerSolverDonor *>(params);
-    std::valarray<double> psi(se->get_z().size()); // Wavefunction amplitude
     std::valarray<double> chi(se->get_z().size()); // Wavefunction envelope amplitude
-    const double psi_inf = se->shoot_wavefunction(E, psi, chi);
-
-    return psi_inf;
+    return se->shoot_wavefunction(E, chi);
 }
 
 void SchroedingerSolverDonor::calculate()
 {
+    _solutions_chi.clear();
     gsl_function f;
-    f.function = &psi_at_inf;
+    f.function = &chi_at_inf;
     f.params   = this;
     gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
@@ -183,16 +169,15 @@ void SchroedingerSolverDonor::calculate()
     if(gsl_fcmp(E, _V.max(), e*1e-12) == 1)
         throw "Exceeded Vmax";
 
-    std::valarray<double> psi(_z.size());
     std::valarray<double> chi(_z.size());
-    const double psi_inf = shoot_wavefunction(E, psi, chi);
-
-    _solutions.push_back(State(E,psi));
+    const double chi_inf = shoot_wavefunction(E, chi);
     _solutions_chi.push_back(State(E,chi));
+
+    calculate_psi_from_chi(); // Finally, compute the complete solution
 
     // Check that wavefunction is tightly bound
     // TODO: Implement a better check
-    if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
+    if(gsl_fcmp(fabs(chi_inf), 0, 1) == 1)
         throw "Warning: Wavefunction is not tightly bound";
 }
 

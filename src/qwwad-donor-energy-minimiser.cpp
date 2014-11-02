@@ -47,7 +47,7 @@ double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 void DonorEnergyMinimiser::find_E_min_fast()
 {
     if(_lambda_stop < 0)
-        throw "Upper limit on Bohr radius must be set to a positive value using --lambdastop";
+        throw std::domain_error("Upper limit on Bohr radius must be set to a positive value using --lambdastop");
 
     double __lambda_start = _lambda_start;
 
@@ -69,7 +69,7 @@ void DonorEnergyMinimiser::find_E_min_fast()
     do
     {
         if(_se->get_lambda() >= _lambda_stop)
-            throw "Can't find a minimum in this range";
+            throw std::domain_error("Can't find a minimum in this range of Bohr radii");
 
         _se->set_lambda(_se->get_lambda() + dlambda); // Increment the Bohr radius
         E0 = _se->get_solutions()[0].get_E();

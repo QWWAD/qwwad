@@ -36,6 +36,7 @@
 #include "qwwad-options.h"
 #include "qwwad-donor-energy-minimiser.h"
 #include "qwwad-schroedinger-donor-2D.h"
+#include "qwwad-schroedinger-donor-3D.h"
 
 using namespace Leeds;
 using namespace constants;
@@ -52,6 +53,7 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
     opt.add_string_option ("lambdasearch", "fast", "Method to use for locating Bohr radius (\"fast\" or \"linear\")");
+    opt.add_string_option ("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\" or \"3D\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -80,11 +82,21 @@ int main(int argc,char *argv[])
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
     {
         // Create an initial estimate of the Schroedinger solution using a guess at lambda
-        SchroedingerSolverDonor2D se(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+        SchroedingerSolverDonor *se = 0;
+
+        if(opt.get_string_option("symmetry") == "2D")
+            se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+        else if(opt.get_string_option("symmetry") == "3D")
+            se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+        else
+        {
+            std::cerr << "Unrecognised symmetry type: " << opt.get_string_option("symmetry") << std::endl;
+            exit(EXIT_FAILURE);
+        }
 
         // Now, use a minimisation technique to correct the Bohr radius and find the minimum energy
         // solution
-        DonorEnergyMinimiser minimiser(&se, lambda_start, lambda_step, lambda_stop);
+        DonorEnergyMinimiser minimiser(se, lambda_start, lambda_step, lambda_stop);
 
         if(opt.get_string_option("lambdasearch") == "linear")
             minimiser.minimise(MINIMISE_LINEAR);
@@ -97,15 +109,15 @@ int main(int argc,char *argv[])
         }
 
         // Read out the solutions now that we've minimised the energy
-        std::vector<State> solutions = se.get_solutions();
+        std::vector<State> solutions = se->get_solutions();
         E0[i_d]                      = solutions[0].get_E();
-        lambda_0[i_d]                = se.get_lambda();
+        lambda_0[i_d]                = se->get_lambda();
 
         // Get the complete wavefunction
         std::valarray<double> psi(solutions[0].psi_array());
 
         // Get the wavefunction (without the hydrogenic factor)
-        std::vector<State> solutions_chi = se.get_solutions_chi();
+        std::vector<State> solutions_chi = se->get_solutions_chi();
         std::valarray<double> chi(solutions_chi[0].psi_array());
 
         /* generate output filename (and open file for writing) using 
@@ -114,6 +126,7 @@ int main(int argc,char *argv[])
         sprintf(filename,"wf%i.r",i_d);
 
         write_table_xyz(filename, z, psi, chi);
+        delete se;
     }/* end loop over r_d */
 
     /* Output neutral dopant binding energies (E) and 

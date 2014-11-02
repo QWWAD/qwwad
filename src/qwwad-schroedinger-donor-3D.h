@@ -1,11 +1,12 @@
 /**
- * \file   qwwad-schroedinger-donor-2D.h
+ * \file   qwwad-schroedinger-donor-3D.h
+ * \author Paul Harrison  <p.harrison@leeds.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \brief  Declarations for Schroedinger solver for a donor in a 1D potential
+ * \brief  Schroedinger solver for a donor in a 1D potential with 3D hydrogenic wavefunction
  */
 
-#ifndef QWWAD_SCHROEDINGER_DONOR_2D_H
-#define QWWAD_SCHROEDINGER_DONOR_2D_H
+#ifndef QWWAD_SCHROEDINGER_DONOR_3D_H
+#define QWWAD_SCHROEDINGER_DONOR_3D_H
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -15,12 +16,12 @@
 
 namespace Leeds {
 /**
- * Schroedinger solver for a donor in a 1D potential with a 2D hydrogenic wavefunction
+ * Schroedinger solver for a donor in a 1D potential with a 3D hydrogenic wavefunction
  */
-class SchroedingerSolverDonor2D : public SchroedingerSolverDonor
+class SchroedingerSolverDonor3D : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonor2D(const double                 m,
+    SchroedingerSolverDonor3D(const double                 m,
                               const std::valarray<double> &V,
                               const std::valarray<double> &z,
                               const double                 eps,
@@ -29,15 +30,23 @@ public:
                               const double                 dE,
                               const unsigned int           nst_max = 0);
 
-    std::string get_name() {return "donor-2D";}
+    std::string get_name() {return "donor-3D";}
 
 private:
-    void calculate_psi_from_chi(){
+    void calculate_psi_from_chi()
+    {
         _solutions.clear();
 
         for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
-            _solutions.push_back(_solutions_chi[ist]);
+        {
+            const std::valarray<double> chi = _solutions_chi[0].psi_array();
+            const double E = _solutions_chi[0].get_E();
+
+            std::valarray<double> psi = chi*exp(-abs(_z - _r_d)/_lambda);
+            _solutions.push_back(State(E,psi));
+        }
     }
+
     double I_1(const double z_dash) const;
     double I_2(const double z_dash) const;
     double I_3(const double z_dash) const;
