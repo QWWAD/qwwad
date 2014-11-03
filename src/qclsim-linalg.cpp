@@ -27,7 +27,7 @@ namespace Leeds
 {
 
 /**
- * Find real solutions to eigenvalue problem from LAPACK
+ * \brief Find real solutions to eigenvalue problem from LAPACK
  *
  * \param[in]  A  Input matrix
  * \param[in]  VL Lower limit for eigenvalue search
@@ -134,7 +134,7 @@ eigen_general(double       A[],
 }
 
 /**
- * Find solution to symmetric-definite banded eigenvalue problem A*x=lambda*B*x
+ * \brief Find solution to symmetric-definite banded eigenvalue problem A*x=lambda*B*x
  *
  * \param[in]  AB    Upper triangle of symmetric matrix A
  * \param[in]  BB    Upper triangle of symmetric matrix B
@@ -234,7 +234,7 @@ eigen_banded(double       AB[],
 }
 
 /**
- * Find solution to eigenvalue problem from LAPACK
+ * \brief Find solution to eigenvalue problem from LAPACK
  *
  * \param[in]  D     Array holding all diagonal elements of matrix
  * \param[in]  E     Array holding all sub-diag. elements of matrix
@@ -317,7 +317,7 @@ eigen_tridiag(double       D[],
 }
 
 /**
- * Solves a matrix of the cyclic form, generated from the cyclic form of the Poisson solver
+ * \brief Solves a matrix of the cyclic form, generated from the cyclic form of the Poisson solver
  *
  * \param[in]  A_sub  Array holding all sub-diagonal elements of matrix.
  * \param[in]  A_diag Array holding all diagonal elements of matrix
@@ -359,6 +359,7 @@ std::valarray<double> solve_cyclic_matrix(std::valarray<double> A_sub,
 	for(unsigned int i=0; i<ni-2; i++){
 		sum += -cyclic*z[i]*b[i]/A_diag[i];
 	}
+
 	b[ni-1] = b[ni-1] + sum - (A_sub[ni-2] + cyclic*z[ni-2])*b[ni-2]/A_diag[ni-2];
 	
 	// Again no need to initialise first element of 
@@ -367,7 +368,6 @@ std::valarray<double> solve_cyclic_matrix(std::valarray<double> A_sub,
 		b[i] = b[i]-(A_super[i]*b[i+1])/A_diag[i+1];
 
         return b/A_diag;
-
 }
 
 /**
