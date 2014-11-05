@@ -35,20 +35,17 @@ rm -f wf_*.r Ee.r Eh.r d.r D.r
 
 # Define band edge profile of single quantum well with a
 # delta-doped layer
-#
-# TODO: The doping profile in Fig. 4.14 appears to use 1e18
-#       doping, but the self-consistent solution appears to
-#       use 2e18. Some investigation needed.
 cat > s.r << EOF
 50.0000 0.2 0.0
 48.5875 0.0 0.0
- 2.8250 0.0 2.0e18
+ 2.8250 0.0 1.0e18
 48.5875 0.0 0.0
 50.0000 0.2 0.0
 EOF
 
 # Generate quantum well profile and initial dopant profile
 find_heterostructure --dz-max 0.25
+awk '{print $1*1e10, $2}' x.r > $outfile_d
 
 # Run diffusion `simulation' for various times
 for t in 0 10 20 50 100 200; do
@@ -56,8 +53,8 @@ for t in 0 10 20 50 100 200; do
     gde --coeff 1 --time $t --infile d.r --outfile D.r
 
     # Save doping profile to file
-    awk '{print $1*1e10, $2/1e24}' D.r >> $outfile_d
     printf '\n' >> $outfile_d
+    awk '{print $1*1e10, $2/1e24}' D.r >> $outfile_d
 
     # Find valence band edge
     efxv --particle h
@@ -92,12 +89,33 @@ Results have been written to $outfile_d, $outfile_V and $outfile_E.
 $outfile_d contains the dopant profiles in the format:
 
   COLUMN 1 - Spatial location [Angstrom]
-  COLUMN 2 - Doping concentration [1e{18} cm^{-3}]
+  COLUMN 2 - Alloy fraction or doping concentration [1e{18} cm^{-3}]
+  
+  The file contains 7 data sets, each set being separated
+  by a blank line. The first set represents the alloy concentration,
+  and subsequent sets represent different diffusion times:
+
+  SET 2 - t = 0 s
+  SET 3 - t = 10 s
+  SET 4 - t = 20 s
+  SET 5 - t = 50 s
+  SET 6 - t = 100 s
+  SET 7 - t = 200 s
 
 $outfile_V contains the Poisson potential in the format:
 
   COLUMN 1 - Spatial location [Angstrom]
   COLUMN 2 - Potential [meV]
+
+  The file contains 6 data sets, each set being separated
+  by a blank line, representing different diffusion times:
+
+  SET 1 - t = 0 s
+  SET 2 - t = 10 s
+  SET 3 - t = 20 s
+  SET 4 - t = 50 s
+  SET 5 - t = 100 s
+  SET 6 - t = 200 s
 
 $outfile_E contains the ground-state energy in the format:
 
