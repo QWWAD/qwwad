@@ -37,6 +37,7 @@
 #include "qwwad-donor-energy-minimiser.h"
 #include "qwwad-schroedinger-donor-2D.h"
 #include "qwwad-schroedinger-donor-3D.h"
+#include "qwwad-schroedinger-donor-variable.h"
 
 using namespace Leeds;
 using namespace constants;
@@ -52,8 +53,11 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
-    opt.add_string_option ("lambdasearch", "fast", "Method to use for locating Bohr radius (\"fast\" or \"linear\")");
-    opt.add_string_option ("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\" or \"3D\")");
+    opt.add_numeric_option("zetastart,w",   0.001, "Initial value for symmetry parameter search");
+    opt.add_numeric_option("zetastep,x",      0.1, "Step size for symmetry parameter search");
+    opt.add_numeric_option("zetastop,y",       -1, "Final value for symmetry parameter search");
+    opt.add_string_option ("searchmethod", "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
+    opt.add_string_option ("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -65,6 +69,9 @@ int main(int argc,char *argv[])
     const double lambda_start = opt.get_numeric_option("lambdastart") * 1e-10; // Initial Bohr radius [m]
     const double lambda_step  = opt.get_numeric_option("lambdastep")  * 1e-10; // Bohr radius increment [m]
     const double lambda_stop  = opt.get_numeric_option("lambdastop")  * 1e-10; // Final Bohr radius [m]
+    const double zeta_start   = opt.get_numeric_option("zetastart"); // Initial symmetry parameter
+    const double zeta_step    = opt.get_numeric_option("zetastep");  // Symmetry parameter increment
+    const double zeta_stop    = opt.get_numeric_option("zetastop");  // Final symmetry parameter
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
@@ -77,6 +84,7 @@ int main(int argc,char *argv[])
     // Solutions for each donor position
     std::valarray<double> E0(r_d.size());       // Binding energy [J]
     std::valarray<double> lambda_0(r_d.size()); // Bohr radius [m]
+    std::valarray<double> zeta_0(r_d.size()); // symmetry parameter
 
     // Perform variational calculation for each donor/acceptor position
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
@@ -88,6 +96,10 @@ int main(int argc,char *argv[])
             se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
         else if(opt.get_string_option("symmetry") == "3D")
             se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+        else if(opt.get_string_option("symmetry") == "variable")
+        {
+            se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E, 1);
+        }
         else
         {
             std::cerr << "Unrecognised symmetry type: " << opt.get_string_option("symmetry") << std::endl;
@@ -97,10 +109,11 @@ int main(int argc,char *argv[])
         // Now, use a minimisation technique to correct the Bohr radius and find the minimum energy
         // solution
         DonorEnergyMinimiser minimiser(se, lambda_start, lambda_step, lambda_stop);
+        minimiser.set_zeta_params(zeta_start, zeta_step, zeta_stop);
 
-        if(opt.get_string_option("lambdasearch") == "linear")
+        if(opt.get_string_option("searchmethod") == "linear")
             minimiser.minimise(MINIMISE_LINEAR);
-        else if (opt.get_string_option("lambdasearch") == "fast")
+        else if (opt.get_string_option("searchmethod") == "fast")
             minimiser.minimise(MINIMISE_FAST);
         else
         {
@@ -112,6 +125,9 @@ int main(int argc,char *argv[])
         std::vector<State> solutions = se->get_solutions();
         E0[i_d]                      = solutions[0].get_E();
         lambda_0[i_d]                = se->get_lambda();
+
+        if(opt.get_string_option("symmetry") == "variable")
+            zeta_0[i_d] = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
 
         // Get the complete wavefunction
         std::valarray<double> psi(solutions[0].psi_array());

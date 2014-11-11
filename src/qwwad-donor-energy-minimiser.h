@@ -30,6 +30,14 @@ public:
                          const double             lambda_stop);
 
     void minimise(MinimisationMethod method=MINIMISE_FAST);
+    void set_zeta_params(const double zeta_start,
+                         const double zeta_step,
+                         const double zeta_stop)
+    {
+        _zeta_start = zeta_start;
+        _zeta_step  = zeta_step;
+        _zeta_stop  = zeta_stop;
+    };
 
 private:
     SchroedingerSolverDonor *_se; ///< The solver to be minimised
@@ -37,6 +45,10 @@ private:
     double _lambda_start;
     double _lambda_step;
     double _lambda_stop;
+
+    double _zeta_start;
+    double _zeta_step;
+    double _zeta_stop;
 
     void find_E_min_fast();
     void find_E_min_linear();
