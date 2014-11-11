@@ -32,6 +32,8 @@ public:
                                     const unsigned int           nst_max = 0);
 
     std::string get_name() {return "donor-variable";}
+    void   set_zeta(const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
+    double get_zeta() const {return _zeta;}
 
 private:
     void calculate_psi_from_chi()

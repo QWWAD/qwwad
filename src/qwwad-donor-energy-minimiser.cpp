@@ -104,7 +104,7 @@ void DonorEnergyMinimiser::find_E_min_fast()
 void DonorEnergyMinimiser::find_E_min_linear()
 {
     double lambda=_lambda_start; // Initial Bohr radius value [m]
-    double E0 = 1e6*e;          // Set minimum energy of single donor to enormous energy [J]
+    double E0 = 1e6*e;           // Set minimum energy of single donor to enormous energy [J]
 
     // Variational calculation (search over lambda)
     do
