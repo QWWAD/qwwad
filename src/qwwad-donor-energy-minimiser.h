@@ -7,6 +7,8 @@
  * \brief  Minimisation of donor state energy
  */
 
+#include <gsl/gsl_vector.h>
+
 namespace Leeds {
 class SchroedingerSolverDonor;
 
@@ -39,6 +41,8 @@ private:
     void find_E_min_fast();
     void find_E_min_linear();
     static double find_E_at_lambda(double lambda, void *params);
+    static double find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
+                                        void             *params);
 };
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

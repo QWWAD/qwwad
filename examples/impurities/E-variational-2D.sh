@@ -70,4 +70,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f *.r
+#rm -f *.r

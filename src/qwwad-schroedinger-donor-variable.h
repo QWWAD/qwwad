@@ -32,7 +32,8 @@ public:
                                     const unsigned int           nst_max = 0);
 
     std::string get_name() {return "donor-variable";}
-    void   set_zeta(const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
+    void   set_zeta       (const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
+    void   set_lambda_zeta(const double lambda, const double zeta) {_lambda = lambda; _zeta = zeta; _solutions.clear(); calculate();}
     double get_zeta() const {return _zeta;}
 
 private:

@@ -13,6 +13,7 @@
 #include "qclsim-constants.h"
 #include "qwwad-donor-energy-minimiser.h"
 #include "qwwad-schroedinger-donor-2D.h"
+#include "qwwad-schroedinger-donor-variable.h"
 
 namespace Leeds
 {
@@ -40,6 +41,23 @@ double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 
     return solutions[0].get_E();
 }
+
+/**
+ * \brief Find the energy of a carrier using a given Bohr radius
+ */
+double DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
+                                                   void             *params)
+{
+    SchroedingerSolverDonorVariable *se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
+    const double lambda = gsl_vector_get(lambda_zeta, 0);
+    const double zeta   = gsl_vector_get(lambda_zeta, 1);
+
+    se->set_lambda_zeta(lambda, zeta); // Set form-factor
+    std::vector<State> solutions = se->get_solutions();
+
+    return solutions[0].get_E();
+}
+
 
 /**
  * Find the minimum carrier energy, and corresponding Bohr radius using a fast search algorithm
@@ -104,7 +122,10 @@ void DonorEnergyMinimiser::find_E_min_fast()
 void DonorEnergyMinimiser::find_E_min_linear()
 {
     double lambda=_lambda_start; // Initial Bohr radius value [m]
-    double E0 = 1e6*e;           // Set minimum energy of single donor to enormous energy [J]
+    double E_min = 1e6*e;        // Set minimum energy of single donor to enormous energy [J]
+    bool   E_min_passed = false; // True if we've overshot the minimum
+    const bool lambda_stop_auto = (_lambda_stop < 0); // Stop looping automatically if the lambda_stop value is negative
+    double lambda_min = lambda;  // The Bohr radius at the minimum energy point [m]
 
     // Variational calculation (search over lambda)
     do
@@ -112,13 +133,23 @@ void DonorEnergyMinimiser::find_E_min_linear()
         const double E = find_E_at_lambda(lambda, _se);
         printf("r_d %le lambda %le energy %le meV\n", _se->get_r_d(),lambda,E/(1e-3*e));
 
-        if (E > E0) break; // Stop looping if we've passed the minimum
+        if (E > E_min)
+            E_min_passed = true; // Stop looping if we've passed the minimum
+        else
+        {
+            // Otherwise, record the new minimum energy and corresponding lambda value
+            E_min      = E;
+            lambda_min = lambda;
+        }
 
         lambda+=_lambda_step; // increments Bohr radius
-    }while((_lambda_stop < 0) || lambda < _lambda_stop);
+    }while((lambda_stop_auto && !E_min_passed) // Carry on looping if we haven't found the minimum yet (in auto mode)
+            ||
+           (!lambda_stop_auto && (lambda < _lambda_stop)) // or the Bohr radius is lower than the stop point, and we're not in auto mode
+           );
 
-    // We've overshot the minimum, so go back to the previous radius
-    _se->set_lambda(lambda-_lambda_step);
+    // Set the Bohr radius to the value that gives minimum energy
+    _se->set_lambda(lambda_min);
 }
 
 void DonorEnergyMinimiser::minimise(MinimisationMethod method)
