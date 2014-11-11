@@ -8,6 +8,7 @@
 #include "qwwad-schroedinger-donor-variable.h"
 
 #include <cmath>
+#include <gsl/gsl_integration.h>
 #include "qclsim-constants.h"
 
 namespace Leeds
@@ -41,8 +42,8 @@ SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double   
  */
 double SchroedingerSolverDonorVariable::I_1(const double z_dash) const
 {
-    return 2*pi*(_zeta*fabs(z_dash)*_lambda/2+gsl_pow_2(_lambda)/4)*
-        exp(-2*_zeta*fabs(z_dash)/_lambda);
+    return 2*pi*(_zeta*fabs(z_dash)*_lambda/2+ _lambda*_lambda/4)*
+           exp(-2*_zeta*fabs(z_dash)/_lambda);
 }
 
 /**
@@ -58,7 +59,30 @@ double SchroedingerSolverDonorVariable::I_1(const double z_dash) const
  */
 double SchroedingerSolverDonorVariable::I_2(const double z_dash) const
 {
-    return 2*pi*(-gsl_pow_2(_zeta)*z_dash/2)*exp(-2*_zeta*fabs(z_dash)/_lambda);
+    return 2*pi*(-_zeta*_zeta*z_dash/2)*exp(-2*_zeta*fabs(z_dash)/_lambda);
+}
+
+struct integral_params
+{
+    double lambda;
+    double zeta;
+    double z_dash_abs;
+};
+
+/* Eq. 5.116, QWWAD3 */
+double I_33_integrand(double w, void *params)
+{
+    integral_params *p = reinterpret_cast<integral_params *>(params);
+    double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/gsl_pow_2(1+w*w);
+    return result;
+}
+
+/* Eq. 5.117, QWWAD3 */
+double I_34_integrand(double w, void *params)
+{
+    integral_params *p = reinterpret_cast<integral_params *>(params);
+    double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/(w*(1+w*w));
+    return result;
 }
 
 /**
@@ -70,30 +94,47 @@ double SchroedingerSolverDonorVariable::I_2(const double z_dash) const
  */
 double SchroedingerSolverDonorVariable::I_3(const double z_dash) const
 {
-    const size_t N_w=100;
+    const double z_dash_abs = fabs(z_dash);
 
     /* Eq. 5.113, QWWAD3 */
-    const double I_31=(-1-gsl_pow_2(_zeta))/2*exp(-2*_zeta*fabs(z_dash)/_lambda);
+    const double I_31=(-1-_zeta*_zeta)/2*exp(-2*_zeta*fabs(z_dash)/_lambda);
     const double I_32=(_zeta*fabs(z_dash)/(2*_lambda)+0.25)*exp(-2*_zeta*fabs(z_dash)/_lambda);
 
-    /* perform integrations over `w' for I_33 and I_34, area simply given by
-       sum of (height of centre of strip * strip width) */
-    const double delta_w=(1.0-0.0)/(float)N_w;
-    double I_33=0.0;
-    double I_34=0.0;
-    for(double w=delta_w/2;w<1;w+=delta_w)
-    {
-        /* Eq. 5.116, QWWAD3 */
-        I_33+=exp(-_zeta*fabs(z_dash)*(1/w+w)/_lambda)*(1-w*w)/gsl_pow_2(1+w*w)*delta_w;
+    integral_params p = {_lambda, _zeta, z_dash_abs};
 
-        /* Eq. 5.117, QWWAD3 */
-        I_34+=exp(-_zeta*fabs(z_dash)*(1/w+w)/_lambda)*(1-gsl_pow_2(w))/(w*(1+w*w))*delta_w;
-    }
+    gsl_function f_33, f_34;
+    f_33.function = &I_33_integrand;
+    f_33.params = &p;
+    f_34.function = &I_34_integrand;
+    f_34.params = &p;
+
+    // Configure integration algorithm
+    const double limit_lo   = 0.0;  // Lower limit for integral
+    const double limit_hi   = 1.0;  // Upper limit for integral
+    double I_33             = 0.0;  // Result of integral
+    double I_34             = 0.0;  // Result of integral
+    const double abserr_max = 100;  // Maximum permitted absolute error
+    const double relerr_max = 1e-7; // Maximum permitted relative error
+    double abserr           = 0.0;  // Absolute error (after calculation)
+    size_t neval            = 0;    // Number of times integrand was evaluated
+
+    // Perform the integral
+    gsl_integration_qng(&f_33, limit_lo, limit_hi, abserr_max, relerr_max, &I_33, &abserr, &neval);
+    gsl_integration_qng(&f_34, limit_lo, limit_hi, abserr_max, relerr_max, &I_34, &abserr, &neval);
 
     I_33*=2*(gsl_pow_3(_zeta)-_zeta)*fabs(z_dash)/_lambda;
     I_34*=(gsl_pow_4(_zeta)-gsl_pow_2(_zeta))*gsl_pow_2(z_dash/_lambda);
 
     return 2*pi*(I_31+I_32+I_33+I_34);
+}
+
+/* Eq. 5.118, QWWAD3 */
+static double I_4_integrand(double w, void *params)
+{
+    integral_params *p = reinterpret_cast<integral_params *>(params);
+    double result = exp(-2*p->z_dash_abs*sqrt(gsl_pow_2((1-w*w)/(2*w))+gsl_pow_2(p->zeta))/p->lambda)
+            *p->z_dash_abs*(1-w*w)/(2*w*w);
+    return result;
 }
 
 /**
@@ -113,18 +154,26 @@ double SchroedingerSolverDonorVariable::I_3(const double z_dash) const
  */
 double SchroedingerSolverDonorVariable::I_4(const double z_dash) const
 {
-    const size_t N_w=100;
-    double I_40=0.0;
-    const double delta_w=(1.0-0.0)/(float)N_w;
+    const double z_dash_abs = fabs(z_dash);
+    integral_params p = {_lambda, _zeta, z_dash_abs};
 
-    /* Eq. 5.118, QWWAD3 */
-    for (double w=delta_w/2;w<1;w+=delta_w)
-    {
-        I_40+=exp(-2*fabs(z_dash)*sqrt(gsl_pow_2((1-w*w)/(2*w))+gsl_pow_2(_zeta))/_lambda)
-            *fabs(z_dash)*(1-w*w)/(2*w*w)*delta_w;
-    }
+    gsl_function f;
+    f.function = &I_4_integrand;
+    f.params = &p;
 
-    return 2*pi*I_40;
+    // Configure integration algorithm
+    const double limit_lo   = 0.0;  // Lower limit for integral
+    const double limit_hi   = 1.0;  // Upper limit for integral
+    double I_4              = 0.0;  // Result of integral
+    const double abserr_max = 1e-5; // Maximum permitted absolute error
+    const double relerr_max = 1e-7; // Maximum permitted relative error
+    double abserr           = 0.0;  // Absolute error (after calculation)
+    size_t neval            = 0;    // Number of times integrand was evaluated
+
+    // Perform the integral
+    gsl_integration_qng(&f, limit_lo, limit_hi, abserr_max, relerr_max, &I_4, &abserr, &neval);
+
+    return 2*pi*I_4;
 }
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
