@@ -615,7 +615,13 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-3D-wf.eps      \
 		 $(eximpsrcdir)/E-donor-3D-wf-vs-2D.agr \
 		 $(eximpsrcdir)/E-donor-3D-wf-vs-2D.eps \
-		 $(eximpsrcdir)/E-binding-3D.sh
+		 $(eximpsrcdir)/E-binding-3D.sh         \
+		 $(eximpsrcdir)/E-binding-3D.agr        \
+		 $(eximpsrcdir)/E-binding-3D.eps        \
+		 $(eximpsrcdir)/E-binding-3D-zoomed.agr \
+		 $(eximpsrcdir)/E-binding-3D-zoomed.eps \
+		 $(eximpsrcdir)/E-binding-3D-lambda.agr \
+		 $(eximpsrcdir)/E-binding-3D-lambda.eps
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

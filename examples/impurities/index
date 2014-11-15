@@ -10,9 +10,9 @@ Fig 5.9:  E-binding-2D.sh     => E-binding-2D-ED0.dat
 Fig 5.10: E-donor-3D-vs-2D.sh => E-donor-3D-vs-2D.dat
 Fig 5.11: E-donor-3D-vs-2D.sh => E-donor-3D-wf.dat
 Fig 5.12: E-donor-3D-vs-2D.sh => E-donor-3D-wf-vs-2D.dat
-Fig 5.13:
-Fig 5.14:
-Fig 5.15:
+Fig 5.13: E-binding-3D.sh     => E-binding-3D.dat
+Fig 5.14: E-binding-3D.sh     => E-binding-3D.dat [zoomed]
+Fig 5.15: E-binding-3D.sh     => E-binding-3D-lambda.dat
 Fig 5.17:
 Fig 5.18:
 Fig 5.19:
