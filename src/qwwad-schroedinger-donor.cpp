@@ -175,6 +175,10 @@ void SchroedingerSolverDonor::calculate()
 
     calculate_psi_from_chi(); // Finally, compute the complete solution
 
+    // Normalise wavefunctions
+    for(std::vector<State>::iterator ist = _solutions.begin(); ist != _solutions.end(); ++ist)
+        ist->normalise(_z);
+
     // Check that wavefunction is tightly bound
     // TODO: Implement a better check
     if(gsl_fcmp(fabs(chi_inf), 0, 1) == 1)
