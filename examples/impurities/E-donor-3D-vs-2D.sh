@@ -64,11 +64,11 @@ find_heterostructure --dz-max 1
 efxv --material cdmnte --mass 0.096
 
 # Perform 2D donor calculation and save results to output file
-d02D --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 2D > garbage.r
+qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 2D > garbage.r
 mv e.r e-2D.r
 
 # Perform 3D donor calculation and save results to file
-d02D --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 3D > garbage.r
+qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 3D > garbage.r
 
 paste e-2D.r e.r | awk '{print $1, $4 - $2}' > $outfile
 

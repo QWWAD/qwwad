@@ -54,7 +54,7 @@ efxv --mass 0.067
 echo $LW | awk '{print (200+$1/2)/1e10}' > r_d.r
 
 # Start donor binding energy calculation
-d02D --lambdastart 10 --lambdastop 300 --symmetry 3D > garbage.r
+qwwad_find_donor_state --lambdastart 10 --lambdastop 300 --symmetry 3D > garbage.r
 
 # Calculate electron energy for same quantum well but without donor
 efss

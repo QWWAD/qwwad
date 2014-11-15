@@ -47,7 +47,7 @@ efxv
 
 seq 0 10e-10 250e-10 > r_d.r
 
-d02D --symmetry variable --lambdastart 50 --zetastart 0.65 > garbage.r
+qwwad_find_donor_state --symmetry variable --lambdastart 50 --zetastart 0.65 > garbage.r
 
 mv e.r $outfile_E
 mv l.r $outfile_zl

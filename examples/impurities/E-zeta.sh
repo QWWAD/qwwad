@@ -50,7 +50,7 @@ echo '250e-10' > r_d.r
 
 # Initiate variable symmetry donor calculation, note specifying the final
 # lambda and zeta values forces this domain to be covered
-d02D --lambdastart 89 --lambdastop 91 --zetastart 0.6 --zetastep 0.02 --zetastop 0.8 --symmetry variable --searchmethod linear > output.r
+qwwad_find_donor_state --lambdastart 89 --lambdastop 91 --zetastart 0.6 --zetastep 0.02 --zetastop 0.8 --symmetry variable --searchmethod linear > output.r
 
 # Now collate data in `output' into file suitable for plotting
 # Do each zeta value at a time

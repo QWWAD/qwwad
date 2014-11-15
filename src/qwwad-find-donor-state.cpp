@@ -1,6 +1,6 @@
 /**
- * \file   d02D.cpp
- * \brief  Calculates state of electron attached to donor in a user-specified potential
+ * \file   qwwad-find-donor-state.cpp
+ * \brief  Calculates state of electron attached to donor in a heterostructure potential
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
@@ -17,15 +17,6 @@
  *          \f]
  *
  *          where \f$r^{\prime\prime} = \sqrt(x^2+y^2)\f$
- *
- *   Input files:
- *  r_d.r		donor (or acceptor positions)
- *  v.r		one-dimensional potential
- *
- *  Output files:
- *  e.r		total energies for each r_d
- *  l.r		Bohr radii (lambda) for each r_d
- *  wfn.r		wave functions, both Psi and chi, n=0,1,2..
  */
 
 #include <cstdio>

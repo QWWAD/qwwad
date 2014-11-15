@@ -66,7 +66,7 @@ EOF
 
 # Initiate donor binding energy calculation
 # Direct output to garbage file... we don't need it for this example
-d02D --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 > garbage.r
+qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 > garbage.r
 
 # Output the total energy and binding energy to files
 awk '{print $1, $2, E1}' E1=$E1 < e.r > $outfile_E

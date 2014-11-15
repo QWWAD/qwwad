@@ -51,7 +51,7 @@ efxv --material cdmnte --mass 0.096
 echo $LW | awk '{print (200+$1/2)/1e10}' > r_d.r
 
 # Start donor binding energy calculation
-d02D --epsilon 10.6 --mass 0.096 --lambdastart 25 --lambdastop 150 > garbage.r
+qwwad_find_donor_state --epsilon 10.6 --mass 0.096 --lambdastart 25 --lambdastop 150 > garbage.r
 
 # Calculate electron energy for same quantum well but without donor
 efss

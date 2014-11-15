@@ -19,8 +19,7 @@ LDADD = $(BOOST_LDFLAGS)             \
 	$(BOOST_PROGRAM_OPTIONS_LIB)
 
 
-noinst_HEADERS = src/d0-helpers.h    \
-		 src/dos-functions.h \
+noinst_HEADERS = src/dos-functions.h \
 		 src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/ppff.h          \
@@ -29,9 +28,6 @@ noinst_HEADERS = src/d0-helpers.h    \
 bin_PROGRAMS =  src/chargedensity \
                 src/csss    \
 		src/cszb    \
-		src/d0      \
-		src/d02D    \
-		src/d03D    \
 		src/densityinput \
 		src/dispersion_relation \
 		src/dos     \
@@ -63,6 +59,7 @@ bin_PROGRAMS =  src/chargedensity \
 		src/ppsl    \
 		src/ppvfq   \
 		src/pth     \
+		src/qwwad_find_donor_state \
 		src/rlv-fcc \
 		src/rlv-sc  \
 		src/rlv-ss  \
@@ -140,14 +137,6 @@ src_chargedensity_LDADD   = src/libqwwad.a $(LDADD)
 src_densityinput_SOURCES = src/densityinput.cpp
 src_densityinput_LDADD   = src/libqwwad.a $(LDADD)
 
-d0_helpers = src/d0-helpers.c src/d0-helpers.h
-src_d0_SOURCES   = src/d0.c $(d0_helpers)
-
-src_d02D_SOURCES = src/d02D.cpp $(d0_helpers)
-src_d02D_LDADD   = src/libqwwad.a $(LDADD)
-
-src_d03D_SOURCES = src/d03D.c $(d0_helpers)
-
 src_dispersion_relation_SOURCES = src/dispersion_relation.cpp
 src_dispersion_relation_LDADD   = src/libqwwad.a $(LDADD)
 
@@ -194,6 +183,9 @@ src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
 src_pth_SOURCES = src/pth.cpp
 src_pth_LDADD   = src/libqwwad.a $(LDADD)
+
+src_qwwad_find_donor_state_SOURCES = src/qwwad-find-donor-state.cpp
+src_qwwad_find_donor_state_LDADD   = src/libqwwad.a $(LDADD)
 
 src_sbp_SOURCES  = src/sbp.cpp
 src_sbp_LDADD    = src/libqwwad.a $(LDADD)
