@@ -54,7 +54,7 @@ int main(int argc,char *argv[])
     opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
     opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
     opt.add_numeric_option("zetastart,w",   0.001, "Initial value for symmetry parameter search");
-    opt.add_numeric_option("zetastep,x",      0.1, "Step size for symmetry parameter search");
+    opt.add_numeric_option("zetastep,x",     0.01, "Step size for symmetry parameter search");
     opt.add_numeric_option("zetastop,y",       -1, "Final value for symmetry parameter search");
     opt.add_string_option ("searchmethod", "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
     opt.add_string_option ("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
@@ -152,6 +152,9 @@ int main(int argc,char *argv[])
     const std::valarray<double> lambda_out = lambda_0*1.0e10;
     write_table_xy("e.r", r_d_out, E_out);
     write_table_xy("l.r", r_d_out, lambda_out);
+
+    if(opt.get_string_option("symmetry") == "variable")
+        write_table_xy("zeta.r", r_d_out, zeta_0);
 
     return EXIT_SUCCESS;
 }

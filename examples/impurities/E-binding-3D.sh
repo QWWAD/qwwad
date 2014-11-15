@@ -26,10 +26,6 @@ set -e
 # You should have received a copy of the GNU General Public License
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
-# 3D trial wave fucntion donor binding energy calculationas a function of
-# well width for different barrier heights
-# Define the barrier alloy concentration
-
 # Initialise files
 outfile_E=E-binding-3D.dat
 outfile_lambda=E-binding-3D-lambda.dat

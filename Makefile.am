@@ -621,7 +621,15 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-binding-3D-zoomed.agr \
 		 $(eximpsrcdir)/E-binding-3D-zoomed.eps \
 		 $(eximpsrcdir)/E-binding-3D-lambda.agr \
-		 $(eximpsrcdir)/E-binding-3D-lambda.eps
+		 $(eximpsrcdir)/E-binding-3D-lambda.eps \
+		 $(eximpsrcdir)/E-zeta.sh               \
+		 $(eximpsrcdir)/E-zeta.agr              \
+		 $(eximpsrcdir)/E-zeta.eps              \
+		 $(eximpsrcdir)/E-donor-variable.sh     \
+		 $(eximpsrcdir)/E-donor-variable.eps    \
+		 $(eximpsrcdir)/E-donor-variable.agr    \
+		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.eps \
+		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
