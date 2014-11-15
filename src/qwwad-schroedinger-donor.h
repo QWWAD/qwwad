@@ -15,7 +15,7 @@
 
 namespace Leeds {
 /**
- * General Schroedinger solver for a hydrogenic donor in an external potential
+ * \brief Schroedinger solver for the ground state of a hydrogenic donor in an external potential
  */
 class SchroedingerSolverDonor : public SchroedingerSolver
 {
@@ -26,8 +26,7 @@ public:
                             const double                 eps,
                             const double                 r_d,
                             const double                 lambda,
-                            const double                 dE,
-                            const unsigned int           nst_max = 0);
+                            const double                 dE);
 
     virtual std::string get_name() = 0;
 

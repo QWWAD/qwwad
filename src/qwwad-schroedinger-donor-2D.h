@@ -26,8 +26,7 @@ public:
                               const double                 eps,
                               const double                 r_d,
                               const double                 lambda,
-                              const double                 dE,
-                              const unsigned int           nst_max = 0);
+                              const double                 dE);
 
     std::string get_name() {return "donor-2D";}
 

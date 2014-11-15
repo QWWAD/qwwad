@@ -28,8 +28,7 @@ public:
                                     const double                 r_d,
                                     const double                 lambda,
                                     const double                 zeta,
-                                    const double                 dE,
-                                    const unsigned int           nst_max = 0);
+                                    const double                 dE);
 
     std::string get_name() {return "donor-variable";}
     void   set_zeta       (const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}

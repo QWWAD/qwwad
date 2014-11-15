@@ -20,9 +20,8 @@ SchroedingerSolverDonor3D::SchroedingerSolverDonor3D(const double               
                                                      const double                 eps,
                                                      const double                 r_d,
                                                      const double                 lambda,
-                                                     const double                 dE,
-                                                     const unsigned int           nst_max) :
-    SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE, nst_max)
+                                                     const double                 dE) :
+    SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE)
 {}
 
 /**

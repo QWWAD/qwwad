@@ -24,9 +24,8 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double                 m,
                                                  const double                 eps,
                                                  const double                 r_d,
                                                  const double                 lambda,
-                                                 const double                 dE,
-                                                 const unsigned int           nst_max) :
-    SchroedingerSolver(V, z, nst_max),
+                                                 const double                 dE) :
+    SchroedingerSolver(V, z, 1),
     _me(m),
     _eps(eps),
     _r_d(r_d),

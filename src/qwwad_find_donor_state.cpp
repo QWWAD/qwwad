@@ -84,12 +84,12 @@ int main(int argc,char *argv[])
         SchroedingerSolverDonor *se = 0;
 
         if(opt.get_string_option("symmetry") == "2D")
-            se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+            se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
         else if(opt.get_string_option("symmetry") == "3D")
-            se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E, 1);
+            se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
         else if(opt.get_string_option("symmetry") == "variable")
         {
-            se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E, 1);
+            se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E);
         }
         else
         {

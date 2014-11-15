@@ -22,9 +22,8 @@ SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double   
                                                                  const double                 r_d,
                                                                  const double                 lambda,
                                                                  const double                 zeta,
-                                                                 const double                 dE,
-                                                                 const unsigned int           nst_max) :
-    SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE, nst_max),
+                                                                 const double                 dE) :
+    SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE),
     _zeta(zeta)
 {}
 
