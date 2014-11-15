@@ -184,7 +184,7 @@ src_pplbso_SOURCES = src/pplbso.c src/ppsop.h
 src_pth_SOURCES = src/pth.cpp
 src_pth_LDADD   = src/libqwwad.a $(LDADD)
 
-src_qwwad_find_donor_state_SOURCES = src/qwwad-find-donor-state.cpp
+src_qwwad_find_donor_state_SOURCES = src/qwwad_find_donor_state.cpp
 src_qwwad_find_donor_state_LDADD   = src/libqwwad.a $(LDADD)
 
 src_sbp_SOURCES  = src/sbp.cpp
@@ -215,6 +215,7 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/efss.1                 \
 		 man/efpqw.1                \
 		 man/pth.1                  \
+		 man/qwwad_find_donor_state.1 \
 		 man/find_poisson_potential.1 \
 		 man/hup.1                    \
 		 man/densityinput.1           \
@@ -240,7 +241,8 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/hup.h2m                    \
 	      doc/densityinput.h2m           \
 	      doc/chargedensity.h2m          \
-	      doc/gde.h2m
+	      doc/gde.h2m                    \
+	      doc/qwwad_find_donor_state.h2m 
 
 man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
 	$(MKDIR_P) man
@@ -351,6 +353,12 @@ man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	$(MAKE) $(AM_MAKEFLAGS) src/gde$(EXEEXT)
 	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/gde.h2m src/gde$(EXEEXT) 
+
+man/qwwad_find_donor_state.1: src/qwwad_find_donor_state.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_find_donor_state.h2m
+	$(MKDIR_P) man
+	$(MAKE) $(AM_MAKEFLAGS) src/qwwad_find_donor_state$(EXEEXT)
+	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_find_donor_state.h2m src/qwwad_find_donor_state$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

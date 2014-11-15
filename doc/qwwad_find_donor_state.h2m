@@ -1,0 +1,88 @@
+[FILES]
+.SS Input files:
+   'v.r'     Confining potential for heterostructure:
+             Column 1: position [m].
+             Column 2: potential [J].
+
+   'r_d.r'   List of dopant locations:
+             Column 1: spatial location [m]
+
+A separate solution will be found for a structure using each dopant ion location in the list.
+In other words, this program does not simulate a structure with multiple dopant ions at once!
+
+.SS Output files:
+   'wf*.r'   Wave function amplitude at each position:
+             Column 1: position [m]
+             Column 2: wave function amplitude [m^{-1/2}].
+             Column 3: wave function amplitude (ignoring hydrogenic factor) [m^{-1/2}].
+
+   'e.r'     Energy of electron:
+             Column 1: Dopant location (from r_d.r file) [Angstrom]
+             Column 2: Energy [meV]
+   
+   'l.r'     Bohr radius of ion:
+             Column 1: Dopant location (from r_d.r file) [Angstrom]
+             Column 2: Bohr radius [Angstrom]
+   
+   'zeta.r'  Symmetry parameter of hydrogenic wave function:
+             Column 1: Dopant location (from r_d.r file) [Angstrom]
+             Column 2: Symmetry parameter (dimensionless)
+
+The '*' in the wavefunction filename is replaced by the number of the structure being considered;
+i.e., the number index of the dopant in the 'r_d.r' file.
+
+The zeta.r file is only created if a variable symmetry waveform is used.
+
+[SYMMETRY OPTIONS]
+This program provides several different options for the symmetry of the dopant orbit.
+This can be selected using the --symmetry option, and are listed as follows:
+
+.SS 2D
+The hydrogenic factor has cylindrical symmetry, with its axis directed along the direction of the potential profile:
+
+  xi = exp(-r_{perp}/lambda)
+
+Therefore, only the Bohr radius (lambda) needs to be determined
+
+.SS 3D
+The hydrogenic factor has spherical symmetry (i.e., the same orbit radius in all directions:
+
+  xi = exp(-r/lambda)
+
+Again, only the Bohr radius needs to be found.
+
+.SS variable
+The hydrogenic factor is taken as a prolate spheroid with its long axis lying along the direction of the potential profile:
+
+  xi = exp(-sqrt{x^2+y^2 + zeta^2 z'^2}/lambda)
+
+In this case, the zeta parameter describes the ellipticity of the spheroid.
+Both the lambda and zeta parameters need to be located, in this case, and hence the solution can be a little slower (although also slightly more accurate).
+
+[SEARCH OPTIONS]
+This program uses a variational technique to find the Bohr radius (and symmetry parameter if using variable symmetry) that give the lowest possible carrier energy.
+There are two methods provided for searching for the parameter(s), which can be selected using the --searchmethod option.
+
+.SS linear
+This method steps incrementally through values of the parameter(s).
+As such, it is very slow, but can be useful for inspecting the energy with respect to the variational parameters.
+The inital values for the search can be specified using --lambdastart and --zetastart, and the step sizes using --lambdastep and --zetastep.
+
+By default, the search will stop as soon as a local minimum has been located.
+If you wish to continue the calculation over a larger range, the final values may be specified using --lambdastop and --zetastop.
+
+.SS fast
+This method uses a rapid minimisation algorithm, and converges (using uneven sized steps) onto the solution quickly.
+As such, it is much faster but takes an unpredictable path to find the solutions.
+As with the linear method, the starting value may be specified using --lambdastart and --zetastart.
+
+For 2D or 3D symmetry, a final value must be specified for the parameters using --lambdastop, such that the solution lies between these endpoints.
+For variable symmetry, the final value has no effect, and the search proceeds automatically using values both above and below the starting points.
+
+[EXAMPLES]
+
+Find a donor state, assuming 2D symmetry, with the Bohr radius being between 50 and 100 Angstrom, using a linear search:
+    qwwad_find_donor_state --symmetry 2D --lambdastart 50 --lambdastop 100 --searchmethod linear
+
+Find a donor state, assuming variable symmetry, using a fast search, starting with lambda = 50 Angstrom and zeta = 0.5.
+    qwwad_find_donor_state --symmetry variable --lambdastart 50 --zetastart 0.5 --searchmethod fast
