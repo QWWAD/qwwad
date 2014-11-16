@@ -630,7 +630,8 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-variable.agr    \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.eps \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr \
-		 $(eximpsrcdir)/E-donor-comparison.sh
+		 $(eximpsrcdir)/E-donor-comparison.sh            \
+		 $(eximpsrcdir)/E-donor-comparison.dat
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
