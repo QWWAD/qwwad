@@ -1,28 +1,29 @@
-#!/bin/sh
+#! /bin/sh
+set -e
 # Spin-flip Raman scattering calculation
-# Define structure
 
-echo '200 0.15 0.0
-60 0.0 0.0
-200 0.15 0.0' > s.r
+# Define structure
+cat > s.r << EOF
+200 0.15 0.0
+60  0.0  0.0
+200 0.15 0.0
+EOF
 
 # Generate alloy profile
-
-efsx
+find_heterostructure
 
 # Generate potential profile, note the use of the paramagnetic
 # Cd(1-x)Mn(x)Te
-
 efxv -M cdmnte
 
 # Add an 8 Tesla magnetic field to the potential
-
 efmfv -B 8 	# add Zeeman splitting due to 8 T, default electron, spin +
+
+seq 0 10e-10 230e-10 > r_d.r
 
 # Calculate electron-donor energy with cdmnte parameters, let's just use
 # the 3D (spherical) trial wave function---it's very quick
-
-qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 -s 40 > output 
+qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 --lambdastart 40 --lambdastop 300 > output 
 
 # Save all data for this the `+' spin state
 
@@ -34,7 +35,7 @@ mv v.r v.r+
 
 efmfv -B 8 -s -		# Generate the potential profile
 
-qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 -s 40 >> output		# donor calculation
+qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 --lambdastart 40 --lambdastop 300 >> output		# donor calculation
 
 mv e.r e.r-		# Save all data
 mv l.r l.r-

@@ -224,7 +224,7 @@ double Laplace::inverse_transform(double (*F)(const double), const double t) con
 }
 
 /**
- * The cotangent of a number
+ * \brief The cotangent of a number
  *
  * \param[in] x The number for which to find the cotangent (radians)
  *
@@ -232,7 +232,19 @@ double Laplace::inverse_transform(double (*F)(const double), const double t) con
  */
 double cot(const double x)
 {
- return 1/tan(x);
+    return 1.0/tan(x);
+}
+
+/**
+ * \brief The hyperbolic cotangent of a number
+ *
+ * \param[in] x The number for which to find the hyperbolic cotangent
+ *
+ * \return The hyperbolic cotangent
+ */
+double coth(const double x)
+{
+    return 1.0/tanh(x);
 }
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

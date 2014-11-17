@@ -149,6 +149,9 @@ src_efiw_LDADD   = src/libqwwad.a $(LDADD)
 src_efkpsl_SOURCES = src/efkpsl.cpp
 src_efkpsl_LDADD   = src/libqwwad.a $(LDADD)
 
+src_efmfv_SOURCES = src/efmfv.cpp
+src_efmfv_LDADD   = src/libqwwad.a $(LDADD)
+
 src_efpqw_SOURCES = src/efpqw.cpp
 src_efpqw_LDADD   = src/libqwwad.a $(LDADD)
 
@@ -631,7 +634,8 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.eps \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr \
 		 $(eximpsrcdir)/E-donor-comparison.sh            \
-		 $(eximpsrcdir)/E-donor-comparison.dat
+		 $(eximpsrcdir)/E-donor-comparison.dat           \
+		 $(eximpsrcdir)/spin-flip-raman.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

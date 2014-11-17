@@ -18,21 +18,76 @@
 
    Paul Harrison, February 1998				 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "maths.h"
 #include "qclsim-constants.h"
+#include "qclsim-maths.h"
+
+using namespace Leeds;
+using namespace constants;
+
+/**
+ * \brief Computes the effective temperature T0(x)
+ *
+ * \details  (J.A.Gaj, C.Bodin-Deshayes, P.Peyla, J.Cibert, G.Feuillet,
+ *           Y.Merle d'Aubigne, R.Romestain and A.Wasiela, Proc. 21st
+ *           Int. Conf. Phys. Semiconductors 1936 (1992))
+ */
+static double Teff(const double x)
+{
+    const double F = 40.7;
+    const double G = 4.6;
+
+    return F*x/(1+G*x);
+}
+
+/**
+ * \brief Compute the effective spin <Sz(x)>
+ *
+ * \details Data taken from 
+ *
+ *  J.A.Gaj, C.Bodin-Deshayes, P.Peyla, J.Cibert, G.Feuillet,
+ *  Y.Merle d'Aubigne, R.Romestain and A.Wasiela, Proc. 21st
+ *  Int. Conf. Phys. Semiconductors 1936 (1992)               
+ *
+ *  Note Gaj gives	Delta E(saturation)=6A+6B
+ * 
+ *  But Delta E(saturation)=x(N0alpha+N0beta)<Sz>
+ *
+ *  Hence <Sz> follows from Gaj's expression
+ */
+static double Seff(const double N0alpha,
+                   const double N0beta,
+                   const double x)
+{
+    const double A = 2488.0*e*1e-3;
+    const double B = -57880.0*e*1e-3;
+    const double C = 152.7;
+    const double D = -20760.0*e*1e-3;
+    const double E = 8.083;
+    const double s = (A+B*gsl_pow_2(x)/(1+C*gsl_pow_2(x))+D*x/(1+E*x))/(N0alpha+N0beta);
+
+    return s;
+}
+
+/**
+ * \brief Brillouin function
+ */
+static double B_J(const double J,
+                  const double MF,
+                  const double T,
+                  const double T0)
+{
+    const double y = 2*J*mu_b*MF/(kB*(T+T0));
+
+    return (2*J+1)/(2*J)*coth((2*J+1)*y/(2*J))-1/(2*J)*coth(y/(2*J));
+}
 
 int main(int argc,char *argv[])
 {
-double	B_J();		/* Brillouin function			*/
-double	Seff();		/* effective spin as function of x	*/
-double	Teff();		/* effective temperature 		*/
-
 double	A;
 double	B;
 double	DeltaV;		/* change in potential due to MF	*/
@@ -203,80 +258,5 @@ for(i=0;i<n;i++)
 fclose(FvF);
 
 return EXIT_SUCCESS;
-}        /* end main */
-
-
-
-
-
-double
-Seff(N0alpha,N0beta,x)
-
-/* This function returns the effective spin <Sz(x)>
-
-   Data taken from 
-
-   J.A.Gaj, C.Bodin-Deshayes, P.Peyla, J.Cibert, G.Feuillet,
-   Y.Merle d'Aubigne, R.Romestain and A.Wasiela, Proc. 21st
-   Int. Conf. Phys. Semiconductors 1936 (1992)               
-
-   Note Gaj gives	Delta E(saturation)=6A+6B
-  
-   But Delta E(saturation)=x(N0alpha+N0beta)<Sz>
-
-   Hence <Sz> follows from Gaj's expression	 */
-
-double N0alpha;
-double N0beta;
-double x;
-{
- double A = 2488.0*e*1e-3;
- double B = -57880.0*e*1e-3;
- double C = 152.7;
- double D = -20760.0*e*1e-3;
- double E = 8.083;
- double s;
-
- s=(A+B*gsl_pow_2(x)/(1+C*gsl_pow_2(x))+D*x/(1+E*x))/(N0alpha+N0beta);
-
- return(s);
 }
-
-
-
-double
-Teff(x)
-
-/* This function returns the effective temperature T0(x)
-
-   (J.A.Gaj, C.Bodin-Deshayes, P.Peyla, J.Cibert, G.Feuillet,
-   Y.Merle d'Aubigne, R.Romestain and A.Wasiela, Proc. 21st
-   Int. Conf. Phys. Semiconductors 1936 (1992))               */
-
-double x;
-{
- double F = 40.7;
- double G = 4.6;
-
- return(F*x/(1+G*x));
-}
-
-
-
-double
-B_J(J,MF,T,T0)
-
-double J;
-double MF;
-double T;
-double T0;
-{
- double	y;
- 
- y=((2*J*mu_b*MF)/(kB*(T+T0)));
-
- return(((2*J+1)/(2*J))*coth(((2*J+1)*y)/(2*J))-(1/(2*J))*coth((y/(2*J))));
-}
-
-
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
