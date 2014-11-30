@@ -145,13 +145,13 @@ csss_SOURCES = src/csss.c
 cszb_SOURCES = src/cszb.c
 
 densityinput_SOURCES = src/densityinput.cpp
-densityinput_LDADD   = libqwwad.la $(LDADD)
+densityinput_LDADD   = libqwwad.la
 
 dispersion_relation_SOURCES = src/dispersion_relation.cpp
 dispersion_relation_LDADD   = libqwwad.la
 
 dos_SOURCES  = src/dos.cpp
-dos_LDADD    = libqwwad.la $(LDADD)
+dos_LDADD    = libqwwad.la
 
 ebe_SOURCES = src/ebe.c
 
@@ -162,48 +162,48 @@ efcwwf_SOURCES = src/efcwwf.c
 effv_SOURCES = src/effv.c
 
 efiw_SOURCES = src/efiw.cpp
-efiw_LDADD   = libqwwad.la $(LDADD)
+efiw_LDADD   = libqwwad.la
 
 efiwire_SOURCES = src/efiwire.c
 
 efkpsl_SOURCES = src/efkpsl.cpp
-efkpsl_LDADD   = libqwwad.la $(LDADD)
+efkpsl_LDADD   = libqwwad.la
 
 efmfv_SOURCES = src/efmfv.cpp
-efmfv_LDADD   = libqwwad.la $(LDADD)
+efmfv_LDADD   = libqwwad.la
 
 efpqw_SOURCES = src/efpqw.cpp
-efpqw_LDADD   = libqwwad.la $(LDADD)
+efpqw_LDADD   = libqwwad.la
 
 efsdot_SOURCES = src/efsdot.c
 
 efsdwf_SOURCES = src/efsdwf.c
 
 efss_SOURCES = src/efss.cpp
-efss_LDADD   = libqwwad.la $(LDADD)
+efss_LDADD   = libqwwad.la
 
 efsqw_SOURCES = src/efsqw.cpp
-efsqw_LDADD   = libqwwad.la $(LDADD)
+efsqw_LDADD   = libqwwad.la
 
 efsx_SOURCES = src/efsx.c
 
 efxv_SOURCES = src/efxv.cpp
-efxv_LDADD   = libqwwad.la $(LDADD)
+efxv_LDADD   = libqwwad.la
 
 find_heterostructure_SOURCES = src/find_heterostructure.cpp
-find_heterostructure_LDADD   = libqwwad.la $(LDADD)
+find_heterostructure_LDADD   = libqwwad.la
 
 find_poisson_potential_SOURCES = src/find_poisson_potential.cpp
-find_poisson_potential_LDADD   = libqwwad.la $(LDADD)
+find_poisson_potential_LDADD   = libqwwad.la
 
 gde_SOURCES = src/gde.cpp
-gde_LDADD   = libqwwad.la $(LDADD)
+gde_LDADD   = libqwwad.la
 
 hup_SOURCES = src/hup.cpp
-hup_LDADD   = libqwwad.la $(LDADD)
+hup_LDADD   = libqwwad.la
 
 ivdb_SOURCES = src/ivdb.cpp
-ivdb_LDADD   = libqwwad.la $(LDADD)
+ivdb_LDADD   = libqwwad.la
 
 ppcd_SOURCES = src/ppcd.c
 ppcd_CFLAGS  = $(GSL_CFLAGS)
@@ -225,10 +225,10 @@ ppvfq_LDADD   = libqwwad.la
 pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
 pth_SOURCES = src/pth.cpp
-pth_LDADD   = libqwwad.la $(LDADD)
+pth_LDADD   = libqwwad.la
 
 qwwad_find_donor_state_SOURCES = src/qwwad_find_donor_state.cpp
-qwwad_find_donor_state_LDADD   = libqwwad.la $(LDADD)
+qwwad_find_donor_state_LDADD   = libqwwad.la
 
 rlv_fcc_SOURCES = src/rlv-fcc.c
 
@@ -237,7 +237,7 @@ rlv_sc_SOURCES = src/rlv-sc.c
 rlv_ss_SOURCES = src/rlv-ss.c
 
 sbp_SOURCES  = src/sbp.cpp
-sbp_LDADD    = libqwwad.la $(LDADD)
+sbp_LDADD    = libqwwad.la
 
 sfr_SOURCES  = src/sfr.c
 
@@ -256,13 +256,13 @@ srmpr_SOURCES  = src/srmpr.c
 srrad_SOURCES  = src/srrad.c
 
 tdb_SOURCES  = src/tdb.cpp
-tdb_LDADD    = libqwwad.la $(LDADD)
+tdb_LDADD    = libqwwad.la
 
 tsb_SOURCES  = src/tsb.cpp
-tsb_LDADD    = libqwwad.la $(LDADD)
+tsb_LDADD    = libqwwad.la
 
 wfplot_SOURCES = src/wfplot.cpp
-wfplot_LDADD   = libqwwad.la $(LDADD)
+wfplot_LDADD   = libqwwad.la
 
 # Build rule for installing manual pages
 dist_man1_MANS = man/dispersion_relation.1 \
