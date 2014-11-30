@@ -78,8 +78,8 @@ LIBS="$BLAS_LIBS $LAPACK_LIBS $LIBS"
 
 dnl Check for GNU Scientific Library
 PKG_CHECK_MODULES(GSL, gsl)
-CPPFLAGS="$GSL_CFLAGS $CPPFLAGS"
-LIBS="$GSL_LIBS $LIBS"
+AC_SUBST(GSL_CFLAGS)
+AC_SUBST(GSL_LIBS)
 
 # Check if we have the new "official" C header for LAPACK.  Also, note that
 # there is a bug in LAPACK that causes incorrect linkage with C++11. See
