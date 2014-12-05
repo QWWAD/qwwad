@@ -48,11 +48,7 @@ bin_PROGRAMS =  chargedensity \
 		ivdb    \
 		ppcd    \
 		ppee    \
-		pplb    \
-		pplbso  \
 		ppsg    \
-		ppsl    \
-		ppvfq   \
 		pth     \
 		qwwad_find_donor_state \
 		rlv-fcc \
@@ -128,9 +124,12 @@ libqwwad_la_SOURCES =  \
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)
 
+libqwwad_la_LDFLAGS = $(BOOST_LDFLAGS)
+
 libqwwad_la_LIBADD = $(GSL_LIBS) \
-	             $(BOOST_LDFLAGS) \
-                     $(BOOST_PROGRAM_OPTIONS_LIB)
+                     $(BOOST_PROGRAM_OPTIONS_LIB) \
+		     $(LAPACK_LIBS) \
+		     $(BLAS_LIBS)
 
 AM_CPPFLAGS  = $(GSL_CFLAGS)
 AM_LDFLAGS   = $(GSL_LIBS) \
@@ -211,18 +210,20 @@ ppcd_LDADD   = $(GSL_LIBS)
 
 ppee_SOURCES = src/ppee.c
 
-pplb_SOURCES = src/pplb.c
+#pplb_SOURCES  = src/pplb.c
+#pplb_CPPFLAGS = $(PTHREAD_CFLAGS)
+#pplb_LDADD    = $(PTHREAD_LIBS)
 
 ppsg_SOURCES = src/ppsg.c
 
-ppsl_SOURCES = src/ppsl.c
-ppsl_CFLAGS = $(GSL_CFLAGS)
-ppsl_LDADD  = $(GSL_LIBS)
+# ppsl_SOURCES = src/ppsl.c
+# ppsl_CFLAGS = $(GSL_CFLAGS)
+# ppsl_LDADD  = $(GSL_LIBS)
 
-ppvfq_SOURCES = src/ppvfq.c src/ppff.h
-ppvfq_LDADD   = libqwwad.la
+# ppvfq_SOURCES = src/ppvfq.c src/ppff.h
+# ppvfq_LDADD   = libqwwad.la
 
-pplbso_SOURCES = src/pplbso.c src/ppsop.h
+# pplbso_SOURCES = src/pplbso.c src/ppsop.h
 
 pth_SOURCES = src/pth.cpp
 pth_LDADD   = libqwwad.la
@@ -309,120 +310,99 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/gde.h2m                    \
 	      doc/qwwad_find_donor_state.h2m 
 
-man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m
+man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m | dos$(EXEEXT) 
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) dos$(EXEEXT)
 	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/dos.h2m ./dos$(EXEEXT)
 
-man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efiw.h2m
+man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efiw.h2m | efiw$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efiw$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/efiw.h2m ./efiw$(EXEEXT)
 
-man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dispersion_relation.h2m
+man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dispersion_relation.h2m | dispersion_relation$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) dispersion_relation$(EXEEXT)
 	help2man --output=$@ --name="compute the dispersion relation for an energy subband" --include $(top_srcdir)/doc/dispersion_relation.h2m ./dispersion_relation$(EXEEXT)
 
-man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m
+man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m | sbp$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) sbp$(EXEEXT)
 	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/sbp.h2m ./sbp$(EXEEXT)
 
-man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2m
+man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2m | efsqw$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efsqw$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/efsqw.h2m ./efsqw$(EXEEXT)
 
-man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot.h2m
+man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot.h2m | wfplot$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) wfplot$(EXEEXT)
 	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/wfplot.h2m ./wfplot$(EXEEXT)
 
-man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efkpsl.h2m
+man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efkpsl.h2m | efkpsl$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efkpsl$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/efkpsl.h2m ./efkpsl$(EXEEXT)
 
-man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tsb.h2m
+man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tsb.h2m | tsb$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) tsb$(EXEEXT)
 	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." --include $(top_srcdir)/doc/tsb.h2m ./tsb$(EXEEXT) 
 
-man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tdb.h2m
+man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tdb.h2m | tdb$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) tdb$(EXEEXT)
 	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." --include $(top_srcdir)/doc/tdb.h2m ./tdb$(EXEEXT)
 
-man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/ivdb.h2m
+man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/ivdb.h2m | ivdb$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) ivdb$(EXEEXT)
 	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/ivdb.h2m ./ivdb$(EXEEXT)
 
 man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/find_heterostructure.h2m
+    $(top_srcdir)/doc/find_heterostructure.h2m | find_heterostructure$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) find_heterostructure$(EXEEXT)
 	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/find_heterostructure.h2m ./find_heterostructure$(EXEEXT)
 
 man/efxv.1: src/efxv.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efxv.h2m
+    $(top_srcdir)/doc/efxv.h2m | efxv$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efxv$(EXEEXT)
 	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/efxv.h2m ./efxv$(EXEEXT)
 
 man/efss.1: src/efss.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efss.h2m
+    $(top_srcdir)/doc/efss.h2m | efss$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efss$(EXEEXT)
 	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/efss.h2m ./efss$(EXEEXT)
 
 man/efpqw.1: src/efpqw.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efpqw.h2m
+    $(top_srcdir)/doc/efpqw.h2m | efpqw$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) efpqw$(EXEEXT)
 	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/efpqw.h2m ./efpqw$(EXEEXT)
 
 man/pth.1: src/pth.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/pth.h2m
+    $(top_srcdir)/doc/pth.h2m | pth$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) pth$(EXEEXT)
 	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/pth.h2m ./pth$(EXEEXT) 
 
 man/find_poisson_potential.1: src/find_poisson_potential.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/find_poisson_potential.h2m
+    $(top_srcdir)/doc/find_poisson_potential.h2m | find_poisson_potential$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) find_poisson_potential$(EXEEXT)
 	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/find_poisson_potential.h2m ./find_poisson_potential$(EXEEXT) 
 
 man/hup.1: src/hup.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/hup.h2m
+    $(top_srcdir)/doc/hup.h2m | hup$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) hup$(EXEEXT)
 	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/hup.h2m ./hup$(EXEEXT) 
 
 man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/densityinput.h2m
+    $(top_srcdir)/doc/densityinput.h2m | densityinput$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) densityinput$(EXEEXT)
 	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/densityinput.h2m ./densityinput$(EXEEXT) 
 
 man/chargedensity.1: src/chargedensity.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/chargedensity.h2m
+    $(top_srcdir)/doc/chargedensity.h2m | chargedensity$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) chargedensity$(EXEEXT)
 	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/chargedensity.h2m ./chargedensity$(EXEEXT) 
 
 man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/gde.h2m
+    $(top_srcdir)/doc/gde.h2m | gde$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) gde$(EXEEXT)
 	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/gde.h2m ./gde$(EXEEXT) 
 
 man/qwwad_find_donor_state.1: src/qwwad_find_donor_state.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/qwwad_find_donor_state.h2m
+    $(top_srcdir)/doc/qwwad_find_donor_state.h2m | qwwad_find_donor_state$(EXEEXT)
 	$(MKDIR_P) man
-	$(MAKE) $(AM_MAKEFLAGS) qwwad_find_donor_state$(EXEEXT)
 	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_find_donor_state.h2m ./qwwad_find_donor_state$(EXEEXT) 
 
 # Install examples

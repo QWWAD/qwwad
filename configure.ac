@@ -16,24 +16,19 @@ m4_if(m4_version_compare(m4_defn([AC_AUTOCONF_VERSION]),[2.64]), [-1],
   ]
 )
 
-AC_CONFIG_SRCDIR([src/csss.c])
 AC_CONFIG_AUX_DIR([config])
-AC_CONFIG_MACRO_DIR([m4])
-AC_CONFIG_HEADERS([config.h])
-
-dnl Libtool needs access to the "ar" archiver so check that it exists.
-dnl TODO: This macro is new in Automake 1.12 so we can apply this
-dnl       check by default once we update our Automake dependency.
-m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
-
-# Set up libtool
-AC_PROG_LIBTOOL
-LT_PREREQ([2.2])
-LT_INIT
 
 # The number in the options list here refers to the minimum version
 # of Automake that can be accepted
 AM_INIT_AUTOMAKE([-W -Wall 1.11 subdir-objects])
+
+AC_CONFIG_SRCDIR([src/csss.c])
+AC_CONFIG_MACRO_DIR([m4])
+AC_CONFIG_HEADERS([config.h])
+
+# Set up libtool
+LT_PREREQ([2.2])
+LT_INIT
 
 dnl Quieten the Make output
 AM_SILENT_RULES([yes])
@@ -55,7 +50,7 @@ dnl Set up very strict build for development purposes
 CPPFLAGS="-W -Wall -Werror"
 
 # Checks for libraries.
-AC_CHECK_LIB([m], [pow])
+AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])
 
 # Check for Boost Program Options
 
@@ -74,7 +69,7 @@ AX_BOOST_PROGRAM_OPTIONS
 # Check for linear algebra libraries
 AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try again]))
 AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))
-LIBS="$BLAS_LIBS $LAPACK_LIBS $LIBS"
+#LINALG_LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
 
 dnl Check for GNU Scientific Library
 PKG_CHECK_MODULES(GSL, gsl)
