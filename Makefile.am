@@ -202,7 +202,7 @@ gde_LDADD   = libqwwad.la
 hup_SOURCES = src/hup.cpp
 hup_LDADD   = libqwwad.la
 
-i0_SOURCES  = src/i0.c
+i0_SOURCES  = src/i0.cpp
 
 ivdb_SOURCES = src/ivdb.cpp
 ivdb_LDADD   = libqwwad.la

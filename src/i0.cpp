@@ -28,23 +28,41 @@
    Paul Harrison, June 2001
    								*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
 #include <signal.h>
 #include <malloc.h>
 #include "struct.h"
-#include "maths.h"
 #include "qclsim-constants.h"
+
+using namespace Leeds;
+using namespace constants;
+
+data11 * read_v(int *n);
+data11 * read_wf(int n,
+                 int state,
+                 char p);
+double read_delta_z(data11 *Vp);
+double Energy(data11	*wf,
+              data11	*V,
+              double	dz,
+              double	epsilon,
+              double	m,
+              double	lambda,
+              double	r_i,
+              int	n,
+              int	S);
+double Psi(const double psi,
+           const double lambda,
+           const double x,
+           const double y,
+           const double z,
+           const int    S);
 
 int main(int argc,char *argv[])
 {
-double	read_delta_z();
-double	Energy();	/* expectation value of Hamiltonian	*/
-data11 *read_v();	/* reads potential file into memory	*/
-data11 *read_wf();	/* reads eigenvector into memory	*/
-
 double	dz;		/* z separation of input potentials	*/
 double	epsilon;	/* permitivity of material		*/
 double	f,fdash;	/* function (dE/dlambda) and derivative 
@@ -134,7 +152,6 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-
   V=read_v(&n);			/* reads potential file		*/
   wf=read_wf(n,state,p);	/* reads wavefunction into memory	*/
 
@@ -170,9 +187,9 @@ while((argc>1)&&(argv[1][0]=='-'))
     								*/
    do
    {
-    y1=Energy(wf,V,dz,epsilon,m,lambda-lambda_step,lambda_0,r_i,n,S);
-    y2=Energy(wf,V,dz,epsilon,m,lambda,lambda_0,r_i,n,S);
-    y3=Energy(wf,V,dz,epsilon,m,lambda+lambda_step,lambda_0,r_i,n,S);
+    y1=Energy(wf,V,dz,epsilon,m,lambda-lambda_step,r_i,n,S);
+    y2=Energy(wf,V,dz,epsilon,m,lambda,r_i,n,S);
+    y3=Energy(wf,V,dz,epsilon,m,lambda+lambda_step,r_i,n,S);
 
     f=(y3-y1)/(2*lambda_step);
     fdash=(y3-2*y2+y1)/(lambda_step*lambda_step);
@@ -203,26 +220,20 @@ while((argc>1)&&(argv[1][0]=='-'))
   return EXIT_SUCCESS;
 } /* end main */
 
-double
-Energy(wf,V,dz,epsilon,m,lambda,r_i,n,S)
-
-data11	*wf;
-data11	*V;
-double	dz;
-double	epsilon;
-double	m;
-double	lambda;
-double	r_i;
-int	n;
-int	S;
-
 /* This function calculates the expectation value (the energy) of the
    Hamiltonian operator	*/
-
+double Energy(data11	*wf,
+              data11	*V,
+              double	dz,
+              double	epsilon,
+              double	m,
+              double	lambda,
+              double	r_i,
+              int	n,
+              int	S)
 {
  double	dx;
  double	dy;
- double	Psi();	/* the wave function		*/
  double	Psixyz;	/* Psi(x,y,z)			*/
  double	d2Pdx2;	/* 2nd derivative of Psi wrt x	*/
  double	d2Pdy2;	/* 2nd derivative of Psi wrt y	*/
@@ -279,8 +290,6 @@ int	S;
  return(top/bot);
 }
 
-
-
 /**
  * \brief The wave function psi(z)phi(r)
  */
@@ -316,15 +325,9 @@ double Psi(const double psi,
     return result;
 }
 
-
-
-double 
-read_delta_z(Vp)
-
 /* This function calculates the separation along the z (growth) 
    direction of the user supplied potentials                                        */
-
-data11 *Vp;
+double read_delta_z(data11 *Vp)
 {
  double z[2];           /* displacement along growth direction     */
 
@@ -334,16 +337,9 @@ data11 *Vp;
  return(z[1]-z[0]);
 }
 
-
-
-data11
-*read_v(n)
-
 /* This function reads the potential into memory and returns the start
    address of this block of memory and the number of lines         */
-
-int     *n;
-
+data11 * read_v(int *n)
 {
  FILE   *fp;            /* file pointer to potential file          */
  data11  *Vp;           /* temporary pointer to potential          */
@@ -375,18 +371,11 @@ int     *n;
 
 }
 
-
-
-data11
-*read_wf(n,state,p)
-
 /* This function reads the potential into memory and returns the start
    address of this block of memory and the number of lines	   */
-
-int	n;
-int	state;
-char	p;
-
+data11 * read_wf(int n,
+                 int state,
+                 char p)
 {
  char	filename[9];	/* input filename			*/
  int	i;		/* index				*/
@@ -415,4 +404,4 @@ char	p;
  return(wf);
 
 }
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
