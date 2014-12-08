@@ -45,6 +45,7 @@ bin_PROGRAMS =  chargedensity \
 		find_poisson_potential \
 		gde     \
 		hup     \
+		i0      \
 		ivdb    \
 		ppcd    \
 		ppee    \
@@ -200,6 +201,8 @@ gde_LDADD   = libqwwad.la
 
 hup_SOURCES = src/hup.cpp
 hup_LDADD   = libqwwad.la
+
+i0_SOURCES  = src/i0.c
 
 ivdb_SOURCES = src/ivdb.cpp
 ivdb_LDADD   = libqwwad.la

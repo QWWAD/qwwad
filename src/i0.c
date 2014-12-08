@@ -30,16 +30,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include <signal.h>
 #include <malloc.h>
-#include "const.h"
 #include "struct.h"
 #include "maths.h"
-#include "bools.h"
-#include "io.h"
+#include "qclsim-constants.h"
 
-main(int argc,char *argv[])
+int main(int argc,char *argv[])
 {
 double	read_delta_z();
 double	Energy();	/* expectation value of Hamiltonian	*/
@@ -47,7 +46,6 @@ data11 *read_v();	/* reads potential file into memory	*/
 data11 *read_wf();	/* reads eigenvector into memory	*/
 
 double	dz;		/* z separation of input potentials	*/
-double	E;		/* electron (or hole) energies		*/
 double	epsilon;	/* permitivity of material		*/
 double	f,fdash;	/* function (dE/dlambda) and derivative 
 			   to be solved				*/
@@ -72,8 +70,8 @@ FILE   *fr_i;		/* file pointer to donor positions	*/
 
 /* default values */
 
-epsilon=13.18*epsilon_0;
-m=0.067*m0;
+epsilon=13.18*eps0;
+m=0.067*me;
 p='e';
 state=1;
 S=1;
@@ -87,10 +85,10 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'e':
-	   epsilon=atof(argv[2])*epsilon_0;
+	   epsilon=atof(argv[2])*eps0;
 	   break;
   case 'm':
-	   m=atof(argv[2])*m0;
+	   m=atof(argv[2])*me;
 	   break;
   case 's':
 	   state=atoi(argv[2]);
@@ -142,7 +140,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 
   dz=read_delta_z(V);		/* z- (growth) direction step length	*/
 
-  lambda_0=4*pi*epsilon*(hbar/e_0)*(hbar/e_0)/m;/* Bohr	theory (1s)	*/
+  lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
   /* Open files for output of data */
 
@@ -170,7 +168,6 @@ while((argc>1)&&(argv[1][0]=='-'))
    /* Newton-Raphson iteration for solution of lambda, this occurs when
       dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
     								*/
-
    do
    {
     y1=Energy(wf,V,dz,epsilon,m,lambda-lambda_step,lambda_0,r_i,n,S);
@@ -181,7 +178,7 @@ while((argc>1)&&(argv[1][0]=='-'))
     fdash=(y3-2*y2+y1)/(lambda_step*lambda_step);
 
     printf("r_i %4.2f A lambda %4.2f A energy %4.3f meV\n",
-            r_i/1e-10,lambda/1e-10,y2/(1e-3*e_0));
+            r_i/1e-10,lambda/1e-10,y2/(1e-3*e));
 
     lambda-=f/fdash;
 
@@ -190,7 +187,7 @@ while((argc>1)&&(argv[1][0]=='-'))
    /* Output total energy (E) of impurity/heterostructure system 
       and Bohr radii (lambda), in meV and Angstrom respectively */
 
-   fprintf(fe,"%le %le\n",r_i/1e-10,y2/(1e-3*e_0));
+   fprintf(fe,"%le %le\n",r_i/1e-10,y2/(1e-3*e));
    fprintf(fl,"%le %le\n",r_i/1e-10,lambda/1e-10);
 
    i_i++;            /* index for impurity atoms */
@@ -203,15 +200,11 @@ while((argc>1)&&(argv[1][0]=='-'))
   free(V);
   free(wf);
 
-
+  return EXIT_SUCCESS;
 } /* end main */
 
-
-
-
-
 double
-Energy(wf,V,dz,epsilon,m,lambda,lambda_0,r_i,n,S)
+Energy(wf,V,dz,epsilon,m,lambda,r_i,n,S)
 
 data11	*wf;
 data11	*V;
@@ -219,7 +212,6 @@ double	dz;
 double	epsilon;
 double	m;
 double	lambda;
-double	lambda_0;
 double	r_i;
 int	n;
 int	S;
@@ -276,8 +268,8 @@ int	S;
 
     r=sqrt(x*x+y*y+(((wf+iz)->a)-r_i)*(((wf+iz)->a)-r_i));
 
-    top+=Psixyz*(-(hbar/(2*m))*hbar*(d2Pdx2+d2Pdy2+d2Pdz2)
-	+(v-e_0*e_0/(4*pi*epsilon*r))*Psixyz);
+    top+=Psixyz*(-(hBar/(2*m))*hBar*(d2Pdx2+d2Pdy2+d2Pdz2)
+	+(v-e*e/(4*pi*epsilon*r))*Psixyz);
     bot+=Psixyz*Psixyz;		
 
    }
@@ -289,26 +281,39 @@ int	S;
 
 
 
-double
-Psi(psi,lambda,x,y,z,S)
-
-/* The wave function psi(z)phi(r)					*/
-
-double	psi;
-double	lambda;
-double	x;
-double	y;
-double	z;
-int	S;
-
+/**
+ * \brief The wave function psi(z)phi(r)
+ */
+double Psi(const double psi,
+           const double lambda,
+           const double x,
+           const double y,
+           const double z,
+           const int    S)
 {
- double	r;
- r=sqrt(x*x+y*y+z*z);
+    const double r = sqrt(x*x+y*y+z*z);
 
- if(S==1)return(psi*exp(-r/lambda));			/* 1s	*/
- if(S==2)return(psi*(1-r/lambda)*exp(-r/lambda));	/* 2s	*/
- if(S==3)return(psi*fabs(x)*exp(-r/lambda));		/* 2px	*/
- if(S==4)return(psi*fabs(z)*exp(-r/lambda));		/* 2pz	*/
+    double result = 0.0;
+
+    switch(S)
+    {
+        case 1:
+            result = psi*exp(-r/lambda); /* 1s	*/
+            break;
+        case 2:
+            result = psi*(1-r/lambda)*exp(-r/lambda);	/* 2s	*/
+            break;
+        case 3:
+            result = psi*fabs(x)*exp(-r/lambda); /* 2px	*/
+            break;
+        case 4:
+            result = psi*fabs(z)*exp(-r/lambda); /* 2pz	*/
+        default:
+            fprintf(stderr, "Unrecognised orbital\n");
+            exit(EXIT_FAILURE);
+    }
+
+    return result;
 }
 
 
@@ -350,7 +355,7 @@ int     *n;
    exit(0);
  }
  *n=0;
- while(fscanf(fp,"%*le %*le")!=EOF)
+ while(fscanf(fp,"%*e %*e")!=EOF)
   (*n)++;
  rewind(fp);
 
