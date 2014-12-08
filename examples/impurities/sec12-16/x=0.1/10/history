@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 # 3D trial wave fucntion donor binding energy calculationas a function of
 # well width for different barrier heights
 # Define the barrier alloy concentration
@@ -32,30 +33,20 @@ echo $LW 0.0 0.0 >> s.r
 echo 200 $X 0.0  >> s.r
 
 # Generate alloy profile
-
-efsx
+find_heterostructure
 
 # Generate potential profile for Ga(1-x)Al(x)As, can use defaults
+efxv --mass 0.067
 
-efxv 
-
-# Calculate electron energy for same quantum well but without donor
-
-efxm -m 0.067			# generate constant mass data 
-
-efshoot				# calculate electron energy without donor
-efwf				# generate wave functions
+efss				# calculate electron energy without donor
 
 # Create r_d.r with single entry at centre of well
-
 gawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_i.r
 
 # Start donor binding energy calculation
-
-./i0
+i0
 
 # Store Bohr radii as a function of well width too
-
 echo -e -n $LW >> $OUTPUT2
 
 # Append lambda

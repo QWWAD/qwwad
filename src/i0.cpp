@@ -36,23 +36,18 @@
 #include <malloc.h>
 #include "struct.h"
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 
 using namespace Leeds;
 using namespace constants;
 
-data11 * read_v(int *n);
-data11 * read_wf(int n,
-                 int state,
-                 char p);
-double read_delta_z(data11 *Vp);
-double Energy(data11	*wf,
-              data11	*V,
-              double	dz,
+double Energy(const std::valarray<double> &wf,
+              const std::valarray<double> &V,
+              const std::valarray<double> &z,
               double	epsilon,
               double	m,
               double	lambda,
               double	r_i,
-              int	n,
               int	S);
 double Psi(const double psi,
            const double lambda,
@@ -63,7 +58,6 @@ double Psi(const double psi,
 
 int main(int argc,char *argv[])
 {
-double	dz;		/* z separation of input potentials	*/
 double	epsilon;	/* permitivity of material		*/
 double	f,fdash;	/* function (dE/dlambda) and derivative 
 			   to be solved				*/
@@ -74,13 +68,10 @@ double	m;		/* mass of particle			*/
 double	r_i;		/* position of impurity			*/
 double	y1,y2,y3;	/* E(lambda-), E(lambda), E(lambda+)	*/
 int	i_i;		/* index of impurity			*/
-int	n;		/* number of lines in potential file	*/
 int	state;		/* principal quantum number		*/
 int	S;		/* impurity level, i.e. `1s', `2px' etc	*/
 char	p;		/* particle				*/
 char	State[9];	/* string containing impurity level	*/
-data11  *V;		/* start address of potential		*/
-data11  *wf;		/* start address of wave function	*/
 FILE   *fe;		/* file pointer for energies		*/
 FILE   *fl;		/* file pointer for lambda_0		*/
 FILE   *fr_i;		/* file pointer to donor positions	*/
@@ -152,10 +143,16 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-  V=read_v(&n);			/* reads potential file		*/
-  wf=read_wf(n,state,p);	/* reads wavefunction into memory	*/
 
-  dz=read_delta_z(V);		/* z- (growth) direction step length	*/
+    std::valarray<double> z; // Spatial location [m]
+    std::valarray<double> V; // Confining potential [J]
+    read_table_xy("v.r", z, V);
+
+    char	filename[9];	/* input filename			*/
+    sprintf(filename,"wf_%c%i.r",p,state);
+    std::valarray<double> z_tmp; // Dummy file for unused spatial locations
+    std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
+    read_table_xy(filename, z_tmp, wf);
 
   lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
@@ -187,9 +184,9 @@ while((argc>1)&&(argv[1][0]=='-'))
     								*/
    do
    {
-    y1=Energy(wf,V,dz,epsilon,m,lambda-lambda_step,r_i,n,S);
-    y2=Energy(wf,V,dz,epsilon,m,lambda,r_i,n,S);
-    y3=Energy(wf,V,dz,epsilon,m,lambda+lambda_step,r_i,n,S);
+    y1=Energy(wf,V,z,epsilon,m,lambda-lambda_step,r_i,S);
+    y2=Energy(wf,V,z,epsilon,m,lambda,r_i,S);
+    y3=Energy(wf,V,z,epsilon,m,lambda+lambda_step,r_i,S);
 
     f=(y3-y1)/(2*lambda_step);
     fdash=(y3-2*y2+y1)/(lambda_step*lambda_step);
@@ -214,26 +211,21 @@ while((argc>1)&&(argv[1][0]=='-'))
   fclose(fr_i);
   fclose(fe);
   fclose(fl);
-  free(V);
-  free(wf);
 
   return EXIT_SUCCESS;
 } /* end main */
 
 /* This function calculates the expectation value (the energy) of the
    Hamiltonian operator	*/
-double Energy(data11	*wf,
-              data11	*V,
-              double	dz,
+double Energy(const std::valarray<double> &wf,
+              const std::valarray<double> &V,
+              const std::valarray<double> &z,
               double	epsilon,
               double	m,
               double	lambda,
               double	r_i,
-              int	n,
               int	S)
 {
- double	dx;
- double	dy;
  double	Psixyz;	/* Psi(x,y,z)			*/
  double	d2Pdx2;	/* 2nd derivative of Psi wrt x	*/
  double	d2Pdy2;	/* 2nd derivative of Psi wrt y	*/
@@ -241,46 +233,43 @@ double Energy(data11	*wf,
  double	top=0;	/* <Psi|H|Psi>			*/
  double	bot=0;	/* <Psi|Psi>			*/
  double	r;	/* distance from impurity	*/
- double	v;	/* the potential V(z)		*/
  double	x;	/* the spatial coordinate x	*/
  double	y;	/* the spatial coordinate y	*/
- int	iz;	/* index over z coordinates	*/
  
- dx=lambda/10;
- dy=lambda/10;
+ const double dx=lambda/10;
+ const double dy=lambda/10;
+ const double dz = z[1] - z[0];		/* z- (growth) direction step length	*/
 
- for(iz=1;iz<(n-1);iz++)	/* integration along z-axis	*/
+ for(unsigned int iz=1;iz<(V.size()-1);iz++)	/* integration along z-axis	*/
  {
-  v=(V+iz)->b;			/* the potential V(z)		*/
-  				
   /* integrate over the plane, include `+dx/2' to avoid `x=0'	*/
 
   for(x=-3*lambda+dx/2;x<(3*lambda);x+=dx)	
   {
    for(y=-3*lambda+dy/2;y<(3*lambda);y+=dy)	
    {
-    Psixyz=Psi((wf+iz)->b,lambda,x,y,((wf+iz)->a)-r_i,S);/* reused, remember*/
+    Psixyz=Psi(wf[iz],lambda,x,y,z[iz]-r_i,S);/* reused, remember*/
 
     /* Calculate the second derivatives along x, y and z	*/
 
-    d2Pdx2=(Psi((wf+iz)->b,lambda,x+dx,y,((wf+iz)->a)-r_i,S)-
+    d2Pdx2=(Psi(wf[iz],lambda,x+dx,y,z[iz]-r_i,S)-
 	    2*Psixyz+
-	    Psi((wf+iz)->b,lambda,x-dx,y,((wf+iz)->a)-r_i,S))/(dx*dx);
+	    Psi(wf[iz],lambda,x-dx,y,z[iz]-r_i,S))/(dx*dx);
 
-    d2Pdy2=(Psi((wf+iz)->b,lambda,x,y+dy,((wf+iz)->a)-r_i,S)-
+    d2Pdy2=(Psi(wf[iz],lambda,x,y+dy,z[iz]-r_i,S)-
 	    2*Psixyz+
-	    Psi((wf+iz)->b,lambda,x,y-dy,((wf+iz)->a)-r_i,S))/(dy*dy);
+	    Psi(wf[iz],lambda,x,y-dy,z[iz]-r_i,S))/(dy*dy);
 
-    d2Pdz2=(Psi((wf+iz+1)->b,lambda,x,y,((wf+iz+1)->a)-r_i,S)-
+    d2Pdz2=(Psi(wf[iz+1],lambda,x,y,z[iz+1]-r_i,S)-
 	    2*Psixyz+
-	    Psi((wf+iz-1)->b,lambda,x,y,((wf+iz-1)->a)-r_i,S))/(dz*dz);
+	    Psi(wf[iz-1],lambda,x,y,z[iz-1]-r_i,S))/(dz*dz);
 	   
     /* Need distance from impurity for Coloumb term		*/
 
-    r=sqrt(x*x+y*y+(((wf+iz)->a)-r_i)*(((wf+iz)->a)-r_i));
+    r=sqrt(x*x+y*y+(z[iz]-r_i)*(z[iz]-r_i));
 
     top+=Psixyz*(-(hBar/(2*m))*hBar*(d2Pdx2+d2Pdy2+d2Pdz2)
-	+(v-e*e/(4*pi*epsilon*r))*Psixyz);
+	+(V[iz]-e*e/(4*pi*epsilon*r))*Psixyz);
     bot+=Psixyz*Psixyz;		
 
    }
@@ -323,85 +312,5 @@ double Psi(const double psi,
     }
 
     return result;
-}
-
-/* This function calculates the separation along the z (growth) 
-   direction of the user supplied potentials                                        */
-double read_delta_z(data11 *Vp)
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0] = Vp->a;
- Vp++;
- z[1] = Vp->a;
- return(z[1]-z[0]);
-}
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines         */
-data11 * read_v(int *n)
-{
- FILE   *fp;            /* file pointer to potential file          */
- data11  *Vp;           /* temporary pointer to potential          */
- data11  *V;            /* start address of potential              */
-
- if((fp=fopen("v.r","r"))==0)
- {
-   fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
-   exit(0);
- }
- *n=0;
- while(fscanf(fp,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(fp);
-
-
- V=(data11 *)calloc(*n,sizeof(data11));
- if (V==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- Vp=V;
-
- while(fscanf(fp,"%le %le", &(Vp->a), &(Vp->b))!=EOF)
-  Vp++;
-
- fclose(fp);
- return(V);
-
-}
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-data11 * read_wf(int n,
-                 int state,
-                 char p)
-{
- char	filename[9];	/* input filename			*/
- int	i;		/* index				*/
- FILE 	*Fwf;		/* file pointer to wavefunction file	*/
- data11	*wf;		/* pointer to wave function structure	*/
-
- /* Open wave function file for reading	*/
- 
- sprintf(filename,"wf_%c%i.r",p,state);	
- if((Fwf=fopen(filename,"r"))==0)
- {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
-
- /* Allocate memory for wavefunction */
-
- wf=(data11 *)calloc(n,sizeof(data11));
- if(wf==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
- /* Read in wave function 	*/
-
- i=0;						/* Read in each file	*/
- while(fscanf(Fwf,"%le %le",&((wf+i)->a),&((wf+i)->b))!=EOF)
-  i++;
-
- fclose(Fwf);					/* Close each file	*/
-
- return(wf);
-
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
