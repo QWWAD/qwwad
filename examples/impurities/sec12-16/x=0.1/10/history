@@ -41,7 +41,7 @@ efxv --mass 0.067
 efss				# calculate electron energy without donor
 
 # Create r_d.r with single entry at centre of well
-gawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_i.r
+gawk "{printf(\"%e\n\",(200+$LW/2)/1e+10)}" dummy.file > r_d.r
 
 # Start donor binding energy calculation
 i0

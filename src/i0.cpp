@@ -32,8 +32,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
-#include <signal.h>
-#include <malloc.h>
 #include "struct.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
@@ -65,29 +63,20 @@ double	lambda;		/* Bohr radius (variational)		*/
 double	lambda_step;	/* Bohr radius increment		*/
 double	lambda_0;	/* Bohr radius of bulk impurity		*/
 double	m;		/* mass of particle			*/
-double	r_i;		/* position of impurity			*/
 double	y1,y2,y3;	/* E(lambda-), E(lambda), E(lambda+)	*/
-int	i_i;		/* index of impurity			*/
 int	state;		/* principal quantum number		*/
 int	S;		/* impurity level, i.e. `1s', `2px' etc	*/
 char	p;		/* particle				*/
 char	State[9];	/* string containing impurity level	*/
 FILE   *fe;		/* file pointer for energies		*/
 FILE   *fl;		/* file pointer for lambda_0		*/
-FILE   *fr_i;		/* file pointer to donor positions	*/
- 
 
 /* default values */
-
 epsilon=13.18*eps0;
 m=0.067*me;
 p='e';
 state=1;
 S=1;
-
-/* computational default values */
-
-i_i=0;          
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -143,7 +132,6 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
     read_table_xy("v.r", z, V);
@@ -161,18 +149,12 @@ while((argc>1)&&(argv[1][0]=='-'))
   fe=fopen("e.r","w");           /* E versus r_i	*/
   fl=fopen("l.r","w");           /* lambda versus r_i	*/
 
-  /* Different donor (or acceptor) positions */
+  // Read list of donor (or acceptor) positions
+  std::valarray<double> r_d; // [m]
+  read_table_x("r_d.r", r_d);
 
-  if((fr_i=fopen("r_i.r","r"))==0)    /* open r_i data for reading	*/
-  {
-   fprintf(stderr,"Error: Cannot open input file 'r_i.r'!\n");
-   exit(0);
-  }
-
-  /* read in each donor position from r_i.r and perform variational
-     calculation for each one						*/
-
-  while(fscanf(fr_i,"%lf\n",&r_i)!=EOF)
+  // Perform variational calculation for each donor/acceptor position
+  for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
   {
    lambda=lambda_0;				/* initial lambda guess	*/
    if((S==2)||(S==3))lambda*=2;			/* for 2s, 2px NOT 2pz	*/
@@ -184,15 +166,15 @@ while((argc>1)&&(argv[1][0]=='-'))
     								*/
    do
    {
-    y1=Energy(wf,V,z,epsilon,m,lambda-lambda_step,r_i,S);
-    y2=Energy(wf,V,z,epsilon,m,lambda,r_i,S);
-    y3=Energy(wf,V,z,epsilon,m,lambda+lambda_step,r_i,S);
+    y1=Energy(wf,V,z,epsilon,m,lambda-lambda_step,r_d[i_d],S);
+    y2=Energy(wf,V,z,epsilon,m,lambda,r_d[i_d],S);
+    y3=Energy(wf,V,z,epsilon,m,lambda+lambda_step,r_d[i_d],S);
 
     f=(y3-y1)/(2*lambda_step);
     fdash=(y3-2*y2+y1)/(lambda_step*lambda_step);
 
     printf("r_i %4.2f A lambda %4.2f A energy %4.3f meV\n",
-            r_i/1e-10,lambda/1e-10,y2/(1e-3*e));
+            r_d[i_d]/1e-10,lambda/1e-10,y2/(1e-3*e));
 
     lambda-=f/fdash;
 
@@ -200,15 +182,10 @@ while((argc>1)&&(argv[1][0]=='-'))
 
    /* Output total energy (E) of impurity/heterostructure system 
       and Bohr radii (lambda), in meV and Angstrom respectively */
-
-   fprintf(fe,"%le %le\n",r_i/1e-10,y2/(1e-3*e));
-   fprintf(fl,"%le %le\n",r_i/1e-10,lambda/1e-10);
-
-   i_i++;            /* index for impurity atoms */
-
+   fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,y2/(1e-3*e));
+   fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda/1e-10);
   }/* end while r_i */
 
-  fclose(fr_i);
   fclose(fe);
   fclose(fl);
 
