@@ -3,7 +3,10 @@
 #endif
 
 ACLOCAL_AMFLAGS=-I m4
-#SUBDIRS=$(OPTIONAL_DOCS)
+AM_CPPFLAGS  = $(GSL_CFLAGS)
+AM_LDFLAGS   = $(GSL_LIBS) \
+               $(BOOST_LDFLAGS) \
+               $(BOOST_PROGRAM_OPTIONS_LIB)
 
 EXTRA_DIST=autogen.sh                     \
 	   config/install-sh              \
@@ -130,12 +133,8 @@ libqwwad_la_LDFLAGS = $(BOOST_LDFLAGS)
 libqwwad_la_LIBADD = $(GSL_LIBS) \
                      $(BOOST_PROGRAM_OPTIONS_LIB) \
 		     $(LAPACK_LIBS) \
-		     $(BLAS_LIBS)
-
-AM_CPPFLAGS  = $(GSL_CFLAGS)
-AM_LDFLAGS   = $(GSL_LIBS) \
-               $(BOOST_LDFLAGS) \
-               $(BOOST_PROGRAM_OPTIONS_LIB)
+		     $(BLAS_LIBS)   \
+		     $(FLIBS)
 
 chargedensity_SOURCES = src/chargedensity.cpp
 chargedensity_LDADD   = libqwwad.la

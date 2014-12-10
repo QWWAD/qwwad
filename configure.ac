@@ -47,7 +47,7 @@ CXXFLAGS="-Wall $CXXFLAGS"
 LDFLAGS="-Wl,--as-needed $LDFLAGS"
 
 dnl Set up very strict build for development purposes
-CPPFLAGS="-W -Wall -Werror"
+CPPFLAGS="-W -Wall -Werror $CPPFLAGS"
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])
