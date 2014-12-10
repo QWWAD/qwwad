@@ -233,9 +233,7 @@ double Energy(double  lambda,
 
         const double z_dash = p->z[iz] - p->r_i; // Separation from donor in z-direction [m]
 
-        // integrate over the plane, skipping singularity at x=0
-        // Note that we correct for this later
-        for(unsigned int ix=1; ix<nxy; ++ix)	
+        for(unsigned int ix=0; ix<nxy; ++ix)	
         {
             const double x = ix*dxy;
 
@@ -245,14 +243,14 @@ double Energy(double  lambda,
             std::valarray<double> H_integrand_xyz(nxy);
 
             // Wavefunction at (x, y - dy, z_dash)
-            double Psixyz_last_y = Psi(p->wf[iz], lambda, x, 0, z_dash, p->S);
+            double Psixyz_last_y = Psi(p->wf[iz], lambda, x, -dxy, z_dash, p->S);
 
             // Wavefunction at (x,y,z_dash)
-            double Psixyz = Psi(p->wf[iz],lambda, x, dxy, z_dash, p->S);
+            double Psixyz = Psi(p->wf[iz],lambda, x, 0, z_dash, p->S);
 
             const double rsq_xz = x*x + z_dash*z_dash;
 
-            for(unsigned int iy=1; iy<nxy; ++iy)
+            for(unsigned int iy=0; iy<nxy; ++iy)
             {
                 const double y = iy*dxy;
 
@@ -288,21 +286,16 @@ double Energy(double  lambda,
                 Psixyz        = Psixyz_next_y;
             }
 
-            // Approximate the singularities with values at neighbouring point
-            // Note that this preserves the symmetry of the functions around 0.
-            PD_integrand_xyz[0] = PD_integrand_xyz[1];
-            H_integrand_xyz[0]  = H_integrand_xyz[1];
+            // Approximate the singularity at r=0 with value at (r=dy)
+            // Note that this preserves the symmetry of the function around (x,y) = 0.
+            if(ix==0 && z_dash == 0)
+                H_integrand_xyz[0] = H_integrand_xyz[1];
 
             // Perform integration over y, noting that a factor of 2 is included
             // to account for even symmetry
             H_integrand_xz[ix]  = 2*simps(H_integrand_xyz, dxy);
             PD_integrand_xz[ix] = 2*simps(PD_integrand_xyz, dxy);
         }
-
-        // Approximate the singularities with values at neighbouring point
-        // Note that this preserves the symmetry of the functions around 0.
-        PD_integrand_xz[0] = PD_integrand_xz[1];
-        H_integrand_xz[0]  = H_integrand_xz[1];
 
         // Perform integration over x, noting that a factor of 2 is included
         // to account for even symmetry
