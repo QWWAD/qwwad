@@ -32,7 +32,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
-#include <iostream>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
@@ -168,7 +167,7 @@ while((argc>1)&&(argv[1][0]=='-'))
    f.params   = &params;
 
    gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-   gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*5);
+   gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
 
    size_t max_iter = 100; // Maximum number of iterations before giving up
    int status = 0;        // Error flag for GSL
@@ -341,6 +340,7 @@ double Psi(const double psi,
             break;
         case 4:
             result = psi*fabs(z)*exp(-r/lambda); /* 2pz	*/
+            break;
         default:
             fprintf(stderr, "Unrecognised orbital\n");
             exit(EXIT_FAILURE);
