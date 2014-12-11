@@ -100,7 +100,7 @@
 @timestamp rot 0
 @timestamp font 4
 @timestamp char size 1.000000
-@timestamp def "Thu Dec 11 00:21:20 2014"
+@timestamp def "Thu Dec 11 00:24:41 2014"
 @r0 off
 @link r0 to g0
 @r0 type above
@@ -290,55 +290,55 @@
 @    frame pattern 1
 @    frame background color 0
 @    frame background pattern 0
-@    s6 hidden false
-@    s6 type xy
-@    s6 symbol 1
-@    s6 symbol size 1.000000
-@    s6 symbol color 1
-@    s6 symbol pattern 1
-@    s6 symbol fill color 1
-@    s6 symbol fill pattern 1
-@    s6 symbol linewidth 1.0
-@    s6 symbol linestyle 1
-@    s6 symbol char 65
-@    s6 symbol char font 4
-@    s6 symbol skip 0
-@    s6 line type 1
-@    s6 line linestyle 1
-@    s6 line linewidth 2.0
-@    s6 line color 1
-@    s6 line pattern 1
-@    s6 baseline type 0
-@    s6 baseline off
-@    s6 dropline off
-@    s6 fill type 0
-@    s6 fill rule 0
-@    s6 fill color 1
-@    s6 fill pattern 1
-@    s6 avalue off
-@    s6 avalue type 2
-@    s6 avalue char size 1.000000
-@    s6 avalue font 4
-@    s6 avalue color 1
-@    s6 avalue rot 0
-@    s6 avalue format general
-@    s6 avalue prec 3
-@    s6 avalue prepend ""
-@    s6 avalue append ""
-@    s6 avalue offset 0.000000 , 0.000000
-@    s6 errorbar on
-@    s6 errorbar place both
-@    s6 errorbar color 1
-@    s6 errorbar pattern 1
-@    s6 errorbar size 1.000000
-@    s6 errorbar linewidth 1.0
-@    s6 errorbar linestyle 1
-@    s6 errorbar riser linewidth 1.0
-@    s6 errorbar riser linestyle 1
-@    s6 errorbar riser clip off
-@    s6 errorbar riser clip length 0.100000
-@    s6 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
-@    s6 legend  "\2x\0=0.1"
+@    s0 hidden false
+@    s0 type xy
+@    s0 symbol 3
+@    s0 symbol size 1.000000
+@    s0 symbol color 1
+@    s0 symbol pattern 1
+@    s0 symbol fill color 1
+@    s0 symbol fill pattern 1
+@    s0 symbol linewidth 2.0
+@    s0 symbol linestyle 1
+@    s0 symbol char 65
+@    s0 symbol char font 4
+@    s0 symbol skip 0
+@    s0 line type 1
+@    s0 line linestyle 1
+@    s0 line linewidth 2.0
+@    s0 line color 1
+@    s0 line pattern 1
+@    s0 baseline type 0
+@    s0 baseline off
+@    s0 dropline off
+@    s0 fill type 0
+@    s0 fill rule 0
+@    s0 fill color 1
+@    s0 fill pattern 1
+@    s0 avalue off
+@    s0 avalue type 2
+@    s0 avalue char size 1.000000
+@    s0 avalue font 4
+@    s0 avalue color 1
+@    s0 avalue rot 0
+@    s0 avalue format general
+@    s0 avalue prec 3
+@    s0 avalue prepend ""
+@    s0 avalue append ""
+@    s0 avalue offset 0.000000 , 0.000000
+@    s0 errorbar on
+@    s0 errorbar place both
+@    s0 errorbar color 1
+@    s0 errorbar pattern 1
+@    s0 errorbar size 1.000000
+@    s0 errorbar linewidth 1.0
+@    s0 errorbar linestyle 1
+@    s0 errorbar riser linewidth 1.0
+@    s0 errorbar riser linestyle 1
+@    s0 errorbar riser clip off
+@    s0 errorbar riser clip length 0.100000
+@    s0 comment "ED0-lw.agr"
+@    s0 legend  "\2x\0=0.3"
 @    s7 hidden false
 @    s7 type xy
 @    s7 symbol 1
@@ -386,7 +386,7 @@
 @    s7 errorbar riser linestyle 1
 @    s7 errorbar riser clip off
 @    s7 errorbar riser clip length 0.100000
-@    s7 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
+@    s7 comment "ED0-lw.agr"
 @    s7 legend  ""
 @    s9 hidden false
 @    s9 type xy
@@ -435,7 +435,7 @@
 @    s9 errorbar riser linestyle 1
 @    s9 errorbar riser clip off
 @    s9 errorbar riser clip length 0.100000
-@    s9 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
+@    s9 comment "ED0-lw.agr"
 @    s9 legend  "\2x\0=0.2"
 @    s10 hidden false
 @    s10 type xy
@@ -484,7 +484,7 @@
 @    s10 errorbar riser linestyle 1
 @    s10 errorbar riser clip off
 @    s10 errorbar riser clip length 0.100000
-@    s10 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
+@    s10 comment "ED0-lw.agr"
 @    s10 legend  ""
 @    s12 hidden false
 @    s12 type xy
@@ -493,7 +493,7 @@
 @    s12 symbol color 1
 @    s12 symbol pattern 1
 @    s12 symbol fill color 1
-@    s12 symbol fill pattern 1
+@    s12 symbol fill pattern 0
 @    s12 symbol linewidth 2.0
 @    s12 symbol linestyle 1
 @    s12 symbol char 65
@@ -533,17 +533,17 @@
 @    s12 errorbar riser linestyle 1
 @    s12 errorbar riser clip off
 @    s12 errorbar riser clip length 0.100000
-@    s12 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
-@    s12 legend  "\2x\0=0.3"
+@    s12 comment "ED0-lw.agr"
+@    s12 legend  ""
 @    s13 hidden false
 @    s13 type xy
-@    s13 symbol 3
+@    s13 symbol 1
 @    s13 symbol size 1.000000
 @    s13 symbol color 1
 @    s13 symbol pattern 1
 @    s13 symbol fill color 1
-@    s13 symbol fill pattern 0
-@    s13 symbol linewidth 2.0
+@    s13 symbol fill pattern 1
+@    s13 symbol linewidth 1.0
 @    s13 symbol linestyle 1
 @    s13 symbol char 65
 @    s13 symbol char font 4
@@ -582,22 +582,22 @@
 @    s13 errorbar riser linestyle 1
 @    s13 errorbar riser clip off
 @    s13 errorbar riser clip length 0.100000
-@    s13 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
-@    s13 legend  ""
-@target G0.S6
+@    s13 comment "ED0-lw.agr"
+@    s13 legend  "\2x\0=0.1"
+@target G0.S0
 @type xy
-10 8.66379
-20 9.9548
-30 10.6997
-40 11.0559
-50 11.1698
-60 11.1451
-80 10.9006
-100 10.5625
-140 9.87362
-180 9.28351
-220 8.74838
-250 8.43558
+10 10.9816
+20 12.8018
+30 13.135
+40 13.0468
+50 12.8059
+60 12.5128
+80 11.9084
+100 11.3486
+140 10.4081
+180 9.68328
+220 9.05722
+250 8.70026
 &
 @target G0.S7
 @type xy
@@ -646,21 +646,6 @@
 &
 @target G0.S12
 @type xy
-10 10.9816
-20 12.8018
-30 13.135
-40 13.0468
-50 12.8059
-60 12.5128
-80 11.9084
-100 11.3486
-140 10.4081
-180 9.68328
-220 9.05722
-250 8.70026
-&
-@target G0.S13
-@type xy
 10 10.8256
 20 12.79
 30 12.9859
@@ -673,4 +658,19 @@
 180 9.36792
 220 8.75771
 250 8.44939
+&
+@target G0.S13
+@type xy
+10 8.66379
+20 9.9548
+30 10.6997
+40 11.0559
+50 11.1698
+60 11.1451
+80 10.9006
+100 10.5625
+140 9.87362
+180 9.28351
+220 8.74838
+250 8.43558
 &
