@@ -100,7 +100,7 @@
 @timestamp rot 0
 @timestamp font 4
 @timestamp char size 1.000000
-@timestamp def "Mon Dec  8 09:10:16 2014"
+@timestamp def "Thu Dec 11 01:27:36 2014"
 @r0 off
 @link r0 to g0
 @r0 type above
@@ -290,268 +290,259 @@
 @    frame pattern 1
 @    frame background color 0
 @    frame background pattern 0
-@    s0 hidden false
-@    s0 type xy
-@    s0 symbol 1
-@    s0 symbol size 1.000000
-@    s0 symbol color 1
-@    s0 symbol pattern 1
-@    s0 symbol fill color 1
-@    s0 symbol fill pattern 1
-@    s0 symbol linewidth 1.0
-@    s0 symbol linestyle 1
-@    s0 symbol char 0
-@    s0 symbol char font 4
-@    s0 symbol skip 0
-@    s0 line type 1
-@    s0 line linestyle 1
-@    s0 line linewidth 2.0
-@    s0 line color 1
-@    s0 line pattern 1
-@    s0 baseline type 0
-@    s0 baseline off
-@    s0 dropline off
-@    s0 fill type 0
-@    s0 fill rule 0
-@    s0 fill color 1
-@    s0 fill pattern 1
-@    s0 avalue off
-@    s0 avalue type 2
-@    s0 avalue char size 1.000000
-@    s0 avalue font 4
-@    s0 avalue color 1
-@    s0 avalue rot 0
-@    s0 avalue format general
-@    s0 avalue prec 3
-@    s0 avalue prepend ""
-@    s0 avalue append ""
-@    s0 avalue offset 0.000000 , 0.000000
-@    s0 errorbar on
-@    s0 errorbar place both
-@    s0 errorbar color 1
-@    s0 errorbar pattern 1
-@    s0 errorbar size 2.000000
-@    s0 errorbar linewidth 1.0
-@    s0 errorbar linestyle 1
-@    s0 errorbar riser linewidth 1.0
-@    s0 errorbar riser linestyle 1
-@    s0 errorbar riser clip off
-@    s0 errorbar riser clip length 0.100000
-@    s0 comment "ED0-dx.agr"
-@    s0 legend  "\0Original"
-@    s1 hidden false
-@    s1 type xy
-@    s1 symbol 3
-@    s1 symbol size 1.000000
-@    s1 symbol color 1
-@    s1 symbol pattern 1
-@    s1 symbol fill color 1
-@    s1 symbol fill pattern 0
-@    s1 symbol linewidth 2.0
-@    s1 symbol linestyle 1
-@    s1 symbol char 0
-@    s1 symbol char font 4
-@    s1 symbol skip 0
-@    s1 line type 1
-@    s1 line linestyle 1
-@    s1 line linewidth 2.0
-@    s1 line color 1
-@    s1 line pattern 1
-@    s1 baseline type 0
-@    s1 baseline off
-@    s1 dropline off
-@    s1 fill type 0
-@    s1 fill rule 0
-@    s1 fill color 1
-@    s1 fill pattern 1
-@    s1 avalue off
-@    s1 avalue type 2
-@    s1 avalue char size 1.000000
-@    s1 avalue font 4
-@    s1 avalue color 1
-@    s1 avalue rot 0
-@    s1 avalue format general
-@    s1 avalue prec 3
-@    s1 avalue prepend ""
-@    s1 avalue append ""
-@    s1 avalue offset 0.000000 , 0.000000
-@    s1 errorbar on
-@    s1 errorbar place both
-@    s1 errorbar color 1
-@    s1 errorbar pattern 1
-@    s1 errorbar size 2.000000
-@    s1 errorbar linewidth 1.0
-@    s1 errorbar linestyle 1
-@    s1 errorbar riser linewidth 1.0
-@    s1 errorbar riser linestyle 1
-@    s1 errorbar riser clip off
-@    s1 errorbar riser clip length 0.100000
-@    s1 comment "ED0-dx.agr"
-@    s1 legend  "\8d\2x\0=\8l\0/100"
-@    s2 hidden false
-@    s2 type xy
-@    s2 symbol 1
-@    s2 symbol size 1.000000
-@    s2 symbol color 1
-@    s2 symbol pattern 1
-@    s2 symbol fill color 1
-@    s2 symbol fill pattern 0
-@    s2 symbol linewidth 2.0
-@    s2 symbol linestyle 1
-@    s2 symbol char 0
-@    s2 symbol char font 4
-@    s2 symbol skip 0
-@    s2 line type 1
-@    s2 line linestyle 1
-@    s2 line linewidth 2.0
-@    s2 line color 1
-@    s2 line pattern 1
-@    s2 baseline type 0
-@    s2 baseline off
-@    s2 dropline off
-@    s2 fill type 0
-@    s2 fill rule 0
-@    s2 fill color 1
-@    s2 fill pattern 1
-@    s2 avalue off
-@    s2 avalue type 2
-@    s2 avalue char size 1.000000
-@    s2 avalue font 4
-@    s2 avalue color 1
-@    s2 avalue rot 0
-@    s2 avalue format general
-@    s2 avalue prec 3
-@    s2 avalue prepend ""
-@    s2 avalue append ""
-@    s2 avalue offset 0.000000 , 0.000000
-@    s2 errorbar on
-@    s2 errorbar place both
-@    s2 errorbar color 1
-@    s2 errorbar pattern 1
-@    s2 errorbar size 2.000000
-@    s2 errorbar linewidth 1.0
-@    s2 errorbar linestyle 1
-@    s2 errorbar riser linewidth 1.0
-@    s2 errorbar riser linestyle 1
-@    s2 errorbar riser clip off
-@    s2 errorbar riser clip length 0.100000
-@    s2 comment "ED0-dx.agr"
-@    s2 legend  "\8d\2x\0=\8l\0/10"
-@    s3 hidden false
-@    s3 type xy
-@    s3 symbol 2
-@    s3 symbol size 1.000000
-@    s3 symbol color 1
-@    s3 symbol pattern 1
-@    s3 symbol fill color 1
-@    s3 symbol fill pattern 0
-@    s3 symbol linewidth 2.0
-@    s3 symbol linestyle 1
-@    s3 symbol char 0
-@    s3 symbol char font 4
-@    s3 symbol skip 0
-@    s3 line type 1
-@    s3 line linestyle 1
-@    s3 line linewidth 2.0
-@    s3 line color 1
-@    s3 line pattern 1
-@    s3 baseline type 0
-@    s3 baseline off
-@    s3 dropline off
-@    s3 fill type 0
-@    s3 fill rule 0
-@    s3 fill color 1
-@    s3 fill pattern 1
-@    s3 avalue off
-@    s3 avalue type 2
-@    s3 avalue char size 1.000000
-@    s3 avalue font 4
-@    s3 avalue color 1
-@    s3 avalue rot 0
-@    s3 avalue format general
-@    s3 avalue prec 3
-@    s3 avalue prepend ""
-@    s3 avalue append ""
-@    s3 avalue offset 0.000000 , 0.000000
-@    s3 errorbar on
-@    s3 errorbar place both
-@    s3 errorbar color 1
-@    s3 errorbar pattern 1
-@    s3 errorbar size 2.000000
-@    s3 errorbar linewidth 1.0
-@    s3 errorbar linestyle 1
-@    s3 errorbar riser linewidth 1.0
-@    s3 errorbar riser linestyle 1
-@    s3 errorbar riser clip off
-@    s3 errorbar riser clip length 0.100000
-@    s3 comment "ED0-dx.agr"
-@    s3 legend  "\8d\2x\0=\8l\0/5"
-@target G0.S0
+@    s4 hidden false
+@    s4 type xy
+@    s4 symbol 1
+@    s4 symbol size 1.000000
+@    s4 symbol color 1
+@    s4 symbol pattern 1
+@    s4 symbol fill color 1
+@    s4 symbol fill pattern 1
+@    s4 symbol linewidth 2.0
+@    s4 symbol linestyle 1
+@    s4 symbol char 65
+@    s4 symbol char font 4
+@    s4 symbol skip 0
+@    s4 line type 1
+@    s4 line linestyle 1
+@    s4 line linewidth 2.0
+@    s4 line color 1
+@    s4 line pattern 1
+@    s4 baseline type 0
+@    s4 baseline off
+@    s4 dropline off
+@    s4 fill type 0
+@    s4 fill rule 0
+@    s4 fill color 1
+@    s4 fill pattern 1
+@    s4 avalue off
+@    s4 avalue type 2
+@    s4 avalue char size 1.000000
+@    s4 avalue font 4
+@    s4 avalue color 1
+@    s4 avalue rot 0
+@    s4 avalue format general
+@    s4 avalue prec 3
+@    s4 avalue prepend ""
+@    s4 avalue append ""
+@    s4 avalue offset 0.000000 , 0.000000
+@    s4 errorbar on
+@    s4 errorbar place both
+@    s4 errorbar color 1
+@    s4 errorbar pattern 1
+@    s4 errorbar size 1.000000
+@    s4 errorbar linewidth 1.0
+@    s4 errorbar linestyle 1
+@    s4 errorbar riser linewidth 1.0
+@    s4 errorbar riser linestyle 1
+@    s4 errorbar riser clip off
+@    s4 errorbar riser clip length 0.100000
+@    s4 comment "/home/alex/Simulations/qwwad-examples/E-binding-5.dat"
+@    s4 legend  "\0Original"
+@    s5 hidden false
+@    s5 type xy
+@    s5 symbol 2
+@    s5 symbol size 1.000000
+@    s5 symbol color 1
+@    s5 symbol pattern 1
+@    s5 symbol fill color 1
+@    s5 symbol fill pattern 0
+@    s5 symbol linewidth 2.0
+@    s5 symbol linestyle 1
+@    s5 symbol char 65
+@    s5 symbol char font 4
+@    s5 symbol skip 0
+@    s5 line type 1
+@    s5 line linestyle 1
+@    s5 line linewidth 2.0
+@    s5 line color 1
+@    s5 line pattern 1
+@    s5 baseline type 0
+@    s5 baseline off
+@    s5 dropline off
+@    s5 fill type 0
+@    s5 fill rule 0
+@    s5 fill color 1
+@    s5 fill pattern 1
+@    s5 avalue off
+@    s5 avalue type 2
+@    s5 avalue char size 1.000000
+@    s5 avalue font 4
+@    s5 avalue color 1
+@    s5 avalue rot 0
+@    s5 avalue format general
+@    s5 avalue prec 3
+@    s5 avalue prepend ""
+@    s5 avalue append ""
+@    s5 avalue offset 0.000000 , 0.000000
+@    s5 errorbar on
+@    s5 errorbar place both
+@    s5 errorbar color 1
+@    s5 errorbar pattern 1
+@    s5 errorbar size 1.000000
+@    s5 errorbar linewidth 1.0
+@    s5 errorbar linestyle 1
+@    s5 errorbar riser linewidth 1.0
+@    s5 errorbar riser linestyle 1
+@    s5 errorbar riser clip off
+@    s5 errorbar riser clip length 0.100000
+@    s5 comment "/home/alex/Simulations/qwwad-examples/E-binding-5.dat"
+@    s5 legend  "\8d\2x\0=\8l\0/5"
+@    s8 hidden false
+@    s8 type xy
+@    s8 symbol 1
+@    s8 symbol size 1.000000
+@    s8 symbol color 1
+@    s8 symbol pattern 1
+@    s8 symbol fill color 1
+@    s8 symbol fill pattern 0
+@    s8 symbol linewidth 2.0
+@    s8 symbol linestyle 1
+@    s8 symbol char 65
+@    s8 symbol char font 4
+@    s8 symbol skip 0
+@    s8 line type 1
+@    s8 line linestyle 1
+@    s8 line linewidth 2.0
+@    s8 line color 1
+@    s8 line pattern 1
+@    s8 baseline type 0
+@    s8 baseline off
+@    s8 dropline off
+@    s8 fill type 0
+@    s8 fill rule 0
+@    s8 fill color 1
+@    s8 fill pattern 1
+@    s8 avalue off
+@    s8 avalue type 2
+@    s8 avalue char size 1.000000
+@    s8 avalue font 4
+@    s8 avalue color 1
+@    s8 avalue rot 0
+@    s8 avalue format general
+@    s8 avalue prec 3
+@    s8 avalue prepend ""
+@    s8 avalue append ""
+@    s8 avalue offset 0.000000 , 0.000000
+@    s8 errorbar on
+@    s8 errorbar place both
+@    s8 errorbar color 1
+@    s8 errorbar pattern 1
+@    s8 errorbar size 1.000000
+@    s8 errorbar linewidth 1.0
+@    s8 errorbar linestyle 1
+@    s8 errorbar riser linewidth 1.0
+@    s8 errorbar riser linestyle 1
+@    s8 errorbar riser clip off
+@    s8 errorbar riser clip length 0.100000
+@    s8 comment "/home/alex/Simulations/qwwad-examples/E-binding-10.dat"
+@    s8 legend  "\8d\2x\0=\8l\0/10"
+@    s12 hidden false
+@    s12 type xy
+@    s12 symbol 3
+@    s12 symbol size 1.000000
+@    s12 symbol color 1
+@    s12 symbol pattern 1
+@    s12 symbol fill color 1
+@    s12 symbol fill pattern 0
+@    s12 symbol linewidth 2.0
+@    s12 symbol linestyle 1
+@    s12 symbol char 65
+@    s12 symbol char font 4
+@    s12 symbol skip 0
+@    s12 line type 1
+@    s12 line linestyle 1
+@    s12 line linewidth 2.0
+@    s12 line color 1
+@    s12 line pattern 1
+@    s12 baseline type 0
+@    s12 baseline off
+@    s12 dropline off
+@    s12 fill type 0
+@    s12 fill rule 0
+@    s12 fill color 1
+@    s12 fill pattern 1
+@    s12 avalue off
+@    s12 avalue type 2
+@    s12 avalue char size 1.000000
+@    s12 avalue font 4
+@    s12 avalue color 1
+@    s12 avalue rot 0
+@    s12 avalue format general
+@    s12 avalue prec 3
+@    s12 avalue prepend ""
+@    s12 avalue append ""
+@    s12 avalue offset 0.000000 , 0.000000
+@    s12 errorbar on
+@    s12 errorbar place both
+@    s12 errorbar color 1
+@    s12 errorbar pattern 1
+@    s12 errorbar size 1.000000
+@    s12 errorbar linewidth 1.0
+@    s12 errorbar linestyle 1
+@    s12 errorbar riser linewidth 1.0
+@    s12 errorbar riser linestyle 1
+@    s12 errorbar riser clip off
+@    s12 errorbar riser clip length 0.100000
+@    s12 comment "/home/alex/Simulations/qwwad-examples/E-binding-3D.dat"
+@    s12 legend  "\8d\2x\0=\8l\0/100"
+@target G0.S4
 @type xy
-10 9.00774
-20 10.0018
-30 10.7089
-40 11.0583
-50 11.1704
-60 11.1455
-80 10.9007
+10 8.66379
+20 9.9548
+30 10.6997
+40 11.0559
+50 11.1698
+60 11.1451
+80 10.9006
 100 10.5625
-140 9.87371
-180 9.26948
-220 8.75997
-260 8.33095
-300 7.96746
-400 7.27123
-500 6.78521
-600 6.4372
-800 5.99646
-1000 5.75029
+140 9.87362
+180 9.28351
+220 8.74838
+250 8.43558
 &
-@target G0.S1
+@target G0.S5
 @type xy
-10 8.56209
-20 9.69304
-30 10.3936
-40 10.7178
-50 10.8085
-60 10.7669
-80 10.5008
-100 10.1528
-140 9.46891
-180 8.88643
-220 8.40614
-260 8.00885
-300 7.67694
+10 8.86423
+20 10.6682
+30 11.1086
+40 11.6473
+50 11.5512
+60 11.6623
+80 11.3192
+100 10.895
+140 10.0871
+180 9.4323
+220 8.86162
+250 8.671
 &
-@target G0.S2
+@target G0.S8
 @type xy
-10 8.52245
-20 9.63155
-30 10.32
-40 10.6403
-50 10.7321
-60 10.694
-80 10.437
-100 10.0979
-140 9.42599
-180 8.85247
-220 8.37766
-260 7.98413
-300 7.65531
+10 8.48984
+20 9.87216
+30 10.5149
+40 10.8871
+50 10.9371
+60 10.9302
+80 10.649
+100 10.2861
+140 9.57616
+180 8.98861
+220 8.46957
+250 8.2035
 &
-@target G0.S3
+@target G0.S12
 @type xy
-10 8.41418
-20 9.46813
-30 10.122
-40 10.4307
-50 10.5244
-60 10.495
-80 10.261
-100 9.9453
-140 9.30804
-180 8.75651
-220 8.29679
-260 7.91365
-300 7.59258
+10 8.42639
+20 9.69768
+30 10.4092
+40 10.7348
+50 10.8271
+60 10.7839
+80 10.5159
+100 10.166
+140 9.47653
+180 8.90281
+220 8.39422
+250 8.10177
 &
