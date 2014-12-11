@@ -680,8 +680,8 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr \
 		 $(eximpsrcdir)/E-donor-comparison.sh            \
 		 $(eximpsrcdir)/E-donor-comparison.dat           \
-		 $(eximpsrcdir)/spin-flip-raman.sh \
-		 $(eximpsrcdir)/E-binding-alternative.sh
+		 $(eximpsrcdir)/spin-flip-raman.sh 
+#		 $(eximpsrcdir)/E-binding-alternative.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
