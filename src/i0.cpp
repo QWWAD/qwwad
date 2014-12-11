@@ -154,7 +154,11 @@ while((argc>1)&&(argv[1][0]=='-'))
   for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
   {
    double lambda=lambda_0;	// initial lambda guess
-   if((S==2)||(S==3))lambda*=2;	// for 2s, 2px NOT 2pz
+
+   // Double the estimate of Bohr radius if we're in a second orbital
+   // This isn't correct for 2pz, but it's still better than the 1s
+   // estimate!
+   if((S==2)||(S==3)||(S==4))lambda*=2;
 
    /* Newton-Raphson iteration for solution of lambda, this occurs when
       dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
