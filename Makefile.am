@@ -167,7 +167,8 @@ effv_SOURCES = src/effv.c
 efiw_SOURCES = src/efiw.cpp
 efiw_LDADD   = libqwwad.la
 
-efiwire_SOURCES = src/efiwire.c
+efiwire_SOURCES = src/efiwire.cpp
+efiwire_LDADD   = libqwwad.la
 
 efkpsl_SOURCES = src/efkpsl.cpp
 efkpsl_LDADD   = libqwwad.la
@@ -294,6 +295,8 @@ dist_man1_MANS = man/dispersion_relation.1 \
 		 man/densityinput.1           \
 		 man/chargedensity.1          \
 		 man/gde.1
+
+CLEANFILES = $(dist_man1_MANS)
 
 EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
@@ -506,7 +509,6 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
                $(ex2srcdir)/landau-quantisation.agr              \
                $(ex2srcdir)/landau-quantisation.eps
 
-
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
@@ -684,8 +686,15 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr \
 		 $(eximpsrcdir)/E-donor-comparison.sh            \
 		 $(eximpsrcdir)/E-donor-comparison.dat           \
-		 $(eximpsrcdir)/spin-flip-raman.sh 
-#		 $(eximpsrcdir)/E-binding-alternative.sh
+		 $(eximpsrcdir)/spin-flip-raman.sh               \
+		 $(eximpsrcdir)/E-binding-alternative.sh
+
+exqwddatadir = $(exdatadir)/simple-wires-and-dots
+exqwdsrcdir  = examples/simple-wires-and-dots
+
+exqwddata_DATA = $(exqwdsrcdir)/index \
+		 $(exqwdsrcdir)/infinite-rectangular-wire.sh \
+		 $(exqwdsrcdir)/infinite-rectangular-wire-wf.gnuplot
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

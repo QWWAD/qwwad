@@ -1,0 +1,4 @@
+The following list shows which scripts and output files are used to generate
+each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
+
+Fig 8.6: infinite-rectangular-wire.sh => infinite-rectangular-wire-E-L.dat
