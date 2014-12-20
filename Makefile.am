@@ -24,6 +24,7 @@ noinst_HEADERS = src/dos-functions.h \
 		 src/struct.h 
 
 bin_PROGRAMS =  chargedensity \
+		critical-thickness \
                 csss    \
 		cszb    \
 		densityinput \
@@ -138,6 +139,9 @@ libqwwad_la_LIBADD = $(GSL_LIBS) \
 
 chargedensity_SOURCES = src/chargedensity.cpp
 chargedensity_LDADD   = libqwwad.la
+
+critical_thickness_SOURCES = src/critical-thickness.cpp
+critical_thickness_LDADD   = libqwwad.la
 
 csss_SOURCES = src/csss.c
 
