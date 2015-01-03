@@ -428,111 +428,41 @@ EXTRA_DIST += examples
 
 ex2data_DATA = $(ex2srcdir)/index                                 \
                $(ex2srcdir)/infinite-well-energy-vs-width.sh      \
-               $(ex2srcdir)/infinite-well-energy-vs-width.agr     \
-               $(ex2srcdir)/infinite-well-energy-vs-width.eps     \
                $(ex2srcdir)/infinite-well-wavefunctions.sh        \
-               $(ex2srcdir)/infinite-well-wavefunctions.agr       \
-               $(ex2srcdir)/infinite-well-wavefunctions.eps       \
 	       $(ex2srcdir)/non-parabolic-dispersion.sh           \
-	       $(ex2srcdir)/non-parabolic-dispersion.agr          \
-	       $(ex2srcdir)/non-parabolic-dispersion.eps          \
 	       $(ex2srcdir)/density-of-states.sh                  \
-	       $(ex2srcdir)/density-of-states-bulk.agr            \
-	       $(ex2srcdir)/density-of-states-bulk.eps            \
-	       $(ex2srcdir)/density-of-states-2D.agr              \
-	       $(ex2srcdir)/density-of-states-2D.eps              \
 	       $(ex2srcdir)/fermi-distribution-T-sweep.sh         \
-	       $(ex2srcdir)/fermi-distribution-T-sweep.agr        \
-	       $(ex2srcdir)/fermi-distribution-T-sweep.eps        \
-	       $(ex2srcdir)/fermi-energy-T-sweep.agr              \
-	       $(ex2srcdir)/fermi-energy-T-sweep.eps              \
 	       $(ex2srcdir)/fermi-distribution-concentration-sweep.sh  \
-	       $(ex2srcdir)/fermi-distribution-concentration-sweep.agr \
-	       $(ex2srcdir)/fermi-distribution-concentration-sweep.eps \
-	       $(ex2srcdir)/fermi-energy-concentration-sweep.agr \
-	       $(ex2srcdir)/fermi-energy-concentration-sweep.eps \
 	       $(ex2srcdir)/thermalised-distribution.sh          \
-	       $(ex2srcdir)/thermalised-distribution.agr         \
-	       $(ex2srcdir)/thermalised-distribution.eps         \
 	       $(ex2srcdir)/finite-well-matching.sh              \
-	       $(ex2srcdir)/finite-well-matching.agr             \
-	       $(ex2srcdir)/finite-well-matching.eps             \
 	       $(ex2srcdir)/finite-well-width.sh                 \
-	       $(ex2srcdir)/finite-well-E-L.agr                  \
-	       $(ex2srcdir)/finite-well-E-L.eps                  \
 	       $(ex2srcdir)/finite-well-wf.sh                    \
-	       $(ex2srcdir)/finite-well-wf.agr                   \
-	       $(ex2srcdir)/finite-well-wf.eps                   \
 	       $(ex2srcdir)/effective-mass-mismatch.sh           \
-	       $(ex2srcdir)/effective-mass-mismatch-E-L.agr      \
-	       $(ex2srcdir)/effective-mass-mismatch-E-L.eps      \
-	       $(ex2srcdir)/effective-mass-mismatch-DE-L.agr     \
-	       $(ex2srcdir)/effective-mass-mismatch-DE-L.eps     \
 	       $(ex2srcdir)/infinite-barrier-height-limit.sh     \
-	       $(ex2srcdir)/infinite-barrier-height-limit.agr    \
-	       $(ex2srcdir)/infinite-barrier-height-limit.eps    \
 	       $(ex2srcdir)/infinite-barrier-mass-limit.sh       \
-	       $(ex2srcdir)/infinite-barrier-mass-limit.agr      \
-	       $(ex2srcdir)/infinite-barrier-mass-limit.eps      \
 	       $(ex2srcdir)/large-barrier-mass-wf.sh             \
-	       $(ex2srcdir)/large-barrier-mass-wf.agr            \
-	       $(ex2srcdir)/large-barrier-mass-wf.eps            \
 	       $(ex2srcdir)/infinite-SL-40-40-E-k.sh             \
-	       $(ex2srcdir)/infinite-SL-40-40-E-k.agr            \
-	       $(ex2srcdir)/infinite-SL-40-40-E-k.eps            \
 	       $(ex2srcdir)/infinite-SL-60-60-E-k.sh             \
 	       $(ex2srcdir)/infinite-SL-miniband-width.sh        \
-	       $(ex2srcdir)/infinite-SL-miniband-width.agr       \
-	       $(ex2srcdir)/infinite-SL-miniband-width.eps       \
 	       $(ex2srcdir)/infinite-SL-mass.sh                  \
-	       $(ex2srcdir)/infinite-SL-mass.agr                 \
-	       $(ex2srcdir)/infinite-SL-mass.eps                 \
 	       $(ex2srcdir)/single-barrier-tx-width.sh           \
-	       $(ex2srcdir)/single-barrier-tx-width.agr          \
-	       $(ex2srcdir)/single-barrier-tx-width.eps          \
 	       $(ex2srcdir)/single-barrier-tx-height.sh          \
-	       $(ex2srcdir)/single-barrier-tx-height.agr         \
-	       $(ex2srcdir)/single-barrier-tx-height.eps         \
                $(ex2srcdir)/double-barrier-tx-width.sh           \
-               $(ex2srcdir)/double-barrier-tx-width.agr          \
-               $(ex2srcdir)/double-barrier-tx-width.eps          \
                $(ex2srcdir)/double-barrier-tx-height.sh          \
-               $(ex2srcdir)/double-barrier-tx-height.agr         \
-               $(ex2srcdir)/double-barrier-tx-height.eps         \
                $(ex2srcdir)/double-barrier-IV-temperature.sh     \
-               $(ex2srcdir)/double-barrier-IV-temperature.agr    \
-               $(ex2srcdir)/double-barrier-IV-temperature.eps    \
                $(ex2srcdir)/double-barrier-IV-width.sh           \
-               $(ex2srcdir)/double-barrier-IV-width.agr          \
-               $(ex2srcdir)/double-barrier-IV-width.eps          \
-               $(ex2srcdir)/landau-quantisation.sh               \
-               $(ex2srcdir)/landau-quantisation.agr              \
-               $(ex2srcdir)/landau-quantisation.eps
+               $(ex2srcdir)/landau-quantisation.sh
 
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
 exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/bisect-example.sh \
-		$(exnssrcdir)/bisect-example.agr \
-		$(exnssrcdir)/bisect-example.eps \
 		$(exnssrcdir)/shooting-method-wavefunctions.sh    \
-		$(exnssrcdir)/shooting-method-wavefunction-even.agr    \
-		$(exnssrcdir)/shooting-method-wavefunction-even.eps    \
-		$(exnssrcdir)/shooting-method-wavefunction-odd.agr    \
-		$(exnssrcdir)/shooting-method-wavefunction-odd.eps    \
 		$(exnssrcdir)/shooting-convergence.sh             \
-		$(exnssrcdir)/shooting-convergence.eps             \
-		$(exnssrcdir)/shooting-convergence.agr            \
 		$(exnssrcdir)/shooting-convergence-LB.sh           \
-		$(exnssrcdir)/shooting-convergence-LB-E.agr           \
-		$(exnssrcdir)/shooting-convergence-LB-E.eps           \
-		$(exnssrcdir)/shooting-convergence-LB-wf.agr           \
-		$(exnssrcdir)/shooting-convergence-LB-wf.eps           \
 		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
-		$(exnssrcdir)/poeschl-teller-hole-V.agr           \
-		$(exnssrcdir)/poeschl-teller-hole-V.eps           \
 		$(exnssrcdir)/poeschl-teller-hole-convergence.sh  \
 		$(exnssrcdir)/poeschl-teller-hole-convergence.dat \
 		$(exnssrcdir)/variable-mass-0.2-alloy.sh          \
@@ -542,69 +472,21 @@ exnsdata_DATA = $(exnssrcdir)/index \
 		$(exnssrcdir)/variable-mass-0.75-alloy-dz.sh  \
 		$(exnssrcdir)/variable-mass-0.75-alloy-dz.dat \
 		$(exnssrcdir)/double-quantum-well.sh          \
-		$(exnssrcdir)/double-quantum-well-E-vs-LB.agr \
-		$(exnssrcdir)/double-quantum-well-E-vs-LB.eps \
-		$(exnssrcdir)/double-quantum-well-wf.agr      \
-		$(exnssrcdir)/double-quantum-well-wf.eps      \
 		$(exnssrcdir)/multiple-qw-40-40.sh            \
-		$(exnssrcdir)/multiple-qw-40-40-E-N.agr       \
-		$(exnssrcdir)/multiple-qw-40-40-E-N.eps       \
-		$(exnssrcdir)/multiple-qw-40-40-wf.agr        \
-		$(exnssrcdir)/multiple-qw-40-40-wf.eps        \
 		$(exnssrcdir)/multiple-qw-100-100.sh          \
-		$(exnssrcdir)/multiple-qw-100-100-wf.agr      \
-		$(exnssrcdir)/multiple-qw-100-100-wf.eps      \
 		$(exnssrcdir)/quantum-confined-stark-effect.sh \
-		$(exnssrcdir)/quantum-confined-stark-effect-E-F.agr \
-		$(exnssrcdir)/quantum-confined-stark-effect-E-F.eps \
 		$(exnssrcdir)/field-induced-anti-crossings.sh \
-		$(exnssrcdir)/field-induced-anti-crossings-E-F.agr \
-		$(exnssrcdir)/field-induced-anti-crossings-E-F.eps \
 		$(exnssrcdir)/symmetry-and-selection-rules.sh \
-		$(exnssrcdir)/symmetry-and-selection-rules.agr \
-		$(exnssrcdir)/symmetry-and-selection-rules.eps \
 		$(exnssrcdir)/field-effect-variable-epsilon.sh  \
-		$(exnssrcdir)/field-effect-variable-epsilon.eps \
-		$(exnssrcdir)/field-effect-variable-epsilon.agr \
 		$(exnssrcdir)/uncertainty-principle-finite-well.sh  \
-		$(exnssrcdir)/uncertainty-principle-finite-well.eps \
-		$(exnssrcdir)/uncertainty-principle-finite-well.agr \
 		$(exnssrcdir)/uncertainty-principle-mass-limit.sh  \
-		$(exnssrcdir)/uncertainty-principle-mass-limit.eps \
-		$(exnssrcdir)/uncertainty-principle-mass-limit.agr \
 		$(exnssrcdir)/nonparabolic-dE-vs-width.sh \
-		$(exnssrcdir)/nonparabolic-dE-vs-width.agr \
-		$(exnssrcdir)/nonparabolic-dE-vs-width.eps \
 		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.sh \
-		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.agr \
-		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.eps \
 		$(exnssrcdir)/poisson-schroedinger.sh \
-		$(exnssrcdir)/poisson-schroedinger-E-I.agr \
-		$(exnssrcdir)/poisson-schroedinger-E-I.eps \
-		$(exnssrcdir)/poisson-schroedinger-field.agr \
-		$(exnssrcdir)/poisson-schroedinger-field.eps \
-		$(exnssrcdir)/poisson-schroedinger-sigma.agr \
-		$(exnssrcdir)/poisson-schroedinger-sigma.eps \
-		$(exnssrcdir)/poisson-schroedinger-Vp.agr \
-		$(exnssrcdir)/poisson-schroedinger-Vp.eps \
-		$(exnssrcdir)/poisson-schroedinger-Vt.agr \
-		$(exnssrcdir)/poisson-schroedinger-Vt.eps \
 		$(exnssrcdir)/poisson-schroedinger-comp.sh \
-		$(exnssrcdir)/poisson-schroedinger-comp-E-I.agr \
-		$(exnssrcdir)/poisson-schroedinger-comp-E-I.eps \
 		$(exnssrcdir)/modulation-doping.sh \
-		$(exnssrcdir)/modulation-doping-V.agr \
-		$(exnssrcdir)/modulation-doping-V.eps \
 		$(exnssrcdir)/high-electron-mobility-transistor.sh \
-		$(exnssrcdir)/high-electron-mobility-transistor-v-I.agr \
-		$(exnssrcdir)/high-electron-mobility-transistor-v-I.eps \
-		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.agr \
-		$(exnssrcdir)/high-electron-mobility-transistor-wf-I.eps \
 		$(exnssrcdir)/parabolic-well-solutions.sh \
-		$(exnssrcdir)/parabolic-well-solutions.agr \
-		$(exnssrcdir)/parabolic-well-solutions.eps \
-		$(exnssrcdir)/parabolic-well-energies.agr \
-		$(exnssrcdir)/parabolic-well-energies.eps \
 		$(exnssrcdir)/parabolic-well-E-10.sh \
 		$(exnssrcdir)/parabolic-well-E-10.dat
 
@@ -613,77 +495,25 @@ exdiffsrcdir = examples/diffusion
 
 exdiffdata_DATA = $(exdiffsrcdir)/index \
 		  $(exdiffsrcdir)/constant-step.sh \
-		  $(exdiffsrcdir)/constant-step.eps \
-		  $(exdiffsrcdir)/constant-step.agr \
 		  $(exdiffsrcdir)/error-function.sh \
-		  $(exdiffsrcdir)/error-function.eps \
-		  $(exdiffsrcdir)/error-function.agr \
 		  $(exdiffsrcdir)/constant-Dt.sh     \
-		  $(exdiffsrcdir)/constant-Dt.eps    \
-		  $(exdiffsrcdir)/constant-Dt.agr    \
 		  $(exdiffsrcdir)/constant-D.sh      \
-		  $(exdiffsrcdir)/constant-D.eps     \
-		  $(exdiffsrcdir)/constant-D.agr     \
-		  $(exdiffsrcdir)/constant-D-E-t.eps \
-		  $(exdiffsrcdir)/constant-D-E-t.agr \
 		  $(exdiffsrcdir)/concentration-dependent.sh  \
-		  $(exdiffsrcdir)/concentration-dependent.agr \
-		  $(exdiffsrcdir)/concentration-dependent.eps \
 		  $(exdiffsrcdir)/depth-dependent.sh          \
-		  $(exdiffsrcdir)/depth-dependent.agr         \
-		  $(exdiffsrcdir)/depth-dependent.eps         \
 		  $(exdiffsrcdir)/time-dependent.sh           \
-		  $(exdiffsrcdir)/time-dependent.agr          \
-		  $(exdiffsrcdir)/time-dependent.eps          \
-		  $(exdiffsrcdir)/delta-doping.sh             \
-		  $(exdiffsrcdir)/delta-doping-d.agr          \
-		  $(exdiffsrcdir)/delta-doping-d.eps          \
-		  $(exdiffsrcdir)/delta-doping-vp.agr         \
-		  $(exdiffsrcdir)/delta-doping-vp.eps         \
-		  $(exdiffsrcdir)/delta-doping-E.agr          \
-		  $(exdiffsrcdir)/delta-doping-E.eps
+		  $(exdiffsrcdir)/delta-doping.sh
 
 eximpdatadir = $(exdatadir)/impurities
 eximpsrcdir = examples/impurities
 
 eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-variational-2D.sh  \
-		 $(eximpsrcdir)/E-variational-2D.agr \
-		 $(eximpsrcdir)/E-variational-2D.eps \
 		 $(eximpsrcdir)/E-donor-2D.sh        \
-		 $(eximpsrcdir)/E-donor-2D-total.eps \
-		 $(eximpsrcdir)/E-donor-2D-total.agr \
-		 $(eximpsrcdir)/E-donor-2D-binding.eps \
-		 $(eximpsrcdir)/E-donor-2D-binding.agr \
-		 $(eximpsrcdir)/E-donor-2D-lambda.eps  \
-		 $(eximpsrcdir)/E-donor-2D-lambda.agr  \
 		 $(eximpsrcdir)/E-binding-2D.sh        \
-		 $(eximpsrcdir)/E-binding-2D.eps       \
-		 $(eximpsrcdir)/E-binding-2D.agr       \
-		 $(eximpsrcdir)/E-binding-2D-ED0.eps   \
-		 $(eximpsrcdir)/E-binding-2D-ED0.agr   \
 		 $(eximpsrcdir)/E-donor-3D-vs-2D.sh    \
-		 $(eximpsrcdir)/E-donor-3D-vs-2D.agr   \
-		 $(eximpsrcdir)/E-donor-3D-vs-2D.eps   \
-		 $(eximpsrcdir)/E-donor-3D-wf.agr      \
-		 $(eximpsrcdir)/E-donor-3D-wf.eps      \
-		 $(eximpsrcdir)/E-donor-3D-wf-vs-2D.agr \
-		 $(eximpsrcdir)/E-donor-3D-wf-vs-2D.eps \
 		 $(eximpsrcdir)/E-binding-3D.sh         \
-		 $(eximpsrcdir)/E-binding-3D.agr        \
-		 $(eximpsrcdir)/E-binding-3D.eps        \
-		 $(eximpsrcdir)/E-binding-3D-zoomed.agr \
-		 $(eximpsrcdir)/E-binding-3D-zoomed.eps \
-		 $(eximpsrcdir)/E-binding-3D-lambda.agr \
-		 $(eximpsrcdir)/E-binding-3D-lambda.eps \
 		 $(eximpsrcdir)/E-zeta.sh               \
-		 $(eximpsrcdir)/E-zeta.agr              \
-		 $(eximpsrcdir)/E-zeta.eps              \
 		 $(eximpsrcdir)/E-donor-variable.sh     \
-		 $(eximpsrcdir)/E-donor-variable.eps    \
-		 $(eximpsrcdir)/E-donor-variable.agr    \
-		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.eps \
-		 $(eximpsrcdir)/E-donor-variable-zeta-lambda.agr \
 		 $(eximpsrcdir)/E-donor-comparison.sh            \
 		 $(eximpsrcdir)/E-donor-comparison.dat           \
 		 $(eximpsrcdir)/spin-flip-raman.sh               \
