@@ -77,283 +77,269 @@ double PI(const Subband &isb,
 
 int main(int argc,char *argv[])
 {
-double	alpha;		/* angle between ki and kj			*/
-double	Deltak0sqr;	/* twice the change in KE, see Smet (55)	*/
-double	dalpha;		/* step length for alpha integration		*/
-double	dtheta;		/* step length for theta integration		*/
-double	dki;		/* step length for loop over ki 		*/
-double	dkj;		/* step length for kj integration		*/
-double	epsilon;	/* low frequency dielectric constant		*/
-double	ki;		/* carrier momentum				*/
-double	kij;		/* (vector)kj-(vector)(ki)			*/
-double	kimax;		/* maximum value of ki				*/
-double	kj;		/* carrier momentum				*/
-double	kjmax;		/* maximum value of kj				*/
-double	m;		/* carrier effective mass			*/
-double	P;		/* probability factor, see Smet			*/
-double	q_perp;		/* in-plane momentum, |ki-kf|			*/
-double	q_perpsqr4;	/* 4*q_perp*q_perp, checks vailidity of q_perp	*/
-double	T;		/* temperature					*/
-double	theta;		/* angle between kij and kfg			*/
-double	W;		/* arbitrary well width, soley for output	*/
-double	Wbar;		/* FD weighted mean of Wijfg			*/
-double	Wijfg;		/* the carrier-carrier scattering rate		*/
-int	ialpha;		/* index over alpha				*/
-int	iki;		/* index over ki				*/
-int	ikj;		/* index over kj				*/
-int	itheta;		/* index over theta				*/
-int	nalpha;		/* number of strips in alpha integration	*/
-int	nki;		/* number of ki calculations			*/
-int	nkj;		/* number of strips in |kj| integration		*/
-int	nq;		/* number of q_perp values for lookup table	*/
-int	ntheta;		/* number of strips in theta integration	*/
-char	filename[9];	/* character string for output filename		*/
-char	p;		/* particle					*/
-bool	ff_flag;	/* form factor flag, output to file if true	*/
-bool	S_flag;		/* screening flag, include screening if true	*/
-data11	*Aijfg;		/* form factor over all 4 wave functions	*/
-data11	*PIii;		/* pointer to screening function versus q_perp	*/
-FILE	*Fcc;		/* pointer to output file			*/
-FILE	*FccABCD;	/* pointer to weighted mean output file		*/
+    double	ki;		/* carrier momentum				*/
+    double	kij;		/* (vector)kj-(vector)(ki)			*/
+    double	kimax;		/* maximum value of ki				*/
+    double	kj;		/* carrier momentum				*/
+    double	kjmax;		/* maximum value of kj				*/
+    double	m;		/* carrier effective mass			*/
+    double	P;		/* probability factor, see Smet			*/
+    double	q_perp;		/* in-plane momentum, |ki-kf|			*/
+    double	q_perpsqr4;	/* 4*q_perp*q_perp, checks vailidity of q_perp	*/
+    double	T;		/* temperature					*/
+    double	theta;		/* angle between kij and kfg			*/
+    double	W;		/* arbitrary well width, soley for output	*/
+    double	Wbar;		/* FD weighted mean of Wijfg			*/
+    double	Wijfg;		/* the carrier-carrier scattering rate		*/
+    char	filename[9];	/* character string for output filename		*/
+    char	p;		/* particle					*/
+    bool	ff_flag;	/* form factor flag, output to file if true	*/
+    bool	S_flag;		/* screening flag, include screening if true	*/
+    data11	*Aijfg;		/* form factor over all 4 wave functions	*/
+    data11	*PIii;		/* pointer to screening function versus q_perp	*/
+    FILE	*Fcc;		/* pointer to output file			*/
+    FILE	*FccABCD;	/* pointer to weighted mean output file		*/
 
-/* default values */
+    /* default values */
+    double epsilon=13.18*eps0; // low frequency dielectric constant for GaAs
+    ff_flag=false;		/* don't output formfactors	*/
+    m=0.067*me;		/* GaAs electron value		*/
+    p='e';			/* electron			*/
+    T=300;			/* temperature			*/
+    W=250e-10;		/* a well width, same as Smet	*/
+    S_flag=true;		/* include screening by default	*/
 
-epsilon=13.18*eps0;/* low frequency dielectric constant for GaAs	*/
-ff_flag=false;		/* don't output formfactors	*/
-m=0.067*me;		/* GaAs electron value		*/
-p='e';			/* electron			*/
-T=300;			/* temperature			*/
-W=250e-10;		/* a well width, same as Smet	*/
-S_flag=true;		/* include screening by default	*/
+    /* default values for numerical calculations	*/
+    size_t nalpha=100; // number of strips in alpha integration
+    size_t ntheta=100; // number of strips in theta integration
+    size_t nki=100; // number of ki calculations
+    size_t nkj=100; // number of strips in |kj| integration
+    size_t nq=100;  // number of q_perp values for lookup table
 
-/* default values for numerical calculations	*/
-
-nalpha=100;
-ntheta=100;
-nki=100;
-nkj=100;
-nq=100;
-
-/* calculate step lengths	*/
-
-dalpha=2*pi/((float)nalpha);
-dtheta=2*pi/((float)ntheta);
-
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'a':
-	   ff_flag=true;
-	   argv--;
-           argc++;
-           break;
-  case 'e':
-	   epsilon=atof(argv[2])*eps0;
-	   break;
-  case 'm':
-	   m=atof(argv[2])*me;
-	   break;
-  case 'p':
-	   p=*argv[2];
-	   switch(p)
-	   {
-	    case 'e': break;
-	    case 'h': break;
-	    case 'l': break;
-	    default:  printf("Usage:  srcc [-p particle (\033[1me\033[0m, h, or l)]\n");
-                      exit(0);
-	   }
-	   break;
-  case 'S':
-	   S_flag=false;
-	   argv--;
-           argc++;
-           break;
-  case 'T':
-	   T=atof(argv[2]);
-	   break;
-  case 'w':
-	   W=atof(argv[2])*1e-10;
-	   break;
-  default :
-	   printf("Usage:  srcc [-a generate form factors \033[1mfalse\033[0m][-e permittivity (\033[1m13.18\033[0mepsilon_0)]\n");
-	   printf("             [-m mass (\033[1m0.067m0\033[0m)][-p particle (\033[1me\033[0m, h, or l)]\n");
-	   printf("             [-S screening \033[1mtrue\033[0m]\n");
-	   printf("             [-T temperature (\033[1m300\033[0mK)][-w a well width (\033[1m250\033[0mA)]\n");
-	   exit(0);
-
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
-
-std::ostringstream E_filename; // Energy filename string
-E_filename << "E" << p << ".r";
-std::ostringstream wf_prefix;  // Wavefunction filename prefix
-wf_prefix << "wf_" << p;
-
-// Read data for all subbands from file
-std::vector<Subband> subbands = Subband::read_from_file(E_filename.str(),
-                                                        wf_prefix.str(),
-                                                        ".r",
-                                                        m);
-
-// Read and set carrier distributions within each subband
-std::valarray<double>       Ef;      // Fermi energies [J]
-std::valarray<double>       N;       // Subband populations [m^{-2}]
-std::valarray<unsigned int> indices; // Subband indices (garbage)
-read_table_xy("Ef.r", indices, Ef);
-Ef *= e/1000.0; // Rescale to J
-read_table_xy("N.r", indices, N);	// read populations
-N *= 1e+10*1e+4; // convert from units of 10^10cm^-2->m^-2
-
-for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-    subbands[isb].set_distribution(Ef[isb], N[isb]);
-
-// Read potential profile
-std::valarray<double> z;
-std::valarray<double> V;
-read_table_xy("v.r", z, V);
-
-std::cout << subbands[0].psi_array().size();
-
-if(V.size() != subbands[0].z_array().size())
-{
-    std::cerr << "Potential and wavefunction arrays are different sizes: " << V.size() << " and " << subbands[0].z_array().size() << " respectively." << std::endl;
-    exit(EXIT_FAILURE);
-}
-
-// Read list of wanted transitions
-std::valarray<unsigned int> i_indices;
-std::valarray<unsigned int> j_indices;
-std::valarray<unsigned int> f_indices;
-std::valarray<unsigned int> g_indices;
-
-read_table_xyzu("rr.r", i_indices, j_indices, f_indices, g_indices);
-
-FccABCD=fopen("ccABCD.r","w");	/* open file for output of weighted means */
-
-// Loop over all desired transitions
-for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
-{
-    // State indices for this transition (NB., these are indexed from 1)
-    unsigned int i = i_indices[itx];
-    unsigned int j = j_indices[itx];
-    unsigned int f = f_indices[itx];
-    unsigned int g = g_indices[itx];
-
-    // Convenience labels for each subband (NB., these are indexed from 0)
-    const Subband isb = subbands[i-1];
-    const Subband jsb = subbands[j-1];
-    const Subband fsb = subbands[f-1];
-    const Subband gsb = subbands[g-1];
-
-    // Subband minima
-    const double Ei = isb.get_E();
-    const double Ej = jsb.get_E();
-    const double Ef = fsb.get_E();
-    const double Eg = gsb.get_E();
-
-    // Output form-factors if desired
-    if(ff_flag)
-        output_ff(W,subbands,i,j,f,g);
-
-    /* Generate filename for particular mechanism and open file	*/
-    sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
-    Fcc=fopen(filename,"w");
-
-    // Calculate Delta k0^2 [QWWAD3, Eq. 10.228]
-    if(i+j == f+g) Deltak0sqr=0;
-    else
-        Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
-
-    Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq);
-    PIii  = PI_table(Aijfg,isb,T,nq,S_flag);
-
-    /* calculate maximum value of ki & kj and hence kj step length	*/
-    kimax=sqrt(2*m*(V.max()-Ei))/hBar;	/* sqr(hBar*kimax)/2m=Vmax-Ei	*/
-    dki=kimax/((float)nki);
-
-    kjmax=sqrt(2*m*(V.max()-Ej))/hBar;	/* sqr(hBar*kjmax)/2m=Vmax-Ej	*/
-    dkj=kjmax/((float)nkj);
-
- Wbar=0;			/* initialise integral sum */
-
- for(iki=0;iki<nki;iki++)	/* calculate c-c rate for all ki	*/
- {
- ki=dki*(float)iki;
- Wijfg=0;			/* Initialize for integration	*/
- for(ikj=0;ikj<nkj;ikj++)	/* integrate over |kj|		*/
- {
-  kj=dkj*(float)ikj;
-
-  // Find Fermi-Dirac occupation at kj
-  P=jsb.f_FD_k(kj,T);
-
-  for(ialpha=0;ialpha<nalpha;ialpha++)	/* Integral over alpha	*/
-  {
-   alpha=dalpha*(float)ialpha;
- 
-   kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));	/* calculate kij	*/
-
-   for(itheta=0;itheta<ntheta;itheta++)		/* Integral over theta	*/
-   {
-    theta=dtheta*(float)itheta;	/* move origin to avoid 0*/
-  
-    /* calculate argument of sqrt function=4*q_perp*q_perp, see (8.179),
-       to check for imaginary q_perp, if argument is positive, q_perp is
-       real and hence calculate scattering rate, otherwise ignore and move
-       onto next q_perp							*/
-
-    q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
-
-    /* recall areal element in plane polars is kj.dkj.dalpha */
-
-    if(q_perpsqr4>=0) 
+    while((argc>1)&&(argv[1][0]=='-'))
     {
-     q_perp=sqrt(q_perpsqr4)/2;
-     Wijfg+=gsl_pow_2(lookup_ff(Aijfg,q_perp,nq)/
-                (q_perp+2*pi*e*e*lookup_PI(PIii,q_perp,nq)
-                 *lookup_ff(Aijfg,q_perp,nq)/(4*pi*epsilon)
-                )
-               )*P*kj;
+        switch(argv[1][1])
+        {
+            case 'a':
+                ff_flag=true;
+                argv--;
+                argc++;
+                break;
+            case 'e':
+                epsilon=atof(argv[2])*eps0;
+                break;
+            case 'm':
+                m=atof(argv[2])*me;
+                break;
+            case 'p':
+                p=*argv[2];
+                switch(p)
+                {
+                    case 'e': break;
+                    case 'h': break;
+                    case 'l': break;
+                    default:  printf("Usage:  srcc [-p particle (\033[1me\033[0m, h, or l)]\n");
+                              exit(0);
+                }
+                break;
+            case 'S':
+                S_flag=false;
+                argv--;
+                argc++;
+                break;
+            case 'T':
+                T=atof(argv[2]);
+                break;
+            case 'w':
+                W=atof(argv[2])*1e-10;
+                break;
+            default :
+                printf("Usage:  srcc [-a generate form factors \033[1mfalse\033[0m][-e permittivity (\033[1m13.18\033[0mepsilon_0)]\n");
+                printf("             [-m mass (\033[1m0.067m0\033[0m)][-p particle (\033[1me\033[0m, h, or l)]\n");
+                printf("             [-S screening \033[1mtrue\033[0m]\n");
+                printf("             [-T temperature (\033[1m300\033[0mK)][-w a well width (\033[1m250\033[0mA)]\n");
+                exit(0);
+
+        }
+        argv++;
+        argv++;
+        argc--;
+        argc--;
     }
 
-    /* Note screening term has been absorbed into the above equation
-       to avoid pole at q_perp=0				*/
+    /* calculate step lengths	*/
+    const double dalpha=2*pi/((float)nalpha - 1); // step length for alpha integration
+    const double dtheta=2*pi/((float)ntheta - 1); // step length for theta integration
 
-   } /* end theta */
+    std::ostringstream E_filename; // Energy filename string
+    E_filename << "E" << p << ".r";
+    std::ostringstream wf_prefix;  // Wavefunction filename prefix
+    wf_prefix << "wf_" << p;
 
-  } /* end alpha */
+    // Read data for all subbands from file
+    std::vector<Subband> subbands = Subband::read_from_file(E_filename.str(),
+            wf_prefix.str(),
+            ".r",
+            m);
 
- } /* end kj   */
- 
- Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
+    // Read and set carrier distributions within each subband
+    std::valarray<double>       Ef;      // Fermi energies [J]
+    std::valarray<double>       N;       // Subband populations [m^{-2}]
+    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    read_table_xy("Ef.r", indices, Ef);
+    Ef *= e/1000.0; // Rescale to J
+    read_table_xy("N.r", indices, N);	// read populations
+    N *= 1e+10*1e+4; // convert from units of 10^10cm^-2->m^-2
 
- Wijfg*=gsl_pow_2(e*e/(hBar*4*pi*epsilon))*m/(pi*hBar);
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+        subbands[isb].set_distribution(Ef[isb], N[isb]);
 
- /* output scattering rate versus carrier energy=subband minima+in-plane
-    kinetic energy						*/
- fprintf(Fcc,"%20.17le %20.17le\n",(Ei+gsl_pow_2(hBar*ki)/(2*m))/
-                                   (1e-3*e),Wijfg);
+    // Read potential profile
+    std::valarray<double> z;
+    std::valarray<double> V;
+    read_table_xy("v.r", z, V);
 
- /* calculate Fermi-Dirac weighted mean of scattering rates over the 
-    initial carrier states, note that the integral step length 
-    dE=2*sqr(hBar)*ki*dki/(2m)					*/
- Wbar+=Wijfg*ki*isb.f_FD_k(ki, T);
- } /* end ki	*/
+    std::cout << subbands[0].psi_array().size();
 
- Wbar*=dki/(pi*isb.get_pop());
+    if(V.size() != subbands[0].z_array().size())
+    {
+        std::cerr << "Potential and wavefunction arrays are different sizes: " << V.size() << " and " << subbands[0].z_array().size() << " respectively." << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
- fprintf(FccABCD,"%i %i %i %i %20.17le\n", i,j,f,g,Wbar);
+    // Read list of wanted transitions
+    std::valarray<unsigned int> i_indices;
+    std::valarray<unsigned int> j_indices;
+    std::valarray<unsigned int> f_indices;
+    std::valarray<unsigned int> g_indices;
 
- fclose(Fcc);	/* close output file for this mechanism	*/
+    read_table_xyzu("rr.r", i_indices, j_indices, f_indices, g_indices);
 
- free(Aijfg);
- free(PIii);
+    FccABCD=fopen("ccABCD.r","w");	/* open file for output of weighted means */
+
+    // Loop over all desired transitions
+    for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
+    {
+        // State indices for this transition (NB., these are indexed from 1)
+        unsigned int i = i_indices[itx];
+        unsigned int j = j_indices[itx];
+        unsigned int f = f_indices[itx];
+        unsigned int g = g_indices[itx];
+
+        // Convenience labels for each subband (NB., these are indexed from 0)
+        const Subband isb = subbands[i-1];
+        const Subband jsb = subbands[j-1];
+        const Subband fsb = subbands[f-1];
+        const Subband gsb = subbands[g-1];
+
+        // Subband minima
+        const double Ei = isb.get_E();
+        const double Ej = jsb.get_E();
+        const double Ef = fsb.get_E();
+        const double Eg = gsb.get_E();
+
+        // Output form-factors if desired
+        if(ff_flag)
+            output_ff(W,subbands,i,j,f,g);
+
+        /* Generate filename for particular mechanism and open file	*/
+        sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
+        Fcc=fopen(filename,"w");
+
+        // Calculate Delta k0^2 [QWWAD3, Eq. 10.228]
+        //   twice the change in KE, see Smet (55)
+        double Deltak0sqr = 0;
+        if(i+j != f+g)
+            Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
+
+        Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq);
+        PIii  = PI_table(Aijfg,isb,T,nq,S_flag);
+
+        /* calculate maximum value of ki & kj and hence kj step length	*/
+        kimax=sqrt(2*m*(V.max()-Ei))/hBar;	/* sqr(hBar*kimax)/2m=Vmax-Ei	*/
+        const double dki=kimax/((float)nki - 1); // step length for loop over ki
+
+        kjmax=sqrt(2*m*(V.max()-Ej))/hBar;	/* sqr(hBar*kjmax)/2m=Vmax-Ej	*/
+        const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
+
+        Wbar=0;			/* initialise integral sum */
+
+        // calculate c-c rate for all ki
+        for(unsigned int iki=0;iki<nki;iki++)
+        {
+            ki=dki*(float)iki;
+            Wijfg=0;			/* Initialize for integration	*/
+
+            // integrate over |kj|
+            for(unsigned int ikj=0;ikj<nkj;ikj++)
+            {
+                kj=dkj*(float)ikj;
+
+                // Find Fermi-Dirac occupation at kj
+                P=jsb.f_FD_k(kj,T);
+
+                // Integral over alpha
+                for(unsigned int ialpha=0;ialpha<nalpha;ialpha++)
+                {
+                    const double alpha=dalpha*(float)ialpha; // angle between ki and kj
+
+                    kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));	/* calculate kij	*/
+
+                    for(unsigned int itheta=0;itheta<ntheta;itheta++)		/* Integral over theta	*/
+                    {
+                        theta=dtheta*(float)itheta;	/* move origin to avoid 0*/
+
+                        /* calculate argument of sqrt function=4*q_perp*q_perp, see (8.179),
+                           to check for imaginary q_perp, if argument is positive, q_perp is
+                           real and hence calculate scattering rate, otherwise ignore and move
+                           onto next q_perp							*/
+
+                        q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
+
+                        /* recall areal element in plane polars is kj.dkj.dalpha */
+
+                        if(q_perpsqr4>=0) 
+                        {
+                            q_perp=sqrt(q_perpsqr4)/2;
+                            Wijfg+=gsl_pow_2(lookup_ff(Aijfg,q_perp,nq)/
+                                    (q_perp+2*pi*e*e*lookup_PI(PIii,q_perp,nq)
+                                     *lookup_ff(Aijfg,q_perp,nq)/(4*pi*epsilon)
+                                    )
+                                    )*P*kj;
+                        }
+
+                        /* Note screening term has been absorbed into the above equation
+                           to avoid pole at q_perp=0				*/
+
+                    } /* end theta */
+
+                } /* end alpha */
+
+            } /* end kj   */
+
+            Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
+
+            Wijfg*=gsl_pow_2(e*e/(hBar*4*pi*epsilon))*m/(pi*hBar);
+
+            /* output scattering rate versus carrier energy=subband minima+in-plane
+               kinetic energy						*/
+            fprintf(Fcc,"%20.17le %20.17le\n",(Ei+gsl_pow_2(hBar*ki)/(2*m))/
+                    (1e-3*e),Wijfg);
+
+            /* calculate Fermi-Dirac weighted mean of scattering rates over the 
+               initial carrier states, note that the integral step length 
+               dE=2*sqr(hBar)*ki*dki/(2m)					*/
+            Wbar+=Wijfg*ki*isb.f_FD_k(ki, T);
+        } /* end ki	*/
+
+        Wbar*=dki/(pi*isb.get_pop());
+
+        fprintf(FccABCD,"%i %i %i %i %20.17le\n", i,j,f,g,Wbar);
+
+        fclose(Fcc);	/* close output file for this mechanism	*/
+
+        free(Aijfg);
+        free(PIii);
 
 } /* end while over states */
 
