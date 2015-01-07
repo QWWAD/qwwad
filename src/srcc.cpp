@@ -77,17 +77,7 @@ double PI(const Subband &isb,
 
 int main(int argc,char *argv[])
 {
-    double	ki;		/* carrier momentum				*/
-    double	kij;		/* (vector)kj-(vector)(ki)			*/
-    double	kimax;		/* maximum value of ki				*/
-    double	kj;		/* carrier momentum				*/
-    double	kjmax;		/* maximum value of kj				*/
-    double	m;		/* carrier effective mass			*/
-    double	P;		/* probability factor, see Smet			*/
-    double	q_perp;		/* in-plane momentum, |ki-kf|			*/
     double	q_perpsqr4;	/* 4*q_perp*q_perp, checks vailidity of q_perp	*/
-    double	T;		/* temperature					*/
-    double	theta;		/* angle between kij and kfg			*/
     double	W;		/* arbitrary well width, soley for output	*/
     double	Wbar;		/* FD weighted mean of Wijfg			*/
     double	Wijfg;		/* the carrier-carrier scattering rate		*/
@@ -103,18 +93,18 @@ int main(int argc,char *argv[])
     /* default values */
     double epsilon=13.18*eps0; // low frequency dielectric constant for GaAs
     ff_flag=false;		/* don't output formfactors	*/
-    m=0.067*me;		/* GaAs electron value		*/
+    double m=0.067*me;	       // effective mass [kg]
     p='e';			/* electron			*/
-    T=300;			/* temperature			*/
+    double T=300;	       // temperature [K]
     W=250e-10;		/* a well width, same as Smet	*/
     S_flag=true;		/* include screening by default	*/
 
     /* default values for numerical calculations	*/
-    size_t nalpha=100; // number of strips in alpha integration
-    size_t ntheta=100; // number of strips in theta integration
-    size_t nki=100; // number of ki calculations
-    size_t nkj=100; // number of strips in |kj| integration
-    size_t nq=100;  // number of q_perp values for lookup table
+    size_t nalpha=101; // number of strips in alpha integration
+    size_t ntheta=101; // number of strips in theta integration
+    size_t nki=101; // number of ki calculations
+    size_t nkj=101; // number of strips in |kj| integration
+    size_t nq=101;  // number of q_perp values for lookup table
 
     while((argc>1)&&(argv[1][0]=='-'))
     {
@@ -199,8 +189,6 @@ int main(int argc,char *argv[])
     std::valarray<double> V;
     read_table_xy("v.r", z, V);
 
-    std::cout << subbands[0].psi_array().size();
-
     if(V.size() != subbands[0].z_array().size())
     {
         std::cerr << "Potential and wavefunction arrays are different sizes: " << V.size() << " and " << subbands[0].z_array().size() << " respectively." << std::endl;
@@ -256,10 +244,10 @@ int main(int argc,char *argv[])
         PIii  = PI_table(Aijfg,isb,T,nq,S_flag);
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
-        kimax=sqrt(2*m*(V.max()-Ei))/hBar;	/* sqr(hBar*kimax)/2m=Vmax-Ei	*/
+        const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
         const double dki=kimax/((float)nki - 1); // step length for loop over ki
 
-        kjmax=sqrt(2*m*(V.max()-Ej))/hBar;	/* sqr(hBar*kjmax)/2m=Vmax-Ej	*/
+        const double kjmax=sqrt(2*m*(V.max()-Ej))/hBar;
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
         Wbar=0;			/* initialise integral sum */
@@ -267,27 +255,28 @@ int main(int argc,char *argv[])
         // calculate c-c rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
         {
-            ki=dki*(float)iki;
+            const double ki=dki*(float)iki; // carrier momentum
             Wijfg=0;			/* Initialize for integration	*/
 
             // integrate over |kj|
             for(unsigned int ikj=0;ikj<nkj;ikj++)
             {
-                kj=dkj*(float)ikj;
+                const double kj=dkj*(float)ikj; // carrier momentum
 
                 // Find Fermi-Dirac occupation at kj
-                P=jsb.f_FD_k(kj,T);
+                const double P=jsb.f_FD_k(kj,T);
 
                 // Integral over alpha
                 for(unsigned int ialpha=0;ialpha<nalpha;ialpha++)
                 {
                     const double alpha=dalpha*(float)ialpha; // angle between ki and kj
 
-                    kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));	/* calculate kij	*/
+                    // Compute (vector)kj-(vector)(ki) [QWWAD3, 10.221]
+                    const double kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));
 
                     for(unsigned int itheta=0;itheta<ntheta;itheta++)		/* Integral over theta	*/
                     {
-                        theta=dtheta*(float)itheta;	/* move origin to avoid 0*/
+                        const double theta=dtheta*(float)itheta; // angle between kij and kfg
 
                         /* calculate argument of sqrt function=4*q_perp*q_perp, see (8.179),
                            to check for imaginary q_perp, if argument is positive, q_perp is
@@ -300,7 +289,7 @@ int main(int argc,char *argv[])
 
                         if(q_perpsqr4>=0) 
                         {
-                            q_perp=sqrt(q_perpsqr4)/2;
+                            const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
                             Wijfg+=gsl_pow_2(lookup_ff(Aijfg,q_perp,nq)/
                                     (q_perp+2*pi*e*e*lookup_PI(PIii,q_perp,nq)
                                      *lookup_ff(Aijfg,q_perp,nq)/(4*pi*epsilon)
@@ -348,6 +337,94 @@ fclose(FccABCD);	/* close weighted mean output file	*/
 return EXIT_SUCCESS;
 } /* end main */
 
+/** Tabulate the matrix element defined as 
+ *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
+ *  for a given wavevector, with respect to position
+ */
+std::valarray<double> find_Cif_p(const std::valarray<double>& psi_if, 
+                                 const std::valarray<double>& exp_qz,
+                                 const std::valarray<double>& z)
+{
+    const size_t nz = z.size();
+    std::valarray<double> Cif_p(nz);
+    const double dz=z[1]-z[0];
+
+    Cif_p[nz-1] = psi_if[nz-1] / exp_qz[nz-1] * dz;
+
+    for(int iz = nz-2; iz >=0; iz--)
+        Cif_p[iz] = Cif_p[iz+1] + psi_if[iz] / exp_qz[iz] * dz;
+
+    return Cif_p;
+}
+
+/** 
+ * \brief Tabulate scattering matrix element component.
+ *
+ * \details defined as:
+ *    C_if⁻(q,z') = ∫_{-∞}^{z'} dz ψ_i(z) ψ_f(z) exp(qz)
+ *  for a given wavevector, with respect to position
+ *
+ * Note that the upper limit has to be the point just BEFORE each z'
+ * value so that we don't double count
+ */
+std::valarray<double> find_Cif_m(const std::valarray<double>& psi_if, 
+                                 const std::valarray<double>& exp_qz,
+                                 const std::valarray<double>& z)
+{
+    const size_t nz = z.size();
+    std::valarray<double> Cif_m(nz);
+    const double dz = z[1]-z[0];
+
+    // Seed the first value as zero
+    Cif_m[0] = 0;
+
+    // Now, perform a block integration by summing on top of the previous
+    // value in the array
+    for(unsigned int iz = 1; iz < nz; iz++)
+        Cif_m[iz] = Cif_m[iz-1] + psi_if[iz-1] * exp_qz[iz-1] * dz;
+
+    return Cif_m;
+}
+
+/** 
+ * \brief Create an array of exp(qz) with respect to position
+ *
+ * \param q[in]       Scattering vector [1/m]
+ * \param exp_qz[out] Output array (should be initialised before calling)
+ * \param z[in]       Spatial positions [m]
+ *
+ * \todo  This is also useful for e-e scattering. Push into library
+ */
+std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z)
+{
+    //const double Lp = z.max() - z.min();
+
+    // Use the midpoint of the z array as the origin, so as to minimise the
+    // magnitude of the exponential terms
+    return exp(q * (z - z[0]));
+}
+
+/** Find the matrix element Iif at a given dopant location z'.
+ *
+ * The matrix element is defined as
+ *  I_if(q,z') = ∫dz ψ_i(z) ψ_f(z) exp(-q|z-z'|),
+ * where z is the electron location.  The numerical solution
+ * can however be speeded up by replacing the modulus function
+ * with the sum of two integrals.  We can say that
+ *
+ *  I_if(q,z') = C_if⁻(q,z')/exp(qz') + C_if⁺(q,z') exp(qz')',
+ *
+ * Therefore, we have separated the z' dependence from the
+ * z dependence of the matrix element.
+ */
+double Iif(const unsigned int iz0,
+           const std::valarray<double>& Cif_p,
+           const std::valarray<double>& Cif_m, 
+           const std::valarray<double>& exp_qz)
+{
+    return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
+}
+
 /* This function calculates the overlap integral over all four carrier
    states		*/
 double A(const double   q_perp,
@@ -356,8 +433,6 @@ double A(const double   q_perp,
          const Subband &fsb,
          const Subband &gsb)
 {
- double	A=0;	// integral over z and hence form factor
- double	B;	/* integral over z'	*/
  const std::valarray<double> z = isb.z_array();
  const size_t nz = z.size();
  const double dz = z[1] - z[0];
@@ -368,23 +443,26 @@ double A(const double   q_perp,
  const std::valarray<double> psi_f = fsb.psi_array();
  const std::valarray<double> psi_g = gsb.psi_array();
 
+ // Products of wavefunctions can be computed in advance
+ const std::valarray<double> psi_if = psi_i * psi_f;
+ const std::valarray<double> psi_jg = psi_j * psi_g;
+
+ const std::valarray<double> expTerm = find_exp_qz(q_perp, z);
+ const std::valarray<double> Cjg_plus  = find_Cif_p(psi_jg, expTerm, z);
+ const std::valarray<double> Cjg_minus = find_Cif_m(psi_jg, expTerm, z);
+
+ std::valarray<double> Aijfg_integrand(nz);
+
  // Integral of i(=0) and f(=2) over z
  for(unsigned int iz=0;iz<nz;iz++)
  {
-  B=0;
-
-  // Integral of |j> and |g> over z'
-  for(unsigned int izd=0;izd<nz;izd++)
-      B += (psi_j[izd]*psi_g[izd])*exp(-q_perp*fabs(z[iz] - z[izd]));
-
-  B *= dz;
-
-  A += psi_i[iz] * psi_f[iz] * B;
+     const double Ijg = Iif(iz, Cjg_plus, Cjg_minus, expTerm);
+     Aijfg_integrand[iz] = psi_if[iz] * Ijg;
  }
 
- A *= dz;
+ const double Aijfg = integral(Aijfg_integrand, dz);
 
- return(A);
+ return Aijfg;
 }
 
 

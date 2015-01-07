@@ -17,21 +17,19 @@ rm -f $OUT
 # making sure it contains the same number of points as below
 
 echo 100 1.0 0.0 > s.r
-echo 100 0.0 0.0 >> s.r
+echo 400 0.0 0.0 >> s.r
 echo 100 1.0 0.0 >> s.r
 
 # Now convert structure into potential data
 # 1 point-per-angstrom
-find_heterostructure --nz-1per 300
+find_heterostructure --nz-1per 301
 efxv
 
 # Define width of infinite well 
-
 LW=400
 
 # Generate infinitely deep well solutions
-
-efiw -L $LW -N 300 --nst 2 --barrierwidth 100
+efiw -L $LW -N 301 --nst 2 --barrierwidth 100
 
 # Define subband populations in file `N.r'
  
