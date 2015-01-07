@@ -87,7 +87,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const std::string& m_d_filename)
 {
     // Read subband data
-    std::valarray<double> ist_temp;
     std::valarray<double> z;
     std::valarray<double> m_d_z;
     
@@ -100,6 +99,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);
     
     const size_t nst = ground_state.size();
+
+    if(nst == 0)
+        throw std::runtime_error("No states found in file");
 
     std::valarray<unsigned int> psi_max_iz(nst);
 
@@ -138,10 +140,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const std::string& wf_input_ext,
                                              const double       m_d)
 {
-    // Read subband data
-    std::valarray<double> ist_temp;
-    std::valarray<double> z;
-    
     std::vector<State> ground_state = State::read_from_file(energy_input_path,
                                                             wf_input_prefix,
                                                             wf_input_ext,
@@ -149,6 +147,16 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             true);
 
     const size_t nst = ground_state.size();
+
+    if(nst == 0)
+        throw std::runtime_error("No states found in file");
+
+    // Read spatial points
+    std::ostringstream iss;
+    iss << wf_input_prefix << 1 << wf_input_ext;
+    std::valarray<double> wf_temp;
+    std::valarray<double> z;
+    read_table_xy(iss.str().c_str(), z, wf_temp);
 
     // Copy subband data to vector
     std::vector<Subband> subbands;
@@ -179,7 +187,6 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     std::vector<Subband> subbands; // Output structure
     
     // Read subband data
-    std::valarray<double> ist_temp;
     std::valarray<double> z;
     std::valarray<double> m_d_z;
     std::valarray<double> alphad;
@@ -237,11 +244,8 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const double       V)
 {
     std::vector<Subband> subbands; // Output structure
-    
+
     // Read subband data
-    std::valarray<double> ist_temp;
-    std::valarray<double> z;
-    
     std::vector<State> ground_state = State::read_from_file(energy_input_path,
                                                             wf_input_prefix,
                                                             wf_input_ext,
@@ -249,7 +253,17 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             true);
 
     const size_t nst = ground_state.size();
-    
+
+    if(nst == 0)
+        throw std::runtime_error("No states found in file");
+
+    // Read spatial points
+    std::ostringstream iss;
+    iss << wf_input_prefix << 1 << wf_input_ext;
+    std::valarray<double> wf_temp;
+    std::valarray<double> z;
+    read_table_xy(iss.str().c_str(), z, wf_temp);
+
     // Copy subband data to vector
     for (unsigned int ist = 0; ist < nst; ist++)
         subbands.push_back(Subband(ground_state[ist], m_d, z, alphad, V));

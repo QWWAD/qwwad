@@ -1,4 +1,6 @@
-#!/bin/sh
+#! /bin/sh
+set -e
+
 # Calculation of the e-e scattering rate over two subband populations
 # with and without screening
 # Define temperature
@@ -19,7 +21,8 @@ echo 100 0.0 0.0 >> s.r
 echo 100 1.0 0.0 >> s.r
 
 # Now convert structure into potential data
-find_heterostructure
+# 1 point-per-angstrom
+find_heterostructure --nz-1per 300
 efxv
 
 # Define width of infinite well 
@@ -28,7 +31,7 @@ LW=400
 
 # Generate infinitely deep well solutions
 
-efiw -L $LW -N 300 -s 2
+efiw -L $LW -N 300 --nst 2 --barrierwidth 100
 
 # Define subband populations in file `N.r'
  

@@ -27,15 +27,16 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the eigenstates of an infinite quantum well.");
 
-    opt.add_numeric_option("width,L",    100,   "Width of quantum well [angstrom].");
-    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
-    opt.add_size_option   ("nz,N",       100,   "Number of spatial points for output file.");
-    opt.add_size_option   ("nst,s",      1,     "Number of states to find.");
-    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for "
-                                                "electrons, heavy holes or light holes respectively.");
-    opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
-    opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_numeric_option("E-cutoff",          "Cut-off energy for solutions [meV]");
+    opt.add_numeric_option("width,L",       100, "Width of quantum well [angstrom].");
+    opt.add_numeric_option("mass,m",      0.067, "Effective mass (relative to free electron).");
+    opt.add_size_option   ("nz,N",          100, "Number of spatial points for output file.");
+    opt.add_size_option   ("nst,s",           1, "Number of states to find.");
+    opt.add_char_option   ("particle,p",    'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                 "electrons, heavy holes or light holes respectively.");
+    opt.add_numeric_option("vcb",          0.00, "Band-edge potential [eV]");
+    opt.add_numeric_option("alpha",        0.00, "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_numeric_option("E-cutoff",           "Cut-off energy for solutions [meV]");
+    opt.add_numeric_option("barrierwidth", 0.00, "Width of barriers [angstrom]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -46,15 +47,17 @@ int main(int argc, char *argv[])
 {
     Options opt = configure_options(argc, argv);
 
-    const double L     = opt.get_numeric_option("width") * 1e-10; // well width [m]
-    const char   p     = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const double m     = opt.get_numeric_option("mass") * me;     // effective mass [kg]
-    const size_t N     = opt.get_size_option("nz");               // number of spatial steps
-    const size_t s     = opt.get_size_option("nst");              // number of states
-    const double alpha = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
-    const double V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
+    const double L     = opt.get_numeric_option("width") * 1e-10;        // well width [m]
+    const double Lb    = opt.get_numeric_option("barrierwidth") * 1e-10; // barrier width [m]
+    const char   p     = opt.get_char_option("particle");                // particle ID (e, h or l)
+    const double m     = opt.get_numeric_option("mass") * me;            // effective mass [kg]
+    const size_t N     = opt.get_size_option("nz");                      // number of spatial steps
+    const size_t s     = opt.get_size_option("nst");                     // number of states
+    const double alpha = opt.get_numeric_option("alpha") / e;            // Non-parabolicity [1/J]
+    const double V     = opt.get_numeric_option("vcb") * e;              // band_edge potential [J]
 
     SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
+    se.set_padding_width(Lb);
 
     // Set cut-off energy if desired
     if(opt.vm.count("E-cutoff") > 0)

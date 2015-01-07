@@ -23,6 +23,8 @@ public:
                               const double       V       = 0,
                               const unsigned int nst_max = 1);
 
+    void set_padding_width(const double Lb);
+
     std::string get_name() {return "infinite-square-well";}
 
 private:
@@ -30,7 +32,10 @@ private:
     double _L;     ///< Width of quantum well [m]
     double _alpha; ///< Nonparabolicity [1/J]
     double _V;     ///< Band edge [J]
+    size_t _nz;    ///< Number of spatial points
+    double _Lb;    ///< Width of padding regions [m]
 
+    void make_z_array();
     void calculate();
 };
 } // namespace Leeds

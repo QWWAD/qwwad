@@ -24,11 +24,24 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
     _me(me),
     _L(L),
     _alpha(alpha),
-    _V(V)
+    _V(V),
+    _nz(nz),
+    _Lb(0)
 {
-    const double dz = L/(nz-1); // Spatial step
+    make_z_array();
+}
 
-    for(unsigned int iz = 0; iz < nz; ++iz)
+/**
+ * \brief Creates an array of spatial points
+ *
+ * \details Accounts for the psi=0 barrier regions if wanted
+ */
+void SchroedingerSolverInfWell::make_z_array()
+{
+    const double L_total = _L + 2*_Lb;  // Well + 2 * barrier
+    const double dz = L_total/(_nz-1); // Spatial step
+
+    for(unsigned int iz = 0; iz < _nz; ++iz)
         _z[iz] = iz*dz;
 }
 
@@ -61,11 +74,30 @@ void SchroedingerSolverInfWell::calculate()
 
         // Loop over spatial locations and find wavefunction
         // amplitude at each point (QWWAD3, 2.15)
-        for(unsigned int i=0;i<nz;i++)
-            psi=sqrt(2/_L)*sin(is*pi*_z/_L); // Wavefunction [m^{-0.5}]
+        for(unsigned int iz=0; iz<nz; ++iz)
+        {
+            if(_z[iz] > _Lb && _z[iz] < _Lb + _L)
+                psi[iz]=sqrt(2/_L)*sin(is*pi*(_z[iz]-_Lb)/_L); // Wavefunction [m^{-0.5}]
+        }
 
         _solutions.push_back(State(E, psi));
     }
+}
+    
+/**
+ * \brief   Adds a pair of "barriers" to the outside of the structure
+ *
+ * \details The wavefunction is set to zero over this region
+ */
+void SchroedingerSolverInfWell::set_padding_width(const double Lb)
+{
+    if(_Lb < 0)
+        throw std::domain_error("Padding width must be positive");
+
+    _Lb = Lb;
+
+    make_z_array(); // Regenerate spatial points
+    calculate();    // Recalculate solutions
 }
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

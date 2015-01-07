@@ -19,11 +19,11 @@
     Paul Harrison, March 1997
     Modifications, February 1999					*/
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <sstream>
+#include <iostream>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "qclsim-constants.h"
@@ -217,6 +217,14 @@ for(unsigned int isb = 0; isb < subbands.size(); ++isb)
 std::valarray<double> z;
 std::valarray<double> V;
 read_table_xy("v.r", z, V);
+
+std::cout << subbands[0].psi_array().size();
+
+if(V.size() != subbands[0].z_array().size())
+{
+    std::cerr << "Potential and wavefunction arrays are different sizes: " << V.size() << " and " << subbands[0].z_array().size() << " respectively." << std::endl;
+    exit(EXIT_FAILURE);
+}
 
 // Read list of wanted transitions
 std::valarray<unsigned int> i_indices;
