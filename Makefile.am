@@ -256,7 +256,8 @@ sradp_SOURCES = src/sradp.c
 sradp_CFLAGS  = $(GSL_CFLAGS)
 sradp_LDADD   = $(GSL_LIBS)
 
-srcc_SOURCES  = src/srcc.c
+srcc_SOURCES  = src/srcc.cpp
+srcc_LDADD    = libqwwad.la
 
 srelo_SOURCES  = src/srelo.c
 
@@ -525,6 +526,11 @@ exqwdsrcdir  = examples/simple-wires-and-dots
 exqwddata_DATA = $(exqwdsrcdir)/index \
 		 $(exqwdsrcdir)/infinite-rectangular-wire.sh \
 		 $(exqwdsrcdir)/infinite-rectangular-wire-wf.gnuplot
+
+exsrdatadir = $(exdatadir)/carrier-scattering
+exsrsrcdir  = examples/carrier-scattering
+
+exsrdata_DATA = $(exsrsrcdir)/cc-screening-N1.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

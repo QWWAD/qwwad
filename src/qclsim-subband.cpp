@@ -56,9 +56,19 @@ void Subband::set_distribution(const double Ef,
     this->Ef                 = Ef;
 }
 
-/** Find Fermi wave-vector [1/m] */
+/**
+ * \brief Find Fermi wave-vector
+ *
+ * \details Uses QWWAD3, Eq. 10.237
+ *          Note that the degeneracy is set as 1
+ *
+ * \returns Fermi wave-vector [1/m]
+ */
 double Subband::get_k_fermi() const
 {
+    if(!distribution_known)
+        throw std::runtime_error("Distribution has not been set");
+
     return sqrt(2.0*pi*population);
 }
 
@@ -328,10 +338,48 @@ double Subband::rho(const double E) const
     return get_m_d(E)/(pi*hBar*hBar);
 }
         
-/// Fermi-dirac statistics at some energy
+/**
+ * \brief   Fermi-dirac statistics at a given energy
+ *
+ * \param[in] E_total The energy of the state [J]
+ * \param[in] Te      The temperature of the carrier distribution
+ *
+ * \details Note that E is the TOTAL energy of the state, specified on the same
+ *          absolute scale as the Fermi energy
+ */
 double Subband::f_FD(const double E, const double Te) const
 {
+    if(!distribution_known)
+        throw std::runtime_error("Distribution has not been set");
+
     return 1.0/(exp((E-Ef)/(kB*Te)) + 1.0);
+}
+
+/**
+ * \brief   Fermi-dirac statistics at a given in-plane wave-vector
+ *
+ * \param[in] k  The in-plane wave-vector of the state [1/m]
+ * \param[in] Te The temperature of the carrier distribution
+ */
+double Subband::f_FD_k(const double k, const double Te) const
+{
+    if(!distribution_known)
+        throw std::runtime_error("Distribution has not been set");
+
+    return f_FD(E_total(k), Te);
+}
+
+/**
+ * \brief Get the total population of the subband
+ *
+ * \returns Population [m^{-2}]
+ */
+double Subband::get_pop() const
+{
+    if(!distribution_known)
+        throw std::runtime_error("Distribution has not been set");
+
+    return population;
 }
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

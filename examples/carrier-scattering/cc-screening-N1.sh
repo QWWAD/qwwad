@@ -19,8 +19,7 @@ echo 100 0.0 0.0 >> s.r
 echo 100 1.0 0.0 >> s.r
 
 # Now convert structure into potential data
-
-efsx
+find_heterostructure
 efxv
 
 # Define width of infinite well 
@@ -37,8 +36,7 @@ echo 1 1 > N.r
 echo 2 1 >> N.r
 
 # Calculate the distribution functions
-
-sbp -T $T
+sbp --Te $T
  
 # Define required e-e rate
 

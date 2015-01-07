@@ -45,7 +45,8 @@ class Subband
 
         inline double                      get_Ef()     const {return Ef;}
         inline double                      get_E()      const {return ground_state.get_E();}
-        inline double                      get_pop()    const {return population;}
+        double                             get_pop()    const;
+
         inline std::valarray<double>       psi_array()  const {return ground_state.psi_array();}
         inline double                      get_condband_edge() const {return condband_edge;}
 
@@ -75,8 +76,11 @@ class Subband
                                                    const double       alphad,
                                                    const double       V);
 
-        double Ek(double k) const;
-        double k(double Ek) const;
+        double Ek(const double k) const;
+        double k(const double Ek) const;
+
+        /// Return total energy of carrier at a given wave-vector
+        inline double E_total(const double k) const {return get_E() + Ek(k);}
         
         /// Return d.o.s mass at bottom of subband 
         inline double get_md_0() const {return md_0;}
@@ -92,8 +96,10 @@ class Subband
         double f_FD(const double E,
                     const double Te) const;
         
+        double f_FD_k(const double k, const double Te) const;
+
         /// Find the population of the subband at wavevector k
-        inline double N(double k, double Te) {return rho(get_E()+Ek(k))*f_FD(get_E()+Ek(k),Te);}
+        inline double N(double k, double Te) {return rho(E_total(k))*f_FD_k(k,Te);}
 
     private:
         State  ground_state;        ///< State at bottom of subband

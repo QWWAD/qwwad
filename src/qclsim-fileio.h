@@ -3,6 +3,8 @@
  * \brief  Functions for reading data from standard input 
  * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
  * \author Jonathan Cooper <jdc.tas@gmail.com>
+ * \todo   Use C++11 variadic templates to make this much cleaner and more generic!
+ * \todo   Replace string tokenisation with C++ istringstream handling
  */
 
 #ifndef CREADDATA_H
@@ -510,6 +512,75 @@ int read_line_xyz(Tx& destx, Ty& desty, Tz& destz, std::ifstream& stream)
     return scan_result;
 }
 
+/** 
+ * \brief Read 4 data values from a line of input
+ *
+ * \param[out] destx   The destination for the 1st data item
+ * \param[out] desty   The destination for the 2nd data item
+ * \param[out] destz   The destination for the 3rd data item
+ * \param[out] destu   The destination for the 4th data item
+ * \param[in]  stream  The input stream from which to read data.
+ *
+ * \details The first 4 whitespace-delimited values on a line are stored in
+ *          the output variables \c destx, \c desty, \c destz and \c destu.
+ *
+ * \returns 0 if successful, 1 if not.
+ */
+    template <class Tx, class Ty, class Tz, class Tu>
+int read_line_xyzu(Tx& destx, Ty& desty, Tz& destz, Tu& destu, std::ifstream& stream)
+{
+    std::streamsize nbytes=100; // Initial size of buffer
+    int scan_result = 1; // Flag showing whether scan successful
+
+    if(!stream)
+        throw std::runtime_error("Could not read stream");
+
+    char* linebuffer = new char[nbytes+1];
+
+    if(stream.getline(linebuffer, nbytes) and linebuffer[0] != '\0')
+    {
+        char *pch=strtok(linebuffer, "\t "); // Pointer to a token on the line
+
+        if(pch == NULL)
+        {
+            delete[] linebuffer;
+            throw std::runtime_error("Some data missing on at least one line");
+        }
+
+        destx=static_cast<Tx>(atof(pch));
+        pch=strtok(NULL, "\t ");
+
+        if(pch == NULL)
+        {
+            delete[] linebuffer;
+            throw std::runtime_error("Some data missing on at least one line");
+        }
+
+        desty=static_cast<Ty>(atof(pch));
+        pch=strtok(NULL, "\t ");
+
+        if(pch == NULL)
+        {
+            delete[] linebuffer;
+            throw std::runtime_error("Some data missing on at least one line");
+        }
+
+        destz=static_cast<Tz>(atof(pch));
+        pch=strtok(NULL, "\t ");
+
+        if(pch == NULL)
+        {
+            delete[] linebuffer;
+            throw std::runtime_error("Some data missing on at least one line");
+        }
+
+        destu=static_cast<Tu>(atof(pch));
+        scan_result = 0; /* Mark scan as successful */
+    }
+
+    delete[] linebuffer;
+    return scan_result;
+}
 
 /**
  * Read numerical data from a file containing data in three columns
@@ -579,6 +650,82 @@ void read_table_xyz(const char* fname,
     stream.close();	
 }
 
+
+/**
+ * Read numerical data from a file containing data in four columns
+ *
+ * \param[in]  fname Filename from which to read data
+ * \param[out] x     Value array into which data from 1st column will be written
+ * \param[out] y     Value array into which data from 2nd column will be written
+ * \param[out] z     Value array into which data from 3rd column will be written
+ * \param[out] u     Value array into which data from 4th column will be written
+ */
+    template <class Tx, class Ty, class Tz, class Tu>
+void read_table_xyzu(const char* fname,
+        std::valarray<Tx>& x,
+        std::valarray<Ty>& y,
+        std::valarray<Tz>& z,
+        std::valarray<Tu>& u)
+{
+    std::ifstream stream(fname);
+
+    if(!stream.is_open())
+    {
+        std::ostringstream oss;
+        oss << "Could not open " << fname;
+        throw std::runtime_error(oss.str());
+    }
+
+    std::vector<Tx> x_temp;
+    std::vector<Ty> y_temp;
+    std::vector<Tz> z_temp;
+    std::vector<Tz> u_temp;
+    unsigned int nlines=0;
+
+    while(!stream.eof()){
+        if(nlines >= nlines_max)
+            throw FileLinesExceedBufferSize(fname, nlines_max);
+
+        Tx buffer_x = 0; // Buffer for x input data
+        Ty buffer_y = 0; // Buffer for y input data
+        Tz buffer_z = 0; // Buffer for z input data
+        Tz buffer_u = 0; // Buffer for u input data
+
+        // If data is valid, stick it into temp vector
+        if(!read_line_xyzu(buffer_x, buffer_y, buffer_z, buffer_u, stream))
+        {
+            x_temp.push_back(buffer_x);
+            y_temp.push_back(buffer_y);
+            z_temp.push_back(buffer_z);
+            u_temp.push_back(buffer_u);
+        }
+    }
+
+    const size_t nx = x_temp.size();
+    const size_t ny = y_temp.size();
+    const size_t nz = z_temp.size();
+    const size_t nu = u_temp.size();
+    x.resize(nx);
+    y.resize(ny);
+    z.resize(nz);
+    u.resize(nu);
+
+    if(nx != ny || nx != nz || ny != nz || nu != nz)
+    {
+        std::ostringstream oss;
+        oss << "Columns in " << fname << " have different lengths: nx = " << nx
+            << ", ny = " << ny << ", nz = " << nz << ", nu = " << nu;
+        throw std::runtime_error(oss.str());
+    }
+
+    // Copy data into output array
+    std::copy(x_temp.begin(), x_temp.end(), &x[0]);
+    std::copy(y_temp.begin(), y_temp.end(), &y[0]);
+    std::copy(z_temp.begin(), z_temp.end(), &z[0]);
+    std::copy(u_temp.begin(), u_temp.end(), &u[0]);
+
+    stream.close();
+}
 
 /**
  * Write three arrays of numerical data to columns in a file
