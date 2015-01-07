@@ -411,36 +411,32 @@ double PI(const Subband &isb,
           const double   T)
 {
     const double m    = isb.get_md_0();    // Effective mass at band-edge [kg]
-    const double ki_F = isb.get_k_fermi(); // Fermi wave-vector [1/m]
-
-    // Equation 43 of Smet, QWWAD3, 10.236
-    //
-    // TODO: This is incorrect... need to bring it INSIDE the integral, because we should
-    //       be using the wave-vector k(Ek), NOT the Fermi wave-vector!!!
-    //
-    //       See QWWAD4 for corrected calculation
-    double	P = m/(pi*hBar*hBar);
-
-    if(q_perp>2*ki_F)
-        P -= m/(pi*hBar*hBar)*sqrt(1-gsl_pow_2(2*ki_F/q_perp));
 
     // Now perform the integration, equation 44 of Smet [QWWAD3, 10.238]
     double mu=isb.get_E();
     const double dmu=1e-3*e;
     double integral=0;
 
-    double	dI; // Intervals in I
+    double dI; // Intervals in I
 
     do
     {
-        dI=1/(4*kB*T*gsl_pow_2(cosh((isb.get_Ef() - mu)/(2*kB*T))));
-        integral+=dI*dmu;
+        const double ki = isb.k(mu);
+
+        // Find low-temperature polarizability *at this wave-vector*
+        //
+        // Equation 43 of Smet, QWWAD3, 10.236
+        double P0 = m/(pi*hBar*hBar);
+
+        if(q_perp>2*ki)
+            P0 -= m/(pi*hBar*hBar)*sqrt(1-gsl_pow_2(2*ki/q_perp));
+
+        dI = P0/(4*kB*T*gsl_pow_2(cosh((isb.get_Ef() - mu)/(2*kB*T))));
+        integral += dI*dmu;
         mu+=dmu;
     }while(dI>integral/100); // continue until integral converges
 
-    P*=integral;
-
-    return P;
+    return integral;
 }
 
 /* This function creates the polarizability table */
