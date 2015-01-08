@@ -45,24 +45,17 @@ static void output_ff(const double       W,
                       const unsigned int f,
                       const unsigned int g);
 
-data11 * ff_table(const double                 Deltak0sqr,
+data11 * FF_table(const double                 Deltak0sqr,
+                  const double                 epsilon,
                   const Subband               &isb,
                   const Subband               &jsb,
                   const Subband               &fsb,
                   const Subband               &gsb,
                   const std::valarray<double> &V,
-                  const size_t                 nq);
-data11 * esc_q_table(double Deltak0sqr,
-                     double epsilon,
-                     data11        *Aijfg,
-                     const Subband &isb,
-                     const Subband &jsb,
-                     const Subband &fsb,
-                     const Subband &gsb,
-                     const std::valarray<double> &V,
-                     const double   T,
-                     const size_t   nq,
-                     const bool     S_flag);
+                  const double                 T,
+                  const size_t                 nq,
+                  const bool                   S_flag);
+
 double lookup(data11       *table,
               const double  q_perp,
               const size_t  nq);
@@ -127,7 +120,7 @@ int main(int argc,char *argv[])
                     case 'h': break;
                     case 'l': break;
                     default:  printf("Usage:  srcc [-p particle (\033[1me\033[0m, h, or l)]\n");
-                              exit(0);
+                              exit(EXIT_FAILURE);
                 }
                 break;
             case 'S':
@@ -146,8 +139,7 @@ int main(int argc,char *argv[])
                 printf("             [-m mass (\033[1m0.067m0\033[0m)][-p particle (\033[1me\033[0m, h, or l)]\n");
                 printf("             [-S screening \033[1mtrue\033[0m]\n");
                 printf("             [-T temperature (\033[1m300\033[0mK)][-w a well width (\033[1m250\033[0mA)]\n");
-                exit(0);
-
+                exit(EXIT_SUCCESS);
         }
         argv++;
         argv++;
@@ -238,8 +230,7 @@ int main(int argc,char *argv[])
         if(i+j != f+g)
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
-        data11 *Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq); // form factor over all 4 wave functions
-        data11 *esc_q = esc_q_table(Deltak0sqr, epsilon, Aijfg, isb, jsb, fsb, gsb, V, T,nq,S_flag); // screening permittivity * wave vector
+        data11 *FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, V, T,nq,S_flag); // Form factor table
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
         const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
@@ -290,12 +281,8 @@ int main(int argc,char *argv[])
                             const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
 
                             // Find screening permittivity using [QWWAD3, 10.235]
-                            const double esc_qxy = lookup(esc_q, q_perp, nq);
-                            Wijfg+=gsl_pow_2(lookup(Aijfg,q_perp,nq)/ esc_qxy)*P*kj;
+                            Wijfg += lookup(FF,q_perp,nq)*P*kj;
                         }
-
-                        /* Note screening term has been absorbed into the above equation
-                           to avoid pole at q_perp=0				*/
                     } /* end theta */
                 } /* end alpha */
             } /* end kj   */
@@ -322,8 +309,7 @@ int main(int argc,char *argv[])
 
         fclose(Fcc);	/* close output file for this mechanism	*/
 
-        free(Aijfg);
-        free(esc_q);
+        delete[] FF;
 } /* end while over states */
 
 fclose(FccABCD);	/* close weighted mean output file	*/
@@ -459,8 +445,6 @@ double A(const double   q_perp,
  return Aijfg;
 }
 
-
-
 /**
  * \brief returns the screening factor, referred to by Smet as e_sc
  */
@@ -497,78 +481,61 @@ double PI(const Subband &isb,
     return integral;
 }
 
-/* This function creates the polarizability table */
-data11 * esc_q_table(double /*Deltak0sqr*/,
-                     double epsilon,
-                     data11        *Aijfg,
-                     const Subband &isb,
-                     const Subband & /*jsb */,
-                     const Subband & /* fsb */,
-                     const Subband & /*gsb */,
-                     const std::valarray<double> & /*V */,
-                     const double   T,
-                     const size_t   nq,
-                     const bool     S_flag)
-{
- data11	*esc_q = new data11[nq];
-
- for(unsigned int iq=0;iq<nq;iq++)
- {
-     const double q_perp = Aijfg[iq].a;
-     esc_q[iq].a = Aijfg[iq].a; // Use same scattering-vectors as matrix element table
-
-     double _PI    = 0.0; // Polarizability
-     double _Aiiii = 0.0; // Matrix element for lowest subband
-
-     // Allow screening to be turned off
-     if(S_flag)
-     {
-         _PI    = PI(isb, q_perp, T);
-         _Aiiii = A(q_perp, isb, isb, isb, isb);
-     }
-
-     esc_q[iq].b = q_perp + 2*pi*e*e/(4*pi*epsilon) * _PI * _Aiiii;
- }
-
- return esc_q;
-}
-
-/* This function creates a form factor look up table	*/
-data11 * ff_table(const double  Deltak0sqr,
+/**
+ *  \brief Compute the form factor [Aijfg/(esc q)]^2
+ */
+data11 * FF_table(const double                 Deltak0sqr,
+                  const double                 epsilon,
                   const Subband               &isb,
                   const Subband               &jsb,
                   const Subband               &fsb,
                   const Subband               &gsb,
                   const std::valarray<double> &V,
-                  const size_t  nq)
+                  const double                 T,
+                  const size_t                 nq,
+                  const bool                   S_flag)
 {
- double	dq;	/* interval in q_perp			*/
- double	q_perp;	/* In-plane wave vector			*/
- double	q_perp_max;	/* maximum in-plane wave vector	*/
- data11	*Aijfg;
+    data11 *FF = new data11[nq];
 
- const double vmax=V.max(); // Maximum potential [J]
- const double kimax=isb.k(vmax - isb.get_E()); // Max value of ki [1/m]
- const double kjmax=jsb.k(vmax - jsb.get_E()); // Max value of kj [1/m]
+    const double vmax=V.max(); // Maximum potential [J]
+    const double kimax=isb.k(vmax - isb.get_E()); // Max value of ki [1/m]
+    const double kjmax=jsb.k(vmax - jsb.get_E()); // Max value of kj [1/m]
 
- Aijfg=(data11 *)calloc(nq,sizeof(data11));
-  if (Aijfg==0)  {
-   fprintf(stderr,"Cannot allocate memory!\n");
-   exit(0);
-  }
-
- q_perp_max=sqrt(2*gsl_pow_2(kimax+kjmax)+Deltak0sqr+2*(kimax+kjmax)*
+    // maximum in-plane wave vector
+    const double q_perp_max=sqrt(2*gsl_pow_2(kimax+kjmax)+Deltak0sqr+2*(kimax+kjmax)*
                  sqrt(gsl_pow_2(kimax+kjmax)+Deltak0sqr))/2;
 
- dq=q_perp_max/((float)(nq-1));
- for(unsigned int iq=0;iq<nq;iq++)
- {
-  q_perp=dq*(float)iq;
-  Aijfg[iq].a=q_perp;
-  Aijfg[iq].b=A(q_perp, isb, jsb, fsb, gsb);
- }
+    const double dq=q_perp_max/((float)(nq-1));	// interval in q_perp
 
- return(Aijfg);
+    for(unsigned int iq=0;iq<nq;iq++)
+    {
+        const double q_perp = iq*dq;
+        FF[iq].a = q_perp;
+
+        // Scattering matrix element (all 4 states)
+        const double _Aijfg = A(q_perp, isb, jsb, fsb, gsb);
+
+        double _PI    = 0.0; // Polarizability
+        double _Aiiii = 0.0; // Matrix element for lowest subband
+
+        // Allow screening to be turned off
+        if(S_flag)
+        {
+            _PI    = PI(isb, q_perp, T);
+            _Aiiii = A(q_perp, isb, isb, isb, isb);
+        }
+
+        // Screening permittivity * wave vector
+        // Note that the pole at q_perp=0 is avoided as long as screening is included
+        const double esc_q = q_perp + 2*pi*e*e/(4*pi*epsilon) * _PI * _Aiiii;
+        FF[iq].b = _Aijfg*_Aijfg / (esc_q * esc_q);
+    }
+
+    // Fix singularity by "clipping" the top off it:
+    if(!S_flag)
+        FF[0].b = FF[1].b;
+
+    return FF;
 }
 
 /**
@@ -615,7 +582,10 @@ static void output_ff(const double        W, // Arbitrary well width to generate
 
  sprintf(filename,"A%i%i%i%i.r", i, j, f, g);	
  if((FA=fopen(filename,"w"))==0)
-  {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);exit(0);}
+ {
+     fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
+     exit(EXIT_FAILURE);
+ }
 
  // Convenience labels for each subband (NB., these are indexed from 0)
  const Subband isb = subbands[i-1];
