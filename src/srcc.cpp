@@ -248,6 +248,8 @@ int main(int argc,char *argv[])
             Wijfg=0;			/* Initialize for integration	*/
 
             // integrate over |kj|
+            std::valarray<double> Wijfg_integrand_kj(nkj);
+
             for(unsigned int ikj=0;ikj<nkj;ikj++)
             {
                 const double kj=dkj*(float)ikj; // carrier momentum
@@ -256,6 +258,8 @@ int main(int argc,char *argv[])
                 const double P=jsb.f_FD_k(kj,T);
 
                 // Integral over alpha
+                std::valarray<double> Wijfg_integrand_alpha(nalpha);
+
                 for(unsigned int ialpha=0;ialpha<nalpha;ialpha++)
                 {
                     const double alpha=dalpha*(float)ialpha; // angle between ki and kj
@@ -263,7 +267,10 @@ int main(int argc,char *argv[])
                     // Compute (vector)kj-(vector)(ki) [QWWAD3, 10.221]
                     const double kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));
 
-                    for(unsigned int itheta=0;itheta<ntheta;itheta++)		/* Integral over theta	*/
+                    // Now perform innermost integral (over theta)
+                    std::valarray<double> Wijfg_integrand_theta(ntheta);
+
+                    for(unsigned int itheta=0;itheta<ntheta;itheta++)
                     {
                         const double theta=dtheta*(float)itheta; // angle between kij and kfg
 
@@ -271,23 +278,24 @@ int main(int argc,char *argv[])
                            to check for imaginary q_perp, if argument is positive, q_perp is
                            real and hence calculate scattering rate, otherwise ignore and move
                            onto next q_perp							*/
-
                         q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
-
-                        /* recall areal element in plane polars is kj.dkj.dalpha */
 
                         if(q_perpsqr4>=0) 
                         {
                             const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
 
                             // Find screening permittivity using [QWWAD3, 10.235]
-                            Wijfg += lookup(FF,q_perp,nq)*P*kj;
+                            Wijfg_integrand_theta[itheta] = lookup(FF,q_perp,nq);
                         }
                     } /* end theta */
+
+                    Wijfg_integrand_alpha[ialpha] = integral(Wijfg_integrand_theta, dtheta);
                 } /* end alpha */
+
+                Wijfg_integrand_kj[ikj] = integral(Wijfg_integrand_alpha, dalpha) * P * kj;
             } /* end kj   */
 
-            Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
+            Wijfg = integral(Wijfg_integrand_kj,dkj);
 
             // Multiply be pre-factor [QWWAD3, 10.233]
             Wijfg *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*(4*4*pi*pi*epsilon*epsilon));
