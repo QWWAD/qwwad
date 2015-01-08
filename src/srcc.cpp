@@ -81,8 +81,6 @@ int main(int argc,char *argv[])
     char	p;		/* particle					*/
     bool	ff_flag;	/* form factor flag, output to file if true	*/
     bool	S_flag;		/* screening flag, include screening if true	*/
-    data11	*Aijfg;		/* form factor over all 4 wave functions	*/
-    data11	*PIii;		/* pointer to screening function versus q_perp	*/
     FILE	*Fcc;		/* pointer to output file			*/
     FILE	*FccABCD;	/* pointer to weighted mean output file		*/
 
@@ -236,8 +234,9 @@ int main(int argc,char *argv[])
         if(i+j != f+g)
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
-        Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq);
-        PIii  = PI_table(Aijfg,isb,T,nq,S_flag);
+        data11 *Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq); // form factor over all 4 wave functions
+        data11 *Aiiii = ff_table(Deltak0sqr, isb, isb, isb, isb, V,nq); // form factor over initial wf only
+        data11 *PIii  = PI_table(Aijfg,isb,T,nq,S_flag); // pointer to screening function versus q_perp
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
         const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
@@ -288,7 +287,7 @@ int main(int argc,char *argv[])
                             const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
                             Wijfg+=gsl_pow_2(lookup(Aijfg,q_perp,nq)/
                                     (q_perp+2*pi*e*e*lookup(PIii,q_perp,nq)
-                                     *lookup(Aijfg,q_perp,nq)/(4*pi*epsilon)
+                                     *lookup(Aiiii,q_perp,nq)/(4*pi*epsilon)
                                     )
                                     )*P*kj;
                         }
@@ -325,6 +324,7 @@ int main(int argc,char *argv[])
         fclose(Fcc);	/* close output file for this mechanism	*/
 
         free(Aijfg);
+        free(Aiiii);
         free(PIii);
 
 } /* end while over states */
