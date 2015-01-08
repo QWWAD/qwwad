@@ -52,13 +52,17 @@ data11 * ff_table(const double                 Deltak0sqr,
                   const Subband               &gsb,
                   const std::valarray<double> &V,
                   const size_t                 nq);
-
-data11 * PI_table(data11        *Aijfg,
-                  const Subband &isb,
-                  const double   T,
-                  const size_t   nq,
-                  const bool     S_flag);
-
+data11 * esc_q_table(double Deltak0sqr,
+                     double epsilon,
+                     data11        *Aijfg,
+                     const Subband &isb,
+                     const Subband &jsb,
+                     const Subband &fsb,
+                     const Subband &gsb,
+                     const std::valarray<double> &V,
+                     const double   T,
+                     const size_t   nq,
+                     const bool     S_flag);
 double lookup(data11       *table,
               const double  q_perp,
               const size_t  nq);
@@ -235,8 +239,7 @@ int main(int argc,char *argv[])
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
         data11 *Aijfg = ff_table(Deltak0sqr, isb, jsb, fsb, gsb, V,nq); // form factor over all 4 wave functions
-        data11 *Aiiii = ff_table(Deltak0sqr, isb, isb, isb, isb, V,nq); // form factor over initial wf only
-        data11 *PIii  = PI_table(Aijfg,isb,T,nq,S_flag); // pointer to screening function versus q_perp
+        data11 *esc_q = esc_q_table(Deltak0sqr, epsilon, Aijfg, isb, jsb, fsb, gsb, V, T,nq,S_flag); // screening permittivity * wave vector
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
         const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
@@ -285,20 +288,16 @@ int main(int argc,char *argv[])
                         if(q_perpsqr4>=0) 
                         {
                             const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
-                            Wijfg+=gsl_pow_2(lookup(Aijfg,q_perp,nq)/
-                                    (q_perp+2*pi*e*e*lookup(PIii,q_perp,nq)
-                                     *lookup(Aiiii,q_perp,nq)/(4*pi*epsilon)
-                                    )
-                                    )*P*kj;
+
+                            // Find screening permittivity using [QWWAD3, 10.235]
+                            const double esc_qxy = lookup(esc_q, q_perp, nq);
+                            Wijfg+=gsl_pow_2(lookup(Aijfg,q_perp,nq)/ esc_qxy)*P*kj;
                         }
 
                         /* Note screening term has been absorbed into the above equation
                            to avoid pole at q_perp=0				*/
-
                     } /* end theta */
-
                 } /* end alpha */
-
             } /* end kj   */
 
             Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
@@ -324,9 +323,7 @@ int main(int argc,char *argv[])
         fclose(Fcc);	/* close output file for this mechanism	*/
 
         free(Aijfg);
-        free(Aiiii);
-        free(PIii);
-
+        free(esc_q);
 } /* end while over states */
 
 fclose(FccABCD);	/* close weighted mean output file	*/
@@ -501,26 +498,39 @@ double PI(const Subband &isb,
 }
 
 /* This function creates the polarizability table */
-data11 * PI_table(data11        *Aijfg,
-                  const Subband &isb,
-                  const double   T,
-                  const size_t   nq,
-                  const bool     S_flag)
+data11 * esc_q_table(double /*Deltak0sqr*/,
+                     double epsilon,
+                     data11        *Aijfg,
+                     const Subband &isb,
+                     const Subband & /*jsb */,
+                     const Subband & /* fsb */,
+                     const Subband & /*gsb */,
+                     const std::valarray<double> & /*V */,
+                     const double   T,
+                     const size_t   nq,
+                     const bool     S_flag)
 {
- data11	*PIii = new data11[nq];
+ data11	*esc_q = new data11[nq];
 
  for(unsigned int iq=0;iq<nq;iq++)
  {
      const double q_perp = Aijfg[iq].a;
-     PIii[iq].a = Aijfg[iq].a; // Use same scattering-vectors as matrix element table
+     esc_q[iq].a = Aijfg[iq].a; // Use same scattering-vectors as matrix element table
 
-     // Allow screening to be turned off	*/
+     double _PI    = 0.0; // Polarizability
+     double _Aiiii = 0.0; // Matrix element for lowest subband
+
+     // Allow screening to be turned off
      if(S_flag)
-         PIii[iq].b = PI(isb, q_perp, T);
-     else PIii[iq].b = 0;
+     {
+         _PI    = PI(isb, q_perp, T);
+         _Aiiii = A(q_perp, isb, isb, isb, isb);
+     }
+
+     esc_q[iq].b = q_perp + 2*pi*e*e/(4*pi*epsilon) * _PI * _Aiiii;
  }
 
- return PIii;
+ return esc_q;
 }
 
 /* This function creates a form factor look up table	*/
