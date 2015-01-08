@@ -304,7 +304,8 @@ int main(int argc,char *argv[])
 
             Wijfg*=dtheta*dalpha*dkj;	/* multiply by all step lengths	*/
 
-            Wijfg*=gsl_pow_2(e*e/(hBar*4*pi*epsilon))*m/(pi*hBar);
+            // Multiply be pre-factor [QWWAD3, 10.233]
+            Wijfg *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*(4*4*pi*pi*epsilon*epsilon));
 
             /* output scattering rate versus carrier energy=subband minima+in-plane
                kinetic energy						*/
