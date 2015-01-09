@@ -174,11 +174,6 @@ int main(int argc,char *argv[])
         if(ff_flag)
             output_ff(W,subbands,i,j,f,g);
 
-        /* Generate filename for particular mechanism and open file	*/
-        char	filename[9];	/* character string for output filename		*/
-        sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
-        FILE *Fcc=fopen(filename,"w");
-
         // Calculate Delta k0^2 [QWWAD3, Eq. 10.228]
         //   twice the change in KE, see Smet (55)
         double Deltak0sqr = 0;
@@ -196,12 +191,13 @@ int main(int argc,char *argv[])
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
         std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
+        std::valarray<double> Wijfg(nki);             // Scattering rate for a given initial wave vector
+        std::valarray<double> Ei_t(nki);              // Total energy of initial state (for output file) [meV]
 
         // calculate c-c rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
         {
             const double ki=dki*(float)iki; // carrier momentum
-            double Wijfg = 0; // Initialize integration of scattering rate
 
             // integrate over |kj|
             std::valarray<double> Wijfg_integrand_kj(nkj);
@@ -261,27 +257,27 @@ int main(int argc,char *argv[])
                 Wijfg_integrand_kj[ikj] = integral(Wijfg_integrand_alpha, dalpha) * P * kj;
             } /* end kj   */
 
-            Wijfg = integral(Wijfg_integrand_kj,dkj);
+            Wijfg[iki] = integral(Wijfg_integrand_kj,dkj);
 
-            // Multiply be pre-factor [QWWAD3, 10.233]
-            Wijfg *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*(4*4*pi*pi*epsilon*epsilon));
-
-            /* output scattering rate versus carrier energy=subband minima+in-plane
-               kinetic energy						*/
-            fprintf(Fcc,"%20.17le %20.17le\n",(Ei+gsl_pow_2(hBar*ki)/(2*m))/
-                    (1e-3*e),Wijfg);
+            // Multiply by pre-factor [QWWAD3, 10.233]
+            Wijfg[iki] *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*(4*4*pi*pi*epsilon*epsilon));
+            Ei_t[iki] = isb.E_total(ki) * 1000/e;
 
             /* calculate Fermi-Dirac weighted mean of scattering rates over the 
                initial carrier states, note that the integral step length 
                dE=2*sqr(hBar)*ki*dki/(2m)					*/
-            Wbar_integrand_ki[iki] = Wijfg*ki*isb.f_FD_k(ki, T);
+            Wbar_integrand_ki[iki] = Wijfg[iki]*ki*isb.f_FD_k(ki, T);
         } /* end ki	*/
+
+        /* output scattering rate versus carrier energy=subband minima+in-plane
+           kinetic energy						*/
+        char	filename[9];	/* character string for output filename		*/
+        sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
+        write_table_xy(filename, Ei_t, Wijfg);
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_pop());
 
         fprintf(FccABCD,"%i %i %i %i %20.17le\n", i,j,f,g,Wbar);
-
-        fclose(Fcc);	/* close output file for this mechanism	*/
 
         gsl_spline_free(FF);
         gsl_interp_accel_free(acc);
@@ -533,7 +529,7 @@ static void output_ff(const double        W, // Arbitrary well width to generate
  sprintf(filename,"A%i%i%i%i.r", i, j, f, g);	
  if((FA=fopen(filename,"w"))==0)
  {
-     fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
+     std::cerr << "Error: Cannot open input file '" << filename << "'." << std::endl;
      exit(EXIT_FAILURE);
  }
 

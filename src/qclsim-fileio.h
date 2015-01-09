@@ -773,6 +773,55 @@ void write_table_xyz(const char* fname,
     stream.close();	
 }
 
+/**
+ * Write four arrays of numerical data to columns in a file
+ *
+ * \param[in] fname     Filename to which to read data
+ * \param[in] x         Value array containing x data
+ * \param[in] y         Value array containing y data
+ * \param[in] z         Value array containing z data
+ * \param[in] u         Value array containing u data
+ * \param[in] with_num  Add an initial column containing the line number
+ */
+    template <class Tx, class Ty, class Tz, class Tu>
+void write_table_xyzu(const char* fname,
+        const std::valarray<Tx>& x,
+        const std::valarray<Ty>& y,
+        const std::valarray<Tz>& z,
+        const std::valarray<Tu>& u,
+        const bool with_num = false)
+{
+    std::ofstream stream(fname);
+    const size_t nx = x.size();
+    const size_t ny = y.size();
+    const size_t nz = z.size();
+    const size_t nu = u.size();
+
+    if(!stream.is_open())
+    {
+        std::ostringstream oss;
+        oss << "Could not open " << fname;
+        throw std::runtime_error(oss.str());
+    }
+
+    if(nx != ny || nx != nz || ny != nz || nu != nz)
+    {
+        std::ostringstream oss;
+        oss << "x, y, z and u data have different sizes: nx = " << nx << ", ny = " << ny << ", nz = " << nz << ", nu = " << nu << ".";
+        throw std::runtime_error(oss.str());
+    }
+
+    for(unsigned int i=0; i<nx; i++)
+    {
+        if(with_num)
+            stream << i+1 << "\t" << x[i] << "\t" << y[i] << "\t" << z[i] << "\t" << u[i] << std::endl;
+        else
+            stream << x[i] << "\t" << y[i] << "\t" << z[i] << "\t" << u[i] << std::endl;
+    }
+
+    stream.close();	
+}
+
 /** 
  * Read 3 numerical data items and a character string from a line of input
  */
