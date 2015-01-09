@@ -25,18 +25,13 @@
 #include <sstream>
 #include <iostream>
 #include <gsl/gsl_math.h>
-#include "struct.h"
+#include <gsl/gsl_interp.h>
+#include <gsl/gsl_spline.h>
 #include "qclsim-constants.h"
 #include "qclsim-subband.h"
 
 using namespace Leeds;
 using namespace constants;
-
-typedef
-struct	{
- double	a;		/* z value of files			*/
- double	b[4];		/* wave function			*/
-} data14;
 
 static void output_ff(const double       W,
                       const std::vector<Subband> &subbands,
@@ -45,24 +40,16 @@ static void output_ff(const double       W,
                       const unsigned int f,
                       const unsigned int g);
 
-data11 * FF_table(const double                 Deltak0sqr,
-                  const double                 epsilon,
-                  const Subband               &isb,
-                  const Subband               &jsb,
-                  const Subband               &fsb,
-                  const Subband               &gsb,
-                  const std::valarray<double> &V,
-                  const double                 T,
-                  const size_t                 nq,
-                  const bool                   S_flag);
-
-double lookup(data11       *table,
-              const double  q_perp,
-              const size_t  nq);
-
-double A(const std::valarray<double> &z,
-         const double                 q_perp,
-         const data14                *wf);
+gsl_spline * FF_table(const double                 Deltak0sqr,
+                      const double                 epsilon,
+                      const Subband               &isb,
+                      const Subband               &jsb,
+                      const Subband               &fsb,
+                      const Subband               &gsb,
+                      const std::valarray<double> &V,
+                      const double                 T,
+                      const size_t                 nq,
+                      const bool                   S_flag);
 
 double PI(const Subband &isb,
           const size_t   q_perp,
@@ -230,7 +217,8 @@ int main(int argc,char *argv[])
         if(i+j != f+g)
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
-        data11 *FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, V, T,nq,S_flag); // Form factor table
+        gsl_spline *FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, V, T,nq,S_flag); // Form factor table
+        gsl_interp_accel *acc = gsl_interp_accel_alloc(); // Creates accelerator for interpolation of FF
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
         const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
@@ -284,8 +272,9 @@ int main(int argc,char *argv[])
                         {
                             const double q_perp=sqrt(q_perpsqr4)/2; // in-plane momentum, |ki-kf|
 
-                            // Find screening permittivity using [QWWAD3, 10.235]
-                            Wijfg_integrand_theta[itheta] = lookup(FF,q_perp,nq);
+                            // Find the form-factor at this wave-vector by looking it up in the
+                            // spline we created earlier
+                            Wijfg_integrand_theta[itheta] = gsl_spline_eval(FF, q_perp, acc);
                         }
                     } /* end theta */
 
@@ -317,7 +306,8 @@ int main(int argc,char *argv[])
 
         fclose(Fcc);	/* close output file for this mechanism	*/
 
-        delete[] FF;
+        gsl_spline_free(FF);
+        gsl_interp_accel_free(acc);
 } /* end while over states */
 
 fclose(FccABCD);	/* close weighted mean output file	*/
@@ -492,19 +482,17 @@ double PI(const Subband &isb,
 /**
  *  \brief Compute the form factor [Aijfg/(esc q)]^2
  */
-data11 * FF_table(const double                 Deltak0sqr,
-                  const double                 epsilon,
-                  const Subband               &isb,
-                  const Subband               &jsb,
-                  const Subband               &fsb,
-                  const Subband               &gsb,
-                  const std::valarray<double> &V,
-                  const double                 T,
-                  const size_t                 nq,
-                  const bool                   S_flag)
+gsl_spline * FF_table(const double                 Deltak0sqr,
+                      const double                 epsilon,
+                      const Subband               &isb,
+                      const Subband               &jsb,
+                      const Subband               &fsb,
+                      const Subband               &gsb,
+                      const std::valarray<double> &V,
+                      const double                 T,
+                      const size_t                 nq,
+                      const bool                   S_flag)
 {
-    data11 *FF = new data11[nq];
-
     const double vmax=V.max(); // Maximum potential [J]
     const double kimax=isb.k(vmax - isb.get_E()); // Max value of ki [1/m]
     const double kjmax=jsb.k(vmax - jsb.get_E()); // Max value of kj [1/m]
@@ -515,13 +503,15 @@ data11 * FF_table(const double                 Deltak0sqr,
 
     const double dq=q_perp_max/((float)(nq-1));	// interval in q_perp
 
+    std::valarray<double> q_perp(nq);
+    std::valarray<double> FF(nq);
+
     for(unsigned int iq=0;iq<nq;iq++)
     {
-        const double q_perp = iq*dq;
-        FF[iq].a = q_perp;
+        q_perp[iq] = iq*dq;
 
         // Scattering matrix element (all 4 states)
-        const double _Aijfg = A(q_perp, isb, jsb, fsb, gsb);
+        const double _Aijfg = A(q_perp[iq], isb, jsb, fsb, gsb);
 
         double _PI    = 0.0; // Polarizability
         double _Aiiii = 0.0; // Matrix element for lowest subband
@@ -529,50 +519,25 @@ data11 * FF_table(const double                 Deltak0sqr,
         // Allow screening to be turned off
         if(S_flag)
         {
-            _PI    = PI(isb, q_perp, T);
-            _Aiiii = A(q_perp, isb, isb, isb, isb);
+            _PI    = PI(isb, q_perp[iq], T);
+            _Aiiii = A(q_perp[iq], isb, isb, isb, isb);
         }
 
         // Screening permittivity * wave vector
         // Note that the pole at q_perp=0 is avoided as long as screening is included
-        const double esc_q = q_perp + 2*pi*e*e/(4*pi*epsilon) * _PI * _Aiiii;
-        FF[iq].b = _Aijfg*_Aijfg / (esc_q * esc_q);
+        const double esc_q = q_perp[iq] + 2*pi*e*e/(4*pi*epsilon) * _PI * _Aiiii;
+        FF[iq] = _Aijfg*_Aijfg / (esc_q * esc_q);
     }
 
     // Fix singularity by "clipping" the top off it:
     if(!S_flag)
-        FF[0].b = FF[1].b;
+        FF[0] = FF[1];
 
-    return FF;
-}
+    // Pack the table of FF vs q into a cubic spline
+    gsl_spline *q_FF = gsl_spline_alloc(gsl_interp_cspline, nq);
+    gsl_spline_init(q_FF, &(q_perp[0]), &(FF[0]), nq);
 
-/**
- * \brief looks up a function in a table
- */
-double lookup(data11       *table,
-              const double  q_perp,
-              const size_t  nq)
-{
- double	P;	/* The looked up screening function	*/
- int	iq=0;	/* index over q_perp in table		*/
-
- if(q_perp > table[nq-1].a)
- {
-     std::cerr << "q_perp>maximum allowed q!" << std::endl;
-     exit(EXIT_FAILURE);
- }
-
- // retrieve the form-factor above q_perp
- while(q_perp >= table[iq].a)
-  iq++;
-
- /* Linearly interpolate the form factor from between the values
-    directly above and below q_perp				*/
- P = table[iq-1].b + (table[iq].b - table[iq-1].b)*
-                   (q_perp-table[iq-1].a)/
-                   (table[iq].a - table[iq-1].a);
-
- return P;
+    return q_FF;
 }
 
 /* This function outputs the formfactors into files	*/
