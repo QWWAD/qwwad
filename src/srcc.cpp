@@ -99,6 +99,12 @@ int main(int argc,char *argv[])
     const double dalpha=2*pi/((float)nalpha - 1); // step length for alpha integration
     const double dtheta=2*pi/((float)ntheta - 1); // step length for theta integration
 
+    // Can save a bit of time by calculating cosines in advance
+    std::valarray<double> cos_theta(ntheta);
+
+    for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
+        cos_theta[itheta] = cos(itheta*dtheta);
+
     std::ostringstream E_filename; // Energy filename string
     E_filename << "E" << p << ".r";
     std::ostringstream wf_prefix;  // Wavefunction filename prefix
@@ -189,7 +195,7 @@ int main(int argc,char *argv[])
         const double kjmax=sqrt(2*m*(V.max()-Ej))/hBar;
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
-        double Wbar = 0; // initialise integral for average scattering rate
+        std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
 
         // calculate c-c rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
@@ -215,21 +221,29 @@ int main(int argc,char *argv[])
                     const double alpha=dalpha*(float)ialpha; // angle between ki and kj
 
                     // Compute (vector)kj-(vector)(ki) [QWWAD3, 10.221]
-                    const double kij=sqrt(ki*ki+kj*kj-2*ki*kj*cos(alpha));
+                    const double kij_sqr = ki*ki+kj*kj-2*ki*kj*cos(alpha);
+                    const double kij = sqrt(kij_sqr);
+
+                    // Can also pre-calculate a few of the terms needed inside the following loop
+                    // to save time
+                    const double kij_sqr_plus_Deltak0sqr = kij_sqr + Deltak0sqr;
+                    const double two_kij_sqr_plus_Deltak0sqr = kij_sqr + kij_sqr_plus_Deltak0sqr;
+                    const double two_kij_times_sqrt__kij_sqr_plus_Deltak0sqr__
+                                     = 2 * kij * sqrt(kij_sqr_plus_Deltak0sqr);
 
                     // Now perform innermost integral (over theta)
                     std::valarray<double> Wijfg_integrand_theta(ntheta);
 
                     for(unsigned int itheta=0;itheta<ntheta;itheta++)
                     {
-                        const double theta=dtheta*(float)itheta; // angle between kij and kfg
-
                         /* calculate argument of sqrt function=4*q_perp*q_perp,
                          * see [QWWAD3, 10.231],
                            to check for imaginary q_perp, if argument is positive, q_perp is
                            real and hence calculate scattering rate, otherwise ignore and move
                            onto next q_perp */
-                        const double q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
+                        // Note that most of the terms here are computed before the loop, so we
+                        // only need to look up the cos(theta)
+                        const double q_perpsqr4 = two_kij_sqr_plus_Deltak0sqr - two_kij_times_sqrt__kij_sqr_plus_Deltak0sqr__ * cos_theta[itheta];
 
                         if(q_perpsqr4>=0) 
                         {
@@ -260,10 +274,10 @@ int main(int argc,char *argv[])
             /* calculate Fermi-Dirac weighted mean of scattering rates over the 
                initial carrier states, note that the integral step length 
                dE=2*sqr(hBar)*ki*dki/(2m)					*/
-            Wbar+=Wijfg*ki*isb.f_FD_k(ki, T);
+            Wbar_integrand_ki[iki] = Wijfg*ki*isb.f_FD_k(ki, T);
         } /* end ki	*/
 
-        Wbar*=dki/(pi*isb.get_pop());
+        const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_pop());
 
         fprintf(FccABCD,"%i %i %i %i %20.17le\n", i,j,f,g,Wbar);
 
