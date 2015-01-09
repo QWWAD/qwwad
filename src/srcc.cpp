@@ -29,6 +29,7 @@
 #include <gsl/gsl_spline.h>
 #include "qclsim-constants.h"
 #include "qclsim-subband.h"
+#include "qwwad-options.h"
 
 using namespace Leeds;
 using namespace constants;
@@ -55,27 +56,37 @@ double PI(const Subband &isb,
           const size_t   q_perp,
           const double   T);
 
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+
+    std::string doc("Find the carrier-carrier scattering rate.");
+
+    opt.add_switch        ("outputff,a",           "Output form-factors to file.");
+    opt.add_switch        ("noscreening,S",        "Disable screening of the Coulomb interaction.");
+    opt.add_numeric_option("epsilon,e",     13.18, "Low-frequency dielectric constant");
+    opt.add_numeric_option("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
+    opt.add_char_option   ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                   "electrons, heavy holes or light holes respectively.");
+    opt.add_numeric_option("temperature,T",   300, "Temperature of carrier distribution.");
+    opt.add_numeric_option("width,w",         250, "Width of quantum well [angstrom]. (Solely for output).");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
 int main(int argc,char *argv[])
 {
-    double	q_perpsqr4;	/* 4*q_perp*q_perp, checks vailidity of q_perp	*/
-    double	W;		/* arbitrary well width, soley for output	*/
-    double	Wbar;		/* FD weighted mean of Wijfg			*/
-    double	Wijfg;		/* the carrier-carrier scattering rate		*/
-    char	filename[9];	/* character string for output filename		*/
-    char	p;		/* particle					*/
-    bool	ff_flag;	/* form factor flag, output to file if true	*/
-    bool	S_flag;		/* screening flag, include screening if true	*/
-    FILE	*Fcc;		/* pointer to output file			*/
-    FILE	*FccABCD;	/* pointer to weighted mean output file		*/
+    const Options opt = configure_options(argc, argv);
 
-    /* default values */
-    double epsilon=13.18*eps0; // low frequency dielectric constant for GaAs
-    ff_flag=false;		/* don't output formfactors	*/
-    double m=0.067*me;	       // effective mass [kg]
-    p='e';			/* electron			*/
-    double T=300;	       // temperature [K]
-    W=250e-10;		/* a well width, same as Smet	*/
-    S_flag=true;		/* include screening by default	*/
+    const double epsilon = opt.get_numeric_option("epsilon")*eps0; // Low frequency dielectric constant [F/m]
+    const bool   ff_flag = opt.get_switch("outputff");             // True if formfactors are wanted
+    const double m       = opt.get_numeric_option("mass")*me;      // Band-edge effective mass [kg]
+    const char   p       = opt.get_char_option("particle");  	   // Particle ID
+    const double T       = opt.get_numeric_option("temperature");  // Temperature [K]
+    const double W       = opt.get_numeric_option("width")*1e-10;  // a well width, same as Smet [angstrom]
+    const bool   S_flag  = !opt.get_switch("noscreening");	   // Include screening by default
 
     /* default values for numerical calculations	*/
     size_t nalpha=101; // number of strips in alpha integration
@@ -83,56 +94,6 @@ int main(int argc,char *argv[])
     size_t nki=101; // number of ki calculations
     size_t nkj=101; // number of strips in |kj| integration
     size_t nq=101;  // number of q_perp values for lookup table
-
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'a':
-                ff_flag=true;
-                argv--;
-                argc++;
-                break;
-            case 'e':
-                epsilon=atof(argv[2])*eps0;
-                break;
-            case 'm':
-                m=atof(argv[2])*me;
-                break;
-            case 'p':
-                p=*argv[2];
-                switch(p)
-                {
-                    case 'e': break;
-                    case 'h': break;
-                    case 'l': break;
-                    default:  printf("Usage:  srcc [-p particle (\033[1me\033[0m, h, or l)]\n");
-                              exit(EXIT_FAILURE);
-                }
-                break;
-            case 'S':
-                S_flag=false;
-                argv--;
-                argc++;
-                break;
-            case 'T':
-                T=atof(argv[2]);
-                break;
-            case 'w':
-                W=atof(argv[2])*1e-10;
-                break;
-            default :
-                printf("Usage:  srcc [-a generate form factors \033[1mfalse\033[0m][-e permittivity (\033[1m13.18\033[0mepsilon_0)]\n");
-                printf("             [-m mass (\033[1m0.067m0\033[0m)][-p particle (\033[1me\033[0m, h, or l)]\n");
-                printf("             [-S screening \033[1mtrue\033[0m]\n");
-                printf("             [-T temperature (\033[1m300\033[0mK)][-w a well width (\033[1m250\033[0mA)]\n");
-                exit(EXIT_SUCCESS);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
 
     /* calculate step lengths	*/
     const double dalpha=2*pi/((float)nalpha - 1); // step length for alpha integration
@@ -180,7 +141,7 @@ int main(int argc,char *argv[])
 
     read_table_xyzu("rr.r", i_indices, j_indices, f_indices, g_indices);
 
-    FccABCD=fopen("ccABCD.r","w");	/* open file for output of weighted means */
+    FILE *FccABCD=fopen("ccABCD.r","w");	/* open file for output of weighted means */
 
     // Loop over all desired transitions
     for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
@@ -208,8 +169,9 @@ int main(int argc,char *argv[])
             output_ff(W,subbands,i,j,f,g);
 
         /* Generate filename for particular mechanism and open file	*/
+        char	filename[9];	/* character string for output filename		*/
         sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
-        Fcc=fopen(filename,"w");
+        FILE *Fcc=fopen(filename,"w");
 
         // Calculate Delta k0^2 [QWWAD3, Eq. 10.228]
         //   twice the change in KE, see Smet (55)
@@ -227,13 +189,13 @@ int main(int argc,char *argv[])
         const double kjmax=sqrt(2*m*(V.max()-Ej))/hBar;
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
-        Wbar=0;			/* initialise integral sum */
+        double Wbar = 0; // initialise integral for average scattering rate
 
         // calculate c-c rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
         {
             const double ki=dki*(float)iki; // carrier momentum
-            Wijfg=0;			/* Initialize for integration	*/
+            double Wijfg = 0; // Initialize integration of scattering rate
 
             // integrate over |kj|
             std::valarray<double> Wijfg_integrand_kj(nkj);
@@ -262,11 +224,12 @@ int main(int argc,char *argv[])
                     {
                         const double theta=dtheta*(float)itheta; // angle between kij and kfg
 
-                        /* calculate argument of sqrt function=4*q_perp*q_perp, see (8.179),
+                        /* calculate argument of sqrt function=4*q_perp*q_perp,
+                         * see [QWWAD3, 10.231],
                            to check for imaginary q_perp, if argument is positive, q_perp is
                            real and hence calculate scattering rate, otherwise ignore and move
-                           onto next q_perp							*/
-                        q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
+                           onto next q_perp */
+                        const double q_perpsqr4=2*kij*kij+Deltak0sqr-2*kij*sqrt(kij*kij+Deltak0sqr)*cos(theta);
 
                         if(q_perpsqr4>=0) 
                         {
