@@ -78,6 +78,7 @@ class Subband
 
         double Ek(const double k) const;
         double k(const double Ek) const;
+        double get_k_max(const double Te) const;
 
         /// Return total energy of carrier at a given wave-vector
         inline double E_total(const double k) const {return get_E() + Ek(k);}

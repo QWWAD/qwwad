@@ -395,5 +395,25 @@ double Subband::get_pop() const
 
     return population;
 }
+
+/**
+ * \brief find the wave-vector below which 99% of population lies
+ *
+ * \todo This is a pretty crude approximation that assumes Maxwell-Boltzmann
+ *       statistics (and adds a correction for subbands with low populations).
+ *       Would be better to integrate over the band to find the correct solution.
+ */
+double Subband::get_k_max(const double Te) const
+{
+    if(!distribution_known)
+        throw std::runtime_error("Distribution has not been set");
+
+    double Ek_max = 5*kB*Te;
+
+    if(get_E() < get_Ef())
+        Ek_max += get_Ef();
+
+    return k(Ek_max);
+}
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

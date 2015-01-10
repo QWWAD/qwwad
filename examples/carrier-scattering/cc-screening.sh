@@ -37,21 +37,6 @@ outfile1=cc-screening-N1.dat
 outfile100=cc-screening-N100.dat
 rm -f $outfile
 
-# Scattering rate codes (at the moment) are angled towards numerical
-# solutions and require a potential barrier height as an upper limit
-# for integration, so define an artificial structure
-# making sure it contains the same number of points as below
-cat > s.r << EOF
-100 1.0 0.0
-400 0.0 0.0
-100 1.0 0.0
-EOF
-
-# Now convert structure into potential data
-# 1 point-per-angstrom
-find_heterostructure --nz-1per 301
-efxv
-
 # Define width of infinite well 
 LW=400
 
@@ -72,13 +57,13 @@ sbp --Te $T
 echo 2 2 1 1 > rr.r
 
 # Calculate e-e rate WITH screening
-srcc --temperature $T
+srcc --temperature $T --Ecutoff 800
 
 # Save data
 cat cc2211.r > $outfile1
  
 # Now calculate WITHOUT screening
-srcc --temperature $T --noscreening
+srcc --temperature $T --noscreening --Ecutoff 800
 
 printf "\n"  >> $outfile1
 cat cc2211.r >> $outfile1
@@ -99,13 +84,13 @@ sbp --Te $T
 echo 2 2 1 1 > rr.r
 
 # Calculate e-e rate WITH screening
-srcc --temperature $T
+srcc --temperature $T --Ecutoff 800
 
 # Save data
 cat cc2211.r > $outfile100
  
 # Now calculate WITHOUT screening
-srcc --temperature $T --noscreening
+srcc --temperature $T --noscreening --Ecutoff 800
 
 printf "\n"  >> $outfile100
 cat cc2211.r >> $outfile100
@@ -137,4 +122,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f *.r
+#rm -f *.r

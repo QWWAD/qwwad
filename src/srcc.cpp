@@ -33,10 +33,10 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
                       const Subband               &jsb,
                       const Subband               &fsb,
                       const Subband               &gsb,
-                      const std::valarray<double> &V,
                       const double                 T,
                       const size_t                 nq,
-                      const bool                   S_flag);
+                      const bool                   S_flag,
+                      const double                 E_cutoff = -1);
 
 double PI(const Subband &isb,
           const size_t   q_perp,
@@ -56,6 +56,7 @@ Options configure_options(int argc, char* argv[])
                                                    "electrons, heavy holes or light holes respectively.");
     opt.add_numeric_option("temperature,T",   300, "Temperature of carrier distribution.");
     opt.add_numeric_option("width,w",         250, "Width of quantum well [angstrom]. (Solely for output).");
+    opt.add_numeric_option("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -114,17 +115,6 @@ int main(int argc,char *argv[])
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
         subbands[isb].set_distribution(Ef[isb], N[isb]);
 
-    // Read potential profile
-    std::valarray<double> z;
-    std::valarray<double> V;
-    read_table_xy("v.r", z, V);
-
-    if(V.size() != subbands[0].z_array().size())
-    {
-        std::cerr << "Potential and wavefunction arrays are different sizes: " << V.size() << " and " << subbands[0].z_array().size() << " respectively." << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
     // Read list of wanted transitions
     std::valarray<unsigned int> i_indices;
     std::valarray<unsigned int> j_indices;
@@ -166,14 +156,28 @@ int main(int argc,char *argv[])
         if(i+j != f+g)
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
-        gsl_spline *FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, V, T,nq,S_flag); // Form factor table
+        gsl_spline *FF = 0;
+        double kimax = 0;
+        double kjmax = 0;
+
+        if(opt.vm.count("Ecutoff"))
+        {
+            const double Ecutoff = opt.get_numeric_option("Ecutoff")*e/1000;
+            FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, T,nq,S_flag,Ecutoff); // Form factor table
+            kimax = isb.k(Ecutoff);
+            kjmax = jsb.k(Ecutoff);
+        }
+        else
+        {
+            FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, T,nq,S_flag); // Form factor table
+            kimax=isb.get_k_max(T);
+            kjmax=jsb.get_k_max(T);
+        }
+
         gsl_interp_accel *acc = gsl_interp_accel_alloc(); // Creates accelerator for interpolation of FF
 
         /* calculate maximum value of ki & kj and hence kj step length	*/
-        const double kimax=sqrt(2*m*(V.max()-Ei))/hBar;
         const double dki=kimax/((float)nki - 1); // step length for loop over ki
-
-        const double kjmax=sqrt(2*m*(V.max()-Ej))/hBar;
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
         std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
@@ -447,14 +451,25 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
                       const Subband               &jsb,
                       const Subband               &fsb,
                       const Subband               &gsb,
-                      const std::valarray<double> &V,
                       const double                 T,
                       const size_t                 nq,
-                      const bool                   S_flag)
+                      const bool                   S_flag,
+                      const double                 E_cutoff)
 {
-    const double vmax=V.max(); // Maximum potential [J]
-    const double kimax=isb.k(vmax - isb.get_E()); // Max value of ki [1/m]
-    const double kjmax=jsb.k(vmax - jsb.get_E()); // Max value of kj [1/m]
+    // Find maximum wave-vectors for calculation if not specified
+    double kimax = 0.0; // Max value of ki [1/m]
+    double kjmax = 0.0; // Max value of kj [1/m]
+
+    if(E_cutoff > 0)
+    {
+        kimax = isb.k(E_cutoff);
+        kjmax = jsb.k(E_cutoff);
+    }
+    else
+    {
+        kimax = isb.get_k_max(T*1.1);
+        kjmax = jsb.get_k_max(T*1.1);
+    }
 
     // maximum in-plane wave vector
     const double q_perp_max=sqrt(2*gsl_pow_2(kimax+kjmax)+Deltak0sqr+2*(kimax+kjmax)*
