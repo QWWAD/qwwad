@@ -530,7 +530,8 @@ exqwddata_DATA = $(exqwdsrcdir)/index \
 exsrdatadir = $(exdatadir)/carrier-scattering
 exsrsrcdir  = examples/carrier-scattering
 
-exsrdata_DATA = $(exsrsrcdir)/cc-screening-N1.sh
+exsrdata_DATA = $(exsrsrcdir)/index           \
+		$(exsrsrcdir)/cc-screening.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

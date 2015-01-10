@@ -1,23 +1,9 @@
-/*==================================================================
-              srcc  Scattering Rate Carrier-Carrier
-  ==================================================================*/
-
-/* This program calculates the carrier-carrier scattering rate for
-   both intra- and intersubband events.  The required rates are provided
-   by the user in the file `rr.r'.  The other necessary inputs are listed
-   below.
-
-	Input files:	rr.r	contains required rates
-			wf_xy.r	x=particle y=state
-			N.r	subband populations
-			Ex.r	x=particle, energies
-			Ef.r	subband Fermi energies
-
-	Output files:	ccABCD.r	cc rate versus Ei for each mechanism
-
-
-    Paul Harrison, March 1997
-    Modifications, February 1999					*/
+/**
+ * \file   srcc.cpp
+ * \brief  Carrier-carrier scattering rate solver
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
 #include <cstdio>
 #include <cstdlib>

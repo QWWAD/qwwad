@@ -1,0 +1,5 @@
+The following list shows which scripts and output files are used to generate
+each figure from the 4th edition of "Quantum Wells, Wires and Dots".
+
+Fig 10.24: cc-screening.sh         => cc-screening-N1.dat
+Fig 10.25: cc-screening.sh         => cc-screening-N10.dat
