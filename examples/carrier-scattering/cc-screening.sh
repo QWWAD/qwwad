@@ -34,7 +34,7 @@ T=77
 
 # Initialise files
 outfile1=cc-screening-N1.dat
-outfile10=cc-screening-N10.dat
+outfile100=cc-screening-N100.dat
 rm -f $outfile
 
 # Scattering rate codes (at the moment) are angled towards numerical
@@ -83,8 +83,8 @@ srcc --temperature $T --noscreening
 printf "\n"  >> $outfile1
 cat cc2211.r >> $outfile1
 
-# Repeat for N=10e10 cm^{-2}
-N=10
+# Repeat for N=100e10 cm^{-2}
+N=100
 
 # Define subband populations in file `N.r'
 cat > N.r << EOF
@@ -102,19 +102,19 @@ echo 2 2 1 1 > rr.r
 srcc --temperature $T
 
 # Save data
-cat cc2211.r > $outfile10
+cat cc2211.r > $outfile100
  
 # Now calculate WITHOUT screening
 srcc --temperature $T --noscreening
 
-printf "\n"  >> $outfile10
-cat cc2211.r >> $outfile10
+printf "\n"  >> $outfile100
+cat cc2211.r >> $outfile100
 
 cat << EOF
-Results have been written to $outfile1 and ${outfile10}.
+Results have been written to $outfile1 and ${outfile100}.
 $outfile1 contains results for a sheet doping density of 1 x 10^{10} cm^{-2}
 in each subband.
-$outfile10 contains results for a sheet doping density of 10 x 10^{10} cm^{-2}
+$outfile100 contains results for a sheet doping density of 100 x 10^{10} cm^{-2}
 in each subband.
 
 Each file is in the format:
