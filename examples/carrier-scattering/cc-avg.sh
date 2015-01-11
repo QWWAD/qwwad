@@ -2,12 +2,9 @@
 set -ve
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of well width
-# Define output file
-
-OUT=cc-LW.r
 
 # Initialise files
-
+OUT=cc-avg-DE.dat
 rm -f $OUT
 
 # Define subband populations in file `N.r'

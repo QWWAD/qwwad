@@ -3,10 +3,9 @@ set -ve
 
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of carrier density
-# Define output file
-OUT=cc-N.r
 
 # Initialise files
+OUT=cc-avg-N.dat
 rm -f $OUT
 
 # Define the well width

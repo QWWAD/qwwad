@@ -3,3 +3,6 @@ each figure from the 4th edition of "Quantum Wells, Wires and Dots".
 
 Fig 10.24a: cc-screening.sh         => cc-screening-N1.dat
 Fig 10.24b: cc-screening.sh         => cc-screening-N100.dat
+Fig 10.25:  cc-avg.sh               => cc-avg-DE.dat
+Fig 10.26a: cc-avg-N.sh             => cc-avg-N.dat
+Fig 10.26b: cc-avg-T.sh             => cc-avg-T.dat
