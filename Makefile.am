@@ -531,7 +531,10 @@ exsrdatadir = $(exdatadir)/carrier-scattering
 exsrsrcdir  = examples/carrier-scattering
 
 exsrdata_DATA = $(exsrsrcdir)/index           \
-		$(exsrsrcdir)/cc-screening.sh
+		$(exsrsrcdir)/cc-screening.sh \
+		$(exsrsrcdir)/cc-avg.sh   \
+		$(exsrsrcdir)/cc-avg-N.sh \
+		$(exsrsrcdir)/cc-avg-T.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

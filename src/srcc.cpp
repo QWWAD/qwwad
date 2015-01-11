@@ -57,6 +57,11 @@ Options configure_options(int argc, char* argv[])
     opt.add_numeric_option("temperature,T",   300, "Temperature of carrier distribution.");
     opt.add_numeric_option("width,w",         250, "Width of quantum well [angstrom]. (Solely for output).");
     opt.add_numeric_option("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
+    opt.add_size_option   ("nki",             101, "Number of initial wave-vector samples for first carrier");
+    opt.add_size_option   ("nkj",             101, "Number of initial wave-vector samples for second carrier");
+    opt.add_size_option   ("nq",              101, "Number of strips in scattering vector integration");
+    opt.add_size_option   ("ntheta",          101, "Number of strips in alpha angle integration");
+    opt.add_size_option   ("nalpha",          101, "Number of strips in theta angle integration");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -74,13 +79,11 @@ int main(int argc,char *argv[])
     const double T       = opt.get_numeric_option("temperature");  // Temperature [K]
     const double W       = opt.get_numeric_option("width")*1e-10;  // a well width, same as Smet [angstrom]
     const bool   S_flag  = !opt.get_switch("noscreening");	   // Include screening by default
-
-    /* default values for numerical calculations	*/
-    size_t nalpha=101; // number of strips in alpha integration
-    size_t ntheta=101; // number of strips in theta integration
-    size_t nki=101; // number of ki calculations
-    size_t nkj=101; // number of strips in |kj| integration
-    size_t nq=101;  // number of q_perp values for lookup table
+    const size_t nki     = opt.get_size_option("nki");             // number of ki calculations
+    const size_t nkj     = opt.get_size_option("nkj");             // number of strips in |kj| integration
+    const size_t nalpha  = opt.get_size_option("nalpha");          // number of strips in alpha integration
+    const size_t ntheta  = opt.get_size_option("ntheta");          // number of strips in theta integration
+    const size_t nq      = opt.get_size_option("nq");              // number of q_perp values for lookup table
 
     /* calculate step lengths	*/
     const double dalpha=2*pi/((float)nalpha - 1); // step length for alpha integration
@@ -349,7 +352,7 @@ std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z
  *
  * The matrix element is defined as
  *  I_if(q,z') = ∫dz ψ_i(z) ψ_f(z) exp(-q|z-z'|),
- * where z is the electron location.  The numerical solution
+ * where z is the carrier location.  The numerical solution
  * can however be speeded up by replacing the modulus function
  * with the sum of two integrals.  We can say that
  *
@@ -462,8 +465,8 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
 
     if(E_cutoff > 0)
     {
-        kimax = isb.k(E_cutoff);
-        kjmax = jsb.k(E_cutoff);
+        kimax = isb.k(E_cutoff*1.1);
+        kjmax = jsb.k(E_cutoff*1.1);
     }
     else
     {
