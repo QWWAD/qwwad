@@ -536,7 +536,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/cc-avg-N.sh   \
 		$(exsrsrcdir)/cc-avg-T.sh   \
 		$(exsrsrcdir)/cc-intra-N.sh \
-		$(exsrsrcdir)/cc-intra-T.sh
+		$(exsrsrcdir)/cc-intra-T.sh \
+		$(exsrsrcdir)/cc-auger.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
