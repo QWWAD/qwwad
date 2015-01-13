@@ -416,33 +416,35 @@ double PI(const Subband &isb,
           const double   q_perp,
           const double   T)
 {
-    const double m    = isb.get_md_0();    // Effective mass at band-edge [kg]
+    const double m = isb.get_md_0();    // Effective mass at band-edge [kg]
 
     // Now perform the integration, equation 44 of Smet [QWWAD3, 10.238]
-    double mu=isb.get_E();
-    const double dmu=1e-3*e;
-    double integral=0;
+    const double Ek_max = isb.Ek(isb.get_k_max(T));
+    const size_t nE = 101;
+    const double dE = Ek_max/(nE-1);
 
-    double dI; // Intervals in I
+    std::valarray<double> PI_integrand_dE(nE);
 
-    do
+    // Integrate from bottom of subband up to Ek_max (Ef + 5kT)
+    for(unsigned int iE = 0; iE < nE; ++iE)
     {
-        const double ki = isb.k(mu);
+        const double Ek = iE*dE; // Kinetic energy
+        const double ki = isb.k(Ek);
+        const double Et = isb.E_total(ki);
 
         // Find low-temperature polarizability *at this wave-vector*
-        //
         // Equation 43 of Smet, QWWAD3, 10.236
         double P0 = m/(pi*hBar*hBar);
 
         if(q_perp>2*ki)
-            P0 -= m/(pi*hBar*hBar)*sqrt(1-gsl_pow_2(2*ki/q_perp));
+            P0 -= m/(pi*hBar*hBar)*sqrt(1-4*ki*ki/(q_perp*q_perp));
 
-        dI = P0/(4*kB*T*gsl_pow_2(cosh((isb.get_Ef() - mu)/(2*kB*T))));
-        integral += dI*dmu;
-        mu+=dmu;
-    }while(dI>integral/100); // continue until integral converges
+        const double cosh_term = cosh((Et - isb.get_Ef())/(2*kB*T));
+        PI_integrand_dE[iE] = P0/(4*kB*T*cosh_term*cosh_term);
+    }
 
-    return integral;
+    const double result = integral(PI_integrand_dE, dE);
+    return result;
 }
 
 /**

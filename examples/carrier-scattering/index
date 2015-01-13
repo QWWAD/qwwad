@@ -8,4 +8,5 @@ Fig 10.26a: cc-avg-N.sh             => cc-avg-N.dat
 Fig 10.26b: cc-avg-T.sh             => cc-avg-T.dat
 Fig 10.27a: cc-intra-N.sh           => cc-intra-N.dat
 Fig 10.27b: cc-intra-T.sh           => cc-intra-T.dat
-Fig 10.28:  cc-auger.sh             => cc-auger-F.dat
+Fig 10.29:  cc-auger.sh             => cc-auger-F.dat
+Fig 10.30:  cc-asymmetric.sh        => cc-asymmetric-F.dat
