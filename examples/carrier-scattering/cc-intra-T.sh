@@ -1,5 +1,5 @@
 #! /bin/sh
-set -ev
+set -e
 
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of temperature

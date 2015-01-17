@@ -50,6 +50,7 @@ bin_PROGRAMS =  chargedensity \
 		gde     \
 		hup     \
 		i0      \
+		imp     \
 		ivdb    \
 		ppcd    \
 		ppee    \
@@ -208,6 +209,9 @@ hup_LDADD   = libqwwad.la
 
 i0_SOURCES  = src/i0.cpp
 i0_LDADD    = libqwwad.la
+
+imp_SOURCES  = src/imp.cpp
+imp_LDADD    = libqwwad.la
 
 ivdb_SOURCES = src/ivdb.cpp
 ivdb_LDADD   = libqwwad.la
@@ -538,7 +542,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/cc-intra-N.sh \
 		$(exsrsrcdir)/cc-intra-T.sh \
 		$(exsrsrcdir)/cc-auger.sh   \
-		$(exsrsrcdir)/cc-asymmetric.sh
+		$(exsrsrcdir)/cc-asymmetric.sh \
+		$(exsrsrcdir)/imp-screening.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

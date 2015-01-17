@@ -40,7 +40,7 @@ efiw --width 200 --nst 1
 for N in 0.1 0.2 0.5 1 2 5 10 20 50 100
 do
     # Write populations file N.r first
-    echo 1 $N > N.r
+    echo $N | awk '{print $1*1e14}' > N.r
 
     # Calculate Fermi energies and population distribution
     sbp --fd --Te 77

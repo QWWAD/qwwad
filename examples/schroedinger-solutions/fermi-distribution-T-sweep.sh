@@ -61,7 +61,7 @@ nst=3  # Number of states
 efiw --width $lw --nst $nst
 
 # Generate table of populations
-N=1
+N="1e14"
 for i in `seq 1 $nst`; do
     echo $i $N >> N.r
 done

@@ -1,11 +1,10 @@
 [FILES]
 .SS Input files:
-   'E*.r'   Energy of each state:
+  'E*.r'    Energy of each state:
             Column 1: state index.
             Column 2: energy [meV].
   'N.r'     Population of each state (not used if --global-population is specified):
-            Column 1: state index.
-            Column 2: subband population [x10^10 cm^{-2}]
+            Column 1: subband population [m^{-2}]
 
 Default output files:
   'Ef.r'    Quasi-Fermi energy of each subband:

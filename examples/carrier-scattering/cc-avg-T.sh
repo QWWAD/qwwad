@@ -3,12 +3,9 @@ set -ve
 
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of temperature
-# Define output file
-
-OUT=cc-T.r
 
 # Initialise files
-
+OUT=cc-avg-T.dat
 rm -f $OUT
 
 # Define the well width

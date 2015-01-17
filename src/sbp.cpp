@@ -112,7 +112,9 @@ int main(int argc,char *argv[])
     }
     else
     {
-        std::valarray<double> N=read_populations(n); // reads subband populations file
+        // reads subband populations file
+        std::valarray<double> N(n);
+        read_table_x("N.r", N);
 
         for(unsigned int i=0; i<n; ++i) // i=0 => ground state
             Ef[i]=find_fermi(E[i],m,N[i],T,alpha,V);

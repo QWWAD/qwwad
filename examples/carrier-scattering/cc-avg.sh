@@ -1,5 +1,5 @@
 #! /bin/sh
-set -ve
+set -e
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of well width
 

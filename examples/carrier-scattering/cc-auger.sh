@@ -1,5 +1,5 @@
 #! /bin/sh
-set -ev
+set -e
 
 # Initialise files
 OUT=E-F.r

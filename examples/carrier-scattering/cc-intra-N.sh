@@ -1,11 +1,11 @@
 #! /bin/sh
-set -ev
+set -e
 
 # Calculation of the mean e-e scattering rate over two subband populations
 # as a function of well width
 
 # Initialise files
-OUT=cc-intra-N.r
+OUT=cc-intra-N.dat
 rm -f $OUT
 
 # Define the well width
