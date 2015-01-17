@@ -41,6 +41,7 @@ Options configure_options(int argc, char* argv[])
 
     opt.add_switch        ("outputff,a",           "Output form-factors to file.");
     opt.add_switch        ("noscreening,S",        "Disable screening of the Coulomb interaction.");
+    opt.add_switch        ("noblocking,S",         "Disable final-state blocking.");
     opt.add_numeric_option("epsilon,e",     13.18, "Low-frequency dielectric constant");
     opt.add_numeric_option("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
     opt.add_char_option   ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
@@ -68,6 +69,7 @@ int main(int argc,char *argv[])
     const double T       = opt.get_numeric_option("temperature");  // Temperature [K]
     const double W       = opt.get_numeric_option("width")*1e-10;  // a well width, same as Smet [angstrom]
     const bool   S_flag  = !opt.get_switch("noscreening");	   // Include screening by default
+    const bool   b_flag  = !opt.get_switch("noblocking");          // Include final-state blocking by default
     const size_t nki     = opt.get_size_option("nki");             // number of ki calculations
     const size_t ntheta  = opt.get_size_option("ntheta");          // number of strips in theta integration
     const size_t nq      = opt.get_size_option("nq");              // number of q_perp values for lookup table
@@ -215,6 +217,11 @@ int main(int argc,char *argv[])
 
             // Multiply by pre-factor
             Wif[iki] *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*epsilon*epsilon);
+
+            // Include final-state blocking factor
+            if (b_flag)
+                Wif[iki] *= (1 - fsb.f_FD_k(kf, T));
+
             Ei_t[iki] = isb.E_total(ki) * 1000/e;
 
             /* calculate Fermi-Dirac weighted mean of scattering rates over the 

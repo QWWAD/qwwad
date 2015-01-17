@@ -69,7 +69,7 @@ printf "\n"  >> $outfile1
 cat cc2211.r >> $outfile1
 
 # Repeat for N=100e10 cm^{-2}
-N=100
+N=100e14
 
 # Define subband populations in file `N.r'
 cat > N.r << EOF
