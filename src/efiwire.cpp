@@ -84,13 +84,13 @@ for(unsigned int in_y=1;in_y<=s;in_y++)
         }
 
         sprintf(filename,"cd%i%i.r",in_y,in_z);
-        write_table_xyz(filename, y, z, psi);
+        write_table(filename, y, z, psi);
 
         ++ist; // Increment the overall state index
     }/* end in_z */
 
 sprintf(filename,"E%c.r",p);
-write_table_xyz(filename, y_index, z_index, E);
+write_table(filename, y_index, z_index, E);
 
 return EXIT_SUCCESS;
 }

@@ -281,9 +281,9 @@ int main(int argc,char *argv[])
             break;
     }
 
-    write_table_xy("v.r", z, V);
-    write_table_xy("Eg.r", z, Eg);
-    write_table_xy("eps-dc.r", z, eps_dc);
+    write_table("v.r", z, V);
+    write_table("Eg.r", z, Eg);
+    write_table("eps-dc.r", z, eps_dc);
 
     if(!opt.compute_mass())
     {
@@ -291,12 +291,12 @@ int main(int argc,char *argv[])
         mp = z*0.0 + opt.get_mass()*me;
     }
 
-    write_table_xy("m.r", z, m);
-    write_table_xy("m_perp.r", z, mp);
+    write_table("m.r", z, m);
+    write_table("m_perp.r", z, mp);
 
     // Find nonparabolicity parameter
     std::valarray<double> alpha = 1.0/Eg;
-    write_table_xy("alpha.r", z, alpha);
+    write_table("alpha.r", z, alpha);
 
     return EXIT_SUCCESS;
 }

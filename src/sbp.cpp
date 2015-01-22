@@ -108,7 +108,7 @@ int main(int argc,char *argv[])
         }
 
         N /= 1e14; // Rescale to 1e10 cm^{-2}
-        Leeds::write_table_x("N-out.r", N, true, 17);
+        Leeds::write_table("N-out.r", N, true, 17);
     }
     else
     {
@@ -131,7 +131,7 @@ int main(int argc,char *argv[])
         }
     }
     Ef *= 1000.0/e; // Rescale to meV
-    Leeds::write_table_x("Ef.r", Ef, true, 17);
+    Leeds::write_table("Ef.r", Ef, true, 17);
 
     return EXIT_SUCCESS;
 }
@@ -176,7 +176,7 @@ static double calc_dist(const double       Emin,
 
     E/=(1e-3*e); // Convert to meV for output
 
-    write_table_xy(filename, E, f);
+    write_table(filename, E, f);
     return find_pop(Emin, Ef, m, T,alpha,V);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

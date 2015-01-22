@@ -215,7 +215,7 @@ int main(int argc, char* argv[])
     }
     
     // Output the index of each interface to file
-    write_table_x(opt.get_string_option("interfaces-file").c_str(), het->get_layer_top_indices());
+    write_table(opt.get_string_option("interfaces-file").c_str(), het->get_layer_top_indices());
 
     std::ofstream stream(opt.get_string_option("alloy-file").c_str());
     for(unsigned int iz = 0; iz < het->get_z().size(); ++iz)
@@ -228,7 +228,7 @@ int main(int argc, char* argv[])
         stream << std::endl;
     }
 
-    write_table_xy(opt.get_string_option("doping-file").c_str(), het->get_z(), het->get_n3D_array());
+    write_table(opt.get_string_option("doping-file").c_str(), het->get_z(), het->get_n3D_array());
 
     delete het;
 

@@ -111,7 +111,7 @@ int main (int argc, char* argv[])
         // Construct filename and output
         std::stringstream filename;
         filename << opt.get_string_option("disp-prefix") << ist << opt.get_string_option("disp-ext");
-        Leeds::write_table_xy(filename.str().c_str(), k, Ek);
+        write_table(filename.str().c_str(), k, Ek);
 
         // Increment state counter
         ist++;

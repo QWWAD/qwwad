@@ -77,7 +77,7 @@ int main(int argc,char *argv[])
         Tx[iE] = get_transmission_coefficient(E[iE], m_w, m_b, Vb, L1, L2, L3);
     }
 
-    write_table_xy("T.r", E, Tx);
+    write_table("T.r", E, Tx);
 
     const size_t nF = 100; // Number of field points
     std::valarray<double> V(nF); // Voltage drop across structure [V]
@@ -103,7 +103,7 @@ int main(int argc,char *argv[])
         }
     }
 
-    write_table_xy("IV.r", V, current);
+    write_table("IV.r", V, current);
 
     return EXIT_SUCCESS;
 }

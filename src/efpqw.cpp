@@ -69,7 +69,7 @@ int main(int argc,char *argv[])
             x[iz] = x_min+gsl_pow_2(z[iz]-(b+a/2))*(x_max-x_min)/gsl_pow_2(a/2);
     }
 
-    write_table_xy("x.r", z, x);
+    write_table("x.r", z, x);
 
     return EXIT_SUCCESS;
 }

@@ -234,7 +234,7 @@ int main(int argc,char *argv[])
            kinetic energy						*/
         char	filename[9];	/* character string for output filename		*/
         sprintf(filename,"imp%i%i.r",i,f);
-        write_table_xy(filename, Ei_t, Wif);
+        write_table(filename, Ei_t, Wif);
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_pop());
 

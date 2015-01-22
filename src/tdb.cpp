@@ -72,7 +72,7 @@ int main(int argc,char *argv[])
 
     // Rescale to meV for output
     E/=(1e-3*e);
-    write_table_xy("T.r", E, T);
+    write_table("T.r", E, T);
 
     return EXIT_SUCCESS;
 }

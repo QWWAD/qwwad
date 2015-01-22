@@ -147,8 +147,8 @@ int main(int argc, char* argv[])
         rho_1per *= -1;
 
     // Output position, charge density [Cm^{-3}] and carrier density [m^{-3}] for a single period
-    write_table_xy(opt.get_string_option("chargefile").c_str(), z_1per, rho_1per);
-    write_table_xy(opt.get_string_option("carrierdensityfile").c_str(), z_1per, carrier_density_1per);
+    write_table(opt.get_string_option("chargefile").c_str(), z_1per, rho_1per);
+    write_table(opt.get_string_option("carrierdensityfile").c_str(), z_1per, carrier_density_1per);
 
     return EXIT_SUCCESS;
 }

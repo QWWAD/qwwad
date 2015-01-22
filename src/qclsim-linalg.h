@@ -399,14 +399,15 @@ class EVP_solution {
                 std::valarray<T> E_temp(solutions.size());
                 for(unsigned int ist=0; ist < solutions.size(); ist++)
                     E_temp[ist] = solutions[ist].get_E();
-                write_table_x(Eigenval_name.c_str(), E_temp, with_num, 17);
+
+                write_table(Eigenval_name.c_str(), E_temp, with_num, 17);
 
                 // Output eigenvectors
                 for(unsigned int ist=0; ist < solutions.size(); ist++){
                     std::stringstream Eigenvect_name_sstream;
                     Eigenvect_name_sstream << Eigenvect_prefix << ist+1 << Eigenvect_ext;
                     std::string Eigenvect_name = Eigenvect_name_sstream.str();
-                    write_table_xy(Eigenvect_name.c_str(), z, solutions[ist].psi_array(), false, 17);
+                    write_table(Eigenvect_name.c_str(), z, solutions[ist].psi_array(), false, 17);
                 }
             }
 };

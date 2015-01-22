@@ -125,7 +125,7 @@ int main(int argc,char *argv[])
         diffuse(z, x, D, dt);
     }
 
-    write_table_xy(opt.get_string_option("outfile").c_str(), z, x);
+    write_table(opt.get_string_option("outfile").c_str(), z, x);
 
     return EXIT_SUCCESS;
 }

@@ -138,7 +138,7 @@ int main(int argc,char *argv[])
             lhs[iv] = se.get_lhs(v[iv]);
         }
 
-        Leeds::write_table_xy("lhs.r", v, lhs);
+        write_table("lhs.r", v, lhs);
 
         // Output a separate file for each rhs branch
         for (unsigned int ibranch = 0; ibranch < nst+1; ++ibranch)
@@ -161,7 +161,7 @@ int main(int argc,char *argv[])
             // Set filename
             std::ostringstream oss;
             oss << "rhs_" << ibranch+1 << ".r";
-            Leeds::write_table_xy(oss.str().c_str(), v_branch, rhs);
+            write_table(oss.str().c_str(), v_branch, rhs);
         }
     }
 
@@ -180,7 +180,7 @@ int main(int argc,char *argv[])
 
     // Write potential profile to file if wanted
     if(opt.get_switch("output-potential"))
-        Leeds::write_table_xy("v.r", se.get_z(), se.get_V());
+        Leeds::write_table("v.r", se.get_z(), se.get_V());
 
     return EXIT_SUCCESS;
 }

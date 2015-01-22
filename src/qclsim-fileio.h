@@ -356,11 +356,11 @@ void read_table(const char* fname, std::valarray<T>& x)
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision The number of decimal places to use in output
  */
-    template <class T>
-void write_table_x(const char* fname,
-        const std::valarray<T>& x,
-        const bool with_num = false,
-        const int precision = 12)
+template <class T>
+void write_table(const char             *fname,
+                 const std::valarray<T> &x,
+                 const bool              with_num = false,
+                 const int               precision = 12)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -467,12 +467,12 @@ void read_table(const char* fname,
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision Precision with which to output floating point numbers
  */
-    template <class Tx, class Ty>
-void write_table_xy(const char              *fname,
-                    const std::valarray<Tx> &x,
-                    const std::valarray<Ty> &y,
-                    const bool               with_num = false,
-                    const size_t             precision = 12)
+template <class Tx, class Ty>
+void write_table(const char              *fname,
+                 const std::valarray<Tx> &x,
+                 const std::valarray<Ty> &y,
+                 const bool               with_num = false,
+                 const size_t             precision = 12)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -659,12 +659,12 @@ void read_table(const char* fname,
  * \param[in] z         Value array containing z data
  * \param[in] with_num  Add an initial column containing the line number
  */
-    template <class Tx, class Ty, class Tz>
-void write_table_xyz(const char* fname,
-        const std::valarray<Tx>& x,
-        const std::valarray<Ty>& y,
-        const std::valarray<Tz>& z,
-        const bool with_num = false)
+template <class Tx, class Ty, class Tz>
+void write_table(const char              *fname,
+                 const std::valarray<Tx> &x,
+                 const std::valarray<Ty> &y,
+                 const std::valarray<Tz> &z,
+                 const bool               with_num = false)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -706,13 +706,13 @@ void write_table_xyz(const char* fname,
  * \param[in] u         Value array containing u data
  * \param[in] with_num  Add an initial column containing the line number
  */
-    template <class Tx, class Ty, class Tz, class Tu>
-void write_table_xyzu(const char* fname,
-        const std::valarray<Tx>& x,
-        const std::valarray<Ty>& y,
-        const std::valarray<Tz>& z,
-        const std::valarray<Tu>& u,
-        const bool with_num = false)
+template <class Tx, class Ty, class Tz, class Tu>
+void write_table(const char              *fname,
+                 const std::valarray<Tx> &x,
+                 const std::valarray<Ty> &y,
+                 const std::valarray<Tz> &z,
+                 const std::valarray<Tu> &u,
+                 const bool               with_num = false)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();

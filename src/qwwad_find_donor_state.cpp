@@ -132,7 +132,7 @@ int main(int argc,char *argv[])
         char   filename[9];     /* character string for wavefunction filename  */
         sprintf(filename,"wf%i.r",i_d);
 
-        write_table_xyz(filename, z, psi, chi);
+        write_table(filename, z, psi, chi);
         delete se;
     }/* end loop over r_d */
 
@@ -141,11 +141,11 @@ int main(int argc,char *argv[])
     const std::valarray<double> E_out = E0*1000.0/e;
     const std::valarray<double> r_d_out = r_d/1e-10;
     const std::valarray<double> lambda_out = lambda_0*1.0e10;
-    write_table_xy("e.r", r_d_out, E_out);
-    write_table_xy("l.r", r_d_out, lambda_out);
+    write_table("e.r", r_d_out, E_out);
+    write_table("l.r", r_d_out, lambda_out);
 
     if(opt.get_string_option("symmetry") == "variable")
-        write_table_xy("zeta.r", r_d_out, zeta_0);
+        write_table("zeta.r", r_d_out, zeta_0);
 
     return EXIT_SUCCESS;
 }

@@ -145,8 +145,8 @@ int main(int argc, char* argv[])
     for(unsigned int iz = 1; iz < nz-1; ++iz)
         F[iz] = (phi[iz+1] - phi[iz-1])/(2*dz*e);
 
-    write_table_xy("field.r", z, F);
-    write_table_xy(opt.get_string_option("potential-file").c_str(), z, phi);
+    write_table("field.r", z, F);
+    write_table(opt.get_string_option("potential-file").c_str(), z, phi);
 
     // Calculate total potential and add on the baseline
     // potential if desired
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
         Vtotal = phi + Vbase;
     }
 
-    write_table_xy(opt.get_string_option("Vtotalfile").c_str(), z, Vtotal);
+    write_table(opt.get_string_option("Vtotalfile").c_str(), z, Vtotal);
     
     return EXIT_SUCCESS;
 }

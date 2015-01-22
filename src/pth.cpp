@@ -75,7 +75,7 @@ int main(int argc,char *argv[])
                          se.get_z(),
                          true);
 
-    Leeds::write_table_xy("v.r", se.get_z(), se.get_V());
+    Leeds::write_table("v.r", se.get_z(), se.get_V());
     
     return EXIT_SUCCESS;
 }

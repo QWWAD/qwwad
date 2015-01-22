@@ -283,7 +283,7 @@ int main(int argc, char *argv[]){
 
         std::ostringstream wf_filename;
         wf_filename << "wf_" << opt.get_char_option("particle") << "E.r";
-        write_table_xy(wf_filename.str().c_str(), z, psi);
+        write_table(wf_filename.str().c_str(), z, psi);
     }
     else // Output all wavefunctions
     {

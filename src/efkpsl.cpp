@@ -155,7 +155,7 @@ int main(int argc,char *argv[])
     char filename[9];
     sprintf(filename,"E%c.r",p);
     E *= 1e3/e; // Rescale to meV
-    Leeds::write_table_x(filename, E, true);
+    write_table(filename, E, true);
 
     return EXIT_SUCCESS;
 }

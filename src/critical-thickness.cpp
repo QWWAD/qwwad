@@ -73,7 +73,7 @@ int main(int argc,char *argv[])
         hc[ix] = -A * gsl_sf_lambert_Wm1(-1/(A*B));
     }
 
-    write_table_xy("hc.r", x, hc);
+    write_table("hc.r", x, hc);
 
     return EXIT_SUCCESS;
 }
