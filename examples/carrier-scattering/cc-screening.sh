@@ -1,5 +1,5 @@
 #! /bin/sh
-set -e
+set -ev
 
 # Calculates the carrier-carrier scattering as function of initial electron
 # energy for a QW with & without screening.
@@ -44,10 +44,10 @@ LW=400
 efiw --width $LW --nz 301 --nst 2
 
 # Define subband populations in file `N.r'
-N=1
+N=1e14
 cat > N.r << EOF
-1 $N
-2 $N
+$N
+$N
 EOF
 
 # Calculate the distribution functions
@@ -73,8 +73,8 @@ N=100e14
 
 # Define subband populations in file `N.r'
 cat > N.r << EOF
-1 $N
-2 $N
+$N
+$N
 EOF
 
 # Calculate the distribution functions

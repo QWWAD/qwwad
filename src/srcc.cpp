@@ -112,8 +112,7 @@ int main(int argc,char *argv[])
     std::valarray<unsigned int> indices; // Subband indices (garbage)
     read_table_xy("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table_xy("N.r", indices, N);	// read populations
-    N *= 1e+10*1e+4; // convert from units of 10^10cm^-2->m^-2
+    read_table_x("N.r", N);	// read populations
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
         subbands[isb].set_distribution(Ef[isb], N[isb]);
@@ -216,9 +215,9 @@ int main(int argc,char *argv[])
                     // Can also pre-calculate a few of the terms needed inside the following loop
                     // to save time
                     const double kfg_sqr = kij_sqr + Deltak0sqr;
-                    const double two_kij_sqr_plus_Deltak0sqr = kij_sqr + kfg_sqr;
-                    const double two_kij_times_sqrt__kij_sqr_plus_Deltak0sqr__
-                                     = 2 * kij * sqrt(kfg_sqr);
+                    const double kfg     = sqrt(kfg_sqr);
+                    const double kij_sqr_plus_kfg_sqr = kij_sqr + kfg_sqr;
+                    const double two_kij_kfg = 2 * kij * kfg;
 
                     // Now perform innermost integral (over theta)
                     std::valarray<double> Wijfg_integrand_theta(ntheta);
@@ -232,7 +231,7 @@ int main(int argc,char *argv[])
                            onto next q_perp */
                         // Note that most of the terms here are computed before the loop, so we
                         // only need to look up the cos(theta)
-                        const double q_perpsqr4 = two_kij_sqr_plus_Deltak0sqr - two_kij_times_sqrt__kij_sqr_plus_Deltak0sqr__ * cos_theta[itheta];
+                        const double q_perpsqr4 = kij_sqr_plus_kfg_sqr - two_kij_kfg * cos_theta[itheta];
 
                         if(q_perpsqr4>=0) 
                         {
