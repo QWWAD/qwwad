@@ -179,30 +179,26 @@ void read_line_array_u(std::valarray<T>& dest, std::istream& stream)
  *
  * \return "0" if read was successful, "1" if not
  */
-    template <class T>
-int read_line_x(T& dest, std::istream& stream)
+template <class T>
+int read_line(T& dest, std::istream& stream)
 {
-    std::streamsize nbytes=100; // Initial size of buffer
     int scan_result = 1; // Flag showing whether scan successful
 
     if(!stream)
         throw std::runtime_error("Could not read stream");
 
-    // Buffer for line data
-    char* linebuffer = new char[nbytes+1];
+    std::string linebuffer; // Buffer for line data
 
-    if(stream.getline(linebuffer, nbytes) && linebuffer[0] != '\0')
+    if(getline(stream, linebuffer) and !linebuffer.empty())
     {
-        char *pch=strtok(linebuffer, "\t "); // Pointer to a token on line
+        std::istringstream oss(linebuffer);
 
-        if(pch == NULL)
-            throw std::runtime_error("Some data missing on at least one line");
-
-        dest=static_cast<T>(atof(pch));
-        scan_result = 0; // Mark scan as successful
+        if(oss >> dest)
+            scan_result = 0; // Mark scan as successful
+        else
+            throw std::runtime_error("Some data missing on line");
     }
 
-    delete[] linebuffer;
     return scan_result;
 }
 
@@ -215,44 +211,101 @@ int read_line_x(T& dest, std::istream& stream)
  *
  * \return "0" if read was successful, "1" if not
  */
-    template <class Tx, class Ty>
-int read_line_xy(Tx& destx, Ty& desty, std::istream& stream)
+template <class Tx, class Ty>
+int read_line(Tx& destx, Ty& desty, std::istream& stream)
 {
-    std::streamsize nbytes=100; // Initial size of buffer
     int scan_result = 1; // Flag showing whether scan successful
 
     if(!stream)
         throw std::runtime_error("Could not read stream");
 
-    char* linebuffer = new char[nbytes+1]; // Buffer for line data
+    std::string linebuffer; // Buffer for line data
 
-    if(stream.getline(linebuffer, nbytes) and linebuffer[0] != '\0')
+    if(getline(stream, linebuffer) and !linebuffer.empty())
     {
-        char *pch = strtok(linebuffer, "\t "); // Pointer to string token
+        std::istringstream oss(linebuffer);
 
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destx=static_cast<Tx>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        desty=static_cast<Ty>(atof(pch));
-        scan_result = 0; /* Mark scan as successful */
+        if(oss >> destx >> desty)
+            scan_result = 0; // Mark scan as successful
+        else
+            throw std::runtime_error("Some data missing on line");
     }
 
-    delete[] linebuffer;
     return scan_result;
 }
 
+/** 
+ * \brief Read 3 data values from a line of input
+ *
+ * \param[out] destx   The destination for the first data item
+ * \param[out] desty   The destination for the second data item
+ * \param[out] destz   The destination for the third data item
+ * \param[in]  stream  The input stream from which to read data.
+ *
+ * \details The first three whitespace-delimited values on a line are stored in
+ *          the output variables \c dest1, \c dest2 and \c dest3.
+ *
+ * \returns 0 if successful, 1 if not.
+ */
+template <class Tx, class Ty, class Tz>
+int read_line(Tx &destx, Ty &desty, Tz &destz, std::istream& stream)
+{
+    int scan_result = 1; // Flag showing whether scan successful
+
+    if(!stream)
+        throw std::runtime_error("Could not read stream");
+
+    std::string linebuffer; // Buffer for line data
+
+    if(getline(stream, linebuffer) and !linebuffer.empty())
+    {
+        std::istringstream oss(linebuffer);
+
+        if(oss >> destx >> desty >> destz)
+            scan_result = 0; // Mark scan as successful
+        else
+            throw std::runtime_error("Some data missing on line");
+    }
+
+    return scan_result;
+}
+
+/** 
+ * \brief Read 4 data values from a line of input
+ *
+ * \param[out] destx   The destination for the 1st data item
+ * \param[out] desty   The destination for the 2nd data item
+ * \param[out] destz   The destination for the 3rd data item
+ * \param[out] destu   The destination for the 4th data item
+ * \param[in]  stream  The input stream from which to read data.
+ *
+ * \details The first 4 whitespace-delimited values on a line are stored in
+ *          the output variables \c destx, \c desty, \c destz and \c destu.
+ *
+ * \returns 0 if successful, 1 if not.
+ */
+template <class Tx, class Ty, class Tz, class Tu>
+int read_line(Tx &destx, Ty &desty, Tz &destz, Tu &destu, std::ifstream& stream)
+{
+    int scan_result = 1; // Flag showing whether scan successful
+
+    if(!stream)
+        throw std::runtime_error("Could not read stream");
+
+    std::string linebuffer; // Buffer for line data
+
+    if(getline(stream, linebuffer) and !linebuffer.empty())
+    {
+        std::istringstream oss(linebuffer);
+
+        if(oss >> destx >> desty >> destz >> destu)
+            scan_result = 0; // Mark scan as successful
+        else
+            throw std::runtime_error("Some data missing on line");
+    }
+
+    return scan_result;
+}
 
 /**
  * Read numerical data from a file containing data in a single column
@@ -283,7 +336,7 @@ void read_table(const char* fname, std::valarray<T>& x)
         T buffer = 0; // Buffer for input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line_x(buffer, stream))
+        if(!read_line(buffer, stream))
             x_temp.push_back(buffer);
     }
     
@@ -375,7 +428,7 @@ void read_table(const char* fname,
         Ty buffer_y = 0; // Buffer for y input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line_xy(buffer_x, buffer_y, stream))
+        if(!read_line(buffer_x, buffer_y, stream))
         {
             x_temp.push_back(buffer_x);
             y_temp.push_back(buffer_y);
@@ -452,136 +505,6 @@ void write_table_xy(const char              *fname,
 }
 
 
-/** 
- * \brief Read 3 data values from a line of input
- *
- * \param[out] destx   The destination for the first data item
- * \param[out] desty   The destination for the second data item
- * \param[out] destz   The destination for the third data item
- * \param[in]  stream  The input stream from which to read data.
- *
- * \details The first three whitespace-delimited values on a line are stored in
- *          the output variables \c dest1, \c dest2 and \c dest3.
- *
- * \returns 0 if successful, 1 if not.
- */
-    template <class Tx, class Ty, class Tz>
-int read_line_xyz(Tx& destx, Ty& desty, Tz& destz, std::ifstream& stream)
-{
-    std::streamsize nbytes=100; // Initial size of buffer
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    char* linebuffer = new char[nbytes+1];
-
-    if(stream.getline(linebuffer, nbytes) and linebuffer[0] != '\0')
-    {
-        char *pch=strtok(linebuffer, "\t "); // Pointer to a token on the line
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destx=static_cast<Tx>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        desty=static_cast<Ty>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destz=static_cast<Tz>(atof(pch));
-        scan_result = 0; /* Mark scan as successful */
-    }
-
-    delete[] linebuffer;
-    return scan_result;
-}
-
-/** 
- * \brief Read 4 data values from a line of input
- *
- * \param[out] destx   The destination for the 1st data item
- * \param[out] desty   The destination for the 2nd data item
- * \param[out] destz   The destination for the 3rd data item
- * \param[out] destu   The destination for the 4th data item
- * \param[in]  stream  The input stream from which to read data.
- *
- * \details The first 4 whitespace-delimited values on a line are stored in
- *          the output variables \c destx, \c desty, \c destz and \c destu.
- *
- * \returns 0 if successful, 1 if not.
- */
-    template <class Tx, class Ty, class Tz, class Tu>
-int read_line_xyzu(Tx& destx, Ty& desty, Tz& destz, Tu& destu, std::ifstream& stream)
-{
-    std::streamsize nbytes=100; // Initial size of buffer
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    char* linebuffer = new char[nbytes+1];
-
-    if(stream.getline(linebuffer, nbytes) and linebuffer[0] != '\0')
-    {
-        char *pch=strtok(linebuffer, "\t "); // Pointer to a token on the line
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destx=static_cast<Tx>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        desty=static_cast<Ty>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destz=static_cast<Tz>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        destu=static_cast<Tu>(atof(pch));
-        scan_result = 0; /* Mark scan as successful */
-    }
-
-    delete[] linebuffer;
-    return scan_result;
-}
-
 /**
  * Read numerical data from a file containing data in three columns
  *
@@ -619,7 +542,7 @@ void read_table(const char* fname,
         Tz buffer_z = 0; // Buffer for z input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line_xyz(buffer_x, buffer_y, buffer_z, stream))
+        if(!read_line(buffer_x, buffer_y, buffer_z, stream))
         {
             x_temp.push_back(buffer_x);
             y_temp.push_back(buffer_y);
@@ -692,7 +615,7 @@ void read_table(const char* fname,
         Tz buffer_u = 0; // Buffer for u input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line_xyzu(buffer_x, buffer_y, buffer_z, buffer_u, stream))
+        if(!read_line(buffer_x, buffer_y, buffer_z, buffer_u, stream))
         {
             x_temp.push_back(buffer_x);
             y_temp.push_back(buffer_y);
