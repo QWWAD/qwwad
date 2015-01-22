@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     // There should probably be an option in the State class for this
     std::valarray<double> z;
     std::valarray<double> _psi;
-    read_table_xy("wf_e1.r", z, _psi);
+    read_table("wf_e1.r", z, _psi);
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 

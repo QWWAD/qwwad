@@ -72,7 +72,7 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> x; // Initial diffusant profile
-    read_table_xy(opt.get_string_option("infile").c_str(), z, x);
+    read_table(opt.get_string_option("infile").c_str(), z, x);
 
     const size_t nz = z.size(); // Number of spatial points
 

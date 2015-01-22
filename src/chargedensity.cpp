@@ -73,7 +73,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
 {
     // Read population of each subband
     const char *population_file = opt.get_string_option("populationfile").c_str();
-    read_table_x(population_file, pop);
+    read_table(population_file, pop);
     const size_t nst = pop.size();
     
     // Check that populations are all positive
@@ -84,7 +84,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     if(opt.vm.count("degeneracyfile"))
     {
         const char *degeneracy_file = opt.get_string_option("degeneracyfile").c_str();
-        read_table_x(degeneracy_file, nval);
+        read_table(degeneracy_file, nval);
 
         // Check that all input files have same size
         if(nval.size() != nst)
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
     // Read doping profile (for entire multi-period structure)
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> d; // Spatial profile of doping in structure [Cm^{-3}]
-    read_table_xy(opt.get_string_option("dopingfile").c_str(), z, d);
+    read_table(opt.get_string_option("dopingfile").c_str(), z, d);
 
     // Compute the spatial points for a single period
     const size_t nz_1per = z.size() / nper; // Number of points in a single period

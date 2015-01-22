@@ -131,13 +131,13 @@ while((argc>1)&&(argv[1][0]=='-'))
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
-    read_table_xy("v.r", z, V);
+    read_table("v.r", z, V);
 
     char	filename[9];	/* input filename			*/
     sprintf(filename,"wf_%c%i.r",p,state);
     std::valarray<double> z_tmp; // Dummy file for unused spatial locations
     std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
-    read_table_xy(filename, z_tmp, wf);
+    read_table(filename, z_tmp, wf);
 
   const double lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
@@ -148,7 +148,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 
   // Read list of donor (or acceptor) positions
   std::valarray<double> r_d; // [m]
-  read_table_x("r_d.r", r_d);
+  read_table("r_d.r", r_d);
 
   // Perform variational calculation for each donor/acceptor position
   for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)

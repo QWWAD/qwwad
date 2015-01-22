@@ -113,7 +113,7 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
                                             const Unit             thickness_unit)
 {
     std::valarray<double> coltemp; // A temporary vector containing the first column of the input file
-    read_table_x(filename.c_str(), coltemp);
+    read_table(filename.c_str(), coltemp);
     const size_t nL = coltemp.size();
 
     std::valarray<double> rowtemp; // A temporary vector containing the first row of the input file

@@ -31,7 +31,7 @@ std::valarray<double> read_E(char p)
     std::valarray<double> E;
 
     sprintf(filename,"E%c.r",p);
-    Leeds::read_table_xy(filename, indices, E);
+    Leeds::read_table(filename, indices, E);
 
     E *= 1e-3*Leeds::constants::e; // convert meV->J
 
@@ -49,7 +49,7 @@ std::valarray<double> read_populations(int n)
 {
     std::valarray<unsigned int> indices(n);
     std::valarray<double>       N(n);
-    Leeds::read_table_xy("N.r", indices, N, n);
+    Leeds::read_table("N.r", indices, N, n);
 
     N *= 1e+10*1e+4; // convert from units of 10^10cm^{-2}->m^{-2}
 
@@ -65,7 +65,7 @@ double Vmax()
 {
     std::valarray<double> z;
     std::valarray<double> V;
-    Leeds::read_table_xy("v.r", z, V);
+    Leeds::read_table("v.r", z, V);
     return V.max();
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

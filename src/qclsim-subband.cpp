@@ -96,7 +96,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             1000.0/e,
                                                             true);
 
-    Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);
+    Leeds::read_table(m_d_filename.c_str(), z, m_d_z);
     
     const size_t nst = ground_state.size();
 
@@ -156,7 +156,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     iss << wf_input_prefix << 1 << wf_input_ext;
     std::valarray<double> wf_temp;
     std::valarray<double> z;
-    read_table_xy(iss.str().c_str(), z, wf_temp);
+    read_table(iss.str().c_str(), z, wf_temp);
 
     // Copy subband data to vector
     std::vector<Subband> subbands;
@@ -197,9 +197,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             wf_input_ext,
                                                             1000.0/e,
                                                             true);
-    Leeds::read_table_xy(m_d_filename.c_str(), z, m_d_z);
-    Leeds::read_table_xy(alphad_filename.c_str(), z, alphad);
-    Leeds::read_table_xy(potential_filename.c_str(), z, V);
+    Leeds::read_table(m_d_filename.c_str(), z, m_d_z);
+    Leeds::read_table(alphad_filename.c_str(), z, alphad);
+    Leeds::read_table(potential_filename.c_str(), z, V);
 
     const size_t nst = ground_state.size();
     std::valarray<unsigned int> psi_max_iz(nst);    
@@ -262,7 +262,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     iss << wf_input_prefix << 1 << wf_input_ext;
     std::valarray<double> wf_temp;
     std::valarray<double> z;
-    read_table_xy(iss.str().c_str(), z, wf_temp);
+    read_table(iss.str().c_str(), z, wf_temp);
 
     // Copy subband data to vector
     for (unsigned int ist = 0; ist < nst; ist++)

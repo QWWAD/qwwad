@@ -329,10 +329,10 @@ class EVP_solution {
                 if(ignore_first_column)
                 {
                     std::valarray<unsigned int> indices;
-                    read_table_xy(Eigenval_name.c_str(), indices, E_temp);
+                    read_table(Eigenval_name.c_str(), indices, E_temp);
                 }
                 else
-                    read_table_x(Eigenval_name.c_str(), E_temp);
+                    read_table(Eigenval_name.c_str(), E_temp);
 
                 E_temp /= eigenvalue_scale;
 
@@ -349,7 +349,7 @@ class EVP_solution {
                 std::valarray<T> z_temp;
                 std::valarray<T> psi_temp;
                 std::string Eigenvect_name = Eigenvect_prefix + "1" + Eigenvect_ext;
-                read_table_xy(Eigenvect_name.c_str(), z_temp, psi_temp);
+                read_table(Eigenvect_name.c_str(), z_temp, psi_temp);
 
                 if(z_temp.size() == 0)
                 {
@@ -368,7 +368,7 @@ class EVP_solution {
                     std::stringstream Eigenvect_name_sstream;
                     Eigenvect_name_sstream << Eigenvect_prefix << ist+1 << Eigenvect_ext;
                     Eigenvect_name = Eigenvect_name_sstream.str();
-                    read_table_xy(Eigenvect_name.c_str(), z_temp, psi_temp, psi_size);
+                    read_table(Eigenvect_name.c_str(), z_temp, psi_temp, psi_size);
                     solutions[ist] = EVP_solution<T>(E_temp[ist], psi_temp);
                 }
                 

@@ -138,7 +138,7 @@ int main(int argc,char *argv[])
     {
         case 'a':	/* Ga(1-x)Al(x)As	*/
             {
-                read_table_xy(alloyfile, z, x);
+                read_table(alloyfile, z, x);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
@@ -183,7 +183,7 @@ int main(int argc,char *argv[])
 
         case 'b':	/* Cd(1-x)Mn(x)Te	*/
             {
-                read_table_xy(alloyfile, z, x);
+                read_table(alloyfile, z, x);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
@@ -237,7 +237,7 @@ int main(int argc,char *argv[])
             {
                 std::valarray<double> y;
 
-                read_table_xyz(alloyfile, z, x, y);
+                read_table(alloyfile, z, x, y);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());

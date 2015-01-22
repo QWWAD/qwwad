@@ -1,5 +1,5 @@
 #! /bin/sh
-set -ev
+set -e
 
 # Calculates the carrier-carrier scattering as function of initial electron
 # energy for a QW with & without screening.

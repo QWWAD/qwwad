@@ -95,14 +95,14 @@ int main(int argc, char *argv[])
 
     std::valarray<double> z;   ///< Spatial points [m]
     std::valarray<double> d;   ///< Volume doping profile [m^{-3}]
-    read_table_xy(opt.get_string_option("dopingfile").c_str(), z, d);
+    read_table(opt.get_string_option("dopingfile").c_str(), z, d);
 
     const double dz = z[1] - z[0];  // Spatial step [m]
     const double n2D = trapz(d,dz); // Sheet doping [m^{-2}]
 
     std::valarray<unsigned int> _inx; // State indices
     std::valarray<double> E;          // Energies of subband minima [J]
-    read_table_xy(opt.get_string_option("energyfile").c_str(), _inx, E);
+    read_table(opt.get_string_option("energyfile").c_str(), _inx, E);
     E *= e/1000; // Rescale to J
 
     const size_t nst = E.size();    // Number of subbands

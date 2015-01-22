@@ -261,7 +261,7 @@ int read_line_xy(Tx& destx, Ty& desty, std::istream& stream)
  * \param[out] x     Value array into which data will be written
  */
     template <class T>
-void read_table_x(const char* fname, std::valarray<T>& x)
+void read_table(const char* fname, std::valarray<T>& x)
 {
     std::ifstream stream(fname);
 
@@ -349,10 +349,10 @@ void write_table_x(const char* fname,
  *       sizing the output arrays.  Probably a bit more efficient.
  */
 template <class Tx, class Ty>
-void read_table_xy(const char* fname,
-                   std::valarray<Tx>& x,
-                   std::valarray<Ty>& y,
-                   size_t n_expected = 0)
+void read_table(const char* fname,
+                std::valarray<Tx>& x,
+                std::valarray<Ty>& y,
+                size_t n_expected = 0)
 {
     std::ifstream stream(fname);
 
@@ -591,10 +591,10 @@ int read_line_xyzu(Tx& destx, Ty& desty, Tz& destz, Tu& destu, std::ifstream& st
  * \param[out] z     Value array into which data from 3rd column will be written
  */
     template <class Tx, class Ty, class Tz>
-void read_table_xyz(const char* fname,
-        std::valarray<Tx>& x,
-        std::valarray<Ty>& y,
-        std::valarray<Tz>& z)
+void read_table(const char* fname,
+                std::valarray<Tx>& x,
+                std::valarray<Ty>& y,
+                std::valarray<Tz>& z)
 {
     std::ifstream stream(fname);
 
@@ -661,11 +661,11 @@ void read_table_xyz(const char* fname,
  * \param[out] u     Value array into which data from 4th column will be written
  */
     template <class Tx, class Ty, class Tz, class Tu>
-void read_table_xyzu(const char* fname,
-        std::valarray<Tx>& x,
-        std::valarray<Ty>& y,
-        std::valarray<Tz>& z,
-        std::valarray<Tu>& u)
+void read_table(const char* fname,
+                std::valarray<Tx>& x,
+                std::valarray<Ty>& y,
+                std::valarray<Tz>& z,
+                std::valarray<Tu>& u)
 {
     std::ifstream stream(fname);
 

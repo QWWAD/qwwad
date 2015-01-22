@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 
     std::valarray<double> z;
     std::valarray<double> _eps; // Low-frequency permittivity [F/m]
-    read_table_xy("eps-dc.r", z, _eps);
+    read_table("eps-dc.r", z, _eps);
 
     const size_t nz = z.size();
 
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
 
     // Read space-charge profile, if desired
     if(!opt.get_switch("uncharged"))
-        read_table_xy(opt.get_string_option("charge-file").c_str(), z2, rho);
+        read_table(opt.get_string_option("charge-file").c_str(), z2, rho);
 
     // Convert charge density into S.I. units
     rho *= e;
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     if (opt.vm.count("Vbasefile"))
     {
         std::valarray<double> zbase(phi.size());
-        read_table_xy(opt.get_string_option("Vbasefile").c_str(), zbase, Vbase);
+        read_table(opt.get_string_option("Vbasefile").c_str(), zbase, Vbase);
 
         // TODO: Add more robust checking of z, zbase identicality here
         if(zbase.size() != z.size())

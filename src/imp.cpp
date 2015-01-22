@@ -98,14 +98,14 @@ int main(int argc,char *argv[])
     std::valarray<double>       Ef;      // Fermi energies [J]
     std::valarray<double>       N;       // Subband populations [m^{-2}]
     std::valarray<unsigned int> indices; // Subband indices (garbage)
-    read_table_xy("Ef.r", indices, Ef);
+    read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table_x("N.r", N);	// read populations
+    read_table("N.r", N);	// read populations
 
     // Read doping profile
     std::valarray<double> z_d; // Spatial location
     std::valarray<double> d;   // Volume doping [m^{-3}]
-    read_table_xy("d.r", z_d, d);
+    read_table("d.r", z_d, d);
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
         subbands[isb].set_distribution(Ef[isb], N[isb]);
@@ -114,7 +114,7 @@ int main(int argc,char *argv[])
     std::valarray<unsigned int> i_indices;
     std::valarray<unsigned int> f_indices;
 
-    read_table_xy("rrp.r", i_indices, f_indices);
+    read_table("rrp.r", i_indices, f_indices);
 
     FILE *Favg=fopen("imp-avg.dat","w");	/* open file for output of weighted means */
 

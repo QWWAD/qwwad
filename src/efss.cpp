@@ -180,7 +180,7 @@ int main(int argc, char *argv[]){
     // Read data from file
     std::valarray<double> z; // Spatial locations [m]
     std::valarray<double> V; // Potential profile [J]
-    read_table_xy(opt.get_string_option("v-file").c_str(), z, V);
+    read_table(opt.get_string_option("v-file").c_str(), z, V);
 
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
@@ -193,14 +193,14 @@ int main(int argc, char *argv[]){
     if(opt.get_type() == MATRIX_TAYLOR_NONPARABOLIC ||
        opt.get_type() == MATRIX_FULL_NONPARABOLIC   ||
        opt.get_type() == SHOOTING_NONPARABOLIC)
-        read_table_xy(opt.get_string_option("alpha-file").c_str(), z_tmp, alpha);
+        read_table(opt.get_string_option("alpha-file").c_str(), z_tmp, alpha);
 
     // Set a constant effective mass if specified.
     // Read spatially-varying profile from file if not.
     if(opt.vm.count("mass"))
         m += opt.get_numeric_option("mass") * me;
     else
-        read_table_xy(opt.get_string_option("mass-file").c_str(), z_tmp, m);
+        read_table(opt.get_string_option("mass-file").c_str(), z_tmp, m);
 
     // By default, we set the number of states automatically
     // within the range of the potential profile

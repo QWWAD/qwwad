@@ -149,7 +149,7 @@ int main(int argc, char* argv[])
 
     std::valarray<double> V;
     std::valarray<double> z;    
-    read_table_xy(opt.get_potential_input_path().c_str(), z, V);
+    read_table(opt.get_potential_input_path().c_str(), z, V);
 
     if(V.size() != states[0].size())
     {

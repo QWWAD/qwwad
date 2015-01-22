@@ -66,11 +66,11 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
-    read_table_xy("v.r", z, V);
+    read_table("v.r", z, V);
 
     // Read list of donor (or acceptor) positions
     std::valarray<double> r_d; // [m]
-    read_table_x("r_d.r", r_d);
+    read_table("r_d.r", r_d);
 
     // Solutions for each donor position
     std::valarray<double> E0(r_d.size());       // Binding energy [J]
