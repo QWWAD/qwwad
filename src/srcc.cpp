@@ -215,10 +215,10 @@ int main(int argc,char *argv[])
 
                     // Can also pre-calculate a few of the terms needed inside the following loop
                     // to save time
-                    const double kij_sqr_plus_Deltak0sqr = kij_sqr + Deltak0sqr;
-                    const double two_kij_sqr_plus_Deltak0sqr = kij_sqr + kij_sqr_plus_Deltak0sqr;
+                    const double kfg_sqr = kij_sqr + Deltak0sqr;
+                    const double two_kij_sqr_plus_Deltak0sqr = kij_sqr + kfg_sqr;
                     const double two_kij_times_sqrt__kij_sqr_plus_Deltak0sqr__
-                                     = 2 * kij * sqrt(kij_sqr_plus_Deltak0sqr);
+                                     = 2 * kij * sqrt(kfg_sqr);
 
                     // Now perform innermost integral (over theta)
                     std::valarray<double> Wijfg_integrand_theta(ntheta);

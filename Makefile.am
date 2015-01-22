@@ -543,7 +543,12 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/cc-intra-T.sh \
 		$(exsrsrcdir)/cc-auger.sh   \
 		$(exsrsrcdir)/cc-asymmetric.sh \
-		$(exsrsrcdir)/imp-screening.sh
+		$(exsrsrcdir)/imp-screening.sh \
+		$(exsrsrcdir)/imp-profiles.sh \
+		$(exsrsrcdir)/imp-profiles-N.sh \
+		$(exsrsrcdir)/imp-N.sh \
+		$(exsrsrcdir)/imp-E.sh
+
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
