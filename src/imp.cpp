@@ -157,8 +157,6 @@ int main(int argc,char *argv[])
                 std::cerr << "Extending range automatically" << std::endl;
                 Ecutoff += Ef;
             }
-
-            kimax = isb.k(Ecutoff);
         }
         // Otherwise, use a fixed, 5kT range
         else
@@ -169,6 +167,8 @@ int main(int argc,char *argv[])
             if(Ecutoff+Ei < Ef)
                 Ecutoff += Ef;
         }
+
+        kimax = isb.k(Ecutoff);
 
         gsl_spline *FF = FF_table(epsilon, isb, fsb, d,nq,S_flag,Ecutoff); // Form factor table
 

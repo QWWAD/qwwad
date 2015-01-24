@@ -23,7 +23,8 @@ noinst_HEADERS = src/dos-functions.h \
 		 src/ppff.h          \
 		 src/struct.h 
 
-bin_PROGRAMS =  chargedensity \
+bin_PROGRAMS =  ado                \
+		chargedensity \
 		critical-thickness \
                 csss    \
 		cszb    \
@@ -137,6 +138,9 @@ libqwwad_la_LIBADD = $(GSL_LIBS) \
 		     $(LAPACK_LIBS) \
 		     $(BLAS_LIBS)   \
 		     $(FLIBS)
+
+ado_SOURCES = src/ado.cpp
+ado_LDADD   = libqwwad.la
 
 chargedensity_SOURCES = src/chargedensity.cpp
 chargedensity_LDADD   = libqwwad.la
@@ -547,7 +551,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/imp-profiles.sh \
 		$(exsrsrcdir)/imp-profiles-N.sh \
 		$(exsrsrcdir)/imp-N.sh \
-		$(exsrsrcdir)/imp-E.sh
+		$(exsrsrcdir)/imp-E.sh \
+		$(exsrsrcdir)/ado-x-well.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
