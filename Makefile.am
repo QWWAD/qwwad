@@ -552,7 +552,10 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/imp-profiles-N.sh \
 		$(exsrsrcdir)/imp-N.sh \
 		$(exsrsrcdir)/imp-E.sh \
-		$(exsrsrcdir)/ado-x-well.sh
+		$(exsrsrcdir)/ado-x-well.sh \
+		$(exsrsrcdir)/ado-x-barrier.sh    \
+		$(exsrsrcdir)/ado-x-double-well.sh \
+		$(exsrsrcdir)/ado-LB-double-well.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
