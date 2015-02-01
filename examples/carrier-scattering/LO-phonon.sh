@@ -10,8 +10,7 @@ echo 100 0.0 0.0 >> s.r
 echo 100 1.0 0.0 >> s.r
 
 # Now convert structure into potential data
-
-efsx
+find_heterostructure
 efxv
 
 # Generate solutions to 100 A infinite well

@@ -51,6 +51,7 @@ bin_PROGRAMS =  ado                \
 		gde     \
 		hup     \
 		i0      \
+		ifr     \
 		imp     \
 		ivdb    \
 		ppcd    \
@@ -211,6 +212,9 @@ gde_LDADD   = libqwwad.la
 hup_SOURCES = src/hup.cpp
 hup_LDADD   = libqwwad.la
 
+ifr_SOURCES = src/ifr.cpp
+ifr_LDADD   = libqwwad.la
+
 i0_SOURCES  = src/i0.cpp
 i0_LDADD    = libqwwad.la
 
@@ -267,7 +271,8 @@ sradp_LDADD   = $(GSL_LIBS)
 srcc_SOURCES  = src/srcc.cpp
 srcc_LDADD    = libqwwad.la
 
-srelo_SOURCES  = src/srelo.c
+srelo_SOURCES  = src/srelo.cpp
+srelo_LDADD    = libqwwad.la
 
 srmpr_SOURCES  = src/srmpr.c
 
@@ -555,7 +560,13 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/ado-x-well.sh \
 		$(exsrsrcdir)/ado-x-barrier.sh    \
 		$(exsrsrcdir)/ado-x-double-well.sh \
-		$(exsrsrcdir)/ado-LB-double-well.sh
+		$(exsrsrcdir)/ado-LB-double-well.sh \
+		$(exsrsrcdir)/ifr-x-barrier.sh \
+		$(exsrsrcdir)/ifr-Ek.sh \
+		$(exsrsrcdir)/ifr-Delta.sh \
+		$(exsrsrcdir)/ifr-Lambda.sh \
+		$(exsrsrcdir)/ifr-LW.sh \
+		$(exsrsrcdir)/LO-phonon.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

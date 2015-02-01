@@ -68,10 +68,17 @@ int main(int argc, char *argv[])
         d2_psi_dz2[i] = (psi[i+1] - 2*psi[i] + psi[i-1])/(dz*dz);
     }
 
-    const double ev_z    = trapz(psi*z*psi, dz);       // Expectation position [m]
-    const double ev_zsqr = trapz(psi*z*z*psi, dz);     // Expectation for z*z [m^2]
-    const double ev_p    = trapz(-psi*d_psi_dz, dz);   // Expectation momentum [relative to i hBar]
-    const double ev_psqr = trapz(-psi*d2_psi_dz2, dz); // Expectation for p*p [relative to hBar^2]
+    const std::valarray<double> ev_z_integrand_dz = psi*z*psi;
+    const double ev_z    = integral(ev_z_integrand_dz, dz);       // Expectation position [m]
+
+    const std::valarray<double> ev_zsqr_integrand_dz = psi*z*z*psi;
+    const double ev_zsqr = integral(ev_zsqr_integrand_dz, dz);     // Expectation for z*z [m^2]
+
+    const std::valarray<double> ev_p_integrand_dz = -psi*d_psi_dz;
+    const double ev_p    = integral(ev_p_integrand_dz, dz);   // Expectation momentum [relative to i hBar]
+
+    const std::valarray<double> ev_psqr_integrand_dz = -psi*d2_psi_dz2;
+    const double ev_psqr = integral(ev_psqr_integrand_dz, dz); // Expectation for p*p [relative to hBar^2]
 
     // Find uncertainty in position and momentum
     const double Delta_z=sqrt(ev_zsqr-gsl_pow_2(ev_z));

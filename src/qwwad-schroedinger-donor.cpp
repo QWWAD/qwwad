@@ -92,7 +92,8 @@ double SchroedingerSolverDonor::shoot_wavefunction(const double           E,
     }
 
     // calculate normalisation integral
-    double Nchi=integral(pow(chi,2.0),dz); // normalisation integral for chi
+    const std::valarray<double> chi_sqr = chi*chi;
+    double Nchi=integral(chi_sqr,dz); // normalisation integral for chi
 
     /* divide unnormalised wavefunction by square root
        of normalisation integral                       */
