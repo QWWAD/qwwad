@@ -53,11 +53,12 @@ TEST(SchroedingerSolverInfWell, parabolicTest)
 
         // Check normalisation of state
         const std::valarray<double> PD = solutions.at(ist).psi_squared();
-        const double integral_norm = trapz(PD,dz);
+        const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 
         // Check expectation position (should be middle of well)
-        const double z_expt = trapz(PD*z, dz);
+        const std::valarray<double> z_expt_dz = PD*z;
+        const double z_expt = integral(z_expt_dz, dz);
         EXPECT_NEAR(L/2.0, z_expt, 0.001*L/2.0);
 
         // Check peak magnitude of probability density (allow 1% error)
@@ -97,11 +98,12 @@ TEST(SchroedingerSolverInfWell, nonParabolicTest)
 
         // Check normalisation of state
         const std::valarray<double> PD = solutions.at(ist).psi_squared();
-        const double integral_norm = trapz(PD,dz);
+        const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 
         // Check expectation position (should be middle of well)
-        const double z_expt = trapz(PD*z, dz);
+        const std::valarray<double> z_expt_dz = PD*z;
+        const double z_expt = integral(z_expt_dz, dz);
         EXPECT_NEAR(L/2.0, z_expt, 0.001*L/2.0);
 
         // Check peak magnitude of probability density (allow 1% error)
