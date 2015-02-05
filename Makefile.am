@@ -68,7 +68,6 @@ bin_PROGRAMS =  ado                \
 		sradp   \
 		srcc    \
 		srelo   \
-	       	srmpr   \
 	       	srrad   \
 	       	tdb     \
 	       	tsb     \
@@ -273,8 +272,6 @@ srcc_LDADD    = libqwwad.la
 
 srelo_SOURCES  = src/srelo.cpp
 srelo_LDADD    = libqwwad.la
-
-srmpr_SOURCES  = src/srmpr.c
 
 srrad_SOURCES  = src/srrad.c
 
@@ -566,7 +563,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/ifr-Delta.sh \
 		$(exsrsrcdir)/ifr-Lambda.sh \
 		$(exsrsrcdir)/ifr-LW.sh \
-		$(exsrsrcdir)/LO-phonon.sh
+		$(exsrsrcdir)/LO-phonon.sh \
+		$(exsrsrcdir)/LO-phonon-avg.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

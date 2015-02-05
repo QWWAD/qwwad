@@ -51,16 +51,10 @@ do
  sbp -T $T
  
  # Define required e-LO phonon rates and calculate 
-
  echo 2 1 > rrp.r
  srelo -T $T
 
- # Calculate the mean over the two populations
-
- srmpr -T $T 
-
  # Sort and store in output file
-
  nawk '/2 1/{printf("%e\n",$3)}' LOe-if.r >> $OUT
 }
 done

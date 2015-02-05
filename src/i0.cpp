@@ -35,7 +35,6 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
-#include "struct.h"
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"
 #include "qclsim-maths.h"

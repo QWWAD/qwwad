@@ -121,6 +121,8 @@ double cot(const double x);
 
 double coth(const double x);
 
+unsigned int Theta(const double x);
+
 /**
  * A numerical solver for Laplace transforms
  *

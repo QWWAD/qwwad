@@ -81,13 +81,8 @@ do
  sbp -T $T
 
  # Calculate e-LO scattering rates
-
  srelo -T $T 
  
- # Perform thermal averaging
-
- srmpr -T $T
-
  # Collate results
 
  nawk '/3 2/{SR32+=$3};/2 1/{SR21+=$3};END{printf(" %e %e",SR32,SR21)}' LOe-if.r >> $OUTsr

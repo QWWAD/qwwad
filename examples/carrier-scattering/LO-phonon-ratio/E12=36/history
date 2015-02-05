@@ -56,19 +56,12 @@ do
  sbp -T $T
  
  # Calculate scattering rates
-
  srelo -T $T
 
- # Calculate the mean over the two populations
-
- srmpr -T $T 
-
  # Write the 2->1 emission rate to the output file
-
  nawk '/2 1 /{printf(" %e",$3)}' LOe-if.r >> $OUT
 
  # Write the 1->2 absorption rate to the output file
-
  nawk '/1 2 /{printf(" %e\n",$3)}' LOa-if.r >> $OUT
 }
 done

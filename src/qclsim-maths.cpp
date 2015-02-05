@@ -156,5 +156,18 @@ double coth(const double x)
 {
     return 1.0/tanh(x);
 }
+
+/**
+ * \brief The Heaviside step function
+ *
+ * \param[in] x The argument of the step function
+ *
+ * \return 1 if \f$x > 0\r$, 0 otherwise
+ */
+unsigned int Theta(const double x)
+{
+    if(x > 0) return 1;
+    else      return 0;
+}
 } // namespace Leeds
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
