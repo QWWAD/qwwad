@@ -41,7 +41,8 @@ static Options configure_options(int argc, char* argv[])
     std::string doc("Find the polar LO-phonon scattering rate.");
 
     opt.add_switch        ("outputff,a",            "Output form-factors to file.");
-    opt.add_switch        ("noblocking,S",          "Disable final-state blocking.");
+    opt.add_switch        ("noblocking,b",          "Disable final-state blocking.");
+    opt.add_switch        ("noscreening,S",         "Disable screening.");
     opt.add_numeric_option("latticeconst,A",  5.65, "Lattice constant in growth direction [angstrom]");
     opt.add_numeric_option("ELO,E",          36.0,  "Energy of LO phonon [meV]");
     opt.add_numeric_option("epss,e",         13.18, "Static dielectric constant");
@@ -74,6 +75,7 @@ const char   p           = opt.get_char_option("particle");  	           // Part
 const double Te          = opt.get_numeric_option("Te");                   // Carrier temperature [K]
 const double Tl          = opt.get_numeric_option("Tl");                   // Lattice temperature [K]
 const bool   b_flag      = !opt.get_switch("noblocking");                  // Include final-state blocking by default
+const bool   S_flag      = !opt.get_switch("noscreening");                 // Include screening by default
 const size_t nki         = opt.get_size_option("nki");                     // number of ki calculations
 const size_t nKz         = opt.get_size_option("nKz");                     // number of Kz calculations
 
@@ -116,6 +118,19 @@ for(unsigned int isb = 0; isb < subbands.size(); ++isb)
 // Read list of wanted transitions
 std::valarray<unsigned int> i_indices;
 std::valarray<unsigned int> f_indices;
+
+double lambda_s_sq = 0.0; // Screening length squared [m^2]
+
+if(S_flag)
+{
+    // Sum over all subbands
+    for(std::vector<Subband>::const_iterator jsb = subbands.begin(); jsb != subbands.end(); ++jsb)
+    {
+        const double Ej = jsb->get_E();
+        lambda_s_sq += sqrt(2*m*Ej) * m * jsb->f_FD(Ej,Te);
+    }
+    lambda_s_sq *= e*e/(pi*pi*hBar*hBar*hBar*epsilon_s);
+}
 
 read_table("rrp.r", i_indices, f_indices);
 const size_t ntx = i_indices.size();
@@ -204,7 +219,12 @@ for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
   // Integral over phonon wavevector Kz
   for(unsigned int iKz=0;iKz<nKz;iKz++)
   {
-      const double Kz_2 = Kz[iKz] * Kz[iKz];
+      double Kz_2 = Kz[iKz] * Kz[iKz];
+
+      // Apply screening if wanted
+      if(S_flag && iKz != 0)
+          Kz_2 *= (1.0 + 2*lambda_s_sq/Kz_2 + lambda_s_sq*lambda_s_sq/(Kz_2*Kz_2));
+
       const double Kz_4 = Kz_2 * Kz_2;
 
       Waif_integrand_dKz[iKz] = Gifsqr[iKz] /

@@ -41,7 +41,7 @@ Options configure_options(int argc, char* argv[])
 
     opt.add_switch        ("outputff,a",           "Output form-factors to file.");
     opt.add_switch        ("noscreening,S",        "Disable screening of the Coulomb interaction.");
-    opt.add_switch        ("noblocking,S",         "Disable final-state blocking.");
+    opt.add_switch        ("noblocking,b",         "Disable final-state blocking.");
     opt.add_numeric_option("epsilon,e",     13.18, "Low-frequency dielectric constant");
     opt.add_numeric_option("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
     opt.add_char_option   ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
