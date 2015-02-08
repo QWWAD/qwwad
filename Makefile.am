@@ -564,7 +564,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/ifr-Lambda.sh \
 		$(exsrsrcdir)/ifr-LW.sh \
 		$(exsrsrcdir)/LO-phonon.sh \
-		$(exsrsrcdir)/LO-phonon-avg.sh
+		$(exsrsrcdir)/LO-phonon-avg.sh \
+		$(exsrsrcdir)/LO-phonon-LW-screen.sh
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
