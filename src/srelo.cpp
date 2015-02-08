@@ -119,6 +119,9 @@ for(unsigned int isb = 0; isb < subbands.size(); ++isb)
 std::valarray<unsigned int> i_indices;
 std::valarray<unsigned int> f_indices;
 
+read_table("rrp.r", i_indices, f_indices);
+const size_t ntx = i_indices.size();
+
 double lambda_s_sq = 0.0; // Screening length squared [m^2]
 
 if(S_flag)
@@ -131,9 +134,6 @@ if(S_flag)
     }
     lambda_s_sq *= e*e/(pi*pi*hBar*hBar*hBar*epsilon_s);
 }
-
-read_table("rrp.r", i_indices, f_indices);
-const size_t ntx = i_indices.size();
 
 std::valarray<double> Wabar(ntx);
 std::valarray<double> Webar(ntx);

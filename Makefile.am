@@ -263,9 +263,8 @@ sfr_SOURCES  = src/sfr.c
 
 slk_SOURCES  = src/slk.c
 
-sradp_SOURCES = src/sradp.c
-sradp_CFLAGS  = $(GSL_CFLAGS)
-sradp_LDADD   = $(GSL_LIBS)
+sradp_SOURCES = src/sradp.cpp
+sradp_LDADD   = libqwwad.la
 
 srcc_SOURCES  = src/srcc.cpp
 srcc_LDADD    = libqwwad.la
