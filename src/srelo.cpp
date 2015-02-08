@@ -259,11 +259,17 @@ for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
       const double Ef_ab = Etf_ab - Ef;
 
       // Final wave-vector
-      const double kf_em = sqrt(Ef_em*2*m)/hBar;
-      const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
+      if(Ef_em >= 0)
+      {
+          const double kf_em = sqrt(Ef_em*2*m)/hBar;
+          Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
+      }
 
-      Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
-      Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
+      if(Ef_ab >= 0)
+      {
+          const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
+          Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
+      }
   }
 
   Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.f_FD_k(ki, Te);
