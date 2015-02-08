@@ -241,23 +241,20 @@ for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
   Waif[iki] = Upsilon_star_a*pi*integral(Waif_integrand_dKz,dKz);
   Weif[iki] = Upsilon_star_e*pi*integral(Weif_integrand_dKz,dKz);
 
+  const double Eki = isb.Ek(ki); // Initial kinetic energy
+
+  // Final kinetic energy
+  const double Ef_em = Eki - Delta_e;
+  const double Ef_ab = Eki - Delta_a;
+
   /* Now check for energy conservation!, would be faster with a nasty `if'
      statement just after the beginning of the ki loop!			*/
-  const double Eki = hBar*hBar*ki*ki/(2*m); // Initial kinetic energy
-  Weif[iki] *= Theta(Eki-Delta_e);
-  Waif[iki] *= Theta(Eki-Delta_a);
+  Weif[iki] *= Theta(Ef_em);
+  Waif[iki] *= Theta(Ef_ab);
 
   // Include final-state blocking factor
   if (b_flag)
   {
-      // Total final energy
-      const double Etf_em = Ei + Eki - Ephonon;
-      const double Etf_ab = Ei + Eki + Ephonon;
-
-      // Final kinetic energy
-      const double Ef_em = Etf_em - Ef;
-      const double Ef_ab = Etf_ab - Ef;
-
       // Final wave-vector
       if(Ef_em >= 0)
       {
