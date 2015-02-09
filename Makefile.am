@@ -565,7 +565,8 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/LO-phonon.sh \
 		$(exsrsrcdir)/LO-phonon-avg.sh \
 		$(exsrsrcdir)/LO-phonon-LW-screen.sh \
-		$(exsrsrcdir)/LO-phonon-Te-screen.sh
+		$(exsrsrcdir)/LO-phonon-Te-screen.sh \
+		$(exsrsrcdir)/ac-E-T.sh 
 
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###

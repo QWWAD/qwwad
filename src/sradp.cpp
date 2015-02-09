@@ -78,6 +78,7 @@ int main(int argc,char *argv[])
     const Options opt = configure_options(argc, argv);
 
     const bool   ff_flag     = opt.get_switch("outputff");                     // True if formfactors are wanted
+    const bool   b_flag      = !opt.get_switch("noblocking");                  // Final state blocking on by default
     const double A0          = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
     const double rho         = opt.get_numeric_option("density");              // Mass density [kg/m^3]
     const double Ephonon     = opt.get_numeric_option("Ephonon")*e/1000;       // Acoustic phonon energy [J]
@@ -90,9 +91,6 @@ int main(int argc,char *argv[])
     const size_t nki         = opt.get_size_option("nki");                     // number of ki calculations
     const size_t nKz         = opt.get_size_option("nkz");                     // number of Kz calculations
     const size_t ntheta      = opt.get_size_option("ntheta");                  // number of samples over angle
-double	Wif;		/* temporary sum (for integration)		*/
-double	Waif;		/* the scattering rate				*/
-double	Weif;		/* the scattering rate				*/
 char	filename[9];	/* character string for output filename		*/
 FILE	*FACa;		/* pointer to absorption output file		*/
 FILE	*FACe;		/* pointer to emission   output file		*/
@@ -137,6 +135,8 @@ std::valarray<unsigned int> f_indices;
 
 read_table("rrp.r", i_indices, f_indices);
 const size_t ntx = i_indices.size();
+std::valarray<double> Wabar(ntx);
+std::valarray<double> Webar(ntx);
 
 // Loop over all desired transitions
 for(unsigned int itx = 0; itx < ntx; ++itx)
@@ -200,11 +200,15 @@ for(unsigned int itx = 0; itx < ntx; ++itx)
         kimax = isb.k(Ecutoff);
 
         const double dki=kimax/((float)nki);
+        std::valarray<double> Waif(nki); // Absorption scattering rate at this wave-vector [1/s]
+        std::valarray<double> Weif(nki); // Emission scattering rate at this wave-vector [1/s]
+        std::valarray<double> Wabar_integrand_ki(nki); // Average scattering rate [1/s]
+        std::valarray<double> Webar_integrand_ki(nki); // Average scattering rate [1/s]
 
  for(unsigned int iki=0;iki<nki;iki++)       /* calculate e-AC rate for all ki	*/
  {
   const double ki=dki*(float)iki+dki/100;	/* second term avoids ki=0 pole	*/
-  Wif=0;			/* Initialize for integration   */
+  double Wif=0;			/* Initialize for integration   */
 
   /* Integral around angle theta	*/
   for(unsigned int itheta=0;itheta<ntheta;itheta++)
@@ -234,28 +238,54 @@ for(unsigned int itx = 0; itx < ntx; ++itx)
    } /* end integral over Kz	*/
   } /* end integral over theta	*/
 
-  Waif=2*Upsilon_a*Wif*dKz*dtheta;
-  Weif=2*Upsilon_e*Wif*dKz*dtheta;	
+  Waif[iki]=2*Upsilon_a*Wif*dKz*dtheta;
+  Weif[iki]=2*Upsilon_e*Wif*dKz*dtheta;	
 
   /* Now check for energy conservation!, would be faster with a nasty `if'
      statement just after the beginning of the ki loop!                 */
-  Weif *= Theta(gsl_pow_2(hBar*ki)/(2*m)-DeltaE-Ephonon);
-  Waif *= Theta(gsl_pow_2(hBar*ki)/(2*m)-DeltaE+Ephonon);
+  const double Eki = isb.Ek(ki);
+  const double Ef_em = Eki - DeltaE - Ephonon;
+  const double Ef_ab = Eki - DeltaE + Ephonon;
+  Weif[iki] *= Theta(Ef_em);
+  Waif[iki] *= Theta(Ef_ab);
+
+  // Include final-state blocking factor
+  if (b_flag)
+  {
+      // Final wave-vector
+      if(Ef_em >= 0)
+      {
+          const double kf_em = sqrt(Ef_em*2*m)/hBar;
+          Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
+      }
+
+      if(Ef_ab >= 0)
+      {
+          const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
+          Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
+      }
+  }
+
+  Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.f_FD_k(ki, Te);
+  Webar_integrand_ki[iki] = Weif[iki]*ki*isb.f_FD_k(ki, Te);
 
   /* output scattering rate versus carrier energy=subband minima+in-plane
      kinetic energy						*/
-
   fprintf(FACa,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
-                                    (1e-3*e),Waif);
+                                    (1e-3*e),Waif[iki]);
 
   fprintf(FACe,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
-                                    (1e-3*e),Weif);
-
+                                    (1e-3*e),Weif[iki]);
  }
+ Wabar[itx] = integral(Wabar_integrand_ki, dki)/(pi*isb.get_pop());
+ Webar[itx] = integral(Webar_integrand_ki, dki)/(pi*isb.get_pop());
+
  fclose(FACa);	/* close output file for this mechanism	*/
  fclose(FACe);	/* close output file for this mechanism	*/
 } /* end while over states */
 
+write_table("ACa-if.r", i_indices, f_indices, Wabar);
+write_table("ACe-if.r", i_indices, f_indices, Webar);
 return EXIT_SUCCESS;
 } /* end main */
 
