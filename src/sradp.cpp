@@ -73,6 +73,7 @@ Options configure_options(int argc, char* argv[])
 
     return opt;
 }
+
 int main(int argc,char *argv[])
 {
     const Options opt = configure_options(argc, argv);
@@ -91,23 +92,23 @@ int main(int argc,char *argv[])
     const size_t nki         = opt.get_size_option("nki");                     // number of ki calculations
     const size_t nKz         = opt.get_size_option("nkz");                     // number of Kz calculations
     const size_t ntheta      = opt.get_size_option("ntheta");                  // number of samples over angle
-char	filename[9];	/* character string for output filename		*/
-FILE	*FACa;		/* pointer to absorption output file		*/
-FILE	*FACe;		/* pointer to emission   output file		*/
+    char	filename[9];	/* character string for output filename		*/
+    FILE	*FACa;		/* pointer to absorption output file		*/
+    FILE	*FACe;		/* pointer to emission   output file		*/
 
-// calculate step length in phonon wave-vector
-const double dKz=2/(A0*nKz); // Taken range of phonon integration as 2/A0
+    // calculate step length in phonon wave-vector
+    const double dKz=2/(A0*nKz); // Taken range of phonon integration as 2/A0
 
-const double dtheta=pi/static_cast<double>(ntheta-1); // theta integration from 0 to pi
+    const double dtheta=pi/static_cast<double>(ntheta-1); // theta integration from 0 to pi
 
-// calculate often used constants
-const double N0=1/(exp(Ephonon/(kB*Tl))-1); // Bose-Einstein factor
+    // calculate often used constants
+    const double N0=1/(exp(Ephonon/(kB*Tl))-1); // Bose-Einstein factor
 
-// Find pre-factors for scattering rates
-const double Upsilon_a = Da*Da*m*N0/(rho*Vs*4*pi*pi*hBar*hBar);
-const double Upsilon_e = Da*Da*m*(N0+1)/(rho*Vs*4*pi*pi*hBar*hBar);
+    // Find pre-factors for scattering rates
+    const double Upsilon_a = Da*Da*m*N0/(rho*Vs*4*pi*pi*hBar*hBar);
+    const double Upsilon_e = Da*Da*m*(N0+1)/(rho*Vs*4*pi*pi*hBar*hBar);
 
-std::ostringstream E_filename; // Energy filename string
+    std::ostringstream E_filename; // Energy filename string
     E_filename << "E" << p << ".r";
     std::ostringstream wf_prefix;  // Wavefunction filename prefix
     wf_prefix << "wf_" << p;
@@ -118,56 +119,56 @@ std::ostringstream E_filename; // Energy filename string
             ".r",
             m);
 
-// Read and set carrier distributions within each subband
-std::valarray<double>       Ef;      // Fermi energies [J]
-std::valarray<double>       N;       // Subband populations [m^{-2}]
-std::valarray<unsigned int> indices; // Subband indices (garbage)
-read_table("Ef.r", indices, Ef);
-Ef *= e/1000.0; // Rescale to J
-read_table("N.r", N);	// read populations
+    // Read and set carrier distributions within each subband
+    std::valarray<double>       Ef;      // Fermi energies [J]
+    std::valarray<double>       N;       // Subband populations [m^{-2}]
+    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    read_table("Ef.r", indices, Ef);
+    Ef *= e/1000.0; // Rescale to J
+    read_table("N.r", N);	// read populations
 
-for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-    subbands[isb].set_distribution(Ef[isb], N[isb]);
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+        subbands[isb].set_distribution(Ef[isb], N[isb]);
 
-// Read list of wanted transitions
-std::valarray<unsigned int> i_indices;
-std::valarray<unsigned int> f_indices;
+    // Read list of wanted transitions
+    std::valarray<unsigned int> i_indices;
+    std::valarray<unsigned int> f_indices;
 
-read_table("rrp.r", i_indices, f_indices);
-const size_t ntx = i_indices.size();
-std::valarray<double> Wabar(ntx);
-std::valarray<double> Webar(ntx);
+    read_table("rrp.r", i_indices, f_indices);
+    const size_t ntx = i_indices.size();
+    std::valarray<double> Wabar(ntx);
+    std::valarray<double> Webar(ntx);
 
-// Loop over all desired transitions
-for(unsigned int itx = 0; itx < ntx; ++itx)
-{
-    // State indices for this transition (NB., these are indexed from 1)
-    unsigned int i = i_indices[itx];
-    unsigned int f = f_indices[itx];
+    // Loop over all desired transitions
+    for(unsigned int itx = 0; itx < ntx; ++itx)
+    {
+        // State indices for this transition (NB., these are indexed from 1)
+        unsigned int i = i_indices[itx];
+        unsigned int f = f_indices[itx];
 
-    // Convenience labels for each subband (NB., these are indexed from 0)
-    const Subband isb = subbands[i-1];
-    const Subband fsb = subbands[f-1];
+        // Convenience labels for each subband (NB., these are indexed from 0)
+        const Subband isb = subbands[i-1];
+        const Subband fsb = subbands[f-1];
 
-    // Subband minima
-    const double Ei = isb.get_E();
-    const double Ef = fsb.get_E();
+        // Subband minima
+        const double Ei = isb.get_E();
+        const double Ef = fsb.get_E();
 
 
-    std::valarray<double> Kz(nKz);
-    std::valarray<double> Gifsqr(nKz);
-    ff_table(dKz,isb,fsb,nKz,Kz,Gifsqr);		/* generates formfactor table	*/
+        std::valarray<double> Kz(nKz);
+        std::valarray<double> Gifsqr(nKz);
+        ff_table(dKz,isb,fsb,nKz,Kz,Gifsqr);		/* generates formfactor table	*/
 
-    // Output formfactors if desired
-    if(ff_flag)
-        ff_output(Kz, Gifsqr, i, f);
+        // Output formfactors if desired
+        if(ff_flag)
+            ff_output(Kz, Gifsqr, i, f);
 
- /* Generate filename for particular mechanism and open file	*/
+        /* Generate filename for particular mechanism and open file	*/
 
- sprintf(filename,"ACa%i%i.r", i, f); // absorption
- FACa=fopen(filename,"w");			
- sprintf(filename,"ACe%i%i.r", i, f); // emission
- FACe=fopen(filename,"w");			
+        sprintf(filename,"ACa%i%i.r", i, f); // absorption
+        FACa=fopen(filename,"w");			
+        sprintf(filename,"ACe%i%i.r", i, f); // emission
+        FACe=fopen(filename,"w");			
 
         // As a zero energy phonon is assumed, no need to 
         // consider emission and absorption processes as in e-LO scattering
@@ -205,88 +206,88 @@ for(unsigned int itx = 0; itx < ntx; ++itx)
         std::valarray<double> Wabar_integrand_ki(nki); // Average scattering rate [1/s]
         std::valarray<double> Webar_integrand_ki(nki); // Average scattering rate [1/s]
 
- for(unsigned int iki=0;iki<nki;iki++)       /* calculate e-AC rate for all ki	*/
- {
-  const double ki=dki*(float)iki+dki/100;	/* second term avoids ki=0 pole	*/
-  double Wif=0;			/* Initialize for integration   */
+        for(unsigned int iki=0;iki<nki;iki++)       /* calculate e-AC rate for all ki	*/
+        {
+            const double ki=dki*(float)iki+dki/100;	/* second term avoids ki=0 pole	*/
+            double Wif=0;			/* Initialize for integration   */
 
-  /* Integral around angle theta	*/
-  for(unsigned int itheta=0;itheta<ntheta;itheta++)
-  {
-   const double theta=dtheta*(float)itheta;
+            /* Integral around angle theta	*/
+            for(unsigned int itheta=0;itheta<ntheta;itheta++)
+            {
+                const double theta=dtheta*(float)itheta;
 
-   /* Integral over phonon wavevector Kz	*/
-   for(unsigned int iKz=0;iKz<nKz;iKz++)
-   {
-    const double arg=gsl_pow_2(ki*cos(theta))-2*m*DeltaE/gsl_pow_2(hBar);	/* sqrt argument */
-    if(arg>=0)
-    {
-        // solutions for phonon wavevector Kz
-        const double alpha1=-ki*cos(theta)+sqrt(arg);
-        const double alpha2=-ki*cos(theta)-sqrt(arg);
+                /* Integral over phonon wavevector Kz	*/
+                for(unsigned int iKz=0;iKz<nKz;iKz++)
+                {
+                    const double arg=gsl_pow_2(ki*cos(theta))-2*m*DeltaE/gsl_pow_2(hBar);	/* sqrt argument */
+                    if(arg>=0)
+                    {
+                        // solutions for phonon wavevector Kz
+                        const double alpha1=-ki*cos(theta)+sqrt(arg);
+                        const double alpha2=-ki*cos(theta)-sqrt(arg);
 
-     /* alpha1 and alpha2 represent solutions for the in-plane polar
-        coordinate Kxy of the carrier momentum---they must be positive, hence
-        use Heaviside unit step function to ignore other contributions	*/
+                        /* alpha1 and alpha2 represent solutions for the in-plane polar
+                           coordinate Kxy of the carrier momentum---they must be positive, hence
+                           use Heaviside unit step function to ignore other contributions	*/
 
-     Wif += Gifsqr[iKz]*
-	   (alpha1*Theta(alpha1)*gsl_hypot(alpha1, Kz[iKz])+
-	    alpha2*Theta(alpha2)*gsl_hypot(alpha2, Kz[iKz]))/
-	   (alpha1-alpha2);
-    }
+                        Wif += Gifsqr[iKz]*
+                            (alpha1*Theta(alpha1)*gsl_hypot(alpha1, Kz[iKz])+
+                             alpha2*Theta(alpha2)*gsl_hypot(alpha2, Kz[iKz]))/
+                            (alpha1-alpha2);
+                    }
 
-   } /* end integral over Kz	*/
-  } /* end integral over theta	*/
+                } /* end integral over Kz	*/
+            } /* end integral over theta	*/
 
-  Waif[iki]=2*Upsilon_a*Wif*dKz*dtheta;
-  Weif[iki]=2*Upsilon_e*Wif*dKz*dtheta;	
+            Waif[iki]=2*Upsilon_a*Wif*dKz*dtheta;
+            Weif[iki]=2*Upsilon_e*Wif*dKz*dtheta;	
 
-  /* Now check for energy conservation!, would be faster with a nasty `if'
-     statement just after the beginning of the ki loop!                 */
-  const double Eki = isb.Ek(ki);
-  const double Ef_em = Eki - DeltaE - Ephonon;
-  const double Ef_ab = Eki - DeltaE + Ephonon;
-  Weif[iki] *= Theta(Ef_em);
-  Waif[iki] *= Theta(Ef_ab);
+            /* Now check for energy conservation!, would be faster with a nasty `if'
+               statement just after the beginning of the ki loop!                 */
+            const double Eki = isb.Ek(ki);
+            const double Ef_em = Eki - DeltaE - Ephonon;
+            const double Ef_ab = Eki - DeltaE + Ephonon;
+            Weif[iki] *= Theta(Ef_em);
+            Waif[iki] *= Theta(Ef_ab);
 
-  // Include final-state blocking factor
-  if (b_flag)
-  {
-      // Final wave-vector
-      if(Ef_em >= 0)
-      {
-          const double kf_em = sqrt(Ef_em*2*m)/hBar;
-          Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
-      }
+            // Include final-state blocking factor
+            if (b_flag)
+            {
+                // Final wave-vector
+                if(Ef_em >= 0)
+                {
+                    const double kf_em = sqrt(Ef_em*2*m)/hBar;
+                    Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
+                }
 
-      if(Ef_ab >= 0)
-      {
-          const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
-          Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
-      }
-  }
+                if(Ef_ab >= 0)
+                {
+                    const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
+                    Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
+                }
+            }
 
-  Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.f_FD_k(ki, Te);
-  Webar_integrand_ki[iki] = Weif[iki]*ki*isb.f_FD_k(ki, Te);
+            Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.f_FD_k(ki, Te);
+            Webar_integrand_ki[iki] = Weif[iki]*ki*isb.f_FD_k(ki, Te);
 
-  /* output scattering rate versus carrier energy=subband minima+in-plane
-     kinetic energy						*/
-  fprintf(FACa,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
-                                    (1e-3*e),Waif[iki]);
+            /* output scattering rate versus carrier energy=subband minima+in-plane
+               kinetic energy						*/
+            fprintf(FACa,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
+                    (1e-3*e),Waif[iki]);
 
-  fprintf(FACe,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
-                                    (1e-3*e),Weif[iki]);
- }
- Wabar[itx] = integral(Wabar_integrand_ki, dki)/(pi*isb.get_pop());
- Webar[itx] = integral(Webar_integrand_ki, dki)/(pi*isb.get_pop());
+            fprintf(FACe,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
+                    (1e-3*e),Weif[iki]);
+        }
+        Wabar[itx] = integral(Wabar_integrand_ki, dki)/(pi*isb.get_pop());
+        Webar[itx] = integral(Webar_integrand_ki, dki)/(pi*isb.get_pop());
 
- fclose(FACa);	/* close output file for this mechanism	*/
- fclose(FACe);	/* close output file for this mechanism	*/
-} /* end while over states */
+        fclose(FACa);	/* close output file for this mechanism	*/
+        fclose(FACe);	/* close output file for this mechanism	*/
+    } /* end while over states */
 
-write_table("ACa-if.r", i_indices, f_indices, Wabar);
-write_table("ACe-if.r", i_indices, f_indices, Webar);
-return EXIT_SUCCESS;
+    write_table("ACa-if.r", i_indices, f_indices, Wabar);
+    write_table("ACe-if.r", i_indices, f_indices, Webar);
+    return EXIT_SUCCESS;
 } /* end main */
 
 /**
