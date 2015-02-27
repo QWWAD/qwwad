@@ -420,7 +420,7 @@ int    N;	/* the number of reciprocal lattice vectors	*/
   t.y=(atoms+ia)->r.y;
   t.z=(atoms+ia)->r.z;
   Lambda = lambda((atoms+ia)->type);
-  v += Lambda * cexp(-q.x*t.x-q.y*t.y-q.z*t.z);
+  v += Lambda * cexp(I*(-q.x*t.x-q.y*t.y-q.z*t.z));
  }
 
  v *= vso;

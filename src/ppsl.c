@@ -680,7 +680,7 @@ vector g;       /* the vector, g=G'-G+kxi'-kxi	*/
    v1*=cexp(-g.z*((atoms+n_atoms-1)->r.z));
 
    v2=1/gsl_pow_2(g.z) + I*((atoms->r.z)-z0)/g.z;
-   v2*=cexp(-g.z*(atoms->r.z));
+   v2*=cexp(I*(-g.z*(atoms->r.z)));
   }
   else
   {

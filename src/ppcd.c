@@ -164,7 +164,7 @@ for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)		/* index along x-axis */
     for(iG=0;iG<N;iG++)				/* sum over G */
     {
      Gdotr=vsprod(*(G+iG),r);
-     psi += ank[iG*Nn+in] * cexp(Gdotr);
+     psi += ank[iG*Nn+in] * cexp(I*Gdotr);
     }
     psi_sqr+=gsl_pow_2(cabs(psi))/Omega;
    }
