@@ -9,6 +9,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
+#include <iostream>
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
 #include "qclsim-fileio.h"

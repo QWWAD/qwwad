@@ -18,9 +18,11 @@
 
     Paul Harrison, March 2000 
     									*/
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
+#include <iostream>
+#include <complex>
 #include "qwwad-options.h"
 #include "qclsim-fileio.h"
 #include "qclsim-subband.h"
