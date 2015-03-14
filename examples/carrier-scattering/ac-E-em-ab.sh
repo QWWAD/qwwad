@@ -26,7 +26,7 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=ac-E-T.dat
+outfile=ac-E-em-ab.dat
 rm -f $outfile
 
 # Electron temperature
@@ -35,7 +35,10 @@ T=300
 nz=601
 
 # Define required rate
-echo "2 1" > rrp.r
+cat > rrp.r << EOF
+2 1
+1 2
+EOF
 
 cat > N.r << EOF
 1e14
@@ -53,19 +56,16 @@ efiw --width $LW --nz $nz --nst 2
  E2=`sed -n 2p < Ee.r | awk '{print $2}'`
  DE=`echo $E1 $E2 | awk '{print $2-$1}'`
 
- printf "%f " $DE >> $outfile
+ # Calculate distribution function
+ sbp --Te $T
 
- for T in 4 77 300; do
-     # Calculate distribution function
-     sbp --Te $T
+ sradp --Te $T --Tl $T
+ rate_21_em=`awk '/^2/{print $3}' ACe-if.r`
+ rate_12_em=`awk '/^1/{print $3}' ACe-if.r`
+ rate_21_ab=`awk '/^2/{print $3}' ACa-if.r`
+ rate_12_ab=`awk '/^1/{print $3}' ACa-if.r`
 
-     sradp --Te $T --Tl $T
-     rate=`awk '{print $3}' imp-avg.dat`
-
-     awk '{printf("%e ",$3)}' ACe-if.r >> $outfile
- done
- # End line in output file
- printf "\n" >> $outfile
+ printf "%e %e %e %e %e\n" $DE $rate_21_em $rate_21_ab $rate_12_em $rate_12_ab >> $outfile
 done
 
 cat << EOF

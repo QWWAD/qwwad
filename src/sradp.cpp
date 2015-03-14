@@ -103,6 +103,12 @@ int main(int argc,char *argv[])
 
     const double dtheta=pi/static_cast<double>(ntheta-1); // theta integration from 0 to pi
 
+    // Can save a bit of time by calculating cosines in advance
+    std::valarray<double> cos_theta(ntheta);
+
+    for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
+        cos_theta[itheta]     = cos(itheta*dtheta);
+
     // calculate often used constants
     const double N0=1/(exp(Ephonon/(kB*Tl))-1); // Bose-Einstein factor
 
@@ -156,10 +162,13 @@ int main(int argc,char *argv[])
         const double Ei = isb.get_E();
         const double Ef = fsb.get_E();
 
-
         std::valarray<double> Kz(nKz);
         std::valarray<double> Gifsqr(nKz);
         ff_table(dKz,isb,fsb,nKz,Kz,Gifsqr);		/* generates formfactor table	*/
+        std::valarray<double> Kz_sqr(nKz);
+
+        for(unsigned int iKz = 0; iKz < nKz; ++iKz)
+            Kz_sqr[iKz] = Kz[iKz]*Kz[iKz];
 
         // Output formfactors if desired
         if(ff_flag)
@@ -207,42 +216,51 @@ int main(int argc,char *argv[])
         std::valarray<double> Weif(nki); // Emission scattering rate at this wave-vector [1/s]
         std::valarray<double> Wabar_integrand_ki(nki); // Average scattering rate [1/s]
         std::valarray<double> Webar_integrand_ki(nki); // Average scattering rate [1/s]
+        const double tmp = 2*m*DeltaE/(hBar*hBar);
 
         for(unsigned int iki=0;iki<nki;iki++)       /* calculate e-AC rate for all ki	*/
         {
             const double ki=dki*(float)iki+dki/100;	/* second term avoids ki=0 pole	*/
-            double Wif=0;			/* Initialize for integration   */
+
+            std::valarray<double> Wif_integrand_dtheta(ntheta);
 
             /* Integral around angle theta	*/
             for(unsigned int itheta=0;itheta<ntheta;itheta++)
             {
-                const double theta=dtheta*(float)itheta;
+                std::valarray<double> Wif_integrand_dKz(nKz);
 
                 /* Integral over phonon wavevector Kz	*/
                 for(unsigned int iKz=0;iKz<nKz;iKz++)
                 {
-                    const double arg=gsl_pow_2(ki*cos(theta))-2*m*DeltaE/gsl_pow_2(hBar);	/* sqrt argument */
+                    const double ki_cos_theta = ki*cos_theta[itheta];
+                    const double arg = ki_cos_theta * ki_cos_theta - tmp;	// sqrt argument
                     if(arg>=0)
                     {
+                        const double sqrt_arg = sqrt(arg);
+
                         // solutions for phonon wavevector Kz
-                        const double alpha1=-ki*cos(theta)+sqrt(arg);
-                        const double alpha2=-ki*cos(theta)-sqrt(arg);
+                        const double alpha1 =  sqrt_arg - ki_cos_theta;
+                        const double alpha2 = -sqrt_arg - ki_cos_theta;
+
+                        const double alpha1_sqr = alpha1*alpha1;
+                        const double alpha2_sqr = alpha2*alpha2;
 
                         /* alpha1 and alpha2 represent solutions for the in-plane polar
                            coordinate Kxy of the carrier momentum---they must be positive, hence
                            use Heaviside unit step function to ignore other contributions	*/
-
-                        Wif += Gifsqr[iKz]*
-                            (alpha1*Theta(alpha1)*gsl_hypot(alpha1, Kz[iKz])+
-                             alpha2*Theta(alpha2)*gsl_hypot(alpha2, Kz[iKz]))/
+                        Wif_integrand_dKz[iKz] = Gifsqr[iKz]*
+                            (alpha1*Theta(alpha1)*sqrt(alpha1_sqr + Kz_sqr[iKz])+
+                             alpha2*Theta(alpha2)*sqrt(alpha2_sqr + Kz_sqr[iKz]))/
                             (alpha1-alpha2);
                     }
-
                 } /* end integral over Kz	*/
+
+                Wif_integrand_dtheta[itheta] = integral(Wif_integrand_dKz, dKz);
             } /* end integral over theta	*/
 
-            Waif[iki]=2*Upsilon_a*Wif*dKz*dtheta;
-            Weif[iki]=2*Upsilon_e*Wif*dKz*dtheta;	
+            const double Wif = integral(Wif_integrand_dtheta, dtheta);
+            Waif[iki]=2*Upsilon_a*Wif;
+            Weif[iki]=2*Upsilon_e*Wif;
 
             /* Now check for energy conservation!, would be faster with a nasty `if'
                statement just after the beginning of the ki loop!                 */

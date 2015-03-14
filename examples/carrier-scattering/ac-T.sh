@@ -26,7 +26,7 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=ac-E-T.dat
+outfile=ac-T.dat
 rm -f $outfile
 
 # Electron temperature
@@ -35,35 +35,28 @@ T=300
 nz=601
 
 # Define required rate
-echo "2 1" > rrp.r
+echo "1 1" > rrp.r
 
-cat > N.r << EOF
-1e14
-1e14
-EOF
-
-# Loop over carrier density per subband
-for LW in `seq 100 10 600`; do
 
 # Solve infinite well
-efiw --width $LW --nz $nz --nst 2
+efiw --width 100 --nz $nz --nst 2
 
- # Save lowest two energies to file
- E1=`sed -n 1p < Ee.r | awk '{print $2}'`
- E2=`sed -n 2p < Ee.r | awk '{print $2}'`
- DE=`echo $E1 $E2 | awk '{print $2-$1}'`
+# Loop over temperature
+for T in `seq 1 9` `seq 10 10 300`; do
+    printf "%e\t" $T >> $outfile
 
- printf "%f " $DE >> $outfile
-
- for T in 4 77 300; do
+ for N in 1e14 1e15 1e16; do
+cat > N.r << EOF
+$N
+$N
+EOF
      # Calculate distribution function
      sbp --Te $T
-
-     sradp --Te $T --Tl $T
-     rate=`awk '{print $3}' imp-avg.dat`
+     sradp --Te $T --Tl $T --Ecutoff 800 
 
      awk '{printf("%e ",$3)}' ACe-if.r >> $outfile
  done
+
  # End line in output file
  printf "\n" >> $outfile
 done
