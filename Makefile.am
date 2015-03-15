@@ -73,6 +73,8 @@ bin_PROGRAMS =  ado                \
 	       	tsb     \
 		wfplot
 
+bin_SCRIPTS = src/xyz2pdb
+
 # Build most functionality into library infrastructure
 lib_LTLIBRARIES = libqwwad.la
 libqwwad_la_SOURCES =  \
