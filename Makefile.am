@@ -237,9 +237,9 @@ pplb_LDADD    = libqwwad.la
 
 ppsg_SOURCES = src/ppsg.c
 
-# ppsl_SOURCES = src/ppsl.c
-# ppsl_CFLAGS = $(GSL_CFLAGS)
-# ppsl_LDADD  = $(GSL_LIBS)
+#ppsl_SOURCES = src/ppsl.c
+#ppsl_CFLAGS = $(GSL_CFLAGS)
+#ppsl_LDADD  = $(GSL_LIBS)
 
 # ppvfq_SOURCES = src/ppvfq.c src/ppff.h
 # ppvfq_LDADD   = libqwwad.la

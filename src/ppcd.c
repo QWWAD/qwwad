@@ -29,6 +29,7 @@
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "ppff.h"
 
 static complex double * read_ank(const int  N,
                                  int       *Nn);
@@ -37,7 +38,6 @@ int main(int argc,char *argv[])
 {
 extern double atof();
 extern int atoi();
-vector *read_rlv();	/* function to read reciprocal lattice vectors	*/
 complex double *ank;	/* real coefficients of eigenvectors		*/
 double complex psi;    	/* the wave function psi_nk(r)			*/
 double A0;		/* Lattice constant			       	*/
@@ -50,12 +50,12 @@ double y_min;           /*               \    spatial extent            */
 double y_max;           /*               /    of cuboid                 */
 double z_min;           /*              |                               */
 double z_max;           /*             -+                               */
-int	iG;		/* index over G vectors                         */
+unsigned int	iG;		/* index over G vectors                         */
 int	in;		/* index over bands                             */
 int	ix;		/* index along x-axis                           */
 int	iy;		/* index along y-axis                           */
 int	iz;		/* index along z-axis                           */
-int	N;		/* number of reciprocal lattice vectors		*/
+size_t	N;		/* number of reciprocal lattice vectors		*/
 int	Nn;		/* number of bands in eigenvector file		*/
 int	n_min;          /* lowest band in summation			*/
 int	n_max;		/* highest band in summation		 	*/
@@ -266,47 +266,3 @@ fclose(Fank);
 
 return(ank);
 }
-
-
-
-vector
-*read_rlv(A0,N)
-
-/* This function reads the reciprocal lattice vectors (defined in
-   the file G.r) into the array G[] and then converts into SI units */
-
-double	A0;
-int     *N;
-{
- int    i=0;
- vector *G;
- FILE   *FG;           /* file pointer to wavefunction file */
-
- if((FG=fopen("G.r","r"))==0)
- {
-  fprintf(stderr,"Cannot open input file 'G.r'!\n");
-  exit(EXIT_FAILURE);
- }
-
- *N=0;
- while(fscanf(FG,"%*f %*f %*f")!=EOF)
-  (*N)++;
- rewind(FG);
-
- G=(vector *)calloc(*N,sizeof(vector));
- if (G==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
-
- while(fscanf(FG,"%lf %lf %lf",&(G+i)->x,&(G+i)->y,&(G+i)->z)!=EOF)
-  {
-   (G+i)->x*=(2*pi/A0);(G+i)->y*=(2*pi/A0);(G+i)->z*=(2*pi/A0);
-   i++;
-  }
-
- fclose(FG);
-
- return(G);
-}
-

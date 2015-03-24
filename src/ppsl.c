@@ -44,25 +44,17 @@
 
 #include "ppff.h"
 
-typedef struct
-{
- char	type[12];
- vector	r;
-}atom;
-
 int main(int argc,char *argv[])
 {
 complex double	V();		/* potential component of Hdash			*/
 complex double	VF();		/* field potential component of Hdash		*/
 complex double	*read_ank();	/* reads in all the bulk eigenvectors ank(G)	*/
 double	*read_Enk();	/* reads in all the bulk eigenvalues Enk	*/
-atom	*read_atoms();	/* read in atomic positions/species		*/
 void	clean_Hdash();	/* removes round-up errors => makes H' Hermitian*/
 void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
 void	write_VF();	/* writes the FT of the electric field potential*/
 int	read_ank0();	/* deduces the number of bands in calculation	*/
 vector	*read_kxi();	/* reads in kxi points				*/
-vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 
 complex double	*Ank;		/* coefficients of eigenvectors			*/
 complex double	*ank;		/* coefficients of bulk eigenvectors		*/
@@ -76,16 +68,16 @@ double	m_per_au;	/* unit conversion factor, m/a.u.		*/
 double	q;		/* the carrier charge, e=-e_0, h=+e_0		*/
 double	*RWORK;		/* LAPACK: workspace				*/
 int	INFO;		/* LAPACK: information integer			*/
-int	N;		/* number of reciprocal lattice vectors		*/
+size_t	N;		/* number of reciprocal lattice vectors		*/
 int	Nn;		/* number of bands in calculation		*/
 int	Nkxi;		/* number of k points in calculation		*/
-int	n_atoms;	/* number of atoms in (large) cell		*/
+size_t	n_atoms;	/* number of atoms in (large) cell		*/
 int     n_min;          /* lowest output band                           */
 int     n_max;          /* highest output band                          */
 int	i;		/* loop index for matrix rows			*/
 int	iE;		/* loop index for energy eigenvalues		*/
-int	iG;		/* index over G					*/
-int	iGdash;		/* index over G'				*/
+unsigned int	iG;		/* index over G					*/
+unsigned int	iGdash;		/* index over G'				*/
 int	ikxi;		/* index for kxi 				*/
 int	ikxidash;	/* index for kxidash 				*/
 int	in;		/* index over the bulk band n			*/
@@ -313,60 +305,6 @@ int	O;	/* the order of the matrix	*/
 
 }
 
-
-
-atom
-*read_atoms(n_atoms,filename)
-
-/* This function reads the atomic species and positions defined in XYZ
-   format from the `filename', either `atoms.xyz', or `atomsp.xyz'	*/
-
-int	*n_atoms;
-char	filename[];
-{
- int    ia=0;
- FILE 	*Fatoms;        /* file pointer to wavefunction file	*/
- atom	*atoms;		/* atomic definitions			*/
-
- if((Fatoms=fopen(filename,"r"))==0)
- {
-  fprintf(stderr,"Error: Cannot open input file '%s'!\n",filename);
-  exit(0);
- }
-
- /* Read in the first line and hence the number of atoms	*/
- int n_read = fscanf(Fatoms,"%i",n_atoms);
- 
- /* Allocate memory for atom definitions	*/
- if (n_read == 1)
-     atoms=(atom *)calloc(*n_atoms,sizeof(atom));
- else
- {
-  fprintf(stderr,"Cannot read number of atoms!\n");
-  exit(EXIT_FAILURE);
- }
-
- if(atoms==0)
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- 
- while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
-        &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
- {
-  /* Convert atomic positions from Angstrom into S.I. units	*/
-
-  (atoms+ia)->r.x*=1e-10;(atoms+ia)->r.y*=1e-10;(atoms+ia)->r.z*=1e-10;
-  ia++;
- }
- fclose(Fatoms);
-
- return(atoms);
-}
-
-
-
 int
 read_ank0(N)
 
@@ -510,49 +448,6 @@ for(ikxi=0;ikxi<Nkxi;ikxi++)
 
 return(Enk);
 }
-
-
-vector
-*read_rlv(A0,N)
-
-/* This function reads the reciprocal lattice vectors (defined in
-   the file G.r) then converts into SI units */
-
-double	A0;
-int     *N;
-{
- int    i=0;
- vector *G;
- FILE   *FG;           /* file pointer to wavefunction file */
-
- if((FG=fopen("G.r","r"))==0)
- {
-  fprintf(stderr,"Error: Cannot open input file 'G.r'!\n");
-  exit(0);
- }
-
- *N=0;
- while(fscanf(FG,"%*f %*f %*f")!=EOF)
-  (*N)++;
- rewind(FG);
-
- G=(vector *)calloc(*N,sizeof(vector));
- if (G==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
-
- while(fscanf(FG,"%lf %lf %lf",&(G+i)->x,&(G+i)->y,&(G+i)->z)!=EOF)
-  {
-   (G+i)->x*=(2*pi/A0);(G+i)->y*=(2*pi/A0);(G+i)->z*=(2*pi/A0);
-   i++;
-  }
-
- fclose(FG);
- 
- return(G);
-}
-
 
 vector
 *read_kxi(A0,Nkxi)

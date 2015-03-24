@@ -52,15 +52,6 @@
 
 #include "ppff.h"
 
-typedef struct
-{
- char	type[12];
- vector	r;
-}atom;
-
-atom   * read_atoms(size_t *n_atoms);
-vector * read_rlv(double A0, size_t *N);
-
 std::complex<double> V(double     A0,
                        double     m_per_au,
                        atom      *atoms,
@@ -132,7 +123,8 @@ if((Fk=fopen("k.r","r"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'k.r'!\n");exit(0);}
 
 size_t	n_atoms;	/* number of atoms in (large) cell		*/
-atoms=read_atoms(&n_atoms);		/* read in atomic basis	*/
+std::string filename("atoms.xyz");
+atoms=read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
 
 G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
 
@@ -198,88 +190,6 @@ free(atoms);
 return EXIT_SUCCESS;
 }/* end main */
 
-/* This function reads the atomic species (defined in the file as.r)
-   into memory (addressed by the pointer as) and returns the start
-   address of this block of memory and the number of lines	   */
-atom *read_atoms(size_t *n_atoms)
-{
- int    ia=0;
- FILE 	*Fatoms;        /* file pointer to wavefunction file       */
- atom	*atoms;		/* atomic definitions			*/
-
- if((Fatoms=fopen("atoms.xyz","r"))==0)
- {
-  fprintf(stderr,"Error: Cannot open input file 'atoms.xyz'!\n");
-  exit(0);
- }
-
- /* Read in the first line and hence the number of atoms	*/
-
- int n_read = fscanf(Fatoms,"%lu",n_atoms);
- 
- /* Allocate memory for atom definitions	*/
- if (n_read == 1)
-   atoms=(atom *)calloc(*n_atoms,sizeof(atom));
- else
- {
-   fprintf(stderr, "Could not read number of atoms!\n");
-   exit(EXIT_FAILURE);
- }
-
- if(atoms==0)
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- 
- while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
-        &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
- {
-  /* Convert atomic positions from Angstrom into S.I. units	*/
-
-  (atoms+ia)->r.x*=1e-10;(atoms+ia)->r.y*=1e-10;(atoms+ia)->r.z*=1e-10;
-  ia++;
- }
- fclose(Fatoms);
-
- return(atoms);
-}
-
-/* This function reads the reciprocal lattice vectors (defined in
-   the file G.r) into the array G[] and then converts into SI units */
-vector * read_rlv(double A0, size_t *N)
-{
- int    i=0;
- vector *G;
- FILE   *FG;           /* file pointer to wavefunction file */
-
- if((FG=fopen("G.r","r"))==0)
- {
-  fprintf(stderr,"Error: Cannot open input file 'G.r'!\n");
-  exit(0);
- }
-
- *N=0;
- while(fscanf(FG,"%*f %*f %*f")!=EOF)
-  (*N)++;
- rewind(FG);
-
- G=(vector *)calloc(*N,sizeof(vector));
- if (G==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
-
- while(fscanf(FG,"%lf %lf %lf",&(G+i)->x,&(G+i)->y,&(G+i)->z)!=EOF)
-  {
-   (G+i)->x*=(2*pi/A0);(G+i)->y*=(2*pi/A0);(G+i)->z*=(2*pi/A0);
-   i++;
-  }
-
- fclose(FG);
- 
- return(G);
-}
 
 /**
  * \param A0	   Lattice constant
