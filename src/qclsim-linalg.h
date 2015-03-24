@@ -12,6 +12,7 @@
 # include "config.h"
 #endif //HAVE_CONFIG_H
 
+#include <complex>
 #include <valarray>
 #include <vector>
 #include <sstream>
@@ -90,6 +91,11 @@ extern "C" {
      */
     void dgetrs_(const char* TRANS, const int* N, const int* NRHS, double A[],
                  const int* LDA, int IPIV[], double B[], const int* LDB, int* INFO);
+    /**
+     * \brief Solve eigenvalue problem for complex matrix
+     */
+    void zheev_(const char *JOBZ, const char *UPLO, const int* N, std::complex<double> ank[],
+                const int *LDA, double E[], std::complex<double> WORK[], int *LWORK, double RWORK[], int *INFO);
 } // extern "C"
 #endif // !HAVE_LAPACKE
 

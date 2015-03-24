@@ -56,6 +56,7 @@ bin_PROGRAMS =  ado                \
 		ivdb    \
 		ppcd    \
 		ppee    \
+		pplb    \
 		ppsg    \
 		pth     \
 		qwwad_find_donor_state \
@@ -231,9 +232,8 @@ ppcd_LDADD   = $(GSL_LIBS)
 
 ppee_SOURCES = src/ppee.c
 
-#pplb_SOURCES  = src/pplb.c
-#pplb_CPPFLAGS = $(PTHREAD_CFLAGS)
-#pplb_LDADD    = $(PTHREAD_LIBS)
+pplb_SOURCES  = src/pplb.cpp
+pplb_LDADD    = libqwwad.la
 
 ppsg_SOURCES = src/ppsg.c
 
@@ -573,6 +573,10 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/ac-Ek.sh      \
 		$(exsrsrcdir)/ac-T.sh 
 
+expphetdatadir = $(exdatadir)/pseudopotential-het
+expphetsrcdir  = examples/pseudopotential-het
+
+expphetdata_DATA = $(expphetsrcdir)/dot-array-transport.sh
 
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 

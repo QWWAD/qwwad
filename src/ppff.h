@@ -11,8 +11,20 @@
 #define PPFF_H
 
 #include <string.h>
+
+#if __cplusplus
+# include <complex>
+#else
+# include <complex.h>
+#endif
+
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
+
+#if __cplusplus
+using namespace Leeds;
+using namespace constants;
+#endif
 
 double Vf(const double  A0,
           const double  m_per_au,
@@ -33,7 +45,6 @@ double Vf(const double  A0,
           double        q_sqr,
           const char   *type)
 {
- double	sqrt();
  double A0_au;	/* lattice constant in atomic units	*/
  double a1,a2,a3,a4,a5,a6;
  double Omega;	/* atomic volume, i.e. fcc cube/4	*/

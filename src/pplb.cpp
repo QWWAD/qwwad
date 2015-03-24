@@ -32,15 +32,23 @@
    	Use of LAPACK diagonalisation routine
 								*/
 
-#include <complex.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <complex>
+#include <valarray>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
+
+#include <armadillo>
+
 #include "struct.h"
 #include "maths.h"
 #include "qclsim-constants.h"
+#include "qclsim-linalg.h"
 
 #include "ppff.h"
 
@@ -50,37 +58,31 @@ typedef struct
  vector	r;
 }atom;
 
+atom   * read_atoms(int *n_atoms);
+vector * read_rlv(double A0, size_t *N);
+std::complex<double> V(double  A0,
+                       double  m_per_au,
+                       atom   *atoms,
+                       int     n_atoms,
+                       vector  q);
+void
+write_ank(arma::cx_mat &ank,
+          int           ik,
+          int           N,
+          int           n_min,
+          int           n_max);
+
 int main(int argc,char *argv[])
 {
-complex	double V();		/* potential component of H_GG			*/
-atom	*read_atoms();	/* read in atomic positions/species		*/
-void	zheev_();	/* Matrix diagonalization routine (LAPACK)	*/
-void	write_ank();	/* writes eigenvectors to file			*/
-vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
-
-complex double	*ank;		/* coefficients of eigenvectors			*/
-complex double	*H_GG;		/* components of H_G'G (see notes)		*/
-complex double	T_GG;		/* kinetic energy component of H_GG		*/
-complex	double *V_GG;		/* potential energy of H_GG, diagonal elements	*/
-			/* stored here for efficiency			*/
-complex	double *WORK;		/* LAPACK: workspace				*/
 double	A0;		/* Lattice constant				*/
-double	*E;		/* energy eigenvalues				*/
 double	m_per_au;	/* unit conversion factor, m/a.u.		*/
-double	*RWORK;		/* LAPACK: workspace				*/
-int	N;		/* number of reciprocal lattice vectors		*/
+size_t	N;		/* number of reciprocal lattice vectors		*/
 int     n_min;          /* lowest output band				*/
 int     n_max;          /* highest output band				*/
 int	n_atoms;	/* number of atoms in (large) cell		*/
-int	INFO;		/* LAPACK: information integer			*/
-int	i;		/* loop index for matrix rows			*/
 int	iE;		/* loop index for energy eigenvalues		*/
 int	ik;		/* loop index for k-vectors			*/
-int	j;		/* loop index for matrix columns		*/
-int	LWORK;		/* LAPACK: workspace				*/
 char	filenameE[9];	/* character string for Energy output filename	*/
-char	JOBZ='V';	/* LAPACK: compute eigenvectors and eigenvalues	*/
-char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
 FILE	*Fk;		/* pointer to k.r file				*/
 FILE	*FEk;		/* pointer to Ek.r file				*/
 atom	*atoms;		/* the type and position of the atoms		*/
@@ -134,43 +136,25 @@ atoms=read_atoms(&n_atoms);		/* read in atomic basis	*/
 
 G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
 
-/* Allocate memory */
+// components of H_G'G (see notes)
+arma::cx_mat H_GG(N,N);
 
-LWORK=2*N;		/* LAPACK workspace definition		*/
+// potential energy of H_GG, diagonal elements
+std::valarray< std::complex<double> > V_GG(N);
 
-WORK=(complex double *)calloc(LWORK,sizeof(complex double));
- if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-RWORK=(double *)calloc(3*N-2,sizeof(double));
- if(RWORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-/* end of LAPACK definitions	*/
-
-H_GG=(complex double *)calloc(N*N,sizeof(complex double));
- if(H_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-V_GG=(complex double *)calloc(N,sizeof(complex double));
- if(V_GG==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-E=(double *)calloc(N,sizeof(double));
- if(E==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-ank=(complex double *)calloc(N*N,sizeof(complex double));
- if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-for(i=0;i<N;i++)        /* index down rows */
+for(unsigned int i=0;i<N;i++)        /* index down rows */
 {
- for(j=0;j<i;j++)       /* index across cols, creates off diagonal elements */
- {
-  q.x=((G+i)->x)-((G+j)->x);
-  q.y=((G+i)->y)-((G+j)->y);
-  q.z=((G+i)->z)-((G+j)->z);
+    for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
+    {
+        q.x = G[i].x - G[j].x;
+        q.y = G[i].y - G[j].y;
+        q.z = G[i].z - G[j].z;
 
-  *(H_GG+i*N+j)=V(A0,m_per_au,atoms,n_atoms,q);    
- }
-q.x=0;q.y=0;q.z=0;      /* creates diagonal potentials */
+        H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);    
+    }
+    q.x=0;q.y=0;q.z=0;      /* creates diagonal potentials */
 
-*(V_GG+i)=V(A0,m_per_au,atoms,n_atoms,q);
+    V_GG[i] =V(A0,m_per_au,atoms,n_atoms,q);
 }
 
 /* Add diagonal elements to matrix H_GG' */
@@ -179,33 +163,28 @@ ik=0;	/* Initialise k-loop index	*/
 while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
 {
  k.x*=(2*pi/A0);k.y*=(2*pi/A0);k.z*=(2*pi/A0);
- for(i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
+ for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
  {
-  T_GG=hBar*(gsl_pow_2(((G+i)->x)+k.x)+gsl_pow_2(((G+i)->y)+k.y)+gsl_pow_2(((G+i)->z)+k.z))*hBar/(2*me);
-  *(H_GG+i*N+i)=*(V_GG+i);
-  H_GG[i*N+i] += T_GG;
+     // kinetic energy component of H_GG [QWWAD3, 15.91]
+     std::complex<double> T_GG=hBar*hBar/(2*me) * (gsl_pow_2(G[i].x+k.x)+gsl_pow_2(G[i].y+k.y)+gsl_pow_2(G[i].z+k.z));
+     H_GG(i,i) = T_GG + V_GG[i];
  }
 
-for(i=0;i<N;i++) 		/* LAPACK routine zheev() writes vectors */
- for(j=0;j<=i;j++)		/* over original matrix, so copy matrix  */
-  *(ank+i*N+j)=*(H_GG+i*N+j);	/* to eigenvector space			 */
-
- /* call LAPACK diagonalisation routine	*/
-
- ctranspose(ank,N);		/* because of FORTRAN LAPACK	*/
- zheev_(&JOBZ,&UPLO,&N,ank,&N,E,WORK,&LWORK,RWORK,&INFO);
+ // Find the eigenvalues & eigenvectors of the Hamiltonian matrix
+ arma::vec E(N); // Energy eigenvalues
+ arma::cx_mat ank(N,N); // coefficients of eigenvectors
+ arma::eig_sym(E, ank, H_GG);
 
  /* Output eigenvalues in a separate file for each k point */
 
  sprintf(filenameE,"Ek%i.r",ik);
  FEk=fopen(filenameE,"w");
- for(iE=n_min;iE<=n_max;iE++)fprintf(FEk,"%10.6f\n",*(E+iE)/e);
+ for(iE=n_min;iE<=n_max;iE++)fprintf(FEk,"%10.6f\n",E(iE)/e);
  fclose(FEk);
 
  /* Output eigenvectors */
 
  if(ev){
-	ctranspose(ank,N);		/* because of FORTRAN LAPACK	*/
 	write_ank(ank,ik,N,n_min,n_max);
         }
 
@@ -215,28 +194,15 @@ for(i=0;i<N;i++) 		/* LAPACK routine zheev() writes vectors */
 fclose(Fk);
 
 free(G);
-free(H_GG);
-free(V_GG);
-free(E);
-free(ank);
 free(atoms);
-
-free(WORK);free(RWORK);		/* The LAPACK definitions	*/
 
 return EXIT_SUCCESS;
 }/* end main */
 
-
-
-
-atom
-*read_atoms(n_atoms)
-
 /* This function reads the atomic species (defined in the file as.r)
    into memory (addressed by the pointer as) and returns the start
    address of this block of memory and the number of lines	   */
-
-int	*n_atoms;
+atom *read_atoms(int *n_atoms)
 {
  int    ia=0;
  FILE 	*Fatoms;        /* file pointer to wavefunction file       */
@@ -280,16 +246,9 @@ int	*n_atoms;
  return(atoms);
 }
 
-
-
-vector
-*read_rlv(A0,N)
-
 /* This function reads the reciprocal lattice vectors (defined in
    the file G.r) into the array G[] and then converts into SI units */
-
-double	A0;
-int     *N;
+vector * read_rlv(double A0, size_t *N)
 {
  int    i=0;
  vector *G;
@@ -323,51 +282,51 @@ int     *N;
  return(G);
 }
 
-
-
-complex double 
-V(A0,m_per_au,atoms,n_atoms,q)
-
-double A0;	/* Lattice constant */
-double m_per_au;/* conversion factor from SI to a.u. */
-atom   *atoms;	/* atomic definitions	*/
-int    n_atoms; /* number of atoms in structure */
-vector q;       /* a reciprocal lattice vector, G'-G */
+/**
+ * \param A0	   Lattice constant
+ * \param m_per_au conversion factor from SI to a.u.
+ * \param atoms    atomic definitions
+ * \param n_atoms  number of atoms in structure
+ * \param q        a reciprocal lattice vector, G'-G
+ */
+std::complex<double> V(double  A0,
+                       double  m_per_au,
+                       atom   *atoms,
+                       int     n_atoms,
+                       vector  q)
 {
- extern double Vf();   /* Fourier transform of potential	*/
- complex double v;     /* potential					*/
- double	vf;	/* storage for returned data from Vf()		*/
- int	ia;	/* index across atoms				*/
- vector t;      /* general vertor representing atom within cell	*/
+    std::complex<double> v = 0.0;     /* potential					*/
+    double	vf;	/* storage for returned data from Vf()		*/
+    int	ia;	/* index across atoms				*/
+    vector t;      /* general vertor representing atom within cell	*/
 
- v=0;
+    for(ia=0;ia<n_atoms;ia++)
+    {
+        t.x = atoms[ia].r.x;
+        t.y = atoms[ia].r.y;
+        t.z = atoms[ia].r.z;
+        vf = Vf(A0,m_per_au,q.x*q.x+q.y*q.y+q.z*q.z,atoms[ia].type);
+        v += std::complex<double>(cos(q.x*t.x+q.y*t.y+q.z*t.z)*vf, - sin(q.x*t.x+q.y*t.y+q.z*t.z)*vf);
+    }
 
- for(ia=0;ia<n_atoms;ia++)
- {
-  t.x=(atoms+ia)->r.x;
-  t.y=(atoms+ia)->r.y;
-  t.z=(atoms+ia)->r.z;
-  vf=Vf(A0,m_per_au,q.x*q.x+q.y*q.y+q.z*q.z,(atoms+ia)->type);
-  v+=cos(q.x*t.x+q.y*t.y+q.z*t.z)*vf - I * sin(q.x*t.x+q.y*t.y+q.z*t.z)*vf;
- }
+    v *= 2.0/n_atoms;
 
- v/=(double)(n_atoms/2);
-
- return(v);
+    return v;
 }
 
-
-
+/** This function writes the eigenvectors (a_nk(G)) to the files ank.r
+ * \param double	ank
+ * \param ik            k point identifier
+ * \param N
+ * \param n_min         lowest output band
+ * \param n_max         highest output band
+ */
 void
-write_ank(ank,ik,N,n_min,n_max)
-
-/* This function writes the eigenvectors (a_nk(G)) to the files ank.r */
-
-complex double	*ank;
-int	ik;		/* k point identifier				*/
-int	N;
-int     n_min;          /* lowest output band				*/
-int     n_max;          /* highest output band				*/
+write_ank(arma::cx_mat &ank,
+          int           ik,
+          int           N,
+          int           n_min,
+          int           n_max)
 {
  int	iG;		/* index over G vectors				*/
  int	in;		/* index over bands				*/
@@ -380,11 +339,11 @@ Fank=fopen(filename,"w");
 for(iG=0;iG<N;iG++)
 {
  for(in=n_min;in<=n_max;in++)
-  fprintf(Fank,"%20.16le %20.16le ",creal(ank[iG*N+in]),cimag(ank[iG*N+in]));
+  fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank[iG*N+in].imag());
  fprintf(Fank,"\n");
 }
 
 
 fclose(Fank);
 }
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

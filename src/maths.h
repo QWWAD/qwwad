@@ -4,7 +4,15 @@
 
 #ifndef MATHS_H
 #define MATHS_H
+
+#if __cplusplus
+# include <complex>
+#else
+# include <complex.h>
+#endif
+
 #include "struct.h"
+
 double sec   (const double x);
 double cosec (const double x);
 double coth  (const double x);
@@ -19,26 +27,40 @@ vector vvprod(const vector A,
               const vector B);
 double vsprod(const vector A,
               const vector B);
+
+#if !__cplusplus
 double Theta (const double x);
+#endif
 
 
 /**
  * \brief Form the transpose of a complex matrix
  * \param[in] N the matrix order
  */
-void ctranspose(complex double *M,
-                int             N)
+void ctranspose(
+#if __cplusplus
+        std::valarray<std::complex<double> > M
+#else
+        complex double *M,
+        int             N
+#endif
+)
 {
+#if __cplusplus
+    std::complex<double> m;
+    int N = sqrt(M.size());
+#else
  complex double m;	/* workspace---a single element	*/
+#endif
  int	i;		/* indices			*/
  int	j;		/* indices			*/
 
  for(i=0;i<N;i++) 		
   for(j=0;j<i;j++)	
   {
-   m=*(M+i*N+j);		/* copy Mij to m		*/
-   *(M+i*N+j)=*(M+j*N+i);	/* make Mij=Mji			*/
-   *(M+j*N+i)=m;		/* make Mji=m			*/
+   m=M[i*N+j];		/* copy Mij to m		*/
+   M[i*N+j]=M[j*N+i];	/* make Mij=Mji			*/
+   M[j*N+i]=m;		/* make Mji=m			*/
   }
 }
 
@@ -146,6 +168,7 @@ double vsprod(const vector A, const vector B)
  return A.x*B.x+A.y*B.y+A.z*B.z;
 }
 
+#if !__cplusplus
 /**
  * Heaviside Step function
  */
@@ -153,4 +176,5 @@ double Theta(const double x)
 {
  return (x<0)?0:1;
 }
+#endif
 #endif

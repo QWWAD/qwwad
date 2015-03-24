@@ -1,7 +1,8 @@
-#!/bin/ksh
+#! /bin/sh
+set -ve
+
 # Transport through dot array calculation
 # Initialise files
-
 rm -f ank*.r Ek*.r
 
 # Define the unit cell extent
@@ -11,12 +12,11 @@ NY=2
 NZ=2
 
 # and the lattice constant in Angstrom
-
-A0=5.65
+# Use value for Si
+A0=5.431
 
 # Create simple cube unit cell of (NX,NY,NZ) lattice constants
-
-cszb -a SI -c SI -x $NX -y $NY -z $NZ
+cszb -a SI -c SI -x $NX -y $NY -z $NZ -A $A0
 
 # Create quantum dot by substituting atoms explicitly
 
@@ -24,26 +24,15 @@ sed '3,10s/SI/GE/' atoms.xyz > atoms.tmp
 mv atoms.tmp atoms.xyz
 
 # Convert also to pdb format for visual check
-
 xyz2pdb atoms
 
 # Specify k-points for calculation, to calculate dispersion curves need more
 # points than zone center, note with n_z=2, zone edge at 1/4 (2*pi/A0)
-
-echo 0.0 0.0 0.0 > k.r
-echo 0.0 0.0 0.025 >> k.r
-echo 0.0 0.0 0.050 >> k.r
-echo 0.0 0.0 0.075 >> k.r
-echo 0.0 0.0 0.100 >> k.r
-echo 0.0 0.0 0.125 >> k.r
-echo 0.0 0.0 0.150 >> k.r
-echo 0.0 0.0 0.175 >> k.r
-echo 0.0 0.0 0.200 >> k.r
-echo 0.0 0.0 0.225 >> k.r
-echo 0.0 0.0 0.250 >> k.r
+cat > k.r << EOF
+0.0 0.0 0.0
+EOF
 
 # Generate reciprocal lattice vectors for this simple cube, and sort
-
 rlv-sc -x $NX -y $NY -z $NZ
 
 ppsg
@@ -53,11 +42,10 @@ ppsg
 # valence band states is twice the number of atoms in the basis
 
 # Calculate all VB and lowest CB state
-
-let N=2*$NX*$NY*$NZ*8
-let M=2*$NX*$NY*$NZ*8+1
-
-pplb -n $N -m $M 
+N=`echo $NX $NY $NZ | awk '{print 2*$1*$2*$3*8}'`
+M=`echo $NX $NY $NZ | awk '{print 2*$1*$2*$3*8 + 1}'`
+echo $N $M
+pplb -n $N -m $M -A $A0
 
 # Collate top VB and bottom CB states
 
