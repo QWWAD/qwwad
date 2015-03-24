@@ -225,7 +225,7 @@ Fank=fopen(filename,"w");
 for(iG=0;iG<N;iG++)
 {
  for(in=n_min;in<=n_max;in++)
-  fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank[iG*N+in].imag());
+     fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank(iG,in).imag());
  fprintf(Fank,"\n");
 }
 
