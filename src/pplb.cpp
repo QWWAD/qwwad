@@ -49,6 +49,7 @@
 #include "maths.h"
 #include "qclsim-constants.h"
 #include "qclsim-linalg.h"
+#include "qwwad-options.h"
 
 #include "ppff.h"
 
@@ -64,44 +65,30 @@ write_ank(arma::cx_mat &ank,
           int           n_min,
           int           n_max);
 
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+
+    std::string doc("Large-basis pseudopotential calculation for user-defined cell");
+
+    opt.add_numeric_option("latticeconst,A", 5.65, "Lattice constant [angstrom]");
+    opt.add_size_option   ("nmin,n",            4, "Lowest output band index (VB = 4, CB = 5)");
+    opt.add_size_option   ("nmax,m",            5, "Highest output band index (VB = 4, CB = 5)");
+    opt.add_switch        ("printev,w",            "Print eigenvectors to file");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
 int main(int argc,char *argv[])
 {
-/* default values	*/
-double A0 = 5.65e-10; // Lattice constant
-bool   ev = false;    // flag, if set output eigenvalues
-int     n_min = 0;    // lowest output band
-int     n_max = -1;   // highest output band
-double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
+    const Options opt = configure_options(argc, argv);
 
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'A':
-	   A0=atof(argv[2])*1e-10;
-           break;
-  case 'n':
-           n_min=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'm':
-           n_max=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'w':
-           ev=true;
-	   argv--;
-	   argc++;
-           break;
-  default :
-	   printf("Usage:  pplb [-A lattice constant (\033[1m5.65\033[0mA)]\n");
-	   printf("             [-n # lowest band \033[1m1\033[0m][-m highest band \033[1m4\033[0m], output states\n");
-	   printf("             [-w output eigenvectors (wavefunctions) in range n->m]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
+    const double A0    = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
+    const int    n_min = opt.get_size_option("nmin"); // Lowest output band
+    const int    n_max = opt.get_size_option("nmax"); // Highest output band
+    const bool   ev    = opt.get_switch("printev");   // Print eigenvectors?
 
 // Read desired wave vector points from file
 std::valarray<double> kx;
@@ -134,6 +121,7 @@ arma::cx_mat H_GG(N,N);
 // potential energy of H_GG, diagonal elements
 std::valarray< std::complex<double> > V_GG(N);
 
+double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
 for(unsigned int i=0;i<N;i++)        /* index down rows */
 {
     for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
