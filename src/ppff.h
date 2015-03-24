@@ -29,7 +29,11 @@ using namespace constants;
 typedef struct
 {
  char	type[12];
+#if __cplusplus
+ arma::vec r;
+#else
  vector	r;
+#endif
 }atom;
 
 
@@ -502,13 +506,30 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
   fprintf(stderr,"Cannot allocate memory!\n");
   exit(0);
  }
- 
+
+#if __cplusplus
+ double rx;
+ double ry;
+ double rz;
+ while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
+        &rx,&ry,&rz))!=EOF)
+ {
+     arma::vec r(3);
+     r(0) = rx;
+     r(1) = ry;
+     r(2) = rz;
+
+     /* Convert atomic positions from Angstrom into S.I. units	*/
+     r *= 1e-10;
+
+     atoms[ia].r = r;
+#else 
  while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
         &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
  {
   /* Convert atomic positions from Angstrom into S.I. units	*/
-
   (atoms+ia)->r.x*=1e-10;(atoms+ia)->r.y*=1e-10;(atoms+ia)->r.z*=1e-10;
+#endif
   ia++;
  }
  fclose(Fatoms);
@@ -518,6 +539,30 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
 
 /* This function reads the reciprocal lattice vectors (defined in
    the file G.r) into the array G[] and then converts into SI units */
+#if __cplusplus
+std::vector<arma::vec>
+read_rlv(double A0)
+{
+    std::valarray<double> Gx;
+    std::valarray<double> Gy;
+    std::valarray<double> Gz;
+    read_table("G.r", Gx, Gy, Gz);
+
+    std::vector<arma::vec> G;
+    size_t N = Gx.size();
+    for(unsigned int iG = 0; iG < N; ++iG)
+    {
+        arma::vec _G(3);
+        _G(0) = Gx[iG];
+        _G(1) = Gy[iG];
+        _G(2) = Gz[iG];
+        _G *= 2.0*pi/A0;
+        G.push_back(_G);
+    }
+
+    return G;
+}
+#else
 vector * read_rlv(double A0, size_t *N)
 {
  int    i=0;
@@ -551,4 +596,5 @@ vector * read_rlv(double A0, size_t *N)
  
  return(G);
 }
+#endif
 #endif

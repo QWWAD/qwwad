@@ -66,28 +66,12 @@ write_ank(arma::cx_mat &ank,
 
 int main(int argc,char *argv[])
 {
-double	A0;		/* Lattice constant				*/
-double	m_per_au;	/* unit conversion factor, m/a.u.		*/
-size_t	N;		/* number of reciprocal lattice vectors		*/
-int     n_min;          /* lowest output band				*/
-int     n_max;          /* highest output band				*/
-int	iE;		/* loop index for energy eigenvalues		*/
-int	ik;		/* loop index for k-vectors			*/
-char	filenameE[9];	/* character string for Energy output filename	*/
-FILE	*Fk;		/* pointer to k.r file				*/
-FILE	*FEk;		/* pointer to Ek.r file				*/
-atom	*atoms;		/* the type and position of the atoms		*/
-bool	ev;		/* flag, if set output eigenvectors 		*/
-vector	*G;		/* reciprocal lattice vectors			*/
-vector	k;		/* electron wave vector				*/
-
 /* default values	*/
-
-A0=5.65e-10;
-ev=false;
-n_min=0;
-n_max=-1;
-m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me;
+double A0 = 5.65e-10; // Lattice constant
+bool   ev = false;    // flag, if set output eigenvalues
+int     n_min = 0;    // lowest output band
+int     n_max = -1;   // highest output band
+double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -119,14 +103,30 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 
-if((Fk=fopen("k.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'k.r'!\n");exit(0);}
+// Read desired wave vector points from file
+std::valarray<double> kx;
+std::valarray<double> ky;
+std::valarray<double> kz;
+read_table("k.r", kx, ky, kz);
+std::vector<arma::vec> k;
+size_t nk = k.size();
+
+for(unsigned int ik = 0; ik < nk; ++ik)
+{
+    arma::vec _k(3);
+    _k(0) = kx[ik];
+    _k(1) = ky[ik];
+    _k(2) = kz[ik];
+    _k *= 2.0*pi/A0;
+    k.push_back(_k);
+}
 
 size_t	n_atoms;	/* number of atoms in (large) cell		*/
 std::string filename("atoms.xyz");
-atoms=read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
+atom *atoms = read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
 
-G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
+std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
+size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
 
 // components of H_G'G (see notes)
 arma::cx_mat H_GG(N,N);
@@ -138,11 +138,7 @@ for(unsigned int i=0;i<N;i++)        /* index down rows */
 {
     for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
     {
-        arma::vec q(3);		/* G'-G						*/
-        q(0) = G[i].x - G[j].x;
-        q(1) = G[i].y - G[j].y;
-        q(2) = G[i].z - G[j].z;
-
+        arma::vec q = G[i] - G[j];		/* G'-G						*/
         H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);    
     }
 
@@ -150,15 +146,14 @@ for(unsigned int i=0;i<N;i++)        /* index down rows */
 }
 
 /* Add diagonal elements to matrix H_GG' */
-
-ik=0;	/* Initialise k-loop index	*/
-while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
+for(unsigned int ik = 0; ik < nk; ++ik)
 {
- k.x*=(2*pi/A0);k.y*=(2*pi/A0);k.z*=(2*pi/A0);
  for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
  {
      // kinetic energy component of H_GG [QWWAD3, 15.91]
-     std::complex<double> T_GG=hBar*hBar/(2*me) * (gsl_pow_2(G[i].x+k.x)+gsl_pow_2(G[i].y+k.y)+gsl_pow_2(G[i].z+k.z));
+     arma::vec G_plus_k = G[i] + k[ik];
+     const double G_plus_k_sq = dot(G_plus_k, G_plus_k);
+     std::complex<double> T_GG=hBar*hBar/(2*me) * G_plus_k_sq;
      H_GG(i,i) = T_GG + V_GG[i];
  }
 
@@ -168,10 +163,10 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
  arma::eig_sym(E, ank, H_GG);
 
  /* Output eigenvalues in a separate file for each k point */
-
+ char	filenameE[9];	/* character string for Energy output filename	*/
  sprintf(filenameE,"Ek%i.r",ik);
- FEk=fopen(filenameE,"w");
- for(iE=n_min;iE<=n_max;iE++)fprintf(FEk,"%10.6f\n",E(iE)/e);
+ FILE *FEk=fopen(filenameE,"w");
+ for(int iE=n_min; iE<=n_max; iE++) fprintf(FEk,"%10.6f\n",E(iE)/e);
  fclose(FEk);
 
  /* Output eigenvectors */
@@ -182,9 +177,7 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
 
  ik++;	/* increment loop counter	*/
 }/* end while*/
-fclose(Fk);
 
-free(G);
 free(atoms);
 
 return EXIT_SUCCESS;
@@ -208,12 +201,8 @@ std::complex<double> V(double     A0,
 
     for(unsigned int ia=0; ia<n_atoms; ++ia)
     {
-        arma::vec t(3);      /* general vector representing atom within cell	*/
-        t(0) = atoms[ia].r.x;
-        t(1) = atoms[ia].r.y;
-        t(2) = atoms[ia].r.z;
         const double q_dot_q = dot(q,q);
-        const double q_dot_t = dot(q,t);
+        const double q_dot_t = dot(q, atoms[ia].r);
         const double vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
         v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // Add contribution to potential from this atom [QWWAD3, 15.92]
     }
@@ -251,7 +240,6 @@ for(iG=0;iG<N;iG++)
   fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank[iG*N+in].imag());
  fprintf(Fank,"\n");
 }
-
 
 fclose(Fank);
 }
