@@ -29,7 +29,17 @@ xyz2pdb atoms
 # Specify k-points for calculation, to calculate dispersion curves need more
 # points than zone center, note with n_z=2, zone edge at 1/4 (2*pi/A0)
 cat > k.r << EOF
-0.0 0.0 0.0
+0.0 0.0 0.000
+0.0 0.0 0.025
+0.0 0.0 0.050
+0.0 0.0 0.075
+0.0 0.0 0.100
+0.0 0.0 0.125
+0.0 0.0 0.150
+0.0 0.0 0.175
+0.0 0.0 0.200
+0.0 0.0 0.225
+0.0 0.0 0.250
 EOF
 
 # Generate reciprocal lattice vectors for this simple cube, and sort
