@@ -60,11 +60,12 @@ typedef struct
 
 atom   * read_atoms(int *n_atoms);
 vector * read_rlv(double A0, size_t *N);
-std::complex<double> V(double  A0,
-                       double  m_per_au,
-                       atom   *atoms,
-                       int     n_atoms,
-                       vector  q);
+
+std::complex<double> V(double     A0,
+                       double     m_per_au,
+                       atom      *atoms,
+                       int        n_atoms,
+                       arma::vec &q);
 void
 write_ank(arma::cx_mat &ank,
           int           ik,
@@ -89,7 +90,6 @@ atom	*atoms;		/* the type and position of the atoms		*/
 bool	ev;		/* flag, if set output eigenvectors 		*/
 vector	*G;		/* reciprocal lattice vectors			*/
 vector	k;		/* electron wave vector				*/
-vector	q;		/* G'-G						*/
 
 /* default values	*/
 
@@ -146,15 +146,15 @@ for(unsigned int i=0;i<N;i++)        /* index down rows */
 {
     for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
     {
-        q.x = G[i].x - G[j].x;
-        q.y = G[i].y - G[j].y;
-        q.z = G[i].z - G[j].z;
+        arma::vec q(3);		/* G'-G						*/
+        q(0) = G[i].x - G[j].x;
+        q(1) = G[i].y - G[j].y;
+        q(2) = G[i].z - G[j].z;
 
         H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);    
     }
-    q.x=0;q.y=0;q.z=0;      /* creates diagonal potentials */
 
-    V_GG[i] =V(A0,m_per_au,atoms,n_atoms,q);
+    V_GG[i] = H_GG(i,i); // Record potentials from diagonal
 }
 
 /* Add diagonal elements to matrix H_GG' */
@@ -289,11 +289,11 @@ vector * read_rlv(double A0, size_t *N)
  * \param n_atoms  number of atoms in structure
  * \param q        a reciprocal lattice vector, G'-G
  */
-std::complex<double> V(double  A0,
-                       double  m_per_au,
-                       atom   *atoms,
-                       int     n_atoms,
-                       vector  q)
+std::complex<double> V(double     A0,
+                       double     m_per_au,
+                       atom      *atoms,
+                       int        n_atoms,
+                       arma::vec &q)
 {
     std::complex<double> v = 0.0;     /* potential					*/
     double	vf;	/* storage for returned data from Vf()		*/
@@ -305,8 +305,9 @@ std::complex<double> V(double  A0,
         t.x = atoms[ia].r.x;
         t.y = atoms[ia].r.y;
         t.z = atoms[ia].r.z;
-        vf = Vf(A0,m_per_au,q.x*q.x+q.y*q.y+q.z*q.z,atoms[ia].type);
-        v += std::complex<double>(cos(q.x*t.x+q.y*t.y+q.z*t.z)*vf, - sin(q.x*t.x+q.y*t.y+q.z*t.z)*vf);
+        const double q_dot_q = dot(q,q);
+        vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
+        v += std::complex<double>(cos(q(0)*t.x+q(1)*t.y+q(2)*t.z)*vf, - sin(q(0)*t.x+q(1)*t.y+q(2)*t.z)*vf);
     }
 
     v *= 2.0/n_atoms;
