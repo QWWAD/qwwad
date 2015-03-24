@@ -58,13 +58,13 @@ typedef struct
  vector	r;
 }atom;
 
-atom   * read_atoms(int *n_atoms);
+atom   * read_atoms(size_t *n_atoms);
 vector * read_rlv(double A0, size_t *N);
 
 std::complex<double> V(double     A0,
                        double     m_per_au,
                        atom      *atoms,
-                       int        n_atoms,
+                       size_t     n_atoms,
                        arma::vec &q);
 void
 write_ank(arma::cx_mat &ank,
@@ -80,7 +80,6 @@ double	m_per_au;	/* unit conversion factor, m/a.u.		*/
 size_t	N;		/* number of reciprocal lattice vectors		*/
 int     n_min;          /* lowest output band				*/
 int     n_max;          /* highest output band				*/
-int	n_atoms;	/* number of atoms in (large) cell		*/
 int	iE;		/* loop index for energy eigenvalues		*/
 int	ik;		/* loop index for k-vectors			*/
 char	filenameE[9];	/* character string for Energy output filename	*/
@@ -132,6 +131,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 if((Fk=fopen("k.r","r"))==0)
  {fprintf(stderr,"Error: Cannot open input file 'k.r'!\n");exit(0);}
 
+size_t	n_atoms;	/* number of atoms in (large) cell		*/
 atoms=read_atoms(&n_atoms);		/* read in atomic basis	*/
 
 G=read_rlv(A0,&N);	/* read in reciprocal lattice vectors	*/
@@ -189,7 +189,6 @@ while((fscanf(Fk,"%lf %lf %lf",&k.x,&k.y,&k.z))!=EOF)
         }
 
  ik++;	/* increment loop counter	*/
- 
 }/* end while*/
 fclose(Fk);
 
@@ -202,7 +201,7 @@ return EXIT_SUCCESS;
 /* This function reads the atomic species (defined in the file as.r)
    into memory (addressed by the pointer as) and returns the start
    address of this block of memory and the number of lines	   */
-atom *read_atoms(int *n_atoms)
+atom *read_atoms(size_t *n_atoms)
 {
  int    ia=0;
  FILE 	*Fatoms;        /* file pointer to wavefunction file       */
@@ -216,7 +215,7 @@ atom *read_atoms(int *n_atoms)
 
  /* Read in the first line and hence the number of atoms	*/
 
- int n_read = fscanf(Fatoms,"%i",n_atoms);
+ int n_read = fscanf(Fatoms,"%lu",n_atoms);
  
  /* Allocate memory for atom definitions	*/
  if (n_read == 1)
@@ -292,22 +291,21 @@ vector * read_rlv(double A0, size_t *N)
 std::complex<double> V(double     A0,
                        double     m_per_au,
                        atom      *atoms,
-                       int        n_atoms,
+                       size_t     n_atoms,
                        arma::vec &q)
 {
     std::complex<double> v = 0.0;     /* potential					*/
-    double	vf;	/* storage for returned data from Vf()		*/
-    int	ia;	/* index across atoms				*/
-    vector t;      /* general vertor representing atom within cell	*/
 
-    for(ia=0;ia<n_atoms;ia++)
+    for(unsigned int ia=0; ia<n_atoms; ++ia)
     {
-        t.x = atoms[ia].r.x;
-        t.y = atoms[ia].r.y;
-        t.z = atoms[ia].r.z;
+        arma::vec t(3);      /* general vector representing atom within cell	*/
+        t(0) = atoms[ia].r.x;
+        t(1) = atoms[ia].r.y;
+        t(2) = atoms[ia].r.z;
         const double q_dot_q = dot(q,q);
-        vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
-        v += std::complex<double>(cos(q(0)*t.x+q(1)*t.y+q(2)*t.z)*vf, - sin(q(0)*t.x+q(1)*t.y+q(2)*t.z)*vf);
+        const double q_dot_t = dot(q,t);
+        const double vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
+        v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // Add contribution to potential from this atom [QWWAD3, 15.92]
     }
 
     v *= 2.0/n_atoms;
