@@ -3,7 +3,7 @@
 #endif
 
 ACLOCAL_AMFLAGS=-I m4
-AM_CPPFLAGS  = $(GSL_CFLAGS)
+AM_CPPFLAGS  = $(GSL_CFLAGS) -DQWWAD_PKGDATADIR='"$(pkgdatadir)"'
 AM_LDFLAGS   = $(GSL_LIBS) \
                $(BOOST_LDFLAGS) \
                $(BOOST_PROGRAM_OPTIONS_LIB)
@@ -16,6 +16,8 @@ EXTRA_DIST=autogen.sh                     \
 	   m4/ax_boost_base.m4            \
 	   m4/ax_boost_program_options.m4 \
 	   m4/ax_lapack.m4
+
+dist_pkgdata_DATA = src/material-library.xml
 
 noinst_HEADERS = src/dos-functions.h \
 		 src/ef-helpers.h    \
@@ -54,6 +56,7 @@ bin_PROGRAMS =  ado                \
 		ifr     \
 		imp     \
 		ivdb    \
+		matlib-query \
 		ppcd    \
 		ppee    \
 		pplb    \
@@ -70,6 +73,8 @@ bin_PROGRAMS =  ado                \
 		srcc    \
 		srelo   \
 	       	srrad   \
+		thermal1d \
+		thermalrc \
 	       	tdb     \
 	       	tsb     \
 		wfplot
@@ -92,10 +97,18 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim-linalg.h         \
 			   src/qclsim-maths.cpp        \
 			   src/qclsim-maths.h          \
+			   src/qclsim-material.cpp     \
+			   src/qclsim-material.h       \
+			   src/qclsim-material-property.cpp     \
+			   src/qclsim-material-property.h       \
+			   src/qclsim-material-specification.cpp     \
+			   src/qclsim-material-specification.h       \
 			   src/qclsim_poisson_solver.cpp \
 			   src/qclsim_poisson_solver.h   \
 			   src/qclsim-subband.cpp      \
 			   src/qclsim-subband.h        \
+			   src/material_library.cpp       \
+			   src/material_library.h         \
 			   src/qwwad-donor-energy-minimiser.cpp \
 			   src/qwwad-donor-energy-minimiser.h   \
 			   src/qwwad-heterostructure.cpp \
@@ -226,6 +239,9 @@ imp_LDADD    = libqwwad.la
 ivdb_SOURCES = src/ivdb.cpp
 ivdb_LDADD   = libqwwad.la
 
+matlib_query_SOURCES = src/matlib-query.cpp
+matlib_query_LDADD   = libqwwad.la
+
 ppcd_SOURCES = src/ppcd.c
 ppcd_CFLAGS  = $(GSL_CFLAGS)
 ppcd_LDADD   = $(GSL_LIBS)
@@ -278,6 +294,12 @@ srrad_SOURCES  = src/srrad.c
 
 tdb_SOURCES  = src/tdb.cpp
 tdb_LDADD    = libqwwad.la
+
+thermal1d_SOURCES = src/thermal1d.cpp
+thermal1d_LDADD   = libqwwad.la
+
+thermalrc_SOURCES = src/thermalrc.cpp
+thermalrc_LDADD   = libqwwad.la
 
 tsb_SOURCES  = src/tsb.cpp
 tsb_LDADD    = libqwwad.la

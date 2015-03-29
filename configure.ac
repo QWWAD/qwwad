@@ -104,6 +104,10 @@ if test "x$have_armadillo" = "xno"; then
 	AC_MSG_ERROR([Armadillo library is not usable])
 fi
 
+PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6 >= 2.30])
+LIBS="$LIBS $LIBXMLXX_LIBS"
+CXXFLAGS="$CXXFLAGS $LIBXMLXX_CFLAGS"
+
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h strings.h complex.h])
 
