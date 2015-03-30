@@ -17,6 +17,7 @@ Build-Depends: autoconf,
                libboost-program-options-dev,
                libgsl0-dev,
                liblapack-dev,
+               libxml++2.6-dev,
                pkg-config
 Standards-Version: 3.9.5
 
