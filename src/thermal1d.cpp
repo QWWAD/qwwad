@@ -81,37 +81,15 @@ class Thermal1DOptions: public Options
 {
     double dc; // Duty cycle
     double f; // Pulse repetition rate [Hz]
-    public:
+
+public:
     Thermal1DOptions(int argc, char* argv[]);
-
-    unsigned int get_active_region_layer_index() const {return vm["active"].as<unsigned int>();}
-
-    /** 
-     * Electrical power dissipation while QCL is switched on [W]
-     * It is assumed that all power is dissipated in the active
-     * region heterostructure (i.e. contacts have zero resistance!)
-     */
-    double get_power() const {return vm["power"].as<double>();}
 
     /// Return fractional duty cycle (i.e. 0 to 1)
     double get_duty_cycle() const {return dc;}
 
     /// Return pulse repetition rate [Hz]
     double get_f_rep() const {return f;}
-
-    /// Return spatial resolution [m]
-    double get_spatial_step() const {return vm["dy"].as<double>();}
-
-    /// Return heatsink temperature [K]
-    double get_heatsink_temperature() const {return vm["Tsink"].as<double>();}
-
-    /// Return number of pulses to simulate
-    size_t get_n_rep() const {return vm["nrep"].as<size_t>();}
-
-    /// Return ridge area [m^2]
-    double get_area() const {return vm["area"].as<double>()*1e-6;}
-
-    std::string get_infile() const {return vm["infile"].as<std::string>();}
 
     void print() const;
 };
@@ -122,87 +100,68 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
     dc(0.02),
     f(10e3)
 {
-    program_specific_options->add_options()
-        ("active,a", po::value<unsigned int>()->default_value(2),
-         "Index of active-region layer")
-
-        ("area", po::value<double>()->default_value(0.85*0.14),
-         "QCL ridge area [mm^2]")
-
-        ("infile", po::value<std::string>()->default_value("thermal_layers.dat"),
-         "Waveguide layers data file")
-
-        ("Tsink,T", po::value<double>()->default_value(80.0), 
-         "set heatsink temperature [K]")
-
-        ("dy,y", po::value<double>()->default_value(1.00e-7), 
-         "set spatial resolution [m]")
-
-        ("dc,d", po::value<double>()->default_value(2), 
-         "set duty cycle for pulse train [%]")
-
-        ("frequency,f", po::value<double>()->default_value(10), 
-         "set pulse repetition rate [kHz]")
-
-        ("power,P", po::value<double>()->default_value(17.65),
-         "set pulse power [W]")
-
-        ("nrep", po::value<size_t>()->default_value(1), 
-         "set number of pulse periods to simulate")
-        ;
-
     std::string doc = "Calculate temperature variation in active region over time";
+
+    add_size_option   ("active,a",                   2, "Index of active-region layer");
+    add_numeric_option("area",                   0.119, "QCL ridge area [mm^2]");
+    add_string_option ("infile",  "thermal_layers.dat", "Waveguide layers data file");
+    add_numeric_option("Tsink,T",                 80.0, "Heatsink temperature [K]");
+    add_numeric_option("dy,y",                 1.00e-7, "Spatial resolution [m]");
+    add_numeric_option("dc,d",                       2, "Duty cycle for pulse train [%]");
+    add_numeric_option("frequency,f",               10, "Pulse repetition rate [kHz]");
+    add_numeric_option("power,P",                17.65, "Pulse power [W]");
+    add_size_option   ("nrep",                       1, "Number of pulse periods to simulate");
+
     add_prog_specific_options_and_parse(argc,argv,doc);
 
     // Check that heatsink temperature is positive
-    if (vm["Tsink"].as<double>() <= 0.0)
+    const double Tsink = get_numeric_option("Tsink");
+    if (Tsink <= 0.0)
     {
         std::ostringstream oss;
-        oss << "Heatsink temperature, " << vm["Tsink"].as<double>() << " is not positive.";
+        oss << "Heatsink temperature, " << Tsink << " is not positive.";
         throw std::domain_error(oss.str());
     }
 
     // Check that spatial step is positive
-    if(vm["dy"].as<double>() <= 0.0)
+    const double dy = get_numeric_option("dy");
+    if(dy <= 0.0)
         throw std::domain_error ("Spatial resolution must be positive");
 
     // Check that duty cycle is positive and
     // rescale to a decimal value
-    if(vm.count("dc"))
-    {
-        dc = vm["dc"].as<double>() * 0.01;
+    dc = get_numeric_option("dc") * 0.01;
 
-        if(dc <= 0.0 or dc >= 1.0)
-        {
-            std::ostringstream oss;
-            oss << "Specified duty cycle, " << dc << " is invalid.";
-            throw std::domain_error(oss.str());
-        }
+    if(dc <= 0.0 or dc >= 1.0)
+    {
+        std::ostringstream oss;
+        oss << "Specified duty cycle, " << dc << " is invalid.";
+        throw std::domain_error(oss.str());
     }
 
     // Check that frequency is positive and
     // rescale to Hz
-    if(vm.count("frequency"))
-    {
-        f = vm["frequency"].as<double>() * 1.0e3;
+    f = get_numeric_option("frequency") * 1.0e3;
 
-        if(f <= 0)
-            throw std::domain_error ("Pulse repetition rate must "
-                    "be positive.");
-    }
+    if(f <= 0)
+        throw std::domain_error ("Pulse repetition rate must "
+                "be positive.");
 
     // Check that power is positive
-    if(vm["power"].as<double>() <= 0.0)
+    const double power = get_numeric_option("power");
+    if(power <= 0.0)
     {
         std::ostringstream oss;
-        oss << "Electrical power dissipation, " << vm["power"].as<double>() << " is not positive.";
+        oss << "Electrical power dissipation, " << power << " is not positive.";
         throw std::domain_error(oss.str());
     }
 
-    if(vm["area"].as<double>() <= 0.0)
+    // Check that area is positive
+    const double area = get_numeric_option("area");
+    if(area <= 0.0)
     {
         std::ostringstream oss;
-        oss << "Ridge area, " << vm["area"].as<double>() << " is not positive.";
+        oss << "Ridge area, " << area << " is not positive.";
         throw std::domain_error(oss.str());
     }
 
@@ -212,14 +171,14 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
 
 void Thermal1DOptions::print() const
 {
-    std::cout << "Heat sink temperature = " << get_heatsink_temperature() << " K"           << std::endl
-              << "Power                 = " << get_power()                << " W"           << std::endl
-              << "Frequency             = " << f/1.0e3                    << " kHz"         << std::endl
-              << "Duty cycle            = " << get_duty_cycle()*100       << "%"            << std::endl
-              << "Period length         = " << 1e6/f                      << " microsecond" << std::endl
-              << "Number of periods     = " << get_n_rep()                                  << std::endl
-              << "Spatial resolution    = " << get_spatial_step()*1e6     << " micron"      << std::endl
-              << "Ridge area            = " << get_area()*1e6             << " mm^2"        << std::endl;
+    std::cout << "Heat sink temperature = " << get_numeric_option("Tsink")  << " K"           << std::endl
+              << "Power                 = " << get_numeric_option("power")  << " W"           << std::endl
+              << "Frequency             = " << f/1.0e3                      << " kHz"         << std::endl
+              << "Duty cycle            = " << get_duty_cycle()*100         << "%"            << std::endl
+              << "Period length         = " << 1e6/f                        << " microsecond" << std::endl
+              << "Number of periods     = " << get_size_option("nrep")                        << std::endl
+              << "Spatial resolution    = " << get_numeric_option("dy")*1e6 << " micron"      << std::endl
+              << "Ridge area            = " << get_numeric_option("area")   << " mm^2"        << std::endl;
 }
 
 
@@ -237,12 +196,13 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
     std::vector<double> d_tmp; // Temp storage for layer thickness
     const size_t nbuff = 10000;
 
-    std::ifstream stream(opt.get_infile().c_str());
+    std::string infile(opt.get_string_option("infile"));
+    std::ifstream stream(infile.c_str());
 
     if(!stream.is_open())
     {
         std::ostringstream oss;
-        oss << "Could not open " << opt.get_infile() << ".";
+        oss << "Could not open " << infile << ".";
         throw std::runtime_error(oss.str());
     }
     
@@ -287,12 +247,12 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
     }
 
     if(opt.get_verbose())
-        std::cout << "Read " << d_tmp.size() << " layers from " << opt.get_infile() << std::endl;
+        std::cout << "Read " << d_tmp.size() << " layers from " << infile << std::endl;
 
     if(d_tmp.empty())
     {
         std::ostringstream oss;
-        oss << "Could not read any layers from " << opt.get_infile();
+        oss << "Could not read any layers from " << infile;
         throw std::runtime_error(oss.str());
     }
 
@@ -337,34 +297,40 @@ static double cp(MaterialSpecification &mat, const double T)
        cp = mat.get_prop_val_0("specific-heat-capacity");
     }
 
-    if (gsl_fcmp(cp, 0.0, 1e-6) <= 0)
+    if (cp <= 0)
     {
         std::ostringstream oss;
         oss << "Negative specific heat capacity " << cp <<
                " was calculated for " << mat.xml->get_description() << " at T= " << T << " K";
+        std::cerr << oss.str() << std::endl;
     }
 
     return cp;
 }
+
 int main(int argc, char *argv[])
 {
     // Grab user preferences
     Thermal1DOptions opt(argc, argv);
     Thermal1DData data(opt);
 
-    const double dy = opt.get_spatial_step();
+    const double dy = opt.get_numeric_option("dy");
     const double L  = data.d.sum(); // Length of structure [m]
     const size_t ny = ceil(L/dy);   // Find number of points in structure
 
     if(opt.get_verbose())
+    {
         std::cout << "ny = " << ny << std::endl;
+    }
 
     // Thickness of active region [m]
-    const double L_AR = data.d[opt.get_active_region_layer_index()];
-    const double volume=L_AR*opt.get_area();  // Active region volume (L x h x w) [m^3]
+    const unsigned int iAR    = opt.get_size_option("active");
+    const double       L_AR   = data.d[iAR];
+    const double       area   = opt.get_numeric_option("area")*1e-6; // [m^2]
+    const double       volume = L_AR * area;  // Active region volume (L x h x w) [m^3]
 
     // Power density in active region [W/m^3]
-    const double power_density = opt.get_power()/volume;
+    const double power_density = opt.get_numeric_option("power")/volume;
     const double pw = opt.get_duty_cycle()/opt.get_f_rep();
 
     if(opt.get_verbose())
@@ -392,14 +358,14 @@ int main(int argc, char *argv[])
             mat[iy] = data.mat_layer[iL];
 
             // Assume that only the active-region is heated
-            if (iL == opt.get_active_region_layer_index())
+            if (iL == iAR)
                 g[iy] = power_density;
 
             iy++;
         }
     }
 
-    double _Tsink = opt.get_heatsink_temperature();
+    double _Tsink = opt.get_numeric_option("Tsink");
     
     // Spatial temperature profile through structure [K].
     // Assume that initially all points are in thermal equilibrium with heat sink.
@@ -435,7 +401,7 @@ int main(int argc, char *argv[])
     if(opt.get_verbose())
         printf("dt=%.4f ns.\n",dt*1e9);
 
-    size_t _n_rep = opt.get_n_rep(); // Number of pulse repetitions
+    const size_t _n_rep = opt.get_size_option("nrep"); // Number of pulse repetitions
    
     // Samples of average T_AR at each time-step 
     std::valarray<double> t(nt_per * _n_rep);
@@ -583,12 +549,13 @@ static void calctemp(double dt,
                      Thermal1DOptions& opt)
 {
     const size_t ny = mat.size();
-    double dy_sq = gsl_pow_2(opt.get_spatial_step());
-    double* RHS_subdiag = new double[ny-1];
-    double* RHS_diag = new double[ny];
+    const double dy = opt.get_numeric_option("dy");
+    double dy_sq = dy*dy;
+    double* RHS_subdiag   = new double[ny-1];
+    double* RHS_diag      = new double[ny];
     double* RHS_superdiag = new double[ny-1];
-    double* LHS_subdiag = new double[ny-1];
-    double* LHS_diag = new double[ny];
+    double* LHS_subdiag   = new double[ny-1];
+    double* LHS_diag      = new double[ny];
     double* LHS_superdiag = new double[ny-1];
 
     // Note that the bottom of the device is not calculated.  We leave it
@@ -603,6 +570,7 @@ static void calctemp(double dt,
     double k_last = thermal_cond(mat[0],Told[0]);
     double k      = thermal_cond(mat[1],Told[1]);
     double k_next = thermal_cond(mat[2],Told[2]);
+
     double rho_cp = 0;
 
     for(unsigned int iy=1; iy<ny-1; iy++)
@@ -610,7 +578,8 @@ static void calctemp(double dt,
         const double rho = mat[iy].get_prop_val_x("density");
 
         // Product of density and spec. heat cap [J/(m^3.K)]
-        rho_cp = rho * cp(mat[iy], Told[iy]);
+        const double _cp = cp(mat[iy], Told[iy]);
+        rho_cp = rho * _cp;
 
         // Find interface values of the thermal conductivity using
         // Eq. 3.25 in Craig's thesis.

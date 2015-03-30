@@ -18,7 +18,8 @@ typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
 static double convert_to_SI(const double y, const std::string &unit);
 
-struct MaterialPropertyImpl {
+class MaterialPropertyImpl {
+public:
     MaterialPropertyImpl(xmlpp::Element *elem);
 
     double get_val(const double x) const;
@@ -237,7 +238,7 @@ double MaterialPropertyImpl::get_val(const double x) const
     {
         std::ostringstream oss;
         oss << "x-value " << x << " is outside the permitted range (" << _xmin << "," << _xmax << ") for property " << _name << std::endl;
-        throw std::runtime_error(oss.str());
+        throw std::domain_error(oss.str());
     }
 
     double val = 0;

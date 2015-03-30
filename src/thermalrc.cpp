@@ -3,8 +3,9 @@
 #endif
 
 #include <iostream>
-#include "qclsim_options.h"
-#include "libqclsim.h"
+#include <valarray>
+#include "qwwad-options.h"
+#include "qclsim-fileio.h"
 
 #if HAVE_LAPACKE
 #include <lapacke.h>
@@ -251,7 +252,7 @@ int main(int argc, char *argv[])
     std::valarray<double> q(&_q[0], nt);
     std::valarray<double> T = B + opt.get_heatsink_temperature();
 
-    write_table_xy("T-t.dat", t, T);
+    write_table("T-t.dat", std::valarray<double>(1e6*t), T);
 
     for(unsigned int irep = 0; irep < _n_rep; irep++)
     {
@@ -259,7 +260,7 @@ int main(int argc, char *argv[])
 	    T_mid[irep] = T[_it_mid[irep]];
     }
 
-    write_table_xy("T-mid_t.dat", t_mid, T_mid);
-    write_table_xy("q-t.dat", t, q);
+    write_table("T-mid_t.dat", t_mid, T_mid);
+    write_table("q-t.dat",     t, q);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

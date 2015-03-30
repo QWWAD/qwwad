@@ -69,7 +69,7 @@ AX_BOOST_PROGRAM_OPTIONS
 # Check for linear algebra libraries
 AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try again]))
 AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))
-#LINALG_LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
+LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
 
 dnl Check for GNU Scientific Library
 PKG_CHECK_MODULES(GSL, gsl)

@@ -30,7 +30,8 @@ using namespace Leeds::constants;
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
-struct MaterialLibraryImpl {
+class MaterialLibraryImpl {
+public:
     MaterialLibraryImpl(const Glib::ustring &filename);
     ~MaterialLibraryImpl();
 
