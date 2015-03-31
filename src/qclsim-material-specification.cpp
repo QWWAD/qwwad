@@ -9,8 +9,6 @@
  */
 MaterialSpecification::MaterialSpecification() :
     lib(new MaterialLibrary("")),
-    valley(GAMMA),
-    orientation(ORIENT_001),
     alloy(0.0),
     n3d(0.0)
 {
@@ -21,26 +19,18 @@ MaterialSpecification::MaterialSpecification() :
  * Specify a material by providing a list of properties
  */
 MaterialSpecification::MaterialSpecification(const char          *mat_name,
-                                             const Valley        &valley,
-                                             const Orientation   &orientation,
                                              const double         alloy,
                                              const double         doping) :
     lib(new MaterialLibrary("")),
-    valley(valley),
-    orientation(orientation),
     alloy(alloy),
     n3d(doping)
 {
     xml = new Material(lib->get_material(mat_name));
 }
 MaterialSpecification::MaterialSpecification(const Glib::ustring &mat_name,
-                                             const Valley        &valley,
-                                             const Orientation   &orientation,
                                              const double         alloy,
                                              const double         doping) :
     lib(new MaterialLibrary("")),
-    valley(valley),
-    orientation(orientation),
     alloy(alloy),
     n3d(doping)
 {
@@ -54,8 +44,6 @@ MaterialSpecification::MaterialSpecification(const Glib::ustring &mat_name,
  */
 MaterialSpecification::MaterialSpecification(const MaterialSpecification &spec) :
     lib(new MaterialLibrary("")),
-    valley(spec.valley),
-    orientation(spec.orientation),
     alloy(spec.alloy),
     n3d(spec.n3d)
 {
@@ -72,8 +60,6 @@ MaterialSpecification::~MaterialSpecification()
 MaterialSpecification & MaterialSpecification::operator=(const MaterialSpecification &rhs)
 {
     lib    = new MaterialLibrary("");
-    valley = rhs.valley;
-    orientation = rhs.orientation;
     alloy  = rhs.alloy;
     n3d    = rhs.n3d;
     std::string mat_name(rhs.xml->get_name());

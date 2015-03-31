@@ -234,8 +234,6 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
             
             const double n3d = doping_buffer * gsl_pow_3(100); // Rescale doping to 1/m^3
             mat_layer.push_back(MaterialSpecification(mat_string,
-                                                      GAMMA,
-                                                      ORIENT_001,
                                                       alloy_buffer,
                                                       n3d));
 
