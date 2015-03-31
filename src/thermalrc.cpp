@@ -6,6 +6,7 @@
 #include <valarray>
 #include "qwwad-options.h"
 #include "qclsim-fileio.h"
+#include "qclsim-linalg.h"
 
 #if HAVE_LAPACKE
 #include <lapacke.h>
