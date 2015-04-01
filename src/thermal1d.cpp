@@ -421,6 +421,9 @@ int main(int argc, char *argv[])
     std::valarray<double> t_period(nt_per);
     std::valarray<double> T_period(nt_per);
 
+    // Temperature profile at end of final pulse
+    std::valarray<double> T_y_max(ny);
+
     // Rising and falling edge of final pulse in temperature profile
     std::vector<double> _t_rise;
     std::vector<double> _T_rise;
@@ -477,6 +480,9 @@ int main(int argc, char *argv[])
             {
                 T_max[iper] = T_avg[it_total];
                 t_max[iper] = t[it_total];
+
+                for(unsigned int iy = 0; iy < ny; ++iy)
+                    T_y_max[iy] = T[iy];
             }
 
             // Find minimum AR temperature
@@ -527,6 +533,7 @@ int main(int argc, char *argv[])
     write_table("Trise_t.dat", t_rise, T_rise);
     write_table("Tfall_t.dat", t_fall, T_fall);
     write_table("T_y.dat", y, T);
+    write_table("T_y_max.dat", y, T_y_max);
     write_table("T-period_t.dat", t_period, T_period);
 
     delete[] Told;
