@@ -61,9 +61,11 @@ Material::Material(xmlpp::Element *elem)
 
 Material::~Material()
 {
-    delete priv;
+//    delete priv;
 }
 
+// \todo Add all the property nodes into a map here, using appropriate sub-classes of
+// MaterialProperty
 MaterialImpl::MaterialImpl(xmlpp::Element *elem)
     : elem(elem)
 {

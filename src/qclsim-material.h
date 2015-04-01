@@ -15,6 +15,7 @@ class ustring;
 /** Wrapper for XML data for a material */
 class Material {
 public:
+    Material(){}
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
     ~Material();

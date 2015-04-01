@@ -14,8 +14,10 @@
 #ifndef MATERIAL_LIBRARY_H
 #define MATERIAL_LIBRARY_H
 
+#include <boost/ptr_container/ptr_map.hpp>
+#include <libxml++/libxml++.h>
+
 class Material;
-class MaterialLibraryImpl;
 class MaterialProperty;
 
 namespace Glib {
@@ -40,7 +42,11 @@ public:
     const Glib::ustring & get_property_unit(Glib::ustring &mat_name,
                                             Glib::ustring &property_name);
 private:
-    MaterialLibraryImpl *priv; ///< Private class members
+    boost::ptr_map<Glib::ustring, Material>  materials;
+    xmlpp::Node::NodeList                    material_nodes;
+    xmlpp::DomParser                        *parser;
+    xmlpp::Document                         *doc;
+    xmlpp::Element                          *root_element;
 };
 #endif //MATERIAL_LIBRARY_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
