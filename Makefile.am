@@ -101,6 +101,8 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim-material.h       \
 			   src/qclsim-material-property.cpp     \
 			   src/qclsim-material-property.h       \
+			   src/qclsim-material-property-interp.cpp     \
+			   src/qclsim-material-property-interp.h       \
 			   src/qclsim-material-specification.cpp     \
 			   src/qclsim-material-specification.h       \
 			   src/qclsim_poisson_solver.cpp \

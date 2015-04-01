@@ -8,6 +8,7 @@
 #include "material_library.h"
 #include "qclsim-material.h"
 #include "qclsim-material-property.h"
+#include "qclsim-material-property-interp.h"
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
@@ -45,8 +46,6 @@ Material::Material(const Material *mat)
     read_properties_from_xml();
 }
 
-// \todo Add all the property nodes into a map here, using appropriate sub-classes of
-// MaterialProperty
 Material::Material(xmlpp::Element *elem)
     : elem(elem)
 {
@@ -57,22 +56,35 @@ void Material::read_properties_from_xml()
 {
     if(elem)
     {
-        // Get a list of all known properties for this material
-        property_nodes = elem->get_children("property");
+        // Set name and description of this material
         name           = elem->get_attribute_value("name");
         description    = elem->get_attribute_value("description");
 
         if(description == "")
             description = name;
 
+        // Get a list of all known properties for this material
+        property_nodes = elem->get_children("property");
+
         // Loop through all property nodes and add them to the cache
         for(NodeListIter iprop = property_nodes.begin(); iprop != property_nodes.end(); ++iprop)
         {
             xmlpp::Element *prop = dynamic_cast<xmlpp::Element *>(*iprop);
+
             if(prop)
             {
                 Glib::ustring prop_name = prop->get_attribute_value("name");
-                properties.insert(prop_name, new MaterialProperty(prop));
+
+//                std::cout << name << ":" << prop_name << std::endl;
+
+                // Figure out what type of property it is
+                if(!prop->get_children("interp").empty())
+                {
+  //                  std::cout << "...adding as interp node" << std::endl;
+                    properties.insert(prop_name, new MaterialPropertyInterp(prop));
+                }
+                else
+                    properties.insert(prop_name, new MaterialProperty(prop));
             }
         }
     }
