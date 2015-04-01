@@ -14,8 +14,6 @@
 using namespace Leeds;
 using namespace constants;
 
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
-
 /**
  * Return the property as a string
  *
@@ -26,13 +24,6 @@ typedef xmlpp::Node::NodeList::iterator NodeListIter;
  */
 const Glib::ustring & MaterialProperty::get_text() const
 {
-    if(type != MATERIAL_PROPERTY_CONSTANT)
-    {
-        std::ostringstream oss;
-        oss << "Couldn't read a text value for the property " << get_name();
-        throw std::runtime_error(oss.str());
-    }
-
     return _text;
 }
 
@@ -46,58 +37,24 @@ const Glib::ustring & MaterialProperty::get_text() const
  */
 MaterialProperty::MaterialProperty(xmlpp::Element *elem) :
     elem(elem),
-    _constant(0),
-    _poly_index(std::vector<int>(0)),
-    _poly_coeff(std::vector<double>(0))
+    _constant(0)
 {
     // Read the name and unit of the parameter
     _name = elem->get_attribute_value("name");
     _unit = elem->get_attribute_value("unit");
-    bool parsing_complete = false;
 
-    if(!elem->get_children("poly").empty()) // Parse a polynomial value
+    if(elem->has_child_text()) // Parse a constant value
     {
-        type = MATERIAL_PROPERTY_POLY;
-        xmlpp::Node::NodeList poly_nodes = elem->get_children("poly");
-        xmlpp::Element *polynomial_node  = dynamic_cast<xmlpp::Element *>(poly_nodes.front());
-
-        if(polynomial_node)
-        {
-            xmlpp::Node::NodeList poly_terms = polynomial_node->get_children("ai");
-
-            // Loop through all terms of the polynomial
-            for(NodeListIter term = poly_terms.begin(); term != poly_terms.end(); ++term)
-            {
-                // TODO: Probably need some error checking in here
-
-                xmlpp::Element *ai_elem = dynamic_cast<xmlpp::Element *>(*term);
-                std::stringstream i_str(ai_elem->get_attribute_value("i").raw());
-                std::stringstream ai_str(ai_elem->get_child_text()->get_content().raw());
-
-                int    i  = 0;   // Index of polynomial term
-                double ai = 0.0; // Polynomial coefficient
-
-                i_str  >> i;
-                ai_str >> ai;
-                _poly_index.push_back(i);
-                _poly_coeff.push_back(ai);
-
-                parsing_complete = true;
-            }
-        }
-    }
-
-    if(!parsing_complete and elem->has_child_text()) // Parse a constant value
-    {
-        type = MATERIAL_PROPERTY_CONSTANT;
         xmlpp::TextNode *val_node = elem->get_child_text();
+
+        // Store raw text value
         _text = val_node->get_content().raw();
+
+        // Parse text as a number
         std::stringstream s(_text);
         s >> _constant;
-        parsing_complete = true;
     }
-
-    if(!parsing_complete)
+    else
     {
         std::ostringstream oss;
         oss << "Couldn't parse the property " << _name;
@@ -113,45 +70,17 @@ MaterialProperty::MaterialProperty(xmlpp::Element *elem) :
  *              assumed.  For constant-valued properties, x is
  *              ignored.
  *
- * \returns The value in SI units
+ * \returns The value in whichever units are specified in the XML file
  *
- * \details At the moment, the parser can interpret data in the following
- *          forms:
+ * \todo Make the library unit-aware (i.e., enable unit conversions etc)
  *
- *          - Constant values
- *
- * \todo Allow non-SI output?
  * \todo Make the library type-aware (i.e., "know" that a property
  *       represents an energy/length/time etc) and check that the
  *       unit makes sense.
  */
-double MaterialProperty::get_val(const double x) const
+double MaterialProperty::get_val(const double /* x */) const
 {
-    double val = 0;
-
-    switch(type) {
-        case MATERIAL_PROPERTY_CONSTANT:
-            val = _constant;
-            break;
-        case MATERIAL_PROPERTY_POLY:
-            for(unsigned int iterm = 0; iterm < _poly_index.size(); ++iterm)
-            {
-                const double ai = _poly_coeff[iterm];
-                unsigned int  i = _poly_index[iterm];
-
-                // TODO: This fallback mechanism is provided for systems that
-                //       don't have new versions of GSL (1.16?). Ultimately,
-                //       we should drop support.
-#if defined(HAVE_GSL_POW_UINT)
-                val += ai * gsl_pow_uint(x, i);
-#else
-                val += ai * pow(x, i);
-#endif
-            }
-            break;
-    }
-
-    return val;
+    return _constant;
 }
 
 /// Return the name of the property
@@ -162,9 +91,5 @@ const Glib::ustring & MaterialProperty::get_name() const {
 /// Return the unit for the property
 const Glib::ustring & MaterialProperty::get_unit() const {
     return _unit;
-}
-
-MaterialPropertyType MaterialProperty::get_type() const {
-    return type;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

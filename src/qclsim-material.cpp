@@ -9,6 +9,7 @@
 #include "qclsim-material.h"
 #include "qclsim-material-property.h"
 #include "qclsim-material-property-interp.h"
+#include "qclsim-material-property-poly.h"
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
@@ -75,13 +76,14 @@ void Material::read_properties_from_xml()
             {
                 Glib::ustring prop_name = prop->get_attribute_value("name");
 
-//                std::cout << name << ":" << prop_name << std::endl;
-
-                // Figure out what type of property it is
+                // Figure out what type of property it is and add an appropriate object to the tree
                 if(!prop->get_children("interp").empty())
                 {
-  //                  std::cout << "...adding as interp node" << std::endl;
                     properties.insert(prop_name, new MaterialPropertyInterp(prop));
+                }
+                else if(!prop->get_children("poly").empty())
+                {
+                    properties.insert(prop_name, new MaterialPropertyPoly(prop));
                 }
                 else
                     properties.insert(prop_name, new MaterialProperty(prop));
