@@ -1,8 +1,9 @@
 #ifndef QCLSIM_MATERIAL
 #define QCLSIM_MATERIAL
 
+#include <boost/ptr_container/ptr_map.hpp>
+#include <libxml++/libxml++.h>
 class MaterialProperty;
-struct MaterialImpl;
 
 namespace xmlpp {
 class Element;
@@ -29,7 +30,15 @@ public:
     xmlpp::Element * get_elem() const;
 
 private:
-    MaterialImpl *priv;
+    void read_properties_from_xml();
+
+    /// Cached set of material properties
+    boost::ptr_map<Glib::ustring, MaterialProperty>   properties;
+
+    xmlpp::Element        *elem;           ///< Underlying XML data
+    xmlpp::Node::NodeList  property_nodes; ///< Set of material properties
+    Glib::ustring          name;           ///< The name of the material
+    Glib::ustring          description;    ///< The description of the material
 };
 
 #endif // QCLSIM_MATERIAL

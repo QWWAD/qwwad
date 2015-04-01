@@ -91,7 +91,8 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
 Material * MaterialLibrary::get_material(const Glib::ustring &mat_name)
 {
     // Look through all materials that we have already parsed
-    return &materials[mat_name];
+    Material mat;
+    return &materials.at(mat_name);
 }
 
 MaterialLibrary::~MaterialLibrary()
@@ -111,13 +112,13 @@ MaterialLibrary::~MaterialLibrary()
 MaterialProperty * MaterialLibrary::get_property(Glib::ustring &mat_name,
                                                  Glib::ustring &property_name)
 {
-    return materials[mat_name].get_property(property_name);
+    return materials.at(mat_name).get_property(property_name);
 }
 
 double MaterialLibrary::get_val(Glib::ustring &mat_name,
                                 Glib::ustring &property_name)
 {
-    MaterialProperty *property = materials[mat_name].get_property(property_name);
+    MaterialProperty *property = materials.at(mat_name).get_property(property_name);
 
     return property->get_val();
 }
@@ -130,6 +131,6 @@ double MaterialLibrary::get_val(Glib::ustring &mat_name,
 Material * MaterialLibrary::get_material(const char  *mat_name)
 {
     std::string str(mat_name);
-    return &materials[str];
+    return &materials.at(str);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

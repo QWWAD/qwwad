@@ -4,38 +4,21 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 #include <stdexcept>
-#include <boost/ptr_container/ptr_vector.hpp>
-#include <libxml++/libxml++.h>
-
+#include <iostream>
 #include "material_library.h"
 #include "qclsim-material.h"
 #include "qclsim-material-property.h"
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
-/**
- * Private members of \c Material class
- */
-struct MaterialImpl {
-    MaterialImpl(xmlpp::Element *elem);
-
-    /// Cached set of material properties
-    boost::ptr_vector<MaterialProperty>   properties;
-
-    xmlpp::Element        *elem;           ///< Underlying XML data
-    xmlpp::Node::NodeList  property_nodes; ///< Set of material properties
-    Glib::ustring          name;           ///< The name of the material
-    Glib::ustring          description;    ///< The description of the material
-};
-
 /** Return the name of the material */
 const Glib::ustring & Material::get_name() const {
-    return priv->name;
+    return name;
 }
     
 /** Return the underlying XML representation */
 xmlpp::Element * Material::get_elem() const {
-    return priv->elem;
+    return elem;
 }
 
 /*
@@ -48,26 +31,29 @@ xmlpp::Element * Material::get_elem() const {
  */
 const Glib::ustring & Material::get_description() const
 {
-    return priv->description;
+    return description;
 }
-
-Material::Material(const Material *mat)
-    : priv(new MaterialImpl(mat->get_elem()))
-{}
-
-Material::Material(xmlpp::Element *elem)
-    : priv(new MaterialImpl(elem))
-{}
 
 Material::~Material()
 {
 //    delete priv;
 }
 
+Material::Material(const Material *mat)
+    : elem(mat->get_elem())
+{
+    read_properties_from_xml();
+}
+
 // \todo Add all the property nodes into a map here, using appropriate sub-classes of
 // MaterialProperty
-MaterialImpl::MaterialImpl(xmlpp::Element *elem)
+Material::Material(xmlpp::Element *elem)
     : elem(elem)
+{
+    read_properties_from_xml();
+}
+
+void Material::read_properties_from_xml()
 {
     if(elem)
     {
@@ -78,6 +64,17 @@ MaterialImpl::MaterialImpl(xmlpp::Element *elem)
 
         if(description == "")
             description = name;
+
+        // Loop through all property nodes and add them to the cache
+        for(NodeListIter iprop = property_nodes.begin(); iprop != property_nodes.end(); ++iprop)
+        {
+            xmlpp::Element *prop = dynamic_cast<xmlpp::Element *>(*iprop);
+            if(prop)
+            {
+                Glib::ustring prop_name = prop->get_attribute_value("name");
+                properties.insert(prop_name, new MaterialProperty(prop));
+            }
+        }
     }
     else
         throw std::runtime_error("Invalid XML element");
@@ -98,45 +95,6 @@ MaterialProperty * Material::get_property(const char* name)
  */
 MaterialProperty * Material::get_property(Glib::ustring &property_name)
 {
-    // Look through all properties that we have already parsed
-    for(boost::ptr_vector<MaterialProperty>::iterator iprop = priv->properties.begin(); iprop != priv->properties.end(); ++iprop)
-    {
-        if(iprop->get_name() == property_name)
-            return &(*iprop);
-    }
-
-    // If we haven't already seen this property, then look in the XML data
-    xmlpp::Element *elem = 0;
-
-    NodeListIter ielem = priv->property_nodes.begin();
-
-    while(ielem != priv->property_nodes.end() and !elem)
-    {
-        elem = dynamic_cast<xmlpp::Element *>(*ielem);
-
-        if(elem)
-        {
-            const Glib::ustring name = elem->get_attribute_value("name");
-
-            if(name != property_name)
-                elem = 0;
-        }
-
-        ++ielem;
-    }
-
-    if(elem)
-    {
-        // Add the property to the cache and return it
-        priv->properties.push_back(new MaterialProperty(elem));
-        return &(priv->properties.back());
-    }
-    else
-    {
-        std::ostringstream oss;
-        oss << "Couldn't find property " << property_name << " for material " << get_name();
-        throw std::runtime_error(oss.str());
-        return 0;
-    }
+    return &properties.at(property_name);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

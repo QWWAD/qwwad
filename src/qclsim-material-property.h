@@ -26,6 +26,7 @@ enum MaterialPropertyType {
 /** Wrapper for XML data describing a physical property of a material */
 class MaterialProperty {
 public:
+    MaterialProperty(){}
     MaterialProperty(xmlpp::Element *elem);
     ~MaterialProperty();
 
