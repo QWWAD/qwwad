@@ -490,7 +490,7 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
 
  /* Read in the first line and hence the number of atoms	*/
 
- int n_read = fscanf(Fatoms,"%lu",n_atoms);
+ size_t n_read = fscanf(Fatoms,"%lu",n_atoms);
  
  /* Allocate memory for atom definitions	*/
  if (n_read == 1)
