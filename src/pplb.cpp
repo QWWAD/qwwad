@@ -95,17 +95,18 @@ std::valarray<double> kx;
 std::valarray<double> ky;
 std::valarray<double> kz;
 read_table("k.r", kx, ky, kz);
-std::vector<arma::vec> k;
 size_t nk = kx.size(); // Number of wave vector samples to compute
+
+
+// Copy wave vector components in each direction into a list of wave vectors 
+std::vector<arma::vec> k(nk, arma::vec(3));
 
 for(unsigned int ik = 0; ik < nk; ++ik)
 {
-    arma::vec _k(3);
-    _k(0) = kx[ik];
-    _k(1) = ky[ik];
-    _k(2) = kz[ik];
-    _k *= 2.0*pi/A0;
-    k.push_back(_k);
+    k[ik](0) = kx[ik];
+    k[ik](1) = ky[ik];
+    k[ik](2) = kz[ik];
+    k[ik] *= 2.0*pi/A0;
 }
 
 size_t	n_atoms;	/* number of atoms in (large) cell		*/
@@ -124,10 +125,17 @@ std::valarray< std::complex<double> > V_GG(N);
 double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
 for(unsigned int i=0;i<N;i++)        /* index down rows */
 {
-    for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
+    // Fill in the upper triangle of the matrix
+    for(unsigned int j=i;j<N;j++)       /* index across cols, creates off diagonal elements */
     {
-        arma::vec q = G[i] - G[j];		/* G'-G						*/
+        arma::vec q = G[i] - G[j];
         H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
+    }
+
+    // Fill in the lower triangle by taking the Hermitian transpose of the elements
+    for(unsigned int j=0;j<i;++j)
+    {
+        H_GG(i,j) = conj(H_GG(j,i));
     }
 
     V_GG[i] = H_GG(i,i); // Record potentials from diagonal
@@ -188,11 +196,11 @@ std::complex<double> V(double     A0,
                        arma::vec &q)
 {
     std::complex<double> v = 0.0;     /* potential					*/
+    const double q_dot_q = dot(q,q);
 
     // Loop over all atoms in the set and add contribution from each
     for(unsigned int ia=0; ia<n_atoms; ++ia)
     {
-        const double q_dot_q = dot(q,q);
         const double q_dot_t = dot(q, atoms[ia].r);
         const double vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
         v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // [QWWAD3, 15.92]
