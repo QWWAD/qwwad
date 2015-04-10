@@ -66,8 +66,8 @@ echo dummy line > dummy.file
 for K in 0 1 2 3 4 5 6 7 8 9 10
 do
 {
- nawk "{printf(\"%f\",$K/40)}" dummy.file >> Ek.r
- nawk '{printf(" %f",$1)}' Ek$K.r >> Ek.r
+ awk "{printf(\"%f\",$K/40)}" dummy.file >> Ek.r
+ awk '{printf(" %f",$1)}' Ek$K.r >> Ek.r
  echo -n -e "\n" >> Ek.r
 }
 done
