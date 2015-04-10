@@ -86,8 +86,8 @@ int main(int argc,char *argv[])
     const Options opt = configure_options(argc, argv);
 
     const double A0    = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
-    const int    n_min = opt.get_size_option("nmin"); // Lowest output band
-    const int    n_max = opt.get_size_option("nmax"); // Highest output band
+    const int    n_min = opt.get_size_option("nmin")-1; // Lowest output band
+    const int    n_max = opt.get_size_option("nmax")-1; // Highest output band
     const bool   ev    = opt.get_switch("printev");   // Print eigenvectors?
 
 // Read desired wave vector points from file
@@ -96,7 +96,7 @@ std::valarray<double> ky;
 std::valarray<double> kz;
 read_table("k.r", kx, ky, kz);
 std::vector<arma::vec> k;
-size_t nk = k.size();
+size_t nk = kx.size(); // Number of wave vector samples to compute
 
 for(unsigned int ik = 0; ik < nk; ++ik)
 {
@@ -127,7 +127,7 @@ for(unsigned int i=0;i<N;i++)        /* index down rows */
     for(unsigned int j=0;j<N;j++)       /* index across cols, creates off diagonal elements */
     {
         arma::vec q = G[i] - G[j];		/* G'-G						*/
-        H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);    
+        H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
     }
 
     V_GG[i] = H_GG(i,i); // Record potentials from diagonal
@@ -136,6 +136,10 @@ for(unsigned int i=0;i<N;i++)        /* index down rows */
 /* Add diagonal elements to matrix H_GG' */
 for(unsigned int ik = 0; ik < nk; ++ik)
 {
+    if(opt.get_verbose())
+        std::cout << "Calculating energy at k = " << std::endl
+                  << k[ik] << " (" << ik + 1 << "/" << nk << ")" << std::endl;
+
  for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
  {
      // kinetic energy component of H_GG [QWWAD3, 15.91]
@@ -162,8 +166,6 @@ for(unsigned int ik = 0; ik < nk; ++ik)
  if(ev){
 	write_ank(ank,ik,N,n_min,n_max);
         }
-
- ik++;	/* increment loop counter	*/
 }/* end while*/
 
 free(atoms);
@@ -187,12 +189,13 @@ std::complex<double> V(double     A0,
 {
     std::complex<double> v = 0.0;     /* potential					*/
 
+    // Loop over all atoms in the set and add contribution from each
     for(unsigned int ia=0; ia<n_atoms; ++ia)
     {
         const double q_dot_q = dot(q,q);
         const double q_dot_t = dot(q, atoms[ia].r);
         const double vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
-        v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // Add contribution to potential from this atom [QWWAD3, 15.92]
+        v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // [QWWAD3, 15.92]
     }
 
     v *= 2.0/n_atoms;

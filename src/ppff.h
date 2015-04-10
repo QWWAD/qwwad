@@ -67,9 +67,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"SI"))
  {
-  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
-  A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr *= A0*A0/(4*pi*pi);		/* convert q from SI into units of (2*pi/A0) */
+  A0_au  = A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
+  q_sqr *= 4*pi*pi/(A0_au*A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   a1=106.0686;
@@ -87,9 +87,9 @@ double Vf(const double  A0,
 
  if(!strcmp(type,"GE"))
  {
-  q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
-  A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
-  q_sqr*=gsl_pow_2(2*pi/A0_au);	/* convert q into atomic units  */
+  q_sqr *= A0*A0/(4*pi*pi);		/* convert q from SI into units of (2*pi/A0) */
+  A0_au  = A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
+  q_sqr *= 4*pi*pi/(A0_au*A0_au);	/* convert q into atomic units  */
   Omega=A0_au*A0_au*A0_au/4;
 
   a1=54.4512;

@@ -59,17 +59,11 @@ pplb -n $N -m $M -A $A0
 
 # Collate top VB and bottom CB states
 
-# Create dummy file with single line in to allow use of awk for the division
-
-echo dummy line > dummy.file
-
-for K in 0 1 2 3 4 5 6 7 8 9 10
+for ik in 0 1 2 3 4 5 6 7 8 9 10
 do
-{
- awk "{printf(\"%f\",$K/40)}" dummy.file >> Ek.r
- awk '{printf(" %f",$1)}' Ek$K.r >> Ek.r
- echo -n -e "\n" >> Ek.r
-}
+    k=`echo $ik | awk '{print $1/40}'`
+    E=`awk '{print $1}' Ek$K.r`
+    printf "%f %f\n" $k $E >> Ek.r
 done
 
 # Tidy up

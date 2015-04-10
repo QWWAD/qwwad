@@ -1,4 +1,6 @@
-nawk '
+#! /bin/sh
+
+awk '
 	BEGIN	{printf("REMARK    Output from xyz2pdb, the XYZ to Brookhaven Protein DataBank converter\n")
 		 printf("REMARK    Note in this implementation the Y co-ordinates are reflected to -Y\n");
 		 printf("REMARK    to produce the familiar x(right)y(up)z(in) axes\n");
