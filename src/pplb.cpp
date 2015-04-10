@@ -90,95 +90,94 @@ int main(int argc,char *argv[])
     const int    n_max = opt.get_size_option("nmax")-1; // Highest output band
     const bool   ev    = opt.get_switch("printev");   // Print eigenvectors?
 
-// Read desired wave vector points from file
-std::valarray<double> kx;
-std::valarray<double> ky;
-std::valarray<double> kz;
-read_table("k.r", kx, ky, kz);
-size_t nk = kx.size(); // Number of wave vector samples to compute
+    // Read desired wave vector points from file
+    std::valarray<double> kx;
+    std::valarray<double> ky;
+    std::valarray<double> kz;
+    read_table("k.r", kx, ky, kz);
+    size_t nk = kx.size(); // Number of wave vector samples to compute
 
+    // Copy wave vector components in each direction into a list of wave vectors 
+    std::vector<arma::vec> k(nk, arma::vec(3));
 
-// Copy wave vector components in each direction into a list of wave vectors 
-std::vector<arma::vec> k(nk, arma::vec(3));
-
-for(unsigned int ik = 0; ik < nk; ++ik)
-{
-    k[ik](0) = kx[ik];
-    k[ik](1) = ky[ik];
-    k[ik](2) = kz[ik];
-    k[ik] *= 2.0*pi/A0;
-}
-
-size_t	n_atoms;	/* number of atoms in (large) cell		*/
-std::string filename("atoms.xyz");
-atom *atoms = read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
-
-std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
-size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
-
-// components of H_G'G (see notes)
-arma::cx_mat H_GG(N,N);
-
-// potential energy of H_GG, diagonal elements
-std::valarray< std::complex<double> > V_GG(N);
-
-double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
-for(unsigned int i=0;i<N;i++)        /* index down rows */
-{
-    // Fill in the upper triangle of the matrix
-    for(unsigned int j=i;j<N;j++)       /* index across cols, creates off diagonal elements */
+    for(unsigned int ik = 0; ik < nk; ++ik)
     {
-        arma::vec q = G[i] - G[j];
-        H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
+        k[ik](0) = kx[ik];
+        k[ik](1) = ky[ik];
+        k[ik](2) = kz[ik];
+        k[ik] *= 2.0*pi/A0;
     }
 
-    // Fill in the lower triangle by taking the Hermitian transpose of the elements
-    for(unsigned int j=0;j<i;++j)
+    size_t	n_atoms;	/* number of atoms in (large) cell		*/
+    std::string filename("atoms.xyz");
+    atom *atoms = read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
+
+    std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
+    size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
+
+    // components of H_G'G (see notes)
+    arma::cx_mat H_GG(N,N);
+
+    // potential energy of H_GG, diagonal elements
+    std::valarray< std::complex<double> > V_GG(N);
+
+    double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
+    for(unsigned int i=0;i<N;i++)        /* index down rows */
     {
-        H_GG(i,j) = conj(H_GG(j,i));
-    }
-
-    V_GG[i] = H_GG(i,i); // Record potentials from diagonal
-}
-
-/* Add diagonal elements to matrix H_GG' */
-for(unsigned int ik = 0; ik < nk; ++ik)
-{
-    if(opt.get_verbose())
-        std::cout << "Calculating energy at k = " << std::endl
-                  << k[ik] << " (" << ik + 1 << "/" << nk << ")" << std::endl;
-
- for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
- {
-     // kinetic energy component of H_GG [QWWAD3, 15.91]
-     arma::vec G_plus_k = G[i] + k[ik];
-     const double G_plus_k_sq = dot(G_plus_k, G_plus_k);
-     std::complex<double> T_GG=hBar*hBar/(2*me) * G_plus_k_sq;
-     H_GG(i,i) = T_GG + V_GG[i];
- }
-
- // Find the eigenvalues & eigenvectors of the Hamiltonian matrix
- arma::vec E(N); // Energy eigenvalues
- arma::cx_mat ank(N,N); // coefficients of eigenvectors
- arma::eig_sym(E, ank, H_GG);
-
- /* Output eigenvalues in a separate file for each k point */
- char	filenameE[9];	/* character string for Energy output filename	*/
- sprintf(filenameE,"Ek%i.r",ik);
- FILE *FEk=fopen(filenameE,"w");
- for(int iE=n_min; iE<=n_max; iE++) fprintf(FEk,"%10.6f\n",E(iE)/e);
- fclose(FEk);
-
- /* Output eigenvectors */
-
- if(ev){
-	write_ank(ank,ik,N,n_min,n_max);
+        // Fill in the upper triangle of the matrix
+        for(unsigned int j=i;j<N;j++)       /* index across cols, creates off diagonal elements */
+        {
+            arma::vec q = G[i] - G[j];
+            H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
         }
-}/* end while*/
 
-free(atoms);
+        // Fill in the lower triangle by taking the Hermitian transpose of the elements
+        for(unsigned int j=0;j<i;++j)
+        {
+            H_GG(i,j) = conj(H_GG(j,i));
+        }
 
-return EXIT_SUCCESS;
+        V_GG[i] = H_GG(i,i); // Record potentials from diagonal
+    }
+
+    /* Add diagonal elements to matrix H_GG' */
+    for(unsigned int ik = 0; ik < nk; ++ik)
+    {
+        if(opt.get_verbose())
+            std::cout << "Calculating energy at k = " << std::endl
+                << k[ik] << " (" << ik + 1 << "/" << nk << ")" << std::endl;
+
+        for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
+        {
+            // kinetic energy component of H_GG [QWWAD3, 15.91]
+            arma::vec G_plus_k = G[i] + k[ik];
+            const double G_plus_k_sq = dot(G_plus_k, G_plus_k);
+            std::complex<double> T_GG=hBar*hBar/(2*me) * G_plus_k_sq;
+            H_GG(i,i) = T_GG + V_GG[i];
+        }
+
+        // Find the eigenvalues & eigenvectors of the Hamiltonian matrix
+        arma::vec E(N); // Energy eigenvalues
+        arma::cx_mat ank(N,N); // coefficients of eigenvectors
+        arma::eig_sym(E, ank, H_GG);
+
+        /* Output eigenvalues in a separate file for each k point */
+        char	filenameE[9];	/* character string for Energy output filename	*/
+        sprintf(filenameE,"Ek%i.r",ik);
+        FILE *FEk=fopen(filenameE,"w");
+        for(int iE=n_min; iE<=n_max; iE++) fprintf(FEk,"%10.6f\n",E(iE)/e);
+        fclose(FEk);
+
+        /* Output eigenvectors */
+
+        if(ev){
+            write_ank(ank,ik,N,n_min,n_max);
+        }
+    }/* end while*/
+
+    free(atoms);
+
+    return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -225,21 +224,21 @@ write_ank(arma::cx_mat &ank,
           int           n_min,
           int           n_max)
 {
- int	iG;		/* index over G vectors				*/
- int	in;		/* index over bands				*/
- char	filename[9];	/* eigenfunction output filename		*/
- FILE 	*Fank;		/* file pointer to eigenvectors file		*/
+    int	iG;		/* index over G vectors				*/
+    int	in;		/* index over bands				*/
+    char	filename[9];	/* eigenfunction output filename		*/
+    FILE 	*Fank;		/* file pointer to eigenvectors file		*/
 
-sprintf(filename,"ank%i.r",ik);
-Fank=fopen(filename,"w");
- 
-for(iG=0;iG<N;iG++)
-{
- for(in=n_min;in<=n_max;in++)
-     fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank(iG,in).imag());
- fprintf(Fank,"\n");
-}
+    sprintf(filename,"ank%i.r",ik);
+    Fank=fopen(filename,"w");
 
-fclose(Fank);
+    for(iG=0;iG<N;iG++)
+    {
+        for(in=n_min;in<=n_max;in++)
+            fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank(iG,in).imag());
+        fprintf(Fank,"\n");
+    }
+
+    fclose(Fank);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
