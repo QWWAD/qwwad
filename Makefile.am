@@ -69,6 +69,7 @@ bin_PROGRAMS =  ado                \
 	       	sbp     \
 		sfr     \
 		slk     \
+		specheat \
 		sradp   \
 		srcc    \
 		srelo   \
@@ -295,6 +296,9 @@ srelo_SOURCES  = src/srelo.cpp
 srelo_LDADD    = libqwwad.la
 
 srrad_SOURCES  = src/srrad.c
+
+specheat_SOURCES = src/specheat.cpp
+specheat_LDADD   = libqwwad.la
 
 tdb_SOURCES  = src/tdb.cpp
 tdb_LDADD    = libqwwad.la
