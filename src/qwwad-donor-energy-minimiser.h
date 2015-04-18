@@ -7,6 +7,9 @@
  * \brief  Minimisation of donor state energy
  */
 
+#ifndef QWWAD_DONOR_ENERGY_MINIMISER_H
+#define QWWAD_DONOR_ENERGY_MINIMISER_H
+
 #include <gsl/gsl_vector.h>
 
 namespace Leeds {
@@ -57,4 +60,6 @@ private:
                                         void             *params);
 };
 } // namespace Leeds
+
+#endif // QWWAD_DONOR_ENERGY_MINIMISER_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
