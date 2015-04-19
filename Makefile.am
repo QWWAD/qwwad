@@ -114,6 +114,8 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim-subband.h        \
 			   src/material_library.cpp       \
 			   src/material_library.h         \
+			   src/qwwad-debye.cpp \
+			   src/qwwad-debye.h   \
 			   src/qwwad-donor-energy-minimiser.cpp \
 			   src/qwwad-donor-energy-minimiser.h   \
 			   src/qwwad-heterostructure.cpp \

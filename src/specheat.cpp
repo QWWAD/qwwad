@@ -12,22 +12,10 @@
 #include "qclsim-constants.h"
 #include "qwwad-options.h"
 #include "qclsim-fileio.h"
+#include "qwwad-debye.h"
 
 using namespace Leeds;
 using namespace constants;
-
-struct U_params
-{
-    double T_D;
-};
-
-// Internal energy of system
-double U(double T, void* p)
-{
-    U_params* params = static_cast<U_params*>(p);
-    double T_D = (params->T_D);
-    return 3.0 * Na * kB * T * gsl_sf_debye_3(T_D/T);
-}
 
 /**
  * Configure command-line options for the program
@@ -67,33 +55,13 @@ int main(int argc,char *argv[])
     std::valarray<double> T(nT);  // Array of temperatures [K]
     std::valarray<double> cp(nT); // Array of spec. heat. capacity [J/(kg K)]
 
+    DebyeModel dm(T_D, M, natoms);
+
     // Loop over temperature
     for(unsigned int iT = 0; iT < nT; ++iT)
     {
         T[iT]  = Tmin + iT*dT;
-
-        // Find the molar specific heat capacity by differentiating
-        // the internal energy of the system with respect to
-        // temperature.  Note that this is about 50 times faster
-        // than directly calculating c, because we are able to
-        // make use of the super-fast gsl_sf_debye_3 function in
-        // calculating the specific heat capacity.
-        double C, abserr;
-        gsl_function F;
-        U_params p = {T_D};
-        F.function = &U;
-        F.params = &p;
-        gsl_deriv_forward(&F, T[iT], 1, &C, &abserr);
-
-        // Rescale to J/(kg K).
-        // Note that the Debye model assumes that all atoms are the same,
-        // so the molar specific heat corresponds to the total number of ATOMS
-        // not molecular units.
-        // In other words, the phonon oscillations occur over individual atomic sites, not on
-        // entire molecular units.
-        // Therefore, we need to divide the molar mass by the
-        // number of atoms in each unit to find the mass of a mole of "average" atoms.
-        cp[iT] = C/(M/natoms); // Rescale to J/(kg K)
+        cp[iT] = dm.get_cp(T[iT]); // Rescale to J/(kg K)
     }
 
     write_table(opt.get_string_option("filename").c_str(), T, cp);
