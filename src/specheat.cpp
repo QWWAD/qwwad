@@ -33,6 +33,7 @@ Options configure_options(int argc, char* argv[])
     opt.add_numeric_option("Tmax",             300, "Maximum temperature to compute [K]");
     opt.add_numeric_option("Tstep",              1, "Step in temperature [K]");
     opt.add_string_option ("filename",       "c.r", "File in which to save specific heat capacity data");
+    opt.add_switch        ("approx"               , "Use quick low/high temperature appriximation");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -49,6 +50,7 @@ int main(int argc,char *argv[])
     const double dT     = opt.get_numeric_option("Tstep");     // Temperature step for loop [K]
     const double M      = opt.get_numeric_option("molarmass"); // Molar mass [kg/mol]
     const size_t natoms = opt.get_size_option("natoms");       // Number of atoms in molecular unit
+    const bool   approx = opt.get_switch("approx");
 
     const size_t nT = 1 + (Tmax-Tmin)/dT;
 
@@ -61,8 +63,11 @@ int main(int argc,char *argv[])
     for(unsigned int iT = 0; iT < nT; ++iT)
     {
         T[iT]  = Tmin + iT*dT;
-        cp[iT] = dm.get_cp(T[iT]);
-//        cp[iT] = dm.get_cp_low_T(T[iT]);
+
+        if(approx)
+            cp[iT] = dm.get_cp_approx(T[iT]);
+        else
+            cp[iT] = dm.get_cp(T[iT]);
     }
 
     write_table(opt.get_string_option("filename").c_str(), T, cp);

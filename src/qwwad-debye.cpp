@@ -56,7 +56,42 @@ double DebyeModel::get_cp(const double T)
 double DebyeModel::get_cp_low_T(const double T)
 {
     const double pi_sq = pi*pi;
-    return 9*pi_sq*pi_sq*Na*kB*T*T*T/(T_D*T_D*T_D*15);
+    return 12*pi_sq*pi_sq*Na*kB*T*T*T/(T_D*T_D*T_D*5)*natoms/M;
+}
+
+/**
+ * \brief Get specific heat, using high-temperature approximation
+ */
+double DebyeModel::get_cp_high_T()
+{
+    return 3*Na*kB*natoms/M;
+}
+
+/**
+ * \brief Get quick approximation to specific heat
+ *
+ * \details Use low or high temperature approximation depending on temperature.
+ *          The cross-over point between the two models occurs at
+ *          \f[
+ *            T_0 = T_{\text{D}} \left(\frac{5}{4\pi^4}\right)^{1/3}
+ *          \f]
+ *          Note that around this transition temperature, this approximate value
+ *          can significantly overestimate the specific heat capacity.
+ */
+double DebyeModel::get_cp_approx(const double T)
+{
+    const double pi_sq = pi*pi;
+    double cp = 0.0;
+
+    // Temperature at which high and low-temperature models meet
+    const double T_match = T_D * pow(1.25/(pi_sq*pi_sq), 0.3333333);
+
+    if (T > T_match)
+        cp = get_cp_high_T();
+    else
+        cp = get_cp_low_T(T);
+
+    return cp;
 }
 
 /**
