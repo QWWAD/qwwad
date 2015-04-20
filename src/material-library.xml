@@ -30,13 +30,24 @@
 	</material>
 
 
-	<material name="SiGe" description="Si(1-x)Ge(x) alloy">
-		<property name="specific-heat-capacity" unit="J/kg/K" reference="ioffe">
-			<interp>
-				<y0>700</y0>
-				<y1>310</y1>
-			</interp>
-		</property>
+        <material name="SiGe" description="Si(1-x)Ge(x) alloy">
+            <property name="debye-temperature" description="Debye temperature" unit="K">
+                <interp>
+                    <y0>640</y0>
+                    <y1>374</y1>
+                </interp>
+            </property>
+
+            <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                <interp>
+                    <y0>0.028085</y0>
+                    <y1>0.07259</y1>
+                </interp>
+            </property>
+            <property name="natoms" description="Number of atoms in molecular unit">
+                1
+            </property>
+
 		<property name="thermal-conductivity-vs-alloy" description="Thermal conductivity as a function of alloy composition (obtained at 300 K)" unit="W/(m K)" reference="schaffler_properties_2001">
 			<poly>
 				<ai i="0">4.6</ai>
@@ -527,20 +538,26 @@
 
 
 	<material name="AlGaAs" description="Al(x)Ga(1-x)As alloy">
-		<!-- Note that this fitting breaks down at low temperatures and gives a negative value -->
-		<property name="specific-heat-capacity-T" description="Spec. heat cap. as a function of temperature" reference="fitting to Debye equation" unit="J kg^{-1} K^{-1}">
-			<poly>
-				<ai i="0">-25.708</ai>
-				<ai i="1">1.7621</ai>
-				<ai i="2">2.0089e-2</ai>
-				<ai i="3">-2.1968e-4</ai>
-				<ai i="4">7.5876e-7</ai>
-				<ai i="5">-9.053e-10</ai>
-			</poly>
-		</property>
-		<property name="thermal-conductivity-0K-1" description="Thermal conductivity at 0 K for first alloy component" unit="W/(m K)">
-			74500
-		</property>
+            <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
+                <interp>
+                    <y0>360</y0>
+                    <y1>446</y1>
+                </interp>
+                </property>
+
+                <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                <interp>
+                    <y0>0.1446</y0>
+                    <y1>0.1019</y1>
+                </interp>
+            </property>
+            <property name="natoms" description="Number of atoms in molecular unit">
+                2
+            </property>
+            
+            <property name="thermal-conductivity-0K-1" description="Thermal conductivity at 0 K for first alloy component" unit="W/(m K)">
+                74500
+            </property>
 		<property name="thermal-conductivity-0K-2" description="Thermal conductivity at 0 K for second alloy component" unit="W/(m K)">
 			225270
 		</property>
@@ -912,19 +929,25 @@
 		</property>
 	</material>
 
-	<material name="QCL_AR_AlGaAs" description="GaAs/AlGaAs heterostructure">
-		<!-- Note that this fitting breaks down at low temperatures and gives a negative value -->
-		<property name="specific-heat-capacity-T" description="Spec. heat cap. as a function of temperature" reference="fitting to Debye equation" unit="J kg^{-1} K^{-1}">
-			<poly>
-				<ai i="0">-25.708</ai>
-				<ai i="1">1.7621</ai>
-				<ai i="2">2.0089e-2</ai>
-				<ai i="3">-2.1968e-4</ai>
-				<ai i="4">7.5876e-7</ai>
-				<ai i="5">-9.053e-10</ai>
-			</poly>
-		</property>
-		<property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="evans, JQE 44, p. 682 (2008)">
+        <material name="QCL_AR_AlGaAs" description="GaAs/AlGaAs heterostructure">
+            <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
+                <interp>
+                    <y0>360</y0>
+                    <y1>446</y1>
+                </interp>
+            </property>
+
+            <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                <interp>
+                    <y0>0.1446</y0>
+                    <y1>0.1019</y1>
+                </interp>
+            </property>
+            <property name="natoms" description="Number of atoms in molecular unit">
+                2
+            </property>
+
+            <property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="evans, JQE 44, p. 682 (2008)">
 			9.6
 		</property>
 		<property name="thermal-conductivity-decay-index" description="Decay index for thermal conductivity" reference="evans, JQE 44, p. 682 (2008)">
@@ -1000,10 +1023,19 @@
 	<!-- METALS -->
 	<!--        -->
 
-	<material name="copper">
-		<property name="specific-heat-capacity" description="spec. heat cap. at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="J kg^{-1} K^{-1}">
-			385
-		</property>
+        <material name="copper">
+            <property name="debye-temperature" description="Debye temperature" unit="K">
+                343
+            </property>
+
+            <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                63.5
+            </property>
+
+            <property name="natoms" description="Number of atoms in molecular unit">
+                1
+            </property>
+
 		<property name="thermal-conductivity-high-T" description="Thermal conductivity at high temperature" unit="W/(m K)" reference="Lops, JAP 100, p. 1 (2006)">
 			349
 		</property>
@@ -1027,10 +1059,18 @@
 	</material>
 
 
-	<material name="gold">
-		<property name="specific-heat-capacity" description="spec. heat cap. at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="J kg^{-1} K^{-1}">
-			128
-		</property>
+        <material name="gold">
+            <property name="debye-temperature" description="Debye temperature" unit="K">
+              165
+            </property>
+
+            <property name="molar-mass" description="Molar mass" unit="kg/mol">
+              0.1970
+            </property>
+            <property name="natoms" description="Number of atoms in molecular unit">
+                1
+            </property>
+
 		<property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
 			<poly>
 				<ai i="0">337</ai>
@@ -1053,10 +1093,18 @@
 			53.0
 		</property>
 	</material>
-	<material name="indium">
-		<property name="specific-heat-capacity" description="spec. heat cap. at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="J kg^{-1} K^{-1}">
-			233
-		</property>
+        <material name="indium">
+            <property name="debye-temperature" description="Debye temperature" unit="K">
+                108
+            </property>
+
+            <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                0.1148
+            </property>
+            <property name="natoms" description="Number of atoms in molecular unit">
+                1
+            </property>
+
 		<property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
 			<poly>
 				<ai i="0">93.9</ai>

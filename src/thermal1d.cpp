@@ -15,6 +15,7 @@
 #include "qclsim-fileio.h"
 #include "qclsim-linalg.h"
 #include <glibmm/ustring.h>
+#include "qwwad-debye.h"
 
 #if HAVE_LAPACKE
 #include <lapacke.h>
@@ -30,7 +31,7 @@ using namespace Leeds;
  *  \todo These values only work for a limited range of
  *        temperatures. Restrict the domain accordingly?
  */
-static double thermal_cond(MaterialSpecification &mat, const double T)
+static double thermal_cond(const MaterialSpecification &mat, const double T)
 {
     double k = 0.0;
 
@@ -267,7 +268,8 @@ static void calctemp(double dt,
                      double *Told,
                      double q_old[],
                      double q_new[], 
-                     std::vector<MaterialSpecification> &mat,
+                     std::valarray<unsigned int>        &iLayer,
+                     const std::vector<MaterialSpecification> &mat,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt);
 
@@ -283,25 +285,26 @@ static void calctemp(double dt,
  *          specific heat capacity is computed.  If not, then a constant
  *          value is found
  */
-static double cp(MaterialSpecification &mat, const double T)
+static double cp(const MaterialSpecification &mat, const double T)
 {
-    double cp = 0.0;
+    double T_D = 0.0;
+    double M   = 0.0;
+    unsigned int natoms = 0;
+
     try
     {
-       cp = mat.xml->get_property("specific-heat-capacity-T")->get_val(T);
+       T_D = mat.get_prop_val_x("debye-temperature");
+       M   = mat.get_prop_val_x("molar-mass");
+       natoms = mat.get_prop_val_0("natoms");
     }
     catch (std::exception &e)
     {
-       cp = mat.get_prop_val_0("specific-heat-capacity");
+        std::cerr << "Could not find material parameters for " << mat.xml->get_description() << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    if (cp <= 0)
-    {
-        std::ostringstream oss;
-        oss << "Negative specific heat capacity " << cp <<
-               " was calculated for " << mat.xml->get_description() << " at T= " << T << " K";
-        std::cerr << oss.str() << std::endl;
-    }
+    DebyeModel dm(T_D, M, natoms);
+    const double cp = dm.get_cp(T);
 
     return cp;
 }
@@ -310,7 +313,7 @@ int main(int argc, char *argv[])
 {
     // Grab user preferences
     Thermal1DOptions opt(argc, argv);
-    Thermal1DData data(opt);
+    const Thermal1DData data(opt);
 
     const double dy = opt.get_numeric_option("dy");
     const double L  = data.d.sum(); // Length of structure [m]
@@ -337,14 +340,14 @@ int main(int argc, char *argv[])
         printf("Pulse width = %5.1f ns.\n",pw*1e9);
     }
 
-    std::vector<MaterialSpecification> mat(ny); // Material at each point
     std::valarray<double> y(ny);                // Spatial coordinates [m]
     std::valarray<double> g(ny);                // Power density profile [W/m^3]
-    mat[0] = data.mat_layer[0];
+    std::valarray<unsigned int> iLayer(ny);     // Index of layer containing each point
 
     double bottom_of_layer=0;
     unsigned int iy=1;
 
+    // Loop through each layer and figure out which points it contains
     for(unsigned int iL=0; iL < data.d.size(); iL++){
         bottom_of_layer += data.d[iL];
 
@@ -352,8 +355,8 @@ int main(int argc, char *argv[])
         // the next point is still in this layer
         while(iy<ny and y[iy-1]+dy < bottom_of_layer)
         {
-            y[iy]   = dy*iy;
-            mat[iy] = data.mat_layer[iL];
+            y[iy]      = dy*iy; // Fill in the position at this point
+            iLayer[iy] = iL;    // Note the layer containing this point
 
             // Assume that only the active-region is heated
             if (iL == iAR)
@@ -377,7 +380,13 @@ int main(int argc, char *argv[])
     FILE* FT=fopen("struct.dat","w");
 
     for(unsigned int iy=0; iy<ny; iy++)
-        fprintf(FT,"%20.8e  %s\n", iy*dy*1e6, mat[iy].xml->get_description().c_str());
+    {
+        unsigned int iL = iLayer[iy]; // Look up layer containing this point
+        MaterialSpecification mat = data.mat_layer[iL]; // Get the material in the layer
+
+        // Now save the material to file
+        fprintf(FT,"%20.8e  %s\n", iy*dy*1e6, mat.xml->get_description().c_str());
+    }
 
     fclose(FT);
 
@@ -459,7 +468,7 @@ int main(int argc, char *argv[])
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            calctemp(dt, Told, q_old, q_now, mat, T, opt);
+            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, T, opt);
 
             // Find spatial average of T_AR
             T_avg[it_total] = calctave(g, T);
@@ -548,12 +557,13 @@ int main(int argc, char *argv[])
 static void calctemp(double dt,
                      double *Told,
                      double q_old[],
-                     double q_new[], 
-                     std::vector<MaterialSpecification> &mat,
+                     double q_new[],
+                     std::valarray<unsigned int>        &iLayer,
+                     const std::vector<MaterialSpecification> &mat_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt)
 {
-    const size_t ny = mat.size();
+    const size_t ny = iLayer.size();
     const double dy = opt.get_numeric_option("dy");
     double dy_sq = dy*dy;
     double* RHS_subdiag   = new double[ny-1];
@@ -572,18 +582,19 @@ static void calctemp(double dt,
     RHS_superdiag[0] = 0.0;
 
     T[0] = 0.0;
-    double k_last = thermal_cond(mat[0],Told[0]);
-    double k      = thermal_cond(mat[1],Told[1]);
-    double k_next = thermal_cond(mat[2],Told[2]);
+
+    double k_last = thermal_cond(mat_layer[iLayer[0]], Told[0]);
+    double k      = thermal_cond(mat_layer[iLayer[1]], Told[1]);
+    double k_next = thermal_cond(mat_layer[iLayer[2]], Told[2]);
 
     double rho_cp = 0;
 
     for(unsigned int iy=1; iy<ny-1; iy++)
     {
-        const double rho = mat[iy].get_prop_val_x("density");
+        const double rho = mat_layer[iLayer[iy]].get_prop_val_x("density");
 
         // Product of density and spec. heat cap [J/(m^3.K)]
-        const double _cp = cp(mat[iy], Told[iy]);
+        const double _cp = cp(mat_layer[iLayer[iy]], Told[iy]);
         rho_cp = rho * _cp;
 
         // Find interface values of the thermal conductivity using
@@ -606,14 +617,15 @@ static void calctemp(double dt,
 
         k_last = k;
         k = k_next;
-        k_next = thermal_cond(mat[iy+1],Told[iy+1]);
+
+        k_next = thermal_cond(mat_layer[iLayer[iy+1]],Told[iy+1]);
     }
 
     // At last point, use Neumann boundary, i.e. dT/dy=0, which gives
     // T[n] = T[n-2] in the finite-difference approximation
     double kns=(2*k_next*k)/(k_next+k);
-    const double rho = mat[ny-1].get_prop_val_x("density");
-    rho_cp = rho * cp(mat[ny-1], Told[ny-1]);
+    const double rho = mat_layer[iLayer[ny-1]].get_prop_val_x("density");
+    rho_cp = rho * cp(mat_layer[iLayer[ny-1]], Told[ny-1]);
     double r = dt/(2.0*rho_cp);
     double alpha_gamma = r*kns/dy_sq;
     RHS_subdiag[ny-2] = 2.0*alpha_gamma;
