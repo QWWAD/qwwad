@@ -19,11 +19,11 @@ public:
                const double M,
                const size_t natoms);
 
-    double get_internal_energy(const double T);
-    double get_cp(const double T);
-    double get_cp_approx(const double T);
-    double get_cp_low_T(const double T);
-    double get_cp_high_T();
+    double get_internal_energy(const double T) const;
+    double get_cp(const double T) const;
+    double get_cp_approx(const double T) const;
+    double get_cp_low_T(const double T) const;
+    double get_cp_high_T() const;
 
 private:
     double T_D;    ///< Debye temperature [K]

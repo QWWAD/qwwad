@@ -27,7 +27,7 @@ DebyeModel::DebyeModel(const double T_D,
 /**
  * \brief Find the internal energy at a given temperature
  */
-double DebyeModel::get_internal_energy(const double T)
+double DebyeModel::get_internal_energy(const double T) const
 {
     return 3.0 * Na * kB * T * gsl_sf_debye_3(T_D/T) * natoms/M;
 }
@@ -38,11 +38,11 @@ double DebyeModel::get_internal_energy(const double T)
 // than directly calculating c, because we are able to
 // make use of the super-fast gsl_sf_debye_3 function in
 // calculating the specific heat capacity.
-double DebyeModel::get_cp(const double T)
+double DebyeModel::get_cp(const double T) const
 {
     gsl_function f;
     f.function = &find_U;
-    f.params   = this;
+    f.params   = const_cast<DebyeModel *>(this);
 
     double cp = 0.0;
     double abserr = 0.0;
@@ -53,7 +53,7 @@ double DebyeModel::get_cp(const double T)
 /**
  * \brief Get specific heat, using low-temperature approximation
  */
-double DebyeModel::get_cp_low_T(const double T)
+double DebyeModel::get_cp_low_T(const double T) const
 {
     const double pi_sq = pi*pi;
     return 12*pi_sq*pi_sq*Na*kB*T*T*T/(T_D*T_D*T_D*5)*natoms/M;
@@ -62,7 +62,7 @@ double DebyeModel::get_cp_low_T(const double T)
 /**
  * \brief Get specific heat, using high-temperature approximation
  */
-double DebyeModel::get_cp_high_T()
+double DebyeModel::get_cp_high_T() const
 {
     return 3*Na*kB*natoms/M;
 }
@@ -78,7 +78,7 @@ double DebyeModel::get_cp_high_T()
  *          Note that around this transition temperature, this approximate value
  *          can significantly overestimate the specific heat capacity.
  */
-double DebyeModel::get_cp_approx(const double T)
+double DebyeModel::get_cp_approx(const double T) const
 {
     const double pi_sq = pi*pi;
     double cp = 0.0;

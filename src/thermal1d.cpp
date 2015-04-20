@@ -270,44 +270,9 @@ static void calctemp(double dt,
                      double q_new[], 
                      std::valarray<unsigned int>        &iLayer,
                      const std::vector<MaterialSpecification> &mat,
+                     const std::vector<DebyeModel> &dm_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt);
-
-/**
- * \brief Find the specific heat capacity of a material [J/kg/K]
- *
- * \param[in] mat The material to use
- * \param[in] T   Temperature [K]
- *
- * \returns The specific heat capacity in J/kg/K.
- *
- * \details If parameters are available, then the temperature-dependent
- *          specific heat capacity is computed.  If not, then a constant
- *          value is found
- */
-static double cp(const MaterialSpecification &mat, const double T)
-{
-    double T_D = 0.0;
-    double M   = 0.0;
-    unsigned int natoms = 0;
-
-    try
-    {
-       T_D = mat.get_prop_val_x("debye-temperature");
-       M   = mat.get_prop_val_x("molar-mass");
-       natoms = mat.get_prop_val_0("natoms");
-    }
-    catch (std::exception &e)
-    {
-        std::cerr << "Could not find material parameters for " << mat.xml->get_description() << std::endl;
-        exit(EXIT_FAILURE);
-    }
-
-    DebyeModel dm(T_D, M, natoms);
-    const double cp = dm.get_cp(T);
-
-    return cp;
-}
 
 int main(int argc, char *argv[])
 {
@@ -347,6 +312,8 @@ int main(int argc, char *argv[])
     double bottom_of_layer=0;
     unsigned int iy=1;
 
+    std::vector<DebyeModel> dm_layer;
+
     // Loop through each layer and figure out which points it contains
     for(unsigned int iL=0; iL < data.d.size(); iL++){
         bottom_of_layer += data.d[iL];
@@ -364,6 +331,24 @@ int main(int argc, char *argv[])
 
             iy++;
         }
+
+        double T_D = 0.0;
+        double M   = 0.0;
+        unsigned int natoms = 0;
+
+        try
+        {
+            T_D = data.mat_layer[iL].get_prop_val_x("debye-temperature");
+            M   = data.mat_layer[iL].get_prop_val_x("molar-mass");
+            natoms = data.mat_layer[iL].get_prop_val_0("natoms");
+        }
+        catch (std::exception &e)
+        {
+            std::cerr << "Could not find material parameters for " << data.mat_layer[iL].xml->get_description() << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        dm_layer.push_back(DebyeModel(T_D, M, natoms));
     }
 
     double _Tsink = opt.get_numeric_option("Tsink");
@@ -468,7 +453,7 @@ int main(int argc, char *argv[])
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, T, opt);
+            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, dm_layer, T, opt);
 
             // Find spatial average of T_AR
             T_avg[it_total] = calctave(g, T);
@@ -560,6 +545,7 @@ static void calctemp(double dt,
                      double q_new[],
                      std::valarray<unsigned int>        &iLayer,
                      const std::vector<MaterialSpecification> &mat_layer,
+                     const std::vector<DebyeModel> &dm_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt)
 {
@@ -594,7 +580,7 @@ static void calctemp(double dt,
         const double rho = mat_layer[iLayer[iy]].get_prop_val_x("density");
 
         // Product of density and spec. heat cap [J/(m^3.K)]
-        const double _cp = cp(mat_layer[iLayer[iy]], Told[iy]);
+        const double _cp = dm_layer[iLayer[iy]].get_cp(Told[iy]);
         rho_cp = rho * _cp;
 
         // Find interface values of the thermal conductivity using
@@ -625,7 +611,7 @@ static void calctemp(double dt,
     // T[n] = T[n-2] in the finite-difference approximation
     double kns=(2*k_next*k)/(k_next+k);
     const double rho = mat_layer[iLayer[ny-1]].get_prop_val_x("density");
-    rho_cp = rho * cp(mat_layer[iLayer[ny-1]], Told[ny-1]);
+    rho_cp = rho * dm_layer[iLayer[ny-1]].get_cp(Told[ny-1]);
     double r = dt/(2.0*rho_cp);
     double alpha_gamma = r*kns/dy_sq;
     RHS_subdiag[ny-2] = 2.0*alpha_gamma;
