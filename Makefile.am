@@ -610,6 +610,11 @@ expphetsrcdir  = examples/pseudopotential-het
 
 expphetdata_DATA = $(expphetsrcdir)/dot-array-transport.sh
 
+exwgdatadir = $(exdatadir)/waveguide
+exwgsrcdir  = examples/waveguide
+
+exwgdata_DATA = $(exwgsrcdir)/specific-heat.sh
+
 ### COMPILE THE GTEST LIBRARY ITSELF ###
 
 EXTRA_DIST += \
