@@ -271,6 +271,7 @@ static void calctemp(double dt,
                      std::valarray<unsigned int>        &iLayer,
                      const std::vector<MaterialSpecification> &mat,
                      const std::vector<DebyeModel> &dm_layer,
+                     const std::valarray<double> &rho_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt);
 
@@ -313,9 +314,11 @@ int main(int argc, char *argv[])
     unsigned int iy=1;
 
     std::vector<DebyeModel> dm_layer;
+    const size_t nL = data.d.size();
+    std::valarray<double> rho_layer(nL);
 
     // Loop through each layer and figure out which points it contains
-    for(unsigned int iL=0; iL < data.d.size(); iL++){
+    for(unsigned int iL=0; iL < nL; iL++){
         bottom_of_layer += data.d[iL];
 
         // Check that we haven't finished filling the array and that
@@ -341,6 +344,7 @@ int main(int argc, char *argv[])
             T_D = data.mat_layer[iL].get_prop_val_x("debye-temperature");
             M   = data.mat_layer[iL].get_prop_val_x("molar-mass");
             natoms = data.mat_layer[iL].get_prop_val_0("natoms");
+            rho_layer[iL] = data.mat_layer[iL].get_prop_val_x("density");
         }
         catch (std::exception &e)
         {
@@ -453,7 +457,7 @@ int main(int argc, char *argv[])
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, dm_layer, T, opt);
+            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, dm_layer, rho_layer, T, opt);
 
             // Find spatial average of T_AR
             T_avg[it_total] = calctave(g, T);
@@ -546,6 +550,7 @@ static void calctemp(double dt,
                      std::valarray<unsigned int>        &iLayer,
                      const std::vector<MaterialSpecification> &mat_layer,
                      const std::vector<DebyeModel> &dm_layer,
+                     const std::valarray<double> &rho_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt)
 {
@@ -577,11 +582,9 @@ static void calctemp(double dt,
 
     for(unsigned int iy=1; iy<ny-1; iy++)
     {
-        const double rho = mat_layer[iLayer[iy]].get_prop_val_x("density");
-
         // Product of density and spec. heat cap [J/(m^3.K)]
         const double _cp = dm_layer[iLayer[iy]].get_cp(Told[iy]);
-        rho_cp = rho * _cp;
+        rho_cp = rho_layer[iLayer[iy]] * _cp;
 
         // Find interface values of the thermal conductivity using
         // Eq. 3.25 in Craig's thesis.
@@ -610,7 +613,7 @@ static void calctemp(double dt,
     // At last point, use Neumann boundary, i.e. dT/dy=0, which gives
     // T[n] = T[n-2] in the finite-difference approximation
     double kns=(2*k_next*k)/(k_next+k);
-    const double rho = mat_layer[iLayer[ny-1]].get_prop_val_x("density");
+    const double rho = rho_layer[iLayer[ny-1]];
     rho_cp = rho * dm_layer[iLayer[ny-1]].get_cp(Told[ny-1]);
     double r = dt/(2.0*rho_cp);
     double alpha_gamma = r*kns/dy_sq;
