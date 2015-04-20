@@ -51,6 +51,15 @@ double DebyeModel::get_cp(const double T)
 }
 
 /**
+ * \brief Get specific heat, using low-temperature approximation
+ */
+double DebyeModel::get_cp_low_T(const double T)
+{
+    const double pi_sq = pi*pi;
+    return 9*pi_sq*pi_sq*Na*kB*T*T*T/(T_D*T_D*T_D*15);
+}
+
+/**
  * \brief A wrapper for compatibility with GSL
  */
 double DebyeModel::find_U(double T, void *params)

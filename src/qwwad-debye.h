@@ -21,6 +21,7 @@ public:
 
     double get_internal_energy(const double T);
     double get_cp(const double T);
+    double get_cp_low_T(const double T);
 
 private:
     double T_D;    ///< Debye temperature [K]

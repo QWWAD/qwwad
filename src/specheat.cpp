@@ -61,7 +61,8 @@ int main(int argc,char *argv[])
     for(unsigned int iT = 0; iT < nT; ++iT)
     {
         T[iT]  = Tmin + iT*dT;
-        cp[iT] = dm.get_cp(T[iT]); // Rescale to J/(kg K)
+        cp[iT] = dm.get_cp(T[iT]);
+//        cp[iT] = dm.get_cp_low_T(T[iT]);
     }
 
     write_table(opt.get_string_option("filename").c_str(), T, cp);
