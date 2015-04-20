@@ -249,9 +249,8 @@ ivdb_LDADD   = libqwwad.la
 matlib_query_SOURCES = src/matlib-query.cpp
 matlib_query_LDADD   = libqwwad.la
 
-ppcd_SOURCES = src/ppcd.c
-ppcd_CFLAGS  = $(GSL_CFLAGS)
-ppcd_LDADD   = $(GSL_LIBS)
+ppcd_SOURCES = src/ppcd.cpp
+ppcd_LDADD   = libqwwad.la
 
 ppee_SOURCES = src/ppee.c
 

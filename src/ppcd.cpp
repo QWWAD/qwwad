@@ -21,25 +21,21 @@
 
    Modifications, September 1998                              */
 
-#include <complex.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <gsl/gsl_math.h>
-#include "struct.h"
-#include "maths.h"
+#include "qclsim-maths.h"
 #include "qclsim-constants.h"
 #include "ppff.h"
 
-static complex double * read_ank(const int  N,
-                                 int       *Nn);
+static std::valarray<std::complex<double> > read_ank(const int  N,
+                                                     int       *Nn);
 
 int main(int argc,char *argv[])
 {
-extern double atof();
-extern int atoi();
-complex double *ank;	/* real coefficients of eigenvectors		*/
-double complex psi;    	/* the wave function psi_nk(r)			*/
+std::valarray<std::complex<double> > ank;	/* real coefficients of eigenvectors		*/
+std::complex<double> psi;    	/* the wave function psi_nk(r)			*/
 double A0;		/* Lattice constant			       	*/
 double Gdotr;		/* G.r						*/
 double Omega;           /* normalisation constant                       */
@@ -55,7 +51,6 @@ int	in;		/* index over bands                             */
 int	ix;		/* index along x-axis                           */
 int	iy;		/* index along y-axis                           */
 int	iz;		/* index along z-axis                           */
-size_t	N;		/* number of reciprocal lattice vectors		*/
 int	Nn;		/* number of bands in eigenvector file		*/
 int	n_min;          /* lowest band in summation			*/
 int	n_max;		/* highest band in summation		 	*/
@@ -64,8 +59,7 @@ FILE	*Fcd;           /* pointer to charge density file, cd.r         */
 FILE	*Fcdx;          /* pointer to x coordinates file, cdx.r         */
 FILE	*Fcdy;          /* pointer to y coordinates file, cdy.r         */
 FILE	*Fcdz;		/* pointer to z coordinates file, cdz.r         */
-vector	*G;		/* reciprocal lattice vectors                   */
-vector	r;		/* position                                     */
+arma::vec r;		/* position                                     */
 
 /* default values	*/
 
@@ -131,7 +125,8 @@ while((argc>1)&&(argv[1][0]=='-'))
 
 Omega=1.0;
 
-G=read_rlv(A0,&N);
+std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
+size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
 ank=read_ank(N,&Nn);
 
 /* Check number of eigenvectors in file is greater than or equal to number
@@ -149,13 +144,13 @@ Fcd=fopen("cd.r","w");
 
 for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)		/* index along x-axis */
 {
- r.x=(x_min+(float)ix/(float)n_xyz)*A0;
+ r(0) = (x_min+(float)ix/(float)n_xyz)*A0;
  for(iy=0;iy<=(y_max-y_min)*n_xyz;iy++)		/* index along y-axis */
  {
-  r.y=(y_min+(float)iy/(float)n_xyz)*A0;
+  r(1) =(y_min+(float)iy/(float)n_xyz)*A0;
   for(iz=0;iz<=(z_max-z_min)*n_xyz;iz++)	/* index along z-axis */
   {
-   r.z=(z_min+(float)iz/(float)n_xyz)*A0;
+   r(2) =(z_min+(float)iz/(float)n_xyz)*A0;
    psi_sqr=0;
    for(in=n_min;in<=n_max;in++)			/* sum over bands */
    {
@@ -163,10 +158,11 @@ for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)		/* index along x-axis */
     psi=0;
     for(iG=0;iG<N;iG++)				/* sum over G */
     {
-     Gdotr=vsprod(*(G+iG),r);
-     psi += ank[iG*Nn+in] * cexp(I*Gdotr);
+     Gdotr = dot(G[iG], r);
+     psi += ank[iG*Nn+in] * exp(std::complex<double>(0.0, Gdotr));
     }
-    psi_sqr+=gsl_pow_2(cabs(psi))/Omega;
+    const double psi_abs = abs(psi);
+    psi_sqr += psi_abs*psi_abs / Omega;
    }
    fprintf(Fcd,"%le\n",psi_sqr);
   }
@@ -183,18 +179,18 @@ Fcdx=fopen("cd-x.r","w");Fcdy=fopen("cd-y.r","w");Fcdz=fopen("cd-z.r","w");
 
 for(ix=0;ix<=(x_max-x_min)*n_xyz;ix++)      /* index along x-axis */
 {
- r.x=(x_min+(float)ix/(float)n_xyz);        /* this time in units of A0 */
- fprintf(Fcdx,"%6.3f\n",r.x);
+ r(0) = (x_min+(float)ix/(float)n_xyz);        /* this time in units of A0 */
+ fprintf(Fcdx,"%6.3f\n",r(0));
 }
 for(iy=0;iy<=(y_max-y_min)*n_xyz;iy++)      /* index along x-axis */
 {
- r.y=(y_min+(float)iy/(float)n_xyz);        /* this time in units of A0 */
- fprintf(Fcdy,"%6.3f\n",r.y);
+ r(1) = (y_min+(float)iy/(float)n_xyz);        /* this time in units of A0 */
+ fprintf(Fcdy,"%6.3f\n",r(1));
 }
 for(iz=0;iz<=(z_max-z_min)*n_xyz;iz++)      /* index along x-axis */
 {
- r.z=(z_min+(float)iz/(float)n_xyz);        /* this time in units of A0 */
- fprintf(Fcdz,"%6.3f\n",r.z);
+ r(2) =(z_min+(float)iz/(float)n_xyz);        /* this time in units of A0 */
+ fprintf(Fcdz,"%6.3f\n",r(2));
 }
 
 fclose(Fcdx);fclose(Fcdy);fclose(Fcdz);
@@ -214,13 +210,12 @@ return EXIT_SUCCESS;
  * \param[in] N  The number of terms in each eigenvector
  * \param     Nn The number of bands in file
  */
-static complex double * read_ank(const int  N,
-                                 int       *Nn)
+static std::valarray<std::complex<double> > read_ank(const int  N,
+                                                     int       *Nn)
 {
  int	in;		/* index across bands				*/
  int	iG;		/* index across G vectors			*/
  int	n;		/* counter for number of elements in file	*/
- complex double *ank;
  FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
 if((Fank=fopen("ank.r","r"))==0)
@@ -243,8 +238,7 @@ rewind(Fank);
 
 /* Allocate memory for eigenvectors	*/
 
-ank=(complex double *)calloc(n,sizeof(complex double));
-if(ank==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+std::valarray<std::complex<double> > ank(n);
 
 /* Finally read eigenvectors into structure	*/
 
@@ -259,7 +253,7 @@ for(iG=0;iG<N;iG++)
     exit(EXIT_FAILURE);
   }
 
-  ank[iG*(*Nn)+in] = re + I*im;
+  ank[iG*(*Nn)+in] = std::complex<double>(re, im);
  }
 
 fclose(Fank);

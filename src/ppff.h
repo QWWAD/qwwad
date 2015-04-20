@@ -10,30 +10,20 @@
 #ifndef PPFF_H
 #define PPFF_H
 
-#include <string.h>
-
-#if __cplusplus
-# include <complex>
-#else
-# include <complex.h>
-#endif
-
+#include <cstring>
+#include <complex>
+#include <armadillo>
 #include <gsl/gsl_math.h>
 #include "qclsim-constants.h"
+#include "qclsim-fileio.h"
 
-#if __cplusplus
 using namespace Leeds;
 using namespace constants;
-#endif
 
 typedef struct
 {
  char	type[12];
-#if __cplusplus
  arma::vec r;
-#else
- vector	r;
-#endif
 }atom;
 
 
@@ -507,7 +497,6 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
   exit(0);
  }
 
-#if __cplusplus
  double rx;
  double ry;
  double rz;
@@ -523,13 +512,6 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
      r *= 1e-10;
 
      atoms[ia].r = r;
-#else 
- while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
-        &(atoms+ia)->r.x,&(atoms+ia)->r.y,&(atoms+ia)->r.z))!=EOF)
- {
-  /* Convert atomic positions from Angstrom into S.I. units	*/
-  (atoms+ia)->r.x*=1e-10;(atoms+ia)->r.y*=1e-10;(atoms+ia)->r.z*=1e-10;
-#endif
   ia++;
  }
  fclose(Fatoms);
@@ -539,7 +521,6 @@ atom *read_atoms(size_t *n_atoms, const char * filename)
 
 /* This function reads the reciprocal lattice vectors (defined in
    the file G.r) into the array G[] and then converts into SI units */
-#if __cplusplus
 std::vector<arma::vec>
 read_rlv(double A0)
 {
@@ -562,39 +543,5 @@ read_rlv(double A0)
 
     return G;
 }
-#else
-vector * read_rlv(double A0, size_t *N)
-{
- int    i=0;
- vector *G;
- FILE   *FG;           /* file pointer to wavefunction file */
-
- if((FG=fopen("G.r","r"))==0)
- {
-  fprintf(stderr,"Error: Cannot open input file 'G.r'!\n");
-  exit(0);
- }
-
- *N=0;
- while(fscanf(FG,"%*f %*f %*f")!=EOF)
-  (*N)++;
- rewind(FG);
-
- G=(vector *)calloc(*N,sizeof(vector));
- if (G==0)  {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
-
- while(fscanf(FG,"%lf %lf %lf",&(G+i)->x,&(G+i)->y,&(G+i)->z)!=EOF)
-  {
-   (G+i)->x*=(2*pi/A0);(G+i)->y*=(2*pi/A0);(G+i)->z*=(2*pi/A0);
-   i++;
-  }
-
- fclose(FG);
- 
- return(G);
-}
 #endif
-#endif
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
