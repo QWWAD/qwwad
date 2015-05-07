@@ -80,7 +80,7 @@ well:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 2014-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
 
 Report bugs to https://bugs.launchpad.net/qwwad

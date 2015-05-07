@@ -105,15 +105,15 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    Options opt = configure_options(argc, argv);
-    const double a      = opt.get_numeric_option("well-width") * 1e-10;
-    const double b      = opt.get_numeric_option("barrier-width") * 1e-10;
-    const double m_w    = opt.get_numeric_option("well-mass") * me;
-    const double m_b    = opt.get_numeric_option("barrier-mass") * me;
-    const char   p      = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const double V      = opt.get_numeric_option("potential") * e / 1000;
-    const size_t state  = opt.get_size_option("nst");
-    const size_t N      = opt.get_size_option("nz");               // number of spatial steps
+    const auto opt   = configure_options(argc, argv);
+    const auto a     = opt.get_numeric_option("well-width") * 1e-10;
+    const auto b     = opt.get_numeric_option("barrier-width") * 1e-10;
+    const auto m_w   = opt.get_numeric_option("well-mass") * me;
+    const auto m_b   = opt.get_numeric_option("barrier-mass") * me;
+    const auto p     = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const auto V     = opt.get_numeric_option("potential") * e / 1000;
+    const auto state = opt.get_size_option("nst");
+    const auto N     = opt.get_size_option("nz");               // number of spatial steps
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
@@ -123,11 +123,11 @@ int main(int argc,char *argv[])
 
     if(opt.get_switch("output-equations"))
     {
-        const size_t nst    = se.get_n_bound();
-        const double v_max  = (nst+1)*pi/2;
+        const auto nst    = se.get_n_bound();
+        const auto v_max  = (nst+1)*pi/2;
 
-        const size_t nv = (nst+1)*1000;
-        const double dv = v_max/(nv-1);
+        const auto nv = (nst+1)*1000;
+        const auto dv = v_max/(nv-1);
         std::valarray<double> v(nv);
         std::valarray<double> lhs(nv);
 
@@ -150,7 +150,7 @@ int main(int argc,char *argv[])
 
             // Set the spacing between points so that we don't quite reach the
             // asymptote at the "end" of the branch
-            const double dv_branch = (pi/2.0*0.999999)/(nv_branch-1);
+            const auto dv_branch = (pi/2.0*0.999999)/(nv_branch-1);
 
             for (unsigned int iv_branch = 0; iv_branch < nv_branch; ++iv_branch)
             {
@@ -180,9 +180,8 @@ int main(int argc,char *argv[])
 
     // Write potential profile to file if wanted
     if(opt.get_switch("output-potential"))
-        Leeds::write_table("v.r", se.get_z(), se.get_V());
+        write_table("v.r", se.get_z(), se.get_V());
 
     return EXIT_SUCCESS;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
-

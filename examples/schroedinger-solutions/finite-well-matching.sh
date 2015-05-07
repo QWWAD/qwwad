@@ -9,7 +9,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 2014-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -59,9 +59,8 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 2014-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
-    Paul Harrison  <p.harrison@leeds.ac.uk>
 
 Report bugs to https://bugs.launchpad.net/qwwad
 EOF
