@@ -44,68 +44,60 @@ WfOptions configure_options(int argc, char* argv[])
 
 int main (int argc, char* argv[])
 {
-    WfOptions opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const size_t nk   = opt.get_size_option("nk");
-    const double nkbt = opt.get_numeric_option("nkbt");
-    const double Te   = opt.get_numeric_option("Te");
+    const auto nk   = opt.get_size_option("nk");
+    const auto nkbt = opt.get_numeric_option("nkbt");
+    const auto Te   = opt.get_numeric_option("Te");
 
-    std::vector<Leeds::Subband> subbands;
-
-    if(!opt.get_switch("nonparabolic"))
-    {
-        subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
-                                                  opt.get_wf_input_prefix(),
-                                                  opt.get_wf_input_ext(),
-                                                  opt.get_numeric_option("mass") * me);
-    }
-    else
-    {
-        subbands = Leeds::Subband::read_from_file(opt.get_energy_input_path(),
-                                                  opt.get_wf_input_prefix(),
-                                                  opt.get_wf_input_ext(),
-                                                  opt.get_numeric_option("mass") * me,
-                                                  opt.get_numeric_option("alpha") / e,
-                                                  opt.get_numeric_option("vcb") * e);
-    }
+    const auto subbands = opt.get_switch("nonparabolic") ?
+                             Subband::read_from_file(opt.get_energy_input_path(),
+                                                     opt.get_wf_input_prefix(),
+                                                     opt.get_wf_input_ext(),
+                                                     opt.get_numeric_option("mass") * me,
+                                                     opt.get_numeric_option("alpha") / e,
+                                                     opt.get_numeric_option("vcb") * e)
+                             :
+                             Subband::read_from_file(opt.get_energy_input_path(),
+                                                     opt.get_wf_input_prefix(),
+                                                     opt.get_wf_input_ext(),
+                                                     opt.get_numeric_option("mass") * me);
 
     // Loop over subbands
     unsigned int ist = 1;
-    for(std::vector<Leeds::Subband>::iterator subband = subbands.begin(); subband < subbands.end(); ++subband)
+    for(auto const sb : subbands)
     {
         std::valarray<double> k(nk);
         std::valarray<double> Ek(nk);
 
         // Calculate maximum wavevector
-        double k_max = subband->k(nkbt*kB*Te);
+        const auto k_max = sb.k(nkbt*kB*Te);
 
         // Calculate wavevector spacing
-        double dk = k_max/nk;
+        const auto dk = k_max/nk;
 
         // Loop over wavevectors and find corresponding energies
         for(unsigned int ik=0; ik<nk; ik++)
         {
-            // Calculate wavevector
-            k[ik] = ik*dk;
-            // Calculate energy
-            Ek[ik] = subband->Ek(k[ik]);
+            k[ik]  = ik*dk;
+            Ek[ik] = sb.Ek(k[ik]);
         }
 
         // If absolute energies are required then offset energies by the energy of the subband
         // minima
         if(!opt.get_switch("relative"))
-            Ek += subband->get_E();
+            Ek += sb.get_E();
 
         Ek /= (1e-3*e); // Rescale to meV
 
         // If verbose option selected output some information about subband
         if(opt.get_verbose())
         {
-            std::cout << "Subband " << ist << " at " << subband->get_E()/(1e-3*e) << "eV." << std::endl;
-            std::cout << "D.o.s effective mass: " << subband->get_md_0() << std::endl;
-            std::cout << "D.o.s nonparabolicity parameter: " << subband->get_alphad() << std::endl;
-            std::cout << "Wavevector at " << nkbt << "*kB*Te: " << k_max << std::endl;
-            std::cout << std::endl;
+            std::cout << "Subband " << ist << " at " << sb.get_E()/(1e-3*e) << "eV." << std::endl
+                      << "D.o.s effective mass: " << sb.get_md_0() << std::endl
+                      << "D.o.s nonparabolicity parameter: " << sb.get_alphad() << std::endl
+                      << "Wavevector at " << nkbt << "*kB*Te: " << k_max << std::endl
+                      << std::endl;
         }
 
         // Construct filename and output
