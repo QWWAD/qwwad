@@ -1,7 +1,6 @@
 /**
- * \file    heterostructure.cpp
+ * \file    qwwad-heterostructure.cpp
  * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date    2012-08-03
  *
  * \brief   A description of layers in a heterostructure
  */
@@ -33,7 +32,6 @@ namespace Leeds {
  * \param[in] nz_1per   The number of points to be used in mapping out a single
  *                      period of the structure
  * \param[in] n_periods Number of periods of the structure to generate
- * \param[in] L_diff    Alloy diffusion length [m]
  *
  * \details The number of points in the entire structure is given by
  *          N = (nz_{\text{1per}} - 1) \times n_{\text{period}} + 1
@@ -42,19 +40,16 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
                                  const std::valarray<double> &W_layer,
                                  const std::valarray<double> &n3D_layer,
                                  const size_t                 nz_1per,
-                                 const size_t                 n_periods,
-                                 const double                 L_diff) :
+                                 const size_t                 n_periods) :
     _n_alloy(x_layer.at(0).size()),
     _x_layer(x_layer),
     _W_layer(W_layer),
     _n3D_layer(n3D_layer),
     _n_periods(n_periods),
-    _L_diff(L_diff),
     _nz_1per(nz_1per),
     _layer_top_index(_x_layer.size() * n_periods),
     _z((_nz_1per - 1)*n_periods + 1),
-    _x_nominal(_z.size(), std::valarray<double>(_n_alloy)),
-    _x_diffuse(_z.size(), std::valarray<double>(_n_alloy)),
+    _x(_z.size(), std::valarray<double>(_n_alloy)),
     _n3D(_z.size())
 {
     const double Lp = _W_layer.sum();    // Length of one period [m]
@@ -96,13 +91,7 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
         _n3D[iz]       = get_n3D_in_layer(iL);
 
         for(unsigned int ialloy = 0; ialloy < _x_layer[0].size(); ++ialloy)
-            _x_nominal.at(iz)[ialloy] = get_x_in_layer_nominal(iL, ialloy);
-    }
-
-    for (unsigned int iz = 0; iz < nz; ++iz)
-    {
-        for(unsigned int ialloy = 0; ialloy < _x_layer[0].size(); ++ialloy)
-            _x_diffuse.at(iz)[ialloy] = calculate_x_annealed_at_point(iz, ialloy);
+            _x.at(iz)[ialloy] = get_x_in_layer(iL, ialloy);
     }
 }
 
@@ -198,7 +187,6 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
  * \param[in] layer_filename Name of input file
  * \param[in] thickness_unit The unit of measurement for the layer thicknesses
  * \param[in] n_periods      Number of periods to generate
- * \param[in] L_diff         Alloy diffusion length [m]
  * \param[in] dz_max         The maximum allowable separation between spatial points [m]
  *
  * \return A new heterostructure object for the system.  Remember to delete it after use!
@@ -206,7 +194,6 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
 Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &layer_filename,
                                                            const Unit         thickness_unit,
                                                            const size_t       n_periods,
-                                                           const double       L_diff,
                                                            const double       dz_max)
 {
     alloy_vector          x_layer;   // Alloy fraction for each layer
@@ -219,7 +206,7 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
     const size_t nz_1per = ceil(period_length/dz_max) + 1;
 
     // Pack input data into a heterostructure object
-    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods, L_diff);
+    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods);
 }
 
 /**
@@ -230,15 +217,13 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
  * \param[in] nz_1per        The number of points to be used in mapping out a single
  *                           period of the structure
  * \param[in] n_periods      Number of periods to generate
- * \param[in] L_diff         Alloy diffusion length [m]
  *
  * \return A new heterostructure object for the system.  Remember to delete it after use!
  */
 Heterostructure* Heterostructure::create_from_file(const std::string &layer_filename,
                                                    const Unit         thickness_unit,
                                                    const size_t       nz_1per,
-                                                   const size_t       n_periods,
-                                                   const double       L_diff)
+                                                   const size_t       n_periods)
 {
     alloy_vector          x_layer;   // Alloy fraction for each layer
     std::valarray<double> W_layer;   // Thickness of each layer
@@ -247,7 +232,7 @@ Heterostructure* Heterostructure::create_from_file(const std::string &layer_file
     read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer, thickness_unit);
 
     // Pack input data into a heterostructure object
-    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods, L_diff);
+    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods);
 }
 
 /**
@@ -255,9 +240,7 @@ Heterostructure* Heterostructure::create_from_file(const std::string &layer_file
  *
  * \param[in] iL The index of the layer
  * 
- * \return The nominal doping density [m\f$^{-3}\f$]
- *
- * \todo Implement dopant diffusion
+ * \return The doping density [m\f$^{-3}\f$]
  */
 double Heterostructure::get_n3D_in_layer(const unsigned int iL) const
 {
@@ -277,13 +260,13 @@ double Heterostructure::get_n3D_at_point(const unsigned int iz) const
 }
 
 /**
- * \brief Return the nominal alloy fraction in a given layer
+ * \brief Return the alloy fraction in a given layer
  *
  * \param[in] iL The index of the layer
  *
- * \return The nominal alloy fraction
+ * \return The alloy fraction
  */
-double Heterostructure::get_x_in_layer_nominal(const unsigned int iL,
+double Heterostructure::get_x_in_layer(const unsigned int iL,
                                                const unsigned int ialloy) const
 {
     if(iL >= _x_layer.size() * _n_periods)
@@ -336,56 +319,6 @@ double Heterostructure::get_height_at_top_of_layer(const unsigned int iL) const
         height += _W_layer.sum() * floor(static_cast<double>(iL)/_W_layer.size());
 
     return height;
-}
-
-/**
- * \brief Find the alloy fraction at a given position, when annealing is included
- *
- * \param[in] z     The spatial position at which to find alloy fraction [m]
- *
- * \return The alloy fraction in the annealed structure at the given point
- *
- * \details See [E. H. Li et. al., IEEE J. Quantum Electron. 32, 1399 (1996)]
- *          for details.  I have replaced the infinitely thick barrier
- *          criterion with periodic boundaries.  This might mess up if very
- *          short structures are used (thinner than the diffusion length) as I
- *          only included adjacent periods in the calculation.
- */
-double Heterostructure::calculate_x_annealed_at_point(const unsigned int iz,
-                                                      const unsigned int ialloy) const
-{
-    const double Lp  = _W_layer.sum();  // Length of period [m]
-    const double z   = fmod(_z[iz], Lp); // Position within period [m]
-    double _x = 0.0; // alloy fraction
-
-    if (_L_diff > 0)
-    {
-        // Find contribution from each layer
-        for(unsigned int iL = 0; iL < _W_layer.size(); iL++)
-        {
-            // Find top of layer
-            const double zi = _dz*get_layer_top_index(iL);
-
-            // Find bottom of layer
-            double zi_1 = 0;
-            if(iL != 0)
-                zi_1 = _dz*get_layer_top_index(iL-1);
-
-            _x += 0.5 * _x_layer.at(iL)[ialloy] * (erf((z-zi_1)/_L_diff) - erf((z-zi)/_L_diff));
-
-            // Add contribution from layers in previous period
-            _x += 0.5 * _x_layer.at(iL)[ialloy] * (erf((z-(zi_1-Lp))/_L_diff)
-                    - erf((z-(zi-Lp))/_L_diff));
-
-            // Add contributions from layers in next period
-            _x += 0.5 * _x_layer.at(iL)[ialloy] * (erf((z-(zi_1+Lp))/_L_diff)
-                    - erf((z-(zi+Lp))/_L_diff));
-        }
-    }
-    else
-        _x = _x_nominal.at(iz)[ialloy];
-
-    return _x;
 }
 
 /**

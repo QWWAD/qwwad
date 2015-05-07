@@ -42,32 +42,6 @@ class HeterostructureOptions : public Options
          */
         Unit get_unit() const {return unit;}
 
-        /**
-         * \brief Returns the diffusion length [m]
-         *
-         * \returns The diffusion length in metres
-         *
-         * \details The length is scaled by the appropriate unit
-         */
-        double get_Ldiff() const
-        {
-            double result = get_numeric_option("ldiff");
-
-            if (result < 0)
-                throw std::domain_error("Diffusion length must be positive.");
-
-            switch(unit)
-            {
-                case UNIT_NM: 
-                    result*=1.0e-9; 
-                    break;
-                case UNIT_ANGSTROM:  
-                    result*=1.0e-10;
-            }
-
-            return result;
-        }
-
         double get_dz_max() const
         {
             if(vm.count("dz-max") == 0)
@@ -111,10 +85,8 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
                             "Normally, this will be the very first step in performing a numerical\n"
                             "simulation of a system. The user should create an input file first,\n"
                             "containing a table describing the system, and then run this program.\n"
-                            "Multi-period structures can be generated if desired, or diffuse\n"
-                            "heterostructures (with annealed interfaces) can also be generated.");
+                            "Multi-period structures can be generated if desired.");
 
-    add_numeric_option("ldiff,l",             0.0,          "Diffusion length.");
     add_numeric_option("dz-max",              0.1,          "Maximum separation between spatial points.");
     add_numeric_option("res-min",                           "Minimum spatial resolution. Overrides the --dz-max option");
     add_size_option   ("nz-1per",               0,          "Number of points (per period) within the structure. "
@@ -175,7 +147,6 @@ void HeterostructureOptions::print() const
     }
 
     std::cout << " * Unit of length for input: " << unit_string << std::endl;
-    std::cout << " * Diffusion length: " << get_Ldiff() << " " << unit_string << std::endl;
     std::cout << " * Number of points per period: " << get_size_option("nz-1per") << std::endl;
     std::cout << " * Number of periods to output: " << get_size_option("nper") << std::endl;
     std::cout << " * Filename of input structure: " << get_string_option("infile") << std::endl;
@@ -195,13 +166,11 @@ int main(int argc, char* argv[])
                                  Heterostructure::create_from_file(opt.get_string_option("infile"),
                                                                    opt.get_unit(),
                                                                    opt.get_size_option("nz-1per"),
-                                                                   opt.get_size_option("nper"),
-                                                                   opt.get_Ldiff())
+                                                                   opt.get_size_option("nper"))
                                  :
                                  Heterostructure::create_from_file_auto_nz(opt.get_string_option("infile"),
                                                                            opt.get_unit(),
                                                                            opt.get_size_option("nper"),
-                                                                           opt.get_Ldiff(),
                                                                            opt.get_dz_max());
 
     if(opt.get_verbose())
@@ -222,8 +191,8 @@ int main(int argc, char* argv[])
     {
         stream << std::setprecision(20) << std::scientific << het->get_z()[iz] << "\t";
 
-        for(unsigned int ialloy = 0; ialloy < het->get_x_diffuse_array().at(0).size(); ++ialloy)
-            stream << std::setprecision(20) << std::scientific << het->get_x_diffuse_array().at(iz)[ialloy] << "\t";
+        for(unsigned int ialloy = 0; ialloy < het->get_x_array().at(0).size(); ++ialloy)
+            stream << std::setprecision(20) << std::scientific << het->get_x_array().at(iz)[ialloy] << "\t";
 
         stream << std::endl;
     }

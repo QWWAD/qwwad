@@ -46,41 +46,33 @@ class Heterostructure
         std::valarray<double> _n3D_layer; ///< Donor density in each layer [m^{-3}]
 
         size_t                _n_periods; ///< Number of periods in the structure
-        double                _L_diff;    ///< Alloy interdiffusion length [m]
-
         size_t                _nz_1per;   ///< Number of points in each period
 
         std::valarray<unsigned int> _layer_top_index;
 
         // Parameters for each point in the entire, expanded structure
-        std::valarray<double> _z;         ///< Spatial position at each point [m]
-        alloy_vector          _x_nominal; ///< Alloy fractions at each spatial point (nominal)
-        alloy_vector          _x_diffuse; ///< Alloy fractions at each spatial point (with interdiffusion)
-        std::valarray<double> _n3D;       ///< Volume doping at each point [m^{-3}]
-        double                _dz;        ///< Spatial separation between points [m]
-
-        double calculate_x_annealed_at_point(const unsigned int iz, const unsigned int ialloy) const;
+        std::valarray<double> _z;   ///< Spatial position at each point [m]
+        alloy_vector          _x;   ///< Alloy fractions at each spatial point
+        std::valarray<double> _n3D; ///< Volume doping at each point [m^{-3}]
+        double                _dz;  ///< Spatial separation between points [m]
 
     public:
         Heterostructure(const alloy_vector          &x_layer,
                         const std::valarray<double> &W_layer,
                         const std::valarray<double> &n3D_layer,
                         const size_t                 nz_1per,
-                        const size_t                 n_periods = 1,
-                        const double                 L_diff    = 0.0);
+                        const size_t                 n_periods = 1);
 
         
         static Heterostructure* create_from_file_auto_nz(const std::string &layer_filename,
                                                        const Unit         thickness_unit,
                                                        const size_t       n_periods,
-                                                       const double       L_diff = 0.0,
                                                        const double       dz_max = 1e-10);
 
         static Heterostructure* create_from_file(const std::string &layer_filename,
                                                  const Unit         thickness_unit,
                                                  const size_t       nz_1per,
-                                                 const size_t       n_periods,
-                                                 const double       L_diff = 0.0);
+                                                 const size_t       n_periods);
 
         /** Return the number of sampling points in one period of the structure */
         size_t get_nz_1per() const {return _nz_1per;}
@@ -94,9 +86,8 @@ class Heterostructure
 
         std::valarray<double> get_layer_widths() const {return _W_layer;}
 
-        double get_x_in_layer_nominal(const unsigned int iL, const unsigned int ialloy) const;
-        alloy_vector get_x_nominal_array() const {return _x_nominal;}
-        alloy_vector get_x_diffuse_array() const {return _x_diffuse;}
+        double get_x_in_layer(const unsigned int iL, const unsigned int ialloy) const;
+        alloy_vector get_x_array() const {return _x;}
 
         double get_n3D_in_layer(const unsigned int iL) const;
         double get_n3D_at_point(const unsigned int iz) const;
@@ -115,9 +106,6 @@ class Heterostructure
 
         /// Return the number of layers in the entire structure
         size_t       get_n_layers_total() const {return _W_layer.size()*_n_periods;}
-
-        double       get_x_annealed(const double z, 
-                                    const double Ldiff) const;
 
         unsigned int get_layer_from_height(const double z) const;
 
