@@ -42,22 +42,23 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const char   p     = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const double m     = opt.get_numeric_option("mass") * me;     // effective mass [kg]
-    const double V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
-    const double alpha = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
+    const auto p     = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const auto m     = opt.get_numeric_option("mass") * me;     // effective mass [kg]
+    const auto V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
+    const auto alpha = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
 
     const size_t n=1000; // Number of output energies
 
-    std::valarray<double> E = read_E(p); // read in subband minima [J]
+    const auto E = read_E(p); // read in subband minima [J]
 
     std::valarray<double> energy(n+1);   // Energies at which dos is calculated [J]
     std::valarray<double> dos_bulk(n+1); // bulk (3D) dos [J^{-1}m^{-3}]
     std::valarray<double> dos_2D(n+1);   // quantum well (2D) dos [J^{-1}m^{-2}]
     std::valarray<double> dos_1D(n+1);   // quantum wire (1D) dos [J^{-1}m^{-1}]
 
+    // TODO: Use QWWAD Fileio instead
     std::ofstream Frho("rho.r");
 
     for(unsigned int ie=0;ie<=n;ie++)
