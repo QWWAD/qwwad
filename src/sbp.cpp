@@ -82,24 +82,24 @@ int main(int argc,char *argv[])
 {
     SBPOptions opt(argc, argv);
 
-    const bool   FD_flag = opt.get_switch("fd");
-    const double m       = opt.get_numeric_option("mass") * me;
-    const double alpha   = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
-    const double V       = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
-    const char   p       = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const double T       = opt.get_numeric_option("Te");
-    const size_t nE      = opt.get_size_option("nenergy");
+    const auto FD_flag = opt.get_switch("fd");
+    const auto m       = opt.get_numeric_option("mass") * me;
+    const auto alpha   = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
+    const auto V       = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
+    const auto p       = opt.get_char_option("particle");         // particle ID (e, h or l)
+    const auto T       = opt.get_numeric_option("Te");
+    const auto nE      = opt.get_size_option("nenergy");
 
-    std::valarray<double> E = read_E(p); // Reads subband energy file [J]
-    const size_t n = E.size();
+    const auto E = read_E(p); // Reads subband energy file [J]
+    const auto n = E.size();
 
     std::valarray<double> Ef(n); // Fermi energies for each subband [J]
     std::valarray<double> N(n); // Population of each subband [m^{-3}]
 
     if(opt.equilibrium())
     {
-        const double N_total = opt.get_global_pop();
-        const double Ef_global = find_fermi_global(E, m, N_total, T, alpha, V);
+        const auto N_total   = opt.get_global_pop();
+        const auto Ef_global = find_fermi_global(E, m, N_total, T, alpha, V);
 
         for(unsigned int i=0; i<n; ++i)
         {
@@ -108,7 +108,7 @@ int main(int argc,char *argv[])
         }
 
         N /= 1e14; // Rescale to 1e10 cm^{-2}
-        Leeds::write_table("N-out.r", N, true, 17);
+        write_table("N-out.r", N, true, 17);
     }
     else
     {
@@ -117,21 +117,22 @@ int main(int argc,char *argv[])
         read_table("N.r", N);
 
         for(unsigned int i=0; i<n; ++i) // i=0 => ground state
-            Ef[i]=find_fermi(E[i],m,N[i],T,alpha,V);
+            Ef[i] = find_fermi(E[i],m,N[i],T,alpha,V);
     }
 
     for(unsigned int i=0; i<n; ++i)
     {
         if(FD_flag)
         {
-            const double N = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
+            const auto N = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
 
             if(opt.get_verbose())
                 printf("Ne=%20.17le\n", N/1e+14);
         }
     }
+
     Ef *= 1000.0/e; // Rescale to meV
-    Leeds::write_table("Ef.r", Ef, true, 17);
+    write_table("Ef.r", Ef, true, 17);
 
     return EXIT_SUCCESS;
 }
@@ -160,14 +161,14 @@ static double calc_dist(const double       Emin,
     char   filename[9]; // output filename for FD distribs
     sprintf(filename,"FD%i.r",s+1);
 
-    double Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
+    auto Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
 
     if(Emax<Emin) Emax=Emin+10*kB*T;
 
     std::valarray<double> E(nE); // Array of energies for plot
     std::valarray<double> f(nE); // Occupation probabilities
 
-    const double dE=(Emax-Emin)/(nE-1); // Energy increment for integration
+    const auto dE=(Emax-Emin)/(nE-1); // Energy increment for integration
     for(unsigned int i=0; i<nE; i++)
     {
         E[i] = Emin + i*dE;

@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
