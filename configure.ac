@@ -26,10 +26,6 @@ AC_CONFIG_SRCDIR([src/csss.c])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
-# Set up libtool
-LT_PREREQ([2.2])
-LT_INIT
-
 dnl Quieten the Make output
 AM_SILENT_RULES([yes])
 
@@ -40,6 +36,7 @@ AC_PROG_CC
 AC_PROG_F77
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AX_CXX_COMPILE_STDCXX_11([],[mandatory])
 
 dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"
@@ -51,6 +48,10 @@ CPPFLAGS="-W -Wall -Werror $CPPFLAGS"
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])
+
+# Set up libtool
+LT_PREREQ([2.2])
+LT_INIT
 
 # Check for Boost Program Options
 
