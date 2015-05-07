@@ -47,14 +47,14 @@ int main(int argc, char *argv[])
 {
     Options opt = configure_options(argc, argv);
 
-    const double L     = opt.get_numeric_option("width") * 1e-10;        // well width [m]
-    const double Lb    = opt.get_numeric_option("barrierwidth") * 1e-10; // barrier width [m]
-    const char   p     = opt.get_char_option("particle");                // particle ID (e, h or l)
-    const double m     = opt.get_numeric_option("mass") * me;            // effective mass [kg]
-    const size_t N     = opt.get_size_option("nz");                      // number of spatial steps
-    const size_t s     = opt.get_size_option("nst");                     // number of states
-    const double alpha = opt.get_numeric_option("alpha") / e;            // Non-parabolicity [1/J]
-    const double V     = opt.get_numeric_option("vcb") * e;              // band_edge potential [J]
+    const auto L     = opt.get_numeric_option("width") * 1e-10;        // well width [m]
+    const auto Lb    = opt.get_numeric_option("barrierwidth") * 1e-10; // barrier width [m]
+    const auto p     = opt.get_char_option("particle");                // particle ID (e, h or l)
+    const auto m     = opt.get_numeric_option("mass") * me;            // effective mass [kg]
+    const auto N     = opt.get_size_option("nz");                      // number of spatial steps
+    const auto s     = opt.get_size_option("nst");                     // number of states
+    const auto alpha = opt.get_numeric_option("alpha") / e;            // Non-parabolicity [1/J]
+    const auto V     = opt.get_numeric_option("vcb") * e;              // band_edge potential [J]
 
     SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
     se.set_padding_width(Lb);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     if(opt.vm.count("E-cutoff") > 0)
         se.set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
 
-    std::vector<State> solutions = se.get_solutions(true);
+    const auto solutions = se.get_solutions(true);
 
     // Dump to file
     char energy_filename[9];
