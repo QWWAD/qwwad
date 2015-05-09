@@ -44,7 +44,7 @@ CXXFLAGS="-Wall $CXXFLAGS"
 LDFLAGS="-Wl,--as-needed $LDFLAGS"
 
 dnl Set up very strict build for development purposes
-CPPFLAGS="-W -Wall -Werror $CPPFLAGS"
+CPPFLAGS="-W -Wall -Wformat=2 -Wformat-security -Werror -DFORTIFY_SOURCE=2 $CPPFLAGS"
 
 # Checks for libraries.
 AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])

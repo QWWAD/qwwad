@@ -466,7 +466,7 @@ double Vf(const double  A0,
 /* This function reads the atomic species (defined in the file as.r)
    into memory (addressed by the pointer as) and returns the start
    address of this block of memory and the number of lines	   */
-atom *read_atoms(size_t *n_atoms, const char * filename)
+atom *read_atoms(long unsigned int *n_atoms, const char * filename)
 {
  int    ia=0;
  FILE 	*Fatoms;        /* file pointer to wavefunction file       */
