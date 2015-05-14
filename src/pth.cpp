@@ -10,10 +10,9 @@
 
 #include "qwwad-options.h"
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
-#include "qwwad-schroedinger-poeschl-teller.h"
+#include "qwwad/file-io.h"
+#include "qwwad/schroedinger-solver-poeschl-teller.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 
@@ -76,7 +75,7 @@ int main(int argc,char *argv[])
                          se.get_z(),
                          true);
 
-    Leeds::write_table("v.r", se.get_z(), se.get_V());
+    write_table("v.r", se.get_z(), se.get_V());
     
     return EXIT_SUCCESS;
 }

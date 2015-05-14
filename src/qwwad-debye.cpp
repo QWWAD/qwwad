@@ -13,10 +13,9 @@
 #include <gsl/gsl_sf_debye.h>
 #include "qwwad/constants.h"
 
-using namespace QWWAD;
+namespace QWWAD
+{
 using namespace constants;
-
-namespace Leeds {
 
 DebyeModel::DebyeModel(const double T_D,
                        const double M,
@@ -104,5 +103,5 @@ double DebyeModel::find_U(double T, void *params)
     DebyeModel *dm = reinterpret_cast<DebyeModel *>(params);
     return dm->get_internal_energy(T);
 }
-} // namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

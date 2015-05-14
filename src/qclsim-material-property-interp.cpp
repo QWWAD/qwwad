@@ -8,10 +8,14 @@
 #include <stdexcept>
 #include <libxml++/libxml++.h>
 #include "qclsim-material-property-interp.h"
-#include "qclsim-maths.h"
+#include "qwwad/maths-helpers.h"
 
-using namespace Leeds;
-
+namespace QWWAD {
+/**
+ * \brief Initialise a new interpolated material property
+ *
+ * \param[in] elem An XML element containing the property data
+ */
 MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
     MaterialProperty(elem),
     _xmin(0),
@@ -100,4 +104,5 @@ double MaterialPropertyInterp::get_interp_b() const
 bool MaterialPropertyInterp::interp_is_bowed() const {
     return _interp_is_bowed;
 }
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

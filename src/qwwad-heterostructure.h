@@ -15,7 +15,8 @@
 #include <valarray>
 #include <vector>
 
-namespace Leeds {
+namespace QWWAD
+{
 /// Convenience wrapper for a list of vector components in each layer
 typedef std::vector< std::valarray<double> > alloy_vector;
 
@@ -123,6 +124,6 @@ class Heterostructure
         /// Return the entire length of the structure
         double       get_total_length() const {return _W_layer.sum()*_n_periods;}
 };
-} // namespace Leeds
+} // namespace
 #endif // HETEROSTRUCTURE_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

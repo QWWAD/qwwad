@@ -13,10 +13,10 @@
 #endif //HAVE_CONFIG_H
 
 #include <string>
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 
-namespace Leeds {
-
+namespace QWWAD
+{
 class Subband
 {
     public:
@@ -113,8 +113,6 @@ class Subband
         double Ef;                  ///< Quasi-Fermi energy [J]
         double population;          ///< Sheet-density of carriers [m^{-2}]
 };
-
-} // namespace Leeds
-
+} // namespace
 #endif // QCLSIM_SUBBAND_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

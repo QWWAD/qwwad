@@ -19,10 +19,9 @@
 #include "double-barrier.h"
 #include "qwwad/constants.h"
 #include "qclsim-fermi.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

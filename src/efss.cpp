@@ -2,7 +2,7 @@
  * \file   efss.cpp
  * \brief  Use Schroedinger library to solve 2D SE for QW system
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \author Jonathan Cooper <el06jdc@leeds.ac.uk>
+ * \author Jonathan Cooper <jdc.tas@gmail.com>
  *
  * \details  This program solves the nonrelativistic Schrodinger equation
  *           for any one-dimensional nonrelativistic potential profile.
@@ -16,14 +16,13 @@
 #include <cstdlib>
 #include "qwwad-options.h"
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
-#include "qclsim-linalg.h"
-#include "qwwad-schroedinger-full.h"
-#include "qwwad-schroedinger-shooting.h"
-#include "qwwad-schroedinger-taylor.h"
-#include "qwwad-schroedinger-tridiagonal.h"
+#include "qwwad/file-io.h"
+#include "qwwad/linear-algebra.h"
+#include "qwwad/schroedinger-solver-full.h"
+#include "qwwad/schroedinger-solver-shooting.h"
+#include "qwwad/schroedinger-solver-taylor.h"
+#include "qwwad/schroedinger-solver-tridiagonal.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

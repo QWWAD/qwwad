@@ -15,14 +15,15 @@
 # include <iostream>
 #endif
 
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 
 /**
  * Gauss error function
  */
 #define erf gsl_sf_erf
 
-namespace Leeds {
+namespace QWWAD
+{
 /**
  * \brief Create a heterostructure using specifications of each layer parameter
  *
@@ -393,5 +394,5 @@ unsigned int Heterostructure::get_layer_from_height(const double z) const
 
     return iL;
 }
-} // namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

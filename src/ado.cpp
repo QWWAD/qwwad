@@ -15,7 +15,6 @@
 #include "qwwad-options.h"
 
 using namespace QWWAD;
-using namespace Leeds;
 using namespace constants;
 
 Options configure_options(int argc, char* argv[])

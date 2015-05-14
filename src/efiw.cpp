@@ -11,11 +11,9 @@
 #include <valarray>
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
-#include "qclsim-linalg.h"
-#include "qwwad-schroedinger-infinite-well.h"
+#include "qwwad/schroedinger-solver-infinite-well.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

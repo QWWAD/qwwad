@@ -12,11 +12,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 #include "wf_options.h"
 #include "qwwad/constants.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

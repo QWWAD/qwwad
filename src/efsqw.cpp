@@ -62,10 +62,9 @@
 #include <cstdlib>
 #include <valarray>
 #include "qwwad/constants.h"
-#include "qwwad-schroedinger-finite-well.h"
+#include "qwwad/schroedinger-solver-finite-well.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

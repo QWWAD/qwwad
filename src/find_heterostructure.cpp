@@ -17,11 +17,11 @@
  */
 
 #include <iostream>
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-heterostructure.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
+using namespace QWWAD;
 
 /** 
  * \brief Argument values read from the command-line.

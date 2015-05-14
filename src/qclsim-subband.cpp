@@ -5,14 +5,13 @@
  * \date   2013-01-10
  */
 #include "qclsim-subband.h"
-#include "qclsim-fileio.h"
-#include "qclsim-maths.h"
+#include "qwwad/file-io.h"
+#include "qwwad/maths-helpers.h"
 #include "qwwad/constants.h"
 
-using namespace QWWAD;
+namespace QWWAD
+{
 using namespace constants;
-
-namespace Leeds {
 
 Subband::Subband(State ground_state,
                  double md_0,
@@ -98,7 +97,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             1000.0/e,
                                                             true);
 
-    Leeds::read_table(m_d_filename.c_str(), z, m_d_z);
+    read_table(m_d_filename.c_str(), z, m_d_z);
     
     const size_t nst = ground_state.size();
 
@@ -199,9 +198,9 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                                             wf_input_ext,
                                                             1000.0/e,
                                                             true);
-    Leeds::read_table(m_d_filename.c_str(), z, m_d_z);
-    Leeds::read_table(alphad_filename.c_str(), z, alphad);
-    Leeds::read_table(potential_filename.c_str(), z, V);
+    read_table(m_d_filename.c_str(), z, m_d_z);
+    read_table(alphad_filename.c_str(), z, alphad);
+    read_table(potential_filename.c_str(), z, V);
 
     const size_t nst = ground_state.size();
     std::valarray<unsigned int> psi_max_iz(nst);    
@@ -417,5 +416,5 @@ double Subband::get_k_max(const double Te) const
 
     return k(Ek_max);
 }
-} // namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

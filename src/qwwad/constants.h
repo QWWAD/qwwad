@@ -6,8 +6,8 @@
  *          library.  All units are SI
  */
 
-#ifndef PHYSICAL_CONSTANTS_H
-#define PHYSICAL_CONSTANTS_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 #if HAVE_CONFIG_H
 # include "config.h"
@@ -58,7 +58,7 @@ const double Rinf = 1.097373156854e7;
 const double mu_b = GSL_CONST_MKSA_BOHR_MAGNETON;
 #if __cplusplus
 }// namespace constants
-}// namespace Leeds
+}// namespace QWWAD
 #endif
 #endif
 

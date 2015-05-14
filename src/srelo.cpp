@@ -12,11 +12,10 @@
 #include <iostream>
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qclsim-subband.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

@@ -48,7 +48,7 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 #include "qwwad-options.h"
 
 #include "ppff.h"

@@ -11,8 +11,6 @@
 #include "wf_options.h"
 #include "qclsim-subband.h"
 
-using namespace Leeds;
-
 #include "qwwad/constants.h"
 using namespace QWWAD;
 using namespace constants;

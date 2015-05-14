@@ -13,12 +13,10 @@
 #include <gsl/gsl_multimin.h>
 #include "qwwad/constants.h"
 #include "qwwad-donor-energy-minimiser.h"
-#include "qwwad-schroedinger-donor-2D.h"
-#include "qwwad-schroedinger-donor-variable.h"
+#include "qwwad/schroedinger-solver-donor-2D.h"
+#include "qwwad/schroedinger-solver-donor-variable.h"
 
-using namespace QWWAD;
-
-namespace Leeds
+namespace QWWAD
 {
 using namespace constants;
 
@@ -241,5 +239,5 @@ void DonorEnergyMinimiser::minimise(MinimisationMethod method)
             break;
     }
 }
-} // Namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

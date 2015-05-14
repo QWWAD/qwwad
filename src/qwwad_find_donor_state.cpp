@@ -23,14 +23,13 @@
 #include <cstdlib>
 #include <iostream>
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-options.h"
 #include "qwwad-donor-energy-minimiser.h"
-#include "qwwad-schroedinger-donor-2D.h"
-#include "qwwad-schroedinger-donor-3D.h"
-#include "qwwad-schroedinger-donor-variable.h"
+#include "qwwad/schroedinger-solver-donor-2D.h"
+#include "qwwad/schroedinger-solver-donor-3D.h"
+#include "qwwad/schroedinger-solver-donor-variable.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

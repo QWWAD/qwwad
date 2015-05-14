@@ -91,12 +91,6 @@ libqwwad_la_SOURCES =  \
 			   src/double-barrier.h        \
 			   src/qclsim-fermi.cpp        \
 			   src/qclsim-fermi.h          \
-			   src/qclsim-fileio.cpp       \
-			   src/qclsim-fileio.h         \
-			   src/qclsim-linalg.cpp       \
-			   src/qclsim-linalg.h         \
-			   src/qclsim-maths.cpp        \
-			   src/qclsim-maths.h          \
 			   src/qclsim-material.cpp     \
 			   src/qclsim-material.h       \
 			   src/qclsim-material-property.cpp     \
@@ -120,34 +114,40 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-donor-energy-minimiser.h   \
 			   src/qwwad-heterostructure.cpp \
 			   src/qwwad-heterostructure.h   \
-			   src/qwwad-fileio.cpp          \
-			   src/qwwad-fileio.h            \
+			   src/qwwad/file-io.cpp          \
+			   src/qwwad/file-io.h            \
+			   src/qwwad/file-io-deprecated.cpp \
+			   src/qwwad/file-io-deprecated.h   \
 			   src/qwwad-options.cpp         \
 			   src/qwwad-options.h           \
-			   src/qwwad-schroedinger.cpp    \
-			   src/qwwad-schroedinger.h      \
-			   src/qwwad-schroedinger-donor.h      \
-			   src/qwwad-schroedinger-donor.cpp    \
-			   src/qwwad-schroedinger-donor-2D.h      \
-			   src/qwwad-schroedinger-donor-2D.cpp    \
-			   src/qwwad-schroedinger-donor-3D.h      \
-			   src/qwwad-schroedinger-donor-3D.cpp    \
-			   src/qwwad-schroedinger-donor-variable.h   \
-			   src/qwwad-schroedinger-donor-variable.cpp \
-			   src/qwwad-schroedinger-finite-well.cpp \
-			   src/qwwad-schroedinger-finite-well.h   \
-			   src/qwwad-schroedinger-full.h          \
-			   src/qwwad-schroedinger-full.cpp        \
-			   src/qwwad-schroedinger-infinite-well.cpp \
-			   src/qwwad-schroedinger-infinite-well.h   \
-			   src/qwwad-schroedinger-poeschl-teller.cpp \
-			   src/qwwad-schroedinger-poeschl-teller.h   \
-			   src/qwwad-schroedinger-shooting.cpp      \
-			   src/qwwad-schroedinger-shooting.h        \
-			   src/qwwad-schroedinger-taylor.cpp        \
-			   src/qwwad-schroedinger-taylor.h          \
-			   src/qwwad-schroedinger-tridiagonal.cpp   \
-			   src/qwwad-schroedinger-tridiagonal.h     \
+			   src/qwwad/linear-algebra.cpp       \
+			   src/qwwad/linear-algebra.h         \
+			   src/qwwad/maths-helpers.cpp        \
+			   src/qwwad/maths-helpers.h          \
+			   src/qwwad/schroedinger-solver.cpp    \
+			   src/qwwad/schroedinger-solver.h      \
+			   src/qwwad/schroedinger-solver-donor.h      \
+			   src/qwwad/schroedinger-solver-donor.cpp    \
+			   src/qwwad/schroedinger-solver-donor-2D.h      \
+			   src/qwwad/schroedinger-solver-donor-2D.cpp    \
+			   src/qwwad/schroedinger-solver-donor-3D.h      \
+			   src/qwwad/schroedinger-solver-donor-3D.cpp    \
+			   src/qwwad/schroedinger-solver-donor-variable.h   \
+			   src/qwwad/schroedinger-solver-donor-variable.cpp \
+			   src/qwwad/schroedinger-solver-finite-well.cpp \
+			   src/qwwad/schroedinger-solver-finite-well.h   \
+			   src/qwwad/schroedinger-solver-full.h          \
+			   src/qwwad/schroedinger-solver-full.cpp        \
+			   src/qwwad/schroedinger-solver-infinite-well.cpp \
+			   src/qwwad/schroedinger-solver-infinite-well.h   \
+			   src/qwwad/schroedinger-solver-poeschl-teller.cpp \
+			   src/qwwad/schroedinger-solver-poeschl-teller.h   \
+			   src/qwwad/schroedinger-solver-shooting.cpp      \
+			   src/qwwad/schroedinger-solver-shooting.h        \
+			   src/qwwad/schroedinger-solver-taylor.cpp        \
+			   src/qwwad/schroedinger-solver-taylor.h          \
+			   src/qwwad/schroedinger-solver-tridiagonal.cpp   \
+			   src/qwwad/schroedinger-solver-tridiagonal.h     \
 			   src/wf_options.cpp                       \
 			   src/wf_options.h
 

@@ -12,7 +12,7 @@
 #include <iostream>
 #include "dos-functions.h"
 #include "qwwad/constants.h"
-#include "qwwad-fileio.h"
+#include "qwwad/file-io-deprecated.h"
 #include "qwwad-options.h"
 #include <cstdlib>
 #include <valarray>

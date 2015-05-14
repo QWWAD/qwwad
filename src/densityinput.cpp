@@ -16,11 +16,10 @@
 #include <fstream>
 #include <iostream>
 #include "qwwad/constants.h"
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 #include "qclsim-fermi.h"
 #include "wf_options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

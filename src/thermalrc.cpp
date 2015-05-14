@@ -5,14 +5,14 @@
 #include <iostream>
 #include <valarray>
 #include "qwwad-options.h"
-#include "qclsim-fileio.h"
-#include "qclsim-linalg.h"
+#include "qwwad/file-io.h"
+#include "qwwad/linear-algebra.h"
 
 #if HAVE_LAPACKE
-#include <lapacke.h>
+# include <lapacke.h>
 #endif
 
-using namespace Leeds;
+using namespace QWWAD;
 
 class ThermalRCOptions: public Options
 {

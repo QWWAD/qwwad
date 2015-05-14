@@ -20,9 +20,9 @@
 #include <assert.h>
 #include <cstring>
 #include <gsl/gsl_math.h>
-#include "qclsim-maths.h"
-
+#include "qwwad/maths-helpers.h"
 #include "qwwad/constants.h"
+
 using namespace QWWAD;
 using namespace constants;
 

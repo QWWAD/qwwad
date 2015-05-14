@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <gsl/gsl_math.h>
-#include "qclsim-maths.h"
+#include "qwwad/maths-helpers.h"
 #include "qwwad/constants.h"
 
 #include "ppff.h"

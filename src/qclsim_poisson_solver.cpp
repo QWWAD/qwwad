@@ -1,9 +1,9 @@
 /**
  * \file   qclsim_poisson_solver.cpp
  *
- * \brief  Poisson solver class for QCLsim
+ * \brief  Poisson solver class
  *
- * \author Jonathan Cooper <el06jdc@leeds.ac.uk>
+ * \author Jonathan Cooper <jdc-tas@gmail.com>
  * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
  */
 
@@ -14,12 +14,12 @@
 # include <lapacke.h>
 #endif
 
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 
 #include <stdexcept>
 #include <iostream>
 
-namespace Leeds
+namespace QWWAD
 {
 /**
  * Create a Poisson solver
@@ -269,5 +269,5 @@ std::valarray<double> Poisson::solve_laplace(double V_drop)
     return phi; 
 }
 
-} // End namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

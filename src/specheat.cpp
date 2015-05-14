@@ -11,10 +11,9 @@
 #include <gsl/gsl_sf_debye.h>
 #include "qwwad/constants.h"
 #include "qwwad-options.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-debye.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

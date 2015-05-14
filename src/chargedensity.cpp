@@ -14,12 +14,11 @@
 #include <fstream>
 #include <gsl/gsl_math.h>
 
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad/constants.h"
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 #include "wf_options.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 
@@ -58,7 +57,7 @@ class ChargeDensityData
         size_t _nper;   ///< Number of periods crossed by wavefunction
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
-        std::vector<Leeds::State> states;  ///< Wf and energy data
+        std::vector<State> states;  ///< Wf and energy data
     public:
         std::valarray<double> pop; ///< Subband population [m^{-2}]
         std::valarray<unsigned int> nval; ///< Degeneracy of subbands

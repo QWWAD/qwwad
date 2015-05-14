@@ -18,10 +18,10 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
+using namespace QWWAD;
 
 /**
  * Configure command-line options for the program

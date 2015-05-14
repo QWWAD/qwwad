@@ -9,9 +9,10 @@
 
 #include <valarray>
 #include <vector>
-#include "qclsim-linalg.h"
+#include "qwwad/linear-algebra.h"
 
-namespace Leeds {
+namespace QWWAD
+{
 double f_FD(const double E_F, const double Ek, const double Te);
 
 double f_FD_ionised(const double E_F, const double Ed, const double Te);
@@ -43,6 +44,6 @@ double find_fermi_global(const std::vector<State>    &states,
                          const double                 Te,
                          const double                 alpha=0,
                          const double                 V=0);
-} // namespace Leeds
+} // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -11,10 +11,8 @@
 
 using namespace arma;
 
-using namespace QWWAD;
+namespace QWWAD {
 using namespace constants;
-
-namespace Leeds {
 
 double get_transmission_coefficient(const double E,
                                     const double m_w,
@@ -93,6 +91,5 @@ double get_transmission_coefficient(const double E,
 
     return Tx;
 }
-
-}// namespace Leeds
+}// namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

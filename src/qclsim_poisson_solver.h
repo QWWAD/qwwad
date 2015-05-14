@@ -15,8 +15,8 @@
 
 #include <valarray>
 
-namespace Leeds {
-
+namespace QWWAD
+{
 /**
  * Boundary condition to use for the Poisson equation solver
  */
@@ -61,7 +61,6 @@ private:
 
     PoissonBoundaryType boundary_type; ///< Boundary condition type for Poisson solver
 };
-
-} // End namespace Leeds
+} // namespace
 #endif //QCLSIM_POISSON_SOLVER_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -11,17 +11,17 @@
 #include "material_library.h"
 #include "qclsim-material-specification.h"
 #include "qclsim-material-property.h"
-#include "qclsim-maths.h"
-#include "qclsim-fileio.h"
-#include "qclsim-linalg.h"
+#include "qwwad/maths-helpers.h"
+#include "qwwad/file-io.h"
+#include "qwwad/linear-algebra.h"
 #include <glibmm/ustring.h>
 #include "qwwad-debye.h"
 
 #if HAVE_LAPACKE
-#include <lapacke.h>
+# include <lapacke.h>
 #endif
 
-using namespace Leeds;
+using namespace QWWAD;
 
 /**
  *  Find the thermal conductivity of a material [W/m/K]

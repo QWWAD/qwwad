@@ -11,7 +11,8 @@
 
 #include <cstddef>
 
-namespace Leeds {
+namespace QWWAD
+{
 class DebyeModel
 {
 public:
@@ -32,6 +33,6 @@ private:
 
     static double find_U(double T, void *params);
 };
-} // namespace Leeds
+} // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

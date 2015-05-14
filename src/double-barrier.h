@@ -7,7 +7,7 @@
 
 #ifndef DOUBLE_BARRIER_H
 #define DOUBLE_BARRIER_H
-namespace Leeds {
+namespace QWWAD {
 double get_transmission_coefficient(const double E,
                                     const double m_w,
                                     const double m_b,

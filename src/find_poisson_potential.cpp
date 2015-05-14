@@ -1,5 +1,5 @@
 /**
- * \file    solve_poisson.cpp
+ * \file    find_poisson_potential.cpp
  * \brief   Solves Poisson equation to calculate space-charge induced potential
  * \author  Jonathan Cooper
  * \date    2013-02-06
@@ -16,9 +16,8 @@
 #include "qwwad-options.h"
 #include "qclsim_poisson_solver.h"
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

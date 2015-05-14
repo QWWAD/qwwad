@@ -1,13 +1,12 @@
 #ifndef LEEDS_TESTABLE_ABSTRACT_SCHROEDINGER_SOLVER_H
 #define LEEDS_TESTABLE_ABSTRACT_SCHROEDINGER_SOLVER_H
 
-#include <qwwad-schroedinger.h>
+#include "qwwad/schroedinger-solver.h"
 
 #include <string>
 
-namespace Leeds
+namespace QWWAD
 {
-
 class TestableAbstractSchroedingerSolver : public SchroedingerSolver
 {
 public:
@@ -31,9 +30,6 @@ public:
     virtual void calculate()
     {
     }
-
 };
-
-}
-
+} // end namespace
 #endif

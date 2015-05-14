@@ -36,10 +36,9 @@
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
-#include "qclsim-maths.h"
+#include "qwwad/file-io.h"
+#include "qwwad/maths-helpers.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

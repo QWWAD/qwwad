@@ -42,9 +42,8 @@
 #include <valarray>
 #include "qwwad-options.h"
 #include "qwwad/constants.h"
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

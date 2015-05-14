@@ -12,10 +12,9 @@
 #include <gsl/gsl_sf_dilog.h>
 #include <gsl/gsl_sf_fermi_dirac.h>
 
-using namespace QWWAD;
+namespace QWWAD
+{
 using namespace constants;
-
-namespace Leeds {
 
 /**
  * \brief Fermi occupation probability at specified kinetic energy
@@ -318,5 +317,5 @@ double find_fermi_global(const std::valarray<double> &Esb,
 
     return E_F;
 }
-} // namespace Leeds
+} // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

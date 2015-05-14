@@ -26,10 +26,10 @@
 
 #include <gsl/gsl_math.h>
 
-#include "qclsim-fileio.h"
+#include "qwwad/file-io.h"
 #include "qwwad-options.h"
 
-using namespace Leeds;
+using namespace QWWAD;
 
 static void diffuse(const std::valarray<double> &z,
                     std::valarray<double>       &x,

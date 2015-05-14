@@ -1,8 +1,7 @@
 #include <gtest/gtest.h>
-#include "qwwad-schroedinger-infinite-well.h"
+#include "qwwad/schroedinger-solver-infinite-well.h"
 #include "qwwad/constants.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 

@@ -12,7 +12,8 @@
 
 #include <gsl/gsl_vector.h>
 
-namespace Leeds {
+namespace QWWAD
+{
 class SchroedingerSolverDonor;
 
 enum MinimisationMethod
@@ -59,7 +60,6 @@ private:
     static double find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                         void             *params);
 };
-} // namespace Leeds
-
+} // namespace
 #endif // QWWAD_DONOR_ENERGY_MINIMISER_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

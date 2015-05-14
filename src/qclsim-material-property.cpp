@@ -9,9 +9,8 @@
 #include <libxml++/libxml++.h>
 #include "qwwad/constants.h"
 #include "qclsim-material-property.h"
-#include "qclsim-maths.h"
+#include "qwwad/maths-helpers.h"
 
-using namespace Leeds;
 using namespace QWWAD;
 using namespace constants;
 
