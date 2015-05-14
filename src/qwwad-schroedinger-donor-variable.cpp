@@ -9,12 +9,13 @@
 
 #include <cmath>
 #include <gsl/gsl_integration.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-using namespace constants;
-
 SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double                 m,
                                                                  const std::valarray<double> &V,
                                                                  const std::valarray<double> &z,

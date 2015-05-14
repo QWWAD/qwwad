@@ -17,12 +17,13 @@
 #include <gsl/gsl_math.h>
 #include "dos-functions.h"
 #include "double-barrier.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fermi.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

@@ -23,10 +23,11 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-maths.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

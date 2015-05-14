@@ -4,7 +4,7 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fermi.h"
 #include <stdexcept>
 #include <gsl/gsl_errno.h>
@@ -12,8 +12,10 @@
 #include <gsl/gsl_sf_dilog.h>
 #include <gsl/gsl_sf_fermi_dirac.h>
 
-namespace Leeds {
+using namespace QWWAD;
 using namespace constants;
+
+namespace Leeds {
 
 /**
  * \brief Fermi occupation probability at specified kinetic energy

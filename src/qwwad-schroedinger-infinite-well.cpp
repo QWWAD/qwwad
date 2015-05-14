@@ -7,11 +7,12 @@
 
 #include "qwwad-schroedinger-infinite-well.h"
 #include <gsl/gsl_math.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
-namespace Leeds {
+using namespace QWWAD;
 using namespace constants;
 
+namespace Leeds {
 SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                                                      const double       L,
                                                      const size_t       nz,

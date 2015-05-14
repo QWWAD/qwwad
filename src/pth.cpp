@@ -9,11 +9,12 @@
 #include <iostream>
 
 #include "qwwad-options.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-schroedinger-poeschl-teller.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

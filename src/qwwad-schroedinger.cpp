@@ -7,13 +7,13 @@
 
 #include "qwwad-schroedinger.h"
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-
-using namespace constants;
-
 /**
  * Get the solutions to the Schroedinger equation.
  *

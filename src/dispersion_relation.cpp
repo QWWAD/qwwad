@@ -13,7 +13,8 @@
 
 using namespace Leeds;
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+using namespace QWWAD;
 using namespace constants;
 
 /**

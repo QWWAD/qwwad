@@ -14,10 +14,11 @@
 #include <complex>
 #include <armadillo>
 #include <gsl/gsl_math.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 typedef struct

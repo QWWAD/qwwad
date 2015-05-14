@@ -19,7 +19,7 @@
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "maths.h"
 
 int main(int argc,char *argv[])

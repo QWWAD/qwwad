@@ -26,7 +26,8 @@
 #include <stdlib.h>
 #include <gsl/gsl_math.h>
 #include "qclsim-maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
 #include "ppff.h"
 
 static std::valarray<std::complex<double> > read_ank(const int  N,

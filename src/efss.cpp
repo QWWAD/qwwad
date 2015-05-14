@@ -15,7 +15,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "qwwad-options.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qclsim-linalg.h"
 #include "qwwad-schroedinger-full.h"
@@ -24,7 +24,8 @@
 #include "qwwad-schroedinger-tridiagonal.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 /** 
  * \brief The type of solver to use

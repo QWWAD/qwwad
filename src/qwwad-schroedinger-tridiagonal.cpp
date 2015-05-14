@@ -8,12 +8,13 @@
 #include "qwwad-schroedinger-tridiagonal.h"
 #include <gsl/gsl_math.h>
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-using namespace constants;
-
 /**
  * Create tridiagonal Hamiltonian
  * \param[in] nst_max Maximum number of states to find

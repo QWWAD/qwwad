@@ -11,10 +11,12 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds {
-using namespace constants;
 
 DebyeModel::DebyeModel(const double T_D,
                        const double M,

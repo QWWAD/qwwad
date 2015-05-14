@@ -15,9 +15,11 @@
 #include <gsl/gsl_math.h>
 
 #include "qclsim-fileio.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qwwad-options.h"
+
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 int main(int argc, char **argv)

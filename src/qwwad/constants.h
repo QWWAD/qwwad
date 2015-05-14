@@ -1,8 +1,7 @@
 /**
- * \file    qclsim-constants.h
+ * \file    constants.h
  * \brief   Frequently-used physical and mathematical constants
  * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date    2013-05-02
  * \details This is mostly just a wrapper for stuff in the GNU Scientific
  *          library.  All units are SI
  */
@@ -19,7 +18,7 @@
 #include <gsl/gsl_math.h>
 
 #if __cplusplus
-namespace Leeds{
+namespace QWWAD{
 namespace constants{
 #endif
 

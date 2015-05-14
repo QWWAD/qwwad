@@ -20,13 +20,14 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fermi.h"
 #include "qclsim-fileio.h"
 #include "qwwad-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 static double calc_dist(const double       Emin,

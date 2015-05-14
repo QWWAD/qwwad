@@ -22,9 +22,9 @@
 #include <gsl/gsl_math.h>
 #include "qclsim-maths.h"
 
-#include "qclsim-constants.h"
-using namespace Leeds;
-using namespace Leeds::constants;
+#include "qwwad/constants.h"
+using namespace QWWAD;
+using namespace constants;
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 

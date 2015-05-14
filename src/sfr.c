@@ -42,7 +42,7 @@
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
 #define N 1000
 

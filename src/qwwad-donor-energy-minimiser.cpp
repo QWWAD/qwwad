@@ -11,10 +11,12 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
 #include <gsl/gsl_multimin.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qwwad-donor-energy-minimiser.h"
 #include "qwwad-schroedinger-donor-2D.h"
 #include "qwwad-schroedinger-donor-variable.h"
+
+using namespace QWWAD;
 
 namespace Leeds
 {

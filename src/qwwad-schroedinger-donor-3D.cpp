@@ -8,12 +8,13 @@
 #include "qwwad-schroedinger-donor-3D.h"
 
 #include <cmath>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-using namespace constants;
-
 SchroedingerSolverDonor3D::SchroedingerSolverDonor3D(const double                 m,
                                                      const std::valarray<double> &V,
                                                      const std::valarray<double> &z,

@@ -20,7 +20,7 @@
 #include "ef-helpers.h"
 #include "struct.h"
 #include "maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
 static double psi_at_inf(const double  E,
                          const double  delta_z,

@@ -12,11 +12,12 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-subband.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 static void output_ff(const double        W, // Arbitrary well width to generate q

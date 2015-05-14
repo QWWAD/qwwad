@@ -6,9 +6,10 @@
  */
 
 #include "dos-functions.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include <cmath>
-using namespace Leeds;
+
+using namespace QWWAD;
 using namespace constants;
 
 /**

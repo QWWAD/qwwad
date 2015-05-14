@@ -41,10 +41,11 @@
 #include <gsl/gsl_roots.h>
 #include <valarray>
 #include "qwwad-options.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /// Parameters needed for computing superlattice eigenstates

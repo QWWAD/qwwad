@@ -7,9 +7,11 @@
 
 #include <cmath>
 #include <armadillo>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
 using namespace arma;
-using namespace Leeds;
+
+using namespace QWWAD;
 using namespace constants;
 
 namespace Leeds {

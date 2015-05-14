@@ -11,11 +11,12 @@
 #include <iostream>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-subband.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 Options configure_options(int argc, char* argv[])

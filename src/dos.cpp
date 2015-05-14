@@ -11,14 +11,14 @@
 
 #include <iostream>
 #include "dos-functions.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qwwad-fileio.h"
 #include "qwwad-options.h"
 #include <cstdlib>
 #include <valarray>
 #include <fstream>
 
-using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

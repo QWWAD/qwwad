@@ -7,11 +7,12 @@
 #include <stdexcept>
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-material-property.h"
 #include "qclsim-maths.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

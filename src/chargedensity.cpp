@@ -15,12 +15,13 @@
 #include <gsl/gsl_math.h>
 
 #include "qclsim-fileio.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-linalg.h"
 #include "wf_options.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 class ChargeDensityOptions : public WfOptions
 {

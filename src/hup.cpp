@@ -14,10 +14,11 @@
 #include <gsl/gsl_math.h>
 #include "qclsim-linalg.h"
 #include "wf_options.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 /**
  * Configure command-line options for the program

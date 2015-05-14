@@ -17,11 +17,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

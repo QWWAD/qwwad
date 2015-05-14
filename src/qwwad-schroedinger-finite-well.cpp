@@ -10,12 +10,13 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-using namespace constants;
-
 SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                                                            const double l_b,
                                                            const double V0,

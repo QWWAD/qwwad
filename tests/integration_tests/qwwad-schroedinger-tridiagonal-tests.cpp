@@ -1,7 +1,9 @@
 #include <gtest/gtest.h>
-#include "../src/qwwad-schroedinger-tridiagonal.h"
-#include "../src/qclsim-constants.h"
+#include "qwwad-schroedinger-tridiagonal.h"
+#include "qwwad/constants.h"
+
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 TEST(SchroedingerSolverTridiag, parabolicInfTest)

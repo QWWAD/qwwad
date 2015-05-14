@@ -7,10 +7,12 @@
 #include "qclsim-subband.h"
 #include "qclsim-fileio.h"
 #include "qclsim-maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds {
-using namespace constants;
 
 Subband::Subband(State ground_state,
                  double md_0,

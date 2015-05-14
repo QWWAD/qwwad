@@ -7,9 +7,12 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-fileio.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 /**
  * \brief Reads subband minima from file
@@ -33,7 +36,7 @@ std::valarray<double> read_E(char p)
     sprintf(filename,"E%c.r",p);
     Leeds::read_table(filename, indices, E);
 
-    E *= 1e-3*Leeds::constants::e; // convert meV->J
+    E *= 1e-3*e; // convert meV->J
 
     return E;
 }

@@ -25,7 +25,7 @@
 #include <math.h>
 #include <signal.h>
 #include <gsl/gsl_math.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "struct.h"
 #include "maths.h"
 

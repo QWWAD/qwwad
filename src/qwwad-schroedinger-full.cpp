@@ -7,11 +7,13 @@
 #include "qwwad-schroedinger-full.h"
 
 #include <gsl/gsl_math.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 namespace Leeds
 {
-using namespace constants;
 /**
  * Build matrix 'A' from general eigenproblem
  * \param[in] nst_max Maximum number of states to find

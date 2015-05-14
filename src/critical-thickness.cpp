@@ -8,11 +8,12 @@
 #include <cmath>
 #include <iostream>
 #include <gsl/gsl_sf_lambert.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

@@ -15,13 +15,14 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-linalg.h"
 #include "qclsim-fermi.h"
 #include "wf_options.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 /// Type of carrier energy distribution
 enum DistributionType {

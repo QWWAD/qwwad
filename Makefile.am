@@ -80,7 +80,7 @@ bin_PROGRAMS =  ado                \
 	       	tsb     \
 		wfplot
 
-bin_SCRIPTS = src/xyz2pdb
+dist_bin_SCRIPTS = src/xyz2pdb
 
 # Build most functionality into library infrastructure
 lib_LTLIBRARIES = libqwwad.la
@@ -89,7 +89,6 @@ libqwwad_la_SOURCES =  \
 			   src/dos-functions.h         \
 			   src/double-barrier.cpp      \
 			   src/double-barrier.h        \
-			   src/qclsim-constants.h      \
 			   src/qclsim-fermi.cpp        \
 			   src/qclsim-fermi.h          \
 			   src/qclsim-fileio.cpp       \
@@ -114,6 +113,7 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim-subband.h        \
 			   src/material_library.cpp       \
 			   src/material_library.h         \
+			   src/qwwad/constants.h      \
 			   src/qwwad-debye.cpp \
 			   src/qwwad-debye.h   \
 			   src/qwwad-donor-energy-minimiser.cpp \

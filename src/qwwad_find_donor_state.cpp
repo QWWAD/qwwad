@@ -22,7 +22,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qwwad-options.h"
 #include "qwwad-donor-energy-minimiser.h"
@@ -31,6 +31,7 @@
 #include "qwwad-schroedinger-donor-variable.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 int main(int argc,char *argv[])

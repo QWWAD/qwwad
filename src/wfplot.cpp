@@ -1,7 +1,6 @@
 /**
  * \file   wfplot.cpp
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date   2012-01-30
  * \brief  Generates a plot file for wavefunction data
  */
 
@@ -14,12 +13,13 @@
 #include <cmath>
 #include <gsl/gsl_math.h>
 
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-linalg.h"
 #include "wf_options.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 /**
  * Configure command-line options for the program

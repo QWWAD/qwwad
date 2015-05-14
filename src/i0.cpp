@@ -35,11 +35,12 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 #include "qclsim-maths.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 struct EnergyParams

@@ -6,11 +6,12 @@
  */
 
 #include "qwwad-schroedinger-taylor.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
-namespace Leeds {
+using namespace QWWAD;
 using namespace constants;
 
+namespace Leeds {
 /**
  * Create discretised Hamiltonian for system
  *

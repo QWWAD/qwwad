@@ -15,11 +15,12 @@
 
 #include "qwwad-options.h"
 #include "qclsim_poisson_solver.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qclsim-fileio.h"
 
 using namespace Leeds;
-using namespace Leeds::constants;
+using namespace QWWAD;
+using namespace constants;
 
 /**
  * \brief Get user options

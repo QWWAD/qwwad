@@ -14,7 +14,7 @@
 #include <math.h>
 #include "struct.h"
 #include "maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
 int main(int argc,char *argv[])
 {

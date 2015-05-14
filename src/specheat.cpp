@@ -9,12 +9,13 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 #include "qwwad-options.h"
 #include "qclsim-fileio.h"
 #include "qwwad-debye.h"
 
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 /**

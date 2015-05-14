@@ -26,8 +26,10 @@
 #include "qwwad-options.h"
 #include "qclsim-fileio.h"
 #include "qclsim-subband.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
+
 using namespace Leeds;
+using namespace QWWAD;
 using namespace constants;
 
 static void ff_table(const double   dKz,
