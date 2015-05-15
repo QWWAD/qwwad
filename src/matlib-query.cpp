@@ -12,6 +12,8 @@
 #include "qwwad-options.h"
 #include <glibmm/ustring.h>
 
+using namespace QWWAD;
+
 /** 
  * \brief Argument values read from the command-line.
  *

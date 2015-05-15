@@ -7,6 +7,7 @@ namespace xmlpp {
 class Element;
 }
 
+namespace QWWAD {
 /**
  * A base class describing a single physical property of a material
  */
@@ -27,5 +28,6 @@ public:
     virtual const decltype(_description) & get_description() const;
     virtual const decltype(_reference)   & get_reference()   const;
 };
+} // end namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

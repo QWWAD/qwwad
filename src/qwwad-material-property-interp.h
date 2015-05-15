@@ -1,8 +1,9 @@
-#ifndef QCLSIM_MATERIAL_PROPERTY_INTERP_H
-#define QCLSIM_MATERIAL_PROPERTY_INTERP_H
+#ifndef QWWAD_MATERIAL_PROPERTY_INTERP_H
+#define QWWAD_MATERIAL_PROPERTY_INTERP_H
 
 #include "qwwad-material-property-numeric.h"
 
+namespace QWWAD {
 /**
  * A MaterialProperty that is interpolated between two values
  *
@@ -46,5 +47,6 @@ public:
     inline decltype(_b)  get_interp_b()  const {return _b;}
     decltype(_y0) get_val(const double x = 0) const;
 };
-#endif // QCLSIM_MATERIAL_PROPERTY_INTERP_H
+} // end namespace
+#endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

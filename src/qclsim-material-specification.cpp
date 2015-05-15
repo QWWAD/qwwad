@@ -1,12 +1,12 @@
 #include "material_library.h"
 #include "qclsim-material.h"
-#include "qclsim-material-property.h"
 #include "qwwad-material-property-numeric.h"
 #include "qwwad-material-property-string.h"
 #include "qclsim-material-specification.h"
 #include <glibmm/ustring.h>
 #include <stdexcept>
 
+namespace QWWAD {
 /**
  * Default constructor
  */
@@ -156,4 +156,5 @@ double MaterialSpecification::get_prop_val_x(Glib::ustring &prop_name) const
 {
     return get_prop_val(prop_name, alloy);
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

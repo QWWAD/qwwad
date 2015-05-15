@@ -3,7 +3,6 @@
 
 #include <boost/ptr_container/ptr_map.hpp>
 #include <libxml++/libxml++.h>
-class MaterialProperty;
 
 namespace xmlpp {
 class Element;
@@ -12,6 +11,9 @@ class Element;
 namespace Glib {
 class ustring;
 }
+
+namespace QWWAD {
+class MaterialProperty;
 
 /** Wrapper for XML data for a material */
 class Material {
@@ -40,6 +42,6 @@ private:
     Glib::ustring          name;           ///< The name of the material
     Glib::ustring          description;    ///< The description of the material
 };
-
-#endif // QCLSIM_MATERIAL
+} // end namespace
+#endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

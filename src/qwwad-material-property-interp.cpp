@@ -1,5 +1,5 @@
 /**
- * \file   qclsim-material-property-interp.cpp
+ * \file   qwwad-material-property-interp.cpp
  * \brief  An individual property of a material that is interpolated between two values
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qclsim-material-property-interp.h"
+#include "qwwad-material-property-interp.h"
 #include "qwwad/maths-helpers.h"
 
 namespace QWWAD {

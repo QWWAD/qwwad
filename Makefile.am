@@ -93,16 +93,16 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim-fermi.h          \
 			   src/qclsim-material.cpp     \
 			   src/qclsim-material.h       \
-			   src/qclsim-material-property.cpp     \
-			   src/qclsim-material-property.h       \
+			   src/qwwad-material-property.cpp     \
+			   src/qwwad-material-property.h       \
 			   src/qwwad-material-property-constant.cpp \
 			   src/qwwad-material-property-constant.h   \
 			   src/qwwad-material-property-numeric.cpp \
 			   src/qwwad-material-property-numeric.h   \
-			   src/qclsim-material-property-interp.cpp     \
-			   src/qclsim-material-property-interp.h       \
-			   src/qclsim-material-property-poly.cpp     \
-			   src/qclsim-material-property-poly.h       \
+			   src/qwwad-material-property-interp.cpp     \
+			   src/qwwad-material-property-interp.h       \
+			   src/qwwad-material-property-poly.cpp     \
+			   src/qwwad-material-property-poly.h       \
 			   src/qwwad-material-property-string.cpp    \
 			   src/qwwad-material-property-string.h      \
 			   src/qclsim-material-specification.cpp     \

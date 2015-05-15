@@ -13,7 +13,6 @@
 
 #include "material_library.h"
 #include "qclsim-material.h"
-#include "qclsim-material-property.h"
 #include "qwwad-material-property-numeric.h"
 #include <cstdlib>
 #include <stdexcept>
@@ -24,10 +23,8 @@
 #include "qwwad/maths-helpers.h"
 #include "qwwad/constants.h"
 
-using namespace QWWAD;
+namespace QWWAD {
 using namespace constants;
-
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
 const Glib::ustring & MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
                                                          Glib::ustring &property_name)
@@ -63,15 +60,15 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
         material_nodes = root_element->get_children("material");
 
         // Iterate through all material nodes and add materials to the list
-        for(NodeListIter ielem = material_nodes.begin(); ielem != material_nodes.end(); ++ielem)
+        for(auto node : material_nodes)
         {
             // Check that the node is really an element
-            xmlpp::Element *elem = dynamic_cast<xmlpp::Element *>(*ielem);
+            auto elem = dynamic_cast<xmlpp::Element *>(node);
 
             if(elem)
             {
                 // Add the material to the list
-                Glib::ustring name = elem->get_attribute_value("name");
+                auto name = elem->get_attribute_value("name");
                 materials.insert(name, new Material(elem));
             }
         }
@@ -134,5 +131,6 @@ Material * MaterialLibrary::get_material(const char  *mat_name)
 {
     std::string str(mat_name);
     return &materials.at(str);
+}
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

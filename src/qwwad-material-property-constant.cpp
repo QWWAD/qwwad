@@ -8,6 +8,7 @@
 #include <libxml++/libxml++.h>
 #include "qwwad-material-property-constant.h"
 
+namespace QWWAD {
 /**
  * Initialise a MaterialPropertyConstant from an XML element
  *
@@ -68,4 +69,5 @@ MaterialPropertyConstant::get_val(const double /* x */) const
 {
     return _constant;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

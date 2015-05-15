@@ -8,8 +8,7 @@
 #include <libxml++/libxml++.h>
 #include "qwwad-material-property-string.h"
 
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
-
+namespace QWWAD {
 MaterialPropertyString::MaterialPropertyString(xmlpp::Element *elem) :
     MaterialProperty(elem)
 {
@@ -45,4 +44,5 @@ const Glib::ustring & MaterialPropertyString::get_text() const
 {
     return _text;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

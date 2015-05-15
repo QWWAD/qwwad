@@ -1,5 +1,5 @@
 /**
- * \file   qclsim-material-property.cpp
+ * \file   qwwad-material-property.cpp
  * \brief  A class to handle an individual property of a material
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
@@ -8,10 +8,10 @@
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
 #include "qwwad/constants.h"
-#include "qclsim-material-property.h"
+#include "qwwad-material-property.h"
 #include "qwwad/maths-helpers.h"
 
-using namespace QWWAD;
+namespace QWWAD {
 using namespace constants;
 
 /**
@@ -87,4 +87,5 @@ MaterialProperty::get_reference() const
 {
     return _reference;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

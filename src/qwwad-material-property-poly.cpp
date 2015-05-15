@@ -1,16 +1,15 @@
 /**
- * \file   qclsim-material-property-poly.cpp
+ * \file   qwwad-material-property-poly.cpp
  * \brief  An individual property of a material, represented by a polynomial fitting
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qclsim-material-property-poly.h"
+#include "qwwad-material-property-poly.h"
 #include <cmath>
 
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
-
+namespace QWWAD {
 MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
     MaterialPropertyNumeric(elem),
     _poly_index(std::vector<int>(0)),
@@ -75,4 +74,5 @@ double MaterialPropertyPoly::get_val(const double x) const
 
     return val;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

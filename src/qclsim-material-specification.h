@@ -5,6 +5,7 @@ namespace Glib {
 class ustring;
 }
 
+namespace QWWAD {
 class Material;
 class MaterialLibrary;
 
@@ -50,5 +51,6 @@ public:
     double           alloy;       ///< The alloy fraction (if applicable)
     double           n3d;         ///< The doping density (if applicable)
 };
+} // end namespace
 #endif // QCLSIM_MATERIAL_SPECIFICATION_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

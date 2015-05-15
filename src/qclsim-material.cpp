@@ -7,14 +7,12 @@
 #include <iostream>
 #include "material_library.h"
 #include "qclsim-material.h"
-#include "qclsim-material-property.h"
-#include "qclsim-material-property-interp.h"
-#include "qclsim-material-property-poly.h"
+#include "qwwad-material-property-interp.h"
+#include "qwwad-material-property-poly.h"
 #include "qwwad-material-property-constant.h"
 #include "qwwad-material-property-string.h"
 
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
-
+namespace QWWAD {
 /** Return the name of the material */
 const Glib::ustring & Material::get_name() const {
     return name;
@@ -70,13 +68,13 @@ void Material::read_properties_from_xml()
         property_nodes = elem->get_children("property");
 
         // Loop through all property nodes and add them to the cache
-        for(NodeListIter iprop = property_nodes.begin(); iprop != property_nodes.end(); ++iprop)
+        for(auto node : property_nodes)
         {
-            xmlpp::Element *prop = dynamic_cast<xmlpp::Element *>(*iprop);
+            auto prop = dynamic_cast<xmlpp::Element *>(node);
 
             if(prop)
             {
-                Glib::ustring prop_name = prop->get_attribute_value("name");
+                auto prop_name = prop->get_attribute_value("name");
 
                 // Figure out what type of property it is and add an appropriate object to the tree
                 if(!prop->get_children("interp").empty())
@@ -117,4 +115,5 @@ MaterialProperty * Material::get_property(Glib::ustring &property_name)
 {
     return &properties.at(property_name);
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

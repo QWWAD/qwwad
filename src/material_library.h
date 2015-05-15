@@ -17,12 +17,13 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <libxml++/libxml++.h>
 
-class Material;
-class MaterialProperty;
-
 namespace Glib {
 class ustring;
 }
+
+namespace QWWAD {
+class Material;
+class MaterialProperty;
 
 /** Library of material data */
 class MaterialLibrary {
@@ -48,5 +49,6 @@ private:
     xmlpp::Document                         *doc;
     xmlpp::Element                          *root_element;
 };
+} // end namespace
 #endif //MATERIAL_LIBRARY_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -8,6 +8,7 @@
 #include <libxml++/libxml++.h>
 #include "qwwad-material-property-numeric.h"
 
+namespace QWWAD {
 /**
  * Create a material property object from a given XML element
  *
@@ -45,4 +46,5 @@ MaterialPropertyNumeric::get_unit() const
 {
     return _unit;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
