@@ -21,41 +21,42 @@ MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
     _xmin(0),
     _xmax(1)
 {
-    xmlpp::Node::NodeList all_interp_nodes = elem->get_children("interp");
+    auto all_interp_nodes = elem->get_children("interp");
 
     // Check for interpolated values
     if(all_interp_nodes.size() == 1)
     {
-        xmlpp::Element *interp_node = dynamic_cast<xmlpp::Element *>(all_interp_nodes.front());
+        auto interp_node = dynamic_cast<xmlpp::Element *>(all_interp_nodes.front());
 
         if(interp_node)
         {
-            xmlpp::Node::NodeList y0_nodes = interp_node->get_children("y0");
-            xmlpp::Node::NodeList y1_nodes = interp_node->get_children("y1");
-            xmlpp::Element *y0_node = dynamic_cast<xmlpp::Element *>(y0_nodes.front());
-            xmlpp::Element *y1_node = dynamic_cast<xmlpp::Element *>(y1_nodes.front());
+            auto y0_nodes = interp_node->get_children("y0");
+            auto y1_nodes = interp_node->get_children("y1");
+            auto y0_node  = dynamic_cast<xmlpp::Element *>(y0_nodes.front());
+            auto y1_node  = dynamic_cast<xmlpp::Element *>(y1_nodes.front());
 
-            if(y0_node and y1_node)
+            if(y0_node && y1_node)
             {
-                xmlpp::TextNode *y0_txtnode = y0_node->get_child_text();
-                xmlpp::TextNode *y1_txtnode = y1_node->get_child_text();
+                auto y0_txtnode = y0_node->get_child_text();
+                auto y1_txtnode = y1_node->get_child_text();
                 std::stringstream y0_str(y0_txtnode->get_content().raw());
                 std::stringstream y1_str(y1_txtnode->get_content().raw());
 
-                y0_str >> _interp_y0;
-                y1_str >> _interp_y1;
+                y0_str >> _y0;
+                y1_str >> _y1;
 
-                // Read optional bowing factor
-                xmlpp::Node::NodeList b_nodes = interp_node->get_children("bow");
+                // Read optional bowing factor if specified
+                auto b_nodes = interp_node->get_children("bow");
 
                 if(!b_nodes.empty())
                 {
-                    xmlpp::Element *b_node = dynamic_cast<xmlpp::Element *>(b_nodes.front());
-                    _interp_is_bowed = true;
-                    xmlpp::TextNode *b_txtnode = b_node->get_child_text();
+                    auto b_node = dynamic_cast<xmlpp::Element *>(b_nodes.front());
+                    auto b_txtnode = b_node->get_child_text();
                     std::stringstream b_str(b_txtnode->get_content().raw());
-                    b_str >> _interp_b;
+                    b_str >> _b;
                 }
+                else
+                    _b = 0.0;
 
                 // Read validity limits
                 std::stringstream xmin_str(interp_node->get_attribute_value("xmin").raw());
@@ -74,7 +75,37 @@ MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
     } // Finish parsing <interp> tag
 }
 
-double MaterialPropertyInterp::get_val(const double x) const
+/**
+ * Create a material property object using specified values
+ *
+ * \param[in] name        The name of the property
+ * \param[in] description A description of the property
+ * \param[in] reference   A literature reference for the property
+ * \param[in] unit        The unit associated with the property
+ * \param[in] y0          The value of the property when \f$x=0\f$ 
+ * \param[in] y1          The value of the property when \f$x=1\f$ 
+ * \param[in] b           The bowing parameter
+ *
+ * \details The limits for interpolation are set as \f$x = (0.0, 1.0)\f$
+ */
+MaterialPropertyInterp::MaterialPropertyInterp(decltype(_name)        name,
+                                               decltype(_description) description,
+                                               decltype(_reference)   reference,
+                                               decltype(_unit)        unit,
+                                               decltype(_y0)          y0,
+                                               decltype(_y1)          y1,
+                                               decltype(_b)           b)
+    :
+    MaterialPropertyNumeric(name, description, reference, unit),
+    _y0(y0),
+    _y1(y1),
+    _b(b),
+    _xmin(0.0),
+    _xmax(1.0)
+{}
+
+decltype(MaterialPropertyInterp::_y0)
+MaterialPropertyInterp::get_val(const double x) const
 {
     if (x < _xmin or x > _xmax)
     {
@@ -83,26 +114,40 @@ double MaterialPropertyInterp::get_val(const double x) const
         throw std::domain_error(oss.str());
     }
 
-    return lin_interp(_interp_y0, _interp_y1, x, _interp_b);
+    return lin_interp(_y0, _y1, x, _b);
 }
 
-double MaterialPropertyInterp::get_interp_y0() const
+/**
+ * Set the validity limits for the interpolation
+ *
+ * \param[in] xmin The lower limit for interpolation
+ * \param[in] xmax The upper limit for interpolation
+ */
+void MaterialPropertyInterp::set_limits(const decltype(_xmin) xmin,
+                                        const decltype(_xmax) xmax)
 {
-    return _interp_y0;
+    if (xmin >= xmax)
+    {
+        std::ostringstream oss;
+        oss << "Lower limit: " << xmin << " must be lower than upper limit: " << xmax << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
+    _xmin = xmin;
+    _xmax = xmax;
 }
 
-double MaterialPropertyInterp::get_interp_y1() const
+/**
+ * Set the validity limits for the interpolation
+ *
+ * \param[out] xmin The lower limit for interpolation
+ * \param[out] xmax The upper limit for interpolation
+ */
+void MaterialPropertyInterp::get_limits(decltype(_xmin) &xmin,
+                                        decltype(_xmax) &xmax)
 {
-    return _interp_y1;
-}
-
-double MaterialPropertyInterp::get_interp_b() const
-{
-    return _interp_b;
-}
-
-bool MaterialPropertyInterp::interp_is_bowed() const {
-    return _interp_is_bowed;
+    xmin = _xmin;
+    xmax = _xmax;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

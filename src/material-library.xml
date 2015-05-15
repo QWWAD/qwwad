@@ -20,6 +20,8 @@
 <!ATTLIST property reference   CDATA #IMPLIED>
 <!ATTLIST interp   xmin        CDATA "0">
 <!ATTLIST interp   xmax        CDATA "1">
+<!ATTLIST poly     xmin        CDATA #IMPLIED>
+<!ATTLIST poly     xmax        CDATA #IMPLIED>
 <!ATTLIST ai       i           CDATA #REQUIRED>
 ]>
 

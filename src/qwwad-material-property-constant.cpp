@@ -8,8 +8,13 @@
 #include <libxml++/libxml++.h>
 #include "qwwad-material-property-constant.h"
 
-typedef xmlpp::Node::NodeList::iterator NodeListIter;
-
+/**
+ * Initialise a MaterialPropertyConstant from an XML element
+ *
+ * \param[in] elem An XML element containing the constant data value.
+ *
+ * \details The XML element must contain a single double-precision number as its child text
+ */
 MaterialPropertyConstant::MaterialPropertyConstant(xmlpp::Element *elem) :
     MaterialPropertyNumeric(elem),
     _constant(0.0)
@@ -34,22 +39,32 @@ MaterialPropertyConstant::MaterialPropertyConstant(xmlpp::Element *elem) :
 }
 
 /**
+ * Create a material property object using specified values
+ *
+ * \param[in] name        The name of the property
+ * \param[in] description A description of the property
+ * \param[in] reference   A literature reference for the property
+ * \param[in] unit        The unit associated with the property
+ * \param[in] value       The constant value of the property
+ */
+MaterialPropertyConstant::MaterialPropertyConstant(decltype(_name)        name,
+                                                   decltype(_description) description,
+                                                   decltype(_reference)   reference,
+                                                   decltype(_unit)        unit,
+                                                   decltype(_constant)    value) :
+    MaterialPropertyNumeric(name, description, reference, unit),
+    _constant(value)
+{}
+
+/**
  * \brief Return the numerical value of the property
  *
- * \param[in] x If the property is a function of x, then you can
- *              specify x here.  If you leave it blank, x=0 is
- *              assumed.  For constant-valued properties, x is
- *              ignored.
+ * \param[in] x (unused) This is just a placeholder, since the value is constant
  *
- * \returns The value in whichever units are specified in the XML file
- *
- * \todo Make the library unit-aware (i.e., enable unit conversions etc)
- *
- * \todo Make the library type-aware (i.e., "know" that a property
- *       represents an energy/length/time etc) and check that the
- *       unit makes sense.
+ * \returns The parameter value
  */
-double MaterialPropertyConstant::get_val(const double /* x */) const
+decltype(MaterialPropertyConstant::_constant)
+MaterialPropertyConstant::get_val(const double /* x */) const
 {
     return _constant;
 }

@@ -5,18 +5,25 @@
 
 /**
  * A physical property of a material that can be described by a numerical value
+ *
+ * \details The numerical value may be obtained using the get_val() function.
+ *          The relevant unit for the property may be obtained using get_unit().
  */
 class MaterialPropertyNumeric : public MaterialProperty {
+protected:
+    Glib::ustring _unit; ///< The unit of the property
+
 public:
     MaterialPropertyNumeric(){}
     MaterialPropertyNumeric(xmlpp::Element *elem);
+    MaterialPropertyNumeric(decltype(_name)        name,
+                            decltype(_description) description,
+                            decltype(_reference)   reference,
+                            decltype(_unit)        unit);
 
-    const Glib::ustring & get_unit() const;
+    const decltype(_unit) & get_unit() const;
 
     virtual double get_val(const double x = 0) const = 0;
-
-protected:
-    Glib::ustring _unit; ///< The unit of the property
 };
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

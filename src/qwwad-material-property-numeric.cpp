@@ -23,8 +23,26 @@ MaterialPropertyNumeric::MaterialPropertyNumeric(xmlpp::Element *elem) :
     _unit = elem->get_attribute_value("unit");
 }
 
+/**
+ * Create a material property object using specified values
+ *
+ * \param[in] name        The name of the property
+ * \param[in] description A description of the property
+ * \param[in] reference   A literature reference for the property
+ * \param[in] unit        The unit associated with the property
+ */
+MaterialPropertyNumeric::MaterialPropertyNumeric(decltype(_name)        name,
+                                                 decltype(_description) description,
+                                                 decltype(_reference)   reference,
+                                                 decltype(_unit)        unit) :
+    MaterialProperty(name, description, reference),
+    _unit(unit)
+{}
+
 /// Return the unit for the property
-const Glib::ustring & MaterialPropertyNumeric::get_unit() const {
+const decltype(MaterialPropertyNumeric::_unit) &
+MaterialPropertyNumeric::get_unit() const
+{
     return _unit;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

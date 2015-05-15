@@ -20,18 +20,18 @@ MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
 
     if(poly_nodes.size() == 1) // Parse a polynomial value
     {
-        xmlpp::Element *polynomial_node  = dynamic_cast<xmlpp::Element *>(poly_nodes.front());
+        auto polynomial_node  = dynamic_cast<xmlpp::Element *>(poly_nodes.front());
 
         if(polynomial_node)
         {
-            xmlpp::Node::NodeList poly_terms = polynomial_node->get_children("ai");
+            auto poly_terms = polynomial_node->get_children("ai");
 
             // Loop through all terms of the polynomial
-            for(NodeListIter term = poly_terms.begin(); term != poly_terms.end(); ++term)
+            for(auto term : poly_terms)
             {
                 // TODO: Probably need some error checking in here
 
-                xmlpp::Element *ai_elem = dynamic_cast<xmlpp::Element *>(*term);
+                auto ai_elem = dynamic_cast<xmlpp::Element *>(term);
                 std::stringstream i_str(ai_elem->get_attribute_value("i").raw());
                 std::stringstream ai_str(ai_elem->get_child_text()->get_content().raw());
 
@@ -60,8 +60,8 @@ double MaterialPropertyPoly::get_val(const double x) const
 
     for(unsigned int iterm = 0; iterm < _poly_index.size(); ++iterm)
     {
-        const double ai = _poly_coeff[iterm];
-        unsigned int  i = _poly_index[iterm];
+        const auto ai = _poly_coeff[iterm];
+        const auto  i = _poly_index[iterm];
 
         // TODO: This fallback mechanism is provided for systems that
         //       don't have new versions of GSL (1.16?). Ultimately,
