@@ -10,7 +10,7 @@
 #include "qclsim-material.h"
 #include "material_library.h"
 #include "qclsim-material-specification.h"
-#include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
 #include "qwwad/maths-helpers.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"
@@ -69,7 +69,8 @@ static double thermal_cond(const MaterialSpecification &mat, const double T)
                 }
                 catch(std::exception &e)
                 {
-                    k = mat.xml->get_property("thermal-conductivity-T")->get_val(T);
+                    const auto property = dynamic_cast<MaterialPropertyNumeric *>(mat.xml->get_property("thermal-conductivity-T"));
+                    k = property->get_val(T);
                 }
             }
         }

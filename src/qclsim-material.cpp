@@ -10,6 +10,8 @@
 #include "qclsim-material-property.h"
 #include "qclsim-material-property-interp.h"
 #include "qclsim-material-property-poly.h"
+#include "qwwad-material-property-constant.h"
+#include "qwwad-material-property-string.h"
 
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
@@ -78,15 +80,19 @@ void Material::read_properties_from_xml()
 
                 // Figure out what type of property it is and add an appropriate object to the tree
                 if(!prop->get_children("interp").empty())
-                {
                     properties.insert(prop_name, new MaterialPropertyInterp(prop));
-                }
                 else if(!prop->get_children("poly").empty())
-                {
                     properties.insert(prop_name, new MaterialPropertyPoly(prop));
-                }
+                else if(!prop->get_children("string").empty())
+                    properties.insert(prop_name, new MaterialPropertyString(prop));
+                else if(prop->has_child_text())
+                    properties.insert(prop_name, new MaterialPropertyConstant(prop));
                 else
-                    properties.insert(prop_name, new MaterialProperty(prop));
+                {
+                    std::ostringstream oss;
+                    oss << "Property type could not be recognised for " << prop_name << " in material " << name << std::endl;
+                    throw std::runtime_error(oss.str());
+                }
             }
         }
     }

@@ -14,6 +14,7 @@
 #include "material_library.h"
 #include "qclsim-material.h"
 #include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
@@ -31,7 +32,7 @@ typedef xmlpp::Node::NodeList::iterator NodeListIter;
 const Glib::ustring & MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
                                                          Glib::ustring &property_name)
 {
-    MaterialProperty *property = get_property(mat_name, property_name);
+    auto property = dynamic_cast<MaterialPropertyNumeric *>(get_property(mat_name, property_name));
     return property->get_unit();
 }
 
@@ -118,9 +119,10 @@ MaterialProperty * MaterialLibrary::get_property(Glib::ustring &mat_name,
 double MaterialLibrary::get_val(Glib::ustring &mat_name,
                                 Glib::ustring &property_name)
 {
-    MaterialProperty *property = materials.at(mat_name).get_property(property_name);
+    const auto property = materials.at(mat_name).get_property(property_name);
+    const auto numeric_property = dynamic_cast<MaterialPropertyNumeric *>(property);
 
-    return property->get_val();
+    return numeric_property->get_val();
 }
 
 /**

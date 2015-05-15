@@ -17,7 +17,7 @@ namespace QWWAD {
  * \param[in] elem An XML element containing the property data
  */
 MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
-    MaterialProperty(elem),
+    MaterialPropertyNumeric(elem),
     _xmin(0),
     _xmax(1)
 {

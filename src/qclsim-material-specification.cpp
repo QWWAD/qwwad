@@ -1,8 +1,11 @@
 #include "material_library.h"
 #include "qclsim-material.h"
 #include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
+#include "qwwad-material-property-string.h"
 #include "qclsim-material-specification.h"
 #include <glibmm/ustring.h>
+#include <stdexcept>
 
 /**
  * Default constructor
@@ -83,7 +86,7 @@ double MaterialSpecification::get_prop_val_0(const char *prop_name) const
 
 double MaterialSpecification::get_prop_val_0(Glib::ustring &prop_name) const
 {
-    return xml->get_property(prop_name)->get_val(0.0);
+    return get_prop_val(prop_name, 0.0);
 }
 
 /**
@@ -95,13 +98,44 @@ double MaterialSpecification::get_prop_val_0(Glib::ustring &prop_name) const
  */
 const Glib::ustring & MaterialSpecification::get_prop_text(Glib::ustring &prop_name) const
 {
-    return xml->get_property(prop_name)->get_text();
+    const auto property = dynamic_cast<MaterialPropertyString *>(xml->get_property(prop_name));
+
+    if(!property)
+    {
+        std::ostringstream oss;
+        oss << "Could not read text data for property: " << prop_name << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
+    return property->get_text();
 }
 
 const Glib::ustring & MaterialSpecification::get_prop_text(const char *prop_name) const
 {
     Glib::ustring str(prop_name);
     return get_prop_text(str);
+}
+
+double MaterialSpecification::get_prop_val(const char   *prop_name,
+                                           const double  x) const
+{
+    Glib::ustring str(prop_name);
+    return get_prop_val(str, x);
+}
+
+double MaterialSpecification::get_prop_val(Glib::ustring &prop_name,
+                                           const double   x) const
+{
+    const auto property = dynamic_cast<MaterialPropertyNumeric *>(xml->get_property(prop_name));
+
+    if(!property)
+    {
+        std::ostringstream oss;
+        oss << "Could not read numerical data for property: " << prop_name << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
+    return property->get_val(x);
 }
 
 /**
@@ -114,12 +148,12 @@ const Glib::ustring & MaterialSpecification::get_prop_text(const char *prop_name
  */
 double MaterialSpecification::get_prop_val_x(const char *prop_name) const
 {
-	Glib::ustring str(prop_name);
-	return get_prop_val_x(str);
+    Glib::ustring str(prop_name);
+    return get_prop_val_x(str);
 }
 
 double MaterialSpecification::get_prop_val_x(Glib::ustring &prop_name) const
 {
-    return xml->get_property(prop_name)->get_val(alloy);
+    return get_prop_val(prop_name, alloy);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

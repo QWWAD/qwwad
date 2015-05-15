@@ -12,11 +12,11 @@
 typedef xmlpp::Node::NodeList::iterator NodeListIter;
 
 MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
-    MaterialProperty(elem),
+    MaterialPropertyNumeric(elem),
     _poly_index(std::vector<int>(0)),
     _poly_coeff(std::vector<double>(0))
 {
-    xmlpp::Node::NodeList poly_nodes = elem->get_children("poly");
+    auto poly_nodes = elem->get_children("poly");
 
     if(poly_nodes.size() == 1) // Parse a polynomial value
     {

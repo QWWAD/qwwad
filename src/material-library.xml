@@ -3,13 +3,14 @@
 [
 <!ELEMENT material-library (material+)>
 <!ELEMENT material (property*)>
-<!ELEMENT property (#PCDATA|interp|poly)*>
+<!ELEMENT property (#PCDATA|interp|poly|string)*>
 <!ELEMENT interp (y0,y1,bow*)>
 <!ELEMENT y0 (#PCDATA)>
 <!ELEMENT y1 (#PCDATA)>
 <!ELEMENT bow (#PCDATA)>
 <!ELEMENT poly (ai+)>
 <!ELEMENT ai (#PCDATA)>
+<!ELEMENT string (#PCDATA)>
 
 <!ATTLIST material name        ID    #REQUIRED>
 <!ATTLIST material description CDATA #IMPLIED>
@@ -352,8 +353,12 @@
 			0.08
 		</property>
 		<property name="crystal-structure">zinc-blende</property>
-		<property name="cation">In</property>
-		<property name="anion">P</property>
+                <property name="cation">
+                    <string>In</string>
+                </property>
+                <property name="anion">
+                    <string>P</string>
+                </property>
 		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
 			9.61
 		</property>
@@ -1125,8 +1130,12 @@
 			5.6611
 		</property>
 		<property name="crystal-structure">zinc-blende</property>
-		<property name="cation">Al</property>
-		<property name="anion">As</property>
+                <property name="cation">
+                    <string>Al</string>
+                </property>
+                <property name="anion">
+                    <string>As</string>
+                </property>
 	</material>
 
 	<material name="GaAs" description="Gallium arsenide">
@@ -1134,28 +1143,44 @@
 			5.65325
 		</property>
 		<property name="crystal-structure">zinc-blende</property>
-		<property name="cation">Ga</property>
-		<property name="anion">As</property>
+                <property name="cation">
+                    <string>Ga</string>
+                </property>
+                <property name="anion">
+                    <string>As</string>
+                </property>
 	</material>
 	<material name="AlN" description="Aluminium nitride">
 		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
 			3.189
 		</property>
 		<property name="crystal-structure">wurtzite</property>
-		<property name="cation">Al</property>
-		<property name="anion">N</property>
+                <property name="cation">
+                    <string>Al</string>
+                </property>
+                <property name="anion">
+                    <string>N</string>
+                </property>
 	</material>
 	<material name="GaN" description="Gallium nitride">
 		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
 			3.112
 		</property>
 		<property name="crystal-structure">wurtzite</property>
-		<property name="cation">Ga</property>
-		<property name="anion">N</property>
+                <property name="cation">
+                    <string>Ga</string>
+                </property>
+                <property name="anion">
+                    <string>N</string>
+                </property>
 	</material>
 	<material name="InAs" description="Indium arsenide">
 		<property name="crystal-structure">zinc-blende</property>
-		<property name="cation">In</property>
-		<property name="anion">As</property>
+                <property name="cation">
+                    <string>In</string>
+                </property>
+                <property name="anion">
+                    <string>As</string>
+                </property>
 	</material>
 </material-library>

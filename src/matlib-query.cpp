@@ -2,12 +2,12 @@
  * \file     matlib-query.cpp
  * \brief    Queries parameters from the material library
  * \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date     2014-02-07
  */
 
 #include <iostream>
 #include "qclsim-material.h"
-#include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
+#include "qwwad-material-property-string.h"
 #include "material_library.h"
 #include "qwwad-options.h"
 #include <glibmm/ustring.h>
@@ -112,14 +112,18 @@ int main(int argc, char* argv[])
     Material          mat  = lib.get_material(opt.get_string_option("material"));
     MaterialProperty *prop = mat.get_property(opt.get_property().c_str());
 
-    if(opt.is_text())
-        std::cout << prop->get_text() << std::endl;
+    const auto text_property = dynamic_cast<MaterialPropertyString *>(prop);
+
+    if(text_property)
+        std::cout << text_property->get_text() << std::endl;
     else
     {
-        std::cout << prop->get_val(opt.get_var());
+        const auto numeric_property = dynamic_cast<MaterialPropertyNumeric *>(prop);
+
+        std::cout << numeric_property->get_val(opt.get_var());
 
         if(opt.show_unit())
-            std::cout << prop->get_unit();
+            std::cout << " " << numeric_property->get_unit();
 
         std::cout << std::endl;
     }

@@ -1,9 +1,9 @@
 #ifndef QCLSIM_MATERIAL_PROPERTY_POLY_H
 #define QCLSIM_MATERIAL_PROPERTY_POLY_H
 
-#include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
 
-class MaterialPropertyPoly : public MaterialProperty {
+class MaterialPropertyPoly : public MaterialPropertyNumeric {
 public:
     MaterialPropertyPoly(xmlpp::Element *elem);
     double get_val(const double x = 0) const;

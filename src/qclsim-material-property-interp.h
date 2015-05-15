@@ -1,9 +1,9 @@
 #ifndef QCLSIM_MATERIAL_PROPERTY_INTERP_H
 #define QCLSIM_MATERIAL_PROPERTY_INTERP_H
 
-#include "qclsim-material-property.h"
+#include "qwwad-material-property-numeric.h"
 
-class MaterialPropertyInterp : public MaterialProperty {
+class MaterialPropertyInterp : public MaterialPropertyNumeric {
 public:
     MaterialPropertyInterp(){}
     MaterialPropertyInterp(xmlpp::Element *elem);

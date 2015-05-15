@@ -31,6 +31,11 @@ public:
 
     MaterialSpecification & operator=(const MaterialSpecification &rhs);
 
+    double get_prop_val(const char    *prop_name,
+                        const double   x) const;
+    double get_prop_val(Glib::ustring &prop_name,
+                        const double   x) const;
+
     double get_prop_val_0(const char    *prop_name) const;
     double get_prop_val_0(Glib::ustring &prop_name) const;
 
