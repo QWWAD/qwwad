@@ -11,8 +11,7 @@ public:
 
 private:
     // Values for polynomial properties
-    std::vector<int>    _poly_index; ///< The index of each term
-    std::vector<double> _poly_coeff; ///< The coefficient of each term
+    std::map<int, double> _poly_coeffs; ///< The terms in the polynomial
 };
 } // end namespace
 #endif

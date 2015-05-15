@@ -11,9 +11,7 @@
 
 namespace QWWAD {
 MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
-    MaterialPropertyNumeric(elem),
-    _poly_index(std::vector<int>(0)),
-    _poly_coeff(std::vector<double>(0))
+    MaterialPropertyNumeric(elem)
 {
     auto poly_nodes = elem->get_children("poly");
 
@@ -39,8 +37,7 @@ MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
 
                 i_str  >> i;
                 ai_str >> ai;
-                _poly_index.push_back(i);
-                _poly_coeff.push_back(ai);
+                _poly_coeffs[i] = ai;
             }
         }
     }
@@ -57,10 +54,10 @@ double MaterialPropertyPoly::get_val(const double x) const
 {
     double val = 0; // Output value
 
-    for(unsigned int iterm = 0; iterm < _poly_index.size(); ++iterm)
+    for(auto term : _poly_coeffs)
     {
-        const auto ai = _poly_coeff[iterm];
-        const auto  i = _poly_index[iterm];
+        const auto  i = term.first;
+        const auto ai = term.second;
 
         // TODO: This fallback mechanism is provided for systems that
         //       don't have new versions of GSL (1.16?). Ultimately,
