@@ -89,14 +89,7 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
 Material const * MaterialLibrary::get_material(const Glib::ustring &mat_name) const
 {
     // Look through all materials that we have already parsed
-    Material mat;
     return &materials.at(mat_name);
-}
-
-MaterialLibrary::~MaterialLibrary()
-{
-    // TODO: Commented out to hack-fix a double free. Should investigate leaks!
-    // delete parser;
 }
 
 /**

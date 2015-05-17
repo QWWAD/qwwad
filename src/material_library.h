@@ -29,7 +29,6 @@ class MaterialProperty;
 class MaterialLibrary {
 public:
     MaterialLibrary(const Glib::ustring &filename);
-    ~MaterialLibrary();
 
     Material const * get_material(const char          *mat_name) const;
     Material const * get_material(const Glib::ustring &mat_name) const;

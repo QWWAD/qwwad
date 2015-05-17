@@ -19,7 +19,6 @@ class MaterialPropertyNumeric;
 /** Wrapper for XML data for a material */
 class Material {
 public:
-    Material(){}
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
 
@@ -39,8 +38,6 @@ public:
                               const double   x = 0) const;
 
 private:
-    void read_properties_from_xml();
-
     /// Cached set of material properties
     boost::ptr_map<Glib::ustring, MaterialProperty> properties;
 
