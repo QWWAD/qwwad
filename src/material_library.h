@@ -31,11 +31,11 @@ public:
     MaterialLibrary(const Glib::ustring &filename);
     ~MaterialLibrary();
 
-    Material * get_material(const char          *mat_name);
-    Material * get_material(const Glib::ustring &mat_name);
+    Material const * get_material(const char          *mat_name) const;
+    Material const * get_material(const Glib::ustring &mat_name) const;
 
-    MaterialProperty * get_property(Glib::ustring &mat_name,
-                                    Glib::ustring &property_name);
+    MaterialProperty const * get_property(Glib::ustring &mat_name,
+                                          Glib::ustring &property_name) const;
 
     double get_val(Glib::ustring &mat_name,
                    Glib::ustring &property_name);

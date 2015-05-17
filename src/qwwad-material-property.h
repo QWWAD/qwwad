@@ -24,10 +24,17 @@ public:
                      decltype(_description) description,
                      decltype(_reference)   reference);
 
+    virtual MaterialProperty * clone() const;
+
     virtual const decltype(_name)        & get_name()        const;
     virtual const decltype(_description) & get_description() const;
     virtual const decltype(_reference)   & get_reference()   const;
 };
+
+inline MaterialProperty * new_clone(const MaterialProperty & mat)
+{
+    return mat.clone();
+}
 } // end namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

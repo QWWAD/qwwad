@@ -55,6 +55,11 @@ MaterialProperty::MaterialProperty(decltype(_name)        name,
         _name = name;
 }
 
+MaterialProperty* MaterialProperty::clone() const
+{
+    return new MaterialProperty(_name, _description, _reference);
+}
+
 /**
  * Return the name of the property
  *

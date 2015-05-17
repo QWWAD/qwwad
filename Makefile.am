@@ -91,8 +91,8 @@ libqwwad_la_SOURCES =  \
 			   src/double-barrier.h        \
 			   src/qclsim-fermi.cpp        \
 			   src/qclsim-fermi.h          \
-			   src/qclsim-material.cpp     \
-			   src/qclsim-material.h       \
+			   src/qwwad-material.cpp     \
+			   src/qwwad-material.h       \
 			   src/qwwad-material-property.cpp     \
 			   src/qwwad-material-property.h       \
 			   src/qwwad-material-property-constant.cpp \
@@ -105,8 +105,6 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-material-property-poly.h       \
 			   src/qwwad-material-property-string.cpp    \
 			   src/qwwad-material-property-string.h      \
-			   src/qclsim-material-specification.cpp     \
-			   src/qclsim-material-specification.h       \
 			   src/qclsim_poisson_solver.cpp \
 			   src/qclsim_poisson_solver.h   \
 			   src/qclsim-subband.cpp      \

@@ -17,6 +17,8 @@ public:
                              decltype(_unit)        unit,
                              decltype(_constant)    value);
 
+    virtual MaterialPropertyConstant * clone() const;
+
     decltype(_constant) get_val(const double x = 0) const;
 };
 } // end namespace

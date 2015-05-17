@@ -1,12 +1,12 @@
 /**
- * \file   qclsim-material.cpp
+ * \file   qwwad-material.cpp
  * \brief  Class to describe a material
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 #include <stdexcept>
 #include <iostream>
 #include "material_library.h"
-#include "qclsim-material.h"
+#include "qwwad-material.h"
 #include "qwwad-material-property-interp.h"
 #include "qwwad-material-property-poly.h"
 #include "qwwad-material-property-constant.h"
@@ -18,11 +18,6 @@ const Glib::ustring & Material::get_name() const {
     return name;
 }
     
-/** Return the underlying XML representation */
-xmlpp::Element * Material::get_elem() const {
-    return elem;
-}
-
 /*
  * Return the description of the material
  *
@@ -36,24 +31,12 @@ const Glib::ustring & Material::get_description() const
     return description;
 }
 
-Material::~Material()
-{
-//    delete priv;
-}
-
 Material::Material(const Material *mat)
-    : elem(mat->get_elem())
 {
-    read_properties_from_xml();
+    properties = mat->properties.clone();
 }
 
 Material::Material(xmlpp::Element *elem)
-    : elem(elem)
-{
-    read_properties_from_xml();
-}
-
-void Material::read_properties_from_xml()
 {
     if(elem)
     {
@@ -65,7 +48,7 @@ void Material::read_properties_from_xml()
             description = name;
 
         // Get a list of all known properties for this material
-        property_nodes = elem->get_children("property");
+        auto property_nodes = elem->get_children("property");
 
         // Loop through all property nodes and add them to the cache
         for(auto node : property_nodes)
@@ -98,7 +81,7 @@ void Material::read_properties_from_xml()
         throw std::runtime_error("Invalid XML element");
 }
 
-MaterialProperty * Material::get_property(const char* name)
+MaterialProperty const * Material::get_property(const char *name) const
 {
     Glib::ustring prop_name(name);
     return get_property(prop_name);
@@ -111,9 +94,38 @@ MaterialProperty * Material::get_property(const char* name)
  *
  * \return The XML node for this material property
  */
-MaterialProperty * Material::get_property(Glib::ustring &property_name)
+MaterialProperty const * Material::get_property(Glib::ustring &property_name) const
 {
     return &properties.at(property_name);
+}
+
+MaterialPropertyNumeric const * Material::get_numeric_property(const char *name) const
+{
+    Glib::ustring prop_name(name);
+    return get_numeric_property(prop_name);
+}
+
+MaterialPropertyNumeric const * Material::get_numeric_property(Glib::ustring &name) const
+{
+    auto prop = dynamic_cast<MaterialPropertyNumeric const *>(get_property(name));
+    return prop;
+}
+
+double Material::get_property_value(const char   *name,
+                                    const double  x) const
+{
+    Glib::ustring prop_name(name);
+    return get_property_value(prop_name, x);
+}
+
+/**
+ * Get the value of a numerical property
+ */
+double Material::get_property_value(Glib::ustring &name,
+                                    const double   x) const
+{
+    auto prop = get_numeric_property(name);
+    return prop->get_val(x);
 }
 } // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

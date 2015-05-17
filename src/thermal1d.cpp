@@ -7,9 +7,8 @@
 #include <string>
 #include <gsl/gsl_math.h>
 #include "qwwad-options.h"
-#include "qclsim-material.h"
+#include "qwwad-material.h"
 #include "material_library.h"
-#include "qclsim-material-specification.h"
 #include "qwwad-material-property-numeric.h"
 #include "qwwad/maths-helpers.h"
 #include "qwwad/file-io.h"
@@ -24,53 +23,57 @@
 using namespace QWWAD;
 
 /**
- *  Find the thermal conductivity of a material [W/m/K]
- *  \param[in] T   temperature [K]
+ * Find the thermal conductivity of a material [W/m/K]
  *
- *  \todo Figure out where all these values come from!
- *  \todo These values only work for a limited range of
- *        temperatures. Restrict the domain accordingly?
+ * \param[in] mat The material system
+ * \param[in] x   Alloy fraction (if applicable)
+ * \param[in] T   Temperature [K]
+ *
+ * \todo Figure out where all these values come from!
+ * \todo These values only work for a limited range of
+ *       temperatures. Restrict the domain accordingly?
  */
-static double thermal_cond(const MaterialSpecification &mat, const double T)
+static double thermal_cond(const Material *mat,
+                           const double    x,
+                           const double    T)
 {
     double k = 0.0;
 
     try
     {
-        k = mat.get_prop_val_x("thermal-conductivity-vs-alloy");
+        k = mat->get_property_value("thermal-conductivity-vs-alloy", x);
     }
     catch(std::exception &e)
     {
         try
         {
-            double k0_1  = mat.get_prop_val_0("thermal-conductivity-0K-1");
-            double k0_2  = mat.get_prop_val_0("thermal-conductivity-0K-2");
-            double tau_1 = mat.get_prop_val_0("thermal-conductivity-decay-index-1");
-            double tau_2 = mat.get_prop_val_0("thermal-conductivity-decay-index-2");
+            double k0_1  = mat->get_property_value("thermal-conductivity-0K-1");
+            double k0_2  = mat->get_property_value("thermal-conductivity-0K-2");
+            double tau_1 = mat->get_property_value("thermal-conductivity-decay-index-1");
+            double tau_2 = mat->get_property_value("thermal-conductivity-decay-index-2");
             double k_1 = k0_1*pow(T,tau_1);
             double k_2 = k0_2*pow(T,tau_2);
-            k = lin_interp(k_1,k_2,mat.alloy);
+            k = lin_interp(k_1,k_2, x);
         }
         catch(std::exception &e)
         {
             try
             {
-                const double k0  = mat.get_prop_val_0("thermal-conductivity-0K");
-                const double tau = mat.get_prop_val_0("thermal-conductivity-decay-index");
+                const double k0  = mat->get_property_value("thermal-conductivity-0K");
+                const double tau = mat->get_property_value("thermal-conductivity-decay-index");
                 k = k0 * pow(T,tau);
             }
             catch(std::exception &e)
             {
                 try
                 {
-                    const double k_hi    = mat.get_prop_val_0("thermal-conductivity-high-T");
-                    const double k_decay = mat.get_prop_val_0("thermal-conductivity-inverse-T");
+                    const double k_hi    = mat->get_property_value("thermal-conductivity-high-T");
+                    const double k_decay = mat->get_property_value("thermal-conductivity-inverse-T");
                     k = k_hi + k_decay/T;
                 }
                 catch(std::exception &e)
                 {
-                    const auto property = dynamic_cast<MaterialPropertyNumeric *>(mat.xml->get_property("thermal-conductivity-T"));
-                    k = property->get_val(T);
+                    k = mat->get_property_value("thermal-conductivity-T", T);
                 }
             }
         }
@@ -186,16 +189,19 @@ void Thermal1DOptions::print() const
 
 class Thermal1DData {
 public:
-    Thermal1DData(const Thermal1DOptions& opt);
-    std::vector<MaterialSpecification> mat_layer; ///< Material in each layer
-    std::valarray<double> d;                      ///< Layer thickness [m]
+    Thermal1DData(const Thermal1DOptions &opt,
+                  const MaterialLibrary  &lib);
+    std::vector<Material const *> mat_layer; ///< Material in each layer
+    std::valarray<double>   x;         ///< Alloy composition in each layer
+    std::valarray<double>   d;         ///< Layer thickness [m]
 };
 
-Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
-    mat_layer(0),
+Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
+                             const MaterialLibrary  &material_library) :
     d(0)
 {
     std::vector<double> d_tmp; // Temp storage for layer thickness
+    std::vector<double> x_tmp; // Temp storage for alloy composition
     const size_t nbuff = 10000;
 
     std::string infile(opt.get_string_option("infile"));
@@ -234,12 +240,9 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
             check_c_interval_0_1(&alloy_buffer);
             check_not_negative(&doping_buffer);
             
-            const double n3d = doping_buffer * gsl_pow_3(100); // Rescale doping to 1/m^3
-            mat_layer.push_back(MaterialSpecification(mat_string,
-                                                      alloy_buffer,
-                                                      n3d));
-
+            mat_layer.push_back(material_library.get_material(mat_string));
             free(mat_string);
+            x_tmp.push_back(alloy_buffer);
 
             // Copy thickness to array and scale to metres
             d_tmp.push_back(thickness_buffer*1e-6);
@@ -257,9 +260,13 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions& opt) :
     }
 
     d.resize(d_tmp.size());
+    x.resize(x_tmp.size());
 
     for(unsigned int iL = 0; iL < d_tmp.size(); ++iL)
+    {
+        x[iL] = x_tmp[iL];
         d[iL] = d_tmp[iL];
+    }
 }
 
 static double calctave(const std::valarray<double> &g,
@@ -269,18 +276,20 @@ static void calctemp(double dt,
                      double *Told,
                      double q_old[],
                      double q_new[], 
-                     std::valarray<unsigned int>        &iLayer,
-                     const std::vector<MaterialSpecification> &mat,
+                     std::valarray<unsigned int>   &iLayer,
+                     const std::vector<Material const *> &mat,
+                     const std::valarray<double>   &x,
                      const std::vector<DebyeModel> &dm_layer,
-                     const std::valarray<double> &rho_layer,
+                     const std::valarray<double>   &rho_layer,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt);
 
 int main(int argc, char *argv[])
 {
     // Grab user preferences
+    MaterialLibrary material_library("");
     Thermal1DOptions opt(argc, argv);
-    const Thermal1DData data(opt);
+    const Thermal1DData data(opt, material_library);
 
     const double dy = opt.get_numeric_option("dy");
     const double L  = data.d.sum(); // Length of structure [m]
@@ -342,14 +351,14 @@ int main(int argc, char *argv[])
 
         try
         {
-            T_D = data.mat_layer[iL].get_prop_val_x("debye-temperature");
-            M   = data.mat_layer[iL].get_prop_val_x("molar-mass");
-            natoms = data.mat_layer[iL].get_prop_val_0("natoms");
-            rho_layer[iL] = data.mat_layer[iL].get_prop_val_x("density");
+            T_D = data.mat_layer[iL]->get_property_value("debye-temperature", data.x[iL]);
+            M   = data.mat_layer[iL]->get_property_value("molar-mass", data.x[iL]);
+            natoms = data.mat_layer[iL]->get_property_value("natoms");
+            rho_layer[iL] = data.mat_layer[iL]->get_property_value("density", data.x[iL]);
         }
         catch (std::exception &e)
         {
-            std::cerr << "Could not find material parameters for " << data.mat_layer[iL].xml->get_description() << std::endl;
+            std::cerr << "Could not find material parameters for " << data.mat_layer[iL]->get_description() << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -372,10 +381,10 @@ int main(int argc, char *argv[])
     for(unsigned int iy=0; iy<ny; iy++)
     {
         unsigned int iL = iLayer[iy]; // Look up layer containing this point
-        MaterialSpecification mat = data.mat_layer[iL]; // Get the material in the layer
+        auto mat = data.mat_layer[iL]; // Get the material in the layer
 
         // Now save the material to file
-        fprintf(FT,"%20.8e  %s\n", iy*dy*1e6, mat.xml->get_description().c_str());
+        fprintf(FT,"%20.8e  %s\n", iy*dy*1e6, mat->get_description().c_str());
     }
 
     fclose(FT);
@@ -458,7 +467,7 @@ int main(int argc, char *argv[])
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, dm_layer, rho_layer, T, opt);
+            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, data.x, dm_layer, rho_layer, T, opt);
 
             // Find spatial average of T_AR
             T_avg[it_total] = calctave(g, T);
@@ -548,8 +557,9 @@ static void calctemp(double dt,
                      double *Told,
                      double q_old[],
                      double q_new[],
-                     std::valarray<unsigned int>        &iLayer,
-                     const std::vector<MaterialSpecification> &mat_layer,
+                     std::valarray<unsigned int>   &iLayer,
+                     const std::vector<Material const *> &mat_layer,
+                     const std::valarray<double>   &x,
                      const std::vector<DebyeModel> &dm_layer,
                      const std::valarray<double> &rho_layer,
                      std::valarray<double>& T,
@@ -575,9 +585,9 @@ static void calctemp(double dt,
 
     T[0] = 0.0;
 
-    double k_last = thermal_cond(mat_layer[iLayer[0]], Told[0]);
-    double k      = thermal_cond(mat_layer[iLayer[1]], Told[1]);
-    double k_next = thermal_cond(mat_layer[iLayer[2]], Told[2]);
+    double k_last = thermal_cond(mat_layer[iLayer[0]], x[iLayer[0]], Told[0]);
+    double k      = thermal_cond(mat_layer[iLayer[1]], x[iLayer[1]], Told[1]);
+    double k_next = thermal_cond(mat_layer[iLayer[2]], x[iLayer[2]], Told[2]);
 
     double rho_cp = 0;
 
@@ -608,7 +618,7 @@ static void calctemp(double dt,
         k_last = k;
         k = k_next;
 
-        k_next = thermal_cond(mat_layer[iLayer[iy+1]],Told[iy+1]);
+        k_next = thermal_cond(mat_layer[iLayer[iy+1]], x[iLayer[iy+1]], Told[iy+1]);
     }
 
     // At last point, use Neumann boundary, i.e. dT/dy=0, which gives

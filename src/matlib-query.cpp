@@ -5,7 +5,7 @@
  */
 
 #include <iostream>
-#include "qclsim-material.h"
+#include "qwwad-material.h"
 #include "qwwad-material-property-numeric.h"
 #include "qwwad-material-property-string.h"
 #include "material_library.h"
@@ -111,16 +111,16 @@ int main(int argc, char* argv[])
     MatLibOptions opt(argc, argv);
     MaterialLibrary lib(opt.get_filename());
 
-    Material          mat  = lib.get_material(opt.get_string_option("material"));
-    MaterialProperty *prop = mat.get_property(opt.get_property().c_str());
+    const auto mat  = lib.get_material(opt.get_string_option("material"));
+    const auto prop = mat->get_property(opt.get_property().c_str());
 
-    const auto text_property = dynamic_cast<MaterialPropertyString *>(prop);
+    const auto text_property = dynamic_cast<MaterialPropertyString const *>(prop);
 
     if(text_property)
         std::cout << text_property->get_text() << std::endl;
     else
     {
-        const auto numeric_property = dynamic_cast<MaterialPropertyNumeric *>(prop);
+        const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
 
         std::cout << numeric_property->get_val(opt.get_var());
 

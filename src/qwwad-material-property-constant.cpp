@@ -58,6 +58,14 @@ MaterialPropertyConstant::MaterialPropertyConstant(decltype(_name)        name,
 {}
 
 /**
+ * \returns a copy of the current object
+ */
+MaterialPropertyConstant * MaterialPropertyConstant::clone() const
+{
+    return new MaterialPropertyConstant(_name, _description, _reference, _unit, _constant);
+}
+
+/**
  * \brief Return the numerical value of the property
  *
  * \param[in] x (unused) This is just a placeholder, since the value is constant

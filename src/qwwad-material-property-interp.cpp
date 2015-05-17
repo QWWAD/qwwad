@@ -4,7 +4,6 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include <iostream>
 #include <stdexcept>
 #include <libxml++/libxml++.h>
 #include "qwwad-material-property-interp.h"
@@ -103,6 +102,13 @@ MaterialPropertyInterp::MaterialPropertyInterp(decltype(_name)        name,
     _xmin(0.0),
     _xmax(1.0)
 {}
+
+MaterialPropertyInterp* MaterialPropertyInterp::clone() const
+{
+    auto mat = new MaterialPropertyInterp(_name, _description, _reference, _unit, _y0, _y1, _b);
+    mat->set_limits(_xmin, _xmax);
+    return mat;
+}
 
 decltype(MaterialPropertyInterp::_y0)
 MaterialPropertyInterp::get_val(const double x) const

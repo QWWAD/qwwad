@@ -50,6 +50,35 @@ MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
     }
 }
 
+/**
+ * Create a material property object using specified values
+ *
+ * \param[in] name        The name of the property
+ * \param[in] description A description of the property
+ * \param[in] reference   A literature reference for the property
+ * \param[in] unit        The unit associated with the property
+ * \param[in] poly_coeffs The set of polynomial coefficients
+ *
+ * \details The coefficients are stored in a map, with the index being used to specify the
+ *          order of the polynomial term, and the value being used to store the coefficient.
+ */
+MaterialPropertyPoly::MaterialPropertyPoly(decltype(_name)        name,
+                                           decltype(_description) description,
+                                           decltype(_reference)   reference,
+                                           decltype(_unit)        unit,
+                                           decltype(_poly_coeffs) poly_coeffs) :
+    MaterialPropertyNumeric(name, description, reference, unit),
+    _poly_coeffs(poly_coeffs)
+{}
+
+/**
+ * \return a clone of the current object
+ */
+MaterialPropertyPoly * MaterialPropertyPoly::clone() const
+{
+    return new MaterialPropertyPoly(_name, _description, _reference, _unit, _poly_coeffs);
+}
+
 double MaterialPropertyPoly::get_val(const double x) const
 {
     double val = 0; // Output value

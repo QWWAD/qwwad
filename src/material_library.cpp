@@ -12,7 +12,7 @@
  */
 
 #include "material_library.h"
-#include "qclsim-material.h"
+#include "qwwad-material.h"
 #include "qwwad-material-property-numeric.h"
 #include <cstdlib>
 #include <stdexcept>
@@ -29,7 +29,7 @@ using namespace constants;
 const Glib::ustring & MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
                                                          Glib::ustring &property_name)
 {
-    auto property = dynamic_cast<MaterialPropertyNumeric *>(get_property(mat_name, property_name));
+    auto property = dynamic_cast<MaterialPropertyNumeric const *>(get_property(mat_name, property_name));
     return property->get_unit();
 }
 
@@ -86,7 +86,7 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
  *
  * \return The material from the library
  */
-Material * MaterialLibrary::get_material(const Glib::ustring &mat_name)
+Material const * MaterialLibrary::get_material(const Glib::ustring &mat_name) const
 {
     // Look through all materials that we have already parsed
     Material mat;
@@ -107,8 +107,8 @@ MaterialLibrary::~MaterialLibrary()
  *
  * \return The material property object
  */
-MaterialProperty * MaterialLibrary::get_property(Glib::ustring &mat_name,
-                                                 Glib::ustring &property_name)
+MaterialProperty const * MaterialLibrary::get_property(Glib::ustring &mat_name,
+                                                       Glib::ustring &property_name) const
 {
     return materials.at(mat_name).get_property(property_name);
 }
@@ -117,7 +117,7 @@ double MaterialLibrary::get_val(Glib::ustring &mat_name,
                                 Glib::ustring &property_name)
 {
     const auto property = materials.at(mat_name).get_property(property_name);
-    const auto numeric_property = dynamic_cast<MaterialPropertyNumeric *>(property);
+    const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(property);
 
     return numeric_property->get_val();
 }
@@ -127,7 +127,7 @@ double MaterialLibrary::get_val(Glib::ustring &mat_name,
  *
  * \returns the material with the given name
  */
-Material * MaterialLibrary::get_material(const char  *mat_name)
+Material const * MaterialLibrary::get_material(const char  *mat_name) const
 {
     std::string str(mat_name);
     return &materials.at(str);

@@ -36,6 +36,8 @@ public:
                            decltype(_y1)          y1,
                            decltype(_b)           b = 0.0);
 
+    virtual MaterialPropertyInterp * clone() const;
+
     void set_limits(const decltype(_xmin) xmin,
                     const decltype(_xmax) xmax);
 

@@ -1,5 +1,5 @@
-#ifndef QCLSIM_MATERIAL
-#define QCLSIM_MATERIAL
+#ifndef QWWAD_MATERIAL
+#define QWWAD_MATERIAL
 
 #include <boost/ptr_container/ptr_map.hpp>
 #include <libxml++/libxml++.h>
@@ -14,6 +14,7 @@ class ustring;
 
 namespace QWWAD {
 class MaterialProperty;
+class MaterialPropertyNumeric;
 
 /** Wrapper for XML data for a material */
 class Material {
@@ -21,24 +22,28 @@ public:
     Material(){}
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
-    ~Material();
 
     const Glib::ustring & get_name() const;
     const Glib::ustring & get_description() const;
 
-    MaterialProperty * get_property(const char    *property_name);
-    MaterialProperty * get_property(Glib::ustring &property_name);
+    MaterialProperty const * get_property(const char    *property_name) const;
+    MaterialProperty const * get_property(Glib::ustring &property_name) const;
 
-    xmlpp::Element * get_elem() const;
+    MaterialPropertyNumeric const * get_numeric_property(const char    *property_name) const;
+    MaterialPropertyNumeric const * get_numeric_property(Glib::ustring &property_name) const;
+
+    double get_property_value(const char   *property_name,
+                              const double  x = 0) const;
+
+    double get_property_value(Glib::ustring &property_name,
+                              const double   x = 0) const;
 
 private:
     void read_properties_from_xml();
 
     /// Cached set of material properties
-    boost::ptr_map<Glib::ustring, MaterialProperty>   properties;
+    boost::ptr_map<Glib::ustring, MaterialProperty> properties;
 
-    xmlpp::Element        *elem;           ///< Underlying XML data
-    xmlpp::Node::NodeList  property_nodes; ///< Set of material properties
     Glib::ustring          name;           ///< The name of the material
     Glib::ustring          description;    ///< The description of the material
 };

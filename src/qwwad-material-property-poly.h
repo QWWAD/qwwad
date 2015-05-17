@@ -5,13 +5,20 @@
 
 namespace QWWAD {
 class MaterialPropertyPoly : public MaterialPropertyNumeric {
+private:
+    std::map<int, double> _poly_coeffs; ///< The terms in the polynomial
+
 public:
     MaterialPropertyPoly(xmlpp::Element *elem);
-    double get_val(const double x = 0) const;
+    MaterialPropertyPoly(decltype(_name)        name,
+                         decltype(_description) description,
+                         decltype(_reference)   reference,
+                         decltype(_unit)        unit,
+                         decltype(_poly_coeffs) poly_coeffs);
 
-private:
-    // Values for polynomial properties
-    std::map<int, double> _poly_coeffs; ///< The terms in the polynomial
+    virtual MaterialPropertyPoly * clone() const;
+
+    double get_val(const double x = 0) const;
 };
 } // end namespace
 #endif
