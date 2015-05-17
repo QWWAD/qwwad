@@ -85,11 +85,25 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
  * \param[in] mat_name The name of the material
  *
  * \return The material from the library
+ *
+ * \throws boost::bad_ptr_container_operation if the material could not be found
  */
 Material const * MaterialLibrary::get_material(const Glib::ustring &mat_name) const
 {
-    // Look through all materials that we have already parsed
-    return &materials.at(mat_name);
+    Material const * mat;
+
+    try
+    {
+        mat = &materials.at(mat_name);
+    }
+    catch(std::exception &e)
+    {
+        std::ostringstream oss;
+        oss << "Could not find material: " << mat_name << " in the material library" << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
+    return mat;
 }
 
 /**

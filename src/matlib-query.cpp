@@ -26,32 +26,13 @@ class MatLibOptions : public Options
         {
             try
             {
-                // Specific configuration options for this program
-                program_specific_options->add_options()
-                    ("filename", po::value<std::string>()->default_value(""), 
-                     "Material library file to read. If this is not specified, "
-                     "the default material library for the system will be used.")
-
-                    ("property,p",
-                     po::value<std::string>()->default_value(""),
-                     "Name of property to look up.")
-
-                    ("material",
-                     po::value<std::string>()->default_value(""),
-                     "Name of material to look up.")
-
-                    ("text,t",
-                     po::bool_switch()->default_value(false),
-                     "Use this flag if the property is a string of text")
-
-                    ("show-unit,u",
-                     po::bool_switch()->default_value(false),
-                     "Show the unit for the property rather than just its value")
-
-                    ("variable,x",
-                     po::value<double>()->default_value(0),
-                     "Optional input parameter for properties of the form y=f(x)")
-                    ;
+                add_string_option ("filename",    "", "Material library file to read. If this is not specified, "
+                                                      "the default material library for the system will be used.");
+                add_string_option ("property,p",  "", "Name of property to look up.");
+                add_string_option ("material",    "", "Name of material to look up.");
+                add_switch        ("text,t",          "Use this flag if the property is a string of text");
+                add_switch        ("show-unit,u",     "Show the unit for the property rather than just its value");
+                add_numeric_option("variable,x",  0,  "Optional input parameter for properties of the form y=f(x)");
 
                 std::string doc = "Queries the value of a property from the material "
                                   "database.";
@@ -69,38 +50,16 @@ class MatLibOptions : public Options
         }
 
         /**
-         * \brief Returns the filename for the material database
-         *
-         * \returns The filename for the input data
-         */
-        Glib::ustring get_filename() const {return vm["filename"].as<std::string>();}
-
-        /**
          * \returns True if the property is text; false if it's a number
          */
         bool is_text() const {return vm["text"].as<bool>();}
-
-        /**
-         * \returns True if the user wants to see the unit for the property
-         */
-        bool show_unit() const {return vm["show-unit"].as<bool>();}
-
-        /**
-         * \returns the name of the property we're inspecting
-         */
-        std::string get_property() const {return vm["property"].as<std::string>();}
-
-        /**
-         * \returns the name of the property we're inspecting
-         */
-        double get_var() const {return vm["variable"].as<double>();}
 
         /**
          * \returns Dump user-options to screen
          */
         void print() const
         {
-            std::cout << "Querying property: " << get_property()
+            std::cout << "Querying property: " << get_string_option("property")
                       << " for " << get_string_option("material")
                       << "." << std::endl;
         }
@@ -109,10 +68,25 @@ class MatLibOptions : public Options
 int main(int argc, char* argv[])
 {
     MatLibOptions opt(argc, argv);
-    MaterialLibrary lib(opt.get_filename());
+    const auto filename = opt.get_string_option("filename");
 
-    const auto mat  = lib.get_material(opt.get_string_option("material"));
-    const auto prop = mat->get_property(opt.get_property().c_str());
+    MaterialLibrary lib(filename);
+
+    const auto material_name = opt.get_string_option("material");
+    const auto property_name = opt.get_string_option("property");
+
+    MaterialProperty const * prop;
+
+    try
+    {
+        const auto mat  = lib.get_material(material_name);
+        prop = mat->get_property(property_name);
+    }
+    catch(std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     const auto text_property = dynamic_cast<MaterialPropertyString const *>(prop);
 
@@ -122,9 +96,10 @@ int main(int argc, char* argv[])
     {
         const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
 
-        std::cout << numeric_property->get_val(opt.get_var());
+        const auto x = opt.get_numeric_option("variable");
+        std::cout << numeric_property->get_val(x);
 
-        if(opt.show_unit())
+        if(opt.get_switch("show-unit"))
             std::cout << " " << numeric_property->get_unit();
 
         std::cout << std::endl;

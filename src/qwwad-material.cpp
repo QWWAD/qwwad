@@ -94,8 +94,21 @@ MaterialProperty const * Material::get_property(const char *name) const
  *
  * \return The XML node for this material property
  */
-MaterialProperty const * Material::get_property(Glib::ustring &property_name) const
+MaterialProperty const * Material::get_property(const Glib::ustring &property_name) const
 {
+    MaterialProperty const * prop;
+
+    try
+    {
+        prop = &properties.at(property_name);
+    }
+    catch(std::exception &e)
+    {
+        std::ostringstream oss;
+        oss << "Could not find property: " << property_name << " in the material library" << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
     return &properties.at(property_name);
 }
 
