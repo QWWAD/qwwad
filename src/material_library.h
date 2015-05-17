@@ -44,10 +44,6 @@ public:
                                             Glib::ustring &property_name);
 private:
     boost::ptr_map<Glib::ustring, Material>  materials;
-    xmlpp::Node::NodeList                    material_nodes;
-    xmlpp::DomParser                        *parser;
-    xmlpp::Document                         *doc;
-    xmlpp::Element                          *root_element;
 };
 } // end namespace
 #endif //MATERIAL_LIBRARY_H

@@ -49,15 +49,15 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
         fname_str >> fname;
     }
 
-    parser = new xmlpp::DomParser(fname, true);
+    xmlpp::DomParser parser(fname, true);
 
-    doc = parser->get_document();
-    root_element = doc->get_root_node();
+    auto doc          = parser.get_document();
+    auto root_element = doc->get_root_node();
 
     if(root_element)
     {
         // Get a list of all known materials from the XML file
-        material_nodes = root_element->get_children("material");
+        auto material_nodes = root_element->get_children("material");
 
         // Iterate through all material nodes and add materials to the list
         for(auto node : material_nodes)
