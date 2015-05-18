@@ -94,25 +94,9 @@ class Options
             return vm[name].as<T>();
         }
 
-        /**
-         * \brief Process all the user specified options
-         *
-         * \param[in] argc    The number of arguments
-         * \param[in] argv    The array of arguments
-         * \param[in] summary A short documentation string
-         * \param[in] details Further details about the program
-         *
-         * \details This should be called after adding all the program options with
-         *          argc and argv being taken directly from the main() function
-         *          in the program.
-         *          The "summary" string is displayed at the top of the "--help" text
-         *          for the program and the "details" string (if specified) is displayed
-         *          after the options in the "--help" text.
-         */
         void add_prog_specific_options_and_parse(const int     argc,
                                                  char ** const argv,
-                                                 std::string   summary,
-                                                 std::string   details="");
+                                                 std::string   summary);
     protected:
         /**
          * \brief The additional options for a specific program

@@ -96,7 +96,6 @@ void Options::print_version_then_exit(char* prog_name) const
  * \param[in] argv    The list of command-line arguments
  * \param[in] summary A short (1 line) documentation string describing the purpose of the program.
  *                    This is displayed at the top when the user gives the "--help" option.
- * \param[in] details More detailed notes to display below the program options in "--help" output
  *
  * \details Configuration is read in the following (decreasing) order of
  *          preference:
@@ -141,8 +140,7 @@ void Options::print_version_then_exit(char* prog_name) const
  */
 void Options::add_prog_specific_options_and_parse(const int     argc,
                                                   char ** const argv,
-                                                  std::string   summary,
-                                                  std::string   details)
+                                                  std::string   summary)
 {
     try {
         // Allow all options to be given on the command-line
@@ -195,7 +193,6 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
                       << std::endl
                       << "Options: " << std::endl
                       << command_line_options << std::endl
-                      << details << std::endl
                       << std::endl
                       << "Report bugs to " << PACKAGE_BUGREPORT << std::endl;
 
