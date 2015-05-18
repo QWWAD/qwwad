@@ -56,23 +56,23 @@ int main(int argc,char *argv[])
     Options opt;
     std::string doc("Solve the generalised diffusion equation");
 
-    opt.add_numeric_option("dt,d",          0.01, "Time-step [s]");
-    opt.add_numeric_option("coeff,D",        1.0, "Diffusion coefficient [Angstrom^2/s]");
-    opt.add_numeric_option("time,t",         1.0, "End time for simulation [s]");
-    opt.add_string_option ("mode,a",  "constant", "Form of diffusion coefficient");
-    opt.add_string_option ("infile",       "x.r", "File from which input profile of diffusant will be read");
-    opt.add_string_option ("outfile",      "X.r", "File to which output profile of diffusant will be written");
+    opt.add_option<double>     ("dt,d",          0.01, "Time-step [s]");
+    opt.add_option<double>     ("coeff,D",        1.0, "Diffusion coefficient [Angstrom^2/s]");
+    opt.add_option<double>     ("time,t",         1.0, "End time for simulation [s]");
+    opt.add_option<std::string>("mode,a",  "constant", "Form of diffusion coefficient");
+    opt.add_option<std::string>("infile",       "x.r", "File from which input profile of diffusant will be read");
+    opt.add_option<std::string>("outfile",      "X.r", "File to which output profile of diffusant will be written");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
-    const double t_final   = opt.get_numeric_option("time");          // [s]
-    const double dt        = opt.get_numeric_option("dt");            // [s]
-    const double D0        = opt.get_numeric_option("coeff") * 1e-20; // [m^2/s]
-    std::string  mode      = opt.get_string_option("mode");
+    const auto t_final = opt.get_option<double>("time");          // [s]
+    const auto dt      = opt.get_option<double>("dt");            // [s]
+    const auto D0      = opt.get_option<double>("coeff") * 1e-20; // [m^2/s]
+    const auto mode    = opt.get_option<std::string>("mode");
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> x; // Initial diffusant profile
-    read_table(opt.get_string_option("infile").c_str(), z, x);
+    read_table(opt.get_option<std::string>("infile").c_str(), z, x);
 
     const size_t nz = z.size(); // Number of spatial points
 
@@ -125,7 +125,7 @@ int main(int argc,char *argv[])
         diffuse(z, x, D, dt);
     }
 
-    write_table(opt.get_string_option("outfile").c_str(), z, x);
+    write_table(opt.get_option<std::string>("outfile").c_str(), z, x);
 
     return EXIT_SUCCESS;
 }

@@ -47,14 +47,14 @@ DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
 {
     std::string doc("Generate an approximate carrier energy distribution for a set of subbands");
 
-    add_string_option ("dopingfile",      "d.r",  "Filename from which doping profile is read [m^{-3}]");
-    add_string_option ("energyfile",      "Ee.r", "Filename from which subband energies are read [meV]");
-    add_numeric_option("mass",            0.067,  "In-plane effective mass (relative to free electron)");
-    add_numeric_option("temperature,T",     100,  "Temperature of carrier distribution [K]");
-    add_string_option ("populationfile",  "N.r",  "Set filename to which subband populations are written [m^{-2}]");
-    add_size_option   ("nval",                1,  "Split population between a number of equivalent valleys");
-    add_string_option ("type",           "even",  "Type of carrier distribution across states. Permitted "
-                                                  "options are: fermi, ground or even");
+    add_option<std::string>("dopingfile",      "d.r",  "Filename from which doping profile is read [m^{-3}]");
+    add_option<std::string>("energyfile",      "Ee.r", "Filename from which subband energies are read [meV]");
+    add_option<double>     ("mass",            0.067,  "In-plane effective mass (relative to free electron)");
+    add_option<double>     ("temperature,T",     100,  "Temperature of carrier distribution [K]");
+    add_option<std::string>("populationfile",  "N.r",  "Set filename to which subband populations are written [m^{-2}]");
+    add_option<size_t>     ("nval",                1,  "Split population between a number of equivalent valleys");
+    add_option<std::string>("type",           "even",  "Type of carrier distribution across states. Permitted "
+                                                       "options are: fermi, ground or even");
 
     add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -89,20 +89,20 @@ DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
 int main(int argc, char *argv[])
 {
     DensityinputOptions opt(argc, argv);
-    const size_t nval = opt.get_size_option("nval"); // Number of equivalent valleys
+    const auto nval = opt.get_option<size_t>("nval"); // Number of equivalent valleys
     
     // Integrate doping profile to find sheet doping [m^{-2}]
 
     std::valarray<double> z;   ///< Spatial points [m]
     std::valarray<double> d;   ///< Volume doping profile [m^{-3}]
-    read_table(opt.get_string_option("dopingfile").c_str(), z, d);
+    read_table(opt.get_option<std::string>("dopingfile").c_str(), z, d);
 
     const double dz = z[1] - z[0];  // Spatial step [m]
     const double n2D = trapz(d,dz); // Sheet doping [m^{-2}]
 
     std::valarray<unsigned int> _inx; // State indices
     std::valarray<double> E;          // Energies of subband minima [J]
-    read_table(opt.get_string_option("energyfile").c_str(), _inx, E);
+    read_table(opt.get_option<std::string>("energyfile").c_str(), _inx, E);
     E *= e/1000; // Rescale to J
 
     const size_t nst = E.size();    // Number of subbands
@@ -120,8 +120,8 @@ int main(int argc, char *argv[])
         // Thermal distribution of subband populations
         case DIST_FERMI:
             {
-                const double _md = opt.get_numeric_option("mass") * me; // Density-of-states mass [kg]
-                const double T   = opt.get_numeric_option("temperature");
+                const auto _md = opt.get_option<double>("mass") * me; // Density-of-states mass [kg]
+                const auto T   = opt.get_option<double>("temperature");
 
                 // Fermi energy for entire system [J]
                 double Ef = find_fermi_global(E, _md, n2D, T);
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
             break;
     }
 
-    write_table(opt.get_string_option("populationfile").c_str(), pop);
+    write_table(opt.get_option<std::string>("populationfile").c_str(), pop);
 
     return EXIT_SUCCESS;
 }

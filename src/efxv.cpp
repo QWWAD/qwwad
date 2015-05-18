@@ -42,15 +42,15 @@ class EFXVOptions : public Options
     public:
         EFXVOptions(int argc, char* argv[])
         {
-            add_string_option("mass,m",     "auto",   "Set a constant effective-mass across the structure "
-                                                      "(relative to free electron). "
-                                                      "If not specified, the mass is calculated automatically "
-                                                      "for all positions in the material.");
-            add_string_option("material,M", "gaalas", "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, "
-                                                      "\"cdmnte\" for Cd(1-x)Mn(x)Te, or "
-                                                      "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
-            add_char_option  ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
-            add_string_option("alloyfile",     "x.r", "File from which alloy is read");
+            add_option<std::string>("mass,m",     "auto",   "Set a constant effective-mass across the structure "
+                                                            "(relative to free electron). "
+                                                            "If not specified, the mass is calculated automatically "
+                                                            "for all positions in the material.");
+            add_option<std::string>("material,M", "gaalas", "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, "
+                                                            "\"cdmnte\" for Cd(1-x)Mn(x)Te, or "
+                                                            "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
+            add_option<char>       ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
+            add_option<std::string>("alloyfile",     "x.r", "File from which alloy is read");
 
             std::string doc("Find material parameters for a given heterostructure. "
                             "The alloy data is read for each point in the system and used to tabulate "
@@ -114,8 +114,8 @@ int main(int argc,char *argv[])
 {
     const EFXVOptions opt(argc, argv);
 
-    char  Material = opt.get_material();  // material character
-    char  p = opt.get_particle();   // particle (e, h, or l)
+    const auto Material = opt.get_material(); // material character
+    const auto p        = opt.get_particle(); // particle (e, h, or l)
 
     /* If either of the reference potential files exist, i.e., v0.r---the zero
        electric field potential file, or v1.r---the zero dopant reference, then
@@ -132,7 +132,7 @@ int main(int argc,char *argv[])
     std::valarray<double> Eg;     // Bandgap
     std::valarray<double> eps_dc; // Low-frequency permittivity [F/m]
 
-    const char *alloyfile = opt.get_string_option("alloyfile").c_str();
+    const auto alloyfile = opt.get_option<std::string>("alloyfile").c_str();
 
     switch(Material)
     {

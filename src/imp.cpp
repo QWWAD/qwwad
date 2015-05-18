@@ -39,19 +39,19 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the impurity scattering rate.");
 
-    opt.add_switch        ("outputff,a",           "Output form-factors to file.");
-    opt.add_switch        ("noscreening,S",        "Disable screening of the Coulomb interaction.");
-    opt.add_switch        ("noblocking,b",         "Disable final-state blocking.");
-    opt.add_numeric_option("epsilon,e",     13.18, "Low-frequency dielectric constant");
-    opt.add_numeric_option("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
-    opt.add_char_option   ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<bool>  ("outputff,a",           "Output form-factors to file.");
+    opt.add_option<bool>  ("noscreening,S",        "Disable screening of the Coulomb interaction.");
+    opt.add_option<bool>  ("noblocking,b",         "Disable final-state blocking.");
+    opt.add_option<double>("epsilon,e",     13.18, "Low-frequency dielectric constant");
+    opt.add_option<double>("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
+    opt.add_option<char>  ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
                                                    "electrons, heavy holes or light holes respectively.");
-    opt.add_numeric_option("temperature,T",   300, "Temperature of carrier distribution.");
-    opt.add_numeric_option("width,w",         250, "Width of quantum well [angstrom]. (Solely for output).");
-    opt.add_numeric_option("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
-    opt.add_size_option   ("nki",             101, "Number of initial wave-vector samples.");
-    opt.add_size_option   ("nq",              101, "Number of strips in scattering vector integration");
-    opt.add_size_option   ("ntheta",          101, "Number of strips in theta angle integration");
+    opt.add_option<double>("temperature,T",   300, "Temperature of carrier distribution.");
+    opt.add_option<double>("width,w",         250, "Width of quantum well [angstrom]. (Solely for output).");
+    opt.add_option<double>("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
+    opt.add_option<size_t>("nki",             101, "Number of initial wave-vector samples.");
+    opt.add_option<size_t>("nq",              101, "Number of strips in scattering vector integration");
+    opt.add_option<size_t>("ntheta",          101, "Number of strips in theta angle integration");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -60,19 +60,19 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double epsilon = opt.get_numeric_option("epsilon")*eps0; // Low frequency dielectric constant [F/m]
-    const bool   ff_flag = opt.get_switch("outputff");             // True if formfactors are wanted
-    const double m       = opt.get_numeric_option("mass")*me;      // Band-edge effective mass [kg]
-    const char   p       = opt.get_char_option("particle");  	   // Particle ID
-    const double T       = opt.get_numeric_option("temperature");  // Temperature [K]
-    const double W       = opt.get_numeric_option("width")*1e-10;  // a well width, same as Smet [angstrom]
-    const bool   S_flag  = !opt.get_switch("noscreening");	   // Include screening by default
-    const bool   b_flag  = !opt.get_switch("noblocking");          // Include final-state blocking by default
-    const size_t nki     = opt.get_size_option("nki");             // number of ki calculations
-    const size_t ntheta  = opt.get_size_option("ntheta");          // number of strips in theta integration
-    const size_t nq      = opt.get_size_option("nq");              // number of q_perp values for lookup table
+    const auto epsilon =  opt.get_option<double>("epsilon")*eps0; // Low frequency dielectric constant [F/m]
+    const auto ff_flag =  opt.get_option<bool>  ("outputff");     // True if formfactors are wanted
+    const auto m       =  opt.get_option<double>("mass")*me;      // Band-edge effective mass [kg]
+    const auto p       =  opt.get_option<char>  ("particle");     // Particle ID
+    const auto T       =  opt.get_option<double>("temperature");  // Temperature [K]
+    const auto W       =  opt.get_option<double>("width")*1e-10;  // a well width, same as Smet [angstrom]
+    const auto S_flag  = !opt.get_option<bool>  ("noscreening");  // Include screening by default
+    const auto b_flag  = !opt.get_option<bool>  ("noblocking");   // Include final-state blocking by default
+    const auto nki     =  opt.get_option<size_t>("nki");          // number of ki calculations
+    const auto ntheta  =  opt.get_option<size_t>("ntheta");       // number of strips in theta integration
+    const auto nq      =  opt.get_option<size_t>("nq");           // number of q_perp values for lookup table
 
     /* calculate step lengths	*/
     const double dtheta=2*pi/((float)ntheta - 1); // step length for theta integration
@@ -149,7 +149,7 @@ int main(int argc,char *argv[])
         // Use user-specified value if given
         if(opt.vm.count("Ecutoff"))
         {
-            Ecutoff = opt.get_numeric_option("Ecutoff")*e/1000;
+            Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 
             if(Ecutoff+Ei < Ef)
             {

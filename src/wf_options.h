@@ -16,6 +16,7 @@
 
 #include "qwwad-options.h"
 
+namespace QWWAD {
 /**
  * \brief Control flags for input, output or in/out options
  */
@@ -48,6 +49,6 @@ class WfOptions : public Options
 private:
         WfOptionMode _mode; ///< Whether we're using input/output mode
 };
-
+} // end namespace
 #endif // WFOPTIONS_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

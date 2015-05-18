@@ -107,20 +107,20 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
 {
     std::string doc = "Calculate temperature variation in active region over time";
 
-    add_size_option   ("active,a",                   2, "Index of active-region layer");
-    add_numeric_option("area",                   0.119, "QCL ridge area [mm^2]");
-    add_string_option ("infile",  "thermal_layers.dat", "Waveguide layers data file");
-    add_numeric_option("Tsink,T",                 80.0, "Heatsink temperature [K]");
-    add_numeric_option("dy,y",                 1.00e-7, "Spatial resolution [m]");
-    add_numeric_option("dc,d",                       2, "Duty cycle for pulse train [%]");
-    add_numeric_option("frequency,f",               10, "Pulse repetition rate [kHz]");
-    add_numeric_option("power,P",                17.65, "Pulse power [W]");
-    add_size_option   ("nrep",                       1, "Number of pulse periods to simulate");
+    add_option<size_t>     ("active,a",                   2, "Index of active-region layer");
+    add_option<double>     ("area",                   0.119, "QCL ridge area [mm^2]");
+    add_option<std::string>("infile",  "thermal_layers.dat", "Waveguide layers data file");
+    add_option<double>     ("Tsink,T",                 80.0, "Heatsink temperature [K]");
+    add_option<double>     ("dy,y",                 1.00e-7, "Spatial resolution [m]");
+    add_option<double>     ("dc,d",                       2, "Duty cycle for pulse train [%]");
+    add_option<double>     ("frequency,f",               10, "Pulse repetition rate [kHz]");
+    add_option<double>     ("power,P",                17.65, "Pulse power [W]");
+    add_option<size_t>     ("nrep",                       1, "Number of pulse periods to simulate");
 
     add_prog_specific_options_and_parse(argc,argv,doc);
 
     // Check that heatsink temperature is positive
-    const double Tsink = get_numeric_option("Tsink");
+    const auto Tsink = get_option<double>("Tsink");
     if (Tsink <= 0.0)
     {
         std::ostringstream oss;
@@ -129,13 +129,13 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
     }
 
     // Check that spatial step is positive
-    const double dy = get_numeric_option("dy");
+    const auto dy = get_option<double>("dy");
     if(dy <= 0.0)
         throw std::domain_error ("Spatial resolution must be positive");
 
     // Check that duty cycle is positive and
     // rescale to a decimal value
-    dc = get_numeric_option("dc") * 0.01;
+    dc = get_option<double>("dc") * 0.01;
 
     if(dc <= 0.0 or dc >= 1.0)
     {
@@ -146,14 +146,14 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
 
     // Check that frequency is positive and
     // rescale to Hz
-    f = get_numeric_option("frequency") * 1.0e3;
+    f = get_option<double>("frequency") * 1.0e3;
 
     if(f <= 0)
         throw std::domain_error ("Pulse repetition rate must "
                 "be positive.");
 
     // Check that power is positive
-    const double power = get_numeric_option("power");
+    const auto power = get_option<double>("power");
     if(power <= 0.0)
     {
         std::ostringstream oss;
@@ -162,7 +162,7 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
     }
 
     // Check that area is positive
-    const double area = get_numeric_option("area");
+    const auto area = get_option<double>("area");
     if(area <= 0.0)
     {
         std::ostringstream oss;
@@ -176,16 +176,15 @@ Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
 
 void Thermal1DOptions::print() const
 {
-    std::cout << "Heat sink temperature = " << get_numeric_option("Tsink")  << " K"           << std::endl
-              << "Power                 = " << get_numeric_option("power")  << " W"           << std::endl
+    std::cout << "Heat sink temperature = " << get_option<double>("Tsink")  << " K"           << std::endl
+              << "Power                 = " << get_option<double>("power")  << " W"           << std::endl
               << "Frequency             = " << f/1.0e3                      << " kHz"         << std::endl
               << "Duty cycle            = " << get_duty_cycle()*100         << "%"            << std::endl
               << "Period length         = " << 1e6/f                        << " microsecond" << std::endl
-              << "Number of periods     = " << get_size_option("nrep")                        << std::endl
-              << "Spatial resolution    = " << get_numeric_option("dy")*1e6 << " micron"      << std::endl
-              << "Ridge area            = " << get_numeric_option("area")   << " mm^2"        << std::endl;
+              << "Number of periods     = " << get_option<size_t>("nrep")                     << std::endl
+              << "Spatial resolution    = " << get_option<double>("dy")*1e6 << " micron"      << std::endl
+              << "Ridge area            = " << get_option<double>("area")   << " mm^2"        << std::endl;
 }
-
 
 class Thermal1DData {
 public:
@@ -204,7 +203,7 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
     std::vector<double> x_tmp; // Temp storage for alloy composition
     const size_t nbuff = 10000;
 
-    std::string infile(opt.get_string_option("infile"));
+    std::string infile(opt.get_option<std::string>("infile"));
     std::ifstream stream(infile.c_str());
 
     if(!stream.is_open())
@@ -291,8 +290,8 @@ int main(int argc, char *argv[])
     Thermal1DOptions opt(argc, argv);
     const Thermal1DData data(opt, material_library);
 
-    const double dy = opt.get_numeric_option("dy");
-    const double L  = data.d.sum(); // Length of structure [m]
+    const auto dy = opt.get_option<double>("dy");
+    const auto L  = data.d.sum(); // Length of structure [m]
     const size_t ny = ceil(L/dy);   // Find number of points in structure
 
     if(opt.get_verbose())
@@ -301,14 +300,14 @@ int main(int argc, char *argv[])
     }
 
     // Thickness of active region [m]
-    const unsigned int iAR    = opt.get_size_option("active");
-    const double       L_AR   = data.d[iAR];
-    const double       area   = opt.get_numeric_option("area")*1e-6; // [m^2]
-    const double       volume = L_AR * area;  // Active region volume (L x h x w) [m^3]
+    const auto iAR    = opt.get_option<size_t>("active");
+    const auto L_AR   = data.d[iAR];
+    const auto area   = opt.get_option<double>("area")*1e-6; // [m^2]
+    const auto volume = L_AR * area;  // Active region volume (L x h x w) [m^3]
 
     // Power density in active region [W/m^3]
-    const double power_density = opt.get_numeric_option("power")/volume;
-    const double pw = opt.get_duty_cycle()/opt.get_f_rep();
+    const auto power_density = opt.get_option<double>("power")/volume;
+    const auto pw = opt.get_duty_cycle()/opt.get_f_rep();
 
     if(opt.get_verbose())
     {
@@ -365,7 +364,7 @@ int main(int argc, char *argv[])
         dm_layer.push_back(DebyeModel(T_D, M, natoms));
     }
 
-    double _Tsink = opt.get_numeric_option("Tsink");
+    const auto _Tsink = opt.get_option<double>("Tsink");
     
     // Spatial temperature profile through structure [K].
     // Assume that initially all points are in thermal equilibrium with heat sink.
@@ -407,7 +406,7 @@ int main(int argc, char *argv[])
     if(opt.get_verbose())
         printf("dt=%.4f ns.\n",dt*1e9);
 
-    const size_t _n_rep = opt.get_size_option("nrep"); // Number of pulse repetitions
+    const auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
    
     // Samples of average T_AR at each time-step 
     std::valarray<double> t(nt_per * _n_rep);
@@ -565,15 +564,15 @@ static void calctemp(double dt,
                      std::valarray<double>& T,
                      Thermal1DOptions& opt)
 {
-    const size_t ny = iLayer.size();
-    const double dy = opt.get_numeric_option("dy");
+    const auto ny = iLayer.size();
+    const auto dy = opt.get_option<double>("dy");
     double dy_sq = dy*dy;
-    double* RHS_subdiag   = new double[ny-1];
-    double* RHS_diag      = new double[ny];
-    double* RHS_superdiag = new double[ny-1];
-    double* LHS_subdiag   = new double[ny-1];
-    double* LHS_diag      = new double[ny];
-    double* LHS_superdiag = new double[ny-1];
+    auto RHS_subdiag   = new double[ny-1];
+    auto RHS_diag      = new double[ny];
+    auto RHS_superdiag = new double[ny-1];
+    auto LHS_subdiag   = new double[ny-1];
+    auto LHS_diag      = new double[ny];
+    auto LHS_superdiag = new double[ny-1];
 
     // Note that the bottom of the device is not calculated.  We leave it
     // set to the heatsink temperature (Dirichlet boundary)

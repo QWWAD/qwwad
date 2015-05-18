@@ -35,23 +35,23 @@ Options get_options(int argc, char* argv[])
 
     const std::string doc("Find the Poisson potential induced by a given charge profile");
 
-    opt.add_switch        ("uncharged",                 "True if there is no charge in the structure");
-    opt.add_switch        ("centred",                   "True if the potential should be pivoted "
-                                                        "around the centre of the structure");
-    opt.add_switch        ("mixed",                     "Use mixed boundary conditions.  By default, "
-                                                        "the space-charge effect is assumed to give "
-                                                        "zero-field boundary conditions.  By supplying "
-                                                        "this option, nonzero boundary fields can exist.");
-    opt.add_string_option ("Vbasefile",                 "File containing baseline potential to be added to Poisson potential");
-    opt.add_string_option ("potential-file", "v_p.r",   "Filename to which the Poisson potential is written.");
-    opt.add_string_option ("Vtotalfile",     "v.r",     "Filename to which the total potential is written.");
-    opt.add_string_option ("charge-file",    "rho.r",   "Set filename from which to read charge density profile.");
-    opt.add_numeric_option("field,E",                   "Set external electric field [kV/cm]. Only specify if "
-                                                        "the voltage drop needs to be fixed. Otherwise will be "
-                                                        "equal to inbuilt potential from zero-field Poisson solution.");
-    opt.add_numeric_option("offset",              0,    "Set potential at spatial point closest to origin [meV].");
-    opt.add_switch        ("ptype",                     "Dopants are to be treated as acceptors, and wavefunctions "
-                                                        "treated as hole states");
+    opt.add_option<bool>       ("uncharged",                 "True if there is no charge in the structure");
+    opt.add_option<bool>       ("centred",                   "True if the potential should be pivoted "
+                                                             "around the centre of the structure");
+    opt.add_option<bool>       ("mixed",                     "Use mixed boundary conditions.  By default, "
+                                                             "the space-charge effect is assumed to give "
+                                                             "zero-field boundary conditions.  By supplying "
+                                                             "this option, nonzero boundary fields can exist.");
+    opt.add_option<std::string>("Vbasefile",                 "File containing baseline potential to be added to Poisson potential");
+    opt.add_option<std::string>("potential-file", "v_p.r",   "Filename to which the Poisson potential is written.");
+    opt.add_option<std::string>("Vtotalfile",     "v.r",     "Filename to which the total potential is written.");
+    opt.add_option<std::string>("charge-file",    "rho.r",   "Set filename from which to read charge density profile.");
+    opt.add_option<double>     ("field,E",                   "Set external electric field [kV/cm]. Only specify if "
+                                                             "the voltage drop needs to be fixed. Otherwise will be "
+                                                             "equal to inbuilt potential from zero-field Poisson solution.");
+    opt.add_option<double>     ("offset",              0,    "Set potential at spatial point closest to origin [meV].");
+    opt.add_option<bool>       ("ptype",                     "Dopants are to be treated as acceptors, and wavefunctions "
+                                                             "treated as hole states");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -72,21 +72,21 @@ int main(int argc, char* argv[])
     std::valarray<double> rho(nz); // Charge-profile
 
     // Read space-charge profile, if desired
-    if(!opt.get_switch("uncharged"))
-        read_table(opt.get_string_option("charge-file").c_str(), z2, rho);
+    if(!opt.get_option<bool>("uncharged"))
+        read_table(opt.get_option<std::string>("charge-file").c_str(), z2, rho);
 
     // Convert charge density into S.I. units
     rho *= e;
 
     // If we're using a p-type system, invert the charge profile so we have
     // a positive energy scale
-    if(opt.get_switch("ptype"))
+    if(opt.get_option<bool>("ptype"))
         rho *= -1;
 
     // Calculate Poisson potential due to charge within structure using cyclic boundary conditions
     const double dz = z[1] - z[0];
     std::valarray<double> phi(nz);
-    if(opt.get_switch("mixed"))
+    if(opt.get_option<bool>("mixed"))
     {
         Poisson poisson(_eps, dz, MIXED);
         phi = poisson.solve(rho);
@@ -100,8 +100,8 @@ int main(int argc, char* argv[])
             // within the structure. This will ensure that the voltage drop is equal to that specified
             // rather than being the sum of applied bias and voltage due to charge which is an unknown
             // quantity.
-            const double field  = opt.get_numeric_option("field") * 1000.0 * 100.0; // V/m
-            const double V_drop = field * e * (z[nz-1] - z[0]) - phi[nz-1];
+            const auto field  = opt.get_option<double>("field") * 1000.0 * 100.0; // V/m
+            const auto V_drop = field * e * (z[nz-1] - z[0]) - phi[nz-1];
 
             if(opt.get_verbose())
                 std::cout << "Voltage drop per period: " << V_drop << "V\n";
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
             Poisson laplace(_eps, dz, DIRICHLET);
             phi += laplace.solve_laplace(V_drop);
 
-            if(opt.get_switch("centred"))
+            if(opt.get_option<bool>("centred"))
                     phi -= V_drop/2.0;
         }
     }
@@ -119,13 +119,13 @@ int main(int argc, char* argv[])
         if(opt.vm.count("field"))
         {
             Poisson poisson(_eps, dz, DIRICHLET);
-            const double field  = opt.get_numeric_option("field") * 1000.0 * 100.0; // V/m
-            const double V_drop = field * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
+            const auto field  = opt.get_option<double>("field") * 1000.0 * 100.0; // V/m
+            const auto V_drop = field * e * (z[nz-1] - z[0])*(nz+2)/nz - phi[nz-1];
             if(opt.get_verbose())
                 std::cout << "Voltage drop per period: " << V_drop << "V\n";
             phi = poisson.solve(rho, V_drop);
 
-            if(opt.get_switch("centred"))
+            if(opt.get_option<bool>("centred"))
                     phi -= V_drop/2.0;
         }
         else
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
             phi = poisson.solve(rho);
         }
 
-        phi -= opt.get_numeric_option("offset") * e/1000; // Minus offset since potential has not yet been inverted
+        phi -= opt.get_option<double>("offset") * e/1000; // Minus offset since potential has not yet been inverted
     }
 
     // Invert potential as we output in electron potential instead of absolute potential.
@@ -146,7 +146,7 @@ int main(int argc, char* argv[])
         F[iz] = (phi[iz+1] - phi[iz-1])/(2*dz*e);
 
     write_table("field.r", z, F);
-    write_table(opt.get_string_option("potential-file").c_str(), z, phi);
+    write_table(opt.get_option<std::string>("potential-file").c_str(), z, phi);
 
     // Calculate total potential and add on the baseline
     // potential if desired
@@ -156,7 +156,7 @@ int main(int argc, char* argv[])
     if (opt.vm.count("Vbasefile"))
     {
         std::valarray<double> zbase(phi.size());
-        read_table(opt.get_string_option("Vbasefile").c_str(), zbase, Vbase);
+        read_table(opt.get_option<std::string>("Vbasefile").c_str(), zbase, Vbase);
 
         // TODO: Add more robust checking of z, zbase identicality here
         if(zbase.size() != z.size())
@@ -169,7 +169,7 @@ int main(int argc, char* argv[])
         Vtotal = phi + Vbase;
     }
 
-    write_table(opt.get_string_option("Vtotalfile").c_str(), z, Vtotal);
+    write_table(opt.get_option<std::string>("Vtotalfile").c_str(), z, Vtotal);
     
     return EXIT_SUCCESS;
 }

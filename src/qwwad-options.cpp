@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 
+namespace QWWAD {
 Options::Options() :
     generic_options_commandline(new po::options_description("Generic options")),
     generic_options_any(new po::options_description("Configuration options")),
@@ -76,7 +77,7 @@ Options::~Options()
 void Options::print_version_then_exit(char* prog_name) const
 {
     std::cout << prog_name << " (" << PACKAGE_NAME << ") " << PACKAGE_VERSION << std::endl
-              << "Copyright (c) 2014 Paul Harrison and Alex Valavanis." << std::endl
+              << "Copyright (c) 2015 Paul Harrison and Alex Valavanis." << std::endl
               << "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>." << std::endl
               << "This is free software: you are free to change and redistribute it." << std::endl
               << "There is NO WARRANTY, to the extent permitted by law." << std::endl
@@ -210,198 +211,5 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         exit(EXIT_FAILURE);
     }
 }
-
-/**
- * \brief Get the value of a floating-point numerical option
- *
- * \param[in] name The long name of the option
- *
- * \return The value of the option as a floating-point number
- */
-double Options::get_numeric_option(const std::string &name) const
-{
-    const std::string val_str = vm[name].as<std::string>();
-    std::istringstream iss(val_str);
-    double val;
-
-    if (!(iss >> val))
-    {
-        std::ostringstream oss("Can't read ");
-        oss << name;
-        throw oss.str();
-    }
-    else
-        return val;
-}
-
-/**
- * \brief Adds a floating-point option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] description   A short description of what the option does
- */
-void Options::add_numeric_option(const std::string &name,
-                                 const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<std::string>(),
-         description.c_str());
-}
-
-/**
- * \brief Adds a floating-point option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] default_value The default value of the option
- * \param[in] description   A short description of what the option does
- */
-void Options::add_numeric_option(const std::string &name,
-                                 const double       default_value,
-                                 const std::string &description)
-{
-    std::ostringstream oss;
-    oss << default_value;
-
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<std::string>()->default_value(oss.str()),
-         description.c_str());
-}
-
-/**
- * \brief Get the value of a size option
- *
- * \param[in] name The long name of the option
- *
- * \return The value of the option as a positive integer
- */
-size_t Options::get_size_option(const std::string &name) const
-{
-    const size_t val = vm[name].as<size_t>();
-    return val;
-}
-
-/**
- * \brief Adds a size option to the program (i.e., a +ve integer)
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] default_value The default value of the option
- * \param[in] description   A short description of what the option does
- */
-void Options::add_size_option(const std::string &name,
-                              const size_t       default_value,
-                              const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<size_t>()->default_value(default_value),
-         description.c_str());
-}
-
-/**
- * \brief Get the value of a character option
- *
- * \param[in] name The long name of the option
- *
- * \return The value of the option as a character
- */
-char Options::get_char_option(const std::string &name) const
-{
-    const char val = vm[name].as<char>();
-    return val;
-}
-
-/**
- * \brief Adds a character option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] default_value The default value of the option
- * \param[in] description   A short description of what the option does
- */
-void Options::add_char_option(const std::string &name,
-                              const char         default_value,
-                              const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<char>()->default_value(default_value),
-         description.c_str());
-}
-
-/**
- * \brief Get the value of a string option
- *
- * \param[in] name The long name of the option
- *
- * \return The value of the option as a string
- */
-std::string Options::get_string_option(const std::string &name) const
-{
-    const std::string val = vm[name].as<std::string>();
-    return val;
-}
-
-/**
- * \brief Adds a string option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] default_value The default value of the option
- * \param[in] description   A short description of what the option does
- */
-void Options::add_string_option(const std::string &name,
-                                const std::string &default_value,
-                                const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<std::string>()->default_value(default_value),
-         description.c_str());
-}
-
-/**
- * \brief Adds a string option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] description   A short description of what the option does
- */
-void Options::add_string_option(const std::string &name,
-                                const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::value<std::string>(),
-         description.c_str());
-}
-
-/**
- * \brief Get the value of a switch
- *
- * \param[in] name The long name of the option
- *
- * \return True if the option was specified
- */
-bool Options::get_switch(const std::string &name) const
-{
-    const bool val = vm[name].as<bool>();
-    return val;
-
-}
-
-/**
- * \brief Adds a switch option to the program
- *
- * \param[in] name          The name of the option ("<long form>,<short form>")
- * \param[in] description   A short description of what the option does
- *
- * \details The switch is FALSE unless the option is specified
- */
-void Options::add_switch(const std::string &name,
-                         const std::string &description)
-{
-    program_specific_options->add_options()
-        (name.c_str(),
-         po::bool_switch()->default_value(false),
-         description.c_str());
-}
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

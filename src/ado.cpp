@@ -23,16 +23,16 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the alloy disorder scattering rate.");
 
-    opt.add_switch        ("noblocking,S",         "Disable final-state blocking.");
-    opt.add_numeric_option("Vad",             600, "Alloy disorder potential [meV]");
-    opt.add_numeric_option("cellfraction",      4, "Fraction of unit cell occupied by each scatterer");
-    opt.add_numeric_option("latticeconst",   5.65, "Lattice constant in growth direction [angstrom]");
-    opt.add_numeric_option("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
-    opt.add_char_option   ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<bool>  ("noblocking,S",         "Disable final-state blocking.");
+    opt.add_option<double>("Vad",             600, "Alloy disorder potential [meV]");
+    opt.add_option<double>("cellfraction",      4, "Fraction of unit cell occupied by each scatterer");
+    opt.add_option<double>("latticeconst",   5.65, "Lattice constant in growth direction [angstrom]");
+    opt.add_option<double>("mass,m",        0.067, "Band-edge effective mass (relative to free electron)");
+    opt.add_option<char>  ("particle,p",      'e', "ID of particle to be used: 'e', 'h' or 'l', for "
                                                    "electrons, heavy holes or light holes respectively.");
-    opt.add_numeric_option("temperature,T",   300, "Temperature of carrier distribution.");
-    opt.add_numeric_option("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
-    opt.add_size_option   ("nki",             101, "Number of initial wave-vector samples.");
+    opt.add_option<double>("temperature,T",   300, "Temperature of carrier distribution.");
+    opt.add_option<double>("Ecutoff",              "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
+    opt.add_option<size_t>("nki",             101, "Number of initial wave-vector samples.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -41,16 +41,16 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double Vad     = opt.get_numeric_option("Vad")*e/1000;   // Alloy-disorder potential [J]
-    const double Ncell   = opt.get_numeric_option("cellfraction"); // Fraction of cell occupied by each scatterer
-    const double alatt   = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
-    const double m       = opt.get_numeric_option("mass")*me;      // Band-edge effective mass [kg]
-    const char   p       = opt.get_char_option("particle");  	   // Particle ID
-    const double T       = opt.get_numeric_option("temperature");  // Temperature [K]
-    const bool   b_flag  = !opt.get_switch("noblocking");          // Include final-state blocking by default
-    const size_t nki     = opt.get_size_option("nki");             // number of ki calculations
+    const auto Vad    =  opt.get_option<double>("Vad")*e/1000;           // Alloy-disorder potential [J]
+    const auto Ncell  =  opt.get_option<double>("cellfraction");         // Fraction of cell occupied by each scatterer
+    const auto alatt  =  opt.get_option<double>("latticeconst") * 1e-10; // Lattice constant [m]
+    const auto m      =  opt.get_option<double>("mass")*me;              // Band-edge effective mass [kg]
+    const auto p      =  opt.get_option<char>  ("particle");             // Particle ID
+    const auto T      =  opt.get_option<double>("temperature");          // Temperature [K]
+    const auto b_flag = !opt.get_option<bool> ("noblocking");            // Include final-state blocking by default
+    const auto nki    =  opt.get_option<size_t>("nki");                  // number of ki calculations
 
     std::ostringstream E_filename; // Energy filename string
     E_filename << "E" << p << ".r";
@@ -114,7 +114,7 @@ int main(int argc,char *argv[])
         // Use user-specified value if given
         if(opt.vm.count("Ecutoff"))
         {
-            Ecutoff = opt.get_numeric_option("Ecutoff")*e/1000;
+            Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 
             if(Ecutoff+Ei < Ef)
             {

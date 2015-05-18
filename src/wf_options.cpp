@@ -8,6 +8,7 @@
 
 #include "wf_options.h"
 
+namespace QWWAD {
 /**
  * \brief Default constructor
  *
@@ -19,22 +20,22 @@ WfOptions::WfOptions(WfOptionMode mode) :
     // Add all input options
     if(_mode != WF_OPTION_MODE_OUT)
     {
-        add_string_option("wf-input-prefix", "wf_e", "Set prefix of wavefunction input files.");
-        add_string_option("wf-input-ext",    ".r",   "Set file extension of wavefunction input files.");
-        add_string_option("potential-input", "v.r",  "Set filename of potential input file.");
-        add_string_option("energy-input",    "Ee.r", "Set filename of energy input file.");
-        add_string_option("input-dir",               "Select directory containing input files.");
+        add_option<std::string>("wf-input-prefix", "wf_e", "Set prefix of wavefunction input files.");
+        add_option<std::string>("wf-input-ext",    ".r",   "Set file extension of wavefunction input files.");
+        add_option<std::string>("potential-input", "v.r",  "Set filename of potential input file.");
+        add_option<std::string>("energy-input",    "Ee.r", "Set filename of energy input file.");
+        add_option<std::string>("input-dir",               "Select directory containing input files.");
     }
 
     // Add all output options
     if(_mode != WF_OPTION_MODE_IN)
     {
-        add_string_option("wf-output-prefix",         "Set prefix of wavefunction output files.");
-        add_string_option("wf-output-ext",            "Set file extension of wavefunction output files.");
-        add_string_option("potential-output",         "Set filename of potential output file.");
-        add_string_option("energy-output",            "Set filename of energy output file.");
-        add_string_option("output-dir",               "Select directory containing output files.");
-        add_string_option("output-ext",       ".out", "Set default output extension.");
+        add_option<std::string>("wf-output-prefix",         "Set prefix of wavefunction output files.");
+        add_option<std::string>("wf-output-ext",            "Set file extension of wavefunction output files.");
+        add_option<std::string>("potential-output",         "Set filename of potential output file.");
+        add_option<std::string>("energy-output",            "Set filename of energy output file.");
+        add_option<std::string>("output-dir",               "Select directory containing output files.");
+        add_option<std::string>("output-ext",       ".out", "Set default output extension.");
     }
 }
 
@@ -271,4 +272,5 @@ std::string WfOptions::get_potential_output_path() const{
 
     return potential_output_path;
 }
+} // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

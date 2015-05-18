@@ -32,11 +32,11 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Generate a parabolic alloy profile surrounded by thick barriers.");
 
-    opt.add_numeric_option("well-width,a",    100, "Width at top of quantum well [angstrom].");
-    opt.add_numeric_option("barrier-width,b", 100, "Width of barriers [angstrom].");
-    opt.add_size_option   ("nz,N",            301, "Number of spatial points for output file.");
-    opt.add_numeric_option("xmin,x",          0,   "Minimum alloy fraction.");
-    opt.add_numeric_option("xmax,y",          0.1, "Maximum alloy fraction.");
+    opt.add_option<double>("well-width,a",    100, "Width at top of quantum well [angstrom].");
+    opt.add_option<double>("barrier-width,b", 100, "Width of barriers [angstrom].");
+    opt.add_option<size_t>("nz,N",            301, "Number of spatial points for output file.");
+    opt.add_option<double>("xmin,x",          0,   "Minimum alloy fraction.");
+    opt.add_option<double>("xmax,y",          0.1, "Maximum alloy fraction.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -45,15 +45,15 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double a     = opt.get_numeric_option("well-width") * 1e-10;    // [m]
-    const double b     = opt.get_numeric_option("barrier-width") * 1e-10; // [m]
-    const size_t nz    = opt.get_size_option("nz");      // Number of points for output file
-    const double x_min = opt.get_numeric_option("xmin"); // Minimum alloy fraction
-    const double x_max = opt.get_numeric_option("xmax"); // Maximum alloy fraction
+    const auto a     = opt.get_option<double>("well-width") * 1e-10;    // [m]
+    const auto b     = opt.get_option<double>("barrier-width") * 1e-10; // [m]
+    const auto nz    = opt.get_option<size_t>("nz");      // Number of points for output file
+    const auto x_min = opt.get_option<double>("xmin"); // Minimum alloy fraction
+    const auto x_max = opt.get_option<double>("xmax"); // Maximum alloy fraction
 
-    const double dz = (a+2*b)/(nz-1); // Find width of each spatial interval [m]
+    const auto dz = (a+2*b)/(nz-1); // Find width of each spatial interval [m]
 
     std::valarray<double> z(nz); // array of spatial points [m]
     std::valarray<double> x(nz); // alloy concentration at each point

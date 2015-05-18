@@ -49,15 +49,15 @@ class SBPOptions : public Options
             {
                 std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
 
-                add_switch        ("fd,f",                      "Output Fermi-Dirac distribution.");
-                add_numeric_option("mass,m",             0.067, "Effective mass (relative to free electron)");
-                add_numeric_option("vcb",                 0.00, "Band-edge potential [eV]");
-                add_numeric_option("alpha",               0.00, "Non-parabolicity parameter [eV^{-1}]");
-                add_char_option   ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
+                add_option<bool>  ("fd,f",                      "Output Fermi-Dirac distribution.");
+                add_option<double>("mass,m",             0.067, "Effective mass (relative to free electron)");
+                add_option<double>("vcb",                 0.00, "Band-edge potential [eV]");
+                add_option<double>("alpha",               0.00, "Non-parabolicity parameter [eV^{-1}]");
+                add_option<char>  ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
                                                                 "electrons, heavy holes or light holes respectively.");
-                add_numeric_option("Te",                  300,  "Carrier temperature [K].");
-                add_size_option   ("nenergy,n",           1000, "Number of energy samples to print out");
-                add_numeric_option("global-population,N", 0.0,  "Use equilibrium population for the entire system "
+                add_option<double>("Te",                  300,  "Carrier temperature [K].");
+                add_option<size_t>("nenergy,n",           1000, "Number of energy samples to print out");
+                add_option<double>("global-population,N", 0.0,  "Use equilibrium population for the entire system "
                                                                 "instead of reading subband "
                                                                 "populations from file [x1e10 cm^{-2}]");
 
@@ -71,7 +71,7 @@ class SBPOptions : public Options
         }
 
         /// \returns the global population [m^{-2}]
-        double get_global_pop() const {return get_numeric_option("global-population") * 10000 *1e10;}
+        double get_global_pop() const {return get_option<double>("global-population") * 10000 *1e10;}
 
         /// \returns true if the system is in thermal equilibrium
         bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
@@ -81,13 +81,13 @@ int main(int argc,char *argv[])
 {
     SBPOptions opt(argc, argv);
 
-    const auto FD_flag = opt.get_switch("fd");
-    const auto m       = opt.get_numeric_option("mass") * me;
-    const auto alpha   = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
-    const auto V       = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
-    const auto p       = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const auto T       = opt.get_numeric_option("Te");
-    const auto nE      = opt.get_size_option("nenergy");
+    const auto FD_flag = opt.get_option<bool>  ("fd");
+    const auto m       = opt.get_option<double>("mass") * me;
+    const auto alpha   = opt.get_option<double>("alpha") / e;     // Non-parabolicity [1/J]
+    const auto V       = opt.get_option<double>("vcb") * e;       // band_edge potential [J]
+    const auto p       = opt.get_option<char>  ("particle");        // particle ID (e, h or l)
+    const auto T       = opt.get_option<double>("Te");
+    const auto nE      = opt.get_option<size_t>("nenergy");
 
     const auto E = read_E(p); // Reads subband energy file [J]
     const auto n = E.size();

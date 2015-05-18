@@ -24,13 +24,13 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the critical thickness of a thin film.");
 
-    opt.add_numeric_option("substrate", 0.0,     "Substrate alloy fraction [0 to 1]");
-    opt.add_numeric_option("C110",      165.773, "Elastic constant C11 for alloy=0");
-    opt.add_numeric_option("C111",      128.528, "Elastic constant C11 for alloy=1");
-    opt.add_numeric_option("C120",       63.924, "Elastic constant C12 for alloy=0");
-    opt.add_numeric_option("C121",       48.260, "Elastic constant C12 for alloy=1");
-    opt.add_numeric_option("a0",          5.431, "Lattice constant for alloy=0");
-    opt.add_numeric_option("a1",          5.633, "Lattice constant for alloy=1");
+    opt.add_option<double>("substrate", 0.0,     "Substrate alloy fraction [0 to 1]");
+    opt.add_option<double>("C110",      165.773, "Elastic constant C11 for alloy=0");
+    opt.add_option<double>("C111",      128.528, "Elastic constant C11 for alloy=1");
+    opt.add_option<double>("C120",       63.924, "Elastic constant C12 for alloy=0");
+    opt.add_option<double>("C121",       48.260, "Elastic constant C12 for alloy=1");
+    opt.add_option<double>("a0",          5.431, "Lattice constant for alloy=0");
+    opt.add_option<double>("a1",          5.633, "Lattice constant for alloy=1");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -39,15 +39,15 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double xs    = opt.get_numeric_option("substrate");
-    const double C11_0 = opt.get_numeric_option("C110");
-    const double C11_1 = opt.get_numeric_option("C111");
-    const double C12_0 = opt.get_numeric_option("C120");
-    const double C12_1 = opt.get_numeric_option("C121");
-    const double a_0   = opt.get_numeric_option("a0");
-    const double a_1   = opt.get_numeric_option("a1");
+    const auto xs    = opt.get_option<double>("substrate");
+    const auto C11_0 = opt.get_option<double>("C110");
+    const auto C11_1 = opt.get_option<double>("C111");
+    const auto C12_0 = opt.get_option<double>("C120");
+    const auto C12_1 = opt.get_option<double>("C121");
+    const auto a_0   = opt.get_option<double>("a0");
+    const auto a_1   = opt.get_option<double>("a1");
 
     const size_t nx = 100;
 

@@ -27,23 +27,23 @@ int main(int argc, char **argv)
 
     std::string doc("Find eigenstates of an infinite rectangular quantum wire.");
 
-    opt.add_numeric_option("ywidth,y",   100,   "Width of quantum wire in y-direction [angstrom].");
-    opt.add_numeric_option("zwidth,z",   100,   "Width of quantum wire in z-direction [angstrom].");
-    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
-    opt.add_size_option   ("nz,N",       100,   "Number of spatial points for output file.");
-    opt.add_size_option   ("nst,s",      1,     "Number of states to find.");
-    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<double>("ywidth,y",   100,   "Width of quantum wire in y-direction [angstrom].");
+    opt.add_option<double>("zwidth,z",   100,   "Width of quantum wire in z-direction [angstrom].");
+    opt.add_option<double>("mass,m",     0.067, "Effective mass (relative to free electron).");
+    opt.add_option<size_t>("nz,N",       100,   "Number of spatial points for output file.");
+    opt.add_option<size_t>("nst,s",      1,     "Number of states to find.");
+    opt.add_option<char>  ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for "
                                                 "electrons, heavy holes or light holes respectively.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
-char	filename[9];	/* wavefunction filename	*/
+    char	filename[9];	/* wavefunction filename	*/
 
-    const double Ly = opt.get_numeric_option("ywidth") * 1e-10; // wire width in y-direction [m]
-    const double Lz = opt.get_numeric_option("zwidth") * 1e-10; // wire width in z-direction [m]
-    const char   p  = opt.get_char_option("particle");          // particle ID (e, h or l)
-    const double m  = opt.get_numeric_option("mass") * me;      // effective mass [kg]
-    const size_t N  = opt.get_size_option("nz");                // number of spatial steps
-    const size_t s  = opt.get_size_option("nst");               // number of states
+    const auto Ly = opt.get_option<double>("ywidth") * 1e-10; // wire width in y-direction [m]
+    const auto Lz = opt.get_option<double>("zwidth") * 1e-10; // wire width in z-direction [m]
+    const auto p  = opt.get_option<char>("particle");         // particle ID (e, h or l)
+    const auto m  = opt.get_option<double>("mass") * me;      // effective mass [kg]
+    const auto N  = opt.get_option<size_t>("nz");             // number of spatial steps
+    const auto s  = opt.get_option<size_t>("nst");            // number of states
 
     std::valarray<unsigned int> y_index(s*s); // y-index of each state
     std::valarray<unsigned int> z_index(s*s); // z-index of each statee

@@ -30,10 +30,10 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
 
-    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
-    opt.add_numeric_option("vcb",        0.00,  "Band-edge potential [eV]");
-    opt.add_numeric_option("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_option<double>("mass,m",     0.067, "Effective mass (relative to free electron).");
+    opt.add_option<double>("vcb",        0.00,  "Band-edge potential [eV]");
+    opt.add_option<double>("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_option<char>  ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -44,10 +44,10 @@ int main(int argc,char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto p     = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const auto m     = opt.get_numeric_option("mass") * me;     // effective mass [kg]
-    const auto V     = opt.get_numeric_option("vcb") * e;       // band_edge potential [J]
-    const auto alpha = opt.get_numeric_option("alpha") / e;     // Non-parabolicity [1/J]
+    const auto p     = opt.get_option<char>("particle");    // particle ID (e, h or l)
+    const auto m     = opt.get_option<double>("mass") * me; // effective mass [kg]
+    const auto V     = opt.get_option<double>("vcb") * e;   // band_edge potential [J]
+    const auto alpha = opt.get_option<double>("alpha") / e; // Non-parabolicity [1/J]
 
     const size_t n=1000; // Number of output energies
 

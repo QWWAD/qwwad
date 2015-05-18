@@ -26,14 +26,14 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Tabulate the specific heat capacity of a material at a range of temperatures.");
 
-    opt.add_numeric_option("debye",            360, "Debye temperature [K]");
-    opt.add_numeric_option("molarmass,m", 0.144645, "Molar mass [kg/mol]");
-    opt.add_size_option   ("natoms",             2, "Number of atoms in molecular unit");
-    opt.add_numeric_option("Tmin",               1, "Minimum temperature to compute [K]");
-    opt.add_numeric_option("Tmax",             300, "Maximum temperature to compute [K]");
-    opt.add_numeric_option("Tstep",              1, "Step in temperature [K]");
-    opt.add_string_option ("filename",       "c.r", "File in which to save specific heat capacity data");
-    opt.add_switch        ("approx"               , "Use quick low/high temperature appriximation");
+    opt.add_option<double>     ("debye",            360, "Debye temperature [K]");
+    opt.add_option<double>     ("molarmass,m", 0.144645, "Molar mass [kg/mol]");
+    opt.add_option<size_t>     ("natoms",             2, "Number of atoms in molecular unit");
+    opt.add_option<double>     ("Tmin",               1, "Minimum temperature to compute [K]");
+    opt.add_option<double>     ("Tmax",             300, "Maximum temperature to compute [K]");
+    opt.add_option<double>     ("Tstep",              1, "Step in temperature [K]");
+    opt.add_option<std::string>("filename",       "c.r", "File in which to save specific heat capacity data");
+    opt.add_option<bool>       ("approx"               , "Use quick low/high temperature appriximation");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -42,17 +42,17 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double T_D    = opt.get_numeric_option("debye");     // Debye temperature for material [K]
-    const double Tmin   = opt.get_numeric_option("Tmin");      // Minimum temperature for loop [K]
-    const double Tmax   = opt.get_numeric_option("Tmax");      // Maximum temperature for loop [K]
-    const double dT     = opt.get_numeric_option("Tstep");     // Temperature step for loop [K]
-    const double M      = opt.get_numeric_option("molarmass"); // Molar mass [kg/mol]
-    const size_t natoms = opt.get_size_option("natoms");       // Number of atoms in molecular unit
-    const bool   approx = opt.get_switch("approx");
+    const auto T_D    = opt.get_option<double>("debye");     // Debye temperature for material [K]
+    const auto Tmin   = opt.get_option<double>("Tmin");      // Minimum temperature for loop [K]
+    const auto Tmax   = opt.get_option<double>("Tmax");      // Maximum temperature for loop [K]
+    const auto dT     = opt.get_option<double>("Tstep");     // Temperature step for loop [K]
+    const auto M      = opt.get_option<double>("molarmass"); // Molar mass [kg/mol]
+    const auto natoms = opt.get_option<size_t>("natoms");    // Number of atoms in molecular unit
+    const auto approx = opt.get_option<bool>  ("approx");
 
-    const size_t nT = 1 + (Tmax-Tmin)/dT;
+    const auto nT = 1 + (Tmax-Tmin)/dT;
 
     std::valarray<double> T(nT);  // Array of temperatures [K]
     std::valarray<double> cp(nT); // Array of spec. heat. capacity [J/(kg K)]
@@ -70,7 +70,7 @@ int main(int argc,char *argv[])
             cp[iT] = dm.get_cp(T[iT]);
     }
 
-    write_table(opt.get_string_option("filename").c_str(), T, cp);
+    write_table(opt.get_option<std::string>("filename").c_str(), T, cp);
 
     return EXIT_SUCCESS;
 }

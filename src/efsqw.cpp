@@ -77,26 +77,26 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the eigenstates of a single finite quantum well. ");
 
-    opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
-    opt.add_numeric_option("barrier-width,b", 200,   "Width of barrier [angstrom]. Note that this is only used "
+    opt.add_option<double>("well-width,a",    100,   "Width of quantum well [angstrom].");
+    opt.add_option<double>("barrier-width,b", 200,   "Width of barrier [angstrom]. Note that this is only used "
                                                      "for the purposes of outputting the data. The calculation here "
                                                      "assumes that the barriers are infinitely thick.  As such, the "
                                                      "wavefunctions do not decay to precisely zero at the boundaries.");
-    opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
-    opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
-    opt.add_switch        ("output-equations",       "Output the matching equations for the system. The left-hand "
+    opt.add_option<double>("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
+    opt.add_option<double>("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
+    opt.add_option<bool>  ("output-equations",       "Output the matching equations for the system. The left-hand "
                                                      "side of the equation is output to 'lhs.r' and each branch of "
                                                      "the right-hand side is output to a set of 'rhs_i.r' files, "
                                                      "where 'i' is the index of the state that lies on that branch. "
                                                      "An rhs file is output for all the bound states in the system and "
                                                      "one additional branch (with no real solution)");
-    opt.add_switch        ("output-potential",       "Output the potential profile for the system to v.r");
-    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, "
+    opt.add_option<bool>  ("output-potential",       "Output the potential profile for the system to v.r");
+    opt.add_option<char>  ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for electrons, "
                                                      "heavy holes or light holes respectively.");
-    opt.add_size_option   ("nz,N",             1000, "Number of spatial points for output file.");
-    opt.add_size_option   ("nst,s",              1,  "Number of states to find");
-    opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
-    opt.add_numeric_option("E-cutoff",               "Cut-off energy for solutions [meV]");
+    opt.add_option<size_t>("nz,N",             1000, "Number of spatial points for output file.");
+    opt.add_option<size_t>("nst,s",              1,  "Number of states to find");
+    opt.add_option<double>("potential",        100,  "Barrier potential [meV]");
+    opt.add_option<double>("E-cutoff",               "Cut-off energy for solutions [meV]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -106,22 +106,22 @@ Options configure_options(int argc, char* argv[])
 int main(int argc,char *argv[])
 {
     const auto opt   = configure_options(argc, argv);
-    const auto a     = opt.get_numeric_option("well-width") * 1e-10;
-    const auto b     = opt.get_numeric_option("barrier-width") * 1e-10;
-    const auto m_w   = opt.get_numeric_option("well-mass") * me;
-    const auto m_b   = opt.get_numeric_option("barrier-mass") * me;
-    const auto p     = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const auto V     = opt.get_numeric_option("potential") * e / 1000;
-    const auto state = opt.get_size_option("nst");
-    const auto N     = opt.get_size_option("nz");               // number of spatial steps
+    const auto a     = opt.get_option<double>("well-width") * 1e-10;
+    const auto b     = opt.get_option<double>("barrier-width") * 1e-10;
+    const auto m_w   = opt.get_option<double>("well-mass") * me;
+    const auto m_b   = opt.get_option<double>("barrier-mass") * me;
+    const auto p     = opt.get_option<char>  ("particle");         // particle ID (e, h or l)
+    const auto V     = opt.get_option<double>("potential") * e / 1000;
+    const auto state = opt.get_option<size_t>("nst");
+    const auto N     = opt.get_option<size_t>("nz");               // number of spatial steps
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
     // Set cut-off energy if desired
     if(opt.vm.count("E-cutoff") > 0)
-        se.set_E_cutoff(opt.get_numeric_option("E-cutoff") * e/1000);
+        se.set_E_cutoff(opt.get_option<double>("E-cutoff") * e/1000);
 
-    if(opt.get_switch("output-equations"))
+    if(opt.get_option<bool>("output-equations"))
     {
         const auto nst    = se.get_n_bound();
         const auto v_max  = (nst+1)*pi/2;
@@ -179,7 +179,7 @@ int main(int argc,char *argv[])
                          true);
 
     // Write potential profile to file if wanted
-    if(opt.get_switch("output-potential"))
+    if(opt.get_option<bool>("output-potential"))
         write_table("v.r", se.get_z(), se.get_V());
 
     return EXIT_SUCCESS;

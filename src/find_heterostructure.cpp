@@ -47,11 +47,11 @@ class HeterostructureOptions : public Options
             if(vm.count("dz-max") == 0)
                 throw std::runtime_error("Spatial separation not specified");
 
-            double result = get_numeric_option("dz-max");
+            auto result = get_option<double>("dz-max");
 
             // Override result use spatial resolution setting if specified
             if (vm.count("res-min") == 1)
-                result = 1.0 / get_numeric_option("res-min");
+                result = 1.0 / get_option<double>("res-min");
 
             if (result < 0)
                 throw std::domain_error("Spatial separation must be positive.");
@@ -87,17 +87,17 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
                             "containing a table describing the system, and then run this program.\n"
                             "Multi-period structures can be generated if desired.");
 
-    add_numeric_option("dz-max",              0.1,          "Maximum separation between spatial points.");
-    add_numeric_option("res-min",                           "Minimum spatial resolution. Overrides the --dz-max option");
-    add_size_option   ("nz-1per",               0,          "Number of points (per period) within the structure. "
-                                                            "If specified, this overrides the --dz-max and "
-                                                            "--res-min options");
-    add_size_option   ("nper,p",                1,          "Number of periods to output");
-    add_string_option ("infile,i",          "s.r",          "Filename from which to read input data.");
-    add_string_option ("interfaces-file,f", "interfaces.r", "Filename to which interface locations are written.");
-    add_string_option ("alloy-file,x",      "x.r",          "Filename to which alloy profile is written.");
-    add_string_option ("doping-file,d",     "d.r",          "Filename to which doping profile is written.");
-    add_string_option ("unit,u",            "angstrom",     "Set length unit.  Acceptable values are 'A': "
+    add_option<double>     ("dz-max",              0.1,          "Maximum separation between spatial points.");
+    add_option<double>     ("res-min",                           "Minimum spatial resolution. Overrides the --dz-max option");
+    add_option<size_t>     ("nz-1per",               0,          "Number of points (per period) within the structure. "
+                                                                 "If specified, this overrides the --dz-max and "
+                                                                 "--res-min options");
+    add_option<size_t>     ("nper,p",                1,          "Number of periods to output");
+    add_option<std::string>("infile,i",          "s.r",          "Filename from which to read input data.");
+    add_option<std::string>("interfaces-file,f", "interfaces.r", "Filename to which interface locations are written.");
+    add_option<std::string>("alloy-file,x",      "x.r",          "Filename to which alloy profile is written.");
+    add_option<std::string>("doping-file,d",     "d.r",          "Filename to which doping profile is written.");
+    add_option<std::string>("unit,u",            "angstrom",     "Set length unit.  Acceptable values are 'A': "
                                                             "Angstroms or 'n': nanometres.");
 
     add_prog_specific_options_and_parse(argc, argv, description);
@@ -121,7 +121,7 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
             unit = UNIT_NM; // Sets unit to [nm]
     }
 
-    if (get_size_option("nper") < 1)
+    if (get_option<size_t>("nper") == 0)
         throw std::domain_error("Number of periods must be positive.");
 
     if(get_verbose())
@@ -146,13 +146,13 @@ void HeterostructureOptions::print() const
             unit_string="angstroms";
     }
 
-    std::cout << " * Unit of length for input: " << unit_string << std::endl;
-    std::cout << " * Number of points per period: " << get_size_option("nz-1per") << std::endl;
-    std::cout << " * Number of periods to output: " << get_size_option("nper") << std::endl;
-    std::cout << " * Filename of input structure: " << get_string_option("infile") << std::endl;
-    std::cout << " * Filename for interface locations: " << get_string_option("interfaces-file") << std::endl;
-    std::cout << " * Filename for alloy profile: " << get_string_option("alloy-file") << std::endl;
-    std::cout << " * Filename for doping profile: " << get_string_option("doping-file") << std::endl;
+    std::cout << " * Unit of length for input:         " << unit_string << std::endl;
+    std::cout << " * Number of points per period:      " << get_option<size_t>("nz-1per")              << std::endl;
+    std::cout << " * Number of periods to output:      " << get_option<size_t>("nper")                 <<  std::endl;
+    std::cout << " * Filename of input structure:      " << get_option<std::string>("infile")          << std::endl;
+    std::cout << " * Filename for interface locations: " << get_option<std::string>("interfaces-file") << std::endl;
+    std::cout << " * Filename for alloy profile:       " << get_option<std::string>("alloy-file")      << std::endl;
+    std::cout << " * Filename for doping profile:      " << get_option<std::string>("doping-file")     << std::endl;
     std::cout << std::endl;
 }
 
@@ -162,16 +162,17 @@ int main(int argc, char* argv[])
     const HeterostructureOptions opt(argc,argv);
 
     // Create a new heterostructure using input data
-    const Heterostructure *het = (opt.get_size_option("nz-1per") != 0) ?  // Force the number of points per period if specified
-                                 Heterostructure::create_from_file(opt.get_string_option("infile"),
-                                                                   opt.get_unit(),
-                                                                   opt.get_size_option("nz-1per"),
-                                                                   opt.get_size_option("nper"))
-                                 :
-                                 Heterostructure::create_from_file_auto_nz(opt.get_string_option("infile"),
-                                                                           opt.get_unit(),
-                                                                           opt.get_size_option("nper"),
-                                                                           opt.get_dz_max());
+    const auto nz_1per = opt.get_option<size_t>("nz-1per");
+    const auto het = (nz_1per != 0) ?  // Force the number of points per period if specified
+                     Heterostructure::create_from_file(opt.get_option<std::string>("infile"),
+                                                       opt.get_unit(),
+                                                       opt.get_option<size_t>("nz-1per"),
+                                                       opt.get_option<size_t>("nper"))
+                     :
+                     Heterostructure::create_from_file_auto_nz(opt.get_option<std::string>("infile"),
+                                                               opt.get_unit(),
+                                                               opt.get_option<size_t>("nper"),
+                                                               opt.get_dz_max());
 
     if(opt.get_verbose())
     {
@@ -184,9 +185,9 @@ int main(int argc, char* argv[])
     }
     
     // Output the index of each interface to file
-    write_table(opt.get_string_option("interfaces-file").c_str(), het->get_layer_top_indices());
+    write_table(opt.get_option<std::string>("interfaces-file").c_str(), het->get_layer_top_indices());
 
-    std::ofstream stream(opt.get_string_option("alloy-file").c_str());
+    std::ofstream stream(opt.get_option<std::string>("alloy-file").c_str());
     for(unsigned int iz = 0; iz < het->get_z().size(); ++iz)
     {
         stream << std::setprecision(20) << std::scientific << het->get_z()[iz] << "\t";
@@ -197,7 +198,7 @@ int main(int argc, char* argv[])
         stream << std::endl;
     }
 
-    write_table(opt.get_string_option("doping-file").c_str(), het->get_z(), het->get_n3D_array());
+    write_table(opt.get_option<std::string>("doping-file").c_str(), het->get_z(), het->get_n3D_array());
 
     delete het;
 

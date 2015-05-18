@@ -33,13 +33,13 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the transmission coefficient through a double tunnelling barrier.");
 
-    opt.add_numeric_option("left-barrier-width,l",    100, "Width of left barrier [angstrom].");
-    opt.add_numeric_option("well-width,b",            100, "Width of well [angstrom].");
-    opt.add_numeric_option("right-barrier-width,r",   100, "Width of right barrier [angstrom].");
-    opt.add_numeric_option("well-mass,m",           0.067, "Effective mass in well (relative to that of a free electron).");
-    opt.add_numeric_option("barrier-mass,n",        0.067, "Effective mass in barrier (relative to that of a free electron).");
-    opt.add_numeric_option("potential",               100, "Barrier potential [meV]");
-    opt.add_numeric_option("energy-step,d",          0.01, "Energy step [meV]");
+    opt.add_option<double>("left-barrier-width,l",    100, "Width of left barrier [angstrom].");
+    opt.add_option<double>("well-width,b",            100, "Width of well [angstrom].");
+    opt.add_option<double>("right-barrier-width,r",   100, "Width of right barrier [angstrom].");
+    opt.add_option<double>("well-mass,m",           0.067, "Effective mass in well (relative to that of a free electron).");
+    opt.add_option<double>("barrier-mass,n",        0.067, "Effective mass in barrier (relative to that of a free electron).");
+    opt.add_option<double>("potential",               100, "Barrier potential [meV]");
+    opt.add_option<double>("energy-step,d",          0.01, "Energy step [meV]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -48,15 +48,15 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double dE  = opt.get_numeric_option("energy-step") * 1e-3 * e;      // [J]
-    const double L1  = opt.get_numeric_option("left-barrier-width") * 1e-10;  // [m]
-    const double L2  = opt.get_numeric_option("well-width") * 1e-10;          // [m]
-    const double L3  = opt.get_numeric_option("right-barrier-width") * 1e-10; // [m]
-    const double m_w = opt.get_numeric_option("well-mass") * me;              // [kg]
-    const double m_b = opt.get_numeric_option("barrier-mass") * me;           // [kg]
-    const double V   = opt.get_numeric_option("potential") * e / 1000;        // [J]
+    const auto dE  = opt.get_option<double>("energy-step") * 1e-3 * e;      // [J]
+    const auto L1  = opt.get_option<double>("left-barrier-width") * 1e-10;  // [m]
+    const auto L2  = opt.get_option<double>("well-width") * 1e-10;          // [m]
+    const auto L3  = opt.get_option<double>("right-barrier-width") * 1e-10; // [m]
+    const auto m_w = opt.get_option<double>("well-mass") * me;              // [kg]
+    const auto m_b = opt.get_option<double>("barrier-mass") * me;           // [kg]
+    const auto V   = opt.get_option<double>("potential") * e / 1000;        // [J]
 
     const size_t nE = floor(V/dE); // Number of points in plot
 

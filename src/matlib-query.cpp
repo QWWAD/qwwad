@@ -26,13 +26,13 @@ class MatLibOptions : public Options
         {
             try
             {
-                add_string_option ("filename",    "", "Material library file to read. If this is not specified, "
-                                                      "the default material library for the system will be used.");
-                add_string_option ("property,p",  "", "Name of property to look up.");
-                add_string_option ("material",    "", "Name of material to look up.");
-                add_switch        ("text,t",          "Use this flag if the property is a string of text");
-                add_switch        ("show-unit,u",     "Show the unit for the property rather than just its value");
-                add_numeric_option("variable,x",  0,  "Optional input parameter for properties of the form y=f(x)");
+                add_option<std::string>("filename",    "", "Material library file to read. If this is not specified, "
+                                                           "the default material library for the system will be used.");
+                add_option<std::string>("property,p",  "", "Name of property to look up.");
+                add_option<std::string>("material",    "", "Name of material to look up.");
+                add_option<bool>       ("text,t",          "Use this flag if the property is a string of text");
+                add_option<bool>       ("show-unit,u",     "Show the unit for the property rather than just its value");
+                add_option<double>     ("variable,x",   0, "Optional input parameter for properties of the form y=f(x)");
 
                 std::string doc = "Queries the value of a property from the material "
                                   "database.";
@@ -59,8 +59,8 @@ class MatLibOptions : public Options
          */
         void print() const
         {
-            std::cout << "Querying property: " << get_string_option("property")
-                      << " for " << get_string_option("material")
+            std::cout << "Querying property: " << get_option<std::string>("property")
+                      << " for " << get_option<std::string>("material")
                       << "." << std::endl;
         }
 };
@@ -68,12 +68,12 @@ class MatLibOptions : public Options
 int main(int argc, char* argv[])
 {
     MatLibOptions opt(argc, argv);
-    const auto filename = opt.get_string_option("filename");
+    const auto filename = opt.get_option<std::string>("filename");
 
     MaterialLibrary lib(filename);
 
-    const auto material_name = opt.get_string_option("material");
-    const auto property_name = opt.get_string_option("property");
+    const auto material_name = opt.get_option<std::string>("material");
+    const auto property_name = opt.get_option<std::string>("property");
 
     MaterialProperty const * prop;
 
@@ -96,10 +96,10 @@ int main(int argc, char* argv[])
     {
         const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
 
-        const auto x = opt.get_numeric_option("variable");
+        const auto x = opt.get_option<double>("variable");
         std::cout << numeric_property->get_val(x);
 
-        if(opt.get_switch("show-unit"))
+        if(opt.get_option<bool>("show-unit"))
             std::cout << " " << numeric_property->get_unit();
 
         std::cout << std::endl;

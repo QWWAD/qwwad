@@ -70,15 +70,15 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the eigenstates of an infinite Kronig-Penney superlattice.");
 
-    opt.add_numeric_option("wave-vector,k",     0,   "Wave-vector expressed relative to pi/L, where L is period length");
-    opt.add_numeric_option("well-width,a",    100,   "Width of quantum well [angstrom].");
-    opt.add_numeric_option("barrier-width,b", 100,   "Width of barrier [angstrom].");
-    opt.add_numeric_option("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
-    opt.add_numeric_option("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
-    opt.add_char_option   ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<double>("wave-vector,k",     0,   "Wave-vector expressed relative to pi/L, where L is period length");
+    opt.add_option<double>("well-width,a",    100,   "Width of quantum well [angstrom].");
+    opt.add_option<double>("barrier-width,b", 100,   "Width of barrier [angstrom].");
+    opt.add_option<double>("well-mass,m",     0.067, "Effective mass in well (relative to that of a free electron)");
+    opt.add_option<double>("barrier-mass,n",  0.067, "Effective mass in barrier (relative to that of a free electron)");
+    opt.add_option<char>  ("particle,p",       'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
                                                      "electrons, heavy holes or light holes respectively.");
-    opt.add_size_option   ("nst,s",              1,  "Number of states to find");
-    opt.add_numeric_option("potential",        100,  "Barrier potential [meV]");
+    opt.add_option<size_t>("nst,s",              1,  "Number of states to find");
+    opt.add_option<double>("potential",        100,  "Barrier potential [meV]");
     
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -87,22 +87,22 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double a    = opt.get_numeric_option("well-width") * 1e-10;
-    const double b    = opt.get_numeric_option("barrier-width") * 1e-10;
-    const double m_w  = opt.get_numeric_option("well-mass") * me;
-    const double m_b  = opt.get_numeric_option("barrier-mass") * me;
-    const char   p    = opt.get_char_option("particle");         // particle ID (e, h or l)
-    const double V    = opt.get_numeric_option("potential") * e / 1000;
-    const size_t nst  = opt.get_size_option("nst");
-    const double k    = opt.get_numeric_option("wave-vector") * pi/(a+b);   // [1/m]
+    const auto a    = opt.get_option<double>("well-width") * 1e-10;
+    const auto b    = opt.get_option<double>("barrier-width") * 1e-10;
+    const auto m_w  = opt.get_option<double>("well-mass") * me;
+    const auto m_b  = opt.get_option<double>("barrier-mass") * me;
+    const auto p    = opt.get_option<char>("particle");         // particle ID (e, h or l)
+    const auto V    = opt.get_option<double>("potential") * e / 1000;
+    const auto nst  = opt.get_option<size_t>("nst");
+    const auto k    = opt.get_option<double>("wave-vector") * pi/(a+b);   // [1/m]
 
     kpsl_params params = {a, b, m_w, m_b, V, k};
     gsl_function F;
     F.function = &f;
     F.params   = &params;
-    gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+    auto solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
     const double dx=1e-3*e; // arbitrarily small energy increment---0.1meV
 

@@ -71,10 +71,10 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Large-basis pseudopotential calculation for user-defined cell");
 
-    opt.add_numeric_option("latticeconst,A", 5.65, "Lattice constant [angstrom]");
-    opt.add_size_option   ("nmin,n",            4, "Lowest output band index (VB = 4, CB = 5)");
-    opt.add_size_option   ("nmax,m",            5, "Highest output band index (VB = 4, CB = 5)");
-    opt.add_switch        ("printev,w",            "Print eigenvectors to file");
+    opt.add_option<double>("latticeconst,A", 5.65, "Lattice constant [angstrom]");
+    opt.add_option<size_t>("nmin,n",            4, "Lowest output band index (VB = 4, CB = 5)");
+    opt.add_option<size_t>("nmax,m",            5, "Highest output band index (VB = 4, CB = 5)");
+    opt.add_option<bool>  ("printev,w",            "Print eigenvectors to file");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -83,12 +83,12 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double A0    = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
-    const int    n_min = opt.get_size_option("nmin")-1; // Lowest output band
-    const int    n_max = opt.get_size_option("nmax")-1; // Highest output band
-    const bool   ev    = opt.get_switch("printev");   // Print eigenvectors?
+    const auto A0    = opt.get_option<double>("latticeconst") * 1e-10; // Lattice constant [m]
+    const auto n_min = opt.get_option<size_t>("nmin")-1;               // Lowest output band
+    const auto n_max = opt.get_option<size_t>("nmax")-1;               // Highest output band
+    const auto ev    = opt.get_option<bool>  ("printev");              // Print eigenvectors?
 
     // Read desired wave vector points from file
     std::valarray<double> kx;

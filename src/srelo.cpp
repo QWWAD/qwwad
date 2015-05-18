@@ -41,21 +41,21 @@ static Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the polar LO-phonon scattering rate.");
 
-    opt.add_switch        ("outputff,a",            "Output form-factors to file.");
-    opt.add_switch        ("noblocking,b",          "Disable final-state blocking.");
-    opt.add_switch        ("noscreening,S",         "Disable screening.");
-    opt.add_numeric_option("latticeconst,A",  5.65, "Lattice constant in growth direction [angstrom]");
-    opt.add_numeric_option("ELO,E",          36.0,  "Energy of LO phonon [meV]");
-    opt.add_numeric_option("epss,e",         13.18, "Static dielectric constant");
-    opt.add_numeric_option("epsinf,f",       10.89, "High-frequency dielectric constant");
-    opt.add_numeric_option("mass,m",         0.067, "Band-edge effective mass (relative to free electron)");
-    opt.add_char_option   ("particle,p",       'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<bool>  ("outputff,a",            "Output form-factors to file.");
+    opt.add_option<bool>  ("noblocking,b",          "Disable final-state blocking.");
+    opt.add_option<bool>  ("noscreening,S",         "Disable screening.");
+    opt.add_option<double>("latticeconst,A",  5.65, "Lattice constant in growth direction [angstrom]");
+    opt.add_option<double>("ELO,E",          36.0,  "Energy of LO phonon [meV]");
+    opt.add_option<double>("epss,e",         13.18, "Static dielectric constant");
+    opt.add_option<double>("epsinf,f",       10.89, "High-frequency dielectric constant");
+    opt.add_option<double>("mass,m",         0.067, "Band-edge effective mass (relative to free electron)");
+    opt.add_option<char>  ("particle,p",       'e', "ID of particle to be used: 'e', 'h' or 'l', for "
                                                     "electrons, heavy holes or light holes respectively.");
-    opt.add_numeric_option("Te",               300, "Carrier temperature [K].");
-    opt.add_numeric_option("Tl",               300, "Lattice temperature [K].");
-    opt.add_numeric_option("Ecutoff",               "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
-    opt.add_size_option   ("nki",             1001, "Number of initial wave-vector samples.");
-    opt.add_size_option   ("nKz",             1001, "Number of phonon wave-vector samples.");
+    opt.add_option<double>("Te",               300, "Carrier temperature [K].");
+    opt.add_option<double>("Tl",               300, "Lattice temperature [K].");
+    opt.add_option<double>("Ecutoff",               "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
+    opt.add_option<size_t>("nki",             1001, "Number of initial wave-vector samples.");
+    opt.add_option<size_t>("nKz",             1001, "Number of phonon wave-vector samples.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -64,21 +64,21 @@ static Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-const bool   ff_flag     = opt.get_switch("outputff");                     // True if formfactors are wanted
-const double A0          = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
-const double Ephonon     = opt.get_numeric_option("ELO") * e/1000;         // Phonon energy [J]
-const double epsilon_s   = opt.get_numeric_option("epss")   * eps0;        // Static permittivity [F/m]
-const double epsilon_inf = opt.get_numeric_option("epsinf") * eps0;        // High-frequency permittivity [F/m]
-const double m           = opt.get_numeric_option("mass")*me;              // Band-edge effective mass [kg]
-const char   p           = opt.get_char_option("particle");  	           // Particle ID
-const double Te          = opt.get_numeric_option("Te");                   // Carrier temperature [K]
-const double Tl          = opt.get_numeric_option("Tl");                   // Lattice temperature [K]
-const bool   b_flag      = !opt.get_switch("noblocking");                  // Include final-state blocking by default
-const bool   S_flag      = !opt.get_switch("noscreening");                 // Include screening by default
-const size_t nki         = opt.get_size_option("nki");                     // number of ki calculations
-const size_t nKz         = opt.get_size_option("nKz");                     // number of Kz calculations
+    const auto ff_flag     =  opt.get_option<bool>  ("outputff");             // True if formfactors are wanted
+    const auto A0          =  opt.get_option<double>("latticeconst") * 1e-10; // Lattice constant [m]
+    const auto Ephonon     =  opt.get_option<double>("ELO") * e/1000;         // Phonon energy [J]
+    const auto epsilon_s   =  opt.get_option<double>("epss")   * eps0;        // Static permittivity [F/m]
+    const auto epsilon_inf =  opt.get_option<double>("epsinf") * eps0;        // High-frequency permittivity [F/m]
+    const auto m           =  opt.get_option<double>("mass")*me;              // Band-edge effective mass [kg]
+    const auto p           =  opt.get_option<char>  ("particle");             // Particle ID
+    const auto Te          =  opt.get_option<double>("Te");                   // Carrier temperature [K]
+    const auto Tl          =  opt.get_option<double>("Tl");                   // Lattice temperature [K]
+    const auto b_flag      = !opt.get_option<bool>  ("noblocking");           // Include final-state blocking by default
+    const auto S_flag      = !opt.get_option<bool>  ("noscreening");          // Include screening by default
+    const auto nki         =  opt.get_option<size_t>("nki");                  // number of ki calculations
+    const auto nKz         =  opt.get_option<size_t>("nKz");                  // number of Kz calculations
 
 // calculate step length in phonon wave-vector
 const double dKz=2/(A0*nKz); // Taken range of phonon integration as 2/A0
@@ -160,7 +160,7 @@ for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
     // Use user-specified value if given
     if(opt.vm.count("Ecutoff"))
     {
-        Ecutoff = opt.get_numeric_option("Ecutoff")*e/1000;
+        Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 
         if(Ecutoff+Ei - Ephonon < Ef)
         {

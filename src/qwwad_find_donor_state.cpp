@@ -38,31 +38,30 @@ int main(int argc,char *argv[])
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system");
 
-    opt.add_numeric_option("dE,d",              1, "Energy step for Shooting solver [meV]");
-    opt.add_numeric_option("epsilon,e",     13.18, "Bulk relative permittivity");
-    opt.add_numeric_option("mass,m",        0.067, "Bulk effective mass (relative to free electron)");
-    opt.add_numeric_option("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
-    opt.add_numeric_option("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
-    opt.add_numeric_option("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
-    opt.add_numeric_option("zetastart,w",   0.001, "Initial value for symmetry parameter search");
-    opt.add_numeric_option("zetastep,x",     0.01, "Step size for symmetry parameter search");
-    opt.add_numeric_option("zetastop,y",       -1, "Final value for symmetry parameter search");
-    opt.add_string_option ("searchmethod", "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
-    opt.add_string_option ("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
+    opt.add_option<double>     ("dE,d",              1, "Energy step for Shooting solver [meV]");
+    opt.add_option<double>     ("epsilon,e",     13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("mass,m",        0.067, "Bulk effective mass (relative to free electron)");
+    opt.add_option<double>     ("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("zetastart,w",   0.001, "Initial value for symmetry parameter search");
+    opt.add_option<double>     ("zetastep,x",     0.01, "Step size for symmetry parameter search");
+    opt.add_option<double>     ("zetastop,y",       -1, "Final value for symmetry parameter search");
+    opt.add_option<std::string>("searchmethod", "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
+    opt.add_option<std::string>("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
-    /* computational default values */
-    const double delta_E = opt.get_numeric_option("dE") * 1e-3*e;    // Energy increment [J]
-    const double epsilon = opt.get_numeric_option("epsilon") * eps0; // Permittivity [F/m]
-    const double mstar   = opt.get_numeric_option("mass") * me;      // Effective mass [kg]
+    const auto delta_E = opt.get_option<double>("dE") * 1e-3*e;    // Energy increment [J]
+    const auto epsilon = opt.get_option<double>("epsilon") * eps0; // Permittivity [F/m]
+    const auto mstar   = opt.get_option<double>("mass") * me;      // Effective mass [kg]
 
-    const double lambda_start = opt.get_numeric_option("lambdastart") * 1e-10; // Initial Bohr radius [m]
-    const double lambda_step  = opt.get_numeric_option("lambdastep")  * 1e-10; // Bohr radius increment [m]
-    const double lambda_stop  = opt.get_numeric_option("lambdastop")  * 1e-10; // Final Bohr radius [m]
-    const double zeta_start   = opt.get_numeric_option("zetastart"); // Initial symmetry parameter
-    const double zeta_step    = opt.get_numeric_option("zetastep");  // Symmetry parameter increment
-    const double zeta_stop    = opt.get_numeric_option("zetastop");  // Final symmetry parameter
+    const auto lambda_start = opt.get_option<double>("lambdastart") * 1e-10; // Initial Bohr radius [m]
+    const auto lambda_step  = opt.get_option<double>("lambdastep")  * 1e-10; // Bohr radius increment [m]
+    const auto lambda_stop  = opt.get_option<double>("lambdastop")  * 1e-10; // Final Bohr radius [m]
+    const auto zeta_start   = opt.get_option<double>("zetastart"); // Initial symmetry parameter
+    const auto zeta_step    = opt.get_option<double>("zetastep");  // Symmetry parameter increment
+    const auto zeta_stop    = opt.get_option<double>("zetastop");  // Final symmetry parameter
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
@@ -83,17 +82,17 @@ int main(int argc,char *argv[])
         // Create an initial estimate of the Schroedinger solution using a guess at lambda
         SchroedingerSolverDonor *se = 0;
 
-        if(opt.get_string_option("symmetry") == "2D")
+        if(opt.get_option<std::string>("symmetry") == "2D")
             se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(opt.get_string_option("symmetry") == "3D")
+        else if(opt.get_option<std::string>("symmetry") == "3D")
             se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(opt.get_string_option("symmetry") == "variable")
+        else if(opt.get_option<std::string>("symmetry") == "variable")
         {
             se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E);
         }
         else
         {
-            std::cerr << "Unrecognised symmetry type: " << opt.get_string_option("symmetry") << std::endl;
+            std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -102,13 +101,15 @@ int main(int argc,char *argv[])
         DonorEnergyMinimiser minimiser(se, lambda_start, lambda_step, lambda_stop);
         minimiser.set_zeta_params(zeta_start, zeta_step, zeta_stop);
 
-        if(opt.get_string_option("searchmethod") == "linear")
+        const auto search_method = opt.get_option<std::string>("searchmethod");
+
+        if(search_method == "linear")
             minimiser.minimise(MINIMISE_LINEAR);
-        else if (opt.get_string_option("searchmethod") == "fast")
+        else if (search_method == "fast")
             minimiser.minimise(MINIMISE_FAST);
         else
         {
-            std::cerr << "Unrecognised search type: " << opt.get_string_option("lambdasearch") << std::endl;
+            std::cerr << "Unrecognised search type: " << search_method << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -117,7 +118,7 @@ int main(int argc,char *argv[])
         E0[i_d]                      = solutions[0].get_E();
         lambda_0[i_d]                = se->get_lambda();
 
-        if(opt.get_string_option("symmetry") == "variable")
+        if(opt.get_option<std::string>("symmetry") == "variable")
             zeta_0[i_d] = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
 
         // Get the complete wavefunction
@@ -144,7 +145,7 @@ int main(int argc,char *argv[])
     write_table("e.r", r_d_out, E_out);
     write_table("l.r", r_d_out, lambda_out);
 
-    if(opt.get_string_option("symmetry") == "variable")
+    if(opt.get_option<std::string>("symmetry") == "variable")
         write_table("zeta.r", r_d_out, zeta_0);
 
     return EXIT_SUCCESS;

@@ -55,22 +55,22 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the acoustic-phonon deformation potential scattering rate.");
 
-    opt.add_switch        ("outputff,a",              "Output form-factors to file.");
-    opt.add_switch        ("noblocking,b",            "Disable final-state blocking.");
-    opt.add_numeric_option("latticeconst,A",    5.65, "Lattice constant in growth direction [angstrom]");
-    opt.add_numeric_option("Ephonon,E",         2.0,  "Energy of acoustic phonon [meV]");
-    opt.add_numeric_option("vs,v"      ,     5117.0,  "Speed of sound [m/s]");
-    opt.add_numeric_option("mass,m",          0.067,  "Band-edge effective mass (relative to free electron)");
-    opt.add_numeric_option("density,d",       5317.5, "Mass density [kg/m^3]");
-    opt.add_numeric_option("Da,D",               7.0, "Acoustic deformation potential [eV]");
-    opt.add_char_option   ("particle,p",        'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
+    opt.add_option<bool>  ("outputff,a",              "Output form-factors to file.");
+    opt.add_option<bool>  ("noblocking,b",            "Disable final-state blocking.");
+    opt.add_option<double>("latticeconst,A",    5.65, "Lattice constant in growth direction [angstrom]");
+    opt.add_option<double>("Ephonon,E",         2.0,  "Energy of acoustic phonon [meV]");
+    opt.add_option<double>("vs,v"      ,     5117.0,  "Speed of sound [m/s]");
+    opt.add_option<double>("mass,m",          0.067,  "Band-edge effective mass (relative to free electron)");
+    opt.add_option<double>("density,d",       5317.5, "Mass density [kg/m^3]");
+    opt.add_option<double>("Da,D",               7.0, "Acoustic deformation potential [eV]");
+    opt.add_option<char>  ("particle,p",        'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
                                                       "electrons, heavy holes or light holes respectively.");
-    opt.add_numeric_option("Te",                300,  "Carrier temperature [K].");
-    opt.add_numeric_option("Tl",                300,  "Lattice temperature [K].");
-    opt.add_numeric_option("Ecutoff",                 "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
-    opt.add_size_option   ("nki",               301,  "Number of initial wave-vector samples.");
-    opt.add_size_option   ("nkz",               301,  "Number of phonon wave-vector samples.");
-    opt.add_size_option   ("ntheta",            101,  "Number of strips in theta angle integration");
+    opt.add_option<double>("Te",                300,  "Carrier temperature [K].");
+    opt.add_option<double>("Tl",                300,  "Lattice temperature [K].");
+    opt.add_option<double>("Ecutoff",                 "Cut-off energy for carrier distribution [meV]. If not specified, then 5kT above band-edge.");
+    opt.add_option<size_t>("nki",               301,  "Number of initial wave-vector samples.");
+    opt.add_option<size_t>("nkz",               301,  "Number of phonon wave-vector samples.");
+    opt.add_option<size_t>("ntheta",            101,  "Number of strips in theta angle integration");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -79,22 +79,23 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const bool   ff_flag     = opt.get_switch("outputff");                     // True if formfactors are wanted
-    const bool   b_flag      = !opt.get_switch("noblocking");                  // Final state blocking on by default
-    const double A0          = opt.get_numeric_option("latticeconst") * 1e-10; // Lattice constant [m]
-    const double rho         = opt.get_numeric_option("density");              // Mass density [kg/m^3]
-    const double Ephonon     = opt.get_numeric_option("Ephonon")*e/1000;       // Acoustic phonon energy [J]
-    const double Da          = opt.get_numeric_option("Da")*e;                 // Acoustic deformation potential [J]
-    const double m           = opt.get_numeric_option("mass")*me;              // Band-edge effective mass [kg]
-    const char   p           = opt.get_char_option("particle");  	       // Particle ID
-    const double Te          = opt.get_numeric_option("Te");                   // Carrier temperature [K]
-    const double Tl          = opt.get_numeric_option("Tl");                   // Lattice temperature [K]
-    const double Vs          = opt.get_numeric_option("vs");                   // Speed of sound [m/s]
-    const size_t nki         = opt.get_size_option("nki");                     // number of ki calculations
-    const size_t nKz         = opt.get_size_option("nkz");                     // number of Kz calculations
-    const size_t ntheta      = opt.get_size_option("ntheta");                  // number of samples over angle
+    const auto ff_flag =  opt.get_option<bool>("outputff");               // True if formfactors are wanted
+    const auto b_flag  = !opt.get_option<bool>("noblocking");             // Final state blocking on by default
+    const auto A0      =  opt.get_option<double>("latticeconst") * 1e-10; // Lattice constant [m]
+    const auto rho     =  opt.get_option<double>("density");              // Mass density [kg/m^3]
+    const auto Ephonon =  opt.get_option<double>("Ephonon")*e/1000;       // Acoustic phonon energy [J]
+    const auto Da      =  opt.get_option<double>("Da")*e;                 // Acoustic deformation potential [J]
+    const auto m       =  opt.get_option<double>("mass")*me;              // Band-edge effective mass [kg]
+    const auto p       =  opt.get_option<char>("particle");               // Particle ID
+    const auto Te      =  opt.get_option<double>("Te");                   // Carrier temperature [K]
+    const auto Tl      =  opt.get_option<double>("Tl");                   // Lattice temperature [K]
+    const auto Vs      =  opt.get_option<double>("vs");                   // Speed of sound [m/s]
+    const auto nki     =  opt.get_option<size_t>("nki");                  // number of ki calculations
+    const auto nKz     =  opt.get_option<size_t>("nkz");                  // number of Kz calculations
+    const auto ntheta  =  opt.get_option<size_t>("ntheta");               // number of samples over angle
+
     char	filename[9];	/* character string for output filename		*/
     FILE	*FACa;		/* pointer to absorption output file		*/
     FILE	*FACe;		/* pointer to emission   output file		*/
@@ -191,7 +192,7 @@ int main(int argc,char *argv[])
         // Use user-specified value if given
         if(opt.vm.count("Ecutoff"))
         {
-            Ecutoff = opt.get_numeric_option("Ecutoff")*e/1000;
+            Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 
             if(Ecutoff+Ei < Ef)
             {

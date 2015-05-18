@@ -25,14 +25,14 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Generate a Poeschl--Teller potential profile and finds eigenstates analytically.");
 
-    opt.add_numeric_option("alpha,a",    0.1,   "Width parameter [1/angstrom].");
-    opt.add_numeric_option("lambda,l",   2.0,   "Depth parameter.");
-    opt.add_numeric_option("length,L",   300,   "Length of potential profile [angstrom].");
-    opt.add_numeric_option("mass,m",     0.067, "Effective mass (relative to free electron).");
-    opt.add_size_option   ("nz,N",       301,   "Number of spatial points for output file.");
-    opt.add_size_option   ("nst-max",     0,    "Maximum number of subbands to find.  The default (0) means "
+    opt.add_option<double>("alpha,a",    0.1,   "Width parameter [1/angstrom].");
+    opt.add_option<double>("lambda,l",   2.0,   "Depth parameter.");
+    opt.add_option<double>("length,L",   300,   "Length of potential profile [angstrom].");
+    opt.add_option<double>("mass,m",     0.067, "Effective mass (relative to free electron).");
+    opt.add_option<size_t>("nz,N",       301,   "Number of spatial points for output file.");
+    opt.add_option<size_t>("nst-max",     0,    "Maximum number of subbands to find.  The default (0) means "
                                                 "that all states will be found up to maximum confining potential.");
-    opt.add_char_option   ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, "
+    opt.add_option<char>  ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, "
                                                 "heavy holes or light holes respectively.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
@@ -42,15 +42,15 @@ Options configure_options(int argc, char* argv[])
 
 int main(int argc,char *argv[])
 {
-    const Options opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    const double alpha   = opt.get_numeric_option("alpha") * 1e10;   // Width parameter [1/m]
-    const double lambda  = opt.get_numeric_option("lambda");         // Depth parameter
-    const double L       = opt.get_numeric_option("length") * 1e-10; // Length of potential [m]
-    const double m       = opt.get_numeric_option("mass") * me;      // effective mass [kg]
-    const size_t nz      = opt.get_size_option("nz"); // Number of spatial points for output file
-    const size_t nst_max = opt.get_size_option("nst-max");
-    const char   p       = opt.get_char_option("particle"); // Particle ID
+    const auto alpha   = opt.get_option<double>("alpha") * 1e10;   // Width parameter [1/m]
+    const auto lambda  = opt.get_option<double>("lambda");         // Depth parameter
+    const auto L       = opt.get_option<double>("length") * 1e-10; // Length of potential [m]
+    const auto m       = opt.get_option<double>("mass") * me;      // effective mass [kg]
+    const auto nz      = opt.get_option<size_t>("nz");             // Number of spatial points for output file
+    const auto nst_max = opt.get_option<size_t>("nst-max");
+    const auto p       = opt.get_option<char>("particle"); // Particle ID
 
     if(opt.get_verbose())
     {

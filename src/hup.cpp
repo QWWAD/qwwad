@@ -28,7 +28,7 @@ WfOptions configure_options(int argc, char* argv[])
     
     std::string summary("Compute the uncertainty relation for a given state.");
 
-    opt.add_size_option("state",  1, "Number of state to analyse.");
+    opt.add_option<size_t>("state",  1, "Number of state to analyse.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -37,15 +37,15 @@ WfOptions configure_options(int argc, char* argv[])
 
 int main(int argc, char *argv[])
 {
-    WfOptions opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    unsigned int state = opt.get_size_option("state"); // Principal quantum number of state to analyze
+    const auto state = opt.get_option<size_t>("state"); // Principal quantum number of state to analyze
 
-    std::vector<State> all_states = State::read_from_file(opt.get_energy_input_path(),
-                                                          opt.get_wf_input_prefix(),
-                                                          opt.get_wf_input_ext(),
-                                                          1000.0/e,
-                                                          true);
+    const auto all_states = State::read_from_file(opt.get_energy_input_path(),
+                                                  opt.get_wf_input_prefix(),
+                                                  opt.get_wf_input_ext(),
+                                                  1000.0/e,
+                                                  true);
 
     // TODO: read z-coordinates in from the ground state
     // There should probably be an option in the State class for this

@@ -24,17 +24,17 @@ WfOptions configure_options(int argc, char* argv[])
 
     std::string summary = "Compute the dispersion relation for a set of subbands.";
 
-    opt.add_numeric_option("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
-    opt.add_numeric_option("Te",             100,        "Carrier temperature [K].");
-    opt.add_size_option   ("nk",             100,        "Number of k-space points to print out");
-    opt.add_string_option ("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
-    opt.add_string_option ("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
-    opt.add_switch        ("nonparabolic",               "Use non-parabolic dispersion relation.");
-    opt.add_switch        ("relative",                   "Output dispersion relative to subband minima. If not specified, "
-                                                         "the dispersion is given relative to the band edge.");
-    opt.add_numeric_option("mass",           0.067,      "In-plane effective mass (relative to free electron).");
-    opt.add_numeric_option("alpha",          0.0,        "In-plane non-parabolicity parameter [1/eV].");
-    opt.add_numeric_option("vcb",            0.0,        "Conduction band edge [eV].");
+    opt.add_option<double>     ("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
+    opt.add_option<double>     ("Te",             100,        "Carrier temperature [K].");
+    opt.add_option<size_t>     ("nk",             100,        "Number of k-space points to print out");
+    opt.add_option<std::string>("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
+    opt.add_option<std::string>("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
+    opt.add_option<bool>       ("nonparabolic",               "Use non-parabolic dispersion relation.");
+    opt.add_option<bool>       ("relative",                   "Output dispersion relative to subband minima. If not specified, "
+                                                              "the dispersion is given relative to the band edge.");
+    opt.add_option<double>     ("mass",           0.067,      "In-plane effective mass (relative to free electron).");
+    opt.add_option<double>     ("alpha",          0.0,        "In-plane non-parabolicity parameter [1/eV].");
+    opt.add_option<double>     ("vcb",            0.0,        "Conduction band edge [eV].");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -45,22 +45,22 @@ int main (int argc, char* argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto nk   = opt.get_size_option("nk");
-    const auto nkbt = opt.get_numeric_option("nkbt");
-    const auto Te   = opt.get_numeric_option("Te");
+    const auto nk   = opt.get_option<size_t>("nk");
+    const auto nkbt = opt.get_option<double>("nkbt");
+    const auto Te   = opt.get_option<double>("Te");
 
-    const auto subbands = opt.get_switch("nonparabolic") ?
+    const auto subbands = opt.get_option<bool>("nonparabolic") ?
                              Subband::read_from_file(opt.get_energy_input_path(),
                                                      opt.get_wf_input_prefix(),
                                                      opt.get_wf_input_ext(),
-                                                     opt.get_numeric_option("mass") * me,
-                                                     opt.get_numeric_option("alpha") / e,
-                                                     opt.get_numeric_option("vcb") * e)
+                                                     opt.get_option<double>("mass") * me,
+                                                     opt.get_option<double>("alpha") / e,
+                                                     opt.get_option<double>("vcb") * e)
                              :
                              Subband::read_from_file(opt.get_energy_input_path(),
                                                      opt.get_wf_input_prefix(),
                                                      opt.get_wf_input_ext(),
-                                                     opt.get_numeric_option("mass") * me);
+                                                     opt.get_option<double>("mass") * me);
 
     // Loop over subbands
     unsigned int ist = 1;
@@ -84,7 +84,7 @@ int main (int argc, char* argv[])
 
         // If absolute energies are required then offset energies by the energy of the subband
         // minima
-        if(!opt.get_switch("relative"))
+        if(!opt.get_option<bool>("relative"))
             Ek += sb.get_E();
 
         Ek /= (1e-3*e); // Rescale to meV
@@ -101,7 +101,7 @@ int main (int argc, char* argv[])
 
         // Construct filename and output
         std::stringstream filename;
-        filename << opt.get_string_option("disp-prefix") << ist << opt.get_string_option("disp-ext");
+        filename << opt.get_option<std::string>("disp-prefix") << ist << opt.get_option<std::string>("disp-ext");
         write_table(filename.str().c_str(), k, Ek);
 
         // Increment state counter
