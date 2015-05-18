@@ -26,1163 +26,1159 @@
 ]>
 
 <material-library>
-	<material name="air">
-		<property name="eps" description="Relative permittivity (all frequencies)">
-			1
-		</property>
-	</material>
+    <material name="air">
+        <property name="eps" description="Relative permittivity (all frequencies)">
+            1
+        </property>
+    </material>
+
+    <material name="SiGe" description="Si(1-x)Ge(x) alloy">
+        <property name="debye-temperature" description="Debye temperature" unit="K">
+            <interp>
+                <y0>640</y0>
+                <y1>374</y1>
+            </interp>
+        </property>
+
+        <property name="molar-mass" description="Molar mass" unit="kg/mol">
+            <interp>
+                <y0>0.028085</y0>
+                <y1>0.07259</y1>
+            </interp>
+        </property>
+        <property name="natoms" description="Number of atoms in molecular unit">
+            1
+        </property>
+
+        <property name="thermal-conductivity-vs-alloy" description="Thermal conductivity as a function of alloy composition (obtained at 300 K)" unit="W/(m K)" reference="schaffler_properties_2001">
+            <poly>
+                <ai i="0">4.6</ai>
+                <ai i="1">8.4</ai>
+            </poly>
+        </property>
+        <property name="density" reference="fischetti_monte-carlo_1991" unit="kg m^{-3}">
+            <interp>
+                <y0>2330.0</y0>
+                <y1>5320.0</y1>
+            </interp>
+        </property>
+        <property name="bandgap-varshni-Eg0-Delta-1" description="Bandgap at 0 K (Varshni model) for Delta valley in Si" reference="levinshtein_properties_2001,p. 157" unit="eV">
+            1.12
+        </property>
+        <property name="bandgap-varshni-Eg0-Delta-2" description="Bandgap at 0 K (Varshni model) for Delta valley in Ge" reference="Pavlo's fitting" unit="eV">
+            0.931
+        </property>
+        <property name="bandgap-varshni-alpha-Delta-1" description="Bandgap bowing parameter for Delta valley in Si" reference="levinshtein_properties_2001" unit="eV/K">
+            4.73e-4
+        </property>
+        <property name="bandgap-varshni-alpha-Delta-2" description="Bandgap bowing parameter for Delta valley in Ge" reference="Pavlo's fitting" unit="eV/K">
+            7.9e-4
+        </property>
+        <property name="bandgap-varshni-beta-Delta-1" description="Bandgap critical temperature for Delta valley in Si" reference="levinshtein_properties_2001" unit="K">
+            636
+        </property>
+        <property name="bandgap-varshni-beta-Delta-2" description="Bandgap critical temperature for Delta valley in Ge" reference="Pavlo's fitting" unit="K">
+            580
+        </property>
+        <property name="bandgap-varshni-Eg0-L-1" description="Bandgap at 0 K (Varshni model) for L valley in Si" reference="Pavlo's fitting" unit="eV">
+            2.01
+        </property>
+        <property name="bandgap-varshni-Eg0-L-2" description="Bandgap at 0 K (Varshni model) for L valley in Ge" reference="levinshtein_properties_2001" unit="eV">
+            0.742
+        </property>
+        <property name="bandgap-varshni-alpha-L-1" description="Bandgap bowing parameter for L valley in Si" reference="Pavlo's fitting" unit="eV/K">
+            3.55e-5
+        </property>
+        <property name="bandgap-varshni-alpha-L-2" description="Bandgap bowing parameter for L valley in Ge" reference="levinshtein_properties_2001" unit="eV/K">
+            4.8e-4
+        </property>
+        <property name="bandgap-varshni-beta-L-1" description="Bandgap critical temperature for L valley in Si" reference="Pavlo's fitting" unit="K">
+            20
+        </property>
+        <property name="bandgap-varshni-beta-L-2" description="Bandgap critical temperature for L valley in Ge" reference="levinshtein_properties_2001" unit="K">
+            235
+        </property>
+        <property name="bandgap-varshni-Eg0-Gamma-1" description="Bandgap at 0 K (Varshni model) for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="eV">
+            3.354
+        </property>
+        <property name="bandgap-varshni-Eg0-Gamma-2" description="Bandgap at 0 K (Varshni model) for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="eV">
+            0.89
+        </property>
+        <property name="bandgap-varshni-alpha-Gamma-1" description="Bandgap bowing parameter for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="eV/K">
+            3.5e-4
+        </property>
+        <property name="bandgap-varshni-alpha-Gamma-2" description="Bandgap bowing parameter for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="eV/K">
+            5.82e-4
+        </property>
+        <property name="bandgap-varshni-beta-Gamma-1" description="Bandgap critical temperature for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="K">
+            580
+        </property>
+        <property name="bandgap-varshni-beta-Gamma-2" description="Bandgap critical temperature for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="K">
+            296
+        </property>
+        <property name="valence-band-offset-1" description="VB offset parameter (Rieger model)" reference="rieger_electronic-band_1993" unit="eV">
+            0.47
+        </property>
+        <property name="valence-band-offset-2" description="VB offset parameter (Rieger model)" reference="rieger_electronic-band_1993" unit="eV">
+            0.06
+        </property>
+        <property name="electron-effective-mass-Gamma" reference="cardona_energy-band_1966,groves_infrared_1966">
+            <interp>
+                <y0>0.156</y0>
+                <y1>0.042</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-L-longitudinal" reference="rahman_generalized_2005">
+            <interp>
+                <y0>1.7</y0>
+                <y1>1.64</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-L-transverse" reference="rahman_generalized_2005">
+            <interp>
+                <y0>0.12</y0>
+                <y1>0.08</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-Delta-longitudinal" reference="rahman_generalized_2005">
+            <interp>
+                <y0>0.91</y0>
+                <y1>0.95</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-Delta-transverse" reference="rahman_generalized_2005">
+            <interp>
+                <y0>0.19</y0>
+                <y1>0.2</y1>
+            </interp>
+        </property>
+        <property name="spin-orbit-splitting" unit="eV" reference="bona_observation_1985,kane_energy_1956">
+            <interp>
+                <y0>0.044</y0>
+                <y1>0.296</y1>
+            </interp>
+        </property>
+        <property name="deformation-Ag-Delta" description="Bandgap hydrostatic deformation potential (Delta valleys)" unit="eV" reference="van_de_walle_theoretical_1986">
+            <interp>
+                <y0>1.72</y0>
+                <y1>1.31</y1>
+            </interp>
+        </property>
+        <property name="deformation-Ag-L" description="Bandgap hydrostatic deformation potential (L valley)" unit="eV" reference="van_de_walle_theoretical_1986">
+            <interp>
+                <y0>-3.12</y0>
+                <y1>-2.78</y1>
+            </interp>
+        </property>
+
+        <!-- Just use the value for Ge for all SiGe alloys -->
+        <property name="deformation-Ag-Gamma" description="Bandgap hydrostatic deformation potential (Gamma valley)" unit="eV" reference="liu_deformation_2004">
+            -8.97
+        </property>
+        <property name="deformation-Xiu-Delta" description="Uniaxial conduction band deformation potential (Delta valley)" unit="eV" reference="van_de_walle_theoretical_1986">
+            <interp>
+                <y0>9.16</y0>
+                <y1>9.42</y1>
+            </interp>
+        </property>
+        <property name="deformation-Xiu-L" description="Uniaxial conduction band deformation potential (L valley)" unit="eV" reference="van_de_walle_theoretical_1986">
+            <interp>
+                <y0>16.14</y0>
+                <y1>15.13</y1>
+            </interp>
+        </property>
+
+        <!-- Just use the value for Ge for all SiGe alloys -->
+        <property name="deformation-Xiu-Gamma" description="Uniaxial conduction band deformation potential (Gamma valley)" unit="eV" reference="liu_deformation_2004">
+            -1.88
+        </property>
+        <property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV" reference="fischetti_monte-carlo_1991">
+            <interp>
+                <y0>1.2</y0>
+                <y1>2.5</y1>
+            </interp>
+        </property>
+        <property name="C11" description="elastic constant" reference="mcskimin_measurement_1964">
+            <interp>
+                <y0>165.773</y0>
+                <y1>128.528</y1>
+            </interp>
+        </property>
+        <property name="C12" description="elastic constant" reference="mcskimin_measurement_1964">
+            <interp>
+                <y0>63.294</y0>
+                <y1>48.260</y1>
+            </interp>
+        </property>
+        <property name="C44" description="elastic constant" reference="mcskimin_measurement_1964">
+            <interp>
+                <y0>79.619</y0>
+                <y1>66.799</y1>
+            </interp>
+        </property>
+        <property name="lattice-constant" unit="angstrom" reference="paul_si/sige_2004">
+            <interp>
+                <y0>5.432</y0>
+                <y1>5.633</y1>
+                <bow>0.002733</bow>
+            </interp>
+        </property>
+        <property name="crystal-structure">diamond</property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit=""
+            reference="humlicek_infrared_1992, Ioffe Inst. web site and levinshtein_properties_2001">
+            <poly>
+                <ai i="0">11.6964</ai>
+                <ai i="1">2.5308</ai>
+                <ai i="2">1.6417</ai>
+                <ai i="3">0.1628</ai>
+                <ai i="4">0.484</ai>
+            </poly>
+        </property>
+        <property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
+            reference="levinshtein_properties_2001">
+            <interp>
+                <y0>11.7</y0>
+                <y1>16.2</y1>
+            </interp>
+        </property>
+        <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>460</y0>
+                <y1>1800</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>-2.18</y0>
+                <y1>-2.33</y1>
+            </interp>
+        </property>
+
+        <!-- Assume that Ge is the same as Si -->
+        <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            3.2
+        </property>
+
+        <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>0.72</y0>
+                <y1>0.56</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>45</y0>
+                <y1>300</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>2.23e17</y0>
+                <y1>1.0e17</y1>
+            </interp>
+        </property>
+
+        <!-- Should work for Ge fraction between 0.58 and 1. Note that there is a table in the reference, which could be used for Si-rich materials -->
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="braunstein_lattice_1963">
+            <interp>
+                <y0>39.15</y0>
+                <y1>26.16</y1>
+            </interp>
+        </property>
+
+        <!-- Should work for Ge fraction between 0.58 and 1. Note that there is a table in the reference, which could be used for Si-rich materials -->
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="braunstein_lattice_1963">
+            <interp>
+                <y0>61.31</y0>
+                <y1>31.49</y1>
+            </interp>
+        </property>
+
+        <!-- L2@300K, http://www.ioffe.rssi.ru/SVA/NSM/Semicond/SiGe/mechanic.html#Phonon -->
+        <property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV" reference="nilson_study_1972">
+            <interp>
+                <y0>46.73</y0>
+                <y1>27.42</y1>
+            </interp>
+        </property>
+
+        <!-- X1@300K, http://www.ioffe.rssi.ru/SVA/NSM/Semicond/SiGe/mechanic.html#Phonon -->
+        <property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV" reference="nilson_study_1972">
+            <interp>
+                <y0>50.87</y0>
+                <y1>29.53</y1>
+            </interp>
+        </property>
+    </material>
+
+    <material name="QCL_AR_SiGe" description="Si(1-x)Ge(x) heterostructure">
+        <property name="density" reference="fischetti_monte-carlo_1991" unit="kg m^{-3}">
+            <interp>
+                <y0>2330.0</y0>
+                <y1>5320.0</y1>
+            </interp>
+        </property>
+        <property name="crystal-structure">diamond</property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit=""
+            reference="humlicek_infrared_1992, Ioffe Inst. web site and levinshtein_properties_2001">
+            <poly>
+                <ai i="0">11.6964</ai>
+                <ai i="1">2.5308</ai>
+                <ai i="2">1.6417</ai>
+                <ai i="3">0.1628</ai>
+                <ai i="4">0.484</ai>
+            </poly>
+        </property>
+        <property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
+            reference="levinshtein_properties_2001">
+            <interp>
+                <y0>11.7</y0>
+                <y1>16.2</y1>
+            </interp>
+        </property>
+
+        <!-- TODO: Currently assume zero mobility. Can we find a better value? -->
+        <property name="mobility-cross-plane" unit="cm^2/Vs">
+            0.0
+        </property>
+    </material>
 
 
-        <material name="SiGe" description="Si(1-x)Ge(x) alloy">
-            <property name="debye-temperature" description="Debye temperature" unit="K">
-                <interp>
-                    <y0>640</y0>
-                    <y1>374</y1>
-                </interp>
-            </property>
+    <material name="InP" description="Indium phosphide (bulk)">
+        <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
+            0.08
+        </property>
+        <property name="crystal-structure">zinc-blende</property>
+        <property name="cation">
+            <string>In</string>
+        </property>
+        <property name="anion">
+            <string>P</string>
+        </property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+            9.61
+        </property>
 
-            <property name="molar-mass" description="Molar mass" unit="kg/mol">
-                <interp>
-                    <y0>0.028085</y0>
-                    <y1>0.07259</y1>
-                </interp>
-            </property>
-            <property name="natoms" description="Number of atoms in molecular unit">
-                1
-            </property>
+        <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            5800
+        </property>
 
-		<property name="thermal-conductivity-vs-alloy" description="Thermal conductivity as a function of alloy composition (obtained at 300 K)" unit="W/(m K)" reference="schaffler_properties_2001">
-			<poly>
-				<ai i="0">4.6</ai>
-				<ai i="1">8.4</ai>
-			</poly>
-		</property>
-		<property name="density" reference="fischetti_monte-carlo_1991" unit="kg m^{-3}">
-			<interp>
-				<y0>2330.0</y0>
-				<y1>5320.0</y1>
-			</interp>
-		</property>
-		<property name="bandgap-varshni-Eg0-Delta-1" description="Bandgap at 0 K (Varshni model) for Delta valley in Si" reference="levinshtein_properties_2001,p. 157" unit="eV">
-			1.12
-		</property>
-		<property name="bandgap-varshni-Eg0-Delta-2" description="Bandgap at 0 K (Varshni model) for Delta valley in Ge" reference="Pavlo's fitting" unit="eV">
-			0.931
-		</property>
-		<property name="bandgap-varshni-alpha-Delta-1" description="Bandgap bowing parameter for Delta valley in Si" reference="levinshtein_properties_2001" unit="eV/K">
-			4.73e-4
-		</property>
-		<property name="bandgap-varshni-alpha-Delta-2" description="Bandgap bowing parameter for Delta valley in Ge" reference="Pavlo's fitting" unit="eV/K">
-			7.9e-4
-		</property>
-		<property name="bandgap-varshni-beta-Delta-1" description="Bandgap critical temperature for Delta valley in Si" reference="levinshtein_properties_2001" unit="K">
-			636
-		</property>
-		<property name="bandgap-varshni-beta-Delta-2" description="Bandgap critical temperature for Delta valley in Ge" reference="Pavlo's fitting" unit="K">
-			580
-		</property>
-		<property name="bandgap-varshni-Eg0-L-1" description="Bandgap at 0 K (Varshni model) for L valley in Si" reference="Pavlo's fitting" unit="eV">
-			2.01
-		</property>
-		<property name="bandgap-varshni-Eg0-L-2" description="Bandgap at 0 K (Varshni model) for L valley in Ge" reference="levinshtein_properties_2001" unit="eV">
-			0.742
-		</property>
-		<property name="bandgap-varshni-alpha-L-1" description="Bandgap bowing parameter for L valley in Si" reference="Pavlo's fitting" unit="eV/K">
-			3.55e-5
-		</property>
-		<property name="bandgap-varshni-alpha-L-2" description="Bandgap bowing parameter for L valley in Ge" reference="levinshtein_properties_2001" unit="eV/K">
-			4.8e-4
-		</property>
-		<property name="bandgap-varshni-beta-L-1" description="Bandgap critical temperature for L valley in Si" reference="Pavlo's fitting" unit="K">
-			20
-		</property>
-		<property name="bandgap-varshni-beta-L-2" description="Bandgap critical temperature for L valley in Ge" reference="levinshtein_properties_2001" unit="K">
-			235
-		</property>
-		<property name="bandgap-varshni-Eg0-Gamma-1" description="Bandgap at 0 K (Varshni model) for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="eV">
-			3.354
-		</property>
-		<property name="bandgap-varshni-Eg0-Gamma-2" description="Bandgap at 0 K (Varshni model) for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="eV">
-			0.89
-		</property>
-		<property name="bandgap-varshni-alpha-Gamma-1" description="Bandgap bowing parameter for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="eV/K">
-			3.5e-4
-		</property>
-		<property name="bandgap-varshni-alpha-Gamma-2" description="Bandgap bowing parameter for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="eV/K">
-			5.82e-4
-		</property>
-		<property name="bandgap-varshni-beta-Gamma-1" description="Bandgap critical temperature for Gamma valley in Si" reference="lautenschlager_temperature_1987" unit="K">
-			580
-		</property>
-		<property name="bandgap-varshni-beta-Gamma-2" description="Bandgap critical temperature for Gamma valley in Ge" reference="levinshtein_properties_2001" unit="K">
-			296
-		</property>
-		<property name="valence-band-offset-1" description="VB offset parameter (Rieger model)" reference="rieger_electronic-band_1993" unit="eV">
-			0.47
-		</property>
-		<property name="valence-band-offset-2" description="VB offset parameter (Rieger model)" reference="rieger_electronic-band_1993" unit="eV">
-			0.06
-		</property>
-		<property name="electron-effective-mass-Gamma" reference="cardona_energy-band_1966,groves_infrared_1966">
-			<interp>
-				<y0>0.156</y0>
-				<y1>0.042</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-L-longitudinal" reference="rahman_generalized_2005">
-			<interp>
-				<y0>1.7</y0>
-				<y1>1.64</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-L-transverse" reference="rahman_generalized_2005">
-			<interp>
-				<y0>0.12</y0>
-				<y1>0.08</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Delta-longitudinal" reference="rahman_generalized_2005">
-			<interp>
-				<y0>0.91</y0>
-				<y1>0.95</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Delta-transverse" reference="rahman_generalized_2005">
-			<interp>
-				<y0>0.19</y0>
-				<y1>0.2</y1>
-			</interp>
-		</property>
-		<property name="spin-orbit-splitting" unit="eV" reference="bona_observation_1985,kane_energy_1956">
-			<interp>
-				<y0>0.044</y0>
-				<y1>0.296</y1>
-			</interp>
-		</property>
-		<property name="deformation-Ag-Delta" description="Bandgap hydrostatic deformation potential (Delta valleys)" unit="eV" reference="van_de_walle_theoretical_1986">
-			<interp>
-				<y0>1.72</y0>
-				<y1>1.31</y1>
-			</interp>
-		</property>
-		<property name="deformation-Ag-L" description="Bandgap hydrostatic deformation potential (L valley)" unit="eV" reference="van_de_walle_theoretical_1986">
-			<interp>
-				<y0>-3.12</y0>
-				<y1>-2.78</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            -1.9
+        </property>
 
-		<!-- Just use the value for Ge for all SiGe alloys -->
-		<property name="deformation-Ag-Gamma" description="Bandgap hydrostatic deformation potential (Gamma valley)" unit="eV" reference="liu_deformation_2004">
-			-8.97
-		</property>
-		<property name="deformation-Xiu-Delta" description="Uniaxial conduction band deformation potential (Delta valley)" unit="eV" reference="van_de_walle_theoretical_1986">
-			<interp>
-				<y0>9.16</y0>
-				<y1>9.42</y1>
-			</interp>
-		</property>
-		<property name="deformation-Xiu-L" description="Uniaxial conduction band deformation potential (L valley)" unit="eV" reference="van_de_walle_theoretical_1986">
-			<interp>
-				<y0>16.14</y0>
-				<y1>15.13</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            5.4
+        </property>
 
-		<!-- Just use the value for Ge for all SiGe alloys -->
-		<property name="deformation-Xiu-Gamma" description="Uniaxial conduction band deformation potential (Gamma valley)" unit="eV" reference="liu_deformation_2004">
-			-1.88
-		</property>
-		<property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV" reference="fischetti_monte-carlo_1991">
-			<interp>
-				<y0>1.2</y0>
-				<y1>2.5</y1>
-			</interp>
-		</property>
-		<property name="C11" description="elastic constant" reference="mcskimin_measurement_1964">
-			<interp>
-				<y0>165.773</y0>
-				<y1>128.528</y1>
-			</interp>
-		</property>
-		<property name="C12" description="elastic constant" reference="mcskimin_measurement_1964">
-			<interp>
-				<y0>63.294</y0>
-				<y1>48.260</y1>
-			</interp>
-		</property>
-		<property name="C44" description="elastic constant" reference="mcskimin_measurement_1964">
-			<interp>
-				<y0>79.619</y0>
-				<y1>66.799</y1>
-			</interp>
-		</property>
-		<property name="lattice-constant" unit="angstrom" reference="paul_si/sige_2004">
-			<interp>
-				<y0>5.432</y0>
-				<y1>5.633</y1>
-				<bow>0.002733</bow>
-			</interp>
-		</property>
-		<property name="crystal-structure">diamond</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit=""
-			reference="humlicek_infrared_1992, Ioffe Inst. web site and levinshtein_properties_2001">
-			<poly>
-				<ai i="0">11.6964</ai>
-				<ai i="1">2.5308</ai>
-				<ai i="2">1.6417</ai>
-				<ai i="3">0.1628</ai>
-				<ai i="4">0.484</ai>
-			</poly>
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
-			reference="levinshtein_properties_2001">
-			<interp>
-				<y0>11.7</y0>
-				<y1>16.2</y1>
-			</interp>
-		</property>
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>460</y0>
-				<y1>1800</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            0.5
+        </property>
 
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>-2.18</y0>
-				<y1>-2.33</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            400
+        </property>
 
-		<!-- Assume that Ge is the same as Si -->
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			3.2
-		</property>
+        <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
+            4.0e17
+        </property>
 
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>0.72</y0>
-				<y1>0.56</y1>
-			</interp>
-		</property>
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            42.78
+        </property>
+        <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            37.65
+        </property>
+        <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            0.43
+        </property>
+    </material>
 
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>45</y0>
-				<y1>300</y1>
-			</interp>
-		</property>
+    <material name="InGaAs" description="In(x)Ga(1-x)As alloy">
+        <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>0.067</y0>
+                <y1>0.23</y1>
+            </interp>
+        </property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+            <interp>
+                <y0>10.89</y0>
+                <y1>12.25</y1>
+            </interp>
+        </property>
+        <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            14000
+        </property>
 
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>2.23e17</y0>
-				<y1>1.0e17</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            -1.59
+        </property>
 
-		<!-- Should work for Ge fraction between 0.58 and 1. Note that there is a table in the reference, which could be
-		     used for Si-rich materials -->
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="braunstein_lattice_1963">
-			<interp>
-				<y0>39.15</y0>
-				<y1>26.16</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            3.68
+        </property>
 
-		<!-- Should work for Ge fraction between 0.58 and 1. Note that there is a table in the reference, which could be
-		     used for Si-rich materials -->
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="braunstein_lattice_1963">
-			<interp>
-				<y0>61.31</y0>
-				<y1>31.49</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            0.48
+        </property>
 
-		<!-- L2@300K, http://www.ioffe.rssi.ru/SVA/NSM/Semicond/SiGe/mechanic.html#Phonon -->
-		<property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV" reference="nilson_study_1972">
-			<interp>
-				<y0>46.73</y0>
-				<y1>27.42</y1>
-			</interp>
-		</property>
+        <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            300
+        </property>
 
-		<!-- X1@300K, http://www.ioffe.rssi.ru/SVA/NSM/Semicond/SiGe/mechanic.html#Phonon -->
-		<property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV" reference="nilson_study_1972">
-			<interp>
-				<y0>50.87</y0>
-				<y1>29.53</y1>
-			</interp>
-		</property>
-	</material>
+        <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
+            1.3e17
+        </property>
 
-	<material name="QCL_AR_SiGe" description="Si(1-x)Ge(x) heterostructure">
-		<property name="density" reference="fischetti_monte-carlo_1991" unit="kg m^{-3}">
-			<interp>
-				<y0>2330.0</y0>
-				<y1>5320.0</y1>
-			</interp>
-		</property>
-		<property name="crystal-structure">diamond</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit=""
-			reference="humlicek_infrared_1992, Ioffe Inst. web site and levinshtein_properties_2001">
-			<poly>
-				<ai i="0">11.6964</ai>
-				<ai i="1">2.5308</ai>
-				<ai i="2">1.6417</ai>
-				<ai i="3">0.1628</ai>
-				<ai i="4">0.484</ai>
-			</poly>
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
-			reference="levinshtein_properties_2001">
-			<interp>
-				<y0>11.7</y0>
-				<y1>16.2</y1>
-			</interp>
-		</property>
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>36.22</y0>
+                <y1>29.76</y1>
+            </interp>
+        </property>
+        <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>33.32</y0>
+                <y1>27.03</y1>
+            </interp>
+        </property>
+        <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>0.30</y0>
+                <y1>0.50</y1>
+            </interp>
+        </property>
+    </material>
 
-		<!-- TODO: Currently assume zero mobility. Can we find a better value? -->
-		<property name="mobility-cross-plane" unit="cm^2/Vs">
-			0.0
-		</property>
-	</material>
+    <material name="InAlAs" description="In(x)Al(1-x)As alloy">
+        <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>0.15</y0>
+                <y1>0.23</y1>
+            </interp>
+        </property>
+        <property name="crystal-structure">zinc-blende</property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+            <interp>
+                <y0>8.16</y0>
+                <y1>12.25</y1>
+            </interp>
+        </property>
 
+        <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            4800
+        </property>
 
-	<material name="InP" description="Indium phosphide (bulk)">
-		<property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
-			0.08
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-                <property name="cation">
-                    <string>In</string>
+        <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            -1.46
+        </property>
+
+        <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            3.0
+        </property>
+
+        <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            1.1
+        </property>
+
+        <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            800
+        </property>
+
+        <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
+            3.0e16
+        </property>
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>49.78</y0>
+                <y1>29.76</y1>
+            </interp>
+        </property>
+        <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>44.86</y0>
+                <y1>27.03</y1>
+            </interp>
+        </property>
+        <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>0.99</y0>
+                <y1>0.50</y1>
+            </interp>
+        </property>
+    </material>
+
+    <material name="QCL_AR_InGaAs_InAlAs" description="In(0.53)Ga(0.47)As/In(0.52)Al(0.48)As heterostructure">
+        <property name="crystal-structure">zinc-blende</property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+            <interp>
+                <y0>11.529</y0>
+                <y1>10.123</y1>
+            </interp>
+        </property>
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>32.80</y0>
+                <y1>38.37</y1>
+            </interp>
+        </property>
+        <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>29.99</y0>
+                <y1>35.59</y1>
+            </interp>
+        </property>
+        <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>0.41</y0>
+                <y1>0.74</y1>
+            </interp>
+        </property>
+    </material>
+
+    <material name="AlGaAs" description="Al(x)Ga(1-x)As alloy">
+        <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
+            <interp>
+                <y0>360</y0>
+                <y1>446</y1>
+            </interp>
+        </property>
+
+        <property name="molar-mass" description="Molar mass" unit="kg/mol">
+            <interp>
+                <y0>0.1446</y0>
+                <y1>0.1019</y1>
+            </interp>
+        </property>
+        <property name="natoms" description="Number of atoms in molecular unit">
+            2
+        </property>
+
+        <property name="thermal-conductivity-0K-1" description="Thermal conductivity at 0 K for first alloy component" unit="W/(m K)">
+            74500
+        </property>
+        <property name="thermal-conductivity-0K-2" description="Thermal conductivity at 0 K for second alloy component" unit="W/(m K)">
+            225270
+        </property>
+        <property name="thermal-conductivity-decay-index-1" description="Decay index for thermal conductivity for first alloy component">
+            -1.30
+        </property>
+        <property name="thermal-conductivity-decay-index-2" description="Decay index for thermal conductivity for second alloy component">
+            -1.37
+        </property>
+        <property name="density" reference="sze_semiconductor_2002" unit="kg m^{-3}">
+            <interp>
+                <y0>5320.0</y0>
+                <y1>3717.0</y1>
+            </interp>
+        </property>
+        <property name="Vcb-Gamma-bandgap-factor" reference="harrison_quantum">
+            0.67
+        </property>
+        <property name="bandgap-Gamma" reference="vurgaftman_band_2001" unit="eV">
+            <interp xmax="0.45">
+                <y0>1.424</y0>
+                <y1>2.671</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
+            <interp xmax="0.45">
+                <y0>0.067</y0>
+                <y1>0.15</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-L-longitudinal" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>1.9</y0>
+                <y1>1.32</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-L-transverse" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>0.0754</y0>
+                <y1>0.15</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-Delta-longitudinal" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>1.3</y0>
+                <y1>0.97</y1>
+            </interp>
+        </property>
+        <property name="electron-effective-mass-Delta-transverse" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>0.23</y0>
+                <y1>0.22</y1>
+            </interp>
+        </property>
+        <property name="shallow-donor-energy" unit="eV" reference="milnes_deep_1973">
+            0.006
+        </property>
+        <property name="spin-orbit-splitting" unit="eV" reference="aspnes_schottky-barrier_1973,peralta_spin-orbit_2006">
+            <interp>
+                <y0>0.341</y0>
+                <y1>0.30</y1>
+            </interp>
+        </property>
+        <property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV" reference="harrison_quantum_2005">
+            7.0
+        </property>
+        <property name="C11" description="elastic constant" reference="NSM">
+            <interp>
+                <y0>118.8</y0>
+                <y1>120.2</y1>
+            </interp>
+        </property>
+        <property name="C12" description="elastic constant" reference="NSM">
+            <interp>
+                <y0>53.8</y0>
+                <y1>57.0</y1>
+            </interp>
+        </property>
+        <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+            <interp>
+                <y0>5.65325</y0>
+                <y1>5.6611</y1>
+            </interp>
+        </property>
+        <property name="crystal-structure">zinc-blende</property>
+        <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+            <interp>
+                <y0>10.89</y0>
+                <y1>8.16</y1>
+            </interp>
+        </property>
+        <property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
+            reference="chamberlain_optical_1993">
+            <interp>
+                <y0>12.9</y0>
+                <y1>10.06</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>9400</y0>
+                <y1>410</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>-2.2</y0>
+                <y1>-2.1</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>5.5</y0>
+                <y1>3.0</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>0.5</y0>
+                <y1>1.0</y1>
+            </interp>
+        </property>
+
+        <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>950</y0>
+                <y1>10</y1>
+            </interp>
+        </property>
+
+        <!-- TODO: Table 2.2 in Craig's thesis actually lists 5.5e17 for AlAs but his code listed it as 5.5e16. Need to check which is the correct value -->
+        <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
+            <interp>
+                <y0>1.0e17</y0>
+                <y1>5.5e16</y1>
+            </interp>
+        </property>
+
+        <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>36.22</y0>
+                <y1>49.78</y1>
+            </interp>
+        </property>
+        <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>33.32</y0>
+                <y1>44.86</y1>
+            </interp>
+        </property>
+        <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+            <interp>
+                <y0>0.30</y0>
+                <y1>0.99</y1>
+            </interp>
+        </property>
+
+        <!-- TODO: Value taken from QCLsim code. Need to look for original source -->
+        <property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV">
+            28.12
+        </property>
+
+        <!-- TODO: Value taken from QCLsim code. Need to look for original source -->
+        <property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV">
+            25.89
+        </property>
+
+        <!-- TODO: This is just set as [Eg(AlAs) - Eg(GaAs)]*2/3, even though the bandgap figure is only valid -->
+        <!-- for x < 0.45. We should replace this with a better figure if we find one! -->
+                <property name="alloy-scattering-potential" description="Potential for use in alloy scattering calculations" unit="meV">
+                    831
                 </property>
-                <property name="anion">
-                    <string>P</string>
+            </material>
+
+            <material name="AlGaN" description="Al(x)Ga(1-x)N alloy">
+                <property name="density" reference="levinshtein_properties_2001" unit="kg m^{-3}">
+                    <interp>
+                        <y0>6100.0</y0>
+                        <y1>3260.0</y1>
+                    </interp>
                 </property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			9.61
-		</property>
+                <property name="Vcb-Gamma" unit="eV">
+                    <interp>
+                        <y0>0.0</y0>
+                        <y1>2.0</y1>
+                    </interp>
+                </property>
+                <property name="bandgap-Gamma" reference="martin_valence-band_1996" unit="eV">
+                    <interp xmax="0.45">
+                        <y0>3.20</y0>
+                        <y1>6.026</y1>
+                    </interp>
+                </property>
+                <property name="electron-effective-mass-Gamma">
+                    <interp>
+                        <y0>0.20</y0>
+                        <y1>0.30</y1>
+                    </interp>
+                </property>
+                <property name="shallow-donor-energy" unit="eV" reference="meyer_shallow_1995">
+                    0.02
+                </property>
+                <property name="spin-orbit-splitting" unit="eV" reference="kim_effective_1997">
+                    <interp>
+                        <y0>0.02</y0>
+                        <y1>0.019</y1>
+                    </interp>
+                </property>
+                <property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV">
+                    8.3
+                </property>
+                <property name="C11" description="elastic constant">
+                    <interp>
+                        <y0>390.00</y0>
+                        <y1>396.00</y1>
+                    </interp>
+                </property>
+                <property name="C12" description="elastic constant">
+                    <interp>
+                        <y0>145.0</y0>
+                        <y1>137.0</y1>
+                    </interp>
+                </property>
+                <property name="C13" description="elastic constant">
+                    <interp>
+                        <y0>106.0</y0>
+                        <y1>108.0</y1>
+                    </interp>
+                </property>
+                <property name="C33" description="elastic constant">
+                    <interp>
+                        <y0>398.0</y0>
+                        <y1>373.0</y1>
+                    </interp>
+                </property>
+                <property name="Pspontaneous" description="Spontaneous polarisation">
+                    <interp>
+                        <y0>-0.034</y0>
+                        <y1>-0.09</y1>
+                        <bow>-0.021</bow>
+                    </interp>
+                </property>
+                <property name="eps13" description="Piezoelectric constant">
+                    <interp>
+                        <y0>-0.49</y0>
+                        <y1>-0.60</y1>
+                    </interp>
+                </property>
+                <property name="eps33" description="Piezoelectric constant">
+                    <interp>
+                        <y0>0.73</y0>
+                        <y1>1.46</y1>
+                    </interp>
+                </property>
+                <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+                    <interp>
+                        <y0>3.112</y0>
+                        <y1>3.189</y1>
+                    </interp>
+                </property>
+                <property name="crystal-structure">wurtzite</property>
+                <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+                    5.3
+                </property>
+                <property name="eps_dc" description="Relative permittivity (below resonance)" unit="" reference="levinshtein_properties_2001">
+                    <interp>
+                        <y0>8.9</y0>
+                        <y1>8.7</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			5800
-		</property>
+                <property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="Vitanov_web">
+                    <interp>
+                        <y0>1600</y0>
+                        <y1>683</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			-1.9
-		</property>
+                <property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="Vitanov_web">
+                    <interp>
+                        <y0>-1.5</y0>
+                        <y1>-3.21</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			5.4
-		</property>
+                <property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="Vitanov_web">
+                    <interp>
+                        <y0>-0.2</y0>
+                        <y1>1.21</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			0.5
-		</property>
+                <property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="Vitanov_web">
+                    <interp>
+                        <y0>1.3</y0>
+                        <y1>-0.18</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			400
-		</property>
+                <property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="Vitanov_web">
+                    <interp>
+                        <y0>100</y0>
+                        <y1>29</y1>
+                    </interp>
+                </property>
 
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
-			4.0e17
-		</property>
+                <property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="Vitanov_web">
+                    <interp>
+                        <y0>3.0e17</y0>
+                        <y1>5.0e17</y1>
+                    </interp>
+                </property>
 
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			42.78
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			37.65
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			0.43
-		</property>
-	</material>
+                <!-- Just used the value for GaN here -->
+                <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV">
+                    92
+                </property>
+                <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV">
+                    <interp>
+                        <y0>69.55</y0>
+                        <y1>83.43</y1>
+                    </interp>
+                </property>
+                <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV">
+                    <interp>
+                        <y0>0.186</y0>
+                        <y1>0.105</y1>
+                    </interp>
+                </property>
 
-	<material name="InGaAs" description="In(x)Ga(1-x)As alloy">
-		<property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>0.067</y0>
-				<y1>0.23</y1>
-			</interp>
-		</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			<interp>
-				<y0>10.89</y0>
-				<y1>12.25</y1>
-			</interp>
-		</property>
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			14000
-		</property>
+                <!-- TODO: Just used the same value as for GaAs.  Needs fixing -->
+                <property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV">
+                    28.12
+                </property>
 
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			-1.59
-		</property>
+                <!-- TODO: Just used the same value as for GaAs.  Needs fixing -->
+                <property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV">
+                    25.89
+                </property>
+            </material>
 
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			3.68
-		</property>
+            <material name="QCL_AR_AlGaN" description="GaN/AlGaN heterostructure">
+                <!-- Just used the value for GaN here -->
+                <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV">
+                    92
+                </property>
+                <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV">
+                    <interp>
+                        <y0>69.55</y0>
+                        <y1>83.43</y1>
+                    </interp>
+                </property>
+                <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV">
+                    <interp>
+                        <y0>0.186</y0>
+                        <y1>0.105</y1>
+                    </interp>
+                </property>
+                <property name="eps_dc" description="Relative permittivity (below resonance)" unit="" reference="levinshtein_properties_2001">
+                    <interp>
+                        <y0>8.9</y0>
+                        <y1>8.7</y1>
+                    </interp>
+                </property>
+            </material>
 
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			0.48
-		</property>
-
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			300
-		</property>
-
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
-			1.3e17
-		</property>
-
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>36.22</y0>
-				<y1>29.76</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>33.32</y0>
-				<y1>27.03</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>0.30</y0>
-				<y1>0.50</y1>
-			</interp>
-		</property>
-	</material>
-
-	<material name="InAlAs" description="In(x)Al(1-x)As alloy">
-		<property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>0.15</y0>
-				<y1>0.23</y1>
-			</interp>
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			<interp>
-				<y0>8.16</y0>
-				<y1>12.25</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			4800
-		</property>
-
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			-1.46
-		</property>
-
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			3.0
-		</property>
-
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			1.1
-		</property>
-
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			800
-		</property>
-
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
-			3.0e16
-		</property>
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>49.78</y0>
-				<y1>29.76</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>44.86</y0>
-				<y1>27.03</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>0.99</y0>
-				<y1>0.50</y1>
-			</interp>
-		</property>
-	</material>
-
-	<material name="QCL_AR_InGaAs_InAlAs" description="In(0.53)Ga(0.47)As/In(0.52)Al(0.48)As heterostructure">
-		<property name="crystal-structure">zinc-blende</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			<interp>
-				<y0>11.529</y0>
-				<y1>10.123</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>32.80</y0>
-				<y1>38.37</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>29.99</y0>
-				<y1>35.59</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>0.41</y0>
-				<y1>0.74</y1>
-			</interp>
-		</property>
-	</material>
-
-
-	<material name="AlGaAs" description="Al(x)Ga(1-x)As alloy">
-            <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
-                <interp>
-                    <y0>360</y0>
-                    <y1>446</y1>
-                </interp>
+            <material name="QCL_AR_AlGaAs" description="GaAs/AlGaAs heterostructure">
+                <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
+                    <interp>
+                        <y0>360</y0>
+                        <y1>446</y1>
+                    </interp>
                 </property>
 
                 <property name="molar-mass" description="Molar mass" unit="kg/mol">
-                <interp>
-                    <y0>0.1446</y0>
-                    <y1>0.1019</y1>
-                </interp>
-            </property>
-            <property name="natoms" description="Number of atoms in molecular unit">
-                2
-            </property>
-            
-            <property name="thermal-conductivity-0K-1" description="Thermal conductivity at 0 K for first alloy component" unit="W/(m K)">
-                74500
-            </property>
-		<property name="thermal-conductivity-0K-2" description="Thermal conductivity at 0 K for second alloy component" unit="W/(m K)">
-			225270
-		</property>
-		<property name="thermal-conductivity-decay-index-1" description="Decay index for thermal conductivity for first alloy component">
-			-1.30
-		</property>
-		<property name="thermal-conductivity-decay-index-2" description="Decay index for thermal conductivity for second alloy component">
-			-1.37
-		</property>
-		<property name="density" reference="sze_semiconductor_2002" unit="kg m^{-3}">
-			<interp>
-				<y0>5320.0</y0>
-				<y1>3717.0</y1>
-			</interp>
-		</property>
-		<property name="Vcb-Gamma-bandgap-factor" reference="harrison_quantum">
-			0.67
-		</property>
-		<property name="bandgap-Gamma" reference="vurgaftman_band_2001" unit="eV">
-			<interp xmax="0.45">
-				<y0>1.424</y0>
-				<y1>2.671</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
-			<interp xmax="0.45">
-				<y0>0.067</y0>
-				<y1>0.15</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-L-longitudinal" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>1.9</y0>
-				<y1>1.32</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-L-transverse" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>0.0754</y0>
-				<y1>0.15</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Delta-longitudinal" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>1.3</y0>
-				<y1>0.97</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Delta-transverse" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>0.23</y0>
-				<y1>0.22</y1>
-			</interp>
-		</property>
-		<property name="shallow-donor-energy" unit="eV" reference="milnes_deep_1973">
-			0.006
-		</property>
-		<property name="spin-orbit-splitting" unit="eV" reference="aspnes_schottky-barrier_1973,peralta_spin-orbit_2006">
-			<interp>
-				<y0>0.341</y0>
-				<y1>0.30</y1>
-			</interp>
-		</property>
-		<property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV" reference="harrison_quantum_2005">
-			7.0
-		</property>
-		<property name="C11" description="elastic constant" reference="NSM">
-			<interp>
-				<y0>118.8</y0>
-				<y1>120.2</y1>
-			</interp>
-		</property>
-		<property name="C12" description="elastic constant" reference="NSM">
-			<interp>
-				<y0>53.8</y0>
-				<y1>57.0</y1>
-			</interp>
-		</property>
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>5.65325</y0>
-				<y1>5.6611</y1>
-			</interp>
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			<interp>
-				<y0>10.89</y0>
-				<y1>8.16</y1>
-			</interp>
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
-			reference="chamberlain_optical_1993">
-			<interp>
-				<y0>12.9</y0>
-				<y1>10.06</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>9400</y0>
-				<y1>410</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>-2.2</y0>
-				<y1>-2.1</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>5.5</y0>
-				<y1>3.0</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>0.5</y0>
-				<y1>1.0</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>950</y0>
-				<y1>10</y1>
-			</interp>
-		</property>
-
-		<!-- TODO: Table 2.2 in Craig's thesis actually lists 5.5e17 for AlAs but his code listed
-			   it as 5.5e16. Need to check which is the correct value -->
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="sotoodeh_empirical_2000">
-			<interp>
-				<y0>1.0e17</y0>
-				<y1>5.5e16</y1>
-			</interp>
-		</property>
-
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>36.22</y0>
-				<y1>49.78</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>33.32</y0>
-				<y1>44.86</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>0.30</y0>
-				<y1>0.99</y1>
-			</interp>
-		</property>
-
-                <!-- TODO: Value taken from QCLsim code. Need to look for original source -->
-		<property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV">
-			28.12
-		</property>
-
-                <!-- TODO: Value taken from QCLsim code. Need to look for original source -->
-		<property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV">
-			25.89
-		</property>
-
-		<!-- TODO: This is just set as [Eg(AlAs) - Eg(GaAs)]*2/3, even though the bandgap figure is only valid
-                           for x < 0.45. We should replace this with a better figure if we find one! -->
-		<property name="alloy-scattering-potential" description="Potential for use in alloy scattering calculations" unit="meV">
-			831
-		</property>
-	</material>
-
-	<material name="AlGaN" description="Al(x)Ga(1-x)N alloy">
-		<property name="density" reference="levinshtein_properties_2001" unit="kg m^{-3}">
-			<interp>
-				<y0>6100.0</y0>
-				<y1>3260.0</y1>
-			</interp>
-		</property>
-		<property name="Vcb-Gamma" unit="eV">
-			<interp>
-				<y0>0.0</y0>
-				<y1>2.0</y1>
-			</interp>
-		</property>
-		<property name="bandgap-Gamma" reference="martin_valence-band_1996" unit="eV">
-			<interp xmax="0.45">
-				<y0>3.20</y0>
-				<y1>6.026</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Gamma">
-			<interp>
-				<y0>0.20</y0>
-				<y1>0.30</y1>
-			</interp>
-		</property>
-		<property name="shallow-donor-energy" unit="eV" reference="meyer_shallow_1995">
-			0.02
-		</property>
-		<property name="spin-orbit-splitting" unit="eV" reference="kim_effective_1997">
-			<interp>
-				<y0>0.02</y0>
-				<y1>0.019</y1>
-			</interp>
-		</property>
-		<property name="deformation-Xiac" description="Acoustic phonon deformation potential" unit="eV">
-			8.3
-		</property>
-		<property name="C11" description="elastic constant">
-			<interp>
-				<y0>390.00</y0>
-				<y1>396.00</y1>
-			</interp>
-		</property>
-		<property name="C12" description="elastic constant">
-			<interp>
-				<y0>145.0</y0>
-				<y1>137.0</y1>
-			</interp>
-		</property>
-		<property name="C13" description="elastic constant">
-			<interp>
-				<y0>106.0</y0>
-				<y1>108.0</y1>
-			</interp>
-		</property>
-		<property name="C33" description="elastic constant">
-			<interp>
-				<y0>398.0</y0>
-				<y1>373.0</y1>
-			</interp>
-		</property>
-		<property name="Pspontaneous" description="Spontaneous polarisation">
-			<interp>
-				<y0>-0.034</y0>
-				<y1>-0.09</y1>
-				<bow>-0.021</bow>
-			</interp>
-		</property>
-		<property name="eps13" description="Piezoelectric constant">
-			<interp>
-				<y0>-0.49</y0>
-				<y1>-0.60</y1>
-			</interp>
-		</property>
-		<property name="eps33" description="Piezoelectric constant">
-			<interp>
-				<y0>0.73</y0>
-				<y1>1.46</y1>
-			</interp>
-		</property>
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>3.112</y0>
-				<y1>3.189</y1>
-			</interp>
-		</property>
-		<property name="crystal-structure">wurtzite</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			5.3
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit="" reference="levinshtein_properties_2001">
-			<interp>
-				<y0>8.9</y0>
-				<y1>8.7</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_mu_L_300" description="Lattice contribution to mobility at 300 K in Caughey-Thomas model" unit="cm^2/Vs" reference="Vitanov_web">
-			<interp>
-				<y0>1600</y0>
-				<y1>683</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma1" description="Fitting parameter for lattice mobility in Caughey-Thomas model" unit="" reference="Vitanov_web">
-			<interp>
-				<y0>-1.5</y0>
-				<y1>-3.21</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma2" description="Fitting parameter for reference doping level in Caughey-Thomas model" unit="" reference="Vitanov_web">
-			<interp>
-				<y0>-0.2</y0>
-				<y1>1.21</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_gamma3" description="Fitting parameter for total mobility in Caughey-Thomas model" unit="" reference="Vitanov_web">
-			<interp>
-				<y0>1.3</y0>
-				<y1>-0.18</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_mu_min" description="Mobility at high doping level in Caughey-Thomas model" unit="cm^2/Vs" reference="Vitanov_web">
-			<interp>
-				<y0>100</y0>
-				<y1>29</y1>
-			</interp>
-		</property>
-
-		<property name="Caughey-Thomas_N_ref_300" description="Reference doping level in Caughey-Thomas model" unit="cm^{-3}" reference="Vitanov_web">
-			<interp>
-				<y0>3.0e17</y0>
-				<y1>5.0e17</y1>
-			</interp>
-		</property>
-
-		<!-- Just used the value for GaN here -->
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV">
-			92
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV">
-			<interp>
-				<y0>69.55</y0>
-				<y1>83.43</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV">
-			<interp>
-				<y0>0.186</y0>
-				<y1>0.105</y1>
-			</interp>
-		</property>
-
-                <!-- TODO: Just used the same value as for GaAs.  Needs fixing -->
-		<property name="phonon-energy-LA-X" description="Energy of the LA phonon at the X point" unit="meV">
-			28.12
-		</property>
-
-                <!-- TODO: Just used the same value as for GaAs.  Needs fixing -->
-		<property name="phonon-energy-LA-L" description="Energy of the LA phonon at the L point" unit="meV">
-			25.89
-		</property>
-	</material>
-
-	<material name="QCL_AR_AlGaN" description="GaN/AlGaN heterostructure">
-		<!-- Just used the value for GaN here -->
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV">
-			92
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV">
-			<interp>
-				<y0>69.55</y0>
-				<y1>83.43</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV">
-			<interp>
-				<y0>0.186</y0>
-				<y1>0.105</y1>
-			</interp>
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit="" reference="levinshtein_properties_2001">
-			<interp>
-				<y0>8.9</y0>
-				<y1>8.7</y1>
-			</interp>
-		</property>
-	</material>
-
-        <material name="QCL_AR_AlGaAs" description="GaAs/AlGaAs heterostructure">
-            <property name="debye-temperature" description="Debye temperature" reference="adachi_properties_1993" unit="K">
-                <interp>
-                    <y0>360</y0>
-                    <y1>446</y1>
-                </interp>
-            </property>
-
-            <property name="molar-mass" description="Molar mass" unit="kg/mol">
-                <interp>
-                    <y0>0.1446</y0>
-                    <y1>0.1019</y1>
-                </interp>
-            </property>
-            <property name="natoms" description="Number of atoms in molecular unit">
-                2
-            </property>
-
-            <property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="evans, JQE 44, p. 682 (2008)">
-			9.6
-		</property>
-		<property name="thermal-conductivity-decay-index" description="Decay index for thermal conductivity" reference="evans, JQE 44, p. 682 (2008)">
-			-0.14
-		</property>
-		<property name="density" reference="sze_semiconductor_2002" unit="kg m^{-3}">
-			<interp>
-				<y0>5320.0</y0>
-				<y1>3717.0</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
-			<interp xmax="0.45">
-				<y0>0.067</y0>
-				<y1>0.15</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-L-longitudinal" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>1.9</y0>
-				<y1>1.32</y1>
-			</interp>
-		</property>
-		<property name="electron-effective-mass-Delta-longitudinal" reference="vurgaftman_band_2001">
-			<interp>
-				<y0>1.3</y0>
-				<y1>0.97</y1>
-			</interp>
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			<interp>
-				<y0>10.89</y0>
-				<y1>8.16</y1>
-			</interp>
-		</property>
-		<property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
-			reference="chamberlain_optical_1993">
-			<interp>
-				<y0>12.9</y0>
-				<y1>10.06</y1>
-			</interp>
-		</property>
-
-		<property name="mobility-cross-plane" unit="cm^2/Vs">
-			38.3
-		</property>
-
-		<property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>36.22</y0>
-				<y1>49.78</y1>
-			</interp>
-		</property>
-		<property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>33.32</y0>
-				<y1>44.86</y1>
-			</interp>
-		</property>
-		<property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
-			<interp>
-				<y0>0.30</y0>
-				<y1>0.99</y1>
-			</interp>
-		</property>
-	</material>
-
-
-
-
-	<!--        -->
-	<!-- METALS -->
-	<!--        -->
-
-        <material name="copper">
-            <property name="debye-temperature" description="Debye temperature" unit="K">
-                343
-            </property>
-
-            <property name="molar-mass" description="Molar mass" unit="kg/mol">
-                63.5
-            </property>
-
-            <property name="natoms" description="Number of atoms in molecular unit">
-                1
-            </property>
-
-		<property name="thermal-conductivity-high-T" description="Thermal conductivity at high temperature" unit="W/(m K)" reference="Lops, JAP 100, p. 1 (2006)">
-			349
-		</property>
-		<property name="thermal-conductivity-inverse-T" description="Thermal conductivity reduction over temprature" unit="W/(m K)" reference="Lops, JAP 100, p. 1 (2006)">
-			14710
-		</property>
-		<property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
-			8960
-		</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			1
-		</property>
-
-		<property name="omega_p" description="Plasma frequency" unit="eV" reference="Craig's thesis">
-			10.83
-		</property>
-
-		<property name="omega_a" description="Plasma damping" unit="meV" reference="Craig's thesis">
-			30.0
-		</property>
-	</material>
-
-
-        <material name="gold">
-            <property name="debye-temperature" description="Debye temperature" unit="K">
-              165
-            </property>
-
-            <property name="molar-mass" description="Molar mass" unit="kg/mol">
-              0.1970
-            </property>
-            <property name="natoms" description="Number of atoms in molecular unit">
-                1
-            </property>
-
-		<property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
-			<poly>
-				<ai i="0">337</ai>
-				<ai i="1">-0.06601</ai>
-			</poly>
-		</property>
-
-		<property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
-			19300
-		</property>
-		<property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
-			1
-		</property>
-
-		<property name="omega_p" description="Plasma frequency" unit="eV" reference="Craig's thesis">
-			9.03
-		</property>
-
-		<property name="omega_a" description="Plasma damping" unit="meV" reference="Craig's thesis">
-			53.0
-		</property>
-	</material>
-        <material name="indium">
-            <property name="debye-temperature" description="Debye temperature" unit="K">
-                108
-            </property>
-
-            <property name="molar-mass" description="Molar mass" unit="kg/mol">
-                0.1148
-            </property>
-            <property name="natoms" description="Number of atoms in molecular unit">
-                1
-            </property>
-
-		<property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
-			<poly>
-				<ai i="0">93.9</ai>
-				<ai i="1">-6.96e-2</ai>
-				<ai i="2">9.86e-5</ai>
-			</poly>
-		</property>
-		<property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
-			7310
-		</property>
-	</material>
-
-
-	<!-- Pure binary semiconductors.  Where possible, handle these using generic
-	     ternary alloys -->
-	<material name="AlAs" description="Aluminium arsenide">
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			5.6611
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-                <property name="cation">
-                    <string>Al</string>
+                    <interp>
+                        <y0>0.1446</y0>
+                        <y1>0.1019</y1>
+                    </interp>
                 </property>
-                <property name="anion">
-                    <string>As</string>
+                <property name="natoms" description="Number of atoms in molecular unit">
+                    2
                 </property>
-	</material>
 
-	<material name="GaAs" description="Gallium arsenide">
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			5.65325
-		</property>
-		<property name="crystal-structure">zinc-blende</property>
-                <property name="cation">
-                    <string>Ga</string>
+                <property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="evans, JQE 44, p. 682 (2008)">
+                    9.6
                 </property>
-                <property name="anion">
-                    <string>As</string>
+                <property name="thermal-conductivity-decay-index" description="Decay index for thermal conductivity" reference="evans, JQE 44, p. 682 (2008)">
+                    -0.14
                 </property>
-	</material>
-	<material name="AlN" description="Aluminium nitride">
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			3.189
-		</property>
-		<property name="crystal-structure">wurtzite</property>
-                <property name="cation">
-                    <string>Al</string>
+                <property name="density" reference="sze_semiconductor_2002" unit="kg m^{-3}">
+                    <interp>
+                        <y0>5320.0</y0>
+                        <y1>3717.0</y1>
+                    </interp>
                 </property>
-                <property name="anion">
-                    <string>N</string>
+                <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
+                    <interp xmax="0.45">
+                        <y0>0.067</y0>
+                        <y1>0.15</y1>
+                    </interp>
                 </property>
-	</material>
-	<material name="GaN" description="Gallium nitride">
-		<property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
-			3.112
-		</property>
-		<property name="crystal-structure">wurtzite</property>
-                <property name="cation">
-                    <string>Ga</string>
+                <property name="electron-effective-mass-L-longitudinal" reference="vurgaftman_band_2001">
+                    <interp>
+                        <y0>1.9</y0>
+                        <y1>1.32</y1>
+                    </interp>
                 </property>
-                <property name="anion">
-                    <string>N</string>
+                <property name="electron-effective-mass-Delta-longitudinal" reference="vurgaftman_band_2001">
+                    <interp>
+                        <y0>1.3</y0>
+                        <y1>0.97</y1>
+                    </interp>
                 </property>
-	</material>
-	<material name="InAs" description="Indium arsenide">
-		<property name="crystal-structure">zinc-blende</property>
-                <property name="cation">
-                    <string>In</string>
+                <property name="crystal-structure">zinc-blende</property>
+                <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+                    <interp>
+                        <y0>10.89</y0>
+                        <y1>8.16</y1>
+                    </interp>
                 </property>
-                <property name="anion">
-                    <string>As</string>
+                <property name="eps_dc" description="Relative permittivity (below resonance)" unit=""
+                    reference="chamberlain_optical_1993">
+                    <interp>
+                        <y0>12.9</y0>
+                        <y1>10.06</y1>
+                    </interp>
                 </property>
-	</material>
-</material-library>
+
+                <property name="mobility-cross-plane" unit="cm^2/Vs">
+                    38.3
+                </property>
+
+                <property name="phonon-energy-LO" description="Energy of the LO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+                    <interp>
+                        <y0>36.22</y0>
+                        <y1>49.78</y1>
+                    </interp>
+                </property>
+                <property name="phonon-energy-TO" description="Energy of the TO phonon" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+                    <interp>
+                        <y0>33.32</y0>
+                        <y1>44.86</y1>
+                    </interp>
+                </property>
+                <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
+                    <interp>
+                        <y0>0.30</y0>
+                        <y1>0.99</y1>
+                    </interp>
+                </property>
+            </material>
+
+
+            <!--        -->
+            <!-- METALS -->
+            <!--        -->
+
+            <material name="copper">
+                <property name="debye-temperature" description="Debye temperature" unit="K">
+                    343
+                </property>
+
+                <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                    63.5
+                </property>
+
+                <property name="natoms" description="Number of atoms in molecular unit">
+                    1
+                </property>
+
+                <property name="thermal-conductivity-high-T" description="Thermal conductivity at high temperature" unit="W/(m K)" reference="Lops, JAP 100, p. 1 (2006)">
+                    349
+                </property>
+                <property name="thermal-conductivity-inverse-T" description="Thermal conductivity reduction over temprature" unit="W/(m K)" reference="Lops, JAP 100, p. 1 (2006)">
+                    14710
+                </property>
+                <property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
+                    8960
+                </property>
+                <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+                    1
+                </property>
+
+                <property name="omega_p" description="Plasma frequency" unit="eV" reference="Craig's thesis">
+                    10.83
+                </property>
+
+                <property name="omega_a" description="Plasma damping" unit="meV" reference="Craig's thesis">
+                    30.0
+                </property>
+            </material>
+
+            <material name="gold">
+                <property name="debye-temperature" description="Debye temperature" unit="K">
+                    165
+                </property>
+
+                <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                    0.1970
+                </property>
+                <property name="natoms" description="Number of atoms in molecular unit">
+                    1
+                </property>
+
+                <property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
+                    <poly>
+                        <ai i="0">337</ai>
+                        <ai i="1">-0.06601</ai>
+                    </poly>
+                </property>
+
+                <property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
+                    19300
+                </property>
+                <property name="eps_inf" description="Relative permittivity (above resonance)" unit="">
+                    1
+                </property>
+
+                <property name="omega_p" description="Plasma frequency" unit="eV" reference="Craig's thesis">
+                    9.03
+                </property>
+
+                <property name="omega_a" description="Plasma damping" unit="meV" reference="Craig's thesis">
+                    53.0
+                </property>
+            </material>
+
+            <material name="indium">
+                <property name="debye-temperature" description="Debye temperature" unit="K">
+                    108
+                </property>
+
+                <property name="molar-mass" description="Molar mass" unit="kg/mol">
+                    0.1148
+                </property>
+                <property name="natoms" description="Number of atoms in molecular unit">
+                    1
+                </property>
+
+                <property name="thermal-conductivity-T" description="Thermal conductivity as a function of temperature" reference="A. Lops, JAP, 100, p.1 (2006)">
+                    <poly>
+                        <ai i="0">93.9</ai>
+                        <ai i="1">-6.96e-2</ai>
+                        <ai i="2">9.86e-5</ai>
+                    </poly>
+                </property>
+                <property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
+                    7310
+                </property>
+            </material>
+
+
+            <!-- Pure binary semiconductors.  Where possible, handle these using generic
+             ternary alloys -->
+        <material name="AlAs" description="Aluminium arsenide">
+            <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+                5.6611
+            </property>
+            <property name="crystal-structure">zinc-blende</property>
+            <property name="cation">
+                <string>Al</string>
+            </property>
+            <property name="anion">
+                <string>As</string>
+            </property>
+        </material>
+
+        <material name="GaAs" description="Gallium arsenide">
+            <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+                5.65325
+            </property>
+            <property name="crystal-structure">zinc-blende</property>
+            <property name="cation">
+                <string>Ga</string>
+            </property>
+            <property name="anion">
+                <string>As</string>
+            </property>
+        </material>
+
+        <material name="AlN" description="Aluminium nitride">
+            <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+                3.189
+            </property>
+            <property name="crystal-structure">wurtzite</property>
+            <property name="cation">
+                <string>Al</string>
+            </property>
+            <property name="anion">
+                <string>N</string>
+            </property>
+        </material>
+
+        <material name="GaN" description="Gallium nitride">
+            <property name="lattice-constant" unit="angstrom" reference="vurgaftman_band_2001">
+                3.112
+            </property>
+            <property name="crystal-structure">wurtzite</property>
+            <property name="cation">
+                <string>Ga</string>
+            </property>
+            <property name="anion">
+                <string>N</string>
+            </property>
+        </material>
+
+        <material name="InAs" description="Indium arsenide">
+            <property name="crystal-structure">zinc-blende</property>
+            <property name="cation">
+                <string>In</string>
+            </property>
+            <property name="anion">
+                <string>As</string>
+            </property>
+        </material>
+    </material-library>
