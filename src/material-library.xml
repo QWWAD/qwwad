@@ -347,6 +347,18 @@
     </material>
 
     <material name="InGaAs" description="In(x)Ga(1-x)As alloy">
+        <property name="density" reference="Goldberg Yu.A. and N.M. Schmidt Handbook Series on Semiconductor Parameters, vol.2, M. Levinshtein, S. Rumyantsev and M. Shur, ed., World Scientific, London, 1999, pp. 62-88" unit="kg m^{-3}">
+            <interp>
+                <y0>5680.0</y0>
+                <y1>5310.0</y1>
+            </interp>
+        </property>
+        <property name="molar-mass" description="Molar mass" unit="kg/mol">
+            <interp>
+                <y0>0.144645</y0>
+                <y1>0.18974</y1>
+            </interp>
+        </property>
         <property name="electron-effective-mass-Gamma" reference="vurgaftman_band_2001">
             <interp>
                 <y0>0.067</y0>
@@ -400,6 +412,9 @@
                 <y0>0.30</y0>
                 <y1>0.50</y1>
             </interp>
+        </property>
+        <property name="debye-temperature" description="Debye temperature" reference="C. Evans, IEEE Proc. Optoelectronics, 153, p.287 (2006)." unit="K">
+            330
         </property>
     </material>
 
@@ -486,6 +501,29 @@
                 <y0>0.41</y0>
                 <y1>0.74</y1>
             </interp>
+        </property>
+    </material>
+
+    <material name="QCL_AR_InGaAs_AlAsSb" description="In(0.53)Ga(0.47)As/Al(0.56)As(0.44)Sb heterostructure">
+        <property name="debye-temperature" description="Debye temperature" reference="C. Evans, IEEE Proc. Optoelectronics, 153, p.287 (2006).  Assumed equal to InGaAs" unit="K">
+            330
+        </property>
+        <property name="molar-mass" description="Molar mass" reference="Assume identical to InGaAs" unit="kg/mol">
+            0.168545
+        </property>
+        <property name="natoms" description="Number of atoms in molecular unit">
+            2
+        </property>
+        <property name="density"
+                  reference="Goldberg Yu.A. and N.M. Schmidt Handbook Series on Semiconductor Parameters, vol.2, M. Levinshtein, S. Rumyantsev and M. Shur, ed., World Scientific, London, 1999, pp. 62-88" 
+                  unit="kg m^{-3}">
+            5843.9
+        </property>
+        <property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="evans, JQE 44, p. 682 (2008) (assume identical to GaAs/AlGaAs QCL).">
+            9.6
+        </property>
+        <property name="thermal-conductivity-decay-index" description="Decay index for thermal conductivity" reference="evans, JQE 44, p. 682 (2008) (assume identical to GaAs/AlGaAs QCL).">
+            -0.14
         </property>
     </material>
 
@@ -1177,6 +1215,26 @@
         </property>
         <property name="phonon-damping" description="Damping constant for phonon-photon interaction" unit="meV" reference="palik_handbook_1998,adachi_gaas_1994">
             0.43
+        </property>
+        <property name="thermal-conductivity-0K" description="Thermal conductivity at 0 K" unit="W/(m K)" reference="J. C. Brice, Properties of Indium Phosphide. EMIS Datareviews Series No. 6, INSPEC,
+London, 1991.">
+            289000
+        </property>
+        <property name="thermal-conductivity-decay-index" description="Decay index for thermal conductivity" reference="J. C. Brice, Properties of Indium Phosphide. EMIS Datareviews Series No. 6, INSPEC,
+London, 1991.">
+            -1.45
+        </property>
+        <property name="debye-temperature" description="Debye temperature" unit="K">
+            425
+        </property>
+        <property name="molar-mass" description="Molar mass" unit="kg/mol">
+            0.145792
+        </property>
+        <property name="natoms" description="Number of atoms in molecular unit">
+            2
+        </property>
+        <property name="density" description="density at 300 K" reference="Y. G. Zhang et al., Chin. Phys. Lett. 20, p.678 (2002)" unit="kg m^{-3}">
+            4810
         </property>
     </material>
 </material-library>
