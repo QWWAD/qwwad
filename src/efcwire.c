@@ -182,51 +182,49 @@ files *fdata;
  return(z[1]-z[0]);
 }
 
-
-
-files
-*read_data(n)
-
 /* This function reads the potential into memory and returns the start
    address of this block of memory and the number of lines	   */
-
-int	*n;
-
+files * read_data(int *n)
 {
  FILE 	*Fv;            /* file pointer to potential file          */
  FILE 	*Fm;            /* file pointer to potential file          */
- files  *fdata;		/* temporary pointer to potential	   */
- files  *data_start;	/* start address of potential		   */
+ files  *fdata;	/* start address of potential		   */
+ int i;
 
  if((Fm=fopen("m.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");exit(0);}
+ {
+     fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");
+     exit(0);
+ }
 
  if((Fv=fopen("v.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
+ {
+     fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
+     exit(0);
+ }
 
  *n=0;
  while(fscanf(Fv,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fv);
 
- data_start=(files *)calloc(*n,sizeof(files));
- if(data_start==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+ fdata=(files *)calloc(*n,sizeof(files));
 
- fdata=data_start;
+ if(fdata==0){
+     fprintf(stderr,"Cannot allocate memory!\n");
+     exit(0);
+ }
 
- while(fscanf(Fv,"%le %le",&(fdata->z),&(fdata->V))!=EOF)
+ for(i=0; i<*n; ++i)
  {
-  int n_read = fscanf(Fm,"%*e %le",&(fdata->mstar));
-
-  if (n_read == 2)
-    fdata++;
+     int n_read = fscanf(Fv,"%le %le",&(fdata[i].z),&(fdata[i].V));
+     n_read = fscanf(Fm,"%*e %le",&(fdata[i].mstar));
  }
 
  fclose(Fm);
  fclose(Fv);
 
- return(data_start);
-
+ return(fdata);
 }
 
 /**
@@ -244,54 +242,56 @@ int	*n;
  * \returns The value of the wavefunction at \f$\infty\f$
  */
 static double psi_at_inf(const double  E,
-                         const double  delta_z,
+                         const double  dr,
                          files        *fdata,
                          const data11 *data_m0Eg,
                          const int     n,
                          const bool    np_flag)
 {
- double psi[3];              /* wavefunction at z-delta_z,
-                                z and z+delta_z              */
- int	i;		     /* index			     */
+    double psi[3];              /* wavefunction at z-delta_z,
+                                   z and z+delta_z              */
+    int	i;		     /* index			     */
 
- /* account for non-parabolicity with mstar(E)	*/
+    /* account for non-parabolicity with mstar(E)	*/
+    if(np_flag)
+    {
+        for(i=0;i<n;i++)
+        {
+            /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
+            const double alpha=gsl_pow_2(1-data_m0Eg[i].a/me)/data_m0Eg[i].b;
 
- if(np_flag)
- {
-  for(i=0;i<n;i++)
-  {
-   /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
-   const double alpha=gsl_pow_2(1-data_m0Eg[i].a/me)/data_m0Eg[i].b;
+            /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
+            fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
+        }
+    }
 
-   /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
-   fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
-  }
- }
+    /* boundary conditions: Eq. 8.55, QWWAD3 */
+    psi[0]=1.0;
+    psi[1]=1.0;
+    psi[2]=0;
 
- /* boundary conditions: Eq. 8.55, QWWAD3 */
- psi[0]=1.0;
- psi[1]=1.0;
- psi[2]=0;
+    for(i=1;i<(n-1);i++)              /* last potential not used */
+    {
+        const double r = fdata[i].z;
+        const double m = fdata[i].mstar;
+        const double V = fdata[i].V;
 
- fdata++;                    /* ignore data corresponding to psi[0] */
+        /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
+        psi[2]=(
+                2.0*r*(2.0*m*dr*dr/(hBar*hBar)*(V-E)+2.0)*
+                psi[1]+
+                (-2.0*r+dr)*psi[0]
+               )
+            /(2.0*r+dr);
 
-  for(i=1;i<(n-1);i++)              /* last potential not used */
-  {
-   /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
-   psi[2]=(
-           2*(fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+2)*
-	   psi[1]+
-           (-2*(fdata->z)+delta_z)*psi[0]
-          )
-           /(2*(fdata->z)+delta_z);
+/*        printf("%e %e\n", V, psi[2]); */
 
-   /* Shift previous values along ready for next iteration */
-   psi[0]=psi[1];
-   psi[1]=psi[2];
-   fdata++;
-  } 
+        /* Shift previous values along ready for next iteration */
+        psi[0]=psi[1];
+        psi[1]=psi[2];
+    } 
 
- return psi[2];
+    return psi[2];
 }
 
 double 

@@ -146,51 +146,49 @@ files *fdata;
  return(z[1]-z[0]);
 }
 
-
-
-files
-*read_data(n)
-
 /* This function reads the potential into memory and returns the start
    address of this block of memory and the number of lines	   */
-
-int	*n;
-
+files * read_data(int *n)
 {
  FILE 	*Fv;            /* file pointer to potential file          */
  FILE 	*Fm;            /* file pointer to potential file          */
- files  *fdata;		/* temporary pointer to potential	   */
- files  *data_start;	/* start address of potential		   */
+ files  *fdata;	/* start address of potential		   */
+ int i;
 
  if((Fm=fopen("m.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");exit(0);}
+ {
+     fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");
+     exit(0);
+ }
 
  if((Fv=fopen("v.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
+ {
+     fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
+     exit(0);
+ }
 
  *n=0;
  while(fscanf(Fv,"%*e %*e")!=EOF)
   (*n)++;
  rewind(Fv);
 
- data_start=(files *)calloc(*n,sizeof(files));
- if(data_start==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+ fdata=(files *)calloc(*n,sizeof(files));
 
- fdata=data_start;
+ if(fdata==0){
+     fprintf(stderr,"Cannot allocate memory!\n");
+     exit(0);
+ }
 
- while(fscanf(Fv,"%le %le",&(fdata->z),&(fdata->V))!=EOF)
+ for(i=0; i<*n; ++i)
  {
-  int n_read = fscanf(Fm,"%*e %le",&(fdata->mstar));
-
-  if (n_read == 2)
-    fdata++;
+     int n_read = fscanf(Fv,"%le %le",&(fdata[i].z),&(fdata[i].V));
+     n_read = fscanf(Fm,"%*e %le",&(fdata[i].mstar));
  }
 
  fclose(Fm);
  fclose(Fv);
 
- return(data_start);
-
+ return(fdata);
 }
 
 /**
