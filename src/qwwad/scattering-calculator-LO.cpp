@@ -192,7 +192,7 @@ double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
 
             Wif_integrand_dKz[iKz] = Gifsqr[iKz] /
                                      sqrt(Kz_4 + 2.0*Kz_2 * (2.0*ki*ki - 2.0*_m*Delta/(hBar*hBar))+
-                                          gsl_pow_2(2.0*_m*Delta/(hBar*hBar)));
+                                          4.0*_m*_m*Delta*Delta/(hBar*hBar*hBar*hBar));
         } // end integral over Kz
 
         Wif_ki = _prefactor*pi*integral(Wif_integrand_dKz,_dKz);
