@@ -13,7 +13,7 @@
 #include <gsl/gsl_interp.h>
 #include <gsl/gsl_spline.h>
 #include "qwwad/constants.h"
-#include "qclsim-subband.h"
+#include "qwwad/subband.h"
 #include "qwwad-options.h"
 
 using namespace QWWAD;

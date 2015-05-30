@@ -13,7 +13,7 @@
 #endif //HAVE_CONFIG_H
 
 #include <string>
-#include "qwwad/linear-algebra.h"
+#include "linear-algebra.h"
 
 namespace QWWAD
 {

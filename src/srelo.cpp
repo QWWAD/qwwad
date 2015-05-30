@@ -14,7 +14,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/scattering-calculator-LO.h"
 #include "qwwad/file-io.h"
-#include "qclsim-subband.h"
+#include "qwwad/subband.h"
 #include "qwwad-options.h"
 
 using namespace QWWAD;

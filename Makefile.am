@@ -107,8 +107,6 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-material-property-string.h      \
 			   src/qclsim_poisson_solver.cpp \
 			   src/qclsim_poisson_solver.h   \
-			   src/qclsim-subband.cpp      \
-			   src/qclsim-subband.h        \
 			   src/material_library.cpp       \
 			   src/material_library.h         \
 			   src/qwwad/constants.h      \
@@ -156,6 +154,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/schroedinger-solver-taylor.h          \
 			   src/qwwad/schroedinger-solver-tridiagonal.cpp   \
 			   src/qwwad/schroedinger-solver-tridiagonal.h     \
+			   src/qwwad/subband.cpp      \
+			   src/qwwad/subband.h        \
 			   src/wf_options.cpp                       \
 			   src/wf_options.h
 

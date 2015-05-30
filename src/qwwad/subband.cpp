@@ -1,13 +1,13 @@
 /**
- * \file   qclsim-subband.cpp
+ * \file   subband.cpp
  * \brief  A subband in a 2D system
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date   2013-01-10
  */
-#include "qclsim-subband.h"
-#include "qwwad/file-io.h"
-#include "qwwad/maths-helpers.h"
-#include "qwwad/constants.h"
+
+#include "subband.h"
+#include "file-io.h"
+#include "maths-helpers.h"
+#include "constants.h"
 
 namespace QWWAD
 {

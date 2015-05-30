@@ -9,7 +9,7 @@
 
 #include <map>
 #include <utility>
-#include "../qclsim-subband.h"
+#include "subband.h"
 #include "intersubband-transition.h"
 
 namespace QWWAD {

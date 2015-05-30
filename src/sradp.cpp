@@ -25,7 +25,7 @@
 #include <complex>
 #include "qwwad-options.h"
 #include "qwwad/file-io.h"
-#include "qclsim-subband.h"
+#include "qwwad/subband.h"
 #include "qwwad/constants.h"
 
 using namespace QWWAD;

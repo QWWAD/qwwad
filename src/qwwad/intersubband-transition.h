@@ -7,7 +7,7 @@
 #ifndef QWWAD_INTERSUBBAND_TRANSITION
 #define QWWAD_INTERSUBBAND_TRANSITION
 
-#include "../qclsim-subband.h"
+#include "subband.h"
 
 namespace QWWAD {
 /**

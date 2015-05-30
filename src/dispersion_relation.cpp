@@ -9,7 +9,7 @@
 #include <valarray>
 
 #include "wf_options.h"
-#include "qclsim-subband.h"
+#include "qwwad/subband.h"
 
 #include "qwwad/constants.h"
 using namespace QWWAD;
