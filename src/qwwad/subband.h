@@ -19,100 +19,108 @@ namespace QWWAD
 {
 class Subband
 {
-    public:
-        Subband(State                 ground_state,
-                double                m_d,
-                std::valarray<double> z);
+private:
+    State  _ground_state;      ///< State at bottom of subband
+
+    /// TODO: The spatial profile should really be part of the State class
+    std::valarray<double> _z; ///< Spatial profile of subband [m]
+
+    double _m;                ///< Effective mass at subband minimum (for dispersion) [kg]
+    double _alpha;            ///< In-plane nonparabolicity parameter [1/J]
+    double _V;                ///< Conduction band edge [J]
+
+    // Carrier distribution parameters
+    bool   _dist_known;       ///< True if the carrier distribution is set
+    double _Ef;               ///< Quasi-Fermi energy [J]
+    double _Te;               ///< Temperature of carrier distribution [K]
+    double _N;                ///< TOTAL sheet-density of carriers [m^{-2}]
+
+public:
+    Subband(State                 ground_state,
+            double                m,
+            std::valarray<double> z);
         
-        Subband(State                 ground_state,
-                double                m_d,
-                std::valarray<double> z,
-                double                alphad,
-                double                condband_edge);
+    Subband(State                 ground_state,
+            double                m,
+            std::valarray<double> z,
+            double                alpha,
+            double                V);
 
-        void set_distribution(const double Ef,
-                              const double population);
+    void set_distribution_from_Ef_Te(const double Ef,
+                                     const double Te);
 
-        inline State                       get_ground() const {return ground_state;}
-        inline std::valarray<double>       z_array()    const {return _z;}
-        inline double                      get_dz()     const {return _z[1]-_z[0];}
+    inline State get_ground() const {return _ground_state;}
 
-        /** Find the total length of the spatial region [m] */
-        inline double                      get_length() const {return _z[_z.size()-1]-_z[0];}
+    /**
+     * \brief find the total length of the spatial region [m]
+     *
+     * \todo This should be part of State class
+     */
+    inline std::valarray<double>       z_array()    const {return _z;}
+    inline double                      get_dz()     const {return _z[1]-_z[0];}
+    inline double                      get_length() const {return _z[_z.size()-1]-_z[0];}
 
-        /** Find expectation position for the ground state [m] */
-        inline double                      get_z_av_0() const {return z_av(ground_state, _z);}
+    /** Find expectation position for the ground state [m] */
+    inline double                      get_z_av_0() const {return z_av(_ground_state, _z);}
 
-        inline double                      get_Ef()     const {return Ef;}
-        inline double                      get_E()      const {return ground_state.get_E();}
-        double                             get_pop()    const;
+    inline double                      get_Ef()     const {return _Ef;}
 
-        inline std::valarray<double>       psi_array()  const {return ground_state.psi_array();}
-        inline double                      get_condband_edge() const {return condband_edge;}
+    /**
+     * \brief Find energy of subband edge
+     */
+    inline double                      get_E_min()  const {return _ground_state.get_E();}
 
-        double                             get_k_fermi() const;
+    double                             get_total_population()    const;
 
-        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                                   const std::string &wf_input_prefix,
-                                                   const std::string &wf_input_ext,
-                                                   const std::string &m_d_filename);
+    inline std::valarray<double>       psi_array()  const {return _ground_state.psi_array();}
+    inline double                      get_condband_edge() const {return _V;}
 
-        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                                   const std::string &wf_input_prefix,
-                                                   const std::string &wf_input_ext,
-                                                   const double       m_d);
+    double                             get_k_fermi() const;
 
-        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                                   const std::string &wf_input_prefix,
-                                                   const std::string &wf_input_ext,
-                                                   const std::string &m_d_filename,
-                                                   const std::string &alphad_filename,
-                                                   const std::string &potential_filename);
+    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                               const std::string &wf_input_prefix,
+                                               const std::string &wf_input_ext,
+                                               const std::string &m_filename);
 
-        static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                                   const std::string &wf_input_prefix,
-                                                   const std::string &wf_input_ext,
-                                                   const double       m_d,
-                                                   const double       alphad,
-                                                   const double       V);
+    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                               const std::string &wf_input_prefix,
+                                               const std::string &wf_input_ext,
+                                               const double       m);
 
-        double Ek(const double k) const;
-        double k(const double Ek) const;
-        double get_k_max(const double Te) const;
+    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                               const std::string &wf_input_prefix,
+                                               const std::string &wf_input_ext,
+                                               const std::string &m_filename,
+                                               const std::string &alpha_filename,
+                                               const std::string &potential_filename);
 
-        /// Return total energy of carrier at a given wave-vector
-        inline double E_total(const double k) const {return get_E() + Ek(k);}
-        
-        /// Return d.o.s mass at bottom of subband 
-        inline double get_md_0() const {return md_0;}
+    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
+                                               const std::string &wf_input_prefix,
+                                               const std::string &wf_input_ext,
+                                               const double       m,
+                                               const double       alpha,
+                                               const double       V);
+
+    double get_Ek_at_k(const double k) const;
+    double get_k_at_Ek(const double Ek) const;
+    double get_k_max(const double Te) const;
+
+    /// Return total energy of carrier at a given wave-vector
+    inline double get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
+
+    decltype(_m) get_effective_mass    (const double E = 0.0) const;
+    decltype(_m) get_effective_mass_dos(const double E = 0.0) const;
+
+    /// Return nonparabolicity parameter
+    inline double get_alpha() const {return _alpha;}
+
+    double get_density_of_states(const double E = 0.0) const;
+
+    double get_occupation_at_E_total(const double E) const;
        
-        /// Return nonparabolicity parameter
-        inline double get_alphad() const {return alphad;}
-        
-        /// Get in plane effective mass at some absolute energy.
-        inline double get_m_d(double E) const {return md_0*(1.0 + alphad*(E - condband_edge));}
-        
-        double rho(const double E) const;
-        
-        double f_FD(const double E,
-                    const double Te) const;
-        
-        double f_FD_k(const double k, const double Te) const;
+    double get_occupation_at_k(const double k) const;
 
-        /// Find the population of the subband at wavevector k
-        inline double N(double k, double Te) {return rho(E_total(k))*f_FD_k(k,Te);}
-
-    private:
-        State  ground_state;        ///< State at bottom of subband
-        std::valarray<double> _z;   ///< Spatial profile of subband
-        double md_0;                ///< Density of states effective mass
-        double alphad;              ///< In-plane nonparabolicity parameter
-        double condband_edge;       ///< Energy of the conduction band located below 'most populated' region of subband.
-
-        // Carrier distribution parameters
-        bool   distribution_known;  ///< True if the carrier distribution is set
-        double Ef;                  ///< Quasi-Fermi energy [J]
-        double population;          ///< Sheet-density of carriers [m^{-2}]
+    double get_population_at_k(const double k) const;
 };
 } // namespace
 #endif // QCLSIM_SUBBAND_H

@@ -70,7 +70,7 @@ int main (int argc, char* argv[])
         std::valarray<double> Ek(nk);
 
         // Calculate maximum wavevector
-        const auto k_max = sb.k(nkbt*kB*Te);
+        const auto k_max = sb.get_k_at_Ek(nkbt*kB*Te);
 
         // Calculate wavevector spacing
         const auto dk = k_max/nk;
@@ -79,22 +79,22 @@ int main (int argc, char* argv[])
         for(unsigned int ik=0; ik<nk; ik++)
         {
             k[ik]  = ik*dk;
-            Ek[ik] = sb.Ek(k[ik]);
+            Ek[ik] = sb.get_Ek_at_k(k[ik]);
         }
 
         // If absolute energies are required then offset energies by the energy of the subband
         // minima
         if(!opt.get_option<bool>("relative"))
-            Ek += sb.get_E();
+            Ek += sb.get_E_min();
 
         Ek /= (1e-3*e); // Rescale to meV
 
         // If verbose option selected output some information about subband
         if(opt.get_verbose())
         {
-            std::cout << "Subband " << ist << " at " << sb.get_E()/(1e-3*e) << "eV." << std::endl
-                      << "D.o.s effective mass: " << sb.get_md_0() << std::endl
-                      << "D.o.s nonparabolicity parameter: " << sb.get_alphad() << std::endl
+            std::cout << "Subband " << ist << " at " << sb.get_E_min()/(1e-3*e) << "eV." << std::endl
+                      << "D.o.s effective mass: " << sb.get_effective_mass() << std::endl
+                      << "D.o.s nonparabolicity parameter: " << sb.get_alpha() << std::endl
                       << "Wavevector at " << nkbt << "*kB*Te: " << k_max << std::endl
                       << std::endl;
         }

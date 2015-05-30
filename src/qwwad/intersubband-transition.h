@@ -36,18 +36,16 @@ public:
     IntersubbandTransition(const decltype(_isb)    isb,
                            const decltype(_fsb)    fsb,
                            const decltype(_ki)     ki,
-      //                     const decltype(_kf)     kf,
                            const decltype(_Wif) Wif_ki);
 
     inline decltype(_ki)  get_ki_table        () const {return _ki;}
     inline decltype(_Eki) get_Eki_table       () const {return _Eki;}
-    inline decltype(_Eki) get_Ei_total_table  () const {return _Eki + _isb.get_E();}
+    inline decltype(_Eki) get_Ei_total_table  () const {return _Eki + _isb.get_E_min();}
     inline decltype(_Wif) get_rate_table () const {return _Wif;}
     inline double get_ki_by_index        (unsigned int ik) const {return _ki[ik];}
-//    inline double get_kf_at_ki_by_index  (unsigned int ik) const {return _kf[ik];}
     inline double get_rate_at_ki_by_index(unsigned int ik) const {return _Wif[ik];}
 
-    double get_average_rate(const double Te) const;
+    double get_average_rate() const;
 };
 } // namespace
 #endif

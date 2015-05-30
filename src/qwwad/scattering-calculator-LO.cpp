@@ -58,8 +58,8 @@ double ScatteringCalculatorLO::get_Eki_min(const unsigned int i,
     const auto fsb = _subbands[f];
 
     // Subband minima
-    const auto Ei = isb.get_E();
-    const auto Ef = fsb.get_E();
+    const auto Ei = isb.get_E_min();
+    const auto Ef = fsb.get_E_min();
 
     // Subband separation
     const auto Eif = Ei - Ef;
@@ -86,7 +86,7 @@ double ScatteringCalculatorLO::get_ki_min(const unsigned int i,
 {
     const auto Eki_min = get_Eki_min(i,f);
     const auto isb = _subbands[i];
-    const auto ki_min = isb.k(Eki_min);
+    const auto ki_min = isb.get_k_at_Ek(Eki_min);
     return ki_min;
 }
 
@@ -103,13 +103,13 @@ double ScatteringCalculatorLO::get_ki_cutoff(const unsigned int i,
     auto Eki_max = Eki_min + 5.0 * kB * _Te;
 
     const auto Ei_F = isb.get_Ef(); // Fermi energy [J]
-    const auto Ei   = isb.get_E(); // Fermi energy [J]
+    const auto Ei   = isb.get_E_min(); // Subband edge [J]
 
     // If the Fermi energy is above the subband minimum, then add that on for good measure!
     if(Ei < Ei_F)
         Eki_max += Ei_F;
 
-    return isb.k(Eki_max);
+    return isb.get_k_at_Ek(Eki_max);
 }
 
 /**
@@ -162,8 +162,8 @@ double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
 
         const auto isb = _subbands[i];
         const auto fsb = _subbands[f];
-        const auto Ei  = isb.get_E();
-        const auto Ef  = fsb.get_E();
+        const auto Ei  = isb.get_E_min();
+        const auto Ef  = fsb.get_E_min();
 
         auto Delta = Ef - Ei;
 
@@ -200,13 +200,14 @@ double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
         if(_enable_blocking)
         {
             // Initial and final kinetic energy
-            const auto Eki = isb.Ek(ki);
+            const auto Eki = isb.get_Ek_at_k(ki);
             const auto Ekf = Eki - Delta;
 
             if(Ekf >= 0)
             {
-                const auto kf = fsb.k(Ekf); 
-                Wif_ki *= (1.0 - fsb.f_FD_k(kf, _Te));
+                const auto kf   = fsb.get_k_at_Ek(Ekf);
+                const auto f_FD = fsb.get_occupation_at_k(kf);
+                Wif_ki *= (1.0 - f_FD);
             }
         }
     }
@@ -259,8 +260,8 @@ void ScatteringCalculatorLO::calculate_screening_length()
         // Sum over all subbands
         for(const auto jsb : _subbands)
         {
-            const auto Ej   = jsb.get_E();
-            const auto f_FD = jsb.f_FD(Ej, _Te);
+            const auto Ej   = jsb.get_E_min();
+            const auto f_FD = jsb.get_occupation_at_E_total(Ej);
             _lambda_s_sq += sqrt(2.0*_m*Ej) * _m * f_FD;
         }
 

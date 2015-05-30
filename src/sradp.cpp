@@ -131,14 +131,12 @@ int main(int argc,char *argv[])
 
     // Read and set carrier distributions within each subband
     std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<double>       N;       // Subband populations [m^{-2}]
     std::valarray<unsigned int> indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table("N.r", N);	// read populations
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-        subbands[isb].set_distribution(Ef[isb], N[isb]);
+        subbands[isb].set_distribution_from_Ef_Te(Ef[isb], Te);
 
     // Read list of wanted transitions
     std::valarray<unsigned int> i_indices;
@@ -161,8 +159,8 @@ int main(int argc,char *argv[])
         const Subband fsb = subbands[f-1];
 
         // Subband minima
-        const double Ei = isb.get_E();
-        const double Ef = fsb.get_E();
+        const double Ei = isb.get_E_min();
+        const double Ef = fsb.get_E_min();
 
         std::valarray<double> Kz(nKz);
         std::valarray<double> Gifsqr(nKz);
@@ -177,7 +175,6 @@ int main(int argc,char *argv[])
             ff_output(Kz, Gifsqr, i, f);
 
         /* Generate filename for particular mechanism and open file	*/
-
         sprintf(filename,"ACa%i%i.r", i, f); // absorption
         FACa=fopen(filename,"w");			
         sprintf(filename,"ACe%i%i.r", i, f); // emission
@@ -211,7 +208,7 @@ int main(int argc,char *argv[])
                 Ecutoff += Ef;
         }
 
-        kimax = isb.k(Ecutoff);
+        kimax = isb.get_k_at_Ek(Ecutoff);
 
         const double dki=kimax/((float)nki);
         std::valarray<double> Waif(nki); // Absorption scattering rate at this wave-vector [1/s]
@@ -266,7 +263,7 @@ int main(int argc,char *argv[])
 
             /* Now check for energy conservation!, would be faster with a nasty `if'
                statement just after the beginning of the ki loop!                 */
-            const double Eki = isb.Ek(ki);
+            const double Eki = isb.get_Ek_at_k(ki);
             const double Ef_em = Eki - DeltaE - Ephonon;
             const double Ef_ab = Eki - DeltaE + Ephonon;
             Weif[iki] *= Theta(Ef_em);
@@ -279,18 +276,18 @@ int main(int argc,char *argv[])
                 if(Ef_em >= 0)
                 {
                     const double kf_em = sqrt(Ef_em*2*m)/hBar;
-                    Weif[iki] *= (1.0 - fsb.f_FD_k(kf_em, Te));
+                    Weif[iki] *= (1.0 - fsb.get_occupation_at_k(kf_em));
                 }
 
                 if(Ef_ab >= 0)
                 {
                     const double kf_ab = sqrt(Ef_ab*2*m)/hBar;
-                    Waif[iki] *= (1.0 - fsb.f_FD_k(kf_ab, Te));
+                    Waif[iki] *= (1.0 - fsb.get_occupation_at_k(kf_ab));
                 }
             }
 
-            Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.f_FD_k(ki, Te);
-            Webar_integrand_ki[iki] = Weif[iki]*ki*isb.f_FD_k(ki, Te);
+            Wabar_integrand_ki[iki] = Waif[iki]*ki*isb.get_occupation_at_k(ki);
+            Webar_integrand_ki[iki] = Weif[iki]*ki*isb.get_occupation_at_k(ki);
 
             /* output scattering rate versus carrier energy=subband minima+in-plane
                kinetic energy						*/
@@ -300,8 +297,8 @@ int main(int argc,char *argv[])
             fprintf(FACe,"%20.17le %20.17le\n",(Ei + gsl_pow_2(hBar*ki)/(2*m))/
                     (1e-3*e),Weif[iki]);
         }
-        Wabar[itx] = integral(Wabar_integrand_ki, dki)/(pi*isb.get_pop());
-        Webar[itx] = integral(Webar_integrand_ki, dki)/(pi*isb.get_pop());
+        Wabar[itx] = integral(Wabar_integrand_ki, dki)/(pi*isb.get_total_population());
+        Webar[itx] = integral(Webar_integrand_ki, dki)/(pi*isb.get_total_population());
 
         fclose(FACa);	/* close output file for this mechanism	*/
         fclose(FACe);	/* close output file for this mechanism	*/

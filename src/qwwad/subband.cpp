@@ -8,53 +8,75 @@
 #include "file-io.h"
 #include "maths-helpers.h"
 #include "constants.h"
+#include "../qclsim-fermi.h"
 
 namespace QWWAD
 {
 using namespace constants;
 
-Subband::Subband(State ground_state,
-                 double md_0,
+/**
+ * \brief Create a parabolic subband
+ *
+ * \param[in] ground_state The quantum state at the edge of the subband
+ * \param[in] m            The effective mass for the subband [kg]
+ * \param[in] z            The spatial locations corresponding to the wave function [m]
+ */
+Subband::Subband(State                 ground_state,
+                 double                m,
                  std::valarray<double> z) :
-    ground_state(ground_state),
+    _ground_state(ground_state),
     _z(z),
-    md_0(md_0),
-    alphad(0.0),
-    condband_edge(0.0),
-    distribution_known(false),
-    Ef(ground_state.get_E()),
-    population(0.0)
-{
-}
-
-Subband::Subband(State ground_state,
-                 double md_0,
-                 std::valarray<double> z,
-                 double alphad,
-                 double condband_edge) :
-    ground_state(ground_state),
-    _z(z),
-    md_0(md_0),
-    alphad(alphad),
-    condband_edge(condband_edge),
-    distribution_known(false),
-    Ef(ground_state.get_E()),
-    population(0.0)
-{
-}
+    _m(m),
+    _alpha(0.0),
+    _V(0.0),
+    _dist_known(false),
+    _Ef(ground_state.get_E()),
+    _Te(0.0),
+    _N(0.0)
+{}
 
 /**
- * \brief Sets the carrier distribution function in subband
+ * \brief Create a non-parabolic subband
  *
- * \param[in] Ef         Quasi-Fermi energy [J]
- * \param[in] population Total carrier population [m^{-2}]
+ * \param[in] ground_state The quantum state at the edge of the subband
+ * \param[in] m            The effective mass for the subband [kg]
+ * \param[in] z            The spatial locations corresponding to the wave function [m]
+ * \param[in] alpha        The nonparabolicity parameter [1/J]
+ * \param[in] V            The edge of the bulk band that contains this subband [J]
  */
-void Subband::set_distribution(const double Ef,
-                               const double population)
+Subband::Subband(State                 ground_state,
+                 double                m,
+                 std::valarray<double> z,
+                 double                alpha,
+                 double                V) :
+    _ground_state(ground_state),
+    _z(z),
+    _m(m),
+    _alpha(alpha),
+    _V(V),
+    _dist_known(false),
+    _Ef(ground_state.get_E()),
+    _Te(0.0),
+    _N(0.0)
+{}
+
+/**
+ * \brief Sets the carrier distribution function in the subband
+ *
+ * \param[in] Ef Quasi-Fermi energy [J]
+ * \param[in] Te Carrier temperature [K]
+ *
+ * \details A Fermi-Dirac distribution is assumed
+ */
+void Subband::set_distribution_from_Ef_Te(const double Ef,
+                                          const double Te)
 {
-    this->distribution_known = true;
-    this->population         = population;
-    this->Ef                 = Ef;
+    if(Te <= 0.0)
+        throw "Carrier temperature must be positive";
+
+    _dist_known = true;
+    _Ef         = Ef;
+    _Te         = Te;
 }
 
 /**
@@ -67,10 +89,12 @@ void Subband::set_distribution(const double Ef,
  */
 double Subband::get_k_fermi() const
 {
-    if(!distribution_known)
+    if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    return sqrt(2.0*pi*population);
+    const auto N = get_total_population();
+
+    return sqrt(2.0*pi*N);
 }
 
 /**
@@ -272,26 +296,25 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     return subbands;
 }
 
-/** Return the energy above subband minima at some wavevector */
-double Subband::Ek(double k) const
+/**
+ * \begin Find the kinetic energy at a given wavevector
+ *
+ * \param[in] k In-plane wave vector [1/m]
+ *
+ * \return Kinetic energy [J]
+ */
+double Subband::get_Ek_at_k(double k) const
 {
-    //TODO Make this configurable?
-    // Numerical error allowed in calcultion
-    double numerical_error = 1e-9;
-    // First check if wavevector is zero. I.e. at subband minima
-    if(fabs(k) < numerical_error)
-        return 0.0;
-
     double Ek;
+
     // Check if subband is initialised as being nonparabolic
-    if(alphad == 0.0)
-        Ek = gsl_pow_2(k*hBar)/(2.0*md_0);
+    if(_alpha == 0.0)
+        Ek = hBar*hBar*k*k/(2.0*_m);
     else
     {
-        // b
-        const double b = 1+alphad*(get_E() - condband_edge);
-        // 4*a*c
-        const double four_ac = 4*alphad*(-gsl_pow_2(hBar*k)/(2*md_0));
+        const auto En = get_E_min();
+        const auto b       = 1.0 + _alpha*(En - _V);
+        const auto four_ac = 4.0*_alpha*(-hBar*hBar*k*k)/(2.0*_m);
 
         // Check solveable
         if(four_ac > b*b)
@@ -301,9 +324,9 @@ double Subband::Ek(double k) const
             throw std::domain_error(oss.str());
         }
 
-        const double root = sqrt(b*b - four_ac);
-        if(root > b)
-            Ek = (-b + root)/(2*alphad);
+        const auto root = sqrt(b*b - four_ac);
+        if(root >= b)
+            Ek = (-b + root)/(2.0*_alpha);
         else
         {
             std::ostringstream oss;
@@ -322,7 +345,7 @@ double Subband::Ek(double k) const
  * 
  * \return Wavevector [m^{-1}]
  */
-double Subband::k(const double Ek) const
+double Subband::get_k_at_Ek(const double Ek) const
 {
     if(Ek < 0.0)
     {
@@ -331,57 +354,65 @@ double Subband::k(const double Ek) const
         throw std::domain_error(oss.str());
     }
 
-    // Check if at subband minima
-    // TODO Make numerical error allowed for configurable?
-    double numerical_error = 1e-9*e;
-    if(fabs(Ek) < numerical_error)
-        return 0.0;
+    // Find the energy-dependent effective mass, including nonparabolicity
+    const auto E_total = Ek + get_E_min();
+    const auto m = get_effective_mass(E_total);
 
-    double k;
-    // Check if subband is initialised as being nonparabolic
-    if(alphad == 0.0)
-        k = sqrt(Ek*2.0*md_0)/hBar;
-    else
-        k = sqrt(Ek*2.0*md_0*(1 + alphad*(get_E() + Ek - condband_edge)))/hBar;
+    const auto k = sqrt(Ek*2.0*m)/hBar;
     
     return k;
 } 
 
-/// Return 2D density of states for subband
-double Subband::rho(const double E) const
-{
-    return get_m_d(E)/(pi*hBar*hBar);
-}
-        
 /**
- * \brief   Fermi-dirac statistics at a given energy
+ * \brief Return 2D density of states for subband
+ *
+ * \param[in] E Absolute energy of state [J]
+ */
+double Subband::get_density_of_states(const double E) const
+{
+    double rho = 0.0;
+
+    // Density of states is zero unless we're above the
+    // subband edge
+    if(E > get_E_min())
+    {
+        const auto m = get_effective_mass_dos(E);
+
+        // QWWAD 4, Eq. 2.63
+        rho = m/(pi*hBar*hBar);
+    }
+
+    return rho;
+}
+
+/**
+ * \brief Find the occupation probability of a state at a given energy
  *
  * \param[in] E_total The energy of the state [J]
- * \param[in] Te      The temperature of the carrier distribution
  *
  * \details Note that E is the TOTAL energy of the state, specified on the same
- *          absolute scale as the Fermi energy
+ *          absolute scale as the Fermi energy and the subband minimum
  */
-double Subband::f_FD(const double E, const double Te) const
+double Subband::get_occupation_at_E_total(const double E) const
 {
-    if(!distribution_known)
+    if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    return 1.0/(exp((E-Ef)/(kB*Te)) + 1.0);
+    return f_FD(_Ef, E, _Te);
 }
 
 /**
- * \brief   Fermi-dirac statistics at a given in-plane wave-vector
+ * \brief Find the occupation probability of a state at a given wave vector
  *
  * \param[in] k  The in-plane wave-vector of the state [1/m]
- * \param[in] Te The temperature of the carrier distribution
  */
-double Subband::f_FD_k(const double k, const double Te) const
+double Subband::get_occupation_at_k(const double k) const
 {
-    if(!distribution_known)
+    if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    return f_FD(E_total(k), Te);
+    const auto E = get_E_total_at_k(k);
+    return get_occupation_at_E_total(E);
 }
 
 /**
@@ -389,12 +420,14 @@ double Subband::f_FD_k(const double k, const double Te) const
  *
  * \returns Population [m^{-2}]
  */
-double Subband::get_pop() const
+double Subband::get_total_population() const
 {
-    if(!distribution_known)
+    if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    return population;
+    const auto E = get_E_min();
+    const auto N = find_pop(E, _Ef, _m, _Te, _alpha, _V);
+    return N;
 }
 
 /**
@@ -406,15 +439,62 @@ double Subband::get_pop() const
  */
 double Subband::get_k_max(const double Te) const
 {
-    if(!distribution_known)
+    if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    double Ek_max = 5*kB*Te;
+    double Ek_max = 5.0*kB*Te;
 
-    if(get_E() < get_Ef())
+    if(get_E_min() < get_Ef())
         Ek_max += get_Ef();
 
-    return k(Ek_max);
+    return get_k_at_Ek(Ek_max);
+}
+
+/**
+ * \brief Return effective mass at a given energy [kg]
+ *
+ * \param[in] E The absolute energy of the state [J]
+ *
+ * \details This is the mass that should be used for finding quantised states
+ *          in a system. Note that the energy is specified on the same absolute
+ *          scale as the subband minimum.
+ */
+double Subband::get_effective_mass(const double E) const
+{
+    const auto m = _m*(1.0 + _alpha*(E-_V));
+
+    return m;
+}
+
+/**
+ * \brief Return the density-of-states effective mass [kg]
+ *
+ * \param[in] E The absolute energy of the state [J]
+ *
+ * \details This is the mass that should be used for finding density of states
+ *          in a system. Note that the energy is specified on the same absolute
+ *          scale as the subband minimum.
+ */
+double Subband::get_effective_mass_dos(const double E) const
+{
+    // QWWAD 4, Eq. 2.65
+    const auto m = _m*(1.0 + 2.0*_alpha*(E-_V));
+
+    return m;
+}
+
+/**
+ * \brief Find the population of the subband at wavevector k
+ *
+ * \param[in] k Wave vector [1/m]
+ */
+double Subband::get_population_at_k(const double k) const
+{
+    const auto E    = get_E_total_at_k(k);
+    const auto rho  = get_density_of_states(E);
+    const auto f_FD = get_occupation_at_k(k);
+
+    return rho*f_FD;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -96,11 +96,9 @@ int main(int argc,char *argv[])
 
     // Read and set carrier distributions within each subband
     std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<double>       N;       // Subband populations [m^{-2}]
     std::valarray<unsigned int> indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table("N.r", N);	// read populations
 
     // Read doping profile
     std::valarray<double> z_d; // Spatial location
@@ -108,7 +106,7 @@ int main(int argc,char *argv[])
     read_table("d.r", z_d, d);
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-        subbands[isb].set_distribution(Ef[isb], N[isb]);
+        subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read list of wanted transitions
     std::valarray<unsigned int> i_indices;
@@ -130,8 +128,8 @@ int main(int argc,char *argv[])
         const Subband fsb = subbands[f-1];
 
         // Subband minima
-        const double Ei = isb.get_E();
-        const double Ef = fsb.get_E();
+        const double Ei = isb.get_E_min();
+        const double Ef = fsb.get_E_min();
 
         // Output form-factors if desired
         if(ff_flag)
@@ -168,7 +166,7 @@ int main(int argc,char *argv[])
                 Ecutoff += Ef;
         }
 
-        kimax = isb.k(Ecutoff);
+        kimax = isb.get_k_at_Ek(Ecutoff);
 
         gsl_spline *FF = FF_table(epsilon, isb, fsb, d,nq,S_flag,Ecutoff); // Form factor table
 
@@ -220,14 +218,14 @@ int main(int argc,char *argv[])
 
             // Include final-state blocking factor
             if (b_flag)
-                Wif[iki] *= (1 - fsb.f_FD_k(kf, T));
+                Wif[iki] *= (1 - fsb.get_occupation_at_k(kf));
 
-            Ei_t[iki] = isb.E_total(ki) * 1000/e;
+            Ei_t[iki] = isb.get_E_total_at_k(ki) * 1000/e;
 
             /* calculate Fermi-Dirac weighted mean of scattering rates over the 
                initial carrier states, note that the integral step length 
                dE=2*sqr(hBar)*ki*dki/(2m)					*/
-            Wbar_integrand_ki[iki] = Wif[iki]*ki*isb.f_FD_k(ki, T);
+            Wbar_integrand_ki[iki] = Wif[iki]*ki*isb.get_occupation_at_k(ki);
         } /* end ki	*/
 
         /* output scattering rate versus carrier energy=subband minima+in-plane
@@ -236,7 +234,7 @@ int main(int argc,char *argv[])
         sprintf(filename,"imp%i%i.r",i,f);
         write_table(filename, Ei_t, Wif);
 
-        const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_pop());
+        const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 
         fprintf(Favg,"%i %i %20.17le\n", i,f,Wbar);
 
@@ -384,10 +382,10 @@ gsl_spline * FF_table(const double                 epsilon,
                       const bool                   S_flag,
                       const double                 E_cutoff)
 {
-    const double kimax = isb.k(E_cutoff*1.1); // Max value of ki [1/m]
-    const double Ei = isb.get_E();
-    const double Ef = fsb.get_E();
-    const double m  = isb.get_md_0();
+    const double kimax = isb.get_k_at_Ek(E_cutoff*1.1); // Max value of ki [1/m]
+    const double Ei = isb.get_E_min();
+    const double Ef = fsb.get_E_min();
+    const double m  = isb.get_effective_mass();
     const double kfmax = sqrt(kimax*kimax + 2*m*(Ei - Ef)/(hBar*hBar));
 
     // maximum in-plane wave vector

@@ -108,14 +108,12 @@ int main(int argc,char *argv[])
 
     // Read and set carrier distributions within each subband
     std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<double>       N;       // Subband populations [m^{-2}]
     std::valarray<unsigned int> indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table("N.r", N);	// read populations
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-        subbands[isb].set_distribution(Ef[isb], N[isb]);
+        subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read list of wanted transitions
     std::valarray<unsigned int> i_indices;
@@ -143,10 +141,10 @@ int main(int argc,char *argv[])
         const Subband gsb = subbands[g-1];
 
         // Subband minima
-        const double Ei = isb.get_E();
-        const double Ej = jsb.get_E();
-        const double Ef = fsb.get_E();
-        const double Eg = gsb.get_E();
+        const double Ei = isb.get_E_min();
+        const double Ej = jsb.get_E_min();
+        const double Ef = fsb.get_E_min();
+        const double Eg = gsb.get_E_min();
 
         // Output form-factors if desired
         if(ff_flag)
@@ -166,8 +164,8 @@ int main(int argc,char *argv[])
         {
             const auto Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
             FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, T,nq,S_flag,Ecutoff); // Form factor table
-            kimax = isb.k(Ecutoff);
-            kjmax = jsb.k(Ecutoff);
+            kimax = isb.get_k_at_Ek(Ecutoff);
+            kjmax = jsb.get_k_at_Ek(Ecutoff);
         }
         else
         {
@@ -199,7 +197,7 @@ int main(int argc,char *argv[])
                 const double kj=dkj*(float)ikj; // carrier momentum
 
                 // Find Fermi-Dirac occupation at kj
-                const double P=jsb.f_FD_k(kj,T);
+                const double P=jsb.get_occupation_at_k(kj);
 
                 // Integral over alpha
                 std::valarray<double> Wijfg_integrand_alpha(nalpha);
@@ -253,12 +251,12 @@ int main(int argc,char *argv[])
 
             // Multiply by pre-factor [QWWAD3, 10.233]
             Wijfg[iki] *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*(4*4*pi*pi*epsilon*epsilon));
-            Ei_t[iki] = isb.E_total(ki) * 1000/e;
+            Ei_t[iki] = isb.get_E_total_at_k(ki) * 1000/e;
 
             /* calculate Fermi-Dirac weighted mean of scattering rates over the 
                initial carrier states, note that the integral step length 
                dE=2*sqr(hBar)*ki*dki/(2m)					*/
-            Wbar_integrand_ki[iki] = Wijfg[iki]*ki*isb.f_FD_k(ki, T);
+            Wbar_integrand_ki[iki] = Wijfg[iki]*ki*isb.get_occupation_at_k(ki);
         } /* end ki	*/
 
         /* output scattering rate versus carrier energy=subband minima+in-plane
@@ -267,7 +265,7 @@ int main(int argc,char *argv[])
         sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
         write_table(filename, Ei_t, Wijfg);
 
-        const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_pop());
+        const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 
         fprintf(FccABCD,"%i %i %i %i %20.17le\n", i,j,f,g,Wbar);
 
@@ -415,10 +413,10 @@ double PI(const Subband &isb,
           const double   q_perp,
           const double   T)
 {
-    const double m = isb.get_md_0();    // Effective mass at band-edge [kg]
+    const double m = isb.get_effective_mass();    // Effective mass at band-edge [kg]
 
     // Now perform the integration, equation 44 of Smet [QWWAD3, 10.238]
-    const double Ek_max = isb.Ek(isb.get_k_max(T));
+    const double Ek_max = isb.get_Ek_at_k(isb.get_k_max(T));
     const size_t nE = 101;
     const double dE = Ek_max/(nE-1);
 
@@ -428,8 +426,8 @@ double PI(const Subband &isb,
     for(unsigned int iE = 0; iE < nE; ++iE)
     {
         const double Ek = iE*dE; // Kinetic energy
-        const double ki = isb.k(Ek);
-        const double Et = isb.E_total(ki);
+        const double ki = isb.get_k_at_Ek(Ek);
+        const double Et = isb.get_E_total_at_k(ki);
 
         // Find low-temperature polarizability *at this wave-vector*
         // Equation 43 of Smet, QWWAD3, 10.236
@@ -466,8 +464,8 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
 
     if(E_cutoff > 0)
     {
-        kimax = isb.k(E_cutoff*1.1);
-        kjmax = jsb.k(E_cutoff*1.1);
+        kimax = isb.get_k_at_Ek(E_cutoff*1.1);
+        kjmax = jsb.get_k_at_Ek(E_cutoff*1.1);
     }
     else
     {

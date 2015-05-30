@@ -82,14 +82,12 @@ int main(int argc,char *argv[])
 
     // Read and set carrier distributions within each subband
     std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<double>       N;       // Subband populations [m^{-2}]
     std::valarray<unsigned int> indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
-    read_table("N.r", N);	// read populations
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
-        subbands[isb].set_distribution(Ef[isb], N[isb]);
+        subbands[isb].set_distribution_from_Ef_Te(Ef[isb], Te);
 
     // Initialise scattering calculators and set parameters
     ScatteringCalculatorLO em_calculator(subbands, A0, Ephonon, epsilon_s, epsilon_inf, m, Te, Tl, true);
@@ -147,8 +145,8 @@ int main(int argc,char *argv[])
         write_table(filename_ab, Ei_ab, Waif);
 
         // Average rates over entire subband
-        Wabar[itx] = tx_ab.get_average_rate(Te);
-        Webar[itx] = tx_em.get_average_rate(Te);
+        Wabar[itx] = tx_ab.get_average_rate();
+        Webar[itx] = tx_em.get_average_rate();
     } /* end while over states */
 
     write_table("LOa-if.r", i_indices, f_indices, Wabar);
