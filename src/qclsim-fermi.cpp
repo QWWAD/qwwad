@@ -51,6 +51,7 @@ double f_FD_ionised(const double E_F, const double Ed, const double Te)
  * \param E_F Quasi-Fermi energy on the same absolute scale as the Fermi energy [J]
  * \param m0  Band-edge effective mass [kg]
  * \param Te  Temperature of electron distribution [K]
+ * \param V   Energy of the band edge [J]
  *
  * \returns Subband population [m^{-2}]
  */

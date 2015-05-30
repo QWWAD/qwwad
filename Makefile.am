@@ -124,10 +124,14 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/file-io-deprecated.h   \
 			   src/qwwad-options.cpp         \
 			   src/qwwad-options.h           \
+			   src/qwwad/intersubband-transition.h   \
+			   src/qwwad/intersubband-transition.cpp \
 			   src/qwwad/linear-algebra.cpp       \
 			   src/qwwad/linear-algebra.h         \
 			   src/qwwad/maths-helpers.cpp        \
 			   src/qwwad/maths-helpers.h          \
+			   src/qwwad/scattering-calculator-LO.h   \
+			   src/qwwad/scattering-calculator-LO.cpp \
 			   src/qwwad/schroedinger-solver.cpp    \
 			   src/qwwad/schroedinger-solver.h      \
 			   src/qwwad/schroedinger-solver-donor.h      \

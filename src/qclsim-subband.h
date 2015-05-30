@@ -109,6 +109,7 @@ class Subband
         double alphad;              ///< In-plane nonparabolicity parameter
         double condband_edge;       ///< Energy of the conduction band located below 'most populated' region of subband.
 
+        // Carrier distribution parameters
         bool   distribution_known;  ///< True if the carrier distribution is set
         double Ef;                  ///< Quasi-Fermi energy [J]
         double population;          ///< Sheet-density of carriers [m^{-2}]
