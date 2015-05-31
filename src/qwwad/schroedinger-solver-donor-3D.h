@@ -35,11 +35,12 @@ private:
 
         for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
         {
-            const std::valarray<double> chi = _solutions_chi[0].psi_array();
-            const double E = _solutions_chi[0].get_E();
+            const double E   = _solutions_chi[0].get_energy();
+            const auto   z   = _solutions_chi[0].get_position_samples();
+            const auto   chi = _solutions_chi[0].get_wavefunction_samples();
 
-            std::valarray<double> psi = chi*exp(-abs(_z - _r_d)/_lambda);
-            _solutions.push_back(State(E,psi));
+            auto psi = chi*exp(-abs(_z - _r_d)/_lambda);
+            _solutions.push_back(Eigenstate(E,z,psi));
         }
     }
 

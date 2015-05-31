@@ -126,7 +126,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
             }
         }
 
-        _solutions.push_back(State(E, psi));
+        _solutions.push_back(Eigenstate(E, _z, psi));
     }
 }
 } // namespace

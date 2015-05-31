@@ -7,6 +7,7 @@
  * \brief  Minimisation of donor state energy
  */
 
+#include <stdexcept>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
@@ -36,11 +37,11 @@ DonorEnergyMinimiser::DonorEnergyMinimiser(SchroedingerSolverDonor *se,
 double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
                                               void   *params)
 {
-    SchroedingerSolverDonor *se = reinterpret_cast<SchroedingerSolverDonor *>(params);
+    auto se = reinterpret_cast<SchroedingerSolverDonor *>(params);
     se->set_lambda(lambda); // Recalculate at given Bohr radius
-    std::vector<State> solutions = se->get_solutions();
+    const auto solutions = se->get_solutions();
 
-    return solutions[0].get_E();
+    return solutions[0].get_energy();
 }
 
 /**
@@ -49,14 +50,14 @@ double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 double DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                                    void             *params)
 {
-    SchroedingerSolverDonorVariable *se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
+    auto se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
     const double lambda = gsl_vector_get(lambda_zeta, 0);
     const double zeta   = gsl_vector_get(lambda_zeta, 1);
 
     se->set_lambda_zeta(lambda, zeta); // Set form-factor
-    std::vector<State> solutions = se->get_solutions();
+    const auto solutions = se->get_solutions();
 
-    return solutions[0].get_E();
+    return solutions[0].get_energy();
 }
 
 /**
@@ -92,7 +93,8 @@ void DonorEnergyMinimiser::find_E_min_fast()
             ++iter;
             status  = gsl_multimin_fminimizer_iterate(s);
             status  = gsl_multimin_test_size(s->size, 1e-5); // Second number is effectively the abs. tolerance in symmetry parameter
-            printf("r_d %le lambda %le zeta %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), se_variable->get_zeta(), _se->get_solutions()[0].get_E()/(1e-3*e));
+            const auto energy = _se->get_solutions()[0].get_energy() * 1000/e;
+            printf("r_d %le lambda %le zeta %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), se_variable->get_zeta(), energy);
         }while((status == GSL_CONTINUE) && (iter < max_iter));
 
         gsl_multimin_fminimizer_free(s);
@@ -126,7 +128,7 @@ void DonorEnergyMinimiser::find_E_min_fast()
                 throw std::domain_error("Can't find a minimum in this range of Bohr radii");
 
             _se->set_lambda(_se->get_lambda() + dlambda); // Increment the Bohr radius
-            E0 = _se->get_solutions()[0].get_E();
+            E0 = _se->get_solutions()[0].get_energy();
         }
         while((E0 > Elo) || (E0 > Ehi));
         __lambda_start = _se->get_lambda() - dlambda;
@@ -142,7 +144,8 @@ void DonorEnergyMinimiser::find_E_min_fast()
             const double lambda_lo = gsl_min_fminimizer_x_lower(s);
             const double lambda_hi = gsl_min_fminimizer_x_upper(s);
             status  = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-            printf("r_d %le lambda %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), _se->get_solutions()[0].get_E()/(1e-3*e));
+            const auto energy = _se->get_solutions()[0].get_energy()/(1e-3*e);
+            printf("r_d %le lambda %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), energy);
         }while((status == GSL_CONTINUE) && (iter < max_iter));
 
         gsl_min_fminimizer_free(s);

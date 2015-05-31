@@ -7,6 +7,7 @@
 
 #include "schroedinger-solver-taylor.h"
 #include "constants.h"
+#include "linear-algebra.h"
 
 namespace QWWAD
 {
@@ -82,7 +83,16 @@ SchroedingerSolverTaylor::SchroedingerSolverTaylor(const std::valarray<double> &
  */
 void SchroedingerSolverTaylor::calculate()
 {
-    _solutions = eigen_banded(&AB[0], &BB[0], _V.min(), _V.max(), _V.size(), _nst_max);
+    // Solve eigenvalue problem
+    const auto EVP_solutions = eigen_banded(&AB[0], &BB[0], _V.min(), _V.max(), _V.size(), _nst_max);
+
+    // Now save solutions
+    for(auto st : EVP_solutions)
+    {
+        const auto E   = st.get_E();
+        const auto psi = st.psi_array();
+        _solutions.push_back(Eigenstate(E, _z, psi));
+    }
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

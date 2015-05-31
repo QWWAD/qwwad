@@ -16,7 +16,8 @@
 #include <fstream>
 #include <iostream>
 #include "qwwad/constants.h"
-#include "qwwad/linear-algebra.h"
+#include "qwwad/maths-helpers.h"
+#include "qwwad/file-io.h"
 #include "qclsim-fermi.h"
 #include "wf_options.h"
 

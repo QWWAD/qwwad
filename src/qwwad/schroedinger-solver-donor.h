@@ -26,7 +26,7 @@ public:
 
     virtual std::string get_name() = 0;
 
-    std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
+    std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
 
     static double chi_at_inf(double  E,
                              void   *params);
@@ -51,7 +51,7 @@ private:
 
 protected:
     ///< Set of solutions to the Schroedinger equation excluding hydrogenic component
-    std::vector<State> _solutions_chi;
+    std::vector<Eigenstate> _solutions_chi;
 
     void calculate();
     virtual void   calculate_psi_from_chi() = 0;

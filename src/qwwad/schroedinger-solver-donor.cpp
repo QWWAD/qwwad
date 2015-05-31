@@ -13,6 +13,7 @@
 #include <gsl/gsl_min.h>
 #include <gsl/gsl_roots.h>
 #include "constants.h"
+#include "maths-helpers.h"
 
 namespace QWWAD
 {
@@ -169,14 +170,10 @@ void SchroedingerSolverDonor::calculate()
         throw std::runtime_error("Energy exceeded Vmax");
 
     std::valarray<double> chi(_z.size());
-    const double chi_inf = shoot_wavefunction(E, chi);
-    _solutions_chi.push_back(State(E,chi));
+    const auto chi_inf = shoot_wavefunction(E, chi);
+    _solutions_chi.push_back(Eigenstate(E, _z, chi));
 
     calculate_psi_from_chi(); // Finally, compute the complete solution
-
-    // Normalise wavefunctions
-    for(std::vector<State>::iterator ist = _solutions.begin(); ist != _solutions.end(); ++ist)
-        ist->normalise(_z);
 
     // Check that wavefunction is tightly bound
     // TODO: Implement a better check
@@ -190,7 +187,7 @@ void SchroedingerSolverDonor::calculate()
  * \details The solutions are computed on the first call to this function, but
  *          subsequent calls just recall the values and are hence much faster.
  */
-std::vector<State> SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV)
+std::vector<Eigenstate> SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV)
 {
     // Only calculate if we haven't done so yet
     if(_solutions_chi.empty())
@@ -200,20 +197,21 @@ std::vector<State> SchroedingerSolverDonor::get_solutions_chi(const bool convert
         // Delete any states that are out of the desired energy range
         // Ideally, sub-classes should never compute anything outside this
         // range!
-        while(_E_cutoff_set && !_solutions_chi.empty() && gsl_fcmp(_solutions_chi.back().get_E(), _E_cutoff, e*1e-12) == 1)
+        while(_E_cutoff_set && !_solutions_chi.empty() && gsl_fcmp(_solutions_chi.back().get_energy(), _E_cutoff, e*1e-12) == 1)
             _solutions_chi.pop_back();
-
-        // Normalise wavefunctions
-        for(std::vector<State>::iterator ist = _solutions_chi.begin(); ist != _solutions_chi.end(); ++ist)
-            ist->normalise(_z);
     }
 
     if(convert_to_meV)
     {
-        std::vector<State> sol_meV;
+        std::vector<Eigenstate> sol_meV;
 
-        for(std::vector<State>::iterator sol_J = _solutions_chi.begin(); sol_J != _solutions_chi.end(); ++sol_J)
-            sol_meV.push_back(State(sol_J->get_E()*1000/e, sol_J->psi_array()));
+        for(auto sol_J : _solutions_chi)
+        {
+            const auto E   = sol_J.get_energy();
+            const auto z   = sol_J.get_position_samples();
+            const auto psi = sol_J.get_wavefunction_samples();
+            sol_meV.push_back(Eigenstate(E, z, psi));
+        }
 
         return sol_meV;
     }

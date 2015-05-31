@@ -11,6 +11,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 #include "constants.h"
+#include "maths-helpers.h"
 
 namespace QWWAD
 {
@@ -245,8 +246,8 @@ void SchroedingerSolverFiniteWell::calculate()
         if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
             break;
 
-        std::valarray<double> psi = get_wavefunction(E,parity_flag);
-        _solutions.push_back(State(E, psi));
+        const auto psi = get_wavefunction(E,parity_flag);
+        _solutions.push_back(Eigenstate(E, _z, psi));
         gsl_root_fsolver_free(solver);
     }
 }

@@ -9,6 +9,7 @@
 #include <gsl/gsl_math.h>
 
 #include "constants.h"
+#include "linear-algebra.h"
 
 namespace QWWAD
 {
@@ -57,10 +58,20 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const std::valarray<double>
  */
 void SchroedingerSolverTridiag::calculate()
 {
-    if (_E_cutoff_set)
-        _solutions = eigen_tridiag(&diag[0], &sub[0], _V.min(), _E_cutoff, _V.size());
-    else
-        _solutions = eigen_tridiag(&diag[0], &sub[0], _V.min(), _V.max(), _V.size(), _nst_max);
+    const auto EVP_solutions =
+        _E_cutoff_set ?
+        eigen_tridiag(&diag[0], &sub[0], _V.min(), _E_cutoff, _V.size())
+        :
+        eigen_tridiag(&diag[0], &sub[0], _V.min(), _V.max(), _V.size(), _nst_max);
+
+    _solutions.clear();
+
+    for (auto st : EVP_solutions)
+    {
+        const auto E   = st.get_E();
+        const auto psi = st.psi_array();
+        _solutions.push_back(Eigenstate(E, _z, psi));
+    }
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

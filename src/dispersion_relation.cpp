@@ -10,7 +10,7 @@
 
 #include "wf_options.h"
 #include "qwwad/subband.h"
-
+#include "qwwad/file-io.h"
 #include "qwwad/constants.h"
 using namespace QWWAD;
 using namespace constants;

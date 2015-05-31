@@ -14,7 +14,8 @@
 #include <gsl/gsl_math.h>
 
 #include "qwwad/constants.h"
-#include "qwwad/linear-algebra.h"
+#include "qwwad/eigenstate.h"
+#include "qwwad/file-io.h"
 #include "wf_options.h"
 
 using namespace QWWAD;
@@ -51,16 +52,16 @@ WfOptions configure_options(int argc, char* argv[])
  *          i.e., the range of potentials in the plot, divided by the
  *          number of states and the maximum probability density.
  */
-static double scaling_factor(const std::vector<State>    &states,
-                             const std::valarray<double> &V)
+static double scaling_factor(const std::vector<Eigenstate> &states,
+                             const std::valarray<double>   &V)
 {
     double Vrange = V.max() - V.min();
 
     // If the potential range is zero, use the state energy range instead
     if (Vrange <= 0)
-        Vrange = states[states.size()-1].get_E() - states[0].get_E();
+        Vrange = states[states.size()-1].get_energy() - states[0].get_energy();
 
-    return Vrange/(State::psi_squared_max(states)*states.size());
+    return Vrange/(Eigenstate::psi_squared_max(states)*states.size());
 }
 
 /**
@@ -68,10 +69,10 @@ static double scaling_factor(const std::vector<State>    &states,
  * 	  quantum well system
  * \todo  Add option to to control how much/if any of the wavefunction tales to cut off
  */
-static void output_plot(const WfOptions             &opt,
-                        const std::vector<State>    &states,
-                        const std::valarray<double> &V,
-                        const std::valarray<double> &z)
+static void output_plot(const WfOptions               &opt,
+                        const std::vector<Eigenstate> &states,
+                        const std::valarray<double>   &V,
+                        const std::valarray<double>   &z)
 {
     const auto dz    = z[1] - z[0];
     const auto scale = scaling_factor(states, V);
@@ -97,13 +98,13 @@ static void output_plot(const WfOptions             &opt,
     const auto plot_wf = opt.get_option<bool>  ("plot-wf");
 
     // Output the probability densities
-    for(std::vector<State>::const_iterator ist = states.begin(); ist != states.end(); ++ist)
+    for(const auto st : states)
     {
         if(nst_plotted < nst_max)
         {
             fprintf(plot_stream, "\n"); // Separate each PD plot by a blank line
-            const std::valarray<double> PD  = ist->psi_squared(); // Probability density at each point
-            const std::valarray<double> psi = ist->psi_array(); // Wavefunction
+            const auto PD  = st.get_PD(); // Probability density at each point
+            const auto psi = st.get_wavefunction_samples(); // Wavefunction
 
             double P_left = 0.0; // probability of electron being found on left of a point
 
@@ -117,15 +118,17 @@ static void output_plot(const WfOptions             &opt,
                 // TODO: Make this configurable
                 if(P_left>0.0001 && P_left<0.9999)
                 {
+                    const auto E = st.get_energy();
+
                     if (plot_wf)
                     {
                         double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size() * 2);
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (psi[iz]*scale_wf + ist->get_E())/(1e-3*e));
+                                (psi[iz]*scale_wf + E)/(1e-3*e));
                     }
                     else
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (PD[iz]*scale + ist->get_E())/(1e-3*e));
+                                (PD[iz]*scale + E)/(1e-3*e));
                 }
             }
 
@@ -138,24 +141,29 @@ static void output_plot(const WfOptions             &opt,
 
 int main(int argc, char* argv[])
 {
-    const WfOptions opt = configure_options(argc, argv);
+    const auto opt = configure_options(argc, argv);
 
-    std::vector<State> states = State::read_from_file(opt.get_energy_input_path(),
-                                                      opt.get_wf_input_prefix(),
-                                                      opt.get_wf_input_ext(),
-                                                      1000.0/e,
-                                                      true);
+    const auto states = Eigenstate::read_from_file(opt.get_energy_input_path(),
+                                                   opt.get_wf_input_prefix(),
+                                                   opt.get_wf_input_ext(),
+                                                   1000.0/e,
+                                                   true);
+
+    if(opt.get_verbose())
+        std::cout << "Read data for " << states.size() << " wave functions" << std::endl;
 
     std::valarray<double> V;
     std::valarray<double> z;    
     read_table(opt.get_potential_input_path().c_str(), z, V);
 
-    if(V.size() != states[0].size())
+    const auto nz_st = states[0].get_position_samples().size();
+
+    if(V.size() != nz_st)
     {
         std::ostringstream oss;
         oss << "Different number of data points in " << opt.get_potential_input_path()
             << " (" << V.size() << " lines) and " << opt.get_wf_input_path(1)
-            << " (" << states[0].size() << " lines).  Do these correspond to the same eigenvalue problem?";
+            << " (" << nz_st << " lines).  Do these correspond to the same eigenvalue problem?";
         throw std::length_error(oss.str());
     }
 

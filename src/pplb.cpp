@@ -165,7 +165,10 @@ int main(int argc,char *argv[])
         char	filenameE[9];	/* character string for Energy output filename	*/
         sprintf(filenameE,"Ek%i.r",ik);
         FILE *FEk=fopen(filenameE,"w");
-        for(int iE=n_min; iE<=n_max; iE++) fprintf(FEk,"%10.6f\n",E(iE)/e);
+
+        for(auto iE=n_min; iE<=n_max; iE++)
+            fprintf(FEk,"%10.6f\n",E(iE)/e);
+
         fclose(FEk);
 
         /* Output eigenvectors */

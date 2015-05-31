@@ -9,7 +9,7 @@
 
 #include <valarray>
 #include <vector>
-#include "qwwad/linear-algebra.h"
+#include "qwwad/eigenstate.h"
 
 namespace QWWAD
 {
@@ -38,12 +38,12 @@ double find_fermi_global(const std::valarray<double> &Esb,
                          const double                 alpha=0,
                          const double                 V=0);
 
-double find_fermi_global(const std::vector<State>    &states,
-                         const double                 m0,
-                         const double                 N,
-                         const double                 Te,
-                         const double                 alpha=0,
-                         const double                 V=0);
+double find_fermi_global(const std::vector<Eigenstate> &states,
+                         const double                   m0,
+                         const double                   N,
+                         const double                   Te,
+                         const double                   alpha=0,
+                         const double                   V=0);
 } // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

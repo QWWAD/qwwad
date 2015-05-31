@@ -12,9 +12,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
-#include "qwwad/linear-algebra.h"
+#include "qwwad/eigenstate.h"
+#include "qwwad/file-io.h"
 #include "wf_options.h"
 #include "qwwad/constants.h"
+#include "qwwad/maths-helpers.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -41,11 +43,11 @@ int main(int argc, char *argv[])
 
     const auto state = opt.get_option<size_t>("state"); // Principal quantum number of state to analyze
 
-    const auto all_states = State::read_from_file(opt.get_energy_input_path(),
-                                                  opt.get_wf_input_prefix(),
-                                                  opt.get_wf_input_ext(),
-                                                  1000.0/e,
-                                                  true);
+    const auto all_states = Eigenstate::read_from_file(opt.get_energy_input_path(),
+                                                       opt.get_wf_input_prefix(),
+                                                       opt.get_wf_input_ext(),
+                                                       1000.0/e,
+                                                       true);
 
     // TODO: read z-coordinates in from the ground state
     // There should probably be an option in the State class for this
@@ -55,7 +57,7 @@ int main(int argc, char *argv[])
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
-    std::valarray<double> psi = all_states.at(state-1).psi_array();
+    const auto psi = all_states.at(state-1).get_wavefunction_samples();
 
     std::valarray<double> d_psi_dz(0.0, nz);   // Derivative of wavefunction
     std::valarray<double> d2_psi_dz2(0.0, nz); // 2nd Derivative of wavefunction

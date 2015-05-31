@@ -57,7 +57,7 @@ void SchroedingerSolverShooting::calculate()
         // Shift the lower estimate up past the last state we found
         if(ist > 0)
         {
-            const double E_last = _solutions[ist-1].get_E();
+            const auto E_last = _solutions[ist-1].get_energy();
             Elo = E_last + _dE;
         }
 
@@ -102,9 +102,9 @@ void SchroedingerSolverShooting::calculate()
             break;
 
         std::valarray<double> psi(_z.size());
-        const double psi_inf = shoot_wavefunction(psi, E);
+        const auto psi_inf = shoot_wavefunction(psi, E);
 
-        _solutions.push_back(State(E,psi));
+        _solutions.push_back(Eigenstate(E,_z,psi));
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
@@ -192,12 +192,7 @@ double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
         if(i != nz-1) wf[i+1] = wf_next;
     } 
 
-    // Normalise the wavefunction
-    const std::valarray<double> pd = wf*wf;
-    const double norm = trapz(pd,dz);
-    wf/= sqrt(norm);
-
-    return wf_next/sqrt(norm);
+    return wf_next;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

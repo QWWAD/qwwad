@@ -239,17 +239,17 @@ double find_fermi(const double Esb,
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const std::vector<State> &states,
-                         const double              m0,
-                         const double              N,
-                         const double              Te,
-                         const double              alpha,
-                         const double              V)
+double find_fermi_global(const std::vector<Eigenstate> &states,
+                         const double                   m0,
+                         const double                   N,
+                         const double                   Te,
+                         const double                   alpha,
+                         const double                   V)
 {
     std::valarray<double> E(states.size());
 
     for(unsigned int ist = 0; ist < E.size(); ++ist)
-        E[ist] = states[ist].get_E();
+        E[ist] = states[ist].get_energy();
 
     return find_fermi_global(E, m0, N, Te, alpha, V);
 }

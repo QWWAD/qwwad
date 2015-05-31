@@ -68,12 +68,11 @@ int main(int argc,char *argv[])
     char wf_prefix[9];
     sprintf(wf_prefix,"wf_%c",p);
 
-    State::write_to_file(energy_filename,
-                         wf_prefix,
-                         ".r",
-                         se.get_solutions(true),
-                         se.get_z(),
-                         true);
+    Eigenstate::write_to_file(energy_filename,
+                              wf_prefix,
+                              ".r",
+                              se.get_solutions(true),
+                              true);
 
     write_table("v.r", se.get_z(), se.get_V());
     

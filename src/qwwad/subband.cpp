@@ -19,18 +19,15 @@ using namespace constants;
  *
  * \param[in] ground_state The quantum state at the edge of the subband
  * \param[in] m            The effective mass for the subband [kg]
- * \param[in] z            The spatial locations corresponding to the wave function [m]
  */
-Subband::Subband(State                 ground_state,
-                 double                m,
-                 std::valarray<double> z) :
+Subband::Subband(const Eigenstate &ground_state,
+                 const double      m) :
     _ground_state(ground_state),
-    _z(z),
     _m(m),
     _alpha(0.0),
     _V(0.0),
     _dist_known(false),
-    _Ef(ground_state.get_E()),
+    _Ef(ground_state.get_energy()),
     _Te(0.0),
     _N(0.0)
 {}
@@ -40,22 +37,19 @@ Subband::Subband(State                 ground_state,
  *
  * \param[in] ground_state The quantum state at the edge of the subband
  * \param[in] m            The effective mass for the subband [kg]
- * \param[in] z            The spatial locations corresponding to the wave function [m]
  * \param[in] alpha        The nonparabolicity parameter [1/J]
  * \param[in] V            The edge of the bulk band that contains this subband [J]
  */
-Subband::Subband(State                 ground_state,
-                 double                m,
-                 std::valarray<double> z,
-                 double                alpha,
-                 double                V) :
+Subband::Subband(const Eigenstate &ground_state,
+                 const double      m,
+                 const double      alpha,
+                 const double      V) :
     _ground_state(ground_state),
-    _z(z),
     _m(m),
     _alpha(alpha),
     _V(V),
     _dist_known(false),
-    _Ef(ground_state.get_E()),
+    _Ef(ground_state.get_energy()),
     _Te(0.0),
     _N(0.0)
 {}
@@ -111,43 +105,39 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const std::string& wf_input_ext,
                                              const std::string& m_d_filename)
 {
-    // Read subband data
-    std::valarray<double> z;
-    std::valarray<double> m_d_z;
-    
-    std::vector<State> ground_state = State::read_from_file(energy_input_path,
-                                                            wf_input_prefix,
-                                                            wf_input_ext,
-                                                            1000.0/e,
-                                                            true);
-
-    read_table(m_d_filename.c_str(), z, m_d_z);
+    // Read ground state data
+    const auto ground_state = Eigenstate::read_from_file(energy_input_path,
+                                                         wf_input_prefix,
+                                                         wf_input_ext,
+                                                         1000.0/e,
+                                                         true);
     
     const size_t nst = ground_state.size();
 
     if(nst == 0)
         throw std::runtime_error("No states found in file");
 
-    std::valarray<unsigned int> psi_max_iz(nst);
+    // Read effective mass table
+    std::valarray<double> z; // m
+    std::valarray<double> m_d_z; // kg
+    read_table(m_d_filename.c_str(), z, m_d_z);
 
-    for(unsigned int ist = 0; ist < nst; ist++){
-        // Use the value of in-plane mass where wavefunction has max. magnitude
-        // (I.e. in the well!)
-        // TODO Is there a better way way of doing this?
-        double psi_max = 0.0;
-        for(unsigned int iz = 0; iz<ground_state[ist].size(); iz++){
-            if(fabs(ground_state[ist].psi(iz)) > psi_max){
-                psi_max = fabs(ground_state[ist].psi(iz));
-                psi_max_iz[ist] = iz;
-            }
-        }
-    }
-    
     // Copy subband data to vector
     std::vector<Subband> subbands;
 
-    for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d_z[psi_max_iz[ist]], z));
+    for(unsigned int ist = 0; ist < nst; ist++)
+    {
+        // Find the expectation-value of in-plane effective mass using QWWAD 4, 12.22
+        // TODO: Note that the value used for transitions between a PAIR of subbands
+        //       should use the inverse-mass matrix element; not this expectation value
+        const auto z  = ground_state[ist].get_position_samples();
+        const auto dz = z[1] - z[0];
+
+        const std::valarray<double> mass_integrand = 1.0 / m_d_z * ground_state[ist].get_PD();
+        const auto mass = 1.0 / integral(mass_integrand, dz);
+
+        subbands.push_back(Subband(ground_state[ist], mass));
+    }
 
     return subbands;
 }
@@ -165,29 +155,22 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const std::string& wf_input_ext,
                                              const double       m_d)
 {
-    std::vector<State> ground_state = State::read_from_file(energy_input_path,
-                                                            wf_input_prefix,
-                                                            wf_input_ext,
-                                                            1000.0/e,
-                                                            true);
+    const auto ground_state = Eigenstate::read_from_file(energy_input_path,
+                                                         wf_input_prefix,
+                                                         wf_input_ext,
+                                                         1000.0/e,
+                                                         true);
 
     const size_t nst = ground_state.size();
 
     if(nst == 0)
         throw std::runtime_error("No states found in file");
 
-    // Read spatial points
-    std::ostringstream iss;
-    iss << wf_input_prefix << 1 << wf_input_ext;
-    std::valarray<double> wf_temp;
-    std::valarray<double> z;
-    read_table(iss.str().c_str(), z, wf_temp);
-
     // Copy subband data to vector
     std::vector<Subband> subbands;
 
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d, z));
+        subbands.push_back(Subband(ground_state[ist], m_d));
 
     return subbands;
 }
@@ -205,49 +188,65 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
 std::vector<Subband> Subband::read_from_file(const std::string& energy_input_path,
                                              const std::string& wf_input_prefix,
                                              const std::string& wf_input_ext,
-                                             const std::string& m_d_filename,
-                                             const std::string& alphad_filename,
+                                             const std::string& m_filename,
+                                             const std::string& alpha_filename,
                                              const std::string& potential_filename)
 {
-    std::vector<Subband> subbands; // Output structure
-    
-    // Read subband data
-    std::valarray<double> z;
-    std::valarray<double> m_d_z;
-    std::valarray<double> alphad;
-    std::valarray<double> V;
-    
-    std::vector<State> ground_state = State::read_from_file(energy_input_path,
-                                                            wf_input_prefix,
-                                                            wf_input_ext,
-                                                            1000.0/e,
-                                                            true);
-    read_table(m_d_filename.c_str(), z, m_d_z);
-    read_table(alphad_filename.c_str(), z, alphad);
-    read_table(potential_filename.c_str(), z, V);
+    // Read ground state data
+    const auto ground_state = Eigenstate::read_from_file(energy_input_path,
+                                                         wf_input_prefix,
+                                                         wf_input_ext,
+                                                         1000.0/e,
+                                                         true);
 
     const size_t nst = ground_state.size();
-    std::valarray<unsigned int> psi_max_iz(nst);    
+
+    if(nst == 0)
+        throw std::runtime_error("No states found in file");
+
+    // Read effective mass table
+    std::valarray<double> z; // m
+    std::valarray<double> m; // kg
+    read_table(m_filename.c_str(), z, m);
+
+    // Read non-parabolicity parameter
+    std::valarray<double> alpha; // [1/J]
+    read_table(alpha_filename.c_str(), z, alpha);
+
+    // Read band-edge potential
+    std::valarray<double> V; // [J]
+    read_table(potential_filename.c_str(), z, V);
+
+    // Copy subband data to vector
+    std::vector<Subband> subbands;
 
     for(unsigned int ist = 0; ist < nst; ist++)
     {
-        // Use the value of in-plane mass where wavefunction has max. magnitude
-        // (I.e. in the well!)
-        // TODO Is there a better way way of doding this?
-        double psi_max = 0.0;
-        for(unsigned int iz = 0; iz<ground_state[ist].size(); iz++){
-            if(fabs(ground_state[ist].psi(iz)) > psi_max){
-                psi_max = fabs(ground_state[ist].psi(iz));
-                psi_max_iz[ist] = iz;
-            }
-        }
+        // Find the expectation-value of in-plane effective mass using QWWAD 4, 12.22
+        // TODO: Note that the value used for transitions between a PAIR of subbands
+        //       should use the inverse-mass matrix element; not this expectation value
+        const auto z  = ground_state[ist].get_position_samples();
+        const auto dz = z[1] - z[0];
+
+        const std::valarray<double> mass_integrand = 1.0 / m * ground_state[ist].get_PD();
+        const auto mass = 1.0 / integral(mass_integrand, dz);
+
+        // Get "expectation values" for potential and non-parabolicity too
+        // TODO: Check whether these make sense!
+        const std::valarray<double> V_integrand = V * ground_state[ist].get_PD();
+        const auto V_exp = integral(V_integrand, dz);
+
+        const std::valarray<double> alpha_integrand = alpha * ground_state[ist].get_PD();
+        const auto alpha_exp = integral(alpha_integrand, dz);
+
+        Subband sb(ground_state[ist],
+                   mass,
+                   alpha_exp,
+                   V_exp);
+
+        subbands.push_back(sb);
     }
     
-    // Copy subband data to vector
-    for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d_z[psi_max_iz[ist]], z,
-                                alphad[psi_max_iz[ist]], V[psi_max_iz[ist]]));
-
     return subbands;
 }
 
@@ -268,30 +267,22 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
                                              const double       alphad,
                                              const double       V)
 {
-    std::vector<Subband> subbands; // Output structure
-
-    // Read subband data
-    std::vector<State> ground_state = State::read_from_file(energy_input_path,
-                                                            wf_input_prefix,
-                                                            wf_input_ext,
-                                                            1000.0/e,
-                                                            true);
+    // Read ground-state data
+    const auto ground_state = Eigenstate::read_from_file(energy_input_path,
+                                                         wf_input_prefix,
+                                                         wf_input_ext,
+                                                         1000.0/e,
+                                                         true);
 
     const size_t nst = ground_state.size();
 
     if(nst == 0)
         throw std::runtime_error("No states found in file");
 
-    // Read spatial points
-    std::ostringstream iss;
-    iss << wf_input_prefix << 1 << wf_input_ext;
-    std::valarray<double> wf_temp;
-    std::valarray<double> z;
-    read_table(iss.str().c_str(), z, wf_temp);
-
     // Copy subband data to vector
+    std::vector<Subband> subbands; // Output structure
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d, z, alphad, V));
+        subbands.push_back(Subband(ground_state[ist], m_d, alphad, V));
 
     return subbands;
 }

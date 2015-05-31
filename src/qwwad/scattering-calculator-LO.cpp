@@ -1,5 +1,7 @@
+#include <complex>
 #include "scattering-calculator-LO.h"
 #include "constants.h"
+#include "maths-helpers.h"
 
 namespace QWWAD {
 using namespace constants;

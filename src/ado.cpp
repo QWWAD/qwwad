@@ -13,6 +13,8 @@
 #include "qwwad/constants.h"
 #include "qwwad/subband.h"
 #include "qwwad-options.h"
+#include "qwwad/file-io.h"
+#include "qwwad/maths-helpers.h"
 
 using namespace QWWAD;
 using namespace constants;

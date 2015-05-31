@@ -114,19 +114,19 @@ int main(int argc,char *argv[])
         }
 
         // Read out the solutions now that we've minimised the energy
-        std::vector<State> solutions = se->get_solutions();
-        E0[i_d]                      = solutions[0].get_E();
-        lambda_0[i_d]                = se->get_lambda();
+        const auto solutions = se->get_solutions();
+        E0[i_d]              = solutions[0].get_energy();
+        lambda_0[i_d]        = se->get_lambda();
 
         if(opt.get_option<std::string>("symmetry") == "variable")
             zeta_0[i_d] = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
 
         // Get the complete wavefunction
-        std::valarray<double> psi(solutions[0].psi_array());
+        const auto psi = solutions[0].get_wavefunction_samples();
 
         // Get the wavefunction (without the hydrogenic factor)
-        std::vector<State> solutions_chi = se->get_solutions_chi();
-        std::valarray<double> chi(solutions_chi[0].psi_array());
+        const auto solutions_chi = se->get_solutions_chi();
+        const auto chi = solutions_chi[0].get_wavefunction_samples();
 
         /* generate output filename (and open file for writing) using 
            the basis wf%i.r where the integer %i is the donor index i_d  */

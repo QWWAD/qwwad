@@ -1,5 +1,6 @@
 #include "intersubband-transition.h"
 #include "constants.h"
+#include "maths-helpers.h"
 
 namespace QWWAD {
 using namespace constants;

@@ -9,6 +9,7 @@
 
 #include <gsl/gsl_math.h>
 #include "constants.h"
+#include "linear-algebra.h"
 
 namespace QWWAD
 {
@@ -102,20 +103,22 @@ void SchroedingerSolverFull::calculate()
 {
     // Find solutions, including all the unwanted "padding" in the eigenvector
     // that comes from the cubic EVP.  See J. Cooper et al., APL 2010
-    const std::vector<State> solutions_tmp = eigen_general(&A[0], _V.min(), _V.max(), 3*_z.size(), _nst_max);
+    const auto solutions_tmp = eigen_general(&A[0], _V.min(), _V.max(), 3*_z.size(), _nst_max);
 
     // Now chop off the padding from the eigenvector
     const size_t nst = solutions_tmp.size();
     const size_t nz  = _z.size();
 
-    _solutions.resize(nst, State(nz));
+    _solutions.clear();
     
     for(unsigned int ist = 0; ist < nst; ist++)
     {
-        const double E = solutions_tmp[ist].get_E();
-        const std::valarray<double> psi = solutions_tmp[ist].psi_array()[std::slice(0, nz, 1)];
+        const auto E   = solutions_tmp[ist].get_E();
 
-        _solutions[ist] = State(E, psi);
+        // We just want the first nz elements of the eigenvector
+        const auto psi = solutions_tmp[ist].psi_array()[std::slice(0, nz, 1)];
+
+        _solutions.push_back(Eigenstate(E, _z, psi));
     }
 }
 } // namespace

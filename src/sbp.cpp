@@ -22,6 +22,7 @@
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
 #include "qclsim-fermi.h"
+#include "qwwad/file-io.h"
 #include "qwwad/file-io-deprecated.h"
 #include "qwwad-options.h"
 

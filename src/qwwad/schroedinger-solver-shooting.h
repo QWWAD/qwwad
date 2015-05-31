@@ -26,7 +26,7 @@ public:
 
     std::string get_name() {return "shooting";}
 
-    std::vector<State> get_solutions_chi(const bool convert_to_meV=false);
+    std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
 
     static double psi_at_inf(double  E,
                              void   *params);

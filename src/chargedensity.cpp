@@ -16,7 +16,7 @@
 
 #include "qwwad/file-io.h"
 #include "qwwad/constants.h"
-#include "qwwad/linear-algebra.h"
+#include "qwwad/eigenstate.h"
 #include "wf_options.h"
 
 using namespace QWWAD;
@@ -57,7 +57,7 @@ class ChargeDensityData
         size_t _nper;   ///< Number of periods crossed by wavefunction
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
-        std::vector<State> states;  ///< Wf and energy data
+        std::vector<Eigenstate> states;  ///< Wf and energy data
     public:
         std::valarray<double> pop; ///< Subband population [m^{-2}]
         std::valarray<unsigned int> nval; ///< Degeneracy of subbands
@@ -65,9 +65,9 @@ class ChargeDensityData
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     _nper(opt.get_option<size_t>("nper")),
-    states(State::read_from_file(opt.get_energy_input_path(),
-                                 opt.get_wf_input_prefix(),
-                                 opt.get_wf_input_ext())),
+    states(Eigenstate::read_from_file(opt.get_energy_input_path(),
+                                      opt.get_wf_input_prefix(),
+                                      opt.get_wf_input_ext())),
     pop(states.size()),
     nval(1, states.size())
 {
@@ -129,10 +129,10 @@ int main(int argc, char* argv[])
         for(unsigned int ist = 0; ist < nst; ist++)
         {
             // Find probability density function for carrier over the entire structure
-            std::valarray<double> PD     = data.states[ist].psi_squared();
+            const auto PD     = data.states[ist].get_PD();
 
             // Grab the part of the PDF that lies in this period
-            std::valarray<double> PD_per = PD[std::slice(iper*nz_1per, nz_1per, 1)];
+            const auto PD_per = PD[std::slice(iper*nz_1per, nz_1per, 1)];
 
             // Add this into the total carrier density profile
             carrier_density_1per += data.pop[ist] * data.nval[ist] * PD_per;

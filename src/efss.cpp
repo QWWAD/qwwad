@@ -132,7 +132,6 @@ class FwfOptions : public Options {
  * Function to format and output solutions
  *
  * \param[in] solutions The set of states to output
- * \param[in] z         Spatial positions [m]
  * \param[in] opt       User options
  *
  * \details   Outputs energy solutions to the command line
@@ -141,9 +140,8 @@ class FwfOptions : public Options {
  *            IE: wf_e1.dat
  *                wf_e2.dat... etc.
  */
-static void output(const std::vector<State>    &solutions, 
-                   const std::valarray<double> &z,
-                   const FwfOptions            &opt)
+static void output(const std::vector<Eigenstate> &solutions, 
+                   const FwfOptions              &opt)
 {
     // Check solutions were found
     if(solutions.empty())
@@ -156,7 +154,7 @@ static void output(const std::vector<State>    &solutions,
 
             // Output all solutions to screen
             for(unsigned int ist=0; ist < solutions.size(); ist++)
-                std::cout << ist << "\t" << std::fixed << solutions[ist].get_E() * 1000/e << " meV" << std::endl;
+                std::cout << ist << "\t" << std::fixed << solutions[ist].get_energy() * 1000/e << " meV" << std::endl;
         }
 
         const auto p = opt.get_option<char>("particle");
@@ -165,11 +163,10 @@ static void output(const std::vector<State>    &solutions,
         std::ostringstream wf_prefix;
         wf_prefix << "wf_" << p;
 
-        State::write_to_file(energy_filename.str(),
+        Eigenstate::write_to_file(energy_filename.str(),
                              wf_prefix.str(),
                              ".r",
                              solutions,
-                             z,
                              true);
     }
 }
@@ -287,8 +284,8 @@ int main(int argc, char *argv[]){
     }
     else // Output all wavefunctions
     {
-        std::vector<State> solutions = se->get_solutions(true);
-        output(solutions, z, opt);
+        const auto solutions = se->get_solutions(true);
+        output(solutions, opt);
     }
 
     delete se;

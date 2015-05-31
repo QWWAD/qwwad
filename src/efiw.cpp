@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     const auto L     = opt.get_option<double>("width") * 1e-10;        // well width [m]
     const auto Lb    = opt.get_option<double>("barrierwidth") * 1e-10; // barrier width [m]
-    const auto p     = opt.get_option<char>("particle");               // particle ID (e, h or l)
+    const auto p     = opt.get_option<char>  ("particle");             // particle ID (e, h or l)
     const auto m     = opt.get_option<double>("mass") * me;            // effective mass [kg]
     const auto N     = opt.get_option<size_t>("nz");                   // number of spatial steps
     const auto s     = opt.get_option<size_t>("nst");                  // number of states
@@ -70,12 +70,11 @@ int main(int argc, char *argv[])
 
     char wf_prefix[9];
     sprintf(wf_prefix,"wf_%c",p);
-    State::write_to_file(energy_filename,
-                         wf_prefix,
-                         ".r",
-                         solutions,
-                         se.get_z(),
-                         true);
+    Eigenstate::write_to_file(energy_filename,
+                              wf_prefix,
+                              ".r",
+                              solutions,
+                              true);
 
     return EXIT_SUCCESS;
 }

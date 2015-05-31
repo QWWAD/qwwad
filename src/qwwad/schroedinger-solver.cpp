@@ -6,6 +6,9 @@
  */
 
 #include "schroedinger-solver.h"
+
+#include <stdexcept>
+#include <sstream>
 #include "constants.h"
 
 namespace QWWAD
@@ -18,7 +21,7 @@ using namespace constants;
  * \details The solutions are computed on the first call to this function, but
  *          subsequent calls just recall the values and are hence much faster.
  */
-std::vector<State> SchroedingerSolver::get_solutions(const bool convert_to_meV)
+std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_meV)
 {
     // Only calculate if we haven't done so yet
     if(_solutions.empty())
@@ -28,20 +31,22 @@ std::vector<State> SchroedingerSolver::get_solutions(const bool convert_to_meV)
         // Delete any states that are out of the desired energy range
         // Ideally, sub-classes should never compute anything outside this
         // range!
-        while(_E_cutoff_set && !_solutions.empty() && gsl_fcmp(_solutions.back().get_E(), _E_cutoff, e*1e-12) == 1)
+        while(_E_cutoff_set && !_solutions.empty() && gsl_fcmp(_solutions.back().get_energy(), _E_cutoff, e*1e-12) == 1)
             _solutions.pop_back();
-
-        // Normalise wavefunctions
-        for(std::vector<State>::iterator ist = _solutions.begin(); ist != _solutions.end(); ++ist)
-            ist->normalise(_z);
     }
 
     if(convert_to_meV)
     {
-        std::vector<State> sol_meV;
+        std::vector<Eigenstate> sol_meV;
 
-        for(std::vector<State>::iterator sol_J = _solutions.begin(); sol_J != _solutions.end(); ++sol_J)
-            sol_meV.push_back(State(sol_J->get_E()*1000/e, sol_J->psi_array()));
+        for(auto sol_J : _solutions)
+        {
+            const auto E   = sol_J.get_energy();
+            const auto z   = sol_J.get_position_samples();
+            const auto psi = sol_J.get_wavefunction_samples();
+
+            sol_meV.push_back(Eigenstate(E*1000/e, z, psi));
+        }
 
         return sol_meV;
     }

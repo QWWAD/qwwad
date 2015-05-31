@@ -8,6 +8,7 @@
  */
 
 #include "schroedinger-solver-infinite-well.h"
+#include <stdexcept>
 #include <gsl/gsl_math.h>
 #include "constants.h"
 
@@ -82,7 +83,7 @@ void SchroedingerSolverInfWell::calculate()
                 psi[iz]=sqrt(2/_L)*sin(is*pi*(_z[iz]-_Lb)/_L); // Wavefunction [m^{-0.5}]
         }
 
-        _solutions.push_back(State(E, psi));
+        _solutions.push_back(Eigenstate(E, _z, psi));
     }
 }
     

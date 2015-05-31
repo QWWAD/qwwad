@@ -1,29 +1,21 @@
 /**
- * \file   qclsim-subband.h
+ * \file   subband.h
  * \brief  A subband in a 2D system
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
- * \date   2013-01-10
  */
 
-#ifndef QCLSIM_SUBBAND_H
-#define QCLSIM_SUBBAND_H
-
-#if HAVE_CONFIG_H
-# include "config.h"
-#endif //HAVE_CONFIG_H
+#ifndef QWWAD_SUBBAND_H
+#define QWWAD_SUBBAND_H
 
 #include <string>
-#include "linear-algebra.h"
+#include "eigenstate.h"
 
 namespace QWWAD
 {
 class Subband
 {
 private:
-    State  _ground_state;      ///< State at bottom of subband
-
-    /// TODO: The spatial profile should really be part of the State class
-    std::valarray<double> _z; ///< Spatial profile of subband [m]
+    Eigenstate  _ground_state;      ///< State at bottom of subband
 
     double _m;                ///< Effective mass at subband minimum (for dispersion) [kg]
     double _alpha;            ///< In-plane nonparabolicity parameter [1/J]
@@ -36,43 +28,36 @@ private:
     double _N;                ///< TOTAL sheet-density of carriers [m^{-2}]
 
 public:
-    Subband(State                 ground_state,
-            double                m,
-            std::valarray<double> z);
+    Subband(const Eigenstate &ground_state,
+            const double      m);
         
-    Subband(State                 ground_state,
-            double                m,
-            std::valarray<double> z,
-            double                alpha,
-            double                V);
+    Subband(const Eigenstate &ground_state,
+            const double      m,
+            const double      alpha,
+            const double      V);
 
     void set_distribution_from_Ef_Te(const double Ef,
                                      const double Te);
 
-    inline State get_ground() const {return _ground_state;}
+    inline decltype(_ground_state) get_ground() const {return _ground_state;}
 
-    /**
-     * \brief find the total length of the spatial region [m]
-     *
-     * \todo This should be part of State class
-     */
-    inline std::valarray<double>       z_array()    const {return _z;}
-    inline double                      get_dz()     const {return _z[1]-_z[0];}
-    inline double                      get_length() const {return _z[_z.size()-1]-_z[0];}
+    inline std::valarray<double>       z_array()    const {return _ground_state.get_position_samples();}
+    inline double                      get_dz()     const {return z_array()[1]-z_array()[0];}
+    inline double                      get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
 
     /** Find expectation position for the ground state [m] */
-    inline double                      get_z_av_0() const {return z_av(_ground_state, _z);}
+    inline double                      get_z_av_0() const {return _ground_state.get_expectation_position();}
 
     inline double                      get_Ef()     const {return _Ef;}
 
     /**
      * \brief Find energy of subband edge
      */
-    inline double                      get_E_min()  const {return _ground_state.get_E();}
+    inline double                      get_E_min()  const {return _ground_state.get_energy();}
 
     double                             get_total_population()    const;
 
-    inline std::valarray<double>       psi_array()  const {return _ground_state.psi_array();}
+    inline std::valarray<double>       psi_array()  const {return _ground_state.get_wavefunction_samples();}
     inline double                      get_condband_edge() const {return _V;}
 
     double                             get_k_fermi() const;

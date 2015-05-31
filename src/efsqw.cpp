@@ -64,6 +64,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/schroedinger-solver-finite-well.h"
 #include "qwwad-options.h"
+#include "qwwad/file-io.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -171,12 +172,11 @@ int main(int argc,char *argv[])
 
     char wf_prefix[9];
     sprintf(wf_prefix,"wf_%c",p);
-    State::write_to_file(energy_filename,
-                         wf_prefix,
-                         ".r",
-                         se.get_solutions(true),
-                         se.get_z(),
-                         true);
+    Eigenstate::write_to_file(energy_filename,
+                              wf_prefix,
+                              ".r",
+                              se.get_solutions(true),
+                              true);
 
     // Write potential profile to file if wanted
     if(opt.get_option<bool>("output-potential"))

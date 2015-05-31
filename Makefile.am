@@ -154,6 +154,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/schroedinger-solver-taylor.h          \
 			   src/qwwad/schroedinger-solver-tridiagonal.cpp   \
 			   src/qwwad/schroedinger-solver-tridiagonal.h     \
+			   src/qwwad/eigenstate.h   \
+			   src/qwwad/eigenstate.cpp \
 			   src/qwwad/subband.cpp      \
 			   src/qwwad/subband.h        \
 			   src/wf_options.cpp                       \

@@ -118,7 +118,7 @@ eigen_general(double       A[],
     gsl_sort_index(&sorted_E_indices[0], &E_tmp[0], 1, nst);
 
     // Copy the solutions into the desired output array
-    std::vector<State> solutions_sorted;
+    std::vector<EVP_solution<double>> solutions_sorted;
 
     for(unsigned int ist=0; ist < nst; ist++)
     {
@@ -333,88 +333,40 @@ std::valarray<double> solve_cyclic_matrix(std::valarray<double> A_sub,
                                           double cyclic,
                                           std::valarray<double> b)
 {
-        unsigned int ni = A_diag.size();
-	std::valarray<double> z(ni);
-        std::valarray<double> A_super(A_sub);
-        //A_sub = A_super;
-	//Forward sweep
-	// Initial elements (don't need to set A_diag and b!)
-	//A_diag[0] = A_diag[0];
-	//b_new[0] = b[0];
-	z[0] = 1;
-	for(unsigned int i=1; i<ni-1; i++){
-		A_diag[i] = A_diag[i] - (A_sub[i-1]*A_super[i-1])/A_diag[i-1];
-		b[i] = b[i]-(A_sub[i-1]*b[i-1])/A_diag[i-1];
+    unsigned int ni = A_diag.size();
+    std::valarray<double> z(ni);
+    std::valarray<double> A_super(A_sub);
+    //A_sub = A_super;
+    //Forward sweep
+    // Initial elements (don't need to set A_diag and b!)
+    //A_diag[0] = A_diag[0];
+    //b_new[0] = b[0];
+    z[0] = 1;
+    for(unsigned int i=1; i<ni-1; i++){
+        A_diag[i] = A_diag[i] - (A_sub[i-1]*A_super[i-1])/A_diag[i-1];
+        b[i] = b[i]-(A_sub[i-1]*b[i-1])/A_diag[i-1];
 
-		// This can probably go in A_sub
-		z[i] = -z[i-1]*A_super[i-1]/A_diag[i-1];
-	}
+        // This can probably go in A_sub
+        z[i] = -z[i-1]*A_super[i-1]/A_diag[i-1];
+    }
 
-	// Last F_dash element
-	A_diag[ni-1] = A_diag[ni-1] - (A_sub[ni-2] + cyclic*z[ni-2])*A_super[ni-2]/A_diag[ni-2];
+    // Last F_dash element
+    A_diag[ni-1] = A_diag[ni-1] - (A_sub[ni-2] + cyclic*z[ni-2])*A_super[ni-2]/A_diag[ni-2];
 
-	// Last L_dash element
-	double sum = 0.0;
-	for(unsigned int i=0; i<ni-2; i++){
-		sum += -cyclic*z[i]*b[i]/A_diag[i];
-	}
+    // Last L_dash element
+    double sum = 0.0;
+    for(unsigned int i=0; i<ni-2; i++){
+        sum += -cyclic*z[i]*b[i]/A_diag[i];
+    }
 
-	b[ni-1] = b[ni-1] + sum - (A_sub[ni-2] + cyclic*z[ni-2])*b[ni-2]/A_diag[ni-2];
-	
-	// Again no need to initialise first element of 
-	// b[ni-1] = b[ni-1]
-	for(int i=ni-2; i>-1; i--)
-		b[i] = b[i]-(A_super[i]*b[i+1])/A_diag[i+1];
+    b[ni-1] = b[ni-1] + sum - (A_sub[ni-2] + cyclic*z[ni-2])*b[ni-2]/A_diag[ni-2];
 
-        return b/A_diag;
-}
+    // Again no need to initialise first element of 
+    // b[ni-1] = b[ni-1]
+    for(int i=ni-2; i>-1; i--)
+        b[i] = b[i]-(A_super[i]*b[i+1])/A_diag[i+1];
 
-/**
- * \brief Find the expectation position for a given state
- *
- * \param[in] i State
- * \param[in] z Spatial coordinates [m]
- *
- * \return Expectation position [m]
- */
-double z_av(const State& i, const std::valarray<double>& z)
-{
-    const double dz = z[1] - z[0];
-    const std::valarray<double> dz_av = pow(i.psi_array(), 2.0) * z;
-
-    return trapz(dz_av, dz);
-}
-
-/** 
- * \brief Find dipole matrix element between a pair of eigenvectors
- *
- * \param[in] i Initial state
- * \param[in] j Final state
- * \param[in] z Spatial coordinates [m]
- *
- * \return Dipole matrix element [m]
- *
- * \todo FIXME: When |i> == |j>, this should just return the expectation
- *       position.  At the moment, we have no way of figuring this out
- *       and the "pivoting" code below generates the wrong value.  It's
- *       not too important however, because the matrix element for an
- *       intrasubband transition is never really used!
- */
-double mij(const State& i, const State& j, const std::valarray<double>& z)
-{
-    const double dz = z[1] - z[0];
-
-    /* Because we have a nonparabolic effective mass, the Schroedinger solutions
-     * are NOT part of an orthonormal set. As such, we need to do something to
-     * ensure spatial invariance when we calculate dipole matrix element.  We
-     * therefore define a pivot point halfway between the expectation positions
-     * of the electron in each state.
-     */
-    const double z0 = 0.5 * (z_av(i,z) + z_av(j,z));
-
-    const std::valarray<double> dmij = i.psi_array() * (z - z0) * j.psi_array();
-
-    return trapz(dmij, dz);
+    return b/A_diag;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

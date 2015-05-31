@@ -8,7 +8,7 @@
 #ifndef QWWAD_SCHROEDINGER_SOLVER_H
 #define QWWAD_SCHROEDINGER_SOLVER_H
 
-#include "linear-algebra.h"
+#include "eigenstate.h"
 
 namespace QWWAD
 {
@@ -24,7 +24,7 @@ public:
                        const std::valarray<double> &z,
                        const unsigned int           nst_max=0);
 
-    std::vector<State> get_solutions(const bool convert_to_meV=false);
+    std::vector<Eigenstate> get_solutions(const bool convert_to_meV=false);
 
     /**
      * \returns the array of spatial positions [m]
@@ -61,7 +61,7 @@ protected:
     bool   _E_cutoff_set; ///< True if a cut-off energy has been set
 
     ///< Set of solutions to the Schroedinger equation
-    std::vector<State> _solutions;
+    std::vector<Eigenstate> _solutions;
 };
 } // namespace QWWAD
 
