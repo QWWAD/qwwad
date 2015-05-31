@@ -16,3 +16,10 @@ target_link_libraries( dispersion_relation qwwad )
 
 add_executable( dos dos.cpp ${qwwad_options} )
 target_link_libraries( dos qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} )
+
+install( PROGRAMS
+           ${CMAKE_BINARY_DIR}/src/dispersion_relation
+           ${CMAKE_BINARY_DIR}/src/dos
+           ${CMAKE_BINARY_DIR}/src/qwwad_find_donor_state
+         DESTINATION
+           ${CMAKE_INSTALL_PREFIX}/bin )
