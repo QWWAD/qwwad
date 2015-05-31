@@ -6,10 +6,10 @@
  */
 
 #include "dos-functions.h"
-#include "qwwad/constants.h"
+#include "constants.h"
 #include <cmath>
 
-using namespace QWWAD;
+namespace QWWAD {
 using namespace constants;
 
 /**
@@ -117,5 +117,6 @@ double calculate_dos_1D(const double                 mass,
     }
 
     return dos_total;
+}
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

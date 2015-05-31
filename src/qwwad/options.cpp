@@ -1,5 +1,5 @@
 /**
- * \file  qwwad-options.cpp
+ * \file  options.cpp
  * \brief Implementaions of common methods for program options
  */
 
@@ -7,7 +7,7 @@
 # include "config.h"
 #endif
 
-#include "qwwad-options.h"
+#include "options.h"
 #include <iostream>
 #include <fstream>
 

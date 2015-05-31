@@ -23,7 +23,7 @@
 #include <cmath>
 #include <iostream>
 #include <complex>
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/file-io.h"
 #include "qwwad/subband.h"
 #include "qwwad/constants.h"

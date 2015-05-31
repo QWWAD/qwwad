@@ -15,7 +15,7 @@
 #include "qwwad/file-io.h"
 #include "qwwad/maths-helpers.h"
 #include "qwwad/subband.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;

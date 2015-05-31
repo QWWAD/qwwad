@@ -9,7 +9,7 @@
 #include "qwwad-material-property-numeric.h"
 #include "qwwad-material-property-string.h"
 #include "material_library.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include <glibmm/ustring.h>
 
 using namespace QWWAD;

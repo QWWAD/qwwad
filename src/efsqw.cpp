@@ -63,7 +63,7 @@
 #include <valarray>
 #include "qwwad/constants.h"
 #include "qwwad/schroedinger-solver-finite-well.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/file-io.h"
 
 using namespace QWWAD;

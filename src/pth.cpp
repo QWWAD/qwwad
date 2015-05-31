@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/schroedinger-solver-poeschl-teller.h"

@@ -19,7 +19,7 @@
 #include <cstdlib>
 #include <gsl/gsl_math.h>
 #include "qwwad/file-io.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 

@@ -19,8 +19,7 @@ EXTRA_DIST=autogen.sh                     \
 
 dist_pkgdata_DATA = src/material-library.xml
 
-noinst_HEADERS = src/dos-functions.h \
-		 src/ef-helpers.h    \
+noinst_HEADERS = src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/ppff.h          \
 		 src/struct.h 
@@ -85,12 +84,12 @@ dist_bin_SCRIPTS = src/xyz2pdb
 # Build most functionality into library infrastructure
 lib_LTLIBRARIES = libqwwad.la
 libqwwad_la_SOURCES =  \
-			   src/dos-functions.cpp       \
-			   src/dos-functions.h         \
-			   src/double-barrier.cpp      \
-			   src/double-barrier.h        \
-			   src/qclsim-fermi.cpp        \
-			   src/qclsim-fermi.h          \
+			   src/qwwad/dos-functions.cpp \
+			   src/qwwad/dos-functions.h   \
+			   src/qwwad/double-barrier.cpp \
+			   src/qwwad/double-barrier.h   \
+			   src/qwwad/fermi.cpp        \
+			   src/qwwad/fermi.h          \
 			   src/qwwad-material.cpp     \
 			   src/qwwad-material.h       \
 			   src/qwwad-material-property.cpp     \
@@ -112,16 +111,16 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/constants.h      \
 			   src/qwwad-debye.cpp \
 			   src/qwwad-debye.h   \
-			   src/qwwad-donor-energy-minimiser.cpp \
-			   src/qwwad-donor-energy-minimiser.h   \
-			   src/qwwad-heterostructure.cpp \
-			   src/qwwad-heterostructure.h   \
+			   src/qwwad/donor-energy-minimiser.cpp \
+			   src/qwwad/donor-energy-minimiser.h   \
+			   src/qwwad/heterostructure.cpp \
+			   src/qwwad/heterostructure.h   \
 			   src/qwwad/file-io.cpp          \
 			   src/qwwad/file-io.h            \
 			   src/qwwad/file-io-deprecated.cpp \
 			   src/qwwad/file-io-deprecated.h   \
-			   src/qwwad-options.cpp         \
-			   src/qwwad-options.h           \
+			   src/qwwad/options.cpp         \
+			   src/qwwad/options.h           \
 			   src/qwwad/intersubband-transition.h   \
 			   src/qwwad/intersubband-transition.cpp \
 			   src/qwwad/linear-algebra.cpp       \

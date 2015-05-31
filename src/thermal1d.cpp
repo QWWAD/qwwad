@@ -6,7 +6,7 @@
 #include <fstream>
 #include <string>
 #include <gsl/gsl_math.h>
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad-material.h"
 #include "material_library.h"
 #include "qwwad-material-property-numeric.h"

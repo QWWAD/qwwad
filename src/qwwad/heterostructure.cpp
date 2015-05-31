@@ -1,11 +1,11 @@
 /**
- * \file    qwwad-heterostructure.cpp
+ * \file    heterostructure.cpp
  * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
  * \brief   A description of layers in a heterostructure
  */
 
-#include "qwwad-heterostructure.h"
+#include "heterostructure.h"
 
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sf_erf.h>
@@ -15,7 +15,7 @@
 # include <iostream>
 #endif
 
-#include "qwwad/file-io.h"
+#include "file-io.h"
 
 /**
  * Gauss error function

@@ -10,7 +10,7 @@
 #include <gsl/gsl_sf_lambert.h>
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;

@@ -18,7 +18,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/maths-helpers.h"
 #include "qwwad/file-io.h"
-#include "qclsim-fermi.h"
+#include "qwwad/fermi.h"
 #include "wf_options.h"
 
 using namespace QWWAD;

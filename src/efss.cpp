@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"

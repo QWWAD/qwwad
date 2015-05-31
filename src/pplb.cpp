@@ -49,7 +49,7 @@
 #include "maths.h"
 #include "qwwad/constants.h"
 #include "qwwad/linear-algebra.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 #include "ppff.h"
 

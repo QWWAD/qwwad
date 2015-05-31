@@ -12,7 +12,7 @@
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
 #include "qwwad/schroedinger-solver-infinite-well.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;

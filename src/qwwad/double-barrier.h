@@ -5,8 +5,8 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#ifndef DOUBLE_BARRIER_H
-#define DOUBLE_BARRIER_H
+#ifndef QWWAD_DOUBLE_BARRIER_H
+#define QWWAD_DOUBLE_BARRIER_H
 namespace QWWAD {
 double get_transmission_coefficient(const double E,
                                     const double m_w,
@@ -15,7 +15,6 @@ double get_transmission_coefficient(const double E,
                                     const double L1,
                                     const double L2,
                                     const double L3);
-};
-
+} // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

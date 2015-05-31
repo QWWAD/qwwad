@@ -7,7 +7,7 @@
 
 #include <cmath>
 #include <armadillo>
-#include "qwwad/constants.h"
+#include "constants.h"
 
 using namespace arma;
 

@@ -4,7 +4,7 @@
 
 #include <iostream>
 #include <valarray>
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"
 

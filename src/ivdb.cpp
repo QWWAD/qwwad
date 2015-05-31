@@ -15,12 +15,12 @@
 #include <iostream>
 #include <valarray>
 #include <gsl/gsl_math.h>
-#include "dos-functions.h"
-#include "double-barrier.h"
+#include "qwwad/dos-functions.h"
+#include "qwwad/double-barrier.h"
 #include "qwwad/constants.h"
-#include "qclsim-fermi.h"
+#include "qwwad/fermi.h"
 #include "qwwad/file-io.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;

@@ -18,8 +18,8 @@
 
 #include <iostream>
 #include "qwwad/file-io.h"
-#include "qwwad-heterostructure.h"
-#include "qwwad-options.h"
+#include "qwwad/heterostructure.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 

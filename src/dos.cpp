@@ -10,10 +10,10 @@
  */
 
 #include <iostream>
-#include "dos-functions.h"
+#include "qwwad/dos-functions.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io-deprecated.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include <cstdlib>
 #include <valarray>
 #include <fstream>

@@ -8,7 +8,7 @@
 #include "file-io.h"
 #include "maths-helpers.h"
 #include "constants.h"
-#include "../qclsim-fermi.h"
+#include "fermi.h"
 
 namespace QWWAD
 {

@@ -40,7 +40,7 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 #include <valarray>
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 

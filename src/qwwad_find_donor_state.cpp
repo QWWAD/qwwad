@@ -24,8 +24,8 @@
 #include <iostream>
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
-#include "qwwad-options.h"
-#include "qwwad-donor-energy-minimiser.h"
+#include "qwwad/options.h"
+#include "qwwad/donor-energy-minimiser.h"
 #include "qwwad/schroedinger-solver-donor-2D.h"
 #include "qwwad/schroedinger-solver-donor-3D.h"
 #include "qwwad/schroedinger-solver-donor-variable.h"

@@ -1,11 +1,11 @@
 /** 
- * \file   qclsim-fermi.cpp
+ * \file   fermi.cpp
  * \brief  Find the Fermi energy for a set of subbands
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include "qwwad/constants.h"
-#include "qclsim-fermi.h"
+#include "constants.h"
+#include "fermi.h"
 #include <stdexcept>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_roots.h>

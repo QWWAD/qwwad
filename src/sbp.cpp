@@ -21,10 +21,10 @@
 #include <cstdlib>
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
-#include "qclsim-fermi.h"
+#include "qwwad/fermi.h"
 #include "qwwad/file-io.h"
 #include "qwwad/file-io-deprecated.h"
-#include "qwwad-options.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;

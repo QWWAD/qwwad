@@ -1,15 +1,15 @@
 /**
- * \file   qclsim-fermi.h
+ * \file   fermi.h
  * \brief  Functions for finding the Fermi energy and population
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#ifndef QCLSIM_FERMI_H
-#define QCLSIM_FERMI_H
+#ifndef QWWAD_FERMI_H
+#define QWWAD_FERMI_H
 
 #include <valarray>
 #include <vector>
-#include "qwwad/eigenstate.h"
+#include "eigenstate.h"
 
 namespace QWWAD
 {

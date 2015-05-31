@@ -1,11 +1,16 @@
 cmake_minimum_required( VERSION 2.8.11 )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 
-set( QWWAD_VERSION 0.1+devel )
+project( "Quantum Wells, Wires and Dots" )
+set( QWWAD_VERSION 1.2+devel )
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 
 option( VERBOSE "Show information about CMake build configuration." )
+
+# Enable C++11 builds
+# TODO: With CMake > 3.1, can use target_compile_features() to do this automatically
+set(CMAKE_CXX_FLAGS "-std=c++11")
 
 find_package( LAPACK REQUIRED )
 find_package( Armadillo 4.000 REQUIRED )

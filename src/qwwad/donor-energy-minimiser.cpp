@@ -1,5 +1,5 @@
 /**
- * \file   qwwad-donor-energy-minimiser.cpp
+ * \file   donor-energy-minimiser.cpp
  *
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
@@ -7,15 +7,16 @@
  * \brief  Minimisation of donor state energy
  */
 
+#include "donor-energy-minimiser.h"
+
 #include <stdexcept>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_min.h>
 #include <gsl/gsl_multimin.h>
-#include "qwwad/constants.h"
-#include "qwwad-donor-energy-minimiser.h"
-#include "qwwad/schroedinger-solver-donor-2D.h"
-#include "qwwad/schroedinger-solver-donor-variable.h"
+#include "constants.h"
+#include "schroedinger-solver-donor-2D.h"
+#include "schroedinger-solver-donor-variable.h"
 
 namespace QWWAD
 {
