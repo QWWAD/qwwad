@@ -16,11 +16,10 @@ public:
         SchroedingerSolver( V, z, nst_max )
     {}
 
-    void set_current_solutions( std::vector<State> const solutions )
+    void set_current_solutions( std::vector<Eigenstate> const solutions )
     {
         _solutions = solutions;
     }
-
 
     virtual std::string get_name()
     {

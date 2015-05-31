@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "qwwad/schroedinger-solver-tridiagonal.h"
 #include "qwwad/constants.h"
+#include "qwwad/maths-helpers.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -33,19 +34,19 @@ TEST(SchroedingerSolverTridiag, parabolicInfTest)
     SchroedingerSolverTridiag se(m, V, z, nst);
 
     // Check that only one state is found using default options
-    const std::vector<State> solutions = se.get_solutions();
+    const auto solutions = se.get_solutions();
     EXPECT_EQ(solutions.size(), nst);
 
     // Check that all states are as expected
     for (unsigned int ist = 0; ist < nst; ++ist)
     {
         // Check energy of state (to within 1%)
-        const double E = solutions.at(ist).get_E();
+        const double E = solutions.at(ist).get_energy();
         const double E_expected = pow(hBar*pi*(ist+1),2.0)/(2.0*m[0]*L*L);
         EXPECT_NEAR(E_expected, E, E_expected/100);
 
         // Check normalisation of state
-        const std::valarray<double> PD = solutions.at(ist).psi_squared();
+        const std::valarray<double> PD = solutions.at(ist).get_PD();
         const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 

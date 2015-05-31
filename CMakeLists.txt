@@ -20,9 +20,6 @@ include( CMakeScripts/make_check_macros.cmake )
 
 if( VERBOSE )
     message( "Generating config.h" )
-    if( APPLE )
-        message( "WARNING: Much of the QWWAD code cannot be compiled on Mac OSX. Will only compile compatible code." )
-    endif()
 endif()
 
 
