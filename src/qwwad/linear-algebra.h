@@ -106,59 +106,6 @@ void dlagtm_(const char* TRANS, int* N, const int* NRHS, double* ALPHA,
 namespace QWWAD
 {
 /**
- * \brief A 3D vector
- */
-template <class T>
-class vector3D {
-public:
-    T x; ///< The 'x' component
-    T y; ///< The 'y' component
-    T z; ///< The 'z' component
-
-    vector3D() :
-        x(0), y(0), z(0)
-    {}
-
-    vector3D(T x, T y, T z) :
-        x(x),
-        y(y),
-        z(z)
-    {}
-
-    vector3D& operator+=(const vector3D &rhs)
-    {
-        x+=rhs.x;
-        y+=rhs.y;
-        z+=rhs.z;
-
-        return *this;
-    }
-
-    vector3D& operator*=(const T &rhs)
-    {
-        x*=rhs;
-        y*=rhs;
-        z*=rhs;
-
-        return *this;
-    }
-};
-
-template <class T>
-inline vector3D<T> operator+(vector3D<T> lhs, const vector3D<T> &rhs)
-{
-    lhs += rhs;
-    return lhs;
-}
-
-template <class T>
-inline vector3D<T> operator*(vector3D<T> lhs, const T &rhs)
-{
-    lhs *= rhs;
-    return lhs;
-}
-
-/**
  * \brief A solution to an eigenvalue problem
  */
 template <class T>
