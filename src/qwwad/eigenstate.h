@@ -7,7 +7,9 @@
 #ifndef QWWAD_EIGENSTATE
 #define QWWAD_EIGENSTATE
 
+#include <string>
 #include <valarray>
+#include <vector>
 
 namespace QWWAD {
 

@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
+#include <iostream>
 #include <gsl/gsl_math.h>
 
 #include "qwwad/constants.h"
