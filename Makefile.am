@@ -145,6 +145,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/schroedinger-solver-full.cpp        \
 			   src/qwwad/schroedinger-solver-infinite-well.cpp \
 			   src/qwwad/schroedinger-solver-infinite-well.h   \
+			   src/qwwad/schroedinger-solver-kronig-penney.cpp \
+			   src/qwwad/schroedinger-solver-kronig-penney.h   \
 			   src/qwwad/schroedinger-solver-poeschl-teller.cpp \
 			   src/qwwad/schroedinger-solver-poeschl-teller.h   \
 			   src/qwwad/schroedinger-solver-shooting.cpp      \
