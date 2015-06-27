@@ -109,7 +109,7 @@ MaterialProperty const * Material::get_property(const Glib::ustring &property_na
         throw std::runtime_error(oss.str());
     }
 
-    return &properties.at(property_name);
+    return prop;
 }
 
 MaterialPropertyNumeric const * Material::get_numeric_property(const char *name) const

@@ -36,15 +36,13 @@ export QWWAD_MASS=0.067 # Effective mass relative to a free electron
 export QWWAD_NST=3   # Number of states
 
 # Loop for different well widths
-for i in `seq 1 0.1 2.3`
-do
-{
+for i in `seq 1 0.1 2.3`; do
     # Generate well-widths exponentially so we get a smooth curve at small
     # widths
     LW=`echo $i | awk '{print 10^$1}'`
 
     # Calculate first 3 energy levels as a function of well width for GaAs
-    efiw --width $LW
+    qwwad_ef_infinite_well --width $LW
 
     # Write well width to output file
     printf "%f\t" "$LW" >> $outfile
@@ -52,7 +50,6 @@ do
     # Extract energies and write to output file
     energies=`awk '{print $2}' < Ee.r`
     echo $energies >> $outfile
-}
 done
 
 cat << EOF

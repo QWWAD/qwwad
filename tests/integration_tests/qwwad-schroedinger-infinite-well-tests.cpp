@@ -42,18 +42,18 @@ TEST(SchroedingerSolverInfWell, parabolicTest)
     const auto solutions = se.get_solutions();
     EXPECT_EQ(solutions.size(), nst);
     const auto z = se.get_z();
-    const double dz = z[1] - z[0];
+    const auto dz = z[1] - z[0];
 
     // Check that all states are as expected
     for (unsigned int ist = 0; ist < nst; ++ist)
     {
         // Check energy of state
-        const auto E = solutions.at(ist).get_energy();
-        const double E_expected = pow(hBar*pi*(ist+1),2.0)/2.0;
+        const auto E          = solutions.at(ist).get_energy();
+        const auto E_expected = pow(hBar*pi*(ist+1),2.0)/2.0;
         EXPECT_DOUBLE_EQ(E_expected, E);
 
         // Check normalisation of state
-        const std::valarray<double> PD = solutions.at(ist).get_PD();
+        const auto PD = solutions.at(ist).get_PD();
         const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 

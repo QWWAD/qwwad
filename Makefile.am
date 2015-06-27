@@ -15,7 +15,8 @@ EXTRA_DIST=autogen.sh                     \
 	   m4/ax_blas.m4                  \
 	   m4/ax_boost_base.m4            \
 	   m4/ax_boost_program_options.m4 \
-	   m4/ax_lapack.m4
+	   m4/ax_lapack.m4                \
+	   m4/ax_make_man_page.m4
 
 dist_pkgdata_DATA = src/material-library.xml
 
@@ -36,7 +37,7 @@ bin_PROGRAMS =  ado                \
 		efcwire \
 		efcwwf  \
 	       	effv    \
-		efiw    \
+		qwwad_ef_infinite_well  \
 		efiwire \
 		efkpsl  \
 	       	efmfv   \
@@ -203,8 +204,8 @@ efcwwf_SOURCES = src/efcwwf.c
 
 effv_SOURCES = src/effv.c
 
-efiw_SOURCES = src/efiw.cpp
-efiw_LDADD   = libqwwad.la
+qwwad_ef_infinite_well_SOURCES = src/qwwad_ef_infinite_well.cpp
+qwwad_ef_infinite_well_LDADD   = libqwwad.la
 
 efiwire_SOURCES = src/efiwire.cpp
 efiwire_LDADD   = libqwwad.la
@@ -330,7 +331,7 @@ wfplot_LDADD   = libqwwad.la
 # Build rule for installing manual pages
 dist_man1_MANS = man/dispersion_relation.1 \
 		 man/dos.1                 \
-		 man/efiw.1                \
+		 man/qwwad_ef_infinite_well.1                \
 		 man/sbp.1                 \
 		 man/efsqw.1               \
 		 man/wfplot.1              \
@@ -358,7 +359,7 @@ EXTRA_DIST += doc/find_heterostructure.h2m   \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
-              doc/efiw.h2m                   \
+              doc/qwwad_ef_infinite_well.h2m                   \
 	      doc/dispersion_relation.h2m    \
 	      doc/dos.h2m                    \
 	      doc/sbp.h2m                    \
@@ -378,9 +379,9 @@ man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m | do
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/dos.h2m ./dos$(EXEEXT)
 
-man/efiw.1: src/efiw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efiw.h2m | efiw$(EXEEXT)
+man/qwwad_ef_infinite_well.1: src/qwwad_ef_infinite_well.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m | qwwad_ef_infinite_well$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/efiw.h2m ./efiw$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m ./qwwad_ef_infinite_well$(EXEEXT)
 
 man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dispersion_relation.h2m | dispersion_relation$(EXEEXT)
 	$(MKDIR_P) man
