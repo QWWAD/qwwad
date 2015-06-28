@@ -17,7 +17,7 @@ In each case, the '*' is replaced by the particle ID and the 'i' is replaced by 
 
 [EXAMPLES]
 Compute the dispersion relation up to 10 kT with a carrier temperature of 10 K:
-    dispersion_relation --nkbt 10 --Te 10
+    qwwad_ef_dispersion --nkbt 10 --Te 10
 
 Compute the non-parabolic dispersion relation using 1000 data points and dispersion of 0.7 eV^{-1}:
-    dispersion_relation --nk 1000 --alpha 0.7
+    qwwad_ef_dispersion --nk 1000 --alpha 0.7
