@@ -24,16 +24,16 @@ WfOptions configure_options(int argc, char* argv[])
 
     std::string summary = "Compute the dispersion relation for a set of subbands.";
 
-    opt.add_option<double>     ("nkbt",           5.0,        "Maximum energy to print out for the subband [multiple of kT].");
-    opt.add_option<double>     ("Te",             100,        "Carrier temperature [K].");
-    opt.add_option<size_t>     ("nk",             100,        "Number of k-space points to print out");
-    opt.add_option<std::string>("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
-    opt.add_option<std::string>("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
-    opt.add_option<bool>       ("relative",                   "Output dispersion relative to subband minima. If not specified, "
-                                                              "the dispersion is given relative to the band edge.");
-    opt.add_option<double>     ("mass",           0.067,      "In-plane effective mass (relative to free electron).");
-    opt.add_option<double>     ("alpha",          0.0,        "In-plane non-parabolicity parameter [1/eV].");
-    opt.add_option<double>     ("vcb",            0.0,        "Conduction band edge [eV].");
+    opt.add_option<double>     ("nkbt",           5.0,    "Maximum energy to print out for the subband [multiple of kT].");
+    opt.add_option<double>     ("Te",             100,    "Carrier temperature [K].");
+    opt.add_option<size_t>     ("nk",             100,    "Number of k-space points to print out");
+    opt.add_option<std::string>("disp-prefix",    "dr_e", "Filename prefix to which dispersion curves will be written");
+    opt.add_option<std::string>("disp-ext",       ".r",   "Filename extension to which dispersion curves will be written");
+    opt.add_option<bool>       ("relative",               "Output dispersion relative to subband minima. If not specified, "
+                                                          "the dispersion is given relative to the band edge.");
+    opt.add_option<double>     ("mass",           0.067,  "In-plane effective mass (relative to free electron).");
+    opt.add_option<double>     ("alpha",          0.0,    "In-plane non-parabolicity parameter [1/eV].");
+    opt.add_option<double>     ("vcb",            0.0,    "Conduction band edge [eV].");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
