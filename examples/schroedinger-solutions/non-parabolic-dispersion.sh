@@ -31,21 +31,22 @@ outfile=non-parabolic-dispersion.dat
 rm -f $outfile
 
 # Set fixed parameters (200 angstrom, GaAs well)
-mass=0.067
-LW=200
-nst=2  # Number of subbands to find
+export QWWAD_MASS=0.067
+export QWWAD_WELLWIDTH=200
+export QWWAD_NST=2  # Number of subbands to find
+export QWWAD_NONPARABOLIC=1 # Switch on non-parabolicity
 
 # Find parabolic solution first
-efiw --width $LW --mass $mass --nst $nst
+qwwad_ef_infinite_well
 
 # Compute the dispersion relation for all states in the system
 dispersion_relation --disp-ext "_0.dat"
 
 # Repeat the calculation using nonparabolicity
 for alpha in 0.7 5; do
-    efiw --width $LW --mass $mass --nst $nst --alpha $alpha
+    qwwad_ef_infinite_well --alpha $alpha
 
-    dispersion_relation --nonparabolic --disp-ext "_$alpha.dat" --alpha $alpha
+    dispersion_relation --disp-ext "_$alpha.dat" --alpha $alpha
 done
 
 # Now, glue all our output files together into one convenient data file

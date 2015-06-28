@@ -13,7 +13,10 @@ In each case, the '*' is replaced by the particle ID and the 'i' is replaced by 
 
 [EXAMPLES]
 Compute the ground state in a 150-angstrom well with effective mass = 0.1m0:
-   qwwad_ef_infinite_well --width 150 --mass 0.1
+   qwwad_ef_infinite_well --wellwidth 150 --mass 0.1
                         
 Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62m0:
-   qwwad_ef_infinite_well --width 200 --mass 0.62 --particle h
+   qwwad_ef_infinite_well --wellwidth 200 --mass 0.62 --particle h
+
+Compute the ground state in a 100-angstrom well and "pad" the computed wave functions with 100-angstrom barriers:
+   qwwad_ef_infinite_well --wellwidth 100 --barrierwidth 100

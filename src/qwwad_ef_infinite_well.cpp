@@ -26,7 +26,7 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the eigenstates of an infinite quantum well.");
 
-    opt.add_option<double>("width,L",       100, "Width of quantum well [angstrom].");
+    opt.add_option<double>("wellwidth,L",   100, "Width of quantum well [angstrom].");
     opt.add_option<double>("mass,m",      0.067, "Effective mass (relative to free electron).");
     opt.add_option<size_t>("nz,N",          100, "Number of spatial points for output file.");
     opt.add_option<size_t>("nst,s",           1, "Number of states to find.");
@@ -34,7 +34,7 @@ Options configure_options(int argc, char* argv[])
                                                  "electrons, heavy holes or light holes respectively.");
     opt.add_option<double>("vcb",          0.00, "Band-edge potential [eV]");
     opt.add_option<double>("alpha",        0.00, "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_option<double>("E-cutoff",           "Cut-off energy for solutions [meV]");
+    opt.add_option<double>("Ecutoff",            "Cut-off energy for solutions [meV]");
     opt.add_option<double>("barrierwidth", 0.00, "Width of barriers [angstrom]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto L     = opt.get_option<double>("width") * 1e-10;        // well width [m]
+    const auto L     = opt.get_option<double>("wellwidth") * 1e-10;    // well width [m]
     const auto Lb    = opt.get_option<double>("barrierwidth") * 1e-10; // barrier width [m]
     const auto p     = opt.get_option<char>  ("particle");             // particle ID (e, h or l)
     const auto m     = opt.get_option<double>("mass") * me;            // effective mass [kg]
@@ -59,8 +59,8 @@ int main(int argc, char *argv[])
     se.set_padding_width(Lb);
 
     // Set cut-off energy if desired
-    if(opt.vm.count("E-cutoff") > 0)
-        se.set_E_cutoff(opt.get_option<double>("E-cutoff") * e/1000);
+    if(opt.vm.count("Ecutoff") > 0)
+        se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     const auto solutions = se.get_solutions(true);
 

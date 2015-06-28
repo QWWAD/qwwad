@@ -38,9 +38,14 @@ class Options
          */
         po::options_description *generic_options_any;
 
+        po::options_description config_options;
+
         std::string              config_filename; ///< Configuration filename
         
         void print_version_then_exit(char* prog_name) const;
+
+        std::string name_mapper(std::string in) const;
+
     public:
         /**
          * Storage for the (raw) values entered on the command-line

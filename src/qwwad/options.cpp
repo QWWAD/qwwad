@@ -156,7 +156,6 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         // Now, read from config file (if available)
         std::ifstream config_filestream(config_filename.c_str(), std::ifstream::in);
 
-        po::options_description config_options;
         config_options.add(*generic_options_any);
         config_options.add(*program_specific_options);
 
@@ -178,7 +177,8 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         }
 
         // Finally, look for any suitable-looking environment variables
-        po::store(po::parse_environment(config_options, "QWWAD_"), vm);
+        const auto mapper = std::bind1st(std::mem_fun(&Options::name_mapper), this);
+        po::store(po::parse_environment(config_options, mapper), vm);
         po::notify(vm);
 
         // TODO: Make this configurable
@@ -207,6 +207,39 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         std::cerr << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
+}
+
+/**
+ * \brief Map an environment variable name to an option name
+ *
+ * \param[in] environment_variable The name of the environment variable
+ *
+ * \return The long name of the program option
+ *
+ * \details The environment variable must start with the "QWWAD_" prefix.
+ *          Any unrecognised options are simply ignored.  The user needs to
+ *          take care of typos!
+ */
+std::string Options::name_mapper(std::string environment_variable) const
+{
+    std::string prefix("QWWAD_");
+    std::string option_name(""); // output string
+
+    // Only inspect variables that start with the QWWAD_ prefix
+    if(environment_variable.compare(0, prefix.length(), prefix) == 0)
+    {
+        std::string suffix = environment_variable.substr(prefix.length());
+
+        // See if this exists in the configuration options
+        try
+        {
+            option_name = config_options.find(suffix, false, true).long_name();
+        }
+        catch(std::exception &e)
+        {}
+    }
+
+    return option_name;
 }
 } // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
