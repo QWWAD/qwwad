@@ -1,5 +1,5 @@
 /**
- * \file    dispersion_relation.cpp
+ * \file    qwwad_ef_dispersion_relation.cpp
  * \brief   Prints out the dispersion relations for each subband
  * \author  Alex Valavanis  <a.valavanis@leeds.ac.uk>
  * \author  Jonathan Cooper <jdc.tas@gmail.com>

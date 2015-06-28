@@ -25,19 +25,20 @@ noinst_HEADERS = src/ef-helpers.h    \
 		 src/ppff.h          \
 		 src/struct.h 
 
-bin_PROGRAMS =  ado                \
+bin_PROGRAMS =  \
+		qwwad_ef_dispersion    \
+		qwwad_ef_infinite_well \
+		ado                \
 		chargedensity \
 		critical-thickness \
                 csss    \
 		cszb    \
 		densityinput \
-		dispersion_relation \
 		dos     \
 		ebe     \
 		efcwire \
 		efcwwf  \
 	       	effv    \
-		qwwad_ef_infinite_well  \
 		efiwire \
 		efkpsl  \
 	       	efmfv   \
@@ -190,8 +191,8 @@ cszb_SOURCES = src/cszb.c
 densityinput_SOURCES = src/densityinput.cpp
 densityinput_LDADD   = libqwwad.la
 
-dispersion_relation_SOURCES = src/dispersion_relation.cpp
-dispersion_relation_LDADD   = libqwwad.la
+qwwad_ef_dispersion_SOURCES = src/qwwad_ef_dispersion.cpp
+qwwad_ef_dispersion_LDADD   = libqwwad.la
 
 dos_SOURCES  = src/dos.cpp
 dos_LDADD    = libqwwad.la
@@ -329,9 +330,10 @@ wfplot_SOURCES = src/wfplot.cpp
 wfplot_LDADD   = libqwwad.la
 
 # Build rule for installing manual pages
-dist_man1_MANS = man/dispersion_relation.1 \
+dist_man1_MANS = \
+		 man/qwwad_ef_dispersion.1    \
+		 man/qwwad_ef_infinite_well.1 \
 		 man/dos.1                 \
-		 man/qwwad_ef_infinite_well.1                \
 		 man/sbp.1                 \
 		 man/efsqw.1               \
 		 man/wfplot.1              \
@@ -353,14 +355,15 @@ dist_man1_MANS = man/dispersion_relation.1 \
 
 CLEANFILES = $(dist_man1_MANS)
 
-EXTRA_DIST += doc/find_heterostructure.h2m   \
+EXTRA_DIST += \
+	      doc/qwwad_ef_dispersion.h2m    \
+              doc/qwwad_ef_infinite_well.h2m \
+	      doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
 	      doc/efss.h2m                   \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
-              doc/qwwad_ef_infinite_well.h2m                   \
-	      doc/dispersion_relation.h2m    \
 	      doc/dos.h2m                    \
 	      doc/sbp.h2m                    \
 	      doc/efsqw.h2m                  \
@@ -383,9 +386,9 @@ man/qwwad_ef_infinite_well.1: src/qwwad_ef_infinite_well.cpp $(top_srcdir)/confi
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m ./qwwad_ef_infinite_well$(EXEEXT)
 
-man/dispersion_relation.1: src/dispersion_relation.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dispersion_relation.h2m | dispersion_relation$(EXEEXT)
+man/qwwad_ef_dispersion.1: src/qwwad_ef_dispersion.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_dispersion.h2m | qwwad_ef_dispersion$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute the dispersion relation for an energy subband" --include $(top_srcdir)/doc/dispersion_relation.h2m ./dispersion_relation$(EXEEXT)
+	help2man --output=$@ --name="compute the dispersion relation for a set of energy subbands" --include $(top_srcdir)/doc/qwwad_ef_dispersion.h2m ./qwwad_ef_dispersion$(EXEEXT)
 
 man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m | sbp$(EXEEXT)
 	$(MKDIR_P) man

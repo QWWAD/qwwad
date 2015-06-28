@@ -42,7 +42,7 @@ for alpha in 0 0.7 5; do
     qwwad_ef_infinite_well --alpha $alpha
 
     # Find in-plane dispersion
-    dispersion_relation --alpha $alpha
+    qwwad_ef_dispersion --alpha $alpha
 
     # Convert wave-vectors to 1/nm and append to end of data file
     awk '{print $1/1e9, $2}' dr_e1.r >> $outfile
@@ -77,4 +77,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f dr_*.dat v.r alpha.r Ee.* wf_* m_perp.r
+rm -f dr_*.r v.r alpha.r Ee.* wf_* m_perp.r
