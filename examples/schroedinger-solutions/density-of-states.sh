@@ -32,28 +32,22 @@ outfile_2D=density-of-states-2D.dat
 rm -f $outfile_bulk $outfile_2D
 
 # Set fixed parameters
-L=200 # Well-width (angstrom)
-nst=3 # Number of states to find
+export QWWAD_WELLWIDTH=200 # Well-width (angstrom)
+export QWWAD_NST=3 # Number of states to find
 
-# Find first three states in an infinite well
-efiw --width $L --nst $nst
+# Run calculations for parabolic and nonparabolic cases
+for alpha in 0 0.7; do
+    # Find first three states in an infinite well
+    qwwad_ef_infinite_well --alpha $alpha
 
-# Find density of states for bulk and 2D system
-dos
+    # Find density of states for bulk and 2D system
+    qwwad_density_of_states --alpha $alpha
 
-awk '{print $1, $2*(1.6e-19*1e-27)}' rho.r >> $outfile_bulk
-awk '{print $1, $3*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
-
-# Repeat for a nonparabolic well
-alpha=0.7
-efiw --width $L --nst $nst --alpha $alpha
-dos --alpha $alpha
-
-printf "\n" >> $outfile_bulk
-printf "\n" >> $outfile_2D
-
-awk '{print $1, $2*(1.6e-19*1e-27)}' rho.r >> $outfile_bulk
-awk '{print $1, $3*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
+    awk '{print $1, $2*(1.6e-19*1e-27)}' rho.r >> $outfile_bulk
+    awk '{print $1, $3*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
+    printf "\n" >> $outfile_bulk
+    printf "\n" >> $outfile_2D
+done
 
 cat << EOF
 Results have been written to $outfile_bulk and $outfile_2D.

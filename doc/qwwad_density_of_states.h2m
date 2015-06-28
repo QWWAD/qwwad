@@ -13,7 +13,7 @@
 
 [EXAMPLES]
 Compute the density of electron states in system with effective mass = 0.1m0:
-    dos --mass 0.1
+    qwwad_density_of_states --mass 0.1
 
 Compute the density of heavy-hole states with mass = 0.62 m0 and non-parabolicity = 10 eV^{-1}:
-    dos --mass 0.62 --alpha 10
+    qwwad_density_of_states --mass 0.62 --alpha 10

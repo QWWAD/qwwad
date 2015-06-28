@@ -34,7 +34,7 @@ bin_PROGRAMS =  \
                 csss    \
 		cszb    \
 		densityinput \
-		dos     \
+		qwwad_density_of_states     \
 		ebe     \
 		efcwire \
 		efcwwf  \
@@ -194,8 +194,8 @@ densityinput_LDADD   = libqwwad.la
 qwwad_ef_dispersion_SOURCES = src/qwwad_ef_dispersion.cpp
 qwwad_ef_dispersion_LDADD   = libqwwad.la
 
-dos_SOURCES  = src/dos.cpp
-dos_LDADD    = libqwwad.la
+qwwad_density_of_states_SOURCES  = src/qwwad_density_of_states.cpp
+qwwad_density_of_states_LDADD    = libqwwad.la
 
 ebe_SOURCES = src/ebe.c
 
@@ -333,7 +333,7 @@ wfplot_LDADD   = libqwwad.la
 dist_man1_MANS = \
 		 man/qwwad_ef_dispersion.1    \
 		 man/qwwad_ef_infinite_well.1 \
-		 man/dos.1                 \
+		 man/qwwad_density_of_states.1                 \
 		 man/sbp.1                 \
 		 man/efsqw.1               \
 		 man/wfplot.1              \
@@ -364,7 +364,7 @@ EXTRA_DIST += \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
-	      doc/dos.h2m                    \
+	      doc/qwwad_density_of_states.h2m                    \
 	      doc/sbp.h2m                    \
 	      doc/efsqw.h2m                  \
 	      doc/wfplot.h2m                 \
@@ -378,9 +378,9 @@ EXTRA_DIST += \
 	      doc/gde.h2m                    \
 	      doc/qwwad_find_donor_state.h2m 
 
-man/dos.1: src/dos.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/dos.h2m | dos$(EXEEXT) 
+man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/dos.h2m ./dos$(EXEEXT)
+	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/qwwad_density_of_states.h2m ./qwwad_density_of_states$(EXEEXT)
 
 man/qwwad_ef_infinite_well.1: src/qwwad_ef_infinite_well.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m | qwwad_ef_infinite_well$(EXEEXT)
 	$(MKDIR_P) man
