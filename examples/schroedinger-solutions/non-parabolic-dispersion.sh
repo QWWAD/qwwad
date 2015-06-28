@@ -34,33 +34,22 @@ rm -f $outfile
 export QWWAD_MASS=0.067
 export QWWAD_WELLWIDTH=200
 export QWWAD_NST=2  # Number of subbands to find
-export QWWAD_NONPARABOLIC=1 # Switch on non-parabolicity
 
-# Find parabolic solution first
-qwwad_ef_infinite_well
+# Run the calculation using varying degrees of nonparabolicity
+for alpha in 0 0.7 5; do
 
-# Compute the dispersion relation for all states in the system
-dispersion_relation --disp-ext "_0.dat"
-
-# Repeat the calculation using nonparabolicity
-for alpha in 0.7 5; do
+    # Find subband minima
     qwwad_ef_infinite_well --alpha $alpha
 
-    dispersion_relation --disp-ext "_$alpha.dat" --alpha $alpha
-done
+    # Find in-plane dispersion
+    dispersion_relation --alpha $alpha
 
-# Now, glue all our output files together into one convenient data file
-awk '{print $1/1e9, $2}' dr_e1_0.dat >> $outfile
-printf "\n" >> $outfile
-awk '{print $1/1e9, $2}' dr_e2_0.dat >> $outfile
-printf "\n" >> $outfile
-awk '{print $1/1e9, $2}' dr_e1_0.7.dat >> $outfile
-printf "\n" >> $outfile
-awk '{print $1/1e9, $2}' dr_e2_0.7.dat >> $outfile
-printf "\n" >> $outfile
-awk '{print $1/1e9, $2}' dr_e1_5.dat >> $outfile
-printf "\n" >> $outfile
-awk '{print $1/1e9, $2}' dr_e2_5.dat >> $outfile
+    # Convert wave-vectors to 1/nm and append to end of data file
+    awk '{print $1/1e9, $2}' dr_e1.r >> $outfile
+    printf "\n" >> $outfile
+    awk '{print $1/1e9, $2}' dr_e2.r >> $outfile
+    printf "\n" >> $outfile
+done
 
 cat << EOF
 Results have been written to $outfile in the format:

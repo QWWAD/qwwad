@@ -29,7 +29,6 @@ WfOptions configure_options(int argc, char* argv[])
     opt.add_option<size_t>     ("nk",             100,        "Number of k-space points to print out");
     opt.add_option<std::string>("disp-prefix",    "dr_e",     "Filename prefix to which dispersion curves will be written");
     opt.add_option<std::string>("disp-ext",       ".r",       "Filename extension to which dispersion curves will be written");
-    opt.add_option<bool>       ("nonparabolic",               "Use non-parabolic dispersion relation.");
     opt.add_option<bool>       ("relative",                   "Output dispersion relative to subband minima. If not specified, "
                                                               "the dispersion is given relative to the band edge.");
     opt.add_option<double>     ("mass",           0.067,      "In-plane effective mass (relative to free electron).");
@@ -49,18 +48,12 @@ int main (int argc, char* argv[])
     const auto nkbt = opt.get_option<double>("nkbt");
     const auto Te   = opt.get_option<double>("Te");
 
-    const auto subbands = opt.get_option<bool>("nonparabolic") ?
-                             Subband::read_from_file(opt.get_energy_input_path(),
-                                                     opt.get_wf_input_prefix(),
-                                                     opt.get_wf_input_ext(),
-                                                     opt.get_option<double>("mass") * me,
-                                                     opt.get_option<double>("alpha") / e,
-                                                     opt.get_option<double>("vcb") * e)
-                             :
-                             Subband::read_from_file(opt.get_energy_input_path(),
-                                                     opt.get_wf_input_prefix(),
-                                                     opt.get_wf_input_ext(),
-                                                     opt.get_option<double>("mass") * me);
+    const auto subbands = Subband::read_from_file(opt.get_energy_input_path(),
+                                                  opt.get_wf_input_prefix(),
+                                                  opt.get_wf_input_ext(),
+                                                  opt.get_option<double>("mass") * me,
+                                                  opt.get_option<double>("alpha") / e,
+                                                  opt.get_option<double>("vcb") * e);
 
     // Loop over subbands
     unsigned int ist = 1;
