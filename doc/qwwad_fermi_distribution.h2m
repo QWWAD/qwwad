@@ -21,7 +21,7 @@ subbands are assumed to be in thermal equilibrium with a single Fermi energy for
 
 [EXAMPLES]
 Compute the global Fermi energy for a system with total population 10e10 cm^{-2} and carrier temperature 20 K:
-   sbp --global-population 10 --Te 20
+   qwwad_fermi_distribution --global-population 10 --Te 20
 
 Compute the quasi-Fermi energies and carrier distributions using non-parabolic mass (alpha = 0.7 eV^{-1}):
-   sbp --fd --alpha 0.7
+   qwwad_fermi_distribution --fd --alpha 0.7

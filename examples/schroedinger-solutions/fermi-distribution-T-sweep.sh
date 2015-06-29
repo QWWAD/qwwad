@@ -34,8 +34,11 @@ set -e
 # parameter 1: The nonparabolicty [1/eV]
 solve_for_alpha()
 {
+    # Solve single quantum well
+    qwwad_ef_infinite_well --alpha $1
+
     # Calculate Fermi energies and population distributions
-    sbp --fd --Te $T --alpha $1
+    qwwad_fermi_distribution --fd --Te $T --alpha $1
     mv FD1.r FD1T=$T-np-alpha$1.r
     mv FD2.r FD2T=$T-np-alpha$1.r
     mv FD3.r FD3T=$T-np-alpha$1.r
@@ -54,17 +57,17 @@ outfile_T=fermi-distribution-T-sweep.dat
 outfile_np=fermi-energy-T-sweep.dat
 rm -f Ef?-T*.r N.r FD*.r $outfile_np $outfile_T
 
-lw=200 # Well width
-nst=3  # Number of states
-
-# Solve single quantum well
-efiw --width $lw --nst $nst
+# set fixed parameters
+export QWWAD_WELLWIDTH=200 # Well width
+export QWWAD_NST=3  # Number of states
 
 # Generate table of populations
-N="1e14"
-for i in `seq 1 $nst`; do
-    echo $i $N >> N.r
-done
+N=1e14
+cat > N.r << EOF
+1 $N
+2 $N
+3 $N
+EOF
 
 # Loop for different temperatures
 for T in 2 20 40 60 77 100 140 180 220 260 300

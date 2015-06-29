@@ -1,5 +1,5 @@
 /**
- * \file  sbp.cpp
+ * \file  qwwad_fermi_distribution.cpp
  * \brief Calculate subband populations
  *
  * \details This program generates the Fermi-Dirac distribution function
@@ -17,13 +17,13 @@
  */
 
 #include <iostream>
+#include <sstream>
 #include <cstdio>
 #include <cstdlib>
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
 #include "qwwad/fermi.h"
 #include "qwwad/file-io.h"
-#include "qwwad/file-io-deprecated.h"
 #include "qwwad/options.h"
 
 using namespace QWWAD;
@@ -90,18 +90,25 @@ int main(int argc,char *argv[])
     const auto T       = opt.get_option<double>("Te");
     const auto nE      = opt.get_option<size_t>("nenergy");
 
-    const auto E = read_E(p); // Reads subband energy file [J]
-    const auto n = E.size();
+    // Read energies from file
+    std::ostringstream Efile;
+    Efile << "E" << p << ".r";
+    std::valarray<unsigned int> idx;
+    std::valarray<double> E;
+    read_table(Efile.str().c_str(), idx, E);
+    E*=e/1000; // Rescale to J
 
-    std::valarray<double> Ef(n); // Fermi energies for each subband [J]
-    std::valarray<double> N(n); // Population of each subband [m^{-3}]
+    const auto nst = E.size();
+
+    std::valarray<double> Ef(nst); // Fermi energies for each subband [J]
+    std::valarray<double> N(nst); // Population of each subband [m^{-2}]
 
     if(opt.equilibrium())
     {
         const auto N_total   = opt.get_global_pop();
         const auto Ef_global = find_fermi_global(E, m, N_total, T, alpha, V);
 
-        for(unsigned int i=0; i<n; ++i)
+        for(unsigned int i=0; i<nst; ++i)
         {
             Ef[i] = Ef_global;
             N[i]  = find_pop(E[i], Ef[i], m, T, alpha, V);
@@ -113,14 +120,20 @@ int main(int argc,char *argv[])
     else
     {
         // reads subband populations file
-        std::valarray<double> N(n);
-        read_table("N.r", N);
+        std::valarray<double> N;
+        read_table("N.r", idx, N);
 
-        for(unsigned int i=0; i<n; ++i) // i=0 => ground state
+        if(N.size() != nst)
+        {
+            std::cerr << "Populations file, N.r contains data for " << N.size() << " states but " << Efile.str() << " has " << nst << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        for(unsigned int i=0; i<nst; ++i) // i=0 => ground state
             Ef[i] = find_fermi(E[i],m,N[i],T,alpha,V);
     }
 
-    for(unsigned int i=0; i<n; ++i)
+    for(unsigned int i=0; i<nst; ++i)
     {
         if(FD_flag)
         {

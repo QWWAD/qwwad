@@ -67,7 +67,7 @@ bin_PROGRAMS =  \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
-	       	sbp     \
+	       	qwwad_fermi_distribution     \
 		sfr     \
 		slk     \
 		specheat \
@@ -293,8 +293,8 @@ rlv_sc_SOURCES = src/rlv-sc.c
 
 rlv_ss_SOURCES = src/rlv-ss.c
 
-sbp_SOURCES  = src/sbp.cpp
-sbp_LDADD    = libqwwad.la
+qwwad_fermi_distribution_SOURCES  = src/qwwad_fermi_distribution.cpp
+qwwad_fermi_distribution_LDADD    = libqwwad.la
 
 sfr_SOURCES  = src/sfr.c
 
@@ -334,7 +334,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_dispersion.1    \
 		 man/qwwad_ef_infinite_well.1 \
 		 man/qwwad_density_of_states.1                 \
-		 man/sbp.1                 \
+		 man/qwwad_fermi_distribution.1                 \
 		 man/efsqw.1               \
 		 man/wfplot.1              \
 		 man/efkpsl.1              \
@@ -365,7 +365,7 @@ EXTRA_DIST += \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
 	      doc/qwwad_density_of_states.h2m                    \
-	      doc/sbp.h2m                    \
+	      doc/qwwad_fermi_distribution.h2m                    \
 	      doc/efsqw.h2m                  \
 	      doc/wfplot.h2m                 \
 	      doc/efkpsl.h2m                 \
@@ -390,9 +390,9 @@ man/qwwad_ef_dispersion.1: src/qwwad_ef_dispersion.cpp $(top_srcdir)/configure.a
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute the dispersion relation for a set of energy subbands" --include $(top_srcdir)/doc/qwwad_ef_dispersion.h2m ./qwwad_ef_dispersion$(EXEEXT)
 
-man/sbp.1: src/sbp.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/sbp.h2m | sbp$(EXEEXT)
+man/qwwad_fermi_distribution.1: src/qwwad_fermi_distribution.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_fermi_distribution.h2m | qwwad_fermi_distribution$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/sbp.h2m ./sbp$(EXEEXT)
+	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/qwwad_fermi_distribution.h2m ./qwwad_fermi_distribution$(EXEEXT)
 
 man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2m | efsqw$(EXEEXT)
 	$(MKDIR_P) man

@@ -180,7 +180,7 @@ double find_fermi(const double Esb,
     // Use the analytical form if possible
     if(gsl_fcmp(alpha, 0.0, 1.0e-6) == 0)
     {
-        // Eq. 2.75, QWWAD4
+        // Eq. 2.85, QWWAD4
         E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
     }
     else
