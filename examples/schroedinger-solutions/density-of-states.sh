@@ -37,15 +37,16 @@ export QWWAD_NST=3 # Number of states to find
 
 # Run calculations for parabolic and nonparabolic cases
 for alpha in 0 0.7; do
-    # Find first three states in an infinite well
-    qwwad_ef_infinite_well --alpha $alpha
 
-    # Find density of states for bulk and 2D system
-    qwwad_density_of_states --alpha $alpha
-
+    # Find density of states for bulk system
+    qwwad_density_of_states --alpha $alpha --ndim 3
     awk '{print $1, $2*(1.6e-19*1e-27)}' rho.r >> $outfile_bulk
-    awk '{print $1, $3*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
     printf "\n" >> $outfile_bulk
+
+    # Find density of states for 2D system
+    qwwad_ef_infinite_well  --alpha $alpha
+    qwwad_density_of_states --alpha $alpha --ndim 2
+    awk '{print $1, $2*(1.6e-19*1e-18)}' rho.r >> $outfile_2D
     printf "\n" >> $outfile_2D
 done
 

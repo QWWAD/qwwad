@@ -1,19 +1,18 @@
 [FILES]
 .SS Input files:
-   'E*.r'   Energies of subband minima:
+   'E*.r'   Energies of subband minima (only needed for 2D or 1D systems):
             Column 1: state index.
             Column 2: energy [meV].
 
 .SS Output files:
    'rho.r'  Density of states:
             Column 1: energy [meV]
-            Column 2: 3D d.o.s. [J^{-1}m^{-3}]
-            Column 3: 2D d.o.s. [J^{-1}m^{-2}]
-            Column 4: 1D d.o.s. [J^{-1}m^{-1}]
+            Column 2: d.o.s. [J^{-1}m^{-n}]
+            Note that the unit for d.o.s. depends on the number of dimensions 'n'.
 
 [EXAMPLES]
-Compute the density of electron states in system with effective mass = 0.1m0:
-    qwwad_density_of_states --mass 0.1
+Compute the density of electron states in a bulk system with effective mass = 0.1m0:
+    qwwad_density_of_states --mass 0.1 --ndim 3
 
-Compute the density of heavy-hole states with mass = 0.62 m0 and non-parabolicity = 10 eV^{-1}:
-    qwwad_density_of_states --mass 0.62 --alpha 10
+Compute the density of heavy-hole states in a 2D system with mass = 0.62 m0 and non-parabolicity = 10 eV^{-1}:
+    qwwad_density_of_states --mass 0.62 --alpha 10 --ndim 2
