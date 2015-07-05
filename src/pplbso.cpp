@@ -28,14 +28,14 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+#include "qwwad/options.h"
 
 #include "ppff.h"	/* the PseudoPotential Form Factors	*/
 #include "pplb-functions.h"
 #include "ppsop.h"	/* the Spin-Orbit Parameters		*/
 
 std::complex<double>
-Vso(const double  A0,
-    const atom   *atoms,
+Vso(const atom   *atoms,
     const std::vector<arma::vec> &G,
     const size_t  n_atoms,
     const arma::vec  &k,
@@ -43,44 +43,30 @@ Vso(const double  A0,
     const unsigned int j,
     const size_t       N);
 
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+
+    std::string doc("Large-basis pseudopotential calculation for user-defined cell");
+
+    opt.add_option<double>("latticeconst,A", 5.65, "Lattice constant [angstrom]");
+    opt.add_option<size_t>("nmin,n",            4, "Lowest output band index (VB = 4, CB = 5)");
+    opt.add_option<size_t>("nmax,m",            5, "Highest output band index (VB = 4, CB = 5)");
+    opt.add_option<bool>  ("printev,w",            "Print eigenvectors to file");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
 int main(int argc,char *argv[])
 {
-/* default values	*/
+    const auto opt = configure_options(argc, argv);
 
-double A0=5.65e-10; // Lattice constant
-bool   ev=false; // flag, if set output eigenvalues
-int n_min=0; // lowest output band
-int n_max=-1; // highest output band
-
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'A':
-	   A0=atof(argv[2])*1e-10;
-           break;
-  case 'n':
-           n_min=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'm':
-           n_max=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'w':
-           ev=true;
-	   argv--;
-	   argc++;
-           break;
-  default :
-	   printf("Usage:  pplbso [-A lattice constant (\033[1m5.65\033[0mA)]\n");
-	   printf("               [-n # lowest band \033[1m1\033[0m][-m highest band \033[1m4\033[0m], output states\n");
-	   printf("               [-w output eigenvectors (wavefunctions) in range n->m]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
+    const auto A0    = opt.get_option<double>("latticeconst") * 1e-10; // Lattice constant [m]
+    const auto n_min = opt.get_option<size_t>("nmin")-1;               // Lowest output band
+    const auto n_max = opt.get_option<size_t>("nmax")-1;               // Highest output band
+    const auto ev    = opt.get_option<bool>  ("printev");              // Print eigenvectors?
 
 // Read desired wave vector points from file
 std::valarray<double> kx;
@@ -154,7 +140,7 @@ for(unsigned int i=0;i<N;i++) // index down rows within Block 1 and 2 of matrix
      {
          for(unsigned int j=0;j<=i;j++)	
          {
-             H_GG(i,j) += Vso(A0,atoms,G,n_atoms,k[ik],i,j,N);
+             H_GG(i,j) += Vso(atoms,G,n_atoms,k[ik],i,j,N);
          }
      }
 
@@ -188,7 +174,6 @@ return EXIT_SUCCESS;
 /**
  * \brief Spin-orbit component of H_GG
  *
- * \param[in] A0      lattice constant
  * \param[in] atoms   atomic definitions
  * \param[in] G	      reciprocal lattice vectors
  * \param[in] n_atoms number of atoms in structure
@@ -198,8 +183,7 @@ return EXIT_SUCCESS;
  * \param[in] N       number of reciprocal lattice vectors
  */
 std::complex<double>
-Vso(const double  A0,
-    const atom   *atoms,
+Vso(const atom   *atoms,
     const std::vector<arma::vec> &G,
     const size_t  n_atoms,
     arma::vec const &k,
@@ -209,7 +193,6 @@ Vso(const double  A0,
 {
     std::complex<double> vso = 0; // intermediate value of spin-orbit interaction
     arma::vec q;	/* a reciprocal lattice vector, G'-G 		*/
- vector t;      /* general vector representing atom within cell	*/
 
  vso = 0;
 
@@ -252,6 +235,6 @@ Vso(const double  A0,
  v *= vso;
  v/=(double)(n_atoms);
 
- return(v);
+ return v;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
