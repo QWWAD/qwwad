@@ -51,19 +51,8 @@
 #include "qwwad/linear-algebra.h"
 #include "qwwad/options.h"
 
+#include "pplb-functions.h"
 #include "ppff.h"
-
-std::complex<double> V(double     A0,
-                       double     m_per_au,
-                       atom      *atoms,
-                       size_t     n_atoms,
-                       arma::vec &q);
-void
-write_ank(arma::cx_mat &ank,
-          int           ik,
-          int           N,
-          int           n_min,
-          int           n_max);
 
 Options configure_options(int argc, char* argv[])
 {
@@ -112,32 +101,26 @@ int main(int argc,char *argv[])
     std::string filename("atoms.xyz");
     atom *atoms = read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
 
-    std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
-    size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
+    const auto G = read_rlv(A0); // read in reciprocal lattice vectors
+    const auto N = G.size(); // number of reciprocal lattice vectors
 
-    // components of H_G'G (see notes)
-    arma::cx_mat H_GG(N,N);
+    const auto m_per_au = 4.0*pi*eps0*hBar*hBar/(e*e*me); // Unit conversion factor, m/a.u
 
-    // potential energy of H_GG, diagonal elements
-    std::valarray< std::complex<double> > V_GG(N);
+    // Compute crystal potential matrix. Note that this is independent of wave-vector
+    // so we only need to do this once.
+    arma::cx_mat V_GG(N,N);
 
-    double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Unit conversion factor, m/a.u
     for(unsigned int i=0;i<N;i++)        /* index down rows */
     {
         // Fill in the upper triangle of the matrix
-        for(unsigned int j=i;j<N;j++)       /* index across cols, creates off diagonal elements */
+        for(unsigned int j=i;j<N;j++)
         {
-            arma::vec q = G[i] - G[j];
-            H_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
-        }
+            const auto q = G[i] - G[j];
+            V_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
 
-        // Fill in the lower triangle by taking the Hermitian transpose of the elements
-        for(unsigned int j=0;j<i;++j)
-        {
-            H_GG(i,j) = conj(H_GG(j,i));
+            // Fill in the lower triangle by taking the Hermitian transpose of the elements
+            V_GG(j,i) = conj(V_GG(i,j));
         }
-
-        V_GG[i] = H_GG(i,i); // Record potentials from diagonal
     }
 
     /* Add diagonal elements to matrix H_GG' */
@@ -147,13 +130,17 @@ int main(int argc,char *argv[])
             std::cout << "Calculating energy at k = " << std::endl
                 << k[ik] << " (" << ik + 1 << "/" << nk << ")" << std::endl;
 
-        for(unsigned int i=0;i<N;i++)        /* add kinetic energy to diagonal elements */
+        // Construct the complete Hamiltonian matrix now, using crystal potential and
+        // kinetic energy on the diagonals
+        auto H_GG = V_GG;
+
+        for(unsigned int i=0;i<N;i++)
         {
-            // kinetic energy component of H_GG [QWWAD3, 15.91]
+            // kinetic energy component of H_GG [QWWAD3, 15.77]
             arma::vec G_plus_k = G[i] + k[ik];
             const double G_plus_k_sq = dot(G_plus_k, G_plus_k);
             std::complex<double> T_GG=hBar*hBar/(2*me) * G_plus_k_sq;
-            H_GG(i,i) = T_GG + V_GG[i];
+            H_GG(i,i) += T_GG;
         }
 
         // Find the eigenvalues & eigenvectors of the Hamiltonian matrix
@@ -183,65 +170,4 @@ int main(int argc,char *argv[])
     return EXIT_SUCCESS;
 }/* end main */
 
-
-/**
- * \param A0	   Lattice constant
- * \param m_per_au conversion factor from SI to a.u.
- * \param atoms    atomic definitions
- * \param n_atoms  number of atoms in structure
- * \param q        a reciprocal lattice vector, G'-G
- */
-std::complex<double> V(double     A0,
-                       double     m_per_au,
-                       atom      *atoms,
-                       size_t     n_atoms,
-                       arma::vec &q)
-{
-    std::complex<double> v = 0.0;     /* potential					*/
-    const double q_dot_q = dot(q,q);
-
-    // Loop over all atoms in the set and add contribution from each
-    for(unsigned int ia=0; ia<n_atoms; ++ia)
-    {
-        const double q_dot_t = dot(q, atoms[ia].r);
-        const double vf = Vf(A0,m_per_au,q_dot_q,atoms[ia].type);
-        v += exp(std::complex<double>(0.0,-q_dot_t)) * vf; // [QWWAD3, 15.92]
-    }
-
-    v *= 2.0/n_atoms;
-
-    return v;
-}
-
-/** This function writes the eigenvectors (a_nk(G)) to the files ank.r
- * \param double	ank
- * \param ik            k point identifier
- * \param N
- * \param n_min         lowest output band
- * \param n_max         highest output band
- */
-void
-write_ank(arma::cx_mat &ank,
-          int           ik,
-          int           N,
-          int           n_min,
-          int           n_max)
-{
-    int	iG;		/* index over G vectors				*/
-    int	in;		/* index over bands				*/
-    char	filename[9];	/* eigenfunction output filename		*/
-    FILE 	*Fank;		/* file pointer to eigenvectors file		*/
-
-    sprintf(filename,"ank%i.r",ik);
-    Fank=fopen(filename,"w");
-
-    for(iG=0;iG<N;iG++)
-    {
-        for(in=n_min;in<=n_max;in++)
-            fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank(iG,in).imag());
-        fprintf(Fank,"\n");
-    }
-
-    fclose(Fank);
-}
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

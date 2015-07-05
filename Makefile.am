@@ -61,6 +61,7 @@ bin_PROGRAMS =  \
 		ppcd    \
 		ppee    \
 		pplb    \
+		pplbso  \
 		ppsg    \
 		pth     \
 		qwwad_find_donor_state \
@@ -110,6 +111,8 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim_poisson_solver.h   \
 			   src/material_library.cpp       \
 			   src/material_library.h         \
+			   src/pplb-functions.cpp \
+			   src/pplb-functions.h \
 			   src/qwwad/constants.h      \
 			   src/qwwad-debye.cpp \
 			   src/qwwad-debye.h   \
@@ -272,14 +275,14 @@ pplb_LDADD    = libqwwad.la
 
 ppsg_SOURCES = src/ppsg.c
 
-#ppsl_SOURCES = src/ppsl.c
-#ppsl_CFLAGS = $(GSL_CFLAGS)
-#ppsl_LDADD  = $(GSL_LIBS)
+#ppsl_SOURCES = src/ppsl.cpp
+#ppsl_LDADD   = libqwwad.la
 
-# ppvfq_SOURCES = src/ppvfq.c src/ppff.h
-# ppvfq_LDADD   = libqwwad.la
+#ppvfq_SOURCES = src/ppvfq.cpp src/ppff.h
+#ppvfq_LDADD   = libqwwad.la
 
-# pplbso_SOURCES = src/pplbso.c src/ppsop.h
+pplbso_SOURCES = src/pplbso.cpp src/ppsop.h
+pplbso_LDADD   = libqwwad.la
 
 pth_SOURCES = src/pth.cpp
 pth_LDADD   = libqwwad.la
@@ -618,6 +621,11 @@ exsrdata_DATA = $(exsrsrcdir)/index           \
 		$(exsrsrcdir)/ac-E-em-ab.sh \
 		$(exsrsrcdir)/ac-Ek.sh      \
 		$(exsrsrcdir)/ac-T.sh 
+
+exeppdatadir = $(exdatadir)/empirical-pseudopotential
+exeppsrcdir  = examples/empirical-pseudopotential
+
+#exeppdata_DATA = $(exeppsrcdir)/
 
 expphetdatadir = $(exdatadir)/pseudopotential-het
 expphetsrcdir  = examples/pseudopotential-het

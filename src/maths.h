@@ -7,6 +7,7 @@
 
 #if __cplusplus
 # include <complex>
+# include <valarray>
 #else
 # include <complex.h>
 #endif

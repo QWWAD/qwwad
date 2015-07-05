@@ -34,13 +34,13 @@
 
 								*/
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <complex>
 #include "struct.h"
 #include "maths.h"
-#include "qclsim-constants.h"
+#include "qwwad/constants.h"
 
 #include "ppff.h"
 
