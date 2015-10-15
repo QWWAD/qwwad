@@ -46,7 +46,7 @@ output_E_if_real()
 }
 
 # Set fixed parameters
-nst=3 # Number of states to find
+export QWWAD_NST=3 # Number of states to find
 
 # Loop for different well widths
 for i in `seq 1 0.05 2.3`
@@ -56,10 +56,10 @@ do
  LW=`echo $i | awk '{print 10^$1}'`
 
  # Calculate energy levels
- efsqw --well-width $LW --nst $nst
+ qwwad_ef_square_well --wellwidth $LW
 
  # Output energies to file
- for state in `seq 1 $nst`; do
+ for state in `seq 1 $QWWAD_NST`; do
 	 output_E_if_real $state
  done
 done
