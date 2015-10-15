@@ -36,6 +36,12 @@ AC_PROG_CC
 AC_PROG_F77
 AM_PROG_CC_C_O
 AC_PROG_CXX
+AC_CHECK_PROG([HELP2MAN], [help2man], [help2man], [no])
+
+if [[ "x$HELP2MAN" = "xno" ]]; then
+        AC_MSG_ERROR([help2man utility not found.  Please install and try again])
+fi
+
 AX_CXX_COMPILE_STDCXX_11([],[mandatory])
 
 dnl Enable some compiler flags by default
