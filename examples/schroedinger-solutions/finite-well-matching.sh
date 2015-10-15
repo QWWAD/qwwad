@@ -29,7 +29,7 @@ set -e
 outfile=finite-well-matching.dat
 rm -f $outfile
 
-efsqw --well-width 200 --potential 100 --output-equations
+qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --outputequations
 
 cat lhs.r   >> $outfile
 printf "\n" >> $outfile

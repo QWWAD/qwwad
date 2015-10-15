@@ -29,6 +29,7 @@ noinst_HEADERS = src/ef-helpers.h    \
 bin_PROGRAMS =  \
 		qwwad_ef_dispersion    \
 		qwwad_ef_infinite_well \
+		qwwad_ef_square_well   \
 		ado                \
 		chargedensity \
 		critical-thickness \
@@ -46,7 +47,6 @@ bin_PROGRAMS =  \
 		efpqw   \
 		efsdot  \
 		efsdwf  \
-		efsqw   \
 		efss    \
 	       	efsx    \
 		efxv    \
@@ -232,8 +232,8 @@ efsdwf_SOURCES = src/efsdwf.c
 efss_SOURCES = src/efss.cpp
 efss_LDADD   = libqwwad.la
 
-efsqw_SOURCES = src/efsqw.cpp
-efsqw_LDADD   = libqwwad.la
+qwwad_ef_square_well_SOURCES = src/qwwad_ef_square_well.cpp
+qwwad_ef_square_well_LDADD   = libqwwad.la
 
 efsx_SOURCES = src/efsx.c
 
@@ -336,11 +336,11 @@ wfplot_LDADD   = libqwwad.la
 
 # Build rule for installing manual pages
 dist_man1_MANS = \
-		 man/qwwad_ef_dispersion.1    \
-		 man/qwwad_ef_infinite_well.1 \
-		 man/qwwad_density_of_states.1                 \
-		 man/qwwad_fermi_distribution.1                 \
-		 man/efsqw.1               \
+		 man/qwwad_density_of_states.1  \
+		 man/qwwad_ef_dispersion.1      \
+		 man/qwwad_ef_infinite_well.1   \
+		 man/qwwad_ef_square_well.1     \
+		 man/qwwad_fermi_distribution.1 \
 		 man/wfplot.1              \
 		 man/efkpsl.1              \
 		 man/tsb.1                 \
@@ -361,17 +361,17 @@ dist_man1_MANS = \
 CLEANFILES = $(dist_man1_MANS)
 
 EXTRA_DIST += \
-	      doc/qwwad_ef_dispersion.h2m    \
-              doc/qwwad_ef_infinite_well.h2m \
+	      doc/qwwad_density_of_states.h2m  \
+	      doc/qwwad_ef_dispersion.h2m      \
+              doc/qwwad_ef_infinite_well.h2m   \
+	      doc/qwwad_ef_square_well.h2m     \
+	      doc/qwwad_fermi_distribution.h2m \
 	      doc/find_heterostructure.h2m   \
 	      doc/efxv.h2m                   \
 	      doc/efss.h2m                   \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
-	      doc/qwwad_density_of_states.h2m                    \
-	      doc/qwwad_fermi_distribution.h2m                    \
-	      doc/efsqw.h2m                  \
 	      doc/wfplot.h2m                 \
 	      doc/efkpsl.h2m                 \
 	      doc/tsb.h2m                    \
@@ -399,9 +399,9 @@ man/qwwad_fermi_distribution.1: src/qwwad_fermi_distribution.cpp $(top_srcdir)/c
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/qwwad_fermi_distribution.h2m ./qwwad_fermi_distribution$(EXEEXT)
 
-man/efsqw.1: src/efsqw.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efsqw.h2m | efsqw$(EXEEXT)
+man/qwwad_ef_square_well.1: src/qwwad_ef_square_well.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_square_well.h2m | qwwad_ef_square_well$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/efsqw.h2m ./efsqw$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/qwwad_ef_square_well.h2m ./qwwad_ef_square_well$(EXEEXT)
 
 man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot.h2m | wfplot$(EXEEXT)
 	$(MKDIR_P) man

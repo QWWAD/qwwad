@@ -6,13 +6,13 @@
   'wf_*i.r' Wave function amplitude at each position
             Column 1: position [m].
             Column 2: wave function amplitude [m^{-1/2}].
-  'v.r'     Potential profile (if --output-potential flag is used)
+  'v.r'     Potential profile (if --outputpotential flag is used)
             Column 1: position [m].
             Column 2: potential [J].
-  'lhs.r'   Left-hand side of matching function (if --output-equations flag is used)
+  'lhs.r'   Left-hand side of matching function (if --outputequations flag is used)
             Column 1: Normalised well wave-vector
             Column 2: Normalised barrier decay constant
-  'rhs_i.r' Right-hand side of matching function for branch i (if --output-equations flag is used)
+  'rhs_i.r' Right-hand side of matching function for branch i (if --outputequations flag is used)
             Column 1: Normalised well wave-vector
             Column 2: Normalised barrier decay constant
 
@@ -20,10 +20,10 @@ In each case, the '*' is replaced by the particle ID and the 'i' is replaced by 
 
 [EXAMPLES]
 Compute the first three states in a 150-angstrom well with 100 meV confining potential:
-   efsqw --well-width 150 --potential 100 --nst 3
+   qwwad_ef_square_well --wellwidth 150 --barrierpotential 100 --nst 3
 
 Compute the first three heavy-hole states in a 200-angstrom well, using effective mass = 0.62 m0:
-   efsqw --well-width 200 --well-mass 0.62 --particle h
+   qwwad_ef_square_well --wellwidth 200 --wellmass 0.62 --particle h
 
 Compute the ground state in a 200 angstrom well with 100 meV barriers, and dump plots of the matching equations to file:
-   efsqw --well-width 200 --potential 100 --output-equations"
+   qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --outputequations"
