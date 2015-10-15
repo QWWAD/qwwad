@@ -32,10 +32,10 @@ They are automatically scaled such that they fit neatly on the plot.
 
 [EXAMPLES]
 Generate plottable data for all states in the input files:
-   wfplot
+   qwwad_ef_plot
 
 Generate plottable data, using wavefunctions instead of probability densities:
-   wfplot --plot-wf
+   qwwad_ef_plot --style wf
 
 Generate plottable data, using only the first three states in the input files:
-   wfplot --nst-max 3
+   qwwad_ef_plot --nstmax 3

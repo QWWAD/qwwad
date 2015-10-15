@@ -8,9 +8,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -30,10 +30,10 @@ set -e
 outfile=finite-well-wf.dat
 
 # Find wave functions
-efsqw --well-width 200 --potential 100 --nst 3 --output-potential
+qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --nst 3 --outputpotential
 
 # Generate plot file
-wfplot --plot-wf --plot-file $outfile
+qwwad_ef_plot --style wf --plotfile $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:

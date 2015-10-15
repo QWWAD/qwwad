@@ -29,6 +29,7 @@ noinst_HEADERS = src/ef-helpers.h    \
 bin_PROGRAMS =  \
 		qwwad_ef_dispersion    \
 		qwwad_ef_infinite_well \
+		qwwad_ef_plot          \
 		qwwad_ef_square_well   \
 		ado                \
 		chargedensity \
@@ -75,8 +76,7 @@ bin_PROGRAMS =  \
 		thermal1d \
 		thermalrc \
 	       	tdb     \
-	       	tsb     \
-		wfplot
+	       	tsb
 
 #		ppcd    \
 #		ppee    \
@@ -331,8 +331,8 @@ thermalrc_LDADD   = libqwwad.la
 tsb_SOURCES  = src/tsb.cpp
 tsb_LDADD    = libqwwad.la
 
-wfplot_SOURCES = src/wfplot.cpp
-wfplot_LDADD   = libqwwad.la
+qwwad_ef_plot_SOURCES = src/qwwad_ef_plot.cpp
+qwwad_ef_plot_LDADD   = libqwwad.la
 
 # Build rule for installing manual pages
 dist_man1_MANS = \
@@ -341,7 +341,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_infinite_well.1   \
 		 man/qwwad_ef_square_well.1     \
 		 man/qwwad_fermi_distribution.1 \
-		 man/wfplot.1              \
+		 man/qwwad_ef_plot.1              \
 		 man/efkpsl.1              \
 		 man/tsb.1                 \
 		 man/tdb.1                 \
@@ -372,7 +372,7 @@ EXTRA_DIST += \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
-	      doc/wfplot.h2m                 \
+	      doc/qwwad_ef_plot.h2m                 \
 	      doc/efkpsl.h2m                 \
 	      doc/tsb.h2m                    \
 	      doc/tdb.h2m                    \
@@ -403,9 +403,9 @@ man/qwwad_ef_square_well.1: src/qwwad_ef_square_well.cpp $(top_srcdir)/configure
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/qwwad_ef_square_well.h2m ./qwwad_ef_square_well$(EXEEXT)
 
-man/wfplot.1: src/wfplot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/wfplot.h2m | wfplot$(EXEEXT)
+man/qwwad_ef_plot.1: src/qwwad_ef_plot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_plot.h2m | qwwad_ef_plot$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/wfplot.h2m ./wfplot$(EXEEXT)
+	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/qwwad_ef_plot.h2m ./qwwad_ef_plot$(EXEEXT)
 
 man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efkpsl.h2m | efkpsl$(EXEEXT)
 	$(MKDIR_P) man

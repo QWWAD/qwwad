@@ -1,5 +1,5 @@
 /**
- * \file   wfplot.cpp
+ * \file   qwwad_ef_plot.cpp
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \brief  Generates a plot file for wavefunction data
  */
@@ -31,9 +31,9 @@ WfOptions configure_options(int argc, char* argv[])
 
     std::string summary("Translate wavefunction data into a prettier plottable form.");
 
-    opt.add_option<std::string>("plot-file", "vwf.r", "Name of file to which plottable data will be written.");
-    opt.add_option<size_t>     ("nst-max",   10,      "Maximum number of states to plot.");
-    opt.add_option<bool>       ("plot-wf",            "Plot wavefunctions rather than probability density.");
+    opt.add_option<std::string>("plotfile", "vwf.r", "Name of file to which plottable data will be written.");
+    opt.add_option<size_t>     ("nstmax",   10,      "Maximum number of states to plot.");
+    opt.add_option<std::string>("style",    "PD"     "Style of plot: 'pd' = probability density, 'wf' = wave functions.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -78,7 +78,7 @@ static void output_plot(const WfOptions               &opt,
     const auto dz    = z[1] - z[0];
     const auto scale = scaling_factor(states, V);
     const auto nz    = V.size();
-    const auto plot_file = opt.get_option<std::string>("plot-file");
+    const auto plot_file = opt.get_option<std::string>("plotfile");
 
     // Open plot file
     FILE* plot_stream = fopen(plot_file.c_str(), "w");
@@ -95,8 +95,8 @@ static void output_plot(const WfOptions               &opt,
 
     unsigned int nst_plotted=0; // Counter to limit number of plotted states
 
-    const auto nst_max = opt.get_option<size_t>("nst-max");
-    const auto plot_wf = opt.get_option<bool>  ("plot-wf");
+    const auto nst_max = opt.get_option<size_t>     ("nstmax");
+    const auto style   = opt.get_option<std::string>("style");
 
     // Output the probability densities
     for(const auto st : states)
@@ -121,7 +121,7 @@ static void output_plot(const WfOptions               &opt,
                 {
                     const auto E = st.get_energy();
 
-                    if (plot_wf)
+                    if (style == "wf")
                     {
                         double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size() * 2);
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
