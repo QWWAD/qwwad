@@ -22,8 +22,9 @@ dist_pkgdata_DATA = src/material-library.xml
 
 noinst_HEADERS = src/ef-helpers.h    \
 		 src/maths.h         \
-		 src/ppff.h          \
 		 src/struct.h 
+
+#		 src/ppff.h
 
 bin_PROGRAMS =  \
 		qwwad_ef_dispersion    \
@@ -58,11 +59,6 @@ bin_PROGRAMS =  \
 		imp     \
 		ivdb    \
 		matlib-query \
-		ppcd    \
-		ppee    \
-		pplb    \
-		pplbso  \
-		ppsg    \
 		pth     \
 		qwwad_find_donor_state \
 		rlv-fcc \
@@ -81,6 +77,12 @@ bin_PROGRAMS =  \
 	       	tdb     \
 	       	tsb     \
 		wfplot
+
+#		ppcd    \
+#		ppee    \
+#		pplb    \
+#		pplbso  \
+#		ppsg 
 
 dist_bin_SCRIPTS = src/xyz2pdb
 
@@ -111,8 +113,6 @@ libqwwad_la_SOURCES =  \
 			   src/qclsim_poisson_solver.h   \
 			   src/material_library.cpp       \
 			   src/material_library.h         \
-			   src/pplb-functions.cpp \
-			   src/pplb-functions.h \
 			   src/qwwad/constants.h      \
 			   src/qwwad-debye.cpp \
 			   src/qwwad-debye.h   \
@@ -166,6 +166,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/subband.h        \
 			   src/wf_options.cpp                       \
 			   src/wf_options.h
+#			   src/pplb-functions.cpp \
+#			   src/pplb-functions.h
 
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)
@@ -265,15 +267,15 @@ ivdb_LDADD   = libqwwad.la
 matlib_query_SOURCES = src/matlib-query.cpp
 matlib_query_LDADD   = libqwwad.la
 
-ppcd_SOURCES = src/ppcd.cpp
-ppcd_LDADD   = libqwwad.la
+#ppcd_SOURCES = src/ppcd.cpp
+#ppcd_LDADD   = libqwwad.la
 
-ppee_SOURCES = src/ppee.c
+#ppee_SOURCES = src/ppee.c
 
-pplb_SOURCES  = src/pplb.cpp
-pplb_LDADD    = libqwwad.la
+#pplb_SOURCES  = src/pplb.cpp
+#pplb_LDADD    = libqwwad.la
 
-ppsg_SOURCES = src/ppsg.c
+#ppsg_SOURCES = src/ppsg.c
 
 #ppsl_SOURCES = src/ppsl.cpp
 #ppsl_LDADD   = libqwwad.la
@@ -281,8 +283,8 @@ ppsg_SOURCES = src/ppsg.c
 #ppvfq_SOURCES = src/ppvfq.cpp src/ppff.h
 #ppvfq_LDADD   = libqwwad.la
 
-pplbso_SOURCES = src/pplbso.cpp src/ppsop.h
-pplbso_LDADD   = libqwwad.la
+#pplbso_SOURCES = src/pplbso.cpp src/ppsop.h
+#pplbso_LDADD   = libqwwad.la
 
 pth_SOURCES = src/pth.cpp
 pth_LDADD   = libqwwad.la
