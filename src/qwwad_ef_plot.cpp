@@ -33,7 +33,7 @@ WfOptions configure_options(int argc, char* argv[])
 
     opt.add_option<std::string>("plotfile", "vwf.r", "Name of file to which plottable data will be written.");
     opt.add_option<size_t>     ("nstmax",   10,      "Maximum number of states to plot.");
-    opt.add_option<std::string>("style",    "PD"     "Style of plot: 'pd' = probability density, 'wf' = wave functions.");
+    opt.add_option<std::string>("style",    "pd"   , "Style of plot: 'pd' = probability density, 'wf' = wave functions.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
