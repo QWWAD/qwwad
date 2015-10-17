@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -34,14 +34,12 @@ rm -f $outfile
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x for x=0.4---keep constant
 MB=0.1002
-MW=0.067 # Well mass (GaAs)
 
-# Keep well width constant at 100 Angstom
-LW=100
+export QWWAD_WELLWIDTH=100 # Constant 100 angstrom well width
 
 # Calculate the infinite well solution and store ground
 # state energy as Einf
-efiw --width $LW --mass $MW
+qwwad_ef_infinite_well
 Einf=`awk '{printf("%8.3f", $2)}' Ee.r`
 
 # Loop for different barrier heights
@@ -56,11 +54,11 @@ do
  printf "%f\t%f\t" "$V" "$Einf" >> $outfile
 
  # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
- efsqw --well-width $LW --well-mass $MW --barrier-mass $MW --potential $V
+ qwwad_ef_square_well --barrierpotential $V
  awk '{printf("%8.3f",$2)}' Ee.r >> $outfile # send data to file
 
  # Calculate ground state energy for different well and barrier masses
- efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
+ qwwad_ef_square_well --barriermass $MB --barrierpotential $V
  awk '{printf("%8.3f\n",$2)}' Ee.r >> $outfile # send data to file
 }
 done
@@ -75,7 +73,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
