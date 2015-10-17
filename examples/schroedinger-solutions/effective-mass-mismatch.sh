@@ -41,15 +41,8 @@ sweep_well_width_using_alloy()
 {
     rm -f Ee-lw.r
 
-    # Read the barrier alloy from command-line argument
-    if [ "z$1" = "z" ]; then
-        echo "You need to specify the barrier alloy as an argument to this script"
-        echo "For example, to use 10% alloy in the barrier, enter:"
-        echo "  $0 0.1"
-        exit 1
-    else
-        x=$1
-    fi
+    # Read the barrier alloy from function argument
+    x=$1
 
     # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
     # Use V=0.67*1247*x
@@ -58,7 +51,6 @@ sweep_well_width_using_alloy()
     # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
     # Use MB=0.067+0.083*x
     MB=`echo 0.067 + 0.083*$x|bc`
-    MW=0.067 # Well mass (GaAs)
 
     # Loop for different well widths
     for i in `seq 1 0.05 2.3`
@@ -70,11 +62,11 @@ sweep_well_width_using_alloy()
         printf "%e\t" "$LW" >> Ee-lw.r	# write well width to file
 
         # Calculate ground state energy for barrier mass (MB)=well mass (0.067)
-        efsqw --well-width $LW --well-mass $MW --barrier-mass $MW --potential $V
+	qwwad_ef_square_well --wellwidth $LW --barrierpotential $V
         awk '{printf("%8.3f",$2)}' Ee.r >> Ee-lw.r	# send data to file
 
         # Calculate ground state energy for correct barrier mass 
-        efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
+	qwwad_ef_square_well --wellwidth $LW --barriermass $MB --barrierpotential $V
         awk '{printf("%8.3f\n",$2)}' Ee.r >> Ee-lw.r  # send data to file
     done
 
@@ -82,8 +74,8 @@ sweep_well_width_using_alloy()
 }
 
 # Loop over alloy fractions
-for lw in 0.1 0.2 0.3 0.4; do
-    sweep_well_width_using_alloy $lw
+for x in 0.1 0.2 0.3 0.4; do
+    sweep_well_width_using_alloy $x
 
     cat x\=$x-Ee-lw.r >> $outfile
     printf "\n"       >> $outfile
