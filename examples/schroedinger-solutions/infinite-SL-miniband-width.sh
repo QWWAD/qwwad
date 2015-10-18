@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -33,30 +33,28 @@ rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.1965
+export QWWAD_BARRIERPOTENTIAL=334.1965
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x
-MB=0.1002
+export QWWAD_BARRIERMASS=0.1002
 
 # Define number of states
-S=1
+export QWWAD_NST=1
 
-# Loop for well and barrier widths
-
+# Loop over well and barrier widths (both identical)
 for LW in `seq 20 5 200`; do
     printf "%d\t" "$LW" >> $outfile # write well width to file
  
     # Loop for carrier momentum at centre and edge of Brillouin zone only
     for K in 0.0 1.0; do
         # Calculate energies for different wave vectors
-
-        efkpsl --well-width $LW --barrier-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst $S
+	qwwad_ef_superlattice --wellwidth $LW --barrierwidth $LW --wavevector $K
         awk '{printf("%9.3f",$2)}' Ee.r >> $outfile	# send data to file
-    done	# done loop over k
+    done
 
     # Compare with energy of single quantum well
-    efsqw --well-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V --nst $S
+    qwwad_ef_square_well --wellwidth $LW
     awk '{printf("%9.3f\n",$2)}' Ee.r >> $outfile	# send data to file
 done	# loop over LW
 
@@ -70,11 +68,11 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
 Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
-rm Ee.r
+rm Ee.r wf_e1.r
