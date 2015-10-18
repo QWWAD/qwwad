@@ -59,7 +59,12 @@ int main(int argc,char *argv[])
         if(gsl_fcmp(E[iE], V, dE/1000) == -1) // If E < V
         {
             const double K = sqrt(2*m*(V-E[iE]))/hBar; // Decay constant in barrier
-            T[iE] = 1/(1+gsl_pow_2((k*k+K*K)/(2*k*K) * sinh(K*L))); // [QWWAD4, 2.199]
+            T[iE] = 1.0/(1.0 + gsl_pow_2((k*k+K*K)/(2*k*K) * sinh(K*L))); // [QWWAD4, 2.199]
+        }
+        else if(gsl_fcmp(E[iE], V, dE/1000) == 0) // If E = V
+        {
+            // Use analytical solution, which is obtained from L'Hopital's rule
+            T[iE] = 4.0/(4.0 + k*k*L*L);
         }
         else // if E > V
         {
