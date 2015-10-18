@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -31,11 +31,10 @@ outfile=single-barrier-tx-height.dat
 rm -f $outfile
 
 # Loop for barrier heights, use default parameters otherwise
-for V in 50 100 200 
-do
-    tsb --potential $V 
-    cat T.r >> $outfile
-    printf "\n" >> $outfile
+for V in 50 100 200; do
+	qwwad_tx_single_barrier --barrierpotential $V
+	cat T.r >> $outfile
+	printf "\n" >> $outfile
 done
 
 cat << EOF
@@ -54,7 +53,7 @@ line.
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
