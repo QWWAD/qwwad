@@ -9,7 +9,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -29,7 +29,7 @@ set -e
 outfile=bisect-example.dat
 rm -f $outfile
 
-efsqw --well-width 200 --potential 100 --output-equations --nst 1
+qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --outputequations --nst 1
 
 paste lhs.r rhs_1.r | awk '{if ($1 < 1.5) print $1, $2 - $4}' > bisect-example.dat
 
@@ -42,7 +42,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
