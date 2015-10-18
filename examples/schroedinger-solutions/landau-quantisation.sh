@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -32,8 +32,7 @@ outfile=landau-quantisation.dat
 rm -f $outfile
 
 # Find first two states in an infinite well
-nst=2
-efsqw --well-width 200 --potential 100 --nst 2
+qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --nst 2
 E1=`sed -n 1p < Ee.r | awk '{print $2}'`
 E2=`sed -n 2p < Ee.r | awk '{print $2}'`
 
@@ -63,24 +62,21 @@ cat << EOF
 Results have been written to $outfile in the format:
 
   COLUMN 1 - Magnetic field [T]
-  COLUMN 2 - Energy of Landau level
+  COLUMN 2 - Energy of Landau level in subband 1 [meV]
+  COLUMN 3 - Energy of Landau level in subband 2 [meV]
 
-The file contains 8 data sets, representing the first
-4 Landau levels (j) associated with the first two subbands (n)
+The file contains 4 data sets, representing the first
+4 Landau levels (j) associated with the first two subbands
 of a quantum well.  Each set is separated by a blank line:
 
-  SET 1 - State 1,0
-  SET 2 - State 2,0
-  SET 3 - State 1,1
-  SET 4 - State 2,1
-  SET 5 - State 1,2
-  SET 6 - State 2,2
-  SET 7 - State 1,3
-  SET 8 - State 2,3
+  SET 1 - Landau levels 0
+  SET 2 - Landau levels 1
+  SET 3 - Landau levels 2
+  SET 4 - Landau levels 3
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
