@@ -76,7 +76,7 @@ bin_PROGRAMS =  \
 		thermal1d \
 		thermalrc \
 	       	tdb     \
-	       	tsb
+	       	qwwad_tx_single_barrier
 
 #		ppcd    \
 #		ppee    \
@@ -328,8 +328,8 @@ thermal1d_LDADD   = libqwwad.la
 thermalrc_SOURCES = src/thermalrc.cpp
 thermalrc_LDADD   = libqwwad.la
 
-tsb_SOURCES  = src/tsb.cpp
-tsb_LDADD    = libqwwad.la
+qwwad_tx_single_barrier_SOURCES  = src/qwwad_tx_single_barrier.cpp
+qwwad_tx_single_barrier_LDADD    = libqwwad.la
 
 qwwad_ef_plot_SOURCES = src/qwwad_ef_plot.cpp
 qwwad_ef_plot_LDADD   = libqwwad.la
@@ -343,7 +343,7 @@ dist_man1_MANS = \
 		 man/qwwad_fermi_distribution.1 \
 		 man/qwwad_ef_plot.1              \
 		 man/qwwad_ef_superlattice.1              \
-		 man/tsb.1                 \
+		 man/qwwad_tx_single_barrier.1                 \
 		 man/tdb.1                 \
 		 man/ivdb.1                \
 		 man/find_heterostructure.1 \
@@ -374,7 +374,7 @@ EXTRA_DIST += \
 	      doc/find_poisson_potential.h2m \
 	      doc/qwwad_ef_plot.h2m                 \
 	      doc/qwwad_ef_superlattice.h2m                 \
-	      doc/tsb.h2m                    \
+	      doc/qwwad_tx_single_barrier.h2m                    \
 	      doc/tdb.h2m                    \
 	      doc/ivdb.h2m                   \
 	      doc/hup.h2m                    \
@@ -411,9 +411,9 @@ man/qwwad_ef_superlattice.1: src/qwwad_ef_superlattice.cpp $(top_srcdir)/configu
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/qwwad_ef_superlattice.h2m ./qwwad_ef_superlattice$(EXEEXT)
 
-man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tsb.h2m | tsb$(EXEEXT)
+man/qwwad_tx_single_barrier.1: src/qwwad_tx_single_barrier.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_tx_single_barrier.h2m | qwwad_tx_single_barrier$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." --include $(top_srcdir)/doc/tsb.h2m ./tsb$(EXEEXT) 
+	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_single_barrier.h2m ./qwwad_tx_single_barrier$(EXEEXT) 
 
 man/tdb.1: src/tdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tdb.h2m | tdb$(EXEEXT)
 	$(MKDIR_P) man

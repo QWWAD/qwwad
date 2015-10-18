@@ -25,11 +25,11 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the transmission coefficient through a single tunnelling barrier.");
 
-    opt.add_option<double>("barrier-width,L",    100,   "Width of barrier [angstrom].");
-    opt.add_option<double>("mass,m",             0.067, "Effective mass in barrier (relative to that of a free electron). "
-                                                        "This is assumed to be constant throughout the whole system.");
-    opt.add_option<double>("potential",           100,  "Barrier potential [meV]");
-    opt.add_option<double>("energy-step,d",        0.1, "Energy step [meV]");
+    opt.add_option<double>("barrierwidth,L",    100,  "Width of barrier [angstrom].");
+    opt.add_option<double>("mass,m",           0.067, "Effective mass (relative to that of a free electron). "
+                                                      "This is assumed to be constant throughout the whole system.");
+    opt.add_option<double>("barrierpotential",  100,  "Barrier potential [meV]");
+    opt.add_option<double>("dE,d",              0.1,  "Energy step [meV]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -40,10 +40,10 @@ int main(int argc,char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto dE = opt.get_option<double>("energy-step") * 1e-3*e;   // [J]
-    const auto L  = opt.get_option<double>("barrier-width") * 1e-10;
+    const auto dE = opt.get_option<double>("dE") * 1e-3*e;   // [J]
+    const auto L  = opt.get_option<double>("barrierwidth") * 1e-10;
     const auto m  = opt.get_option<double>("mass") * me;
-    const auto V  = opt.get_option<double>("potential") * e / 1000;
+    const auto V  = opt.get_option<double>("barrierpotential") * e / 1000;
 
     const double E_cutoff = V * 10; // Cut-off energy for plot
     const size_t nE = floor(E_cutoff/dE); // Number of points in plot

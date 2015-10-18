@@ -6,7 +6,7 @@
 
 [EXAMPLES]
 Compute the transmission coefficient through a 100-meV barrier, with 200-angstrom width:
-   tsb --barrier-width 200 --potential 100
+   qwwad_tx_single_barrier --barrierwidth 200 --barrierpotential 100
 
 Compute the transmission coefficient through a 1-eV barrier, with default width and effective mass = 0.1 m0 using resolution of 1 meV:
-   tsb --potential 1000 --mass 0.1 --energy-step 1
+   qwwad_tx_single_barrier --barrierpotential 1000 --mass 0.1 --dE 1
