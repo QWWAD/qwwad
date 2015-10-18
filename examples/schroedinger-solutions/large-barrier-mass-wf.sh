@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -33,16 +33,15 @@ rm -f Ee-mb.r $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.196
+export QWWAD_BARRIERPOTENTIAL=334.196
 
 # Keep well width constant at 100 Angstom
-LW=100
+export QWWAD_WELLWIDTH=100
 
 # Loop for different barrier heights
-for MB in 0.1002 1 10 100
-do
+for MB in 0.1002 1 10 100; do
     # Calculate ground state energy for different well and barrier masses
-    efsqw --well-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V
+    qwwad_ef_square_well --barriermass $MB
     mv wf_e1.r wf_e1-${MB}.r
 done
 
@@ -72,7 +71,7 @@ The file contains 4 data sets for various barrier masses:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
