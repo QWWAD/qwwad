@@ -11,7 +11,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -35,7 +35,7 @@ rm -f $outfile
 # Loop for well widths, use default parameters otherwise
 for L2 in 20 50 100
 do
-    tdb --well-width $L2 
+    qwwad_tx_double_barrier --wellwidth $L2 
     cat T.r >> $outfile
     printf "\n" >> $outfile
 done
@@ -56,7 +56,7 @@ line.
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
