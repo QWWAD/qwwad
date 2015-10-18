@@ -31,7 +31,7 @@ outfile=double-barrier-tx-height.dat
 rm -f $outfile
 
 # Keep well width constant
-L2=50
+export QWWAD_WELLWIDTH=50
 
 for X in 0.1 0.2 0.3 0.4; do
     # Use V=0.67*1247*x
@@ -41,7 +41,7 @@ for X in 0.1 0.2 0.3 0.4; do
     # Use MB=0.067+0.083*x
     MB=`echo $X | awk '{print 0.067+0.083*$1}'`
 
-    tdb --well-width $L2 --potential $V --barrier-mass $MB
+    qwwad_tx_double_barrier --barrierpotential $V --barriermass $MB
     cat T.r >> $outfile
     printf "\n" >> $outfile
 done

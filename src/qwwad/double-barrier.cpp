@@ -86,7 +86,7 @@ double get_transmission_coefficient(const double E,
     if (gsl_fcmp(E, 0, 1e-9*e) == 1)
     {
         cx_mat M = inv(M1) * M2 * inv(M3) * M4 * inv(M5) * M6 * inv(M7) * M8;
-        Tx = 1/(norm(M(1,1))); // Transission coeff
+        Tx = 1/(norm(M(1,1))); // Transmission coeff
     }
 
     return Tx;

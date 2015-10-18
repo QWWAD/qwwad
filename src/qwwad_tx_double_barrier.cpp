@@ -63,7 +63,7 @@ int main(int argc,char *argv[])
     std::valarray<double> E(nE); // Array of energies
     std::valarray<double> T(nE); // Array of transmission coefficients
 
-    // Loop over energy
+    // Loop over energy (stop at top of barrier)
     for(unsigned int iE = 0; iE < nE; ++iE)
     {
         E[iE] = iE*dE;
