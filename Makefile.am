@@ -58,7 +58,7 @@ bin_PROGRAMS =  \
 		i0      \
 		ifr     \
 		imp     \
-		ivdb    \
+		qwwad_tx_double_barrier_iv    \
 		matlib-query \
 		pth     \
 		qwwad_find_donor_state \
@@ -261,8 +261,8 @@ i0_LDADD    = libqwwad.la
 imp_SOURCES  = src/imp.cpp
 imp_LDADD    = libqwwad.la
 
-ivdb_SOURCES = src/ivdb.cpp
-ivdb_LDADD   = libqwwad.la
+qwwad_tx_double_barrier_iv_SOURCES = src/qwwad_tx_double_barrier_iv.cpp
+qwwad_tx_double_barrier_iv_LDADD   = libqwwad.la
 
 matlib_query_SOURCES = src/matlib-query.cpp
 matlib_query_LDADD   = libqwwad.la
@@ -345,7 +345,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_superlattice.1              \
 		 man/qwwad_tx_single_barrier.1                 \
 		 man/qwwad_tx_double_barrier.1                 \
-		 man/ivdb.1                \
+		 man/qwwad_tx_double_barrier_iv.1                \
 		 man/find_heterostructure.1 \
 		 man/efxv.1                 \
 		 man/efss.1                 \
@@ -376,7 +376,7 @@ EXTRA_DIST += \
 	      doc/qwwad_ef_superlattice.h2m                 \
 	      doc/qwwad_tx_single_barrier.h2m                    \
 	      doc/qwwad_tx_double_barrier.h2m                    \
-	      doc/ivdb.h2m                   \
+	      doc/qwwad_tx_double_barrier_iv.h2m                   \
 	      doc/hup.h2m                    \
 	      doc/densityinput.h2m           \
 	      doc/chargedensity.h2m          \
@@ -419,9 +419,9 @@ man/qwwad_tx_double_barrier.1: src/qwwad_tx_double_barrier.cpp $(top_srcdir)/con
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_double_barrier.h2m ./qwwad_tx_double_barrier$(EXEEXT)
 
-man/ivdb.1: src/ivdb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/ivdb.h2m | ivdb$(EXEEXT)
+man/qwwad_tx_double_barrier_iv.1: src/qwwad_tx_double_barrier_iv.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m | qwwad_tx_double_barrier_iv$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/ivdb.h2m ./ivdb$(EXEEXT)
+	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m ./qwwad_tx_double_barrier_iv$(EXEEXT)
 
 man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/find_heterostructure.h2m | find_heterostructure$(EXEEXT)

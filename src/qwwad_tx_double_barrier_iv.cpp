@@ -1,5 +1,5 @@
 /**
- * \file   ivdb.cpp
+ * \file   qwwad_tx_double_barrier_iv.cpp
  * \brief  Calculate I-V for double barrier structure
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
@@ -34,17 +34,17 @@ Options configure_options(int argc, char* argv[])
 
     std::string summary("Find the current through a double barrier structure as a function of bias voltage.");
 
-    opt.add_option<double>("left-barrier-width,l",    100, "Width of left barrier [angstrom].");
-    opt.add_option<double>("well-width,b",            100, "Width of well [angstrom].");
-    opt.add_option<double>("right-barrier-width,r",   100, "Width of right barrier [angstrom].");
-    opt.add_option<double>("well-mass,m",           0.067, "Effective mass in well (relative to that "
-                                                           "of a free electron). This is used to "
-                                                           "compute the distribution of carriers at the input.");
-    opt.add_option<double>("barrier-mass,n",        0.067, "Effective mass in barrier (relative to "
-                                                          "that of a free electron).");
-    opt.add_option<double>("potential",               100, "Barrier potential [meV]");
-    opt.add_option<double>("temperature",             300, "Temperature of carrier distribution [K]");
-    opt.add_option<double>("energy-step,d",          0.01, "Energy step [meV]");
+    opt.add_option<double>("leftbarrierwidth,l",    100, "Width of left barrier [angstrom].");
+    opt.add_option<double>("wellwidth,b",           100, "Width of well [angstrom].");
+    opt.add_option<double>("rightbarrierwidth,r",   100, "Width of right barrier [angstrom].");
+    opt.add_option<double>("wellmass,m",          0.067, "Effective mass in well (relative to that "
+                                                         "of a free electron). This is used to "
+                                                         "compute the distribution of carriers at the input.");
+    opt.add_option<double>("barriermass,n",       0.067, "Effective mass in barrier (relative to "
+                                                         "that of a free electron).");
+    opt.add_option<double>("barrierpotential",      100, "Barrier potential [meV]");
+    opt.add_option<double>("Te",                    300, "Temperature of carrier distribution [K]");
+    opt.add_option<double>("dE,d",                 0.01, "Energy step [meV]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -55,14 +55,14 @@ int main(int argc,char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto dE  = opt.get_option<double>("energy-step") * 1e-3 * e;      // [J]
-    const auto L1  = opt.get_option<double>("left-barrier-width") * 1e-10;  // [m]
-    const auto L2  = opt.get_option<double>("well-width") * 1e-10;          // [m]
-    const auto L3  = opt.get_option<double>("right-barrier-width") * 1e-10; // [m]
-    const auto m_w = opt.get_option<double>("well-mass") * me;              // [kg]
-    const auto m_b = opt.get_option<double>("barrier-mass") * me;           // [kg]
-    const auto Vb  = opt.get_option<double>("potential") * e / 1000;        // [J]
-    const auto T   = opt.get_option<double>("temperature");                 // [K]
+    const auto dE  = opt.get_option<double>("dE") * 1e-3 * e;               // [J]
+    const auto L1  = opt.get_option<double>("leftbarrierwidth") * 1e-10;    // [m]
+    const auto L2  = opt.get_option<double>("wellwidth") * 1e-10;           // [m]
+    const auto L3  = opt.get_option<double>("rightbarrierwidth") * 1e-10;   // [m]
+    const auto m_w = opt.get_option<double>("wellmass") * me;               // [kg]
+    const auto m_b = opt.get_option<double>("barriermass") * me;            // [kg]
+    const auto Vb  = opt.get_option<double>("barrierpotential") * e / 1000; // [J]
+    const auto Te  = opt.get_option<double>("Te");                          // [K]
 
     const size_t nE = floor(Vb/dE); // Number of points in table of energies
     const double Ef=2*1e-3*e;      // Just set fixed Fermi energy to represent some fixed density
@@ -96,7 +96,7 @@ int main(int argc,char *argv[])
             if(E[iE] > DeltaE)	/* only add contribution to current if E>DeltaE	*/
             {
                 const double rho   = calculate_dos_3D(m_w, E[iE] - DeltaE); // Bulk density of states
-                const double _f_FD = f_FD(Ef + DeltaE, E[iE], T); // Fermi function
+                const double _f_FD = f_FD(Ef + DeltaE, E[iE], Te); // Fermi function
 
                 current[iF] += Tx[iE]*_f_FD*rho*dE;
             }

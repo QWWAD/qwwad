@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -35,20 +35,20 @@ rm -f $outfile
 X=0.2
 
 # Use V=0.67*1247*x
-V=`echo $X | awk '{print 0.67*1247*$1}'`
+export QWWAD_BARRIERPOTENTIAL=`echo $X | awk '{print 0.67*1247*$1}'`
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x
-MB=`echo $X | awk '{print 0.067+0.083*$1}'`
+export QWWAD_BARRIERMASS=`echo $X | awk '{print 0.067+0.083*$1}'`
 
 # Keep well width constant
-L1=100
-L2=50
-L3=100
+export QWWAD_LEFTBARRIERWIDTH=100
+export QWWAD_WELLWIDTH=50
+export QWWAD_RIGHTBARRIERWIDTH=100
 
-for T in 2 77 300
-do
-    ivdb --left-barrier-width $L1 --well-width $L2 --right-barrier-width $L3 --potential $V --barrier-mass $MB --temperature $T
+# Loop over carrier temperature
+for T in 2 77 300; do
+    qwwad_tx_double_barrier_iv --Te $T
     cat IV.r >> $outfile
     printf "\n" >> $outfile
 done
@@ -68,7 +68,7 @@ temperatures:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
