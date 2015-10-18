@@ -8,7 +8,6 @@
 #include "heterostructure.h"
 
 #include <gsl/gsl_math.h>
-#include <gsl/gsl_sf_erf.h>
 #include <fstream>
 
 #ifdef DEBUG
@@ -16,11 +15,6 @@
 #endif
 
 #include "file-io.h"
-
-/**
- * Gauss error function
- */
-#define erf gsl_sf_erf
 
 namespace QWWAD
 {
@@ -57,13 +51,20 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
     const size_t n_cell_1per = _nz_1per - 1; // Number of spatial intervals in a period
     _dz = Lp/n_cell_1per; // Separation between points [m]
 
-    // TODO: Check that no layer is thinner than dz and throw an error if it is
+    // Check that no layer is thinner than dz and throw an error if it is
+    if (_W_layer.min() < _dz)
+    {
+        std::ostringstream oss;
+        oss << "Layer with " << _W_layer.min()*1e10 << " angstrom width is thinner than spatial separation " << _dz << " angstrom." << std::endl;
+        throw std::runtime_error(oss.str());
+    }
 
     // Calculate spatial points
     unsigned int iL_cache = 0;
     unsigned int idx = 0;
     const size_t nz = _z.size(); // Total points in structure
 
+    // Loop through all points and assign layer compositions
     for (unsigned int iz = 0; iz < nz; ++iz)
     {
         _z[iz] = iz*_dz; // Calculate the spatial location [m]
@@ -99,8 +100,7 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
 void Heterostructure::read_layers_from_file(const std::string     &filename,
                                             alloy_vector          &x_layer,
                                             std::valarray<double> &W_layer,
-                                            std::valarray<double> &n3D_layer,
-                                            const Unit             thickness_unit)
+                                            std::valarray<double> &n3D_layer)
 {
     std::valarray<double> coltemp; // A temporary vector containing the first column of the input file
     read_table(filename.c_str(), coltemp);
@@ -168,15 +168,8 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
         check_not_negative(&n3D_layer[iL]);
     }
 
-    // Scale layer widths according to unit
-    switch(thickness_unit)
-    {
-        case UNIT_NM:
-            W_layer *= 1.0e-9;
-            break;
-        case UNIT_ANGSTROM:
-            W_layer *= 1.0e-10;
-    }
+    // Scale layer widths angstrom -> metre
+    W_layer *= 1.0e-10;
 
     n3D_layer *= 1000000.0; // Scale doping to m^{-3}
 }
@@ -186,14 +179,12 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
  * per period calculated automatically
  *
  * \param[in] layer_filename Name of input file
- * \param[in] thickness_unit The unit of measurement for the layer thicknesses
  * \param[in] n_periods      Number of periods to generate
  * \param[in] dz_max         The maximum allowable separation between spatial points [m]
  *
  * \return A new heterostructure object for the system.  Remember to delete it after use!
  */
 Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &layer_filename,
-                                                           const Unit         thickness_unit,
                                                            const size_t       n_periods,
                                                            const double       dz_max)
 {
@@ -201,7 +192,7 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
     std::valarray<double> W_layer;   // Thickness of each layer
     std::valarray<double> n3D_layer; // Doping density of each layer
 
-    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer, thickness_unit);
+    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
     const double period_length = W_layer.sum();
     const size_t nz_1per = ceil(period_length/dz_max) + 1;
@@ -214,7 +205,6 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
  * Create a heterostructure using data from an input file containing data for each layer
  *
  * \param[in] layer_filename Name of input file
- * \param[in] thickness_unit The unit of measurement for the layer thicknesses
  * \param[in] nz_1per        The number of points to be used in mapping out a single
  *                           period of the structure
  * \param[in] n_periods      Number of periods to generate
@@ -222,7 +212,6 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
  * \return A new heterostructure object for the system.  Remember to delete it after use!
  */
 Heterostructure* Heterostructure::create_from_file(const std::string &layer_filename,
-                                                   const Unit         thickness_unit,
                                                    const size_t       nz_1per,
                                                    const size_t       n_periods)
 {
@@ -230,7 +219,7 @@ Heterostructure* Heterostructure::create_from_file(const std::string &layer_file
     std::valarray<double> W_layer;   // Thickness of each layer
     std::valarray<double> n3D_layer; // Doping density of each layer
 
-    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer, thickness_unit);
+    read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
     // Pack input data into a heterostructure object
     return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods);

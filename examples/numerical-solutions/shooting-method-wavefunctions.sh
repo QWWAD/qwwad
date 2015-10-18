@@ -39,6 +39,7 @@ EOF
 # Create alloy concentration file
 qwwad_mesh
 
+exit
 # Find band-edge parameters
 efxv
 

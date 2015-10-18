@@ -28,17 +28,8 @@ using namespace QWWAD;
  */
 class HeterostructureOptions : public Options
 {
-    private:
-        Unit unit;       ///< Length unit for calculation
     public:
         HeterostructureOptions(int argc, char* argv[]);
-
-        /**
-         * \brief Returns the unit of measurement for lengths
-         *
-         * \returns The unit of measurement for lengths
-         */
-        Unit get_unit() const {return unit;}
 
         double get_dz_max() const
         {
@@ -54,14 +45,7 @@ class HeterostructureOptions : public Options
             if (result < 0)
                 throw std::domain_error("Spatial separation must be positive.");
 
-            switch(unit)
-            {
-                case UNIT_NM:
-                    result*=1.0e-9;
-                    break;
-                case UNIT_ANGSTROM:
-                    result*=1.0e-10;
-            }
+            result*=1.0e-10; // Convert from angstrom -> m
 
             return result;
         }
@@ -75,49 +59,22 @@ class HeterostructureOptions : public Options
  * \param[in] argc Number of command-line arguments
  * \param[in] argv Array of command-line arguments
  */
-HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
-    unit(UNIT_ANGSTROM)
+HeterostructureOptions::HeterostructureOptions(int argc, char* argv[])
 {
-    std::string description("This program generates a mesh (i.e., a set of spatial points)\n"
-                            "and tabulates the composition of a heterostructure at each point.\n"
-                            "Normally, this will be the very first step in performing a numerical\n"
-                            "simulation of a system. The user should create an input file first,\n"
-                            "containing a table describing the system, and then run this program.\n"
-                            "Multi-period structures can be generated if desired.");
+    std::string description("Generate a mesh of samples of structural data.");
 
     add_option<double>     ("dzmax",               0.1,         "Maximum separation between spatial points.");
     add_option<double>     ("zresmin",                          "Minimum spatial resolution. Overrides the --dz-max option");
     add_option<size_t>     ("nz1per",                0,         "Number of points (per period) within the structure. "
-                                                                "If specified, this overrides the --dz-max and "
-                                                                "--res-min options");
+                                                                "If specified, this overrides the --dzmax and "
+                                                                "--zresmin options");
     add_option<size_t>     ("nper,p",                1,         "Number of periods to output");
     add_option<std::string>("layerfile,i",          "s.r",      "Filename from which to read input data.");
     add_option<std::string>("interfacesfile,f", "interfaces.r", "Filename to which interface locations are written.");
     add_option<std::string>("alloyfile,x",      "x.r",          "Filename to which alloy profile is written.");
     add_option<std::string>("dopingfile,d",     "d.r",          "Filename to which doping profile is written.");
-    add_option<std::string>("unit,u",            "angstrom",    "Set length unit.  Acceptable values are 'A': "
-                                                                "Angstroms or 'n': nanometres.");
 
     add_prog_specific_options_and_parse(argc, argv, description);
-
-    // Parse which unit we're using
-    if (vm.count("unit"))
-    {
-        const char* arg = vm["unit"].as<std::string>().c_str();
-        if(!strcmp (arg, "A") ||
-                !strcmp(arg, "angstrom") ||
-                !strcmp(arg, "Angstrom") ||
-                !strcmp(arg, "angstroms") ||
-                !strcmp(arg, "Angstroms"))
-            unit = UNIT_ANGSTROM; // Sets unit to [Å]
-        else if(!strcmp(arg, "n") ||
-                !strcmp(arg, "nm") ||
-                !strcmp(arg, "nanometre") ||
-                !strcmp(arg, "nanometer") ||
-                !strcmp(arg, "nanometres") ||
-                !strcmp(arg, "nanometers"))
-            unit = UNIT_NM; // Sets unit to [nm]
-    }
 
     if (get_option<size_t>("nper") == 0)
         throw std::domain_error("Number of periods must be positive.");
@@ -131,20 +88,8 @@ HeterostructureOptions::HeterostructureOptions(int argc, char* argv[]) :
  */
 void HeterostructureOptions::print() const
 {
-    const char* unit_string = NULL;
-
     printf("Program options have been set as follows...\n");
 
-    switch(unit)
-    {
-        case UNIT_NM:
-            unit_string="nm";
-            break;
-        case UNIT_ANGSTROM:
-            unit_string="angstroms";
-    }
-
-    std::cout << " * Unit of length for input:         " << unit_string << std::endl;
     std::cout << " * Number of points per period:      " << get_option<size_t>("nz1per")              << std::endl;
     std::cout << " * Number of periods to output:      " << get_option<size_t>("nper")                <<  std::endl;
     std::cout << " * Filename of input structure:      " << get_option<std::string>("layerfile")      << std::endl;
@@ -163,12 +108,10 @@ int main(int argc, char* argv[])
     const auto nz_1per = opt.get_option<size_t>("nz1per");
     const auto het = (nz_1per != 0) ?  // Force the number of points per period if specified
                      Heterostructure::create_from_file(opt.get_option<std::string>("layerfile"),
-                                                       opt.get_unit(),
                                                        opt.get_option<size_t>("nz1per"),
                                                        opt.get_option<size_t>("nper"))
                      :
                      Heterostructure::create_from_file_auto_nz(opt.get_option<std::string>("layerfile"),
-                                                               opt.get_unit(),
                                                                opt.get_option<size_t>("nper"),
                                                                opt.get_dz_max());
 

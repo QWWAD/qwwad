@@ -21,14 +21,6 @@ namespace QWWAD
 typedef std::vector< std::valarray<double> > alloy_vector;
 
 /**
- * \brief Unit of measurement for layer thickness
- */
-enum Unit {
-    UNIT_NM,       ///< Nanometres
-    UNIT_ANGSTROM  ///< angstroms
-};
-
-/**
  * \brief A stack of layers making up a quantum heterostructure
  */
 class Heterostructure
@@ -37,19 +29,18 @@ class Heterostructure
         static void read_layers_from_file(const std::string     &filename,
                                           alloy_vector          &x_layer,
                                           std::valarray<double> &W_layer,
-                                          std::valarray<double> &n3D_layer,
-                                          const Unit             thickness_unit = UNIT_NM);
+                                          std::valarray<double> &n3D_layer);
 
         // Parameters for each individual layer of the structure
-        size_t                _n_alloy;   ///< Number of alloy components
-        alloy_vector          _x_layer;   ///< Alloy fractions in each layer
-        std::valarray<double> _W_layer;   ///< Width of each layer [m]
-        std::valarray<double> _n3D_layer; ///< Donor density in each layer [m^{-3}]
+        size_t                _n_alloy;    ///< Number of alloy components
+        alloy_vector          _x_layer;    ///< Alloy fractions in each layer
+        std::valarray<double> _W_layer;    ///< Width of each layer [m]
+        std::valarray<double> _n3D_layer;  ///< Donor density in each layer [m^{-3}]
 
-        size_t                _n_periods; ///< Number of periods in the structure
-        size_t                _nz_1per;   ///< Number of points in each period
+        size_t                _n_periods;  ///< Number of periods in the structure
+        size_t                _nz_1per;    ///< Number of points in each period (including the 'cap')
 
-        std::valarray<unsigned int> _layer_top_index;
+        std::valarray<unsigned int> _layer_top_index; ///< Index of the top of each layer
 
         // Parameters for each point in the entire, expanded structure
         std::valarray<double> _z;   ///< Spatial position at each point [m]
@@ -66,12 +57,10 @@ class Heterostructure
 
         
         static Heterostructure* create_from_file_auto_nz(const std::string &layer_filename,
-                                                       const Unit         thickness_unit,
-                                                       const size_t       n_periods,
-                                                       const double       dz_max = 1e-10);
+                                                         const size_t       n_periods,
+                                                         const double       dz_max = 1e-10);
 
         static Heterostructure* create_from_file(const std::string &layer_filename,
-                                                 const Unit         thickness_unit,
                                                  const size_t       nz_1per,
                                                  const size_t       n_periods);
 
