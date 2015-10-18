@@ -43,7 +43,7 @@ bin_PROGRAMS =  \
 		efcwwf  \
 	       	effv    \
 		efiwire \
-		efkpsl  \
+		qwwad_ef_superlattice  \
 	       	efmfv   \
 		efpqw   \
 		efsdot  \
@@ -216,8 +216,8 @@ qwwad_ef_infinite_well_LDADD   = libqwwad.la
 efiwire_SOURCES = src/efiwire.cpp
 efiwire_LDADD   = libqwwad.la
 
-efkpsl_SOURCES = src/efkpsl.cpp
-efkpsl_LDADD   = libqwwad.la
+qwwad_ef_superlattice_SOURCES = src/qwwad_ef_superlattice.cpp
+qwwad_ef_superlattice_LDADD   = libqwwad.la
 
 efmfv_SOURCES = src/efmfv.cpp
 efmfv_LDADD   = libqwwad.la
@@ -342,7 +342,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_square_well.1     \
 		 man/qwwad_fermi_distribution.1 \
 		 man/qwwad_ef_plot.1              \
-		 man/efkpsl.1              \
+		 man/qwwad_ef_superlattice.1              \
 		 man/tsb.1                 \
 		 man/tdb.1                 \
 		 man/ivdb.1                \
@@ -373,7 +373,7 @@ EXTRA_DIST += \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
 	      doc/qwwad_ef_plot.h2m                 \
-	      doc/efkpsl.h2m                 \
+	      doc/qwwad_ef_superlattice.h2m                 \
 	      doc/tsb.h2m                    \
 	      doc/tdb.h2m                    \
 	      doc/ivdb.h2m                   \
@@ -407,9 +407,9 @@ man/qwwad_ef_plot.1: src/qwwad_ef_plot.cpp $(top_srcdir)/configure.ac $(top_srcd
 	$(MKDIR_P) man
 	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/qwwad_ef_plot.h2m ./qwwad_ef_plot$(EXEEXT)
 
-man/efkpsl.1: src/efkpsl.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/efkpsl.h2m | efkpsl$(EXEEXT)
+man/qwwad_ef_superlattice.1: src/qwwad_ef_superlattice.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_superlattice.h2m | qwwad_ef_superlattice$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/efkpsl.h2m ./efkpsl$(EXEEXT)
+	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/qwwad_ef_superlattice.h2m ./qwwad_ef_superlattice$(EXEEXT)
 
 man/tsb.1: src/tsb.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/tsb.h2m | tsb$(EXEEXT)
 	$(MKDIR_P) man

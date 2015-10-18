@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -31,25 +31,27 @@ set -e
 outfile=infinite-SL-40-40-E-k.dat
 rm -f $outfile
 
-# Read well and barrier width from command line
-LW=40
-LB=40
+# Specify a fixed well and barrier width
+export QWWAD_WELLWIDTH=40
+export QWWAD_BARRIERWIDTH=40
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.1965
+export QWWAD_BARRIERPOTENTIAL=334.1965
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x
-MB=0.1002
+export QWWAD_BARRIERMASS=0.1002
 
-# Loop for carrier momentum
-for K in `seq -2.0 0.01 2.0`
-do
+# Only compute one state
+export QWWAD_NST=1
+
+# Loop over carrier wave-vector
+for K in `seq -2.0 0.01 2.0`; do
     printf "%e\t" $K >> $outfile	# write wave vector to file
 
     # Calculate energies for different wave vectors
-    efkpsl --well-width $LW --barrier-width $LB --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst 1
+    qwwad_ef_superlattice --wavevector $K
     awk '{printf("%9.3f\n",$2)}' Ee.r >> $outfile		# send data to file
 done
 
@@ -61,11 +63,11 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
 Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
-rm Ee.r
+rm Ee.r wf_e1.r

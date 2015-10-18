@@ -8,7 +8,7 @@ The '*' is replaced by the particle ID.
 
 [EXAMPLES]
 Compute the first three states at Gamma (k = 0) using 150-angstrom wells and barriers with 100 meV confining potential:
-   efkpsl --well-width 150 --barrier-width 150 --potential 100 --nst 3 --wave-vector 0
+   qwwad_ef_superlattice --wellwidth 150 --barrierwidth 150 --barrierpotential 100 --nst 3 --wavevector 0
 
 Compute the ground state at X (k = pi/L) using 100-angstrom wells, 200-angstrom barriers and 100 meV confining potential:
-   efkpsl --well-width 100 --barrier-width 200 --potential 100 --wave-vector 1
+   qwwad_ef_superlattice --wellwidth 100 --barrierwidth 200 --barrierpotential 100 --wavevector 1
