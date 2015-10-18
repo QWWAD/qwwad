@@ -1,5 +1,4 @@
 #!/bin/sh
-# Initialise files
 set -e
 
 # Calculates the lowest two energy solutions in a Kronig-Penney superlattice
@@ -11,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -32,22 +31,24 @@ outfile=infinite-SL-60-60-E-k.dat
 rm -f $outfile
 
 # Read well and barrier width from command line
-LW=60
-LB=60
+export QWWAD_WELLWIDTH=60
+export QWWAD_BARRIERWIDTH=60
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.1965
+export QWWAD_BARRIERPOTENTIAL=334.1965
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x
-MB=0.1002
+export QWWAD_BARRIERMASS=0.1002
+
+# Always compute first two states
+export QWWAD_NST=2
 
 # Loop for carrier momentum
-for K in `seq -2.0 0.01 2.0`
-do
+for K in `seq -2.0 0.01 2.0`; do
     # Calculate energies for different wave vectors
-    efkpsl --well-width $LW --barrier-width $LB --well-mass 0.067 --barrier-mass $MB --potential $V --wave-vector $K --nst 2
+    qwwad_ef_superlattice --wavevector $K
     E1=`sed -n 1p < Ee.r | awk '{print $2}'`
     E2=`sed -n 2p < Ee.r | awk '{print $2}'`
     printf "%e\t%9.3f\t%9.3f\n" $K $E1 $E2 >> $outfile
@@ -62,11 +63,11 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
 Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
-rm Ee.r
+rm Ee.r wf_e1.r wf_e2.r
