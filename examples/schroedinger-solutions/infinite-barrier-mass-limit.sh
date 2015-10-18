@@ -33,10 +33,8 @@ rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.1965
-
-LW=100 # Well width [angstrom]
-MW=0.067 # Well mass (GaAs)
+export QWWAD_BARRIERPOTENTIAL=334.1965
+export QWWAD_WELLWIDTH=100 # Well width [angstrom]
 
 calculate_plot_using_well_width()
 {
@@ -45,17 +43,14 @@ calculate_plot_using_well_width()
     tempfile=Ee-mb-${LW}.dat
 
     # Loop for different barrier masses
-    for iMB in `seq -2 0.1 3`
-    do
-        {
-            # Generate barrier mass exponentially so we get a smooth curve
-            MB=`echo $iMB | awk '{print 10^$1}'`
-            printf "%8.3e\t" "$MB" >> $tempfile	# write potential to file
+    for iMB in `seq -2 0.1 3`; do
+	    # Generate barrier mass exponentially so we get a smooth curve
+	    MB=`echo $iMB | awk '{print 10^$1}'`
+	    printf "%8.3e\t" "$MB" >> $tempfile	# write barrier mass to file
 
-            # Calculate ground state energy for different well and barrier masses
-            efsqw --well-width $LW --well-mass $MW --barrier-mass $MB --potential $V
-            awk '{printf("%8.3f\n",$2)}' Ee.r >> $tempfile   # send data to file
-        }
+	    # Calculate ground state energy for different well and barrier masses
+	    qwwad_ef_square_well --wellwidth $LW --barriermass $MB
+	    awk '{printf("%8.3f\n",$2)}' Ee.r >> $tempfile   # send data to file
     done
 }
 
