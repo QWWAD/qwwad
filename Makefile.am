@@ -51,7 +51,7 @@ bin_PROGRAMS =  \
 		efss    \
 	       	efsx    \
 		efxv    \
-		find_heterostructure \
+		qwwad_mesh \
 		find_poisson_potential \
 		gde     \
 		hup     \
@@ -240,8 +240,8 @@ efsx_SOURCES = src/efsx.c
 efxv_SOURCES = src/efxv.cpp
 efxv_LDADD   = libqwwad.la
 
-find_heterostructure_SOURCES = src/find_heterostructure.cpp
-find_heterostructure_LDADD   = libqwwad.la
+qwwad_mesh_SOURCES = src/qwwad_mesh.cpp
+qwwad_mesh_LDADD   = libqwwad.la
 
 find_poisson_potential_SOURCES = src/find_poisson_potential.cpp
 find_poisson_potential_LDADD   = libqwwad.la
@@ -346,7 +346,7 @@ dist_man1_MANS = \
 		 man/qwwad_tx_single_barrier.1                 \
 		 man/qwwad_tx_double_barrier.1                 \
 		 man/qwwad_tx_double_barrier_iv.1                \
-		 man/find_heterostructure.1 \
+		 man/qwwad_mesh.1 \
 		 man/efxv.1                 \
 		 man/efss.1                 \
 		 man/efpqw.1                \
@@ -366,7 +366,7 @@ EXTRA_DIST += \
               doc/qwwad_ef_infinite_well.h2m   \
 	      doc/qwwad_ef_square_well.h2m     \
 	      doc/qwwad_fermi_distribution.h2m \
-	      doc/find_heterostructure.h2m   \
+	      doc/qwwad_mesh.h2m   \
 	      doc/efxv.h2m                   \
 	      doc/efss.h2m                   \
 	      doc/efpqw.h2m                  \
@@ -423,10 +423,10 @@ man/qwwad_tx_double_barrier_iv.1: src/qwwad_tx_double_barrier_iv.cpp $(top_srcdi
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m ./qwwad_tx_double_barrier_iv$(EXEEXT)
 
-man/find_heterostructure.1: src/find_heterostructure.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/find_heterostructure.h2m | find_heterostructure$(EXEEXT)
+man/qwwad_mesh.1: src/qwwad_mesh.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_mesh.h2m | qwwad_mesh$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/find_heterostructure.h2m ./find_heterostructure$(EXEEXT)
+	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/qwwad_mesh.h2m ./qwwad_mesh$(EXEEXT)
 
 man/efxv.1: src/efxv.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/efxv.h2m | efxv$(EXEEXT)

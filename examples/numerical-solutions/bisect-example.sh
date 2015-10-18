@@ -50,4 +50,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f lhs.r rhs_?.r Ee.r wf_?.r
+rm -f lhs.r rhs_?.r Ee.r wf_e?.r
