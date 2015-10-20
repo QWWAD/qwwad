@@ -39,7 +39,6 @@ EOF
 # Create alloy concentration file
 qwwad_mesh
 
-exit
 # Find band-edge parameters
 efxv
 
@@ -62,7 +61,7 @@ $outfile_odd contains the (odd parity) first excited state
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

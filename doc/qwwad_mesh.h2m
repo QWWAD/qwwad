@@ -1,7 +1,7 @@
 [FILES]
 .SS Input files
    's.r'    Structure specification:
-            Column  1:         thickness of layer [UNIT]
+            Column  1:         thickness of layer [angstrom]
             Columns 2...(n-1): alloy fraction(s)
             Column  n:         doping [cm^{-3}]
 
@@ -32,8 +32,6 @@ A 200-angstrom layer of GaAs surrounded by 50-angstrom Al(0.15)Ga(0.85)As barrie
     200  0.00  0
     50   0.15  1e17
 
-Here, the units of thickness (1st column) are taken to be Angstrom by default, although this can be changed using the --unit option.
-
 An important `trick' can be used to specify doped regions within layers.
 Simply split the appropriate layer into multiple lines within the file.
 For example, to define a 20-Angstrom-thick layer inside the middle layer of the structure, with 2e16 cm^{-3} doping:
@@ -62,9 +60,6 @@ To specify a layer of In(0.52)Al(0.48)As followed by a layer of In(0.53)Ga(0.47)
 .SS Example usage
 Generate structure data for 3 periods of the structure in the input file:
     qwwad_mesh --nper 3
-
-Generate structure data, reading the lengths in nanometres (i.e., structure will be 10x thicker):
-    qwwad_mesh --unit nm
 
 Generate structure data, using resolution of at least 10 samples per angstrom:
     qwwad_mesh --zresmin 10
