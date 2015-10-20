@@ -39,8 +39,9 @@ EOF
 # Create alloy concentration file
 qwwad_mesh
 
-# Find band-edge parameters
-qwwad_ef_band_edge
+# Find band-edge parameters and output band-edge potential
+# as the total confining potential file (v.r)
+qwwad_ef_band_edge --bandedgepotentialfile v.r
 
 # Find lowest two states
 efss --nst-max 2

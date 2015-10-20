@@ -40,6 +40,8 @@ class BandEdgeOptions : public Options
                                                             "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
             add_option<char>       ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
             add_option<std::string>("alloyfile",     "x.r", "File from which alloy is read");
+            add_option<std::string>("bandedgepotentialfile",
+                                                   "v_b.r", "File to which band-edge potential is written");
 
             std::string doc("Find band-edge parameters for a heterostructure");
 
@@ -251,7 +253,8 @@ int main(int argc,char *argv[])
             break;
     }
 
-    write_table("v.r", z, V);
+    const auto bandedgepotentialfile = opt.get_option<std::string>("bandedgepotentialfile");
+    write_table(bandedgepotentialfile.c_str(), z, V);
     write_table("Eg.r", z, Eg);
     write_table("eps-dc.r", z, eps_dc);
 

@@ -10,7 +10,7 @@ For materials where the 2nd alloy component is not needed (E.g., AlGaAs), just o
 
 .SS Output files
 
-    'v.r'      Band-edge profile [J]
+    'v_b.r'    Band-edge profile [J]
     'alpha.r'  Nonparabolicity parameter [1/J]
     'Eg.r'     Bandgap [J]
     'eps_dc.r' Low-frequency permittivity [F/m]
