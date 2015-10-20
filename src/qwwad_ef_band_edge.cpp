@@ -1,5 +1,5 @@
 /**
- * \file   efxv.cpp
+ * \file   qwwad_ef_band_edge.cpp
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
@@ -14,7 +14,6 @@
  *          non-parabolicity in efshoot.
  */ 
 
-#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include "qwwad/constants.h"
@@ -27,22 +26,12 @@ using namespace constants;
 /**
  * Handler for command-line options
  */
-class EFXVOptions : public Options
+class BandEdgeOptions : public Options
 {
-    private:
-        bool auto_mass; ///< Calculate effective mass automatically
-
-        /**
-         * \brief Constant value of effective mass.
-         *
-         * This is only used if the constant-mass approximation is chosen 
-         */
-        double mass;
-
     public:
-        EFXVOptions(int argc, char* argv[])
+        BandEdgeOptions(int argc, char* argv[])
         {
-            add_option<std::string>("mass,m",     "auto",   "Set a constant effective-mass across the structure "
+            add_option<double>     ("mass,m",               "Set a constant effective-mass across the structure "
                                                             "(relative to free electron). "
                                                             "If not specified, the mass is calculated automatically "
                                                             "for all positions in the material.");
@@ -52,28 +41,9 @@ class EFXVOptions : public Options
             add_option<char>       ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
             add_option<std::string>("alloyfile",     "x.r", "File from which alloy is read");
 
-            std::string doc("Find material parameters for a given heterostructure. "
-                            "The alloy data is read for each point in the system and used to tabulate "
-                            "the band-edge profile, effective mass and permittivity.");
+            std::string doc("Find band-edge parameters for a heterostructure");
 
             add_prog_specific_options_and_parse(argc, argv, doc);	
-
-            // Parse the effective-mass calculation type            
-            std::string mass_arg(vm["mass"].as<std::string>());
-
-            if(!strcmp(mass_arg.c_str(), "auto"))
-                auto_mass = true;
-            else if(atof(mass_arg.c_str()) > 0.0)
-            {
-                auto_mass = false;
-                mass = atof(mass_arg.c_str());
-            }
-            else
-            {
-                std::ostringstream oss;
-                oss << "Cannot parse mass type: " << mass_arg;
-                throw std::runtime_error(oss.str());
-            }
         }
 
         /**
@@ -87,8 +57,8 @@ class EFXVOptions : public Options
             else if(mat_string.compare("inalgaas") == 0) Material='c';
             else
             {
-                fprintf(stderr,"The only materials defined in the database are\n");
-                fprintf(stderr,"Ga(1-x)Al(x)As, Cd(1-x)Mn(x)Te, In(1-x-y)Al(x)Ga(y)As\n");
+                std::cerr << "The only materials defined in the database are "
+                             "Ga(1-x)Al(x)As, Cd(1-x)Mn(x)Te and In(1-x-y)Al(x)Ga(y)As" << std::endl;
                 exit(EXIT_FAILURE);
             }
             return Material;
@@ -98,24 +68,15 @@ class EFXVOptions : public Options
          * \returns the particle ID
          */
         char get_particle() const {return vm["particle"].as<char>();}
-
-        /**
-         * \returns true if we calculate effective mass automatically
-         */
-        bool compute_mass() const {return auto_mass;}
-
-        /**
-         * \returns The constant effective mass in the material
-         */
-        double get_mass() const {return mass;}
 };
 
 int main(int argc,char *argv[])
 {
-    const EFXVOptions opt(argc, argv);
+    const BandEdgeOptions opt(argc, argv);
 
     const auto Material = opt.get_material(); // material character
     const auto p        = opt.get_particle(); // particle (e, h, or l)
+
 
     /* If either of the reference potential files exist, i.e., v0.r---the zero
        electric field potential file, or v1.r---the zero dopant reference, then
@@ -131,6 +92,12 @@ int main(int argc,char *argv[])
     std::valarray<double> mp;     // Effective mass perpendicular to growth
     std::valarray<double> Eg;     // Bandgap
     std::valarray<double> eps_dc; // Low-frequency permittivity [F/m]
+
+    // Flag whether effective mass needs computing or setting manually
+    bool compute_mass = true;
+
+    if (opt.vm.count("mass") > 0)
+        compute_mass = false;
 
     const auto alloyfile = opt.get_option<std::string>("alloyfile").c_str();
 
@@ -154,7 +121,7 @@ int main(int argc,char *argv[])
                             V=0.67*dV;
 
                             // Mass data: S. Adachi, `GaAs and related materials' */
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.067+0.083*x)*me;
                                 mp=(0.067+0.083*x)*me;
@@ -165,15 +132,18 @@ int main(int argc,char *argv[])
                         {
                             V=0.33*dV;
 
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.62+0.14*x)*me;
                                 mp=(0.62+0.14*x)*me;
                             }
                         }
                         break;
-                    case 'l':printf("Data not defined for Ga(1-x)Al(x)As light-hole\n");
-                             exit(EXIT_FAILURE);
+                    case 'l':
+                        {
+                            std::cerr << "Data not defined for Ga(1-x)Al(x)As light-hole" << std::endl;
+                            exit(EXIT_FAILURE);
+                        }
                 }
 
                 Eg     = 1.426*e+dV;
@@ -199,7 +169,7 @@ int main(int argc,char *argv[])
                             V=0.70*dV;
 
                             // Mass data: Long, 23rd Phys. Semicond. p1819
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.11+0.067*x)*me;
                                 mp=(0.11+0.067*x)*me;
@@ -210,7 +180,7 @@ int main(int argc,char *argv[])
                         {
                             V=0.30*dV;
 
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.60+0.21*x+0.15*x*x)*me;
                                 mp=(0.60+0.21*x+0.15*x*x)*me;
@@ -219,12 +189,12 @@ int main(int argc,char *argv[])
                         break;
                     case 'l':
                         {
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.18+0.14*x)*me;
                                 mp=(0.18+0.14*x)*me;
                             }
-                            fprintf(stderr, "Warning: Potential data not defined for Cd(1-x)Mn(x)Te light-hole\n");
+                            std::cerr << "Warning: Potential data not defined for Cd(1-x)Mn(x)Te light-hole" << std::endl;
                         }
                 }
 
@@ -254,7 +224,7 @@ int main(int argc,char *argv[])
                     case 'e':
                         {
                             V=0.53*dV;
-                            if(opt.compute_mass())
+                            if(compute_mass)
                             {
                                 m=(0.0427+0.0685*x)*me;
                                 mp=(0.0427+0.0685*x)*me;
@@ -264,13 +234,13 @@ int main(int argc,char *argv[])
                     case 'h':
                         {
                             V=0.47*dV;
-                            if(opt.compute_mass())
-                                fprintf(stderr, "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
+                            if(compute_mass)
+                                std::cerr << "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole" << std::endl;
                         }
                         break;
                     case 'l':
                         {
-                            printf("Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole\n");
+                            std::cerr << "Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole" << std::endl;
                             exit(EXIT_FAILURE);
                         }
                 }
@@ -285,10 +255,11 @@ int main(int argc,char *argv[])
     write_table("Eg.r", z, Eg);
     write_table("eps-dc.r", z, eps_dc);
 
-    if(!opt.compute_mass())
+    if(!compute_mass)
     {
-        m = z*0.0 + opt.get_mass()*me;
-        mp = z*0.0 + opt.get_mass()*me;
+        const auto mass = opt.get_option<double>("mass")*me;
+        m = z*0.0 + mass;
+        mp = z*0.0 + mass;
     }
 
     write_table("m.r", z, m);

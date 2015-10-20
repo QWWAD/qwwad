@@ -50,7 +50,7 @@ bin_PROGRAMS =  \
 		efsdwf  \
 		efss    \
 	       	efsx    \
-		efxv    \
+		qwwad_ef_band_edge    \
 		qwwad_mesh \
 		find_poisson_potential \
 		gde     \
@@ -237,8 +237,8 @@ qwwad_ef_square_well_LDADD   = libqwwad.la
 
 efsx_SOURCES = src/efsx.c
 
-efxv_SOURCES = src/efxv.cpp
-efxv_LDADD   = libqwwad.la
+qwwad_ef_band_edge_SOURCES = src/qwwad_ef_band_edge.cpp
+qwwad_ef_band_edge_LDADD   = libqwwad.la
 
 qwwad_mesh_SOURCES = src/qwwad_mesh.cpp
 qwwad_mesh_LDADD   = libqwwad.la
@@ -347,7 +347,7 @@ dist_man1_MANS = \
 		 man/qwwad_tx_double_barrier.1                 \
 		 man/qwwad_tx_double_barrier_iv.1                \
 		 man/qwwad_mesh.1 \
-		 man/efxv.1                 \
+		 man/qwwad_ef_band_edge.1                 \
 		 man/efss.1                 \
 		 man/efpqw.1                \
 		 man/pth.1                  \
@@ -367,7 +367,7 @@ EXTRA_DIST += \
 	      doc/qwwad_ef_square_well.h2m     \
 	      doc/qwwad_fermi_distribution.h2m \
 	      doc/qwwad_mesh.h2m   \
-	      doc/efxv.h2m                   \
+	      doc/qwwad_ef_band_edge.h2m                   \
 	      doc/efss.h2m                   \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
@@ -428,10 +428,10 @@ man/qwwad_mesh.1: src/qwwad_mesh.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/qwwad_mesh.h2m ./qwwad_mesh$(EXEEXT)
 
-man/efxv.1: src/efxv.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efxv.h2m | efxv$(EXEEXT)
+man/qwwad_ef_band_edge.1: src/qwwad_ef_band_edge.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_ef_band_edge.h2m | qwwad_ef_band_edge$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/efxv.h2m ./efxv$(EXEEXT)
+	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/qwwad_ef_band_edge.h2m ./qwwad_ef_band_edge$(EXEEXT)
 
 man/efss.1: src/efss.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/efss.h2m | efss$(EXEEXT)

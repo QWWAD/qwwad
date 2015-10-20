@@ -40,7 +40,7 @@ EOF
 qwwad_mesh
 
 # Find band-edge parameters
-efxv
+qwwad_ef_band_edge
 
 # Find lowest two states
 efss --nst-max 2
