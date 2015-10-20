@@ -1,13 +1,12 @@
 /**
- * \file    heterostructure.cpp
+ * \file    mesh.cpp
  * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
  * \brief   A description of layers in a heterostructure
  */
 
-#include "heterostructure.h"
+#include "mesh.h"
 
-#include <gsl/gsl_math.h>
 #include <fstream>
 
 #ifdef DEBUG
@@ -19,37 +18,34 @@
 namespace QWWAD
 {
 /**
- * \brief Create a heterostructure using specifications of each layer parameter
+ * \brief Create a Mesh using specifications of each layer parameter
  *
- * \param[in] x_layer   Alloy fraction of each layer
- * \param[in] W_layer   Thickness of each layer [m]
- * \param[in] n3D_layer Volume doping in each layer [m^{-3}]
- * \param[in] nz_1per   The number of points to be used in mapping out a single
- *                      period of the structure
- * \param[in] n_periods Number of periods of the structure to generate
- *
- * \details The number of points in the entire structure is given by
- *          N = (nz_{\text{1per}} - 1) \times n_{\text{period}} + 1
+ * \param[in] x_layer    Alloy fractions in each layer
+ * \param[in] W_layer    Thickness of each layer [m]
+ * \param[in] n3D_layer  Volume doping in each layer [m^{-3}]
+ * \param[in] ncell_1per The number of cells to be used in the mesh for each period
+ * \param[in] n_periods  Number of periods of the structure to generate
  */
-Heterostructure::Heterostructure(const alloy_vector          &x_layer,
-                                 const std::valarray<double> &W_layer,
-                                 const std::valarray<double> &n3D_layer,
-                                 const size_t                 nz_1per,
-                                 const size_t                 n_periods) :
+Mesh::Mesh(const decltype(_x_layer)    &x_layer,
+           const decltype(_W_layer)    &W_layer,
+           const decltype(_n3D_layer)  &n3D_layer,
+           const decltype(_ncell_1per)  ncell_1per,
+           const decltype(_n_periods)   n_periods) :
     _n_alloy(x_layer.at(0).size()),
     _x_layer(x_layer),
     _W_layer(W_layer),
     _n3D_layer(n3D_layer),
     _n_periods(n_periods),
-    _nz_1per(nz_1per),
+    _ncell_1per(ncell_1per),
     _layer_top_index(_x_layer.size() * n_periods),
-    _z((_nz_1per - 1)*n_periods + 1),
+    _z(_ncell_1per*_n_periods),
     _x(_z.size(), std::valarray<double>(_n_alloy)),
-    _n3D(_z.size())
+    _n3D(_z.size()),
+    _Lp(_W_layer.sum()),
+    _dz(_Lp/_ncell_1per)
 {
-    const double Lp = _W_layer.sum();    // Length of one period [m]
-    const size_t n_cell_1per = _nz_1per - 1; // Number of spatial intervals in a period
-    _dz = Lp/n_cell_1per; // Separation between points [m]
+    const auto n_layer_1per = _W_layer.size(); // Number of layers in one period
+    const auto n_layer      = n_layer_1per * _n_periods; // Total number of layers in system
 
     // Check that no layer is thinner than dz and throw an error if it is
     if (_W_layer.min() < _dz)
@@ -59,45 +55,32 @@ Heterostructure::Heterostructure(const alloy_vector          &x_layer,
         throw std::runtime_error(oss.str());
     }
 
-    // Calculate spatial points
-    unsigned int iL_cache = 0;
-    unsigned int idx = 0;
-    const size_t nz = _z.size(); // Total points in structure
-
-    // Loop through all points and assign layer compositions
-    for (unsigned int iz = 0; iz < nz; ++iz)
+    // Find the index at the top of each layer
+    for(unsigned int iL = 0; iL < n_layer; ++iL)
     {
-        _z[iz] = iz*_dz; // Calculate the spatial location [m]
+        _layer_top_index[iL] = get_layer_top_index(iL);
 
-        const double zp = fmod(_z[iz], Lp); // Position within period [m]
-        unsigned int iL = 0; // Layer index
+        unsigned int _previous_layer_top_index = 0;
 
-        // If this is the last point in the structure, insist that we stay
-        // inside the last layer
-        if (iz < nz-1)
-            iL = get_layer_from_height(zp); // Layer index
-        else
+        if (iL > 0) _previous_layer_top_index = _layer_top_index[iL-1];
+
+        // Now fill in the properties for each cell within the layer
+        for (unsigned int icell = _previous_layer_top_index;
+                          icell < _layer_top_index[iL];
+                          ++icell)
         {
-            iL = iL_cache;
-            _layer_top_index[_x_layer.size()-1] = _z.size();
+            _z[icell]   = (icell+0.5) * _dz; // Set location to middle of cell
+            _n3D[icell] = get_n3D_in_layer(iL);
+
+            // Copy all the alloy fractions for this layer
+            for(unsigned int ialloy = 0; ialloy < _n_alloy; ++ialloy)
+                _x.at(icell)[ialloy] = _x_layer.at(iL%n_layer_1per)[ialloy];
         }
-
-        // Only recalculate if we're in a new period
-        if(iL != iL_cache)
-        {
-            // TODO: Add some kind of bounds checking
-            _layer_top_index[idx++] = iz;
-            iL_cache = iL;
-        }
-
-        _n3D[iz]       = get_n3D_in_layer(iL);
-
-        for(unsigned int ialloy = 0; ialloy < _x_layer[0].size(); ++ialloy)
-            _x.at(iz)[ialloy] = get_x_in_layer(iL, ialloy);
     }
 }
 
-void Heterostructure::read_layers_from_file(const std::string     &filename,
+
+void Mesh::read_layers_from_file(const std::string     &filename,
                                             alloy_vector          &x_layer,
                                             std::valarray<double> &W_layer,
                                             std::valarray<double> &n3D_layer)
@@ -175,18 +158,18 @@ void Heterostructure::read_layers_from_file(const std::string     &filename,
 }
 
 /**
- * Create a heterostructure using data from an input file, with the number of spatial points
+ * Create a Mesh using data from an input file, with the number of spatial points
  * per period calculated automatically
  *
  * \param[in] layer_filename Name of input file
  * \param[in] n_periods      Number of periods to generate
- * \param[in] dz_max         The maximum allowable separation between spatial points [m]
+ * \param[in] dz_max         The maximum allowable width of each cell [m]
  *
- * \return A new heterostructure object for the system.  Remember to delete it after use!
+ * \return A new Mesh object for the system.  Remember to delete it after use!
  */
-Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &layer_filename,
-                                                           const size_t       n_periods,
-                                                           const double       dz_max)
+Mesh* Mesh::create_from_file_auto_nz(const std::string &layer_filename,
+                                     const size_t       n_periods,
+                                     const double       dz_max)
 {
     alloy_vector          x_layer;   // Alloy fraction for each layer
     std::valarray<double> W_layer;   // Thickness of each layer
@@ -195,25 +178,26 @@ Heterostructure* Heterostructure::create_from_file_auto_nz(const std::string &la
     read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
     const double period_length = W_layer.sum();
-    const size_t nz_1per = ceil(period_length/dz_max) + 1;
 
-    // Pack input data into a heterostructure object
-    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods);
+    // Round up to get the required number of cells per period
+    const size_t nz_1per = ceil(period_length/dz_max);
+
+    // Pack input data into a Mesh object
+    return new Mesh(x_layer, W_layer, n3D_layer, nz_1per, n_periods);
 }
 
 /**
- * Create a heterostructure using data from an input file containing data for each layer
+ * Create a Mesh using data from an input file containing data for each layer
  *
  * \param[in] layer_filename Name of input file
- * \param[in] nz_1per        The number of points to be used in mapping out a single
- *                           period of the structure
+ * \param[in] ncell_1per     The number of cells to be used in each period
  * \param[in] n_periods      Number of periods to generate
  *
- * \return A new heterostructure object for the system.  Remember to delete it after use!
+ * \return A new Mesh object for the system.  Remember to delete it after use!
  */
-Heterostructure* Heterostructure::create_from_file(const std::string &layer_filename,
-                                                   const size_t       nz_1per,
-                                                   const size_t       n_periods)
+Mesh* Mesh::create_from_file(const std::string &layer_filename,
+                             const size_t       ncell_1per,
+                             const size_t       n_periods)
 {
     alloy_vector          x_layer;   // Alloy fraction for each layer
     std::valarray<double> W_layer;   // Thickness of each layer
@@ -221,8 +205,8 @@ Heterostructure* Heterostructure::create_from_file(const std::string &layer_file
 
     read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
-    // Pack input data into a heterostructure object
-    return new Heterostructure(x_layer, W_layer, n3D_layer, nz_1per, n_periods);
+    // Pack input data into a Mesh object
+    return new Mesh(x_layer, W_layer, n3D_layer, ncell_1per, n_periods);
 }
 
 /**
@@ -232,7 +216,7 @@ Heterostructure* Heterostructure::create_from_file(const std::string &layer_file
  * 
  * \return The doping density [m\f$^{-3}\f$]
  */
-double Heterostructure::get_n3D_in_layer(const unsigned int iL) const
+double Mesh::get_n3D_in_layer(const unsigned int iL) const
 {
     if(iL > _n3D_layer.size() * _n_periods)
         throw std::domain_error("Tried to access the doping concentration in a layer outside the heterostructure.");
@@ -241,28 +225,12 @@ double Heterostructure::get_n3D_in_layer(const unsigned int iL) const
 }
 
 /** Get the doping concentration at a given point in the structure */
-double Heterostructure::get_n3D_at_point(const unsigned int iz) const
+double Mesh::get_n3D_at_point(const unsigned int iz) const
 {
     if(iz > _n3D.size())
         throw std::domain_error("Tried to access the doping concentration at a point outside the heterostructure.");
 
     return _n3D[iz];
-}
-
-/**
- * \brief Return the alloy fraction in a given layer
- *
- * \param[in] iL The index of the layer
- *
- * \return The alloy fraction
- */
-double Heterostructure::get_x_in_layer(const unsigned int iL,
-                                               const unsigned int ialloy) const
-{
-    if(iL >= _x_layer.size() * _n_periods)
-        throw std::domain_error("Tried to access the alloy fraction in a layer outside the heterostructure.");
-
-    return _x_layer.at(iL%_x_layer.size())[ialloy];
 }
 
 /**
@@ -278,12 +246,24 @@ double Heterostructure::get_x_in_layer(const unsigned int iL,
  *          of the point, assuming that the structure is infinitely long and
  *          periodic.
  */
-unsigned int Heterostructure::get_layer_top_index(const unsigned int iL) const
+unsigned int Mesh::get_layer_top_index(const unsigned int iL) const
 {
-    if(iL >= _W_layer.size()*_n_periods + 1)
-        throw std::domain_error("Cannot find layer top: layer index is outside the heterostructure");
+    // First figure out how many complete periods precede this layer
+    const auto previous_periods = iL / _W_layer.size(); // Integer division
 
-    return _layer_top_index[iL];
+    // ...and hence how many cells in those underlying periods
+    const auto previous_period_cells = _ncell_1per * previous_periods;
+
+    // Now work within this (incomplete) period
+    const auto iL_per = iL % _W_layer.size(); // Index of layer WITHIN period
+    const auto z_at_top  = get_height_at_top_of_layer(iL_per);
+    unsigned int iz_at_top = round(z_at_top / _dz); // Round to nearest layer
+
+    // Fix possible rounding error at top of period
+    if(iz_at_top > _ncell_1per)
+        iz_at_top = _ncell_1per;
+
+    return iz_at_top + previous_period_cells;
 }
 
 /**
@@ -296,17 +276,17 @@ unsigned int Heterostructure::get_layer_top_index(const unsigned int iL) const
  * \details If the heterostructure is periodic, then the specified layer index
  *          can be greater than the number in the heterostructure.
  */
-double Heterostructure::get_height_at_top_of_layer(const unsigned int iL) const
+double Mesh::get_height_at_top_of_layer(const unsigned int iL) const
 {
-//    if(iL >= _W_layer.size() * _n_periods + 10)
-//        throw std::domain_error("Tried to find top of a layer that is outside the heterostructure.");
-
     // Find the height of the highest **incomplete** period
     double height = _W_layer[std::slice(0, iL%_W_layer.size() + 1, 1)].sum();
 
     // Add on the height of all the **complete** periods below this layer
     if(_n_periods > 1)
-        height += _W_layer.sum() * floor(static_cast<double>(iL)/_W_layer.size());
+    {
+        const auto n_previous_periods = iL / _W_layer.size(); // Integer division
+        height += _W_layer.sum() * n_previous_periods;
+    }
 
     return height;
 }
@@ -322,20 +302,9 @@ double Heterostructure::get_height_at_top_of_layer(const unsigned int iL) const
  * \details The point is considered to be within the layer
  *          if z_top[iL-1] <= z < z_top[iL]
  */
-bool Heterostructure::point_is_in_layer(const double       z,
-                                        const unsigned int iL) const
+bool Mesh::point_is_in_layer(const double       z,
+                             const unsigned int iL) const
 {
-    /*
-    if(iL >= get_n_layers_total() + 1 or gsl_fcmp(z, get_total_length()*2, get_dz()/10) == 1)
-    {
-        std::ostringstream oss;
-        oss << "Tried to check whether the layer with index " << iL << " contains the point at " << z*1e9 << " nm."
-            " However, the structure only contains " << get_n_layers_total() << " layers and has a total height of "
-            << get_total_length()*1e9 << " nm.";
-
-        throw std::domain_error(oss.str());
-    }*/
-
     double       top_of_previous_layer = 0;
     const double top_of_this_layer     = get_height_at_top_of_layer(iL);
 
@@ -366,7 +335,7 @@ bool Heterostructure::point_is_in_layer(const double       z,
  *
  * \details A point lies within layer i if z_(i-1) <= z < z_i. 
  */
-unsigned int Heterostructure::get_layer_from_height(const double z) const
+unsigned int Mesh::get_layer_from_height(const double z) const
 {
     if (z > get_period_length()*_n_periods)
     {

@@ -1,11 +1,11 @@
 /**
- * \file   qwwad-heterostructure.h
+ * \file   mesh.h
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \brief  Declarations for heterostructure array generation
  */
 
-#ifndef HETEROSTRUCTURE_H
-#define HETEROSTRUCTURE_H
+#ifndef MESH_H
+#define MESH_H
 
 #if HAVE_CONFIG_H
 # include "config.h"
@@ -23,7 +23,7 @@ typedef std::vector< std::valarray<double> > alloy_vector;
 /**
  * \brief A stack of layers making up a quantum heterostructure
  */
-class Heterostructure
+class Mesh
 {
     private:
         static void read_layers_from_file(const std::string     &filename,
@@ -38,45 +38,47 @@ class Heterostructure
         std::valarray<double> _n3D_layer;  ///< Donor density in each layer [m^{-3}]
 
         size_t                _n_periods;  ///< Number of periods in the structure
-        size_t                _nz_1per;    ///< Number of points in each period (including the 'cap')
+        size_t                _ncell_1per; ///< Number of cells in each period of the mesh
 
-        std::valarray<unsigned int> _layer_top_index; ///< Index of the top of each layer
+        std::valarray<unsigned int> _layer_top_index; ///< Index of the last cell in each layer
 
         // Parameters for each point in the entire, expanded structure
-        std::valarray<double> _z;   ///< Spatial position at each point [m]
-        alloy_vector          _x;   ///< Alloy fractions at each spatial point
-        std::valarray<double> _n3D; ///< Volume doping at each point [m^{-3}]
-        double                _dz;  ///< Spatial separation between points [m]
+        std::valarray<double> _z;   ///< Spatial position at the middle of each cell [m]
+        alloy_vector          _x;   ///< Alloy fractions at the middle of each cell
+        std::valarray<double> _n3D; ///< Volume doping at the middle of each cell [m^{-3}]
+        double                _Lp;  ///< Length of one period [m]
+        double                _dz;  ///< Width of each cell [m]
 
     public:
-        Heterostructure(const alloy_vector          &x_layer,
-                        const std::valarray<double> &W_layer,
-                        const std::valarray<double> &n3D_layer,
-                        const size_t                 nz_1per,
-                        const size_t                 n_periods = 1);
-
+        Mesh(const decltype(_x_layer)    &x_layer,
+             const decltype(_W_layer)    &W_layer,
+             const decltype(_n3D_layer)  &n3D_layer,
+             const decltype(_ncell_1per)  ncell_1per,
+             const decltype(_n_periods)   n_periods = 1);
         
-        static Heterostructure* create_from_file_auto_nz(const std::string &layer_filename,
-                                                         const size_t       n_periods,
-                                                         const double       dz_max = 1e-10);
+        static Mesh* create_from_file_auto_nz(const std::string &layer_filename,
+                                              const size_t       n_periods,
+                                              const double       dz_max = 1e-10);
 
-        static Heterostructure* create_from_file(const std::string &layer_filename,
-                                                 const size_t       nz_1per,
-                                                 const size_t       n_periods);
+        static Mesh* create_from_file(const std::string &layer_filename,
+                                      const size_t       nz_1per,
+                                      const size_t       n_periods);
 
-        /** Return the number of sampling points in one period of the structure */
-        size_t get_nz_1per() const {return _nz_1per;}
+        /** Return the number of cells in one period of the mesh */
+        size_t get_ncell_1per() const {return _ncell_1per;}
 
         /** Return the total number of sampling points in the entire structure */
-        size_t get_nz() const {return _z.size();}
+        size_t get_ncell() const {return _z.size();}
 
         std::valarray<double> get_z() const {return _z;}
         double                get_z(unsigned int iz) const {return _z[iz];}
         double                get_dz() const {return _dz;}
 
+        /** Return the number of alloy components in the structure */
+        decltype(_n_alloy)    get_n_alloy() const {return _n_alloy;}
+
         std::valarray<double> get_layer_widths() const {return _W_layer;}
 
-        double get_x_in_layer(const unsigned int iL, const unsigned int ialloy) const;
         alloy_vector get_x_array() const {return _x;}
 
         double get_n3D_in_layer(const unsigned int iL) const;
@@ -114,5 +116,5 @@ class Heterostructure
         double       get_total_length() const {return _W_layer.sum()*_n_periods;}
 };
 } // namespace
-#endif // HETEROSTRUCTURE_H
+#endif // MESH_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

@@ -118,8 +118,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-debye.h   \
 			   src/qwwad/donor-energy-minimiser.cpp \
 			   src/qwwad/donor-energy-minimiser.h   \
-			   src/qwwad/heterostructure.cpp \
-			   src/qwwad/heterostructure.h   \
+			   src/qwwad/mesh.cpp \
+			   src/qwwad/mesh.h   \
 			   src/qwwad/file-io.cpp          \
 			   src/qwwad/file-io.h            \
 			   src/qwwad/file-io-deprecated.cpp \
