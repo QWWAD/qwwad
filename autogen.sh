@@ -14,8 +14,8 @@ if test -z $WHICH_AUTORECONF; then
         exit 1
 fi
 
-WHICH_LIBTOOL=`which libtool`
-if test -z $WHICH_LIBTOOL; then
+WHICH_LIBTOOLIZE=`which libtoolize`
+if test -z $WHICH_LIBTOOLIZE; then
         echo "*** No libtool found, please install it ***"
         exit 1
 fi
