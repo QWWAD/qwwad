@@ -9,7 +9,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -31,15 +31,15 @@ outfile_E=parabolic-well-energies.dat
 rm -f $outfile $outfile_E
 
 # Calculate alloy profile along z-axis
-efpqw --xmax 1
+qwwad_ef_parabolic_well --xmax 1
 
 # Convert alloy concentration `x' into effective mass `m'
-efxv -m 0.067
+qwwad_ef_band_edge --mass 0.067 --bandedgepotentialfile v.r
 
 # Implement shooting technique
-efss --nst-max 3
+qwwad_ef_generic --nstmax 3
 
-wfplot --plot-wf --plot-file $outfile
+qwwad_ef_plot --style wf --plotfile $outfile
 mv Ee.r $outfile_E
 
 cat << EOF
@@ -69,7 +69,7 @@ $outfile_E is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

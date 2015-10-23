@@ -45,7 +45,7 @@ bin_PROGRAMS =  \
 		efiwire \
 		qwwad_ef_superlattice  \
 	       	efmfv   \
-		efpqw   \
+		qwwad_ef_parabolic_well   \
 		efsdot  \
 		efsdwf  \
 		qwwad_ef_generic    \
@@ -222,8 +222,8 @@ qwwad_ef_superlattice_LDADD   = libqwwad.la
 efmfv_SOURCES = src/efmfv.cpp
 efmfv_LDADD   = libqwwad.la
 
-efpqw_SOURCES = src/efpqw.cpp
-efpqw_LDADD   = libqwwad.la
+qwwad_ef_parabolic_well_SOURCES = src/qwwad_ef_parabolic_well.cpp
+qwwad_ef_parabolic_well_LDADD   = libqwwad.la
 
 efsdot_SOURCES = src/efsdot.c
 
@@ -349,7 +349,7 @@ dist_man1_MANS = \
 		 man/qwwad_mesh.1 \
 		 man/qwwad_ef_band_edge.1                 \
 		 man/qwwad_ef_generic.1                 \
-		 man/efpqw.1                \
+		 man/qwwad_ef_parabolic_well.1                \
 		 man/pth.1                  \
 		 man/qwwad_find_donor_state.1 \
 		 man/find_poisson_potential.1 \
@@ -369,7 +369,7 @@ EXTRA_DIST += \
 	      doc/qwwad_mesh.h2m   \
 	      doc/qwwad_ef_band_edge.h2m                   \
 	      doc/qwwad_ef_generic.h2m                   \
-	      doc/efpqw.h2m                  \
+	      doc/qwwad_ef_parabolic_well.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
 	      doc/qwwad_ef_plot.h2m                 \
@@ -438,10 +438,10 @@ man/qwwad_ef_generic.1: src/qwwad_ef_generic.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/qwwad_ef_generic.h2m ./qwwad_ef_generic$(EXEEXT)
 
-man/efpqw.1: src/efpqw.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efpqw.h2m | efpqw$(EXEEXT)
+man/qwwad_ef_parabolic_well.1: src/qwwad_ef_parabolic_well.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_ef_parabolic_well.h2m | qwwad_ef_parabolic_well$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/efpqw.h2m ./efpqw$(EXEEXT)
+	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/qwwad_ef_parabolic_well.h2m ./qwwad_ef_parabolic_well$(EXEEXT)
 
 man/pth.1: src/pth.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/pth.h2m | pth$(EXEEXT)
