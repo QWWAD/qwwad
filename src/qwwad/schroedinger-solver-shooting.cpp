@@ -10,6 +10,8 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
+
+#include "maths-helpers.h"
 #include "constants.h"
 
 namespace QWWAD
@@ -45,9 +47,9 @@ void SchroedingerSolverShooting::calculate()
     double Elo=_V.min() + _dE;    // first energy estimate
 
     gsl_function f;
-    f.function = &psi_at_inf;
-    f.params   = this;
-    gsl_root_fsolver *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+    f.function  = &psi_at_inf;
+    f.params    = this;
+    auto solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
     for(unsigned int ist=0;
             (_nst_max > 0  && ist < _nst_max) || // Continue if max. states is specified & not exceeded
@@ -62,7 +64,7 @@ void SchroedingerSolverShooting::calculate()
         }
 
         // Value for y=f(x) at bottom of search range
-        const double y1 = GSL_FN_EVAL(&f,Elo);
+        const auto y1 = GSL_FN_EVAL(&f,Elo);
 
         // Find the range in which the solution lies by incrementing the
         // upper limit of the search range until the function changes sign.
@@ -76,6 +78,7 @@ void SchroedingerSolverShooting::calculate()
         // TODO: Make the cut-off configurable
         double y2 = y1;
         double Ehi = Elo;
+
         do
         {
             Ehi += _dE;
@@ -155,7 +158,7 @@ double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
     const double dz = _z[1] - _z[0];
 
     // Recalculate effective mass with non-parabolicity at this energy
-    std::valarray<double> m = _me*(1.0+_alpha*(E-_V));
+    const std::valarray<double> m = _me*(1.0+_alpha*(E-_V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf[0]   = 1.0;
@@ -189,8 +192,16 @@ double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
                 - wf_prev * m_next/m_prev;
         wf_prev += 0;
 
+        // Now copy calculated wave function to array
         if(i != nz-1) wf[i+1] = wf_next;
-    } 
+    }
+
+    // Normalise the stored wave function
+    const std::valarray<double> PD = wf*wf;
+    const auto PD_integral = integral(PD, dz);
+
+    wf /= sqrt(PD_integral);
+    wf_next /= sqrt(PD_integral);
 
     return wf_next;
 }
