@@ -41,13 +41,13 @@ $LB 0.2 0
 EOF
 
 # Create alloy concentration file
-find_heterostructure --dz-max 0.2
+qwwad_mesh --dzmax 0.2
 
 # Find band-edge parameters
-efxv
+qwwad_ef_band_edge --bandedgepotentialfile v.r
 
 # Find ground-state solution
-efss --solver shooting --mass 0.067 --nst-max 1
+qwwad_ef_generic --solver shooting --mass 0.067 --nstmax 1
 
 E=`cut -f2 Ee.r`
 echo $LB $E >> $outfile_E
