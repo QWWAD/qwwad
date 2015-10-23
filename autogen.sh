@@ -8,9 +8,15 @@ test -n "$srcdir" || srcdir=.
 olddir=`pwd`
 cd $srcdir
 
-AUTORECONF=`which autoreconf`
-if test -z $AUTORECONF; then
+WHICH_AUTORECONF=`which autoreconf`
+if test -z $WHICH_AUTORECONF; then
         echo "*** No autoreconf found, please install it ***"
+        exit 1
+fi
+
+WHICH_LIBTOOL=`which libtool`
+if test -z $WHICH_LIBTOOL; then
+        echo "*** No libtool found, please install it ***"
         exit 1
 fi
 
