@@ -20,7 +20,7 @@ using namespace constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt(WF_OPTION_MODE_IN);
+    WfOptions opt;
 
     std::string summary = "Compute the dispersion relation for a set of subbands.";
 
@@ -48,9 +48,9 @@ int main (int argc, char* argv[])
     const auto nkbt = opt.get_option<double>("nkbt");
     const auto Te   = opt.get_option<double>("Te");
 
-    const auto subbands = Subband::read_from_file(opt.get_energy_input_path(),
-                                                  opt.get_wf_input_prefix(),
-                                                  opt.get_wf_input_ext(),
+    const auto subbands = Subband::read_from_file(opt.get_energy_filename(),
+                                                  opt.get_wf_prefix(),
+                                                  opt.get_wf_ext(),
                                                   opt.get_option<double>("mass") * me,
                                                   opt.get_option<double>("alpha") / e,
                                                   opt.get_option<double>("vcb") * e);

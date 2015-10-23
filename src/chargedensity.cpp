@@ -28,8 +28,7 @@ public:
     ChargeDensityOptions(int argc, char* argv[]);
 };
 
-ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[]) :
-    WfOptions(WF_OPTION_MODE_IN)
+ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
 {
     std::string doc("Find charge density in a 2D heterostructure.");
 

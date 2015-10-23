@@ -27,7 +27,7 @@ using namespace constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt(WF_OPTION_MODE_IN);
+    WfOptions opt;
 
     std::string summary("Translate wavefunction data into a prettier plottable form.");
 
@@ -144,9 +144,9 @@ int main(int argc, char* argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto states = Eigenstate::read_from_file(opt.get_energy_input_path(),
-                                                   opt.get_wf_input_prefix(),
-                                                   opt.get_wf_input_ext(),
+    const auto states = Eigenstate::read_from_file(opt.get_energy_filename(),
+                                                   opt.get_wf_prefix(),
+                                                   opt.get_wf_ext(),
                                                    1000.0/e,
                                                    true);
 
