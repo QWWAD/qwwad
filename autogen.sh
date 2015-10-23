@@ -1,4 +1,4 @@
-#! /bin/sh -e
+#! /bin/sh
 
 # autogen.sh - Generate and update configuration files
 
