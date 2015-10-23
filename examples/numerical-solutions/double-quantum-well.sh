@@ -9,7 +9,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -30,14 +30,6 @@ outfile=double-quantum-well-E-vs-LB.dat
 outfile_wf=double-quantum-well-wf.dat
 rm -f $outfile
 
-# Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
-# Use V=0.67*1247*x, keep x=0.2
-V=167.0985
-
-# Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
-# Use MB=0.067+0.083*x, keep x=0.2
-MB=0.0836
-
 # Define well width here
 LW=60
 
@@ -53,10 +45,10 @@ $LW 0.0 0.0
 200 0.2 0.0
 EOF
 
-find_heterostructure --dz-max 0.25
-efxv # generate potential data
+qwwad_mesh --dzmax 0.25
+qwwad_ef_band_edge --bandedgepotentialfile v.r # generate potential data
 
-efss --nst-max 2 # calculate 2 lowest energy levels
+qwwad_ef_generic --nstmax 2 # calculate 2 lowest energy levels
 
 E1_numerical=`awk '/^1/{print $2}' Ee.r`
 E2_numerical=`awk '/^2/{print $2}' Ee.r`
@@ -70,7 +62,8 @@ mv wf_e2.r wf_e2-$LB.r
 printf "%e\t%s\t%s\n" $LB $E1_numerical $E2_numerical >> $outfile
 done
 
-wfplot --plot-wf --energy-input Ee-40.r --wf-input-ext "-40.r" --potential-input "v-40.r" --plot-file $outfile_wf
+# Generate a 'pretty' plot of bandstructure for the 40-angstrom wells
+qwwad_ef_plot --style wf --energy-input Ee-40.r --wf-input-ext "-40.r" --potential-input "v-40.r" --plotfile $outfile_wf
 
 cat << EOF
 Results have been written to $outfile and $outfile_wf, containing
@@ -98,7 +91,7 @@ $outfile_wf is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
