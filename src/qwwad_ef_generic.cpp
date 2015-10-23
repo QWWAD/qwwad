@@ -1,5 +1,5 @@
 /**
- * \file   efss.cpp
+ * \file   qwwad_ef_generic.cpp
  * \brief  Use Schroedinger library to solve 2D SE for QW system
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \author Jonathan Cooper <jdc.tas@gmail.com>
@@ -7,7 +7,7 @@
  * \details  This program solves the nonrelativistic Schrodinger equation
  *           for any one-dimensional nonrelativistic potential profile.
  *
- *           It takes inputs in the form of the conduction band profile,
+ *           It takes inputs in the form of the confining potential,
  *           effective mass profile, and non-parabolicity (alpha) profile
  *           all in SI units.
  */
@@ -28,6 +28,8 @@ using namespace constants;
 
 /** 
  * \brief The type of solver to use
+ *
+ * \todo Add a MATRIX_ITERATIVE_NONPARABOLIC solver based on a block eigenvalue search for non-parabolic bands
  */
 enum SolverType {
     MATRIX_PARABOLIC,  ///< Matrix method (parabolic bands)
@@ -67,7 +69,6 @@ enum SolverType {
 
 /** 
  * \brief Store for command line inputs
- * \todo  Use qclsim options class instead
  */
 class FwfOptions : public Options {
     private:
@@ -81,28 +82,28 @@ class FwfOptions : public Options {
         {
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!
-            add_option<double>     ("E-cutoff",              "Cut-off energy for solutions [meV]");
+            add_option<double>     ("Ecutoff",               "Cut-off energy for solutions [meV]");
             add_option<double>     ("mass",                  "The constant effective mass to use across the entire structure. "
                                                              "If unspecified, the mass profile will be read from file.");
             add_option<double>     ("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
                                                              "This is only used with the shooting-method solvers.");
-            add_option<std::string>("mass-file",  "m.r",     "Filename from which effective mass profile is read. "
+            add_option<std::string>("massfile",  "m.r",      "Filename from which effective mass profile is read. "
                                                              "This is only needed if you are not using constant effective "
                                                              "mass.");
             add_option<char>       ("particle,p", 'e',       "Particle to be used: 'e', 'h' or 'l'");
-            add_option<std::string>("alpha-file", "alpha.r", "Filename from which nonparabolicity parameter profile is read.");
-            add_option<std::string>("v-file",     "v.r",     "Filename from which confining potential is read.");
-            add_option<size_t>     ("nst-max",     0,        "Maximum number of subbands to find.  The default (0) means "
+            add_option<std::string>("alphafile", "alpha.r",  "Filename from which nonparabolicity parameter profile is read.");
+            add_option<std::string>("totalpotentialfile", "v.r", "Filename from which confining potential is read.");
+            add_option<size_t>     ("nstmax",     0,         "Maximum number of subbands to find.  The default (0) means "
                                                              "that all states will be found up to maximum confining potential, "
                                                              "or the cut-off energy (if specified).");
-            add_option<double>     ("try-energy",            "Calculate a trial wavefunction at a given energy [meV] and "
+            add_option<double>     ("tryenergy",             "Calculate a trial wavefunction at a given energy [meV] and "
                                                              "write to file. "
                                                              "This only works with Shooting solvers.");
             add_option<std::string>("solver",     "matrix",  "Set the way in which the Schroedinger "
                                                              "equation is solved. See the manual for "
                                                              "a detailed list of the options");
 
-            std::string doc = "Solve the 1D Schroedinger equation with the effective mass/envelope function approximations.";
+            std::string doc = "Solve the 1D Schroedinger equation numerically with the effective mass/envelope function approximations.";
 
             add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -177,7 +178,7 @@ int main(int argc, char *argv[]){
     // Read data from file
     std::valarray<double> z; // Spatial locations [m]
     std::valarray<double> V; // Potential profile [J]
-    read_table(opt.get_option<std::string>("v-file").c_str(), z, V);
+    read_table(opt.get_option<std::string>("totalpotentialfile").c_str(), z, V);
 
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
@@ -190,25 +191,25 @@ int main(int argc, char *argv[]){
     if(opt.get_type() == MATRIX_TAYLOR_NONPARABOLIC ||
        opt.get_type() == MATRIX_FULL_NONPARABOLIC   ||
        opt.get_type() == SHOOTING_NONPARABOLIC)
-        read_table(opt.get_option<std::string>("alpha-file").c_str(), z_tmp, alpha);
+        read_table(opt.get_option<std::string>("alphafile").c_str(), z_tmp, alpha);
 
     // Set a constant effective mass if specified.
     // Read spatially-varying profile from file if not.
     if(opt.vm.count("mass"))
         m += opt.get_option<double>("mass") * me;
     else
-        read_table(opt.get_option<std::string>("mass-file").c_str(), z_tmp, m);
+        read_table(opt.get_option<std::string>("massfile").c_str(), z_tmp, m);
 
     // By default, we set the number of states automatically
     // within the range of the potential profile
-    const auto nst_max = opt.get_option<size_t>("nst-max");
+    const auto nst_max = opt.get_option<size_t>("nstmax");
 
     // If we have a flat potential, the user needs to specify either
     // a cut-off energy or a number of states, otherwise we can't
     // proceed
-    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.vm.count("E-cutoff") == 0)
+    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.vm.count("Ecutoff") == 0)
     {
-        std::cerr << "Flat potential detected in " << opt.get_option<std::string>("v-file")
+        std::cerr << "Flat potential detected in " << opt.get_option<std::string>("totalpotentialfile")
                   << ".  You must either specify a cut-off energy using --E-cutoff "
                   << "or a number of states using --nst-max" << std::endl;
         exit(EXIT_FAILURE);
@@ -263,13 +264,13 @@ int main(int argc, char *argv[]){
     }
 
     // Set cut-off energy if desired
-    if(opt.vm.count("E-cutoff") > 0)
-        se->set_E_cutoff(opt.get_option<double>("E-cutoff") * e/1000);
+    if(opt.vm.count("Ecutoff") > 0)
+        se->set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     // Output a single trial wavefunction
-    if (opt.vm.count("try-energy") != 0 && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
+    if (opt.vm.count("tryenergy") != 0 && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
     {
-        const double E_trial = opt.get_option<double>("try-energy") * e/1000;
+        const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
         std::valarray<double> psi;
         const double psi_inf = dynamic_cast<SchroedingerSolverShooting *>(se)->shoot_wavefunction(psi, E_trial);
 

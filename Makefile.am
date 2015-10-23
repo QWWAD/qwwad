@@ -48,7 +48,7 @@ bin_PROGRAMS =  \
 		efpqw   \
 		efsdot  \
 		efsdwf  \
-		efss    \
+		qwwad_ef_generic    \
 	       	efsx    \
 		qwwad_ef_band_edge    \
 		qwwad_mesh \
@@ -229,8 +229,8 @@ efsdot_SOURCES = src/efsdot.c
 
 efsdwf_SOURCES = src/efsdwf.c
 
-efss_SOURCES = src/efss.cpp
-efss_LDADD   = libqwwad.la
+qwwad_ef_generic_SOURCES = src/qwwad_ef_generic.cpp
+qwwad_ef_generic_LDADD   = libqwwad.la
 
 qwwad_ef_square_well_SOURCES = src/qwwad_ef_square_well.cpp
 qwwad_ef_square_well_LDADD   = libqwwad.la
@@ -348,7 +348,7 @@ dist_man1_MANS = \
 		 man/qwwad_tx_double_barrier_iv.1                \
 		 man/qwwad_mesh.1 \
 		 man/qwwad_ef_band_edge.1                 \
-		 man/efss.1                 \
+		 man/qwwad_ef_generic.1                 \
 		 man/efpqw.1                \
 		 man/pth.1                  \
 		 man/qwwad_find_donor_state.1 \
@@ -368,7 +368,7 @@ EXTRA_DIST += \
 	      doc/qwwad_fermi_distribution.h2m \
 	      doc/qwwad_mesh.h2m   \
 	      doc/qwwad_ef_band_edge.h2m                   \
-	      doc/efss.h2m                   \
+	      doc/qwwad_ef_generic.h2m                   \
 	      doc/efpqw.h2m                  \
 	      doc/pth.h2m                    \
 	      doc/find_poisson_potential.h2m \
@@ -433,10 +433,10 @@ man/qwwad_ef_band_edge.1: src/qwwad_ef_band_edge.cpp $(top_srcdir)/configure.ac 
 	$(MKDIR_P) man
 	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/qwwad_ef_band_edge.h2m ./qwwad_ef_band_edge$(EXEEXT)
 
-man/efss.1: src/efss.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/efss.h2m | efss$(EXEEXT)
+man/qwwad_ef_generic.1: src/qwwad_ef_generic.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_ef_generic.h2m | qwwad_ef_generic$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/efss.h2m ./efss$(EXEEXT)
+	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/qwwad_ef_generic.h2m ./qwwad_ef_generic$(EXEEXT)
 
 man/efpqw.1: src/efpqw.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/efpqw.h2m | efpqw$(EXEEXT)

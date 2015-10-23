@@ -2,7 +2,7 @@
 .SS Input files
    'm.r'     Effective mass at the band edge [kg]
    'alpha.r' Nonparabolicity parameter [1/J]
-   'v.r'     Confining potential [J]:
+   'v.r'     Total confining potential [J]:
              Column 1: Spatial location [m]
              Column 2: Parameter, as listed above.
 
@@ -18,7 +18,7 @@ For example, the mass file is not needed if a constant mass is specified using t
              Column 1: position [m]
              Column 2: wave function amplitude [m^{-1/2}].
 
-   'wf_*E.r' Trial wave function at a specified energy (only if the --try-energy
+   'wf_*E.r' Trial wave function at a specified energy (only if the --tryenergy
              option was used).
              Column 1: position [m]
              Column 2: wave function amplitude [m^{-1/2}].
@@ -58,9 +58,9 @@ In other words,
 .B all the bound states within the system are found by default.
 The number of found solutions is, therefore, determined automatically.
 This behaviour can be changed by specifying either a maximum number of states to find above the lowest potential, using the
-.B --nst-max
+.B --nstmax
 option, or a cut-off energy, using the
-.B --E-cutoff
+.B --Ecutoff
 option.
 Note that the cut-off energy may be higher or lower than the maximum confining potential.
 
@@ -80,26 +80,26 @@ option.
 
 The Shooting-method solvers provide one more useful feature.
 It is possible to test a `trial' wave function at a given energy, using the
-.B --try-energy
+.B --tryenergy
 option.
 If this option is used, a single wave function will be computed, and saved to the 'wf_*E.r' file (where '*' is replaced by the particle ID).
 
 [EXAMPLES]
 
 Find the first four states in a system:
-    efss --nst-max 4
+    qwwad_ef_generic --nstmax 4
 
 Find all states within 100 meV of the lowest potential:
-    efss --E-cutoff 100
+    qwwad_ef_generic --Ecutoff 100
 
 As above, but using a shooting-method solver:
-    efss --E-cutoff 100 --solver shooting
+    qwwad_ef_generic --Ecutoff 100 --solver shooting
 
 Fix the effective mass at 0.07 across the entire structure:
-    efss --mass 0.07
+    qwwad_ef_generic --mass 0.07
 
 Find the trial wave function at an energy of 10 meV:
-    efss --try-energy 10 --solver shooting
+    qwwad_ef_generic --tryenergy 10 --solver shooting
 
 Use a shooting-method solver with 20 micro-electron-volt separation between search blocks:
-    efss --dE 0.02 --solver shooting
+    qwwad_ef_generic --dE 0.02 --solver shooting

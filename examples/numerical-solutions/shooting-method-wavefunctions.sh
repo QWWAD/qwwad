@@ -43,8 +43,8 @@ qwwad_mesh
 # as the total confining potential file (v.r)
 qwwad_ef_band_edge --bandedgepotentialfile v.r
 
-# Find lowest two states
-efss --nst-max 2
+# Find all bound eigenstates
+qwwad_ef_generic
 
 # Rescale to angstrom units and centre at zero
 awk '{print $1*1e10 - 200, $2}' wf_e1.r > $outfile_even
