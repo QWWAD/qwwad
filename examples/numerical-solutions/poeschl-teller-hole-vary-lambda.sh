@@ -9,7 +9,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -30,14 +30,18 @@ outfile_E=poeschl-teller-hole-E-lambda.dat
 outfile_V=poeschl-teller-hole-V.dat
 rm -f $outfile_E $outfile_V
 
-# Define length of Poschl-Teller potential
-L=300
+# Define constant length and width-parameter of Poschl-Teller potential
+export QWWAD_LENGTH=300
+export QWWAD_WIDTHPARAMETER=0.05
+
+# Use a constant effective mass of 0.067
+export QWWAD_MASS=0.067
 
 # Loop over depth parameter lambda
 for LAMBDA in 0.75 1 1.5 2.0 5.0 10.0; do
 
     # Find potential profile and get analytical solution
-    pth --alpha 0.05 --lambda $LAMBDA --length $L
+    qwwad_ef_poeschl_teller --depthparameter $LAMBDA
 
     E1_analytical=`awk '/^1/{print $2}' Ee.r`
     E2_analytical=`awk '/^2/{print $2}' Ee.r`
@@ -52,7 +56,7 @@ for LAMBDA in 0.75 1 1.5 2.0 5.0 10.0; do
     fi
 
     # Now perform numerical solution
-    efss --nst-max 2 --mass 0.067 # calculate 2 lowest energy levels
+    qwwad_ef_generic --nstmax 2 # calculate 2 lowest energy levels
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
     E2_numerical=`awk '/^2/{print $2}' Ee.r`
@@ -106,7 +110,7 @@ $outfile_E in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

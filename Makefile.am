@@ -60,7 +60,7 @@ bin_PROGRAMS =  \
 		imp     \
 		qwwad_tx_double_barrier_iv    \
 		matlib-query \
-		pth     \
+		qwwad_ef_poeschl_teller     \
 		qwwad_find_donor_state \
 		rlv-fcc \
 		rlv-sc  \
@@ -286,8 +286,8 @@ matlib_query_LDADD   = libqwwad.la
 #pplbso_SOURCES = src/pplbso.cpp src/ppsop.h
 #pplbso_LDADD   = libqwwad.la
 
-pth_SOURCES = src/pth.cpp
-pth_LDADD   = libqwwad.la
+qwwad_ef_poeschl_teller_SOURCES = src/qwwad_ef_poeschl_teller.cpp
+qwwad_ef_poeschl_teller_LDADD   = libqwwad.la
 
 qwwad_find_donor_state_SOURCES = src/qwwad_find_donor_state.cpp
 qwwad_find_donor_state_LDADD   = libqwwad.la
@@ -350,7 +350,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_band_edge.1                 \
 		 man/qwwad_ef_generic.1                 \
 		 man/qwwad_ef_parabolic_well.1                \
-		 man/pth.1                  \
+		 man/qwwad_ef_poeschl_teller.1                  \
 		 man/qwwad_find_donor_state.1 \
 		 man/find_poisson_potential.1 \
 		 man/hup.1                    \
@@ -370,7 +370,7 @@ EXTRA_DIST += \
 	      doc/qwwad_ef_band_edge.h2m                   \
 	      doc/qwwad_ef_generic.h2m                   \
 	      doc/qwwad_ef_parabolic_well.h2m                  \
-	      doc/pth.h2m                    \
+	      doc/qwwad_ef_poeschl_teller.h2m                    \
 	      doc/find_poisson_potential.h2m \
 	      doc/qwwad_ef_plot.h2m                 \
 	      doc/qwwad_ef_superlattice.h2m                 \
@@ -443,10 +443,10 @@ man/qwwad_ef_parabolic_well.1: src/qwwad_ef_parabolic_well.cpp $(top_srcdir)/con
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/qwwad_ef_parabolic_well.h2m ./qwwad_ef_parabolic_well$(EXEEXT)
 
-man/pth.1: src/pth.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/pth.h2m | pth$(EXEEXT)
+man/qwwad_ef_poeschl_teller.1: src/qwwad_ef_poeschl_teller.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_ef_poeschl_teller.h2m | qwwad_ef_poeschl_teller$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/pth.h2m ./pth$(EXEEXT) 
+	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/qwwad_ef_poeschl_teller.h2m ./qwwad_ef_poeschl_teller$(EXEEXT) 
 
 man/find_poisson_potential.1: src/find_poisson_potential.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/find_poisson_potential.h2m | find_poisson_potential$(EXEEXT)
