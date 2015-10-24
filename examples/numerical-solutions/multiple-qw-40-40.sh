@@ -10,7 +10,7 @@ set -e
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
 #    Chichester, U.K.: J. Wiley, 2015, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2015
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -33,52 +33,62 @@ rm -f $outfile $outfile_wf
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.2
-V=167.0985
+export QWWAD_BARRIERPOTENTIAL=167.0985
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x, keep x=0.2
-MB=0.0836
+export QWWAD_BARRIERMASS=0.0836
 
 # Define well and barrier widths here
-LW=40
-LB=40
+export QWWAD_WELLWIDTH=40
+export QWWAD_BARRIERWIDTH=40
+
+# Specify padding thickness at the start and end of the structure,
+# such that startpadding = finalpadding + barrierwidth
+startpadding=200
+endpadding=160
 
 # To compare with infinite superlattice
-efkpsl --well-width $LW --barrier-width $LB --barrier-mass $MB --potential $V
+qwwad_ef_superlattice
 E1_analytical=`awk '/^1/{print $2}' Ee.r`
 
+# Start a temporary layer definition file that we'll use to "build"
+# a stack of quantum wells inside the following loop
+# First, we'll just define the initial "padding" layer
+cat > s.r.tmp << EOF
+$startpadding 0.2 0.0
+EOF
+
 # Loop over number of wells
-for N in 1 2 3 4 5 6 7 8 9 10; do
- 
- # Write first barrier and initiate file
- echo 200 0.2 0.0 > s.r	
+for N in `seq 1 10`; do
 
- # Could only think of an awk script as a replacement `for(i=1;i<N-1;i++)'
- # loop---I'm sure you must be able to do this within `/bin/sh'
- echo $N $LW $LB | awk '{
- Nwells=$1; LW=$2; LB=$3;
- while(Nwells-- > 1)
-     {
-         printf("%i 0.0 0.0\n",LW)	
-         printf("%i 0.2 0.0\n",LB)	
-     }
- }' >> s.r
+# Now, add a quantum well and a barrier to the temporary layer file
+cat >> s.r.tmp << EOF
+$QWWAD_WELLWIDTH    0.0 0.0
+$QWWAD_BARRIERWIDTH 0.2 0.0
+EOF
+
+# Finally, copy the temporary layer file and add a final bit of padding
+# to give a symmetrical structure
+cp s.r.tmp s.r
+
+cat >> s.r << EOF
+$endpadding 0.2 0.0 
+EOF
 		 
- # Write last well and barrier
- echo $LW 0.0 0.0 >> s.r
- echo 200 0.2 0.0 >> s.r
+# Now generate mesh and bandstructure for the MQW system
+qwwad_mesh
+qwwad_ef_band_edge --bandedgepotentialfile v.r
 
- find_heterostructure --dz-max 0.25 # generate alloy concentration as a function of z
- efxv			# generate potential data
+# Solve the Schroedinger equation numerically
+qwwad_ef_generic --nstmax 1
 
- efss --nst-max 1
-
- # Write energy to output file
- E1_numerical=`awk '/^1/{print $2}' Ee.r`
- printf "%d\t%e\t%e\n" $N $E1_analytical $E1_numerical >> $outfile
+# Write energy to output file
+E1_numerical=`awk '/^1/{print $2}' Ee.r`
+printf "%d\t%e\t%e\n" $N $E1_analytical $E1_numerical >> $outfile
 done
 
-wfplot --plot-wf --plot-file $outfile_wf
+qwwad_ef_plot --style wf --plotfile $outfile_wf
 
 cat << EOF
 Results have been written to $outfile and
@@ -105,7 +115,7 @@ $outfile_wf is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2015
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
