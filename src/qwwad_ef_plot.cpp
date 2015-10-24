@@ -154,16 +154,17 @@ int main(int argc, char* argv[])
         std::cout << "Read data for " << states.size() << " wave functions" << std::endl;
 
     std::valarray<double> V;
-    std::valarray<double> z;    
-    read_table(opt.get_potential_input_path().c_str(), z, V);
+    std::valarray<double> z;
+    const auto totalpotentialfile = opt.get_option<std::string>("totalpotentialfile");
+    read_table(totalpotentialfile.c_str(), z, V);
 
     const auto nz_st = states[0].get_position_samples().size();
 
     if(V.size() != nz_st)
     {
         std::ostringstream oss;
-        oss << "Different number of data points in " << opt.get_potential_input_path()
-            << " (" << V.size() << " lines) and " << opt.get_wf_input_path(1)
+        oss << "Different number of data points in " << totalpotentialfile
+            << " (" << V.size() << " lines) and " << opt.get_wf_filename(1)
             << " (" << nz_st << " lines).  Do these correspond to the same eigenvalue problem?";
         throw std::length_error(oss.str());
     }

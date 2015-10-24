@@ -26,7 +26,7 @@ using namespace constants;
  */
 WfOptions configure_options(int argc, char* argv[])
 {
-    WfOptions opt(WF_OPTION_MODE_IN);
+    WfOptions opt;
     
     std::string summary("Compute the uncertainty relation for a given state.");
 
@@ -43,9 +43,9 @@ int main(int argc, char *argv[])
 
     const auto state = opt.get_option<size_t>("state"); // Principal quantum number of state to analyze
 
-    const auto all_states = Eigenstate::read_from_file(opt.get_energy_input_path(),
-                                                       opt.get_wf_input_prefix(),
-                                                       opt.get_wf_input_ext(),
+    const auto all_states = Eigenstate::read_from_file(opt.get_energy_filename(),
+                                                       opt.get_wf_prefix(),
+                                                       opt.get_wf_ext(),
                                                        1000.0/e,
                                                        true);
 

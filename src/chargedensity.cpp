@@ -64,9 +64,9 @@ class ChargeDensityData
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     _nper(opt.get_option<size_t>("nper")),
-    states(Eigenstate::read_from_file(opt.get_energy_input_path(),
-                                      opt.get_wf_input_prefix(),
-                                      opt.get_wf_input_ext())),
+    states(Eigenstate::read_from_file(opt.get_energy_filename(),
+                                      opt.get_wf_prefix(),
+                                      opt.get_wf_ext())),
     pop(states.size()),
     nval(1, states.size())
 {
