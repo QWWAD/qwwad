@@ -63,7 +63,7 @@ printf "%e\t%s\t%s\n" $LB $E1_numerical $E2_numerical >> $outfile
 done
 
 # Generate a 'pretty' plot of bandstructure for the 40-angstrom wells
-qwwad_ef_plot --style wf --energy-input Ee-40.r --wf-input-ext "-40.r" --potential-input "v-40.r" --plotfile $outfile_wf
+qwwad_ef_plot --style wf --energyfile Ee-40.r --wffileext "-40.r" --totalpotentialfile "v-40.r" --plotfile $outfile_wf
 
 cat << EOF
 Results have been written to $outfile and $outfile_wf, containing
