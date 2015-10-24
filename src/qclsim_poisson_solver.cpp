@@ -34,8 +34,8 @@ Poisson::Poisson(const std::valarray<double> &eps,
     _eps(eps),
     _eps_minus(eps), // Set the half-index permittivities
     _eps_plus(eps),  // to a default for now
-    _dx(dx),
-    _L(_eps.size()*_dx),
+    _dx(dx), // Size of cells in mesh
+    _L(_eps.size() * _dx), // Samples are at CENTRE of each cell so total length of structure is nx dx
     diag(std::valarray<double>(_eps.size())),
     sub_diag(std::valarray<double>(_eps.size()-1)),
     corner_point(0.0),
@@ -94,7 +94,7 @@ void Poisson::factorise_dirichlet()
         // Diagonal elements b_i [QWWAD4, 3.80]
         diag[i] = (_eps_plus[i] + _eps_minus[i]) / (_dx * _dx);
 
-        // Sub-diagonal elements a_(i+1], c_i [QWWAD4, 3.80]
+        // Sub-diagonal elements a_(i+1), c_i [QWWAD4, 3.80]
         if(i>0)
             sub_diag[i-1] = -_eps_minus[i] / (_dx * _dx);
     }
@@ -114,7 +114,7 @@ void Poisson::factorise_dirichlet()
         oss << "Cannot factorise Poisson equation. (Lapack error code: " << info << ")";
         throw std::runtime_error(oss.str());
     }
-} // End Poisson::factorise_hardwall()
+}
 
 void Poisson::factorise_mixed()
 {
@@ -157,10 +157,28 @@ void Poisson::factorise_zerofield()
     }
 }
 
-std::valarray<double> Poisson::solve(std::valarray<double> rho)
+/**
+ * \brief Solves the Poisson equation for a given charge-density with no potential drop
+ *
+ * \param[in] rho    The charge density profile [C m^{-3}]
+ *
+ * \return The potential profile [J]
+ */
+std::valarray<double> Poisson::solve(const std::valarray<double> &rho) const
 {
-    std::valarray<double> phi(rho.size());
-    const size_t n = _eps.size();
+    const auto n = _eps.size();
+
+    if (rho.size() != n)
+        throw std::runtime_error("Permittivity and charge density arrays have different sizes");
+
+    auto rhs = rho; // Set right-hand-side to the charge-density
+
+    // Create temporary copies of the diagonal and subdiagonal arrays since this
+    // function promises not to change any member variables
+    auto diag_tmp = diag;
+    auto sub_diag_tmp = sub_diag;
+
+    auto phi = rhs; // Array in which to output the potential [J]
 
     switch(boundary_type)
     {
@@ -169,10 +187,10 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
                 int nrhs = 1;
                 int info = 0;
 #if HAVE_LAPACKE
-                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &rho[0], n);
+                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], n);
 #else
                 const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &rho[0], &_N, &info);
+                dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
 #endif
                 if(info != 0)
                 {
@@ -181,39 +199,65 @@ std::valarray<double> Poisson::solve(std::valarray<double> rho)
                     throw std::runtime_error(oss.str());
                 }
 
-                phi = rho;
+                phi = rhs;
             }
             break;
         case MIXED:
         case ZERO_FIELD:
             phi = solve_cyclic_matrix(sub_diag, diag, corner_point, rho);
-            
-            if(phi.size() != static_cast<size_t>(n))
-                    throw std::runtime_error("Cannot solve Poisson equation.");
             break;
     }
 
     return phi; 
 }
 
-std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
+/**
+ * \brief Solves the Poisson equation for a given charge-density and potential drop
+ *
+ * \param[in] rho    The charge density profile [C m^{-3}]
+ * \param[in] V_drop The total potential drop across the structure [J]
+ *
+ * \return The potential profile [J]
+ */
+std::valarray<double> Poisson::solve(const std::valarray<double> &rho,
+                                     const double                 V_drop) const
 {
-    const size_t n = _eps.size();
+    const auto n = _eps.size();
+
+    if (rho.size() != n)
+        throw std::runtime_error("Permittivity and charge density arrays have different sizes");
+
+    auto rhs = rho; // Set right-hand-side to the charge-density
+
+    // Create temporary copies of the diagonal and subdiagonal arrays since this
+    // function promises not to change any member variables
+    auto diag_tmp = diag;
+    auto sub_diag_tmp = sub_diag;
 
     switch(boundary_type)
     {
         case DIRICHLET:
             {
-                int nrhs = 1;
-                int info = 0;
+                int nrhs = 1; // number of right-hand-side columns
+                int info = 0; // return code for LAPACK
 
-                // Add voltage drop
-                phi[n-1] += V_drop*diag[n-1];
+                // We want to fix the potential just BEFORE the structure to 0
+                //   i.e., phi[-1] = 0
+                // If the voltage drop across the structure is V_drop, then the LAST
+                // point in the system takes this value
+                //   i.e., phi[n-1] = V_drop = F * length
+                // so the first point AFTER the structure has the potential
+                //   phi[n] = F * (length + dz) = V_drop + F dz = V_drop (nz + 1) / nz
+
+                const auto next_potential = V_drop * n / (n+1);
+
+                // The boundary condition is then set according to QWWAD4, 3.110.
+                rhs[n-1] += diag[n-1] * next_potential;
 #if HAVE_LAPACKE
-                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &phi[0], n);
+                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], n);
 #else
                 const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &_N, &info);
+                dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
 #endif
                 if(info != 0)
                 {
@@ -225,46 +269,32 @@ std::valarray<double> Poisson::solve(std::valarray<double> phi, double V_drop)
             break;
         case MIXED:
             throw std::runtime_error("Cannot apply bias directly when solving the Poisson equation with "
-                                     "mixed bounradries. Instead solve cyclic problem without bias, then solve Laplace "
+                                     "mixed boundaries. Instead solve cyclic problem without bias, then solve Laplace "
                                      "equation and sum the result.");
         default:
             throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
     }
 
-    return phi; 
+    // LAPACK outputs the potential in the right-hand-side vector on exit
+    const auto phi = rhs;
+
+    return phi;
 }
 
-std::valarray<double> Poisson::solve_laplace(double V_drop)
+/**
+ * \brief Solve the Laplace equation (i.e., the Poisson equation with no charge)
+ *
+ * \param[in] V_drop the total potential drop across the system [J]
+ *
+ * \return The potential profile [J]
+ */
+std::valarray<double> Poisson::solve_laplace(const double V_drop) const
 {
     const size_t n = _eps.size();
-    std::valarray<double> phi(0.0, n);
-    switch(boundary_type)
-    {
-        case DIRICHLET:
-            {
-                int nrhs = 1;
-                int info = 0;
 
-                phi[n-1] += V_drop*diag[n-1];
-#if HAVE_LAPACKE
-                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag[0], &sub_diag[0], &phi[0], n);
-#else
-                const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag[0], &sub_diag[0], &phi[0], &_N, &info);
-#endif
-                if(info != 0)
-                {
-                    std::ostringstream oss;
-                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
-                    throw std::runtime_error(oss.str());
-                }
-            }
-            break;
-        case MIXED:
-            throw std::runtime_error("Cannot solve the Laplace equation with mixed boundary conditions.");
-        default:
-            throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
-    }
+    // Create an empty charge profile and solve the Poisson equation
+    std::valarray<double> rho(0.0, n);
+    const auto phi = solve(rho, V_drop);
 
     return phi; 
 }

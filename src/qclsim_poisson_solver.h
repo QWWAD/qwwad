@@ -38,9 +38,10 @@ class Poisson
 public:
     Poisson(const std::valarray<double>& eps, const double dx, PoissonBoundaryType bt=DIRICHLET);
     
-    std::valarray<double> solve(std::valarray<double> phi);
-    std::valarray<double> solve(std::valarray<double> phi, double V_drop);
-    std::valarray<double> solve_laplace(const double V_drop);
+    std::valarray<double> solve(const std::valarray<double> &rho) const;
+    std::valarray<double> solve(const std::valarray<double> &rho,
+                                const double                 V_drop) const;
+    std::valarray<double> solve_laplace(const double V_drop) const;
 
 private:
     void factorise_dirichlet();

@@ -49,13 +49,13 @@ This may be the most suitable option for cases such as periodic structures, in w
 
 [EXAMPLES]
 Compute the Poisson potential for a fixed bias of 10 kV/cm and add it to the potential stored in vcb.r
-    find_poisson_potential --field 10 --Vbasefile vcb.r
+    qwwad_poisson --field 10 --Vbasefile vcb.r
 
 Compute the Poisson potential under no external bias, without pinning to the contact potential
-    find_poisson_potential --mixed
+    qwwad_poisson --mixed
 
 Compute the Poisson potential for a structure with no internal charge, under 5 kV/cm bias
-    find_poisson_potential --uncharged --field 5
+    qwwad_poisson --uncharged --field 5
 
 Compute the Poisson potential under 10 kV/cm bias, with the left side pinned at 2 meV.
-    find_poisson_potential --field 10 --offset 2
+    qwwad_poisson --field 10 --offset 2

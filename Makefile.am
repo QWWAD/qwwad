@@ -52,7 +52,7 @@ bin_PROGRAMS =  \
 	       	efsx    \
 		qwwad_ef_band_edge    \
 		qwwad_mesh \
-		find_poisson_potential \
+		qwwad_poisson \
 		gde     \
 		hup     \
 		i0      \
@@ -243,8 +243,8 @@ qwwad_ef_band_edge_LDADD   = libqwwad.la
 qwwad_mesh_SOURCES = src/qwwad_mesh.cpp
 qwwad_mesh_LDADD   = libqwwad.la
 
-find_poisson_potential_SOURCES = src/find_poisson_potential.cpp
-find_poisson_potential_LDADD   = libqwwad.la
+qwwad_poisson_SOURCES = src/qwwad_poisson.cpp
+qwwad_poisson_LDADD   = libqwwad.la
 
 gde_SOURCES = src/gde.cpp
 gde_LDADD   = libqwwad.la
@@ -352,7 +352,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_parabolic_well.1                \
 		 man/qwwad_ef_poeschl_teller.1                  \
 		 man/qwwad_find_donor_state.1 \
-		 man/find_poisson_potential.1 \
+		 man/qwwad_poisson.1 \
 		 man/hup.1                    \
 		 man/densityinput.1           \
 		 man/chargedensity.1          \
@@ -371,7 +371,7 @@ EXTRA_DIST += \
 	      doc/qwwad_ef_generic.h2m                   \
 	      doc/qwwad_ef_parabolic_well.h2m                  \
 	      doc/qwwad_ef_poeschl_teller.h2m                    \
-	      doc/find_poisson_potential.h2m \
+	      doc/qwwad_poisson.h2m \
 	      doc/qwwad_ef_plot.h2m                 \
 	      doc/qwwad_ef_superlattice.h2m                 \
 	      doc/qwwad_tx_single_barrier.h2m                    \
@@ -448,10 +448,10 @@ man/qwwad_ef_poeschl_teller.1: src/qwwad_ef_poeschl_teller.cpp $(top_srcdir)/con
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/qwwad_ef_poeschl_teller.h2m ./qwwad_ef_poeschl_teller$(EXEEXT) 
 
-man/find_poisson_potential.1: src/find_poisson_potential.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/find_poisson_potential.h2m | find_poisson_potential$(EXEEXT)
+man/qwwad_poisson.1: src/qwwad_poisson.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_poisson.h2m | qwwad_poisson$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/find_poisson_potential.h2m ./find_poisson_potential$(EXEEXT) 
+	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/qwwad_poisson.h2m ./qwwad_poisson$(EXEEXT) 
 
 man/hup.1: src/hup.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/hup.h2m | hup$(EXEEXT)
