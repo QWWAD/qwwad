@@ -1,3 +1,9 @@
+qwwad (1.2.0+15) xenial; urgency=low
+
+  * Rebuild to pick up new Boost libs
+
+ -- Alex Valavanis <a.valavanis@leeds.ac.uk>  Fri, 05 Feb 2015 10:21:00 +0000
+
 qwwad (1.0+1) saucy; urgency=low
 
   * Start packaging for automated bzr builder. See the real packaging
