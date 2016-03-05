@@ -1,5 +1,5 @@
 /**
- * \file   hup.cpp
+ * \file   qwwad_uncertainty.cpp
  * \brief  Heisenberg's Uncertainty Principle
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>

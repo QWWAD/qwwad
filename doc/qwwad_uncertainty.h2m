@@ -11,4 +11,4 @@ In each case, the '*' is replaced by the particle ID and the 'i' is replaced by 
 
 [EXAMPLES]
 Calculate uncertainty in <z><p> for state 3:
-   hup --state 3
+   qwwad_uncertainty --state 3

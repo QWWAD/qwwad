@@ -54,7 +54,7 @@ bin_PROGRAMS =  \
 		qwwad_mesh \
 		qwwad_poisson \
 		gde     \
-		hup     \
+		qwwad_uncertainty    \
 		i0      \
 		ifr     \
 		imp     \
@@ -249,8 +249,8 @@ qwwad_poisson_LDADD   = libqwwad.la
 gde_SOURCES = src/gde.cpp
 gde_LDADD   = libqwwad.la
 
-hup_SOURCES = src/hup.cpp
-hup_LDADD   = libqwwad.la
+qwwad_uncertainty_SOURCES = src/qwwad_uncertainty.cpp
+qwwad_uncertainty_LDADD   = libqwwad.la
 
 ifr_SOURCES = src/ifr.cpp
 ifr_LDADD   = libqwwad.la
@@ -353,7 +353,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_poeschl_teller.1                  \
 		 man/qwwad_find_donor_state.1 \
 		 man/qwwad_poisson.1 \
-		 man/hup.1                    \
+		 man/qwwad_uncertainty.1                    \
 		 man/densityinput.1           \
 		 man/chargedensity.1          \
 		 man/gde.1
@@ -377,7 +377,7 @@ EXTRA_DIST += \
 	      doc/qwwad_tx_single_barrier.h2m                    \
 	      doc/qwwad_tx_double_barrier.h2m                    \
 	      doc/qwwad_tx_double_barrier_iv.h2m                   \
-	      doc/hup.h2m                    \
+	      doc/qwwad_uncertainty.h2m                    \
 	      doc/densityinput.h2m           \
 	      doc/chargedensity.h2m          \
 	      doc/gde.h2m                    \
@@ -453,10 +453,10 @@ man/qwwad_poisson.1: src/qwwad_poisson.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/qwwad_poisson.h2m ./qwwad_poisson$(EXEEXT) 
 
-man/hup.1: src/hup.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/hup.h2m | hup$(EXEEXT)
+man/qwwad_uncertainty.1: src/qwwad_uncertainty.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_uncertainty.h2m | qwwad_uncertainty$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/hup.h2m ./hup$(EXEEXT) 
+	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/qwwad_uncertainty.h2m ./qwwad_uncertainty$(EXEEXT) 
 
 man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/densityinput.h2m | densityinput$(EXEEXT)

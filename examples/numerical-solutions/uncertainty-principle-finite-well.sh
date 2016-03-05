@@ -37,7 +37,7 @@ for LW in 20 30 40 50 60 70 80 90 100 120 140 160 180 200; do
  qwwad_ef_square_well --wellwidth $LW
 
  # Search for line in standard output from hup and write to file 
- data=`hup | awk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}'`
+ data=`qwwad_uncertainty | awk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}'`
 
  printf "%d\t%s\n" $LW $data >> $outfile
 done
