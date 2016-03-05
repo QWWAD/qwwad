@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -29,28 +29,31 @@ set -e
 outfile=nonparabolic-dE-vs-width.dat
 rm -f $outfile
 
+export QWWAD_NSTMAX=1 # Only study ground states
+
 # Loop over barrier concentrations
 for X in 0.4 0.6 0.8 1.0; do
 
  # Loop over well width
  for LW in 20 22 24 26 28 30 35 40 50 60 80 100 120 140 160 180 200; do
+     printf "\rCalculating barrier = %f; width = %d" $X $LW
 
      # First generate structure definition `s.r' file
      echo 200 $X  0.0  > s.r
      echo $LW 0.0 0.0 >> s.r
      echo 200 $X  0.0 >> s.r
 
-     find_heterostructure --dz-max 0.25 # generate alloy concentration as a function of z
-     efxv 		  # generate potential data, and bandgap
+     qwwad_mesh --dzmax 0.25 # generate alloy concentration as a function of z
+     qwwad_ef_band_edge --bandedgepotentialfile v.r    # generate potential data, and bandgap
 
      # Calculate ground state energy with band non-parabolicity
-     efss --solver shooting-nonparabolic --nst-max 1
+     qwwad_ef_generic --solver shooting-nonparabolic
 
      # Get energy from file
      E1_np=`awk '/^1/{printf $2}' Ee.r`
 
      # Calculate ground state energy without band non-parabolicity
-     efss --nst-max 1
+     qwwad_ef_generic
 
      # Get energy from file
      E1_parab=`awk '/^1/{printf $2}' Ee.r`
@@ -63,6 +66,8 @@ for X in 0.4 0.6 0.8 1.0; do
 
  printf "\n" >> $outfile
 done # X
+
+printf "\n"
 
 cat << EOF
 Results have been written to $outfile in the format:
@@ -78,10 +83,9 @@ Results have been written to $outfile in the format:
   SET 3 - 80% AlAs barriers
   SET 4 - 100% AlAs barriers
 
-
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
