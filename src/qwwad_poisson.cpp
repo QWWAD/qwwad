@@ -35,23 +35,24 @@ Options get_options(int argc, char* argv[])
 
     const std::string doc("Find the Poisson potential induced by a given charge profile");
 
-    opt.add_option<bool>       ("uncharged",                      "True if there is no charge in the structure");
-    opt.add_option<bool>       ("centred",                        "True if the potential should be pivoted "
-                                                                  "around the centre of the structure");
-    opt.add_option<bool>       ("mixed",                          "Use mixed boundary conditions.  By default, "
-                                                                  "the space-charge effect is assumed to give "
-                                                                  "zero-field boundary conditions.  By supplying "
-                                                                  "this option, nonzero boundary fields can exist.");
-    opt.add_option<std::string>("bandedgepotentialfile", "v_b.r", "File containing baseline potential to be added to Poisson potential");
-    opt.add_option<std::string>("poissonpotentialfile",  "v_p.r", "Filename to which the Poisson potential is written.");
-    opt.add_option<std::string>("totalpotentialfile",    "v.r",   "Filename to which the total potential is written.");
-    opt.add_option<std::string>("chargefile",           "rho.r",  "Set filename from which to read charge density profile.");
-    opt.add_option<double>     ("field,E",                        "Set external electric field [kV/cm]. Only specify if "
-                                                                  "the voltage drop needs to be fixed. Otherwise will be "
-                                                                  "equal to inbuilt potential from zero-field Poisson solution.");
-    opt.add_option<double>     ("offset",               0 ,       "Set potential at spatial point closest to origin [meV].");
-    opt.add_option<bool>       ("ptype",                          "Dopants are to be treated as acceptors, and wavefunctions "
-                                                                  "treated as hole states");
+    opt.add_option<bool>       ("uncharged",                         "True if there is no charge in the structure");
+    opt.add_option<bool>       ("centred",                           "True if the potential should be pivoted "
+                                                                     "around the centre of the structure");
+    opt.add_option<bool>       ("mixed",                             "Use mixed boundary conditions.  By default, "
+                                                                     "the space-charge effect is assumed to give "
+                                                                     "zero-field boundary conditions.  By supplying "
+                                                                     "this option, nonzero boundary fields can exist.");
+    opt.add_option<std::string>("bandedgepotentialfile", "v_b.r",    "File containing baseline potential to be added to Poisson potential");
+    opt.add_option<std::string>("dcpermittivityfile",    "eps_dc.r", "File containing the dc permittivity");
+    opt.add_option<std::string>("poissonpotentialfile",  "v_p.r",    "Filename to which the Poisson potential is written.");
+    opt.add_option<std::string>("totalpotentialfile",    "v.r",      "Filename to which the total potential is written.");
+    opt.add_option<std::string>("chargefile",            "cd.r",     "Filename from which to read charge density profile.");
+    opt.add_option<double>     ("field,E",                           "Set external electric field [kV/cm]. Only specify if "
+                                                                     "the voltage drop needs to be fixed. Otherwise will be "
+                                                                     "equal to inbuilt potential from zero-field Poisson solution.");
+    opt.add_option<double>     ("offset",                 0 ,        "Set potential at spatial point closest to origin [meV].");
+    opt.add_option<bool>       ("ptype",                             "Dopants are to be treated as acceptors, and wavefunctions "
+                                                                     "treated as hole states");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -65,7 +66,7 @@ int main(int argc, char* argv[])
     // Read low-frequency permittivity from file [F/m]
     std::valarray<double> z;
     std::valarray<double> _eps;
-    read_table("eps-dc.r", z, _eps);
+    read_table(opt.get_option<std::string>("dcpermittivityfile").c_str(), z, _eps);
 
     const size_t nz = z.size();
 

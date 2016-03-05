@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ for LW in 20 30 40 50 60 70 80 90 100 120 140 160 180 200; do
 
  # Calculate ground state energy and wave function as a function 
  # of well width for GaAs
- efsqw --well-width $LW
+ qwwad_ef_square_well --wellwidth $LW
 
  # Search for line in standard output from hup and write to file 
  data=`hup | awk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}'`
@@ -50,7 +50,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

@@ -38,10 +38,10 @@ class BandEdgeOptions : public Options
             add_option<std::string>("material,M", "gaalas", "Material ID: \"gaalas\" for Ga(1-x)Al(x)As, "
                                                             "\"cdmnte\" for Cd(1-x)Mn(x)Te, or "
                                                             "\"inalgaas\" for In(1-x-y)Al(x)Ga(y)As");
-            add_option<char>       ("particle,p",      'e', "Particle to be used: 'e', 'h' or 'l'");
-            add_option<std::string>("alloyfile",     "x.r", "File from which alloy is read");
-            add_option<std::string>("bandedgepotentialfile",
-                                                   "v_b.r", "File to which band-edge potential is written");
+            add_option<char>       ("particle,p",            'e',        "Particle to be used: 'e', 'h' or 'l'");
+            add_option<std::string>("dcpermittivityfile",    "eps_dc.r", "File containing the dc permittivity");
+            add_option<std::string>("alloyfile",             "x.r",      "File from which alloy is read");
+            add_option<std::string>("bandedgepotentialfile", "v_b.r",    "File to which band-edge potential is written");
 
             std::string doc("Find band-edge parameters for a heterostructure");
 
@@ -254,9 +254,10 @@ int main(int argc,char *argv[])
     }
 
     const auto bandedgepotentialfile = opt.get_option<std::string>("bandedgepotentialfile");
+    const auto dcpermittivityfile    = opt.get_option<std::string>("dcpermittivityfile");
     write_table(bandedgepotentialfile.c_str(), z, V);
     write_table("Eg.r", z, Eg);
-    write_table("eps-dc.r", z, eps_dc);
+    write_table(dcpermittivityfile.c_str(), z, eps_dc);
 
     if(!compute_mass)
     {
