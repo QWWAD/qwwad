@@ -36,7 +36,7 @@ bin_PROGRAMS =  \
 		critical-thickness \
                 csss    \
 		cszb    \
-		densityinput \
+		qwwad_population_init \
 		qwwad_density_of_states     \
 		ebe     \
 		efcwire \
@@ -193,8 +193,8 @@ csss_SOURCES = src/csss.c
 
 cszb_SOURCES = src/cszb.c
 
-densityinput_SOURCES = src/densityinput.cpp
-densityinput_LDADD   = libqwwad.la
+qwwad_population_init_SOURCES = src/qwwad_population_init.cpp
+qwwad_population_init_LDADD   = libqwwad.la
 
 qwwad_ef_dispersion_SOURCES = src/qwwad_ef_dispersion.cpp
 qwwad_ef_dispersion_LDADD   = libqwwad.la
@@ -354,7 +354,7 @@ dist_man1_MANS = \
 		 man/qwwad_find_donor_state.1 \
 		 man/qwwad_poisson.1 \
 		 man/qwwad_uncertainty.1                    \
-		 man/densityinput.1           \
+		 man/qwwad_population_init.1           \
 		 man/qwwad_charge_density.1          \
 		 man/gde.1
 
@@ -378,7 +378,7 @@ EXTRA_DIST += \
 	      doc/qwwad_tx_double_barrier.h2m                    \
 	      doc/qwwad_tx_double_barrier_iv.h2m                   \
 	      doc/qwwad_uncertainty.h2m                    \
-	      doc/densityinput.h2m           \
+	      doc/qwwad_population_init.h2m           \
 	      doc/qwwad_charge_density.h2m          \
 	      doc/gde.h2m                    \
 	      doc/qwwad_find_donor_state.h2m 
@@ -458,10 +458,10 @@ man/qwwad_uncertainty.1: src/qwwad_uncertainty.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/qwwad_uncertainty.h2m ./qwwad_uncertainty$(EXEEXT) 
 
-man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/densityinput.h2m | densityinput$(EXEEXT)
+man/qwwad_population_init.1: src/qwwad_population_init.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_population_init.h2m | qwwad_population_init$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/densityinput.h2m ./densityinput$(EXEEXT) 
+	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/qwwad_population_init.h2m ./qwwad_population_init$(EXEEXT) 
 
 man/qwwad_charge_density.1: src/qwwad_charge_density.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/qwwad_charge_density.h2m | qwwad_charge_density$(EXEEXT)

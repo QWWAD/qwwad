@@ -50,8 +50,8 @@ for I in `seq 0 7`; do
  # Calculate ground state energy
  qwwad_ef_generic --nstmax 1
 
- densityinput  # Estimate the population density in each state
- qwwad_charge_density # Compute charge density profile
+ qwwad_population_init # Estimate the population density in each state
+ qwwad_charge_density  # Compute charge density profile
  
  # save wave function in separate file
  cp wf_e1.r wf_e1-I=$I.r
@@ -66,7 +66,7 @@ for I in `seq 0 7`; do
 done # X
 
 # Convert volume density to sheet density within slices
-awk '{print $1*1e10, $2/(1e14*1.6e-19) * 1e-10}' rho.r > $outfile_sigma
+awk '{print $1*1e10, $2/(1e14*1.6e-19) * 1e-10}' cd.r > $outfile_sigma
 
 awk '{print $1*1e10, $2/1e6}' field.r > $outfile_field
 awk '{print $1*1e10, $2*1000/1.6e-19}' v_p.r > $outfile_Vp

@@ -1,5 +1,5 @@
 /**
- * \file   densityinput.cpp
+ * \file   qwwad_population_input.cpp
  * \brief  Generate approximate subband populations
  * \author Andrew Grier <el09a2g@leeds.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
@@ -51,7 +51,7 @@ DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
     add_option<std::string>("dopingfile",      "d.r",  "Filename from which doping profile is read [m^{-3}]");
     add_option<std::string>("energyfile",      "Ee.r", "Filename from which subband energies are read [meV]");
     add_option<double>     ("mass",            0.067,  "In-plane effective mass (relative to free electron)");
-    add_option<double>     ("temperature,T",     100,  "Temperature of carrier distribution [K]");
+    add_option<double>     ("Te",                100,  "Temperature of carrier distribution [K]");
     add_option<std::string>("populationfile",  "N.r",  "Set filename to which subband populations are written [m^{-2}]");
     add_option<size_t>     ("nval",                1,  "Split population between a number of equivalent valleys");
     add_option<std::string>("type",           "even",  "Type of carrier distribution across states. Permitted "

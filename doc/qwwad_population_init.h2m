@@ -29,11 +29,11 @@ This is a reasonable approximation for e.g., periodic multi-quantum-well systems
 
 .SS fermi
 With this option, carriers follow a thermalised Fermi-Dirac energy distribution.
-The Fermi energy for the entire system is computed automatically, using the carrier temperature and effective mass specified by the --temperature and --mass options.
+The Fermi energy for the entire system is computed automatically, using the carrier temperature and effective mass specified by the --Te and --mass options.
 
 [EXAMPLES]
 Put all carriers into the ground state
-    densityinput --type ground
+    qwwad_population_init --type ground
 
 Generate a Fermi-Dirac distribution with carrier temperature = 200 K 
-    densityinput --temperature 200
+    qwwad_population_init --Te 200
