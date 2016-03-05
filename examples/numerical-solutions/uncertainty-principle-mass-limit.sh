@@ -8,9 +8,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -32,7 +32,8 @@ rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.4
-V=334.196
+export QWWAD_BARRIERPOTENTIAL=334.196
+export QWWAD_WELLMASS=0.067
 
 # Loop over well width
 for LW in 20 50 100; do
@@ -41,10 +42,10 @@ for LW in 20 50 100; do
     for MB in 0.01 0.02 0.03 0.04 0.05 0.06 0.067 0.07 0.08 0.09 0.10 0.12 0.14 0.16 0.18 0.20 0.3 0.4 0.50 0.6 0.7 0.8 0.9 1.0; do
  
         # Calculate ground state energy for different well and barrier masses
-        efsqw --well-width $LW --well-mass 0.067 --barrier-mass $MB --potential $V
+        qwwad_ef_square_well --wellwidth $LW --barriermass $MB
 
-        # Search for line in standard output from hup and write to file 
-        data=`hup | awk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}'`
+        # Search for line in standard output from qwwad_uncertainty and write to file 
+        data=`qwwad_uncertainty | awk '/Delta_z.Delta_p/{printf("%8.3f\n",$2)}'`
 
         echo $MB $data >> $outfile
     done
@@ -67,7 +68,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
