@@ -8,9 +8,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -32,19 +32,19 @@ rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.2
-V=626.6175
+export QWWAD_BARRIERPOTENTIAL=626.6175
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x, keep x=0.2
-MB=0.12925
+export QWWAD_BARRIERMASS=0.12925
 
 # Define a set well width
-LW=20
+export QWWAD_WELLWIDTH=20
 
 # Loop over spatial resolution [points-per-angstrom]
 for N in 2 4 6 8 10 12; do
     # Calculate lowest 2 levels with analytical form
-    efsqw --well-width $LW --barrier-mass $MB --nst 2 --potential $V
+    qwwad_ef_square_well --nst 2
 
     E1_analytical=`awk '/^1/{print $2}' Ee.r`
 
@@ -57,16 +57,13 @@ for N in 2 4 6 8 10 12; do
 
     # First generate structure definition `s.r' file
     echo 200 0.75 0.0 > s.r
-    echo $LW 0.0 0.0  >> s.r
+    echo $QWWAD_WELLWIDTH 0.0 0.0  >> s.r
     echo 200 0.75 0.0 >> s.r
 
-    # Work out how many points we need for the desired sampling period
-    nz=`echo $LW $N | awk '{print ($1 + 400) * $2 + 1}'`
+    qwwad_mesh --zresmin $N # generate alloy concentration as a function of z
+    qwwad_ef_band_edge --bandedgepotentialfile v.r  # generate potential data
 
-    find_heterostructure --nz-1per $nz # generate alloy concentration as a function of z
-    efxv			  # generate potential data
-
-    efss --nst-max 1 # calculate lowest energy level
+    qwwad_ef_generic --nstmax 1 # calculate lowest energy level
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
 
@@ -86,7 +83,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

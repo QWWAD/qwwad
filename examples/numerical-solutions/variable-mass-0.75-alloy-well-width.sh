@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -31,16 +31,16 @@ rm -f $outfile
 
 # Calculate conduction band barrier height for GaAs/Ga(1-x)Al(x)As
 # Use V=0.67*1247*x, keep x=0.2
-V=626.6175
+export QWWAD_BARRIERPOTENTIAL=626.6175
 
 # Calculate bulk effective mass of electron in Ga(1-x)Al(x)As
 # Use MB=0.067+0.083*x, keep x=0.2
-MB=0.12925
+export QWWAD_BARRIERMASS=0.12925
 
 # Loop over well width
 for LW in 20 40 60 80 100 120 160 200; do
     # Calculate lowest 2 levels with analytical form
-    efsqw --well-width $LW --barrier-mass $MB --nst 2 --potential $V
+    qwwad_ef_square_well --wellwidth $LW --nst 2
 
     # Save lowest two energies to file
     E1_analytical=`awk '/^1/{print $2}' Ee.r`
@@ -61,10 +61,10 @@ for LW in 20 40 60 80 100 120 160 200; do
     echo $LW 0.00 0.0 >> s.r
     echo 200 0.75 0.0 >> s.r
 
-    find_heterostructure --dz-max 1 # generate alloy concentration as a function of z
-    efxv	  		  # generate potential data
+    qwwad_mesh --dzmax 1 # generate alloy concentration as a function of z
+    qwwad_ef_band_edge --bandedgepotentialfile v.r  # generate potential data
 
-    efss --nst-max 2 # calculate 2 lowest energy levels
+    qwwad_ef_generic --nstmax 2 # calculate 2 lowest energy levels
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
     E2_numerical=`awk '/^2/{print $2}' Ee.r`
@@ -91,7 +91,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -31,16 +31,18 @@ outfile=poeschl-teller-hole-convergence.dat
 # Initialise files
 rm -f $outfile
     
-# Define length of Poschl-Teller potential [angstrom]
-L=300
+# Define a fixed geometry Poschl-Teller potential [angstrom]
+export QWWAD_LENGTH=300
+export QWWAD_WIDTHPARAMETER=0.05
+export QWWAD_DEPTHPARAMETER=5
 
 # Loop over number of points per Angstrom
 for N in 1 2 5 10 20 50 100; do
 
     # Compute the total number of points needed
-    nz=`echo $N $L | awk '{print $1 * $2 + 1}'`
+    nz=`echo $N $QWWAD_LENGTH | awk '{print $1 * $2 + 1}'`
 
-    pth --alpha 0.05 --lambda 5 --length $L --nz $nz
+    qwwad_ef_poeschl_teller --nz $nz
 
     E1_analytical=`awk '/^1/{print $2}' Ee.r`
     E2_analytical=`awk '/^2/{print $2}' Ee.r`
@@ -55,7 +57,7 @@ for N in 1 2 5 10 20 50 100; do
     fi
 
     # Now perform numerical solution
-    efss --nst-max 2 --mass 0.067 # calculate 2 lowest energy levels
+    qwwad_ef_generic --nstmax 2 --mass 0.067 # calculate 2 lowest energy levels
 
     E1_numerical=`awk '/^1/{print $2}' Ee.r`
     E2_numerical=`awk '/^2/{print $2}' Ee.r`

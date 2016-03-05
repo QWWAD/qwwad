@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -36,24 +36,24 @@ cat > s.r << EOF
 100 0.2 2e17
 EOF
  
-find_heterostructure --dz-max 1	# generate alloy concentration as a function of z
-efxv                            # generate potential data
+qwwad_mesh --dzmax 1	# generate alloy concentration as a function of z
+qwwad_ef_band_edge      # generate potential data
 
-cp v.r vcb.r # Save conduction-band energy
+cp v_b.r v.r # Copy conduction-band potential to total potential for first iteration
   
 for I in 0 1 2 3; do
  # Calculate ground state Schroedinger solution
- efss --nst-max 1
+ qwwad_ef_generic --nstmax 1
 
- densityinput # Generate an estimate of the population density
- chargedensity # Compute charge density profile
+ qwwad_population_init # Generate an estimate of the population density
+ qwwad_charge_density  # Compute charge density profile
 
  # Implement self consistent Poisson calculation
- find_poisson_potential --Vbasefile vcb.r
+ qwwad_poisson
 done
 
 # Save data to output file [meV]
-awk '{print $1*1e10, $2/1.6e-19 * 1000}' vcb.r  > $outfile # band-edge potential
+awk '{print $1*1e10, $2/1.6e-19 * 1000}' v_b.r  > $outfile # band-edge potential
 printf "\n"                                    >> $outfile # blank line
 awk '{print $1*1e10, $2/1.6e-19 * 1000}' v.r   >> $outfile # total potential
 
@@ -71,7 +71,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

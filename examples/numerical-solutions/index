@@ -32,7 +32,7 @@ Fig 3.40: modulation-doping.sh                 => modulation-doping-V.dat
 Fig 3.41: high-electron-mobility-transistor.sh => high-electron-mobility-transistor-V.dat
 Fig 3.42: high-electron-mobility-transistor.sh => high-electron-mobility-transistor-wf.dat
 
-Tbl 3.1:  parabolic-well-E-10.sh                 => parabolic-well-E-10.dat
+Tbl 3.2:  parabolic-well-E-10.sh                 => parabolic-well-E-10.dat
 Tbl 3.3:  poeschl-teller-hole-vary-lambda.sh     => poeschl-teller-hole-E-lambda.dat
 Tbl 3.4:  poeschl-teller-hole-convergence.sh     => poeschl-teller-hole-convergence.dat
 Tbl 3.5:  variable-mass-0.2-alloy.sh             => variable-mass-0.2-alloy.dat

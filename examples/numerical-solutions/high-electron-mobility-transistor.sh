@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -36,24 +36,24 @@ cat > s.r << EOF
 200 0.0 0.0
 EOF
  
-find_heterostructure	# generate alloy concentration as a function of z
-efxv			# generate potential data
+qwwad_mesh          # generate alloy concentration as a function of z
+qwwad_ef_band_edge  # generate potential data
 
-cp v.r vcb.r # Save conduction-band energy
+cp v_b.r v.r # Copy conduction-band potential to total potential for first iteration
   
 for I in `seq 0 6`; do
  # Calculate ground state energy
- efss --nst-max 1
+ qwwad_ef_generic --nstmax 1
 
- densityinput  # Generate an estimate of the population density
- chargedensity # Compute charge density profile
+ qwwad_population_init # Generate an estimate of the population density
+ qwwad_charge_density  # Compute charge density profile
 
  # save wave function and potential in separate files
  cp wf_e1.r wf_e1-I=$I.r
  cp v.r v-I=$I.r
 
  # Implement self consistent Poisson calculation
- find_poisson_potential --mixed --Vbasefile vcb.r
+ qwwad_poisson --mixed
 done
 
 # Save data to output files
