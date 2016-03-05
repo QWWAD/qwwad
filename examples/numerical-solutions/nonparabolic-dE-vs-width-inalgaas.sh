@@ -8,9 +8,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -41,6 +41,8 @@ Xw=0.0
 Yb=0.0
 Xb=0.48
 
+export NSTMAX=1 # Only study ground states
+
 # Loop over well width
 for LW in 20 30 40 50 60 80 100 120 140 160 180 200; do
  # First generate structure definition `s.r' file
@@ -49,17 +51,17 @@ for LW in 20 30 40 50 60 80 100 120 140 160 180 200; do
  echo 200 $Xb $Yb 0 >> s.r
  
  # Remember to switch material system
- find_heterostructure --dz-max 0.25  # generate alloy concentration as a function of z
- efxv --material inalgaas # generate potential data, and bandgap
+ qwwad_mesh --dzmax 0.25  # generate alloy concentration as a function of z
+ qwwad_ef_band_edge --material inalgaas --bandedgepotentialfile v.r # generate potential data, and bandgap
  
  # Calculate ground state energy with band non-parabolicity
- efss --solver shooting-nonparabolic --nst-max 1
+ qwwad_ef_generic --solver shooting-nonparabolic
 
  # Get energy from file
  E_np=`awk '/^1/{printf $2}' Ee.r`
 
  # Calculate ground state energy without band non-parabolicity
- efss --nst-max 1
+ qwwad_ef_generic
 
  # Get energy from file
  E_parab=`awk '/^1/{printf $2}' Ee.r`
