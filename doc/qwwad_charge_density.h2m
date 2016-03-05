@@ -16,7 +16,7 @@
              Column 1: population [m^{-2}]
 
 .SS Output files:
-   'rho.r'   Charge density profile:
+   'cd.r'    Charge density profile:
              Column 1: spatial location [m]
              Column 2: volume density [C m^{-3}]
 
@@ -37,7 +37,7 @@ To change this behaviour, use the --ptype flag.
 
 [EXAMPLES]
 Compute the charge density for a given (single-period) structure:
-    chargedensity
+    qwwad_charge_density
 
 Compute the charge density for a periodic structure, where the wf_e*.r files contain centrally-localised wavefunction data for three periods of the system.
-    chargedensity --nper 3
+    qwwad_charge_density --nper 3

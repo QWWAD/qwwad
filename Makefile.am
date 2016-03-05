@@ -32,7 +32,7 @@ bin_PROGRAMS =  \
 		qwwad_ef_plot          \
 		qwwad_ef_square_well   \
 		ado                \
-		chargedensity \
+		qwwad_charge_density \
 		critical-thickness \
                 csss    \
 		cszb    \
@@ -183,8 +183,8 @@ libqwwad_la_LIBADD = $(GSL_LIBS) \
 ado_SOURCES = src/ado.cpp
 ado_LDADD   = libqwwad.la
 
-chargedensity_SOURCES = src/chargedensity.cpp
-chargedensity_LDADD   = libqwwad.la
+qwwad_charge_density_SOURCES = src/qwwad_charge_density.cpp
+qwwad_charge_density_LDADD   = libqwwad.la
 
 critical_thickness_SOURCES = src/critical-thickness.cpp
 critical_thickness_LDADD   = libqwwad.la
@@ -355,7 +355,7 @@ dist_man1_MANS = \
 		 man/qwwad_poisson.1 \
 		 man/qwwad_uncertainty.1                    \
 		 man/densityinput.1           \
-		 man/chargedensity.1          \
+		 man/qwwad_charge_density.1          \
 		 man/gde.1
 
 CLEANFILES = $(dist_man1_MANS)
@@ -379,7 +379,7 @@ EXTRA_DIST += \
 	      doc/qwwad_tx_double_barrier_iv.h2m                   \
 	      doc/qwwad_uncertainty.h2m                    \
 	      doc/densityinput.h2m           \
-	      doc/chargedensity.h2m          \
+	      doc/qwwad_charge_density.h2m          \
 	      doc/gde.h2m                    \
 	      doc/qwwad_find_donor_state.h2m 
 
@@ -463,10 +463,10 @@ man/densityinput.1: src/densityinput.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/densityinput.h2m ./densityinput$(EXEEXT) 
 
-man/chargedensity.1: src/chargedensity.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/chargedensity.h2m | chargedensity$(EXEEXT)
+man/qwwad_charge_density.1: src/qwwad_charge_density.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_charge_density.h2m | qwwad_charge_density$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/chargedensity.h2m ./chargedensity$(EXEEXT) 
+	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/qwwad_charge_density.h2m ./qwwad_charge_density$(EXEEXT) 
 
 man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/gde.h2m | gde$(EXEEXT)

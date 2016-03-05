@@ -1,5 +1,5 @@
 /** 
- * \file   chargedensity.cpp
+ * \file   qwwad_charge_density.cpp
  * \brief  Calculates charge density profile for a 2D heterostructure
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
@@ -38,7 +38,7 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
     add_option<std::string>("populationfile",        "N.r", "File from which to read subband populations [m^{-2}]");
     add_option<std::string>("degeneracyfile",               "File from which to read subband degeneracies. If not "
                                                             "specified, all states are taken to be non-degenerate");
-    add_option<std::string>("chargefile",          "rho.r", "File to which charge density profile will be written");
+    add_option<std::string>("chargefile",           "cd.r", "File to which charge density profile will be written");
     add_option<std::string>("carrierdensityfile", "dens.r", "File to which electron density profile will be written");
     add_option<bool>       ("ptype",                        "Dopants are to be treated as acceptors, and wavefunctions "
                                                             "treated as hole states");

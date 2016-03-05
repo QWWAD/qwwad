@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.3
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -41,17 +41,17 @@ cat > s.r << EOF
 200 0.2 0.0
 EOF
  
-find_heterostructure --dz-max 1	# generate alloy concentration as a function of z
-efxv                            # generate potential data
+qwwad_mesh --dzmax 1	# generate alloy concentration as a function of z
+qwwad_ef_band_edge      # generate potential data
 
-cp v.r vcb.r     # Save conduction-band potential for use as a baseline
+cp v_b.r v.r # Copy band-edge potential to total potential for first iteration
 
 for I in `seq 0 7`; do
  # Calculate ground state energy
- efss --nst-max 1
+ qwwad_ef_generic --nstmax 1
 
  densityinput  # Estimate the population density in each state
- chargedensity # Compute charge density profile
+ qwwad_charge_density # Compute charge density profile
  
  # save wave function in separate file
  cp wf_e1.r wf_e1-I=$I.r
@@ -62,7 +62,7 @@ for I in `seq 0 7`; do
  echo $I $E1 >> $outfile
 
  # Implement self consistent Poisson calculation
- find_poisson_potential --Vbasefile vcb.r
+ qwwad_poisson
 done # X
 
 # Convert volume density to sheet density within slices
@@ -106,7 +106,7 @@ $outfile_Vt contains the total potential profile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
