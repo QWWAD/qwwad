@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.2
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -36,17 +36,17 @@ cat > s.r << EOF
 200 0.2 0.0
 EOF
 
-find_heterostructure # generate alloy concentration as a function of z
-efxv		     # generate potential data
+export QWWAD_NSTMAX=1 # Only consider ground state
 
-cp v.r vcb.r # Save conduction band energy for use as baseline
+qwwad_mesh         # generate alloy concentration as a function of z
+qwwad_ef_band_edge # generate potential data
 
 # Loop over electric field 
 for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70; do
  # Add electric field to potential
- find_poisson_potential --uncharged --field $F --centred --Vbasefile vcb.r
+ qwwad_poisson --uncharged --field $F --centred
 
- efss --nst-max 1 # calculate ground state only
+ qwwad_ef_generic
 
  # Write energy to output file
  E1=`awk '/^1/{print $2}' Ee.r`
@@ -61,7 +61,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
