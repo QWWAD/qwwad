@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/sh
+set -e
 
 # Computes a simple step diffusion profile with constant diff. coeff.
 #

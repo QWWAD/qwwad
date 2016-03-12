@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/sh
+set -e
 
 # Computes a diffusion profile for QW with constant diff. coeff. and varying time
 #
@@ -6,9 +7,9 @@
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.4
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -37,21 +38,21 @@ cat > s.r << EOF
 200 0.1 0.0
 EOF
 
-find_heterostructure --dz-max 1
+qwwad_mesh --dzmax 1
 
 # Run diffusion `simulation' for various times
 for t in 0 10 20 50 100 200 500 1000; do
 
     # Generate diffusion profile
-    gde --coeff 10 --time $t
+    qwwad_diffuse --coeff 10 --time $t
 
     # Store diffusion profiles
     awk '{print $1*1e10, $2}' X.r >> $outfile_D
     printf "\n" >> $outfile_D
 
     # Now solve for the electron energy
-    efxv --alloyfile X.r    # Find potential profile
-    efss                    # calculate ground state electron energy
+    qwwad_ef_band_edge --alloyfile X.r --bandedgepotentialfile v.r   # Find potential profile
+    qwwad_ef_generic                      # calculate ground state electron energy
 
     # Save electron energy in file
     E1=`awk '/^1/{printf("\t%e\n",$2)}' Ee.r`
@@ -86,7 +87,7 @@ respect to diffusion time, in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

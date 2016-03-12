@@ -6,9 +6,9 @@
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.4
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
 # QWWAD is free software: you can redistribute it and/or modify
@@ -36,13 +36,13 @@ cat > s.r << EOF
 EOF
 
 # Generate alloy concentration (diffusant) profile
-find_heterostructure --dz-max 1
+qwwad_mesh --dzmax 1
 
 # Run diffusion `simulation' for various times
 for t in 100 1000; do
 
     # Find diffuse profile
-    gde --coeff 10 --time $t
+    qwwad_diffuse --coeff 10 --time $t
  
     # Store diffusion profiles
     awk '{print $1*1e10, $2}' X.r >> $outfile
@@ -53,7 +53,7 @@ done
 for D in 100 1000; do
 
     # Need to reduce time-step to ensure stability
-    gde --coeff $D --time 10 --dt 0.0001
+    qwwad_diffuse --coeff $D --time 10 --dt 0.0001
 
     # Store diffusion profiles
     awk '{print $1*1e10, $2}' X.r >> $outfile
@@ -77,7 +77,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

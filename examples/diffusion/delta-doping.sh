@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.4
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -44,34 +44,33 @@ cat > s.r << EOF
 EOF
 
 # Generate quantum well profile and initial dopant profile
-find_heterostructure --dz-max 0.25
+qwwad_mesh --dzmax 0.25
 awk '{print $1*1e10, $2}' x.r > $outfile_d
 
 # Run diffusion `simulation' for various times
 for t in 0 10 20 50 100 200; do
     # Generate diffuse dopant profile using constant diffusion coefficient
-    gde --coeff 1 --time $t --infile d.r --outfile D.r
+    qwwad_diffuse --coeff 1 --time $t --infile d.r --outfile D.r
 
     # Save doping profile to file
     printf '\n' >> $outfile_d
     awk '{print $1*1e10, $2/1e24}' D.r >> $outfile_d
 
     # Find valence band edge
-    efxv --particle h
-
-    cp v.r vvb.r # Save valence-band potential for use as a baseline
+    qwwad_ef_band_edge --particle h
+    cp v_b.r v.r
 
     # Perform iterative solution
     for I in `seq 0 7`; do
         # Calculate ground state Schroedinger solution
-        efss --particle h --nst-max 1
+        qwwad_ef_generic --particle h --nstmax 1
 
         # Estimate population density and charge density profile
-        densityinput --energyfile Eh.r --dopingfile D.r
-        chargedensity --ptype --dopingfile D.r --wf-input-prefix wf_h --energy-input Eh.r
+        qwwad_population_init --energyfile Eh.r --dopingfile D.r
+        qwwad_charge_density --ptype --dopingfile D.r --wffileprefix wf_h --energyfile Eh.r
 
         # Implement self consistent Poisson calculation
-        find_poisson_potential --Vbasefile vvb.r --ptype --field 0
+        qwwad_poisson --ptype --field 0
     done
 
     # Write energy to output file
@@ -134,7 +133,7 @@ by a blank line, representing different diffusion times:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

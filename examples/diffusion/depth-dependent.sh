@@ -1,4 +1,5 @@
-#!/bin/sh -e
+#!/bin/sh
+set -e
 
 # Computes a diffusion profile for MQW system with depth dependent diff. coeff.
 #
@@ -6,9 +7,9 @@
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.4
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -55,11 +56,11 @@ cat > s.r << EOF
 EOF
 
 # Generate initial alloy concentration (diffusant) profile
-find_heterostructure --dz-max 1 
+qwwad_mesh --dzmax 1 
 
 # Run diffusion `simulation' for various times
 for t in 0 200; do
-    gde --mode depth-dependent --time $t
+    qwwad_diffuse --mode depth-dependent --time $t
 
     awk '{print $1*1e10, $2}' X.r >> $outfile
     printf '\n' >> $outfile
@@ -79,7 +80,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
