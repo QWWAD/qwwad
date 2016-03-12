@@ -1,3 +1,12 @@
+2016-03-12 (QWWAD 1.3.0):
+        * This preview release renames the programs for Ch1-4 to a more user
+          friendly and consistent format: qwwad_*
+        * Program options and filenames now use a more consistent format
+        * The qwwad_mesh program is much faster and more robust
+        * All API functionality is now in the QWWAD C++ namespace
+        * Carrier distributions are now managed more robustly in the Subband
+          class
+
 2014-10-20 (QWWAD 1.2.0):
         * This preview release adds a solver for the generalised diffusion
           equation to accompany Chapter 4 of the textbook ("Diffusion").

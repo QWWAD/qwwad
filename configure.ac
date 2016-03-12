@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.63])
 
-AC_INIT([Quantum Wells, Wires and Dots], [1.2+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
+AC_INIT([Quantum Wells, Wires and Dots], [1.3+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
 
 dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
 dnl manually.
