@@ -53,7 +53,7 @@ bin_PROGRAMS =  \
 		qwwad_ef_band_edge    \
 		qwwad_mesh \
 		qwwad_poisson \
-		gde     \
+		qwwad_diffuse     \
 		qwwad_uncertainty    \
 		i0      \
 		ifr     \
@@ -246,8 +246,8 @@ qwwad_mesh_LDADD   = libqwwad.la
 qwwad_poisson_SOURCES = src/qwwad_poisson.cpp
 qwwad_poisson_LDADD   = libqwwad.la
 
-gde_SOURCES = src/gde.cpp
-gde_LDADD   = libqwwad.la
+qwwad_diffuse_SOURCES = src/qwwad_diffuse.cpp
+qwwad_diffuse_LDADD   = libqwwad.la
 
 qwwad_uncertainty_SOURCES = src/qwwad_uncertainty.cpp
 qwwad_uncertainty_LDADD   = libqwwad.la
@@ -356,7 +356,7 @@ dist_man1_MANS = \
 		 man/qwwad_uncertainty.1                    \
 		 man/qwwad_population_init.1           \
 		 man/qwwad_charge_density.1          \
-		 man/gde.1
+		 man/qwwad_diffuse.1
 
 CLEANFILES = $(dist_man1_MANS)
 
@@ -380,7 +380,7 @@ EXTRA_DIST += \
 	      doc/qwwad_uncertainty.h2m                    \
 	      doc/qwwad_population_init.h2m           \
 	      doc/qwwad_charge_density.h2m          \
-	      doc/gde.h2m                    \
+	      doc/qwwad_diffuse.h2m                    \
 	      doc/qwwad_find_donor_state.h2m 
 
 man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
@@ -468,10 +468,10 @@ man/qwwad_charge_density.1: src/qwwad_charge_density.cpp $(top_srcdir)/configure
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/qwwad_charge_density.h2m ./qwwad_charge_density$(EXEEXT) 
 
-man/gde.1: src/gde.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/gde.h2m | gde$(EXEEXT)
+man/qwwad_diffuse.1: src/qwwad_diffuse.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_diffuse.h2m | qwwad_diffuse$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/gde.h2m ./gde$(EXEEXT) 
+	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/qwwad_diffuse.h2m ./qwwad_diffuse$(EXEEXT) 
 
 man/qwwad_find_donor_state.1: src/qwwad_find_donor_state.cpp $(top_srcdir)/configure.ac \
     $(top_srcdir)/doc/qwwad_find_donor_state.h2m | qwwad_find_donor_state$(EXEEXT)

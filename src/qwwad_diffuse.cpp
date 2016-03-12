@@ -1,5 +1,5 @@
 /**
- * \file    gde.cpp
+ * \file    qwwad_diffuse.cpp
  * \brief   General Diffusion Equation
  * \author  Paul Harrison <p.harrison@shu.ac.uk>
  * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>

@@ -48,13 +48,13 @@ It can be rectified by selecting an appropriately small value of dt using the --
 
 [EXAMPLES]
 Find a diffusion profile using a constant diffusion coefficient of 10 Angstrom^2/s and a time of 100 s:
-    gde --coeff 10 --time 100
+    qwwad_diffuse --coeff 10 --time 100
 
 As above, but with a time-step of 0.0001 seconds:
-    gde --coeff 10 --time 100 --dt 0.0001
+    qwwad_diffuse --coeff 10 --time 100 --dt 0.0001
 
 Compute the diffusion profile using the file `d.r' as the input, and `D.r' as the output
-    gde --coeff 10 --time 100 --infile d.r --outfile D.r
+    qwwad_diffuse --coeff 10 --time 100 --infile d.r --outfile D.r
 
 Compute the diffusion profile using a time-dependent diffusion coefficient:
-    gde --mode time-dependent --time 100
+    qwwad_diffuse --mode time-dependent --time 100
