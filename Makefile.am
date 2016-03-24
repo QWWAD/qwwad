@@ -61,7 +61,7 @@ bin_PROGRAMS =  \
 		qwwad_tx_double_barrier_iv    \
 		matlib-query \
 		qwwad_ef_poeschl_teller     \
-		qwwad_find_donor_state \
+		qwwad_ef_donor_specific \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
@@ -289,8 +289,8 @@ matlib_query_LDADD   = libqwwad.la
 qwwad_ef_poeschl_teller_SOURCES = src/qwwad_ef_poeschl_teller.cpp
 qwwad_ef_poeschl_teller_LDADD   = libqwwad.la
 
-qwwad_find_donor_state_SOURCES = src/qwwad_find_donor_state.cpp
-qwwad_find_donor_state_LDADD   = libqwwad.la
+qwwad_ef_donor_specific_SOURCES = src/qwwad_ef_donor_specific.cpp
+qwwad_ef_donor_specific_LDADD   = libqwwad.la
 
 rlv_fcc_SOURCES = src/rlv-fcc.c
 
@@ -351,7 +351,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_generic.1                 \
 		 man/qwwad_ef_parabolic_well.1                \
 		 man/qwwad_ef_poeschl_teller.1                  \
-		 man/qwwad_find_donor_state.1 \
+		 man/qwwad_ef_donor_specific.1 \
 		 man/qwwad_poisson.1 \
 		 man/qwwad_uncertainty.1                    \
 		 man/qwwad_population_init.1           \
@@ -381,7 +381,7 @@ EXTRA_DIST += \
 	      doc/qwwad_population_init.h2m           \
 	      doc/qwwad_charge_density.h2m          \
 	      doc/qwwad_diffuse.h2m                    \
-	      doc/qwwad_find_donor_state.h2m 
+	      doc/qwwad_ef_donor_specific.h2m 
 
 man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
 	$(MKDIR_P) man
@@ -473,10 +473,10 @@ man/qwwad_diffuse.1: src/qwwad_diffuse.cpp $(top_srcdir)/configure.ac \
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/qwwad_diffuse.h2m ./qwwad_diffuse$(EXEEXT) 
 
-man/qwwad_find_donor_state.1: src/qwwad_find_donor_state.cpp $(top_srcdir)/configure.ac \
-    $(top_srcdir)/doc/qwwad_find_donor_state.h2m | qwwad_find_donor_state$(EXEEXT)
+man/qwwad_ef_donor_specific.1: src/qwwad_ef_donor_specific.cpp $(top_srcdir)/configure.ac \
+    $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m | qwwad_ef_donor_specific$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_find_donor_state.h2m ./qwwad_find_donor_state$(EXEEXT) 
+	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m ./qwwad_ef_donor_specific$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

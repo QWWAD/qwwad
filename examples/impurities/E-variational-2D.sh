@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -38,10 +38,10 @@ cat > s.r << EOF
 EOF
 
 # Convert structure file into alloy profile
-find_heterostructure
+qwwad_mesh
 
 # Generate potential profile
-efxv --material cdmnte
+qwwad_ef_band_edge --material cdmnte --bandedgepotentialfile v.r
 
 # Place donor at centre of well
 echo "230e-10" > r_d.r
@@ -49,7 +49,7 @@ echo "230e-10" > r_d.r
 # Start donor binding energy calculation,
 # force output of energy E versus lambda data for lambda=40 to 90A in 2A steps
 # in order to illustrate the variational principle
-qwwad_find_donor_state --lambdastart 40 --lambdastep 2 --lambdastop 90 --epsilon 10.6 --mass 0.096 --lambdasearch linear > output.tmp
+qwwad_ef_donor_specific --lambdastart 40 --lambdastep 2 --lambdastop 90 --dcpermittivity 10.6 --mass 0.096 --searchmethod linear > output.tmp
 
 # Filter `output' file to give energy versus lambda data
 awk '{printf("%e %e\n",$4,$6)}' output.tmp > $outfile
@@ -62,7 +62,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

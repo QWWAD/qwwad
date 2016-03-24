@@ -1,5 +1,5 @@
 /**
- * \file   qwwad-find-donor-state.cpp
+ * \file   qwwad_ef_donor_specific.cpp
  * \brief  Calculates state of electron attached to donor in a heterostructure potential
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
@@ -39,7 +39,7 @@ int main(int argc,char *argv[])
     std::string doc("Find state of electron attached to a donor in a 2D system");
 
     opt.add_option<double>     ("dE,d",              1, "Energy step for Shooting solver [meV]");
-    opt.add_option<double>     ("epsilon,e",     13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("dcpermittivity,e",     13.18, "Bulk relative permittivity");
     opt.add_option<double>     ("mass,m",        0.067, "Bulk effective mass (relative to free electron)");
     opt.add_option<double>     ("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
     opt.add_option<double>     ("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
@@ -53,7 +53,7 @@ int main(int argc,char *argv[])
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     const auto delta_E = opt.get_option<double>("dE") * 1e-3*e;    // Energy increment [J]
-    const auto epsilon = opt.get_option<double>("epsilon") * eps0; // Permittivity [F/m]
+    const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
     const auto mstar   = opt.get_option<double>("mass") * me;      // Effective mass [kg]
 
     const auto lambda_start = opt.get_option<double>("lambdastart") * 1e-10; // Initial Bohr radius [m]
@@ -133,9 +133,14 @@ int main(int argc,char *argv[])
         char   filename[9];     /* character string for wavefunction filename  */
         sprintf(filename,"wf%i.r",i_d);
 
-        write_table(filename, z, psi, chi);
+        // character string for wavefunction filename (no hydrogenic factor
+        char   filename_chi[10];
+        sprintf(filename_chi,"wf_chi%i.r",i_d);
+
+        write_table(filename, z, psi);
+        write_table(filename_chi, z, chi);
         delete se;
-    }/* end loop over r_d */
+    }// end loop over r_d
 
     /* Output neutral dopant binding energies (E) and 
        Bohr radii (lambda) in meV and Angstrom respectively */
