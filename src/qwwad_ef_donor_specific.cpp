@@ -145,7 +145,7 @@ int main(int argc,char *argv[])
 
         // Output the search log
         std::ostringstream oss;
-        oss << "searchlog_" << r_d[i_d] << ".r";
+        oss << "searchlog_" << i_d+1 << ".r";
         write_table(oss.str().c_str(),
                     minimiser->get_lambda_history(),
                     minimiser->get_zeta_history(),

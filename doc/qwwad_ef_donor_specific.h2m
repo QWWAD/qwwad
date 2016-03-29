@@ -11,25 +11,33 @@ A separate solution will be found for a structure using each dopant ion location
 In other words, this program does not simulate a structure with multiple dopant ions at once!
 
 .SS Output files:
-   'wf*.r'      Wave function amplitude at each position:
-   'wf_chi*.r'  Wave function amplitude at each position (ignoring hydrogenic factor):
-                Column 1: position [m]
-                Column 2: wave function amplitude [m^{-1/2}].
+   'wf*.r'         Wave function amplitude at each position:
+   'wf_chi*.r'     Wave function amplitude at each position (ignoring hydrogenic factor):
+                   Column 1: position [m]
+                   Column 2: wave function amplitude [m^{-1/2}].
 
-   'e.r'        Energy of electron:
-                Column 1: Dopant location (from r_d.r file) [Angstrom]
-                Column 2: Energy [meV]
+   'e.r'           Energy of electron:
+                   Column 1: Dopant location (from r_d.r file) [Angstrom]
+                   Column 2: Energy [meV]
    
-   'l.r'        Bohr radius of ion:
-                Column 1: Dopant location (from r_d.r file) [Angstrom]
-                Column 2: Bohr radius [Angstrom]
+   'l.r'           Bohr radius of ion:
+                   Column 1: Dopant location (from r_d.r file) [Angstrom]
+                   Column 2: Bohr radius [Angstrom]
    
-   'zeta.r'     Symmetry parameter of hydrogenic wave function:
-                Column 1: Dopant location (from r_d.r file) [Angstrom]
-                Column 2: Symmetry parameter (dimensionless)
+   'zeta.r'        Symmetry parameter of hydrogenic wave function:
+                   Column 1: Dopant location (from r_d.r file) [Angstrom]
+                   Column 2: Symmetry parameter (dimensionless)
+
+   'searchlog_j.r' Log of the search algorithm progress:
+                   Column 1: Bohr radius [m]
+                   Column 2: Symmetry parameter
+                   Column 3: Energy [J]
 
 The '*' in the wavefunction filenames is replaced by the number of the structure being considered;
 i.e., the number index of the dopant in the 'r_d.r' file.
+
+A separate search log file is created for each of the dopant locations specified in the r_d.r file.
+The 'j' in the filename corresponds to the line in the input file.
 
 The zeta.r file is only created if a variable symmetry waveform is used.
 
