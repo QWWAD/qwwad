@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <valarray>
 
 #include <gsl/gsl_math.h>
 

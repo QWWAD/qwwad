@@ -51,8 +51,8 @@ int main(int argc,char *argv[])
 
     const size_t nx = 100;
 
-    std::valarray<double> x(nx);  // Array of energies
-    std::valarray<double> hc(nx); // Array of critical thickness
+    std::vector<double> x(nx);  // Array of energies
+    std::vector<double> hc(nx); // Array of critical thickness
 
     const double a_subst = a_0*(1.0-xs) + a_1*xs;
 

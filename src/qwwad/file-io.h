@@ -16,7 +16,6 @@
 
 #include <cstring>
 #include <cstdlib>
-#include <valarray>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -90,8 +89,9 @@ void check_not_negative(double*);
  *
  * \return 0 if scan was successful, 1 if there was an error
  */
-    template <class T>
-int read_line_array(std::valarray<T> &dest, const size_t n, std::istream& stream)
+template <template<typename, typename...> class Tcontainer,
+          class T>
+int read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream)
 {
     std::streamsize nbytes = 100; // Initial size of buffer
     int scan_result=1; // Flag to show whether scan was successful [1=error]
@@ -131,8 +131,9 @@ int read_line_array(std::valarray<T> &dest, const size_t n, std::istream& stream
  *
  * \param[in]  stream - Stream from which to read data
  */
-    template <class T>
-void read_line_array_u(std::valarray<T>& dest, std::istream& stream)
+template <template<typename, typename...> class Tcontainer,
+          class T>
+void read_line_array_u(Tcontainer<T>& dest, std::istream& stream)
 {
     std::streamsize nbytes=10000; // Initial size of buffer
 
@@ -312,8 +313,9 @@ int read_line(Tx &destx, Ty &desty, Tz &destz, Tu &destu, std::ifstream& stream)
  * \param[in]  fname Filename from which to read data
  * \param[out] x     Value array into which data will be written
  */
-    template <class T>
-void read_table(const char* fname, std::valarray<T>& x)
+template <template<typename, typename...> class Tcontainer,
+          class T>
+void read_table(const char* fname, Tcontainer<T>& x)
 {
     std::ifstream stream(fname);
 
@@ -355,11 +357,12 @@ void read_table(const char* fname, std::valarray<T>& x)
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision The number of decimal places to use in output
  */
-template <class T>
-void write_table(const char             *fname,
-                 const std::valarray<T> &x,
-                 const bool              with_num = false,
-                 const int               precision = 12)
+template <template<typename, typename...> class Tcontainer,
+          class T>
+void write_table(const char          *fname,
+                 const Tcontainer<T> &x,
+                 const bool           with_num = false,
+                 const int            precision = 12)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -400,11 +403,15 @@ void write_table(const char             *fname,
  *       size of the data.  It might be sensible to allow it to be used for
  *       sizing the output arrays.  Probably a bit more efficient.
  */
-template <class Tx, class Ty>
-void read_table(const char* fname,
-                std::valarray<Tx>& x,
-                std::valarray<Ty>& y,
-                size_t n_expected = 0)
+template <
+          template<typename, typename...> class Tcontainerx,
+          template<typename, typename...> class Tcontainery,
+          class Tx,
+          class Ty>
+void read_table(const char      *fname,
+                Tcontainerx<Tx> &x,
+                Tcontainery<Ty> &y,
+                const size_t     n_expected = 0)
 {
     std::ifstream stream(fname);
 
@@ -466,12 +473,17 @@ void read_table(const char* fname,
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision Precision with which to output floating point numbers
  */
-template <class Tx, class Ty>
-void write_table(const char              *fname,
-                 const std::valarray<Tx> &x,
-                 const std::valarray<Ty> &y,
-                 const bool               with_num = false,
-                 const size_t             precision = 12)
+template<
+         template<typename, typename...> class Tcontainerx,
+         template<typename, typename...> class Tcontainery,
+         class Tx,
+         class Ty
+        >
+void write_table(const char            *fname,
+                 const Tcontainerx<Tx> &x,
+                 const Tcontainery<Ty> &y,
+                 const bool             with_num = false,
+                 const size_t           precision = 12)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -512,11 +524,17 @@ void write_table(const char              *fname,
  * \param[out] y     Value array into which data from 2nd column will be written
  * \param[out] z     Value array into which data from 3rd column will be written
  */
-    template <class Tx, class Ty, class Tz>
-void read_table(const char* fname,
-                std::valarray<Tx>& x,
-                std::valarray<Ty>& y,
-                std::valarray<Tz>& z)
+template<template<typename, typename...> class Tcontainerx,
+         template<typename, typename...> class Tcontainery,
+         template<typename, typename...> class Tcontainerz,
+         class Tx,
+         class Ty,
+         class Tz
+        >
+void read_table(const char      *fname,
+                Tcontainerx<Tx> &x,
+                Tcontainery<Ty> &y,
+                Tcontainerz<Tz> &z)
 {
     std::ifstream stream(fname);
 
@@ -582,12 +600,20 @@ void read_table(const char* fname,
  * \param[out] z     Value array into which data from 3rd column will be written
  * \param[out] u     Value array into which data from 4th column will be written
  */
-    template <class Tx, class Ty, class Tz, class Tu>
+template<
+         template<typename, typename...> class Tcontainerx,
+         template<typename, typename...> class Tcontainery,
+         template<typename, typename...> class Tcontainerz,
+         template<typename, typename...> class Tcontaineru,
+         class Tx,
+         class Ty,
+         class Tz,
+         class Tu>
 void read_table(const char* fname,
-                std::valarray<Tx>& x,
-                std::valarray<Ty>& y,
-                std::valarray<Tz>& z,
-                std::valarray<Tu>& u)
+                Tcontainerx<Tx>& x,
+                Tcontainery<Ty>& y,
+                Tcontainerz<Tz>& z,
+                Tcontaineru<Tu>& u)
 {
     std::ifstream stream(fname);
 
@@ -710,13 +736,21 @@ void write_table(const char              *fname,
  * \param[in] u         Value array containing u data
  * \param[in] with_num  Add an initial column containing the line number
  */
-template <class Tx, class Ty, class Tz, class Tu>
-void write_table(const char              *fname,
-                 const std::valarray<Tx> &x,
-                 const std::valarray<Ty> &y,
-                 const std::valarray<Tz> &z,
-                 const std::valarray<Tu> &u,
-                 const bool               with_num = false)
+template<
+         template<typename, typename...> class Tcontainerx,
+         template<typename, typename...> class Tcontainery,
+         template<typename, typename...> class Tcontainerz,
+         template<typename, typename...> class Tcontaineru,
+         class Tx,
+         class Ty,
+         class Tz,
+         class Tu>
+void write_table(const char            *fname,
+                 const Tcontainerx<Tx> &x,
+                 const Tcontainery<Ty> &y,
+                 const Tcontainerz<Tz> &z,
+                 const Tcontaineru<Tu> &u,
+                 const bool             with_num = false)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();

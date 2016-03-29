@@ -45,9 +45,9 @@ int main(int argc, char **argv)
     const auto N  = opt.get_option<size_t>("nz");             // number of spatial steps
     const auto s  = opt.get_option<size_t>("nst");            // number of states
 
-    std::valarray<unsigned int> y_index(s*s); // y-index of each state
-    std::valarray<unsigned int> z_index(s*s); // z-index of each statee
-    std::valarray<double>       E(s*s);       // Energy of each state [meV]
+    std::vector<unsigned int> y_index(s*s); // y-index of each state
+    std::vector<unsigned int> z_index(s*s); // z-index of each state
+    std::vector<double>       E(s*s);       // Energy of each state [meV]
 
 // Loop over all y and z state indices
 unsigned int ist = 0;
@@ -59,9 +59,9 @@ for(unsigned int in_y=1;in_y<=s;in_y++)
         z_index[ist] = in_z;
         E[ist]       = gsl_pow_2(pi*hBar)/(2*m)*(gsl_pow_2(in_y/Ly)+gsl_pow_2(in_z/Lz)) /(1e-3*e);
 
-        std::valarray<double> y(N*N);
-        std::valarray<double> z(N*N);
-        std::valarray<double> psi(N*N);
+        std::vector<double> y(N*N);
+        std::vector<double> z(N*N);
+        std::vector<double> psi(N*N);
 
         const double dy = Ly/(N-1);
         const double dz = Ly/(N-1);

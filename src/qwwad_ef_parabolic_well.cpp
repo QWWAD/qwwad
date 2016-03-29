@@ -55,8 +55,8 @@ int main(int argc,char *argv[])
 
     const auto dz = (a+2*b)/(nz-1); // Find width of each spatial interval [m]
 
-    std::valarray<double> z(nz); // array of spatial points [m]
-    std::valarray<double> x(nz); // alloy concentration at each point
+    std::vector<double> z(nz); // array of spatial points [m]
+    std::vector<double> x(nz); // alloy concentration at each point
 
     // Loop through spatial points and compute alloy fractions
     for(unsigned int iz = 0; iz < nz; ++iz)

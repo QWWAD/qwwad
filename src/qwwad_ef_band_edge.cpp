@@ -16,6 +16,8 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <valarray>
+
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/options.h"
