@@ -658,12 +658,17 @@ void read_table(const char* fname,
  * \param[in] z         Value array containing z data
  * \param[in] with_num  Add an initial column containing the line number
  */
-template <class Tx, class Ty, class Tz>
+template <template<typename, typename...> class Tcontainerx,
+          template<typename, typename...> class Tcontainery,
+          template<typename, typename...> class Tcontainerz,
+          typename Tx,
+          typename Ty,
+          typename Tz>
 void write_table(const char              *fname,
-                 const std::valarray<Tx> &x,
-                 const std::valarray<Ty> &y,
-                 const std::valarray<Tz> &z,
-                 const bool               with_num = false)
+                 const Tcontainerx<Tx> &x,
+                 const Tcontainery<Ty> &y,
+                 const Tcontainerz<Tz> &z,
+                 const bool             with_num = false)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();

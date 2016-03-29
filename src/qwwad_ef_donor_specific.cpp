@@ -76,20 +76,20 @@ int main(int argc,char *argv[])
     std::valarray<double> lambda_0(r_d.size()); // Bohr radius [m]
     std::valarray<double> zeta_0(r_d.size()); // symmetry parameter
 
+    const auto symmetry_string = opt.get_option<std::string>("symmetry");
+
     // Perform variational calculation for each donor/acceptor position
     for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
     {
         // Create an initial estimate of the Schroedinger solution using a guess at lambda
         SchroedingerSolverDonor *se = 0;
 
-        if(opt.get_option<std::string>("symmetry") == "2D")
+        if(symmetry_string == "2D")
             se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(opt.get_option<std::string>("symmetry") == "3D")
+        else if(symmetry_string == "3D")
             se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(opt.get_option<std::string>("symmetry") == "variable")
-        {
+        else if(symmetry_string == "variable")
             se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E);
-        }
         else
         {
             std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
@@ -132,13 +132,21 @@ int main(int argc,char *argv[])
            the basis wf%i.r where the integer %i is the donor index i_d  */
         char   filename[9];     /* character string for wavefunction filename  */
         sprintf(filename,"wf%i.r",i_d);
+        write_table(filename, z, psi);
 
-        // character string for wavefunction filename (no hydrogenic factor
+        // character string for wavefunction filename (no hydrogenic factor)
         char   filename_chi[10];
         sprintf(filename_chi,"wf_chi%i.r",i_d);
-
-        write_table(filename, z, psi);
         write_table(filename_chi, z, chi);
+
+        // Output the search log
+        std::ostringstream oss;
+        oss << "searchlog_" << r_d[i_d] << ".r";
+        write_table(oss.str().c_str(),
+                    minimiser.get_lambda_history(),
+                    minimiser.get_zeta_history(),
+                    minimiser.get_E_history());
+
         delete se;
     }// end loop over r_d
 

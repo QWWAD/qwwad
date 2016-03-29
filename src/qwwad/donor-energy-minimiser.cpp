@@ -29,7 +29,13 @@ DonorEnergyMinimiser::DonorEnergyMinimiser(SchroedingerSolverDonor *se,
     _se(se),
     _lambda_start(lambda_start),
     _lambda_step(lambda_step),
-    _lambda_stop(lambda_stop)
+    _lambda_stop(lambda_stop),
+    _zeta_start(0.0),
+    _zeta_step(0.0),
+    _zeta_stop(0.0),
+    _lambda_history(std::vector<double>(0)),
+    _zeta_history(std::vector<double>(0)),
+    _E_history(std::vector<double>(0))
 {}
 
 /**
@@ -46,7 +52,7 @@ double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 }
 
 /**
- * \brief Find the energy of a carrier using a given Bohr radius
+ * \brief Find the energy of a carrier using a given Bohr radius and symmetry
  */
 double DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                                    void             *params)
@@ -62,7 +68,7 @@ double DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta
 }
 
 /**
- * Find the minimum carrier energy, and corresponding Bohr radius using a fast search algorithm
+ * /brief Find the minimum carrier energy, and corresponding Bohr radius using a fast search algorithm
  */
 void DonorEnergyMinimiser::find_E_min_fast()
 {
@@ -94,8 +100,11 @@ void DonorEnergyMinimiser::find_E_min_fast()
             ++iter;
             status  = gsl_multimin_fminimizer_iterate(s);
             status  = gsl_multimin_test_size(s->size, 1e-5); // Second number is effectively the abs. tolerance in symmetry parameter
-            const auto energy = _se->get_solutions()[0].get_energy() * 1000/e;
-            printf("r_d %le lambda %le zeta %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), se_variable->get_zeta(), energy);
+
+            // Save search history
+            _lambda_history.push_back(_se->get_lambda());
+            _zeta_history.push_back(se_variable->get_zeta());
+            _E_history.push_back(_se->get_solutions()[0].get_energy());
         }while((status == GSL_CONTINUE) && (iter < max_iter));
 
         gsl_multimin_fminimizer_free(s);
@@ -145,8 +154,11 @@ void DonorEnergyMinimiser::find_E_min_fast()
             const double lambda_lo = gsl_min_fminimizer_x_lower(s);
             const double lambda_hi = gsl_min_fminimizer_x_upper(s);
             status  = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-            const auto energy = _se->get_solutions()[0].get_energy()/(1e-3*e);
-            printf("r_d %le lambda %le energy %le meV\n", _se->get_r_d(), _se->get_lambda(), energy);
+
+            // Save search history
+            _lambda_history.push_back(_se->get_lambda());
+            _zeta_history.push_back(0.0);
+            _E_history.push_back(_se->get_solutions()[0].get_energy());
         }while((status == GSL_CONTINUE) && (iter < max_iter));
 
         gsl_min_fminimizer_free(s);
@@ -186,7 +198,11 @@ void DonorEnergyMinimiser::find_E_min_linear()
             {
                 gsl_vector_set(lambda_zeta, 1, zeta);
                 E = find_E_at_lambda_zeta(lambda_zeta, se_variable);
-                printf("r_d %le lambda %le zeta %le energy %le meV\n", se_variable->get_r_d(),lambda,zeta,E/(1e-3*e));
+
+                // Save search history
+                _lambda_history.push_back(_se->get_lambda());
+                _zeta_history.push_back(se_variable->get_zeta());
+                _E_history.push_back(_se->get_solutions()[0].get_energy());
 
                 if (E > E_min_zeta)
                     E_min_zeta_passed = true; // Stop looping if we've passed the minimum
@@ -209,7 +225,11 @@ void DonorEnergyMinimiser::find_E_min_linear()
         else // If it's a fixed-symmetry solution, just use this Bohr radius
         {
             E = find_E_at_lambda(lambda, _se);
-            printf("r_d %le lambda %le energy %le meV\n", _se->get_r_d(),lambda,E/(1e-3*e));
+
+            // Save search history
+            _lambda_history.push_back(_se->get_lambda());
+            _zeta_history.push_back(0.0);
+            _E_history.push_back(_se->get_solutions()[0].get_energy());
         }
 
         if (E > E_min)

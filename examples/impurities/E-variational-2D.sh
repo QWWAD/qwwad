@@ -49,10 +49,10 @@ echo "230e-10" > r_d.r
 # Start donor binding energy calculation,
 # force output of energy E versus lambda data for lambda=40 to 90A in 2A steps
 # in order to illustrate the variational principle
-qwwad_ef_donor_specific --lambdastart 40 --lambdastep 2 --lambdastop 90 --dcpermittivity 10.6 --mass 0.096 --searchmethod linear > output.tmp
+qwwad_ef_donor_specific --lambdastart 40 --lambdastep 2 --lambdastop 90 --dcpermittivity 10.6 --mass 0.096 --searchmethod linear
 
 # Filter `output' file to give energy versus lambda data
-awk '{printf("%e %e\n",$4,$6)}' output.tmp > $outfile
+awk '{printf("%e %e\n",$1*1e10,$3/1.6e-19*1000)}' searchlog_2.3e-08.r > $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:
