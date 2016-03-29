@@ -77,7 +77,7 @@ Options::~Options()
 void Options::print_version_then_exit(char* prog_name) const
 {
     std::cout << prog_name << " (" << PACKAGE_NAME << ") " << PACKAGE_VERSION << std::endl
-              << "Copyright (c) 2015 Paul Harrison and Alex Valavanis." << std::endl
+              << "Copyright (c) 2016 Paul Harrison and Alex Valavanis." << std::endl
               << "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>." << std::endl
               << "This is free software: you are free to change and redistribute it." << std::endl
               << "There is NO WARRANTY, to the extent permitted by law." << std::endl
