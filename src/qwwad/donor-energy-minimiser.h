@@ -17,12 +17,6 @@ namespace QWWAD
 {
 class SchroedingerSolverDonor;
 
-enum MinimisationMethod
-{
-    MINIMISE_FAST,
-    MINIMISE_LINEAR
-};
-
 /**
  * \brief A tool for minimising the energy of a donor state
  */
@@ -34,7 +28,9 @@ public:
                          const double             lambda_step,
                          const double             lambda_stop);
 
-    void minimise(MinimisationMethod method=MINIMISE_FAST);
+    virtual ~DonorEnergyMinimiser() {};
+
+    virtual void minimise() = 0;
     void set_zeta_params(const double zeta_start,
                          const double zeta_step,
                          const double zeta_stop)
@@ -44,7 +40,7 @@ public:
         _zeta_stop  = zeta_stop;
     };
 
-private:
+protected:
     SchroedingerSolverDonor *_se; ///< The solver to be minimised
 
     double _lambda_start;
@@ -60,8 +56,6 @@ private:
     std::vector<double> _zeta_history;
     std::vector<double> _E_history;
 
-    void find_E_min_fast();
-    void find_E_min_linear();
     static double find_E_at_lambda(double lambda, void *params);
     static double find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                         void             *params);

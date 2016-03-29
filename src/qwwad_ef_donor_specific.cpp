@@ -25,7 +25,8 @@
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/options.h"
-#include "qwwad/donor-energy-minimiser.h"
+#include "qwwad/donor-energy-minimiser-linear.h"
+#include "qwwad/donor-energy-minimiser-fast.h"
 #include "qwwad/schroedinger-solver-donor-2D.h"
 #include "qwwad/schroedinger-solver-donor-3D.h"
 #include "qwwad/schroedinger-solver-donor-variable.h"
@@ -98,20 +99,23 @@ int main(int argc,char *argv[])
 
         // Now, use a minimisation technique to correct the Bohr radius and find the minimum energy
         // solution
-        DonorEnergyMinimiser minimiser(se, lambda_start, lambda_step, lambda_stop);
-        minimiser.set_zeta_params(zeta_start, zeta_step, zeta_stop);
+        DonorEnergyMinimiser *minimiser = NULL;
 
+        // Select whichever minimiser the user specified
         const auto search_method = opt.get_option<std::string>("searchmethod");
 
         if(search_method == "linear")
-            minimiser.minimise(MINIMISE_LINEAR);
+            minimiser = new DonorEnergyMinimiserLinear(se, lambda_start, lambda_step, lambda_stop);
         else if (search_method == "fast")
-            minimiser.minimise(MINIMISE_FAST);
+            minimiser = new DonorEnergyMinimiserFast(se, lambda_start, lambda_step, lambda_stop);
         else
         {
             std::cerr << "Unrecognised search type: " << search_method << std::endl;
             exit(EXIT_FAILURE);
         }
+
+        minimiser->set_zeta_params(zeta_start, zeta_step, zeta_stop);
+        minimiser->minimise();
 
         // Read out the solutions now that we've minimised the energy
         const auto solutions = se->get_solutions();
@@ -143,10 +147,11 @@ int main(int argc,char *argv[])
         std::ostringstream oss;
         oss << "searchlog_" << r_d[i_d] << ".r";
         write_table(oss.str().c_str(),
-                    minimiser.get_lambda_history(),
-                    minimiser.get_zeta_history(),
-                    minimiser.get_E_history());
+                    minimiser->get_lambda_history(),
+                    minimiser->get_zeta_history(),
+                    minimiser->get_E_history());
 
+        delete minimiser;
         delete se;
     }// end loop over r_d
 

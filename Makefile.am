@@ -118,6 +118,10 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-debye.h   \
 			   src/qwwad/donor-energy-minimiser.cpp \
 			   src/qwwad/donor-energy-minimiser.h   \
+			   src/qwwad/donor-energy-minimiser-linear.cpp \
+			   src/qwwad/donor-energy-minimiser-linear.h   \
+			   src/qwwad/donor-energy-minimiser-fast.cpp \
+			   src/qwwad/donor-energy-minimiser-fast.h   \
 			   src/qwwad/mesh.cpp \
 			   src/qwwad/mesh.h   \
 			   src/qwwad/file-io.cpp          \
