@@ -84,7 +84,7 @@ void Options::print_version_then_exit(char* prog_name) const
               << std::endl
               << "Any use of this software in published work must be accompanied by a " << std::endl
               << "citation of the textbook: \"Quantum Wells, Wires and Dots\" (4th edition), " << std::endl
-              << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2015), " << std::endl
+              << "Paul Harrison and Alexander Valavanis, Wiley, Chichester (2016), " << std::endl
               << "in addition to any works cited in the source code." << std::endl;
 
     exit (EXIT_SUCCESS);

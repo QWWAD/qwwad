@@ -387,97 +387,97 @@ EXTRA_DIST += \
 	      doc/qwwad_diffuse.h2m                    \
 	      doc/qwwad_ef_donor_specific.h2m 
 
-man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
+man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute density of states in 1D, 2D and 3D systems" --include $(top_srcdir)/doc/qwwad_density_of_states.h2m ./qwwad_density_of_states$(EXEEXT)
 
-man/qwwad_ef_infinite_well.1: src/qwwad_ef_infinite_well.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m | qwwad_ef_infinite_well$(EXEEXT)
+man/qwwad_ef_infinite_well.1: src/qwwad_ef_infinite_well.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m | qwwad_ef_infinite_well$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates in an infinite quantum well" --include $(top_srcdir)/doc/qwwad_ef_infinite_well.h2m ./qwwad_ef_infinite_well$(EXEEXT)
 
-man/qwwad_ef_dispersion.1: src/qwwad_ef_dispersion.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_dispersion.h2m | qwwad_ef_dispersion$(EXEEXT)
+man/qwwad_ef_dispersion.1: src/qwwad_ef_dispersion.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_ef_dispersion.h2m | qwwad_ef_dispersion$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute the dispersion relation for a set of energy subbands" --include $(top_srcdir)/doc/qwwad_ef_dispersion.h2m ./qwwad_ef_dispersion$(EXEEXT)
 
-man/qwwad_fermi_distribution.1: src/qwwad_fermi_distribution.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_fermi_distribution.h2m | qwwad_fermi_distribution$(EXEEXT)
+man/qwwad_fermi_distribution.1: src/qwwad_fermi_distribution.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_fermi_distribution.h2m | qwwad_fermi_distribution$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find Fermi-Dirac distribution functions for a set of subbands" --include $(top_srcdir)/doc/qwwad_fermi_distribution.h2m ./qwwad_fermi_distribution$(EXEEXT)
 
-man/qwwad_ef_square_well.1: src/qwwad_ef_square_well.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_square_well.h2m | qwwad_ef_square_well$(EXEEXT)
+man/qwwad_ef_square_well.1: src/qwwad_ef_square_well.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_ef_square_well.h2m | qwwad_ef_square_well$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a finite square quantum well" --include $(top_srcdir)/doc/qwwad_ef_square_well.h2m ./qwwad_ef_square_well$(EXEEXT)
 
-man/qwwad_ef_plot.1: src/qwwad_ef_plot.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_plot.h2m | qwwad_ef_plot$(EXEEXT)
+man/qwwad_ef_plot.1: src/qwwad_ef_plot.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_ef_plot.h2m | qwwad_ef_plot$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="translate wavefunction data into a prettier plottable form." --include $(top_srcdir)/doc/qwwad_ef_plot.h2m ./qwwad_ef_plot$(EXEEXT)
 
-man/qwwad_ef_superlattice.1: src/qwwad_ef_superlattice.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_ef_superlattice.h2m | qwwad_ef_superlattice$(EXEEXT)
+man/qwwad_ef_superlattice.1: src/qwwad_ef_superlattice.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_ef_superlattice.h2m | qwwad_ef_superlattice$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a Kronig-Penney superlattice." --include $(top_srcdir)/doc/qwwad_ef_superlattice.h2m ./qwwad_ef_superlattice$(EXEEXT)
 
-man/qwwad_tx_single_barrier.1: src/qwwad_tx_single_barrier.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_tx_single_barrier.h2m | qwwad_tx_single_barrier$(EXEEXT)
+man/qwwad_tx_single_barrier.1: src/qwwad_tx_single_barrier.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_tx_single_barrier.h2m | qwwad_tx_single_barrier$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute transmission coefficient through single tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_single_barrier.h2m ./qwwad_tx_single_barrier$(EXEEXT) 
 
-man/qwwad_tx_double_barrier.1: src/qwwad_tx_double_barrier.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_tx_double_barrier.h2m | qwwad_tx_double_barrier$(EXEEXT)
+man/qwwad_tx_double_barrier.1: src/qwwad_tx_double_barrier.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_tx_double_barrier.h2m | qwwad_tx_double_barrier$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute transmission coefficient through double tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_double_barrier.h2m ./qwwad_tx_double_barrier$(EXEEXT)
 
-man/qwwad_tx_double_barrier_iv.1: src/qwwad_tx_double_barrier_iv.cpp $(top_srcdir)/configure.ac $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m | qwwad_tx_double_barrier_iv$(EXEEXT)
+man/qwwad_tx_double_barrier_iv.1: src/qwwad_tx_double_barrier_iv.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m | qwwad_tx_double_barrier_iv$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute current--voltage characteristics for a double tunnelling barrier." --include $(top_srcdir)/doc/qwwad_tx_double_barrier_iv.h2m ./qwwad_tx_double_barrier_iv$(EXEEXT)
 
-man/qwwad_mesh.1: src/qwwad_mesh.cpp $(top_srcdir)/configure.ac \
+man/qwwad_mesh.1: src/qwwad_mesh.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_mesh.h2m | qwwad_mesh$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate spatial mesh and output alloy & doping profiles." --include $(top_srcdir)/doc/qwwad_mesh.h2m ./qwwad_mesh$(EXEEXT)
 
-man/qwwad_ef_band_edge.1: src/qwwad_ef_band_edge.cpp $(top_srcdir)/configure.ac \
+man/qwwad_ef_band_edge.1: src/qwwad_ef_band_edge.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_band_edge.h2m | qwwad_ef_band_edge$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="tabulate material parameters for heterostructure." --include $(top_srcdir)/doc/qwwad_ef_band_edge.h2m ./qwwad_ef_band_edge$(EXEEXT)
 
-man/qwwad_ef_generic.1: src/qwwad_ef_generic.cpp $(top_srcdir)/configure.ac \
+man/qwwad_ef_generic.1: src/qwwad_ef_generic.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_generic.h2m | qwwad_ef_generic$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="solve the Schroedinger equation numerically." --include $(top_srcdir)/doc/qwwad_ef_generic.h2m ./qwwad_ef_generic$(EXEEXT)
 
-man/qwwad_ef_parabolic_well.1: src/qwwad_ef_parabolic_well.cpp $(top_srcdir)/configure.ac \
+man/qwwad_ef_parabolic_well.1: src/qwwad_ef_parabolic_well.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_parabolic_well.h2m | qwwad_ef_parabolic_well$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a parabolic alloy profile." --include $(top_srcdir)/doc/qwwad_ef_parabolic_well.h2m ./qwwad_ef_parabolic_well$(EXEEXT)
 
-man/qwwad_ef_poeschl_teller.1: src/qwwad_ef_poeschl_teller.cpp $(top_srcdir)/configure.ac \
+man/qwwad_ef_poeschl_teller.1: src/qwwad_ef_poeschl_teller.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_poeschl_teller.h2m | qwwad_ef_poeschl_teller$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="compute eigenstates of a Poeschl-Teller potential hole." --include $(top_srcdir)/doc/qwwad_ef_poeschl_teller.h2m ./qwwad_ef_poeschl_teller$(EXEEXT) 
 
-man/qwwad_poisson.1: src/qwwad_poisson.cpp $(top_srcdir)/configure.ac \
+man/qwwad_poisson.1: src/qwwad_poisson.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_poisson.h2m | qwwad_poisson$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find the Poisson potential induced by a charge profile." --include $(top_srcdir)/doc/qwwad_poisson.h2m ./qwwad_poisson$(EXEEXT) 
 
-man/qwwad_uncertainty.1: src/qwwad_uncertainty.cpp $(top_srcdir)/configure.ac \
+man/qwwad_uncertainty.1: src/qwwad_uncertainty.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_uncertainty.h2m | qwwad_uncertainty$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find the uncertainty product for position and momentum." --include $(top_srcdir)/doc/qwwad_uncertainty.h2m ./qwwad_uncertainty$(EXEEXT) 
 
-man/qwwad_population_init.1: src/qwwad_population_init.cpp $(top_srcdir)/configure.ac \
+man/qwwad_population_init.1: src/qwwad_population_init.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_population_init.h2m | qwwad_population_init$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate an appoximate carrier energy distribution." --include $(top_srcdir)/doc/qwwad_population_init.h2m ./qwwad_population_init$(EXEEXT) 
 
-man/qwwad_charge_density.1: src/qwwad_charge_density.cpp $(top_srcdir)/configure.ac \
+man/qwwad_charge_density.1: src/qwwad_charge_density.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_charge_density.h2m | qwwad_charge_density$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a charge density profile for a 2D system." --include $(top_srcdir)/doc/qwwad_charge_density.h2m ./qwwad_charge_density$(EXEEXT) 
 
-man/qwwad_diffuse.1: src/qwwad_diffuse.cpp $(top_srcdir)/configure.ac \
+man/qwwad_diffuse.1: src/qwwad_diffuse.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_diffuse.h2m | qwwad_diffuse$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="generate a 1D diffusion profile." --include $(top_srcdir)/doc/qwwad_diffuse.h2m ./qwwad_diffuse$(EXEEXT) 
 
-man/qwwad_ef_donor_specific.1: src/qwwad_ef_donor_specific.cpp $(top_srcdir)/configure.ac \
+man/qwwad_ef_donor_specific.1: src/qwwad_ef_donor_specific.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m | qwwad_ef_donor_specific$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m ./qwwad_ef_donor_specific$(EXEEXT) 
