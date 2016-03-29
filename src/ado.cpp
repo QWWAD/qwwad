@@ -160,7 +160,7 @@ int main(int argc,char *argv[])
             const double kf_sqr = ki_sqr + 2*m*(Ei - Ef)/(hBar*hBar);
             assert(kf_sqr >= 0.0);
             const double kf = sqrt(kf_sqr);
-            assert(!isnan(kf));
+            assert(!std::isnan(kf));
 
             Wif[iki] = I; // Scattering rate is same at all wave-vectors
 
