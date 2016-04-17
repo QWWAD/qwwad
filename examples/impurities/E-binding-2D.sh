@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -41,29 +41,32 @@ $LW 0.0 0.0
 200 0.1 0.0
 EOF
 
+# Set effective mass of CdMnTe throughout structure
+export QWWAD_MASS=0.096
+
 # Generate alloy profile
-find_heterostructure 
+qwwad_mesh
 
 # Generate potential profile for Cd(1-x)Mn(x)Te
-efxv --material cdmnte --mass 0.096
+qwwad_ef_band_edge --material cdmnte --bandedgepotentialfile v.r
 
-# Create r_d.r with single entry at centre of well
-echo $LW | awk '{print (200+$1/2)/1e10}' > r_d.r
+# Set donor at centre of well
+r_d=`echo $LW | awk '{print (200+$1/2)}'`
 
 # Start donor binding energy calculation
-qwwad_find_donor_state --epsilon 10.6 --mass 0.096 --lambdastart 25 --lambdastop 150 > garbage.r
+qwwad_ef_donor_specific --dcpermittivity 10.6 --lambdastart 25 --lambdastop 150 --donorposition $r_d
+
+# Save energy with donor present
+E=`awk '{print $2}' Ee.r`
 
 # Calculate electron energy for same quantum well but without donor
-efss
+qwwad_ef_generic
 
-# Energy with donor present
-E=`awk '{printf(" %e",$2)}' e.r`
+# Save energy without donor present
+E0=`awk '{print $2}' Ee.r`
 
-# Energy without donor present
-E0=`awk '{printf(" %20.17e\n",$2)}' Ee.r`
-
-# Store data to file, i.e. energy with donor (from e.r), energy
-# without donor (from Ee.r) versus well width (lw)
+# Store data to file, i.e. energy with and without donor
+# versus well width (lw)
 echo $LW $E $E0 >> $outfile_E
 
 awk '{print $1, $3 - $2, 11.7}' < $outfile_E > $outfile_ED0
@@ -86,7 +89,7 @@ $outfile_ED0 is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
