@@ -59,7 +59,7 @@ int main(int argc,char *argv[])
     SchroedingerSolverKronigPenney se(a, b, V, m_w, m_b, k, N, 4, nst);
 
     // Set cut-off energy if desired
-    if(opt.vm.count("Ecutoff") > 0)
+    if(opt.get_argument_known("Ecutoff"))
         se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     // Dump to file

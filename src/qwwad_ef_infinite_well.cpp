@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     se.set_padding_width(Lb);
 
     // Set cut-off energy if desired
-    if(opt.vm.count("Ecutoff") > 0)
+    if(opt.get_argument_known("Ecutoff"))
         se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     const auto solutions = se.get_solutions(true);

@@ -39,23 +39,28 @@ int main(int argc,char *argv[])
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system");
 
-    opt.add_option<double>     ("dE,d",              1, "Energy step for Shooting solver [meV]");
-    opt.add_option<double>     ("dcpermittivity,e",     13.18, "Bulk relative permittivity");
-    opt.add_option<double>     ("mass,m",        0.067, "Bulk effective mass (relative to free electron)");
-    opt.add_option<double>     ("lambdastart,s",    50, "Initial value for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("lambdastep,t",      1, "Step size for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("lambdastop,u",     -1, "Final value for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("zetastart,w",   0.001, "Initial value for symmetry parameter search");
-    opt.add_option<double>     ("zetastep,x",     0.01, "Step size for symmetry parameter search");
-    opt.add_option<double>     ("zetastop,y",       -1, "Final value for symmetry parameter search");
-    opt.add_option<std::string>("searchmethod", "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
-    opt.add_option<std::string>("symmetry",       "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
+    opt.add_option<double>     ("dE,d",                 1, "Energy step for Shooting solver [meV]");
+    opt.add_option<double>     ("dcpermittivity,e", 13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("mass,m",           0.067, "Bulk effective mass (relative to free electron)");
+    opt.add_option<double>     ("lambdastart,s",       50, "Initial value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastep,t",         1, "Step size for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastop,u",        -1, "Final value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("donorposition,r",         "Location of donor ion [Angstrom]");
+    opt.add_option<double>     ("zetastart,w",      0.001, "Initial value for symmetry parameter search");
+    opt.add_option<double>     ("zetastep,x",        0.01, "Step size for symmetry parameter search");
+    opt.add_option<double>     ("zetastop,y",          -1, "Final value for symmetry parameter search");
+    opt.add_option<std::string>("searchmethod",    "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
+    opt.add_option<std::string>("symmetry",          "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
     const auto delta_E = opt.get_option<double>("dE") * 1e-3*e;    // Energy increment [J]
     const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
     const auto mstar   = opt.get_option<double>("mass") * me;      // Effective mass [kg]
+
+    // Read symmetry and minimiser types
+    const auto symmetry_string = opt.get_option<std::string>("symmetry");
+    const auto search_method   = opt.get_option<std::string>("searchmethod");
 
     const auto lambda_start = opt.get_option<double>("lambdastart") * 1e-10; // Initial Bohr radius [m]
     const auto lambda_step  = opt.get_option<double>("lambdastep")  * 1e-10; // Bohr radius increment [m]
@@ -68,103 +73,93 @@ int main(int argc,char *argv[])
     std::valarray<double> V; // Confining potential [J]
     read_table("v.r", z, V);
 
-    // Read list of donor (or acceptor) positions
-    std::valarray<double> r_d; // [m]
-    read_table("r_d.r", r_d);
+    // Get donor location [m].  If unspecified, assume it's in the middle
+    auto r_d = 0.0;
 
-    // Solutions for each donor position
-    std::valarray<double> E0(r_d.size());       // Binding energy [J]
-    std::valarray<double> lambda_0(r_d.size()); // Bohr radius [m]
-    std::valarray<double> zeta_0(r_d.size()); // symmetry parameter
+    if (opt.get_argument_known("donorposition") > 0)
+        r_d = opt.get_option<double>("donorposition") * 1e-10;
+    else
+        r_d = (z[z.size()-1] + z[0])/2.0;
 
-    const auto symmetry_string = opt.get_option<std::string>("symmetry");
+    // Initial estimates of the orbital geometry
+    auto lambda_0 = lambda_start; // Bohr radius [m]
+    auto zeta_0   = zeta_start;   // symmetry parameter
 
-    // Perform variational calculation for each donor/acceptor position
-    for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
+    // Create an initial estimate of the Schroedinger solution
+    SchroedingerSolverDonor *se = 0;
+
+    if(symmetry_string == "2D")
+        se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
+    else if(symmetry_string == "3D")
+        se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
+    else if(symmetry_string == "variable")
+        se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d, lambda_0, zeta_0, delta_E);
+    else
     {
-        // Create an initial estimate of the Schroedinger solution using a guess at lambda
-        SchroedingerSolverDonor *se = 0;
+        std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-        if(symmetry_string == "2D")
-            se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(symmetry_string == "3D")
-            se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], delta_E);
-        else if(symmetry_string == "variable")
-            se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d[i_d], lambda_0[i_d], zeta_0[i_d], delta_E);
-        else
-        {
-            std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
-            exit(EXIT_FAILURE);
-        }
+    // Now, use a minimiser to correct the orbital and find the minimum energy solution
+    DonorEnergyMinimiser *minimiser = NULL;
 
-        // Now, use a minimisation technique to correct the Bohr radius and find the minimum energy
-        // solution
-        DonorEnergyMinimiser *minimiser = NULL;
+    if(search_method == "linear")
+        minimiser = new DonorEnergyMinimiserLinear(se, lambda_start, lambda_step, lambda_stop);
+    else if (search_method == "fast")
+        minimiser = new DonorEnergyMinimiserFast(se, lambda_start, lambda_step, lambda_stop);
+    else
+    {
+        std::cerr << "Unrecognised search type: " << search_method << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
-        // Select whichever minimiser the user specified
-        const auto search_method = opt.get_option<std::string>("searchmethod");
+    minimiser->set_zeta_params(zeta_start, zeta_step, zeta_stop);
+    minimiser->minimise();
 
-        if(search_method == "linear")
-            minimiser = new DonorEnergyMinimiserLinear(se, lambda_start, lambda_step, lambda_stop);
-        else if (search_method == "fast")
-            minimiser = new DonorEnergyMinimiserFast(se, lambda_start, lambda_step, lambda_stop);
-        else
-        {
-            std::cerr << "Unrecognised search type: " << search_method << std::endl;
-            exit(EXIT_FAILURE);
-        }
-
-        minimiser->set_zeta_params(zeta_start, zeta_step, zeta_stop);
-        minimiser->minimise();
-
-        // Read out the solutions now that we've minimised the energy
-        const auto solutions = se->get_solutions();
-        E0[i_d]              = solutions[0].get_energy();
-        lambda_0[i_d]        = se->get_lambda();
-
-        if(opt.get_option<std::string>("symmetry") == "variable")
-            zeta_0[i_d] = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
-
-        // Get the complete wavefunction
-        const auto psi = solutions[0].get_wavefunction_samples();
-
-        // Get the wavefunction (without the hydrogenic factor)
-        const auto solutions_chi = se->get_solutions_chi();
-        const auto chi = solutions_chi[0].get_wavefunction_samples();
-
-        /* generate output filename (and open file for writing) using 
-           the basis wf%i.r where the integer %i is the donor index i_d  */
-        char   filename[9];     /* character string for wavefunction filename  */
-        sprintf(filename,"wf%i.r",i_d);
-        write_table(filename, z, psi);
-
-        // character string for wavefunction filename (no hydrogenic factor)
-        char   filename_chi[10];
-        sprintf(filename_chi,"wf_chi%i.r",i_d);
-        write_table(filename_chi, z, chi);
-
-        // Output the search log
-        std::ostringstream oss;
-        oss << "searchlog_" << i_d+1 << ".r";
-        write_table(oss.str().c_str(),
-                    minimiser->get_lambda_history(),
-                    minimiser->get_zeta_history(),
-                    minimiser->get_E_history());
-
-        delete minimiser;
-        delete se;
-    }// end loop over r_d
-
-    /* Output neutral dopant binding energies (E) and 
-       Bohr radii (lambda) in meV and Angstrom respectively */
-    const std::valarray<double> E_out = E0*1000.0/e;
-    const std::valarray<double> r_d_out = r_d/1e-10;
-    const std::valarray<double> lambda_out = lambda_0*1.0e10;
-    write_table("e.r", r_d_out, E_out);
-    write_table("l.r", r_d_out, lambda_out);
+    // Read out the solutions now that we've minimised the energy
+    // Note that we only calculate the ground state at the moment
+    const auto solutions = se->get_solutions();
+    const auto E0        = solutions[0].get_energy();
+    lambda_0             = se->get_lambda();
 
     if(opt.get_option<std::string>("symmetry") == "variable")
-        write_table("zeta.r", r_d_out, zeta_0);
+        zeta_0 = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
+
+    // Get the complete wavefunction
+    const auto psi = solutions[0].get_wavefunction_samples();
+
+    // Get the wavefunction (without the hydrogenic factor)
+    const auto solutions_chi = se->get_solutions_chi();
+    const auto chi = solutions_chi[0].get_wavefunction_samples();
+
+    // Save the ground-state wavefunction
+    write_table("wf_1.r", z, psi);
+
+    // Save the ground-state wavefunction (no hydrogenic factor)
+    write_table("wf_chi_1.r", z, chi);
+
+    // Output the search log
+    write_table("searchlog.r",
+                minimiser->get_lambda_history(),
+                minimiser->get_zeta_history(),
+                minimiser->get_E_history());
+
+    delete minimiser;
+    delete se;
+
+    // Output neutral dopant binding energies (E) and 
+    // Bohr radii (lambda) in meV and Angstrom respectively
+    std::vector<double> indices(1,1);
+    std::vector<double> E_out(1,E0*1000.0/e);
+    std::vector<double> lambda_out(1,lambda_0*1.0e10);
+    write_table("Ee.r", indices, E_out);
+    write_table("l.r",  indices, lambda_out);
+
+    if(opt.get_option<std::string>("symmetry") == "variable")
+    {
+        std::vector<double> zeta_out(1,zeta_0);
+        write_table("zeta.r", indices, zeta_out);
+    }
 
     return EXIT_SUCCESS;
 }

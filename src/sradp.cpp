@@ -188,7 +188,7 @@ int main(int argc,char *argv[])
         const double DeltaE = Ef - Ei;
 
         // Use user-specified value if given
-        if(opt.vm.count("Ecutoff"))
+        if(opt.get_argument_known("Ecutoff"))
         {
             Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 

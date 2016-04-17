@@ -54,7 +54,7 @@ class BandEdgeOptions : public Options
          * \returns The material identifier
          */
         char get_material() const {
-            std::string mat_string(vm["material"].as<std::string>());
+            const auto mat_string = get_option<std::string>("material");
             char Material;
             if     (mat_string.compare("gaalas")   == 0) Material='a';
             else if(mat_string.compare("cdmnte")   == 0) Material='b';
@@ -67,11 +67,6 @@ class BandEdgeOptions : public Options
             }
             return Material;
         }
-
-        /**
-         * \returns the particle ID
-         */
-        char get_particle() const {return vm["particle"].as<char>();}
 };
 
 int main(int argc,char *argv[])
@@ -79,7 +74,7 @@ int main(int argc,char *argv[])
     const BandEdgeOptions opt(argc, argv);
 
     const auto Material = opt.get_material(); // material character
-    const auto p        = opt.get_particle(); // particle (e, h, or l)
+    const auto p        = opt.get_option<char>("particle"); // particle (e, h, or l)
 
 
     /* If either of the reference potential files exist, i.e., v0.r---the zero
@@ -100,7 +95,7 @@ int main(int argc,char *argv[])
     // Flag whether effective mass needs computing or setting manually
     bool compute_mass = true;
 
-    if (opt.vm.count("mass") > 0)
+    if (opt.get_argument_known("mass"))
         compute_mass = false;
 
     const auto alloyfile = opt.get_option<std::string>("alloyfile").c_str();

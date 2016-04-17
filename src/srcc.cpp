@@ -162,7 +162,7 @@ int main(int argc,char *argv[])
         double kimax = 0;
         double kjmax = 0;
 
-        if(opt.vm.count("Ecutoff"))
+        if(opt.get_argument_known("Ecutoff"))
         {
             const auto Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
             FF = FF_table(Deltak0sqr, epsilon, isb, jsb, fsb, gsb, T,nq,S_flag,Ecutoff); // Form factor table

@@ -67,7 +67,7 @@ int main(int argc,char *argv[])
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
     // Set cut-off energy if desired
-    if(opt.vm.count("E-cutoff") > 0)
+    if(opt.get_argument_known("E-cutoff"))
         se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     if(opt.get_option<bool>("outputequations"))

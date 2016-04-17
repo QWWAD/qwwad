@@ -45,7 +45,7 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
 
     add_prog_specific_options_and_parse(argc, argv, doc);
 
-    if(vm["nper"].as<size_t>() < 1)
+    if(get_option<size_t>("nper") < 1)
         throw std::domain_error("Number of periods must be one or more.");
 }
 
@@ -80,7 +80,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
         check_positive(&pop[ist]);
 
     // Read state degeneracy if specified
-    if(opt.vm.count("degeneracyfile"))
+    if(opt.get_argument_known("degeneracyfile"))
     {
         const auto degeneracy_file = opt.get_option<std::string>("degeneracyfile").c_str();
         read_table(degeneracy_file, nval);

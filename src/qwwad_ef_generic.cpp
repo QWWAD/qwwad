@@ -108,7 +108,7 @@ class FwfOptions : public Options {
             add_prog_specific_options_and_parse(argc, argv, doc);
 
             // Parse the calculation type
-            std::string solver_arg(vm["solver"].as<std::string>());
+            const auto solver_arg = get_option<std::string>("solver");
 
             if     (!strcmp(solver_arg.c_str(), "matrix"))
                 type = MATRIX_PARABOLIC;
@@ -195,7 +195,7 @@ int main(int argc, char *argv[]){
 
     // Set a constant effective mass if specified.
     // Read spatially-varying profile from file if not.
-    if(opt.vm.count("mass"))
+    if(opt.get_argument_known("mass"))
         m += opt.get_option<double>("mass") * me;
     else
         read_table(opt.get_option<std::string>("massfile").c_str(), z_tmp, m);
@@ -207,7 +207,7 @@ int main(int argc, char *argv[]){
     // If we have a flat potential, the user needs to specify either
     // a cut-off energy or a number of states, otherwise we can't
     // proceed
-    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.vm.count("Ecutoff") == 0)
+    if(gsl_fcmp(V.max(), V.min(), 1e-6*e) == 0 && nst_max == 0 && opt.get_argument_known("Ecutoff"))
     {
         std::cerr << "Flat potential detected in " << opt.get_option<std::string>("totalpotentialfile")
                   << ".  You must either specify a cut-off energy using --E-cutoff "
@@ -264,11 +264,11 @@ int main(int argc, char *argv[]){
     }
 
     // Set cut-off energy if desired
-    if(opt.vm.count("Ecutoff") > 0)
+    if(opt.get_argument_known("Ecutoff"))
         se->set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
 
     // Output a single trial wavefunction
-    if (opt.vm.count("tryenergy") != 0 && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
+    if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
     {
         const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
         std::valarray<double> psi;

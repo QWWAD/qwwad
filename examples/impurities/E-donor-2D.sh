@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -30,7 +30,7 @@ set -e
 outfile_E=E-donor-2D-total.dat
 outfile_ED=E-donor-2D-binding.dat
 outfile_lambda=E-donor-2D-lambda.dat
-rm -f $outfile_E $outfile_ED
+rm -f $outfile_E $outfile_ED $outfile_lambda
 
 # Define structure
 cat > s.r << EOF
@@ -39,40 +39,32 @@ cat > s.r << EOF
 200 0.1 0.0
 EOF
 
-find_heterostructure    # generates x.r file
-efxv --material cdmnte --mass 0.096	# converts x.r into v.r appropriate to Cd(1-x)Mn(x)Te
+# Set a fixed effective mass throughout structure
+export QWWAD_MASS=0.096
 
-# Just calculate energy of same structure without a donor, for deduction
+# Generate CdMnTe band profile
+qwwad_mesh
+qwwad_ef_band_edge --material cdmnte --bandedgepotentialfile v.r
+
+# Calculate energy of structure without a donor, for deduction
 # of donor binding energy
-efss # calculate electron energy without donor, m=constant
+qwwad_ef_generic
+
+# Store the ground-state for later
 E1=`awk '/^1/{print $2}' Ee.r`
 
-# Define donor positions
-cat > r_d.r << EOF
-0.0e-10
-2.0e-9
-4.0e-9
-6.0e-9
-8.0e-9
-1.0e-8
-1.2e-8
-1.4e-8 
-1.6e-8 
-1.8e-8 
-2.0e-8 
-2.2e-8 
-2.3e-8
-EOF
+# Loop over donor positions
+for r_d in `seq 0.0 20 220` 230; do
+    # Donor state calculation
+    qwwad_ef_donor_specific --dcpermittivity 10.6 --lambdastart 25 --lambdastop 300 --donorposition $r_d
 
-# Initiate donor binding energy calculation
-# Direct output to garbage file... we don't need it for this example
-qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 > garbage.r
+    # Append the total energy and Bohr radius to output files
+    awk '{print r_d, $2, E1}' r_d=$r_d E1=$E1 < Ee.r >> $outfile_E
+    awk '{print r_d, $2}'     r_d=$r_d < l.r >> $outfile_lambda
+done
 
-# Output the total energy and binding energy to files
-awk '{print $1, $2, E1}' E1=$E1 < e.r > $outfile_E
-awk '{print $1, E1-$2}' E1=$E1 < $outfile_E > $outfile_ED
-
-mv l.r $outfile_lambda
+# Process the energy file to get the binding energy
+awk '{print $1, $3-$2}' < $outfile_E > $outfile_ED
 
 cat << EOF
 Results have been written to $outfile_E, ${outfile_ED} and ${outfile_lambda}.
@@ -95,7 +87,7 @@ $outfile_lambda is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

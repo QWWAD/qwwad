@@ -46,11 +46,14 @@ class Options
 
         std::string name_mapper(std::string in) const;
 
-    public:
+    protected:
         /**
          * Storage for the (raw) values entered on the command-line
          */
         po::variables_map vm;
+
+    public:
+        bool get_argument_known(const std::string &name) const;
 
         /**
          * \brief Adds an option to the program, with a default argument specified

@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
 
         // Only fix the voltage across the structure if an applied field is specified.
         // (Otherwise just return the zero-field cyclic solution!)
-        if(opt.vm.count("field"))
+        if(opt.get_argument_known("field"))
         {
             // Now solve the Laplace equation to find the contribution due to applied bias
             // Find voltage drop per period and take off the voltage drop from the charge discontinuity
@@ -124,7 +124,7 @@ int main(int argc, char* argv[])
     else
     {
         // If a bias is specified, then pin the potential at each end
-        if(opt.vm.count("field"))
+        if(opt.get_argument_known("field"))
         {
             Poisson poisson(_eps, dz, DIRICHLET);
             const auto field  = opt.get_option<double>("field") * 1000.0 * 100.0; // V/m
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
     std::valarray<double> Vtotal = phi;
     std::valarray<double> Vbase(phi.size());
 
-    if (opt.vm.count("bandedgepotentialfile"))
+    if (opt.get_argument_known("bandedgepotentialfile"))
     {
         std::valarray<double> zbase(phi.size());
         read_table(opt.get_option<std::string>("bandedgepotentialfile").c_str(), zbase, Vbase);

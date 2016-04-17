@@ -115,7 +115,7 @@ int main(int argc,char *argv[])
         double Ecutoff = 0.0; // Maximum kinetic energy in initial subband
 
         // Use user-specified value if given
-        if(opt.vm.count("Ecutoff"))
+        if(opt.get_argument_known("Ecutoff"))
         {
             Ecutoff = opt.get_option<double>("Ecutoff")*e/1000;
 

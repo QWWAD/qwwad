@@ -241,5 +241,25 @@ std::string Options::name_mapper(std::string environment_variable) const
 
     return option_name;
 }
+
+/**
+ * \brief Check if the argument for a given option is known
+ *
+ * \param[in] name The long name of the option
+ *
+ * \return True if the option was found
+ *
+ * \details This means that either a default argument was specified when
+ *          the option was defined or that the user has set the argument
+ */
+bool Options::get_argument_known(const std::string &name) const
+{
+    auto seen = false;
+
+    if(vm.count(name) > 0)
+        seen = true;
+
+    return seen;
+}
 } // end namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
