@@ -52,7 +52,7 @@ echo "230e-10" > r_d.r
 qwwad_ef_donor_specific --lambdastart 40 --lambdastep 2 --lambdastop 90 --dcpermittivity 10.6 --mass 0.096 --searchmethod linear
 
 # Filter `output' file to give energy versus lambda data
-awk '{printf("%e %e\n",$1*1e10,$3/1.6e-19*1000)}' searchlog_2.3e-08.r > $outfile
+awk '{printf("%e %e\n",$1*1e10,$3/1.6e-19*1000)}' searchlog_1.r > $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:
@@ -70,4 +70,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-#rm -f *.r
+rm -f *.r
