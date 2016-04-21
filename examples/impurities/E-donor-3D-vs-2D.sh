@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -40,59 +40,53 @@ cat > s.r << EOF
 200 0.1 0.0
 EOF
 
-# Define donor positions
-cat > r_d.r << EOF
-0.0e-10
-2.0e-9
-4.0e-9
-6.0e-9
-8.0e-9
-1.0e-8
-1.2e-8
-1.4e-8 
-1.6e-8 
-1.8e-8 
-2.0e-8 
-2.2e-8
-2.3e-8
-EOF
+export QWWAD_MASS=0.096
 
-# Generate alloy profile
-find_heterostructure --dz-max 1
+iwf=0 # index of wavefunction file
 
-# Generate potential profile
-efxv --material cdmnte --mass 0.096
+export QWWAD_DONORPOSITION=0
 
-# Perform 2D donor calculation and save results to output file
-qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 2D > garbage.r
-mv e.r e-2D.r
+# Loop over donor position
+for QWWAD_DONORPOSITION in `seq 0 20 220` 230; do
 
-# Perform 3D donor calculation and save results to file
-qwwad_find_donor_state --mass 0.096 --epsilon 10.6 --lambdastart 25 --lambdastop 300 --symmetry 3D > garbage.r
+    qwwad_mesh --dzmax 1
 
-paste e-2D.r e.r | awk '{print $1, $4 - $2}' > $outfile
+    # Generate potential profile
+    qwwad_ef_band_edge --material cdmnte --bandedgepotentialfile v.r
 
-# Pack all wavefunction files into a single output file
-for iwf in `seq 0 12`; do
-    # Figure out the filename
-    wf_file=wf${iwf}.r
+    # Perform 2D donor calculation and save energy
+    qwwad_ef_donor_specific --dcpermittivity 10.6 --lambdastart 25 --lambdastop 300 --symmetry 2D
+    E2D=`awk '{print $2}' < Ee.r`
 
-    awk '{print $1*1e10, $2 + iwf*5000}' iwf=$iwf $wf_file >> $outfile_wf
+    # Perform 3D donor calculation and save energy
+    qwwad_ef_donor_specific --dcpermittivity 10.6 --lambdastart 25 --lambdastop 300 --symmetry 3D
+    E3D=`awk '{print $2}' < Ee.r`
+
+    echo $QWWAD_DONORPOSITION $E2D $E3D | awk '{print $1, $3 - $2}' >> $outfile
+
+    # Append wavefunction to output file
+    awk '{print $1*1e10, $2 + iwf*5000}' iwf=$iwf wf_1.r >> $outfile_wf
+
+    # Store the wavefunction files
+    mv wf_1.r wf_${iwf}.tmp
+    mv wf_chi_1.r wf_chi_${iwf}.tmp
     printf "\n" >> $outfile_wf
+
+    iwf=`echo $iwf | awk '{print $1 + 1}'`
 done
 
 # Copy desired wavefunctions to output file
-awk '{print $1*1e10, $2}' wf0.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2}' wf_0.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
-awk '{print $1*1e10, $3}' wf0.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2}' wf_chi_0.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
-awk '{print $1*1e10, $2+10000}' wf10.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2+10000}' wf_10.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
-awk '{print $1*1e10, $3+10000}' wf10.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2+10000}' wf_chi_10.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
-awk '{print $1*1e10, $2+20000}' wf12.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2+20000}' wf_12.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
-awk '{print $1*1e10, $3+20000}' wf12.r >> $outfile_wf_diff
+awk '{print $1*1e10, $2+20000}' wf_chi_12.tmp >> $outfile_wf_diff
 printf "\n" >> $outfile_wf_diff
 
 cat << EOF
@@ -145,7 +139,7 @@ $outfile_wf_diff is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
@@ -153,4 +147,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f *.r
+rm -f *.r *.tmp

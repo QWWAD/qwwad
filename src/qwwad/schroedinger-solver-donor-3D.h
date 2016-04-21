@@ -9,7 +9,7 @@
 #define QWWAD_SCHROEDINGER_SOLVER_DONOR_3D_H
 
 #include "schroedinger-solver-donor.h"
-
+#include <iostream>
 namespace QWWAD
 {
 /**
@@ -33,14 +33,16 @@ private:
     {
         _solutions.clear();
 
-        for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
+        for (auto ist : _solutions_chi)
         {
-            const double E   = _solutions_chi[0].get_energy();
-            const auto   z   = _solutions_chi[0].get_position_samples();
-            const auto   chi = _solutions_chi[0].get_wavefunction_samples();
+            const auto E   = ist.get_energy();
+            const auto chi = ist.get_wavefunction_samples();
 
-            auto psi = chi*exp(-abs(_z - _r_d)/_lambda);
-            _solutions.push_back(Eigenstate(E,z,psi));
+            const std::valarray<double> psi = exp(-abs(_z - _r_d)/_lambda) * chi;
+
+            const auto psi_state = Eigenstate(E,_z,psi);
+
+            _solutions.push_back(psi_state);
         }
     }
 

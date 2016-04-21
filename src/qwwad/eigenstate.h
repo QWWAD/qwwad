@@ -31,7 +31,7 @@ public:
                decltype(_z)   z,
                decltype(_psi) psi);
 
-    inline double get_energy() const {return _E;}
+    inline decltype(_E)   get_energy() const {return _E;}
     inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
     inline decltype(_psi) get_wavefunction_samples() const {return _psi;}
     inline decltype(_psi) get_PD() const {return _psi*_psi;}
