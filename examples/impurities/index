@@ -1,24 +1,24 @@
 The following list shows which scripts and output files are used to generate
 each figure or table from the 4th edition of "Quantum Wells, Wires and Dots".
 
-Fig 5.3:   E-variational-2D.sh => E-variational-2D.dat
-Fig 5.4a:  E-donor-2D.sh       => E-donor-2D-total.dat
-Fig 5.4b:  E-donor-2D.sh       => E-donor-2D-binding.dat
-Fig 5.5:   E-donor-2D.sh       => E-donor-2D-lambda.dat
-Fig 5.6:   E-binding-2D.sh     => E-binding-2D.dat
-Fig 5.7:   E-binding-2D.sh     => E-binding-2D-ED0.dat
-Fig 5.8:   E-donor-3D-vs-2D.sh => E-donor-3D-vs-2D.dat
-Fig 5.9:   E-donor-3D-vs-2D.sh => E-donor-3D-wf.dat
-Fig 5.10:  E-donor-3D-vs-2D.sh => E-donor-3D-wf-vs-2D.dat
+Fig 5.3:  E-variational-2D.sh => E-variational-2D.dat
+Fig 5.4a: E-donor-2D.sh       => E-donor-2D-total.dat
+Fig 5.4b: E-donor-2D.sh       => E-donor-2D-binding.dat
+Fig 5.5:  E-donor-2D.sh       => E-donor-2D-lambda.dat
+Fig 5.6:  E-binding-2D.sh     => E-binding-2D.dat
+Fig 5.7:  E-binding-2D.sh     => E-binding-2D-ED0.dat
+Fig 5.8:  E-donor-3D-vs-2D.sh => E-donor-3D-vs-2D.dat
+Fig 5.9:  E-donor-3D-vs-2D.sh => E-donor-3D-wf.dat
+Fig 5.10: E-donor-3D-vs-2D.sh => E-donor-3D-wf-vs-2D.dat
+Fig 5.11: E-binding-3D.sh     => E-binding-3D.dat
+Fig 5.12: E-binding-3D.sh     => E-binding-3D.dat [zoomed]
+Fig 5.13: E-binding-3D.sh     => E-binding-3D-lambda.dat
 
-Fig 5.13: E-binding-3D.sh     => E-binding-3D.dat
-Fig 5.14: E-binding-3D.sh     => E-binding-3D.dat [zoomed]
-Fig 5.15: E-binding-3D.sh     => E-binding-3D-lambda.dat
-Fig 5.17: E-zeta.sh           => E-zeta.dat
-Fig 5.18: E-donor-variable.sh => E-donor-variable.dat
-Fig 5.19: E-donor-variable.sh => E-donor-variable-zeta-lambda.dat
+Fig 5.15: E-zeta.sh           => E-zeta.dat
+Fig 5.16: E-donor-variable.sh => E-donor-variable.dat
+Fig 5.17: E-donor-variable.sh => E-donor-variable-zeta-lambda.dat
+Fig 5.20:
+Fig 5.21:
 Fig 5.22:
-Fig 5.23:
-Fig 5.24:
 
 Tbl 5.1: E-donor-comparison.sh => E-donor-comparison.dat

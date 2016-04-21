@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2015, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -45,28 +45,28 @@ $LW 0.0 0.0
 EOF
 
 # Generate alloy profile
-find_heterostructure --dz-max 1
+qwwad_mesh --dzmax 1
 
 # Generate potential profile for Ga(1-x)Al(x)As, can use defaults
-efxv --mass 0.067 
+qwwad_ef_band_edge --mass 0.067 --bandedgepotentialfile v.r
 
-# Create r_d.r with single entry at centre of well
-echo $LW | awk '{print (200+$1/2)/1e10}' > r_d.r
+# Position donor at centre of well
+export QWWAD_DONORPOSITION=`echo $LW | awk '{print (200+$1/2)}'`
 
 # Start donor binding energy calculation
-qwwad_find_donor_state --lambdastart 10 --lambdastop 300 --symmetry 3D > garbage.r
-
-# Calculate electron energy for same quantum well but without donor
-efss
+qwwad_ef_donor_specific --lambdastart 10 --lambdastop 300 --symmetry 3D
 
 # Energy with donor present
-E=`awk '{printf(" %e",$2)}' e.r`
+E=`awk '{print $2}' Ee.r`
+
+# Calculate electron energy for same quantum well but without donor
+qwwad_ef_generic
 
 # Energy without donor present
-E0=`awk '{printf(" %20.17e\n",$2)}' Ee.r`
+E0=`awk '{print $2}' Ee.r`
 
-# Store data to file, i.e. energy with donor (from e.r), energy
-# without donor (from Ee.r) versus well width (lw)
+# Store data to file, i.e. energy with & without donor
+# versus well width (lw)
 echo $LW $E $E0 | awk '{print $1, $3 - $2, 5.3}' >> $outfile_E
 
 # Store the Bohr radius to file
@@ -116,7 +116,7 @@ $outfile_lambda is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
