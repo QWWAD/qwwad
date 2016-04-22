@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -40,19 +40,26 @@ cat > s.r << EOF
 EOF
 
 # Generate alloy profile
-find_heterostructure --dz-max 1		
+qwwad_mesh --dzmax 1		
 
 # Generate potential profile
-efxv		
+qwwad_ef_band_edge --bandedgepotentialfile v.r	
 
 seq 0 10e-10 250e-10 > r_d.r
 
-qwwad_find_donor_state --symmetry variable --lambdastart 50 --zetastart 0.65 > garbage.r
+for r_d in `seq 0 10 250`; do
+	qwwad_ef_donor_specific --donorposition $r_d     \
+                                --symmetry      variable \
+				--lambdastart   50       \
+				--zetastart     0.65
 
-mv e.r $outfile_E
-mv l.r $outfile_zl
-printf "\n" >> $outfile_zl
-cat zeta.r >> $outfile_zl
+	E=`awk '{print $2}' Ee.r`
+	lambda=`awk '{print $2}' l.r`
+	zeta=`awk '{print $2}' zeta.r`
+
+	printf "%f\t%f\n"     $r_d $E            >> $outfile_E
+	printf "%f\t%f\t%f\n" $r_d $lambda $zeta >> $outfile_zl
+done
 
 cat << EOF
 Results have been written to $outfile_E and $outfile_zl
@@ -65,18 +72,12 @@ $outfile_E is in the format:
 $outfile_zl is in the format:
 
   COLUMN 1 - Spatial location [Angstrom]
-  COLUMN 2 - Hydrogenic wavefunction parameter
-
-  The file contains 2 data sets, each set being separated
-  by a blank line, representing the paramaters needed to
-  describe the hydrogenic waveform:
-
-  SET 1 - Bohr radius [Angstrom]
-  SET 2 - Symmetry parameter
+  COLUMN 2 - Bohr radius [Angstrom]
+  COLUMN 3 - Symmetry parameter
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 

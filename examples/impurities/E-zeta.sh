@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2015, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -26,8 +26,6 @@ set -e
 # You should have received a copy of the GNU General Public License
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
-# Map lambda-zeta parameter space
-
 # Initialise files
 outfile=E-zeta.dat
 rm -f $outfile
@@ -40,22 +38,27 @@ cat > s.r << EOF
 EOF
 
 # Create alloy profile
-find_heterostructure --dz-max 1
+qwwad_mesh --dzmax 1
 
 # Create potential profile
-efxv
-
-# Define donor position
-echo '250e-10' > r_d.r
+qwwad_ef_band_edge --bandedgepotentialfile v.r
 
 # Initiate variable symmetry donor calculation, note specifying the final
 # lambda and zeta values forces this domain to be covered
-qwwad_find_donor_state --lambdastart 89 --lambdastop 91 --zetastart 0.6 --zetastep 0.02 --zetastop 0.8 --symmetry variable --searchmethod linear > output.r
+qwwad_ef_donor_specific --donorposition 250      \
+                        --lambdastart   89       \
+                        --lambdastop    91       \
+                        --zetastart     0.6      \
+                        --zetastep      0.02     \
+                        --zetastop      0.8      \
+                        --symmetry      variable \
+                        --searchmethod  linear
 
-# Now collate data in `output' into file suitable for plotting
+# Now collate data from the search log into file suitable for plotting
 # Do each zeta value at a time
-for ZETA in `seq 6.0 0.2 7.8`; do
-    awk "BEGIN{printf(\"%e\",$ZETA/10)}/zeta $ZETA/{printf(\" %e\",\$8)}END{printf(\"\\n\")}" output.r >> $outfile
+for lambda in 89 90 91; do
+	awk '{if($1==lambda*1e-10) print $2, $3/1.6e-19*1000}' lambda=$lambda < searchlog.r >> $outfile
+	printf "\n" >> $outfile
 done
 
 cat << EOF
@@ -75,7 +78,7 @@ $outfile is in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
@@ -83,4 +86,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f *.r
+#rm -f *.r
