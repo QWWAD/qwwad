@@ -7,19 +7,8 @@
  * \details Implements a variational technique to calculate the
  *          uncorrelated one particle energies of an electron attatched to a 
  *          single donor at any position, in any user supplied potential.  
- *          The potential is read from the file v.r
- *
- *          This version is a single variational parameter calculation---the 
- *          two-dimensional (2D) approximation trial wavefunction:
- *
- *          \f[
- *            \Psi(z)=\chi(z) \exp(-r^{\prime\prime}/\lambda)
- *          \f]
- *
- *          where \f$r^{\prime\prime} = \sqrt(x^2+y^2)\f$
  */
 
-#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include "qwwad/constants.h"
@@ -133,10 +122,10 @@ int main(int argc,char *argv[])
     const auto chi = solutions_chi[0].get_wavefunction_samples();
 
     // Save the ground-state wavefunction
-    write_table("wf_1.r", z, psi);
+    write_table("wf_e1.r", z, psi);
 
     // Save the ground-state wavefunction (no hydrogenic factor)
-    write_table("wf_chi_1.r", z, chi);
+    write_table("wf_chi_e1.r", z, chi);
 
     // Output the search log
     write_table("searchlog.r",

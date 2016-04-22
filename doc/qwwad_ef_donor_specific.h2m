@@ -4,41 +4,30 @@
              Column 1: position [m].
              Column 2: potential [J].
 
-   'r_d.r'   List of dopant locations:
-             Column 1: spatial location [m]
-
-A separate solution will be found for a structure using each dopant ion location in the list.
-In other words, this program does not simulate a structure with multiple dopant ions at once!
-
 .SS Output files:
-   'wf*.r'         Wave function amplitude at each position:
-   'wf_chi*.r'     Wave function amplitude at each position (ignoring hydrogenic factor):
-                   Column 1: position [m]
-                   Column 2: wave function amplitude [m^{-1/2}].
+   'E*.r'        Energy of each state:
+                 Column 1: state index.
+                 Column 2: energy [meV].
 
-   'e.r'           Energy of electron:
-                   Column 1: Dopant location (from r_d.r file) [Angstrom]
-                   Column 2: Energy [meV]
+   'wf_*i.r'     Wave function amplitude at each position:
+   'wf_chi_*i.r' Wave function amplitude at each position (ignoring hydrogenic factor):
+                 Column 1: position [m]
+                 Column 2: wave function amplitude [m^{-1/2}].
+
+   'l.r'         Bohr radius of ion:
+                 Column 1: Dopant location (from r_d.r file) [Angstrom]
+                 Column 2: Bohr radius [Angstrom]
    
-   'l.r'           Bohr radius of ion:
-                   Column 1: Dopant location (from r_d.r file) [Angstrom]
-                   Column 2: Bohr radius [Angstrom]
-   
-   'zeta.r'        Symmetry parameter of hydrogenic wave function:
-                   Column 1: Dopant location (from r_d.r file) [Angstrom]
-                   Column 2: Symmetry parameter (dimensionless)
+   'zeta.r'      Symmetry parameter of hydrogenic wave function:
+                 Column 1: Dopant location (from r_d.r file) [Angstrom]
+                 Column 2: Symmetry parameter (dimensionless)
 
-   'searchlog_j.r' Log of the search algorithm progress:
-                   Column 1: Bohr radius [m]
-                   Column 2: Symmetry parameter
-                   Column 3: Energy [J]
+   'searchlog.r' Log of the search algorithm progress:
+                 Column 1: Bohr radius [m]
+                 Column 2: Symmetry parameter
+                 Column 3: Energy [J]
 
-The '*' in the wavefunction filenames is replaced by the number of the structure being considered;
-i.e., the number index of the dopant in the 'r_d.r' file.
-
-A separate search log file is created for each of the dopant locations specified in the r_d.r file.
-The 'j' in the filename corresponds to the line in the input file.
-
+In each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.
 The zeta.r file is only created if a variable symmetry waveform is used.
 
 [SYMMETRY OPTIONS]
@@ -89,8 +78,8 @@ For variable symmetry, the final value has no effect, and the search proceeds au
 
 [EXAMPLES]
 
-Find a donor state, assuming 2D symmetry, with the Bohr radius being between 50 and 100 Angstrom, using a linear search:
-    qwwad_ef_donor_specific --symmetry 2D --lambdastart 50 --lambdastop 100 --searchmethod linear
+Find the eigenstate for a donor at z = 10 Angstrom, assuming 2D symmetry, with the Bohr radius being between 50 and 100 Angstrom, using a linear search:
+    qwwad_ef_donor_specific --symmetry 2D --lambdastart 50 --lambdastop 100 --searchmethod linear --donorposition 10
 
-Find a donor state, assuming variable symmetry, using a fast search, starting with lambda = 50 Angstrom and zeta = 0.5.
-    qwwad_ef_donor_specific --symmetry variable --lambdastart 50 --zetastart 0.5 --searchmethod fast
+Find the eigenstate for a donor at z = 100 Angstrom, assuming variable symmetry, using a fast search, starting with lambda = 50 Angstrom and zeta = 0.5.
+    qwwad_ef_donor_specific --symmetry variable --lambdastart 50 --zetastart 0.5 --searchmethod fast --donorposition 100
