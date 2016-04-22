@@ -119,41 +119,6 @@ double cot(const double x);
 double coth(const double x);
 
 unsigned int Theta(const double x);
-
-/**
- * A numerical solver for Laplace transforms
- *
- * \details This uses the Stehfest algorithm to compute transforms as described
- *          at: http://www.codeproject.com/Articles/25189/Numerical-Laplace-Transforms-and-Inverse-Transform
- *
- * \todo Replace this with a call to an external library if/when one becomes
- *       available.  This isn't widely used in QCLsim, so we probably don't
- *       want to maintain it ourselves!
- */
-class Laplace
-{
-private:
-    /**
-     * Number of summation terms to use in algorithm.
-     *
-     * This must be an even number.
-     *
-     * TODO: Make this configurable?
-     */
-    static const size_t N = 20;
-
-    /**
-     * Stehfest algorithm coefficients
-     *
-     * More terms gives a more accurate solution, but is slower
-     */
-    std::valarray<double> V;
-    
-public:
-    Laplace();
-
-    double inverse_transform(double (*F)(const double), const double t) const;
-};
 } // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
