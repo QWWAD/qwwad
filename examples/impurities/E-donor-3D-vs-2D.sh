@@ -65,11 +65,11 @@ for QWWAD_DONORPOSITION in `seq 0 20 220` 230; do
     echo $QWWAD_DONORPOSITION $E2D $E3D | awk '{print $1, $3 - $2}' >> $outfile
 
     # Append wavefunction to output file
-    awk '{print $1*1e10, $2 + iwf*5000}' iwf=$iwf wf_1.r >> $outfile_wf
+    awk '{print $1*1e10, $2 + iwf*5000}' iwf=$iwf wf_e1.r >> $outfile_wf
 
     # Store the wavefunction files
-    mv wf_1.r wf_${iwf}.tmp
-    mv wf_chi_1.r wf_chi_${iwf}.tmp
+    mv wf_e1.r wf_${iwf}.tmp
+    mv wf_chi_e1.r wf_chi_${iwf}.tmp
     printf "\n" >> $outfile_wf
 
     iwf=`echo $iwf | awk '{print $1 + 1}'`
