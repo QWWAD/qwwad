@@ -119,6 +119,9 @@ double cot(const double x);
 double coth(const double x);
 
 unsigned int Theta(const double x);
+
+double sf_brillouin(const double J,
+                    const double x);
 } // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

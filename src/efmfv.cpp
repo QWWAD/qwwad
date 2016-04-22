@@ -83,7 +83,7 @@ static double B_J(const double J,
 {
     const double y = 2*J*mu_b*MF/(kB*(T+T0));
 
-    return (2*J+1)/(2*J)*coth((2*J+1)*y/(2*J))-1/(2*J)*coth(y/(2*J));
+    return sf_brillouin(J,y);
 }
 
 int main(int argc,char *argv[])

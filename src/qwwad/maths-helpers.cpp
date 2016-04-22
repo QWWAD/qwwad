@@ -5,7 +5,6 @@
  */
 
 #include "maths-helpers.h"
-#include <gsl/gsl_sf_gamma.h>
 
 namespace QWWAD
 {
@@ -103,6 +102,24 @@ unsigned int Theta(const double x)
 {
     if(x > 0) return 1;
     else      return 0;
+}
+
+/**
+ * \brief The Brillouin function y = B_J(x)
+ *
+ * \param[in] J The order of the Brillouin function
+ * \param[in] x The argument of the function
+ *
+ * \return The value of the function, y
+ */
+double sf_brillouin(const double J,
+                    const double x)
+{
+    const auto tJ   = 2.0*J;
+    const auto tJp1 = tJ + 1.0;
+    const auto tJp1_tJ = tJp1/tJ;
+    const auto y = tJp1_tJ * coth(tJp1_tJ * x) - 1.0/tJ*coth(x/tJ);
+    return y;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
