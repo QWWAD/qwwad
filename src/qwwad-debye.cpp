@@ -8,7 +8,8 @@
 
 #include "qwwad-debye.h"
 
-#include <gsl/gsl_math.h>
+#include <cmath>
+
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
 #include "qwwad/constants.h"
@@ -85,7 +86,7 @@ double DebyeModel::get_cp_approx(const double T) const
     double cp = 0.0;
 
     // Temperature at which high and low-temperature models meet
-    const double T_match = T_D * pow(1.25/(pi_sq*pi_sq), 0.3333333);
+    const double T_match = T_D * std::cbrt(1.25/(pi_sq*pi_sq));
 
     if (T > T_match)
         cp = get_cp_high_T();

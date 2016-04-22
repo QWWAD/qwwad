@@ -40,7 +40,7 @@ double calculate_dos_3D(const double mass,
         const double E = energy - V; // Express energy relative to band edge
 
         // Density-of-states mass for an excited state in bulk
-        const double m_d = mass * pow((1.0+alpha*E) * gsl_pow_2(1.0+2*alpha*E),1.0/3.0);
+        const auto m_d = mass * std::cbrt((1.0+alpha*E) * gsl_pow_2(1.0+2*alpha*E));
 
         // Bulk density of states [QWWAD3, Eq. 2.40]
         rho = 1/(2.0*gsl_pow_2(pi)) * gsl_pow_3(sqrt(2.0*m_d/gsl_pow_2(hBar))) * sqrt(E);

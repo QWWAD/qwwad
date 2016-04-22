@@ -181,7 +181,7 @@ double find_fermi(const double Esb,
     if(gsl_fcmp(alpha, 0.0, 1.0e-6) == 0)
     {
         // Eq. 2.85, QWWAD4
-        E_F = Esb + kB*Te * log(gsl_expm1((N*pi*hBar*hBar)/(m*kB*Te)));
+        E_F = Esb + kB*Te * log(std::expm1((N*pi*hBar*hBar)/(m*kB*Te)));
     }
     else
     {
