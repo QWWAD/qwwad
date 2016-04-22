@@ -55,13 +55,13 @@ bin_PROGRAMS =  \
 		qwwad_poisson \
 		qwwad_diffuse     \
 		qwwad_uncertainty    \
-		i0      \
 		ifr     \
 		imp     \
 		qwwad_tx_double_barrier_iv    \
 		matlib-query \
 		qwwad_ef_poeschl_teller     \
-		qwwad_ef_donor_specific \
+		qwwad_ef_donor_generic      \
+		qwwad_ef_donor_specific     \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
@@ -259,8 +259,8 @@ qwwad_uncertainty_LDADD   = libqwwad.la
 ifr_SOURCES = src/ifr.cpp
 ifr_LDADD   = libqwwad.la
 
-i0_SOURCES  = src/i0.cpp
-i0_LDADD    = libqwwad.la
+qwwad_ef_donor_generic_SOURCES  = src/qwwad_ef_donor_generic.cpp
+qwwad_ef_donor_generic_LDADD    = libqwwad.la
 
 imp_SOURCES  = src/imp.cpp
 imp_LDADD    = libqwwad.la

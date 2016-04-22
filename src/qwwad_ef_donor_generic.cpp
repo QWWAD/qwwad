@@ -1,32 +1,9 @@
-/*==================================================================
-                                i0
-  ==================================================================*/
-
-/* This program implements a variational technique to calculate the
-   uncorrelated one particle energies of an electron or hole attatched
-   to a single donor or acceptor at any position, in any user supplied 
-   potential.  The potential is read from the file v.r
-
-   This version is a single variational parameter calculation---the 
-   three-dimensional (3D) approximation trial wavefunction:
-
-		Psi=psi(z) phi(r)
-
-   where psi(z) is the one-particle wave function without the impurity
-   and phi(r) is the hydorgenic-like term, which can take any form, i.e.
-   1s, 2s, 2pz, 2px.
-
-		Input files:
-		r_i.r		donor (or acceptor positions)
-		v.r		one-dimensional potential
-		wf_pn.r		wave functions
-
-		Output files:
-		e.r		total energies for each r_i
-		l.r		Bohr radii (lambda) for each r_i
-
-   Paul Harrison, June 2001
-   								*/
+/**
+ * \file   qwwad_ef_donor_generic.cpp
+ * \brief  Use variational technique to minimise Hamiltonian of donor state
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
 #include <cstdio>
 #include <cstdlib>
@@ -112,12 +89,12 @@ while((argc>1)&&(argv[1][0]=='-'))
 	    case 'e': break;
 	    case 'h': break;
 	    case 'l': break;
-	    default:  printf("Usage:  i0 [-p particle (e, h, or l)]\n");
+	    default:  printf("Usage:  qwwad_ef_donor_generic [-p particle (e, h, or l)]\n");
                       exit(0);
 	   }
 	   break;
   default :
-           printf("Usage:  i0 [-e relative permittivity \033[1m13.18\033[0m]\n");
+           printf("Usage:  qwwad_ef_donor_generic [-e relative permittivity \033[1m13.18\033[0m]\n");
 	   printf("           [-m mass (\033[1m0.067\033[0mm0)]\n");
 	   printf("           [-s subband (\033[1m1\033[0m)][-S impurity level (\033[1m1s\033[0m)]\n");
 	   exit(0);
