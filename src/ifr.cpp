@@ -195,7 +195,7 @@ int main(int argc,char *argv[])
             const double kf_sqr = ki_sqr + 2*m*(Ei - Ef)/(hBar*hBar);
             assert(kf_sqr >= 0.0);
             const double kf = sqrt(kf_sqr);
-            assert(!isnan(kf));
+            assert(!std::isnan(kf));
             const double beta = exp(-(ki_sqr + kf_sqr)*Lambda*Lambda/4) * gsl_sf_bessel_I0(ki*kf*Lambda*Lambda/2);
 
             Wif[iki] = pi*m*Delta*Delta*Lambda*Lambda/(hBar*hBar*hBar) * beta * F_if_sq;

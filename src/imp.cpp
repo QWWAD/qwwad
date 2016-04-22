@@ -192,7 +192,7 @@ int main(int argc,char *argv[])
             const double kf_sqr = ki_sqr + 2*m*(Ei - Ef)/(hBar*hBar);
             assert(kf_sqr >= 0.0);
             const double kf = sqrt(kf_sqr);
-            assert(!isnan(kf));
+            assert(!std::isnan(kf));
             const double two_kif = 2*ki*kf;
             const double ki_sqr_plus_kf_sqr = ki_sqr + kf_sqr;
 
@@ -206,7 +206,7 @@ int main(int argc,char *argv[])
                 // only need to look up the cos(theta)
                 const double q_sqr = ki_sqr_plus_kf_sqr + two_kif * cos_theta[itheta];
                 const double q = sqrt(q_sqr);
-                assert(!isnan(q));
+                assert(!std::isnan(q));
 
                 // Find the form-factor at this wave-vector by looking it up in the
                 // spline we created earlier
