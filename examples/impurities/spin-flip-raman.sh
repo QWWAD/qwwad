@@ -44,7 +44,7 @@ qwwad_mesh
 qwwad_ef_band_edge --material cdmnte
 
 # Add an 8 Tesla magnetic field to the potential
-qwwad_ef_zeeman -B 8 	# add Zeeman splitting due to 8 T, default electron, spin +
+qwwad_ef_zeeman --magneticfield 8 --spinup # add Zeeman splitting due to 8 T, default electron, spin up
 
 exit
 

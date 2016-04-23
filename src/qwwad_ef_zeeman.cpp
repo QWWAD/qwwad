@@ -13,6 +13,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/maths-helpers.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -56,69 +57,44 @@ static double Seff(const double N0alpha,
     const double C = 152.7;
     const double D = -20760.0*e*1e-3;
     const double E = 8.083;
-    const double s = (A+B*gsl_pow_2(x)/(1+C*gsl_pow_2(x))+D*x/(1+E*x))/(N0alpha+N0beta);
+    const double s = (A + B*x*x/(1.0+C*x*x) + D*x/(1.0+E*x))/(N0alpha+N0beta);
 
     return s;
 }
 
 /**
- * \brief Brillouin function
+ * Configure command-line options for the program
  */
-static double B_J(const double J,
-                  const double MF,
-                  const double T,
-                  const double T0)
+Options configure_options(int argc, char* argv[])
 {
-    const double y = 2*J*mu_b*MF/(kB*(T+T0));
+    Options opt;
 
-    return sf_brillouin(J,y);
-}
+    std::string doc("Find the Zeeman splitting contribution to a potential profile.");
+
+    opt.add_option<double>("magneticfield,B",   0.0, "Magnetic field along growth axis [T].");
+    opt.add_option<char>  ("particle,p",        'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                     "electrons, heavy holes or light holes respectively.");
+    opt.add_option<bool>  ("spinup",                 "Spin direction is 'up'. Down-spin assumed if this flag is not used.");
+    opt.add_option<double>("Tl",                1.8, "Temperature of crystal lattice [K]");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+};
+
 
 int main(int argc,char *argv[])
 {
-    /* Define global defaults */
-    double MF      = 0.0; // Magnetic field
-    char   p       = 'e'; // Particle (e, h, or l)
-    char   s       = '+'; // Electron spin state, up or down, +/-
-    double T       = 1.8;     // Sample temperature
+    const auto opt = configure_options(argc, argv);
+
+    const auto MF     = opt.get_option<double>("magneticfield"); // [T]
+    const auto p      = opt.get_option<char>  ("particle");
+    const auto spinup = opt.get_option<bool>  ("spinup");        // True = 'up spin'; False = 'down spin'
+    const auto Tl     = opt.get_option<double>("Tl");            // Lattice temperature [K]
+
     double N0alpha = 0.220*e; // Magnetic parameter
     double N0beta  = 0.880*e; // Magnetic parameter
     double J       = 2.5;     // magnetic ion spin
-
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'B':
-                MF=atof(argv[2]);            /* read magnetic field in Tesla */
-                break;
-            case 'p':
-                p=*argv[2];
-                switch(p)
-                {
-                    case 'e': break;
-                    case 'h': break;
-                    case 'l': break;
-                    default:  printf("Usage:  qwwad_ef_zeeman [-p particle (\033[1me\033[0m, h, or l)]\n");
-                              exit(EXIT_FAILURE);
-                }
-                break;
-            case 's':
-                s=*argv[2];
-                break;
-            case 'T':
-                T=atof(argv[2]);
-                break;
-            default: 
-                printf("Usage: qwwad_ef_zeeman [-B magnetic field (\033[1m0\033[0mTesla)][-p particle (\033[1me\033[0m, h, or l)]\n");
-                printf("             [-s spin-state (\033[1m+\033[0m/-)][-T temperature (\033[1m1.8\033[0mK)]\n");
-                exit(0);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
 
     // Open baseline potential and alloy files
     std::valarray<double> z;  // Spatial locations [m]
@@ -134,38 +110,31 @@ int main(int argc,char *argv[])
 
     std::valarray<double> V_zeeman(nz);
 
-    /* Add field in the form +/- 3A, +/- 3B or +/- B depending on spin */
+    // Add field in the form +/- 3A, +/- 3B or +/- B depending on spin
     for(unsigned int iz=0; iz<nz; iz++)
     {
         const double T0 = Teff(x[iz]); // Effective temperature
         const double Sz = Seff(N0alpha,N0beta,x[iz]);
 
-        const double A=x[iz]*N0alpha*Sz*B_J(J,MF,T,T0)/6;
-        const double B=x[iz]*N0beta*Sz*B_J(J,MF,T,T0)/6;
+        const double y = 2*J*mu_b*MF/(kB*(Tl+T0));
+
+        const double A=x[iz]*N0alpha*Sz*sf_brillouin(J,y)/6;
+        const double B=x[iz]*N0beta *Sz*sf_brillouin(J,y)/6;
 
         // calculate change in potential due to magnetic field
         switch(p)
         {
             case 'e': 
-                switch(s)
-                {
-                    case '+': V_zeeman[iz] =  3*A;break;
-                    case '-': V_zeeman[iz] = -3*A;break;
-                }
+                if(spinup) V_zeeman[iz] =  3*A;
+                else       V_zeeman[iz] = -3*A;
                 break;
             case 'h':
-                switch(s)
-                {
-                    case '+': V_zeeman[iz] =  3*B;break;
-                    case '-': V_zeeman[iz] = -3*B;break;
-                }
+                if(spinup) V_zeeman[iz] =  3*B;
+                else       V_zeeman[iz] = -3*B;
                 break;
             case 'l': 
-                switch(s)
-                {
-                    case '+': V_zeeman[iz] = B;break;
-                    case '-': V_zeeman[iz] = B;break;
-                }
+                if(spinup) V_zeeman[iz] = B;
+                else       V_zeeman[iz] = B;
                 break;
         }
     }
