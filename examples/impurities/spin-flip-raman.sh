@@ -62,38 +62,34 @@ for QWWAD_DONORPOSITION in `seq 0 10 230`; do
 	# Save all data for the spin-up state
 	Eplus=`awk '{print $2}' Ee.r`
 
-#	mv e.r e.r+
-#	mv l.r l.r+
-#	mv v.r v.r+
-
 	# Now repeat for the spin-down state
 	qwwad_ef_donor_specific --symmetry 3D  --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_down.r
 	Eminus=`awk '{print $2}' Ee.r`
 
 	printf "%d\t%e\t%e\n" $QWWAD_DONORPOSITION $Eplus $Eminus >> $outfile_E_pm
-
-#	mv e.r e.r-
-#	mv l.r l.r-
-#	mv v.r v.r-
 done
 
 # Now produce the energy difference between the states
 awk '{print $1, $2-$3}' $outfile_E_pm > $outfile_dE
 
-exit
 # With only a few donor points, calculating the spin-flip spectra produces
 # a very spiky Intensity-energy curve.  So take a spline of the spin-flip
 # energies in e_sf.r-raw to simulate a continuous donor distribution and
 # save in file `e_sf.r'.
 
-sfr -l 0.5 -s 13 -t 0.1 -u 23
-mv I.r Il=0.5.r
+export QWWAD_WAVENUMBERMIN=13
+export QWWAD_WAVENUMBERMAX=23
+export QWWAD_WAVENUMBERSTEP=0.1
+export QWWAD_SPINFLIPFILE=$outfile_dE
 
-sfr -s 13 -t 0.1 -u 23
-mv I.r I1=1.0.r
+qwwad_spin_flip_raman -l 0.5
+mv I.r Il-0.5.dat
 
-sfr -l 2 -s 13 -t 0.1 -u 23
-mv I.r Il=2.0.r
+qwwad_spin_flip_raman
+mv I.r Il-1.0.dat
+
+qwwad_spin_flip_raman -l 2
+mv I.r Il-2.0.dat
 
 # <Edit accordingly, to describe each output file>
 cat << EOF

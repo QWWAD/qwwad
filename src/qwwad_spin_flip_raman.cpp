@@ -40,12 +40,11 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+#include "qwwad/file-io.h"
 #include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
-
-#define N 1000
 
 /**
  * \brief Configure command-line options for the program
@@ -56,10 +55,11 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the spin-flip Raman spectrum.");
 
-    opt.add_option<double>("linewidth,l",        1, "Linewidth of all transitions [cm^{-1}].");
-    opt.add_option<double>("wavenumbermin,s",    0, "Minimum wavenumber for spectrum [cm^{-1}.");
-    opt.add_option<double>("wavenumbermax,u",  100, "Maximum wavenumber for spectrum [cm^{-1}.");
-    opt.add_option<double>("wavenumberstep,t",   1, "Step in wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>     ("linewidth,l",             1, "Linewidth of all transitions [cm^{-1}].");
+    opt.add_option<double>     ("wavenumbermin,s",         0, "Minimum wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>     ("wavenumbermax,u",       100, "Maximum wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>     ("wavenumberstep,t",        1, "Step in wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<std::string>("spinflipfile",     "e_sf.r", "Table of spin-flip energies vs donor position.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -70,62 +70,41 @@ int main(int argc, char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    double	E;		/* spectral energy			*/
-    double	E_sf[N];	/* spin-flip energy for each r_d	*/
-    double	intensity;	/* intensity of Raman signal at E	*/
-    double	r_d[N];		/* donor positions (r_d)		*/
-    double	sigma;		/* standard deviation of Gaussians	*/
-    int	i_i;		/* index over r_d for intensity sum	*/
-    int	i_sf;		/* index over r_d for spin-flip energies*/
-    int	N_rd;		/* number of r_d points in e_sf.r	*/
-    FILE	*fE_sf;		/* file pointer to input file e_sf.r	*/
-    FILE	*fI;		/* file pointer to output file I.r	*/
-
     // Spectral parameters [1/cm]
-    const auto E_min  = opt.get_option<double>("wavenumbermin");
-    const auto E_max  = opt.get_option<double>("wavenumbermax");
-    const auto E_step = opt.get_option<double>("wavenumberstep");
+    const auto E_min     = opt.get_option<double>("wavenumbermin");
+    const auto E_max     = opt.get_option<double>("wavenumbermax");
+    const auto E_step    = opt.get_option<double>("wavenumberstep");
     const auto linewidth = opt.get_option<double>("linewidth");
 
-    /* Read spin-flip energies in from spline file
-       in units of wavenumbers                              */
-    if((fE_sf=fopen("e_sf.r","r"))==0)
-    {fprintf(stderr,"Error: Cannot open input file 'e_sf.r'!\n");
-        fprintf(stderr,"Generate file by saving spline from `e.r+' - `e.r-'\n");
-        exit(0);
-    }
+    // Read spin-flip energies as a function of donor position
+    std::valarray<double> r_d;  // donor positions
+    std::valarray<double> E_sf; // spin-flip energy for each r_d
+    const auto spinflipfile = opt.get_option<std::string>("spinflipfile");
+    read_table(spinflipfile, r_d, E_sf);
 
-    i_sf=0;
-    while(fscanf(fE_sf,"%lf %lf",&r_d[i_sf],&E_sf[i_sf])!=EOF)
+    E_sf *= 1e-3*e/(h*c)/100.0; // Convert from meV to cm^{-1}
+
+    const auto N_rd=r_d.size(); // Number of donor positions
+
+    // Standard deviation from linewidths (FWHM)
+    const auto sigma=linewidth/(2*sqrt(2*log(2)));
+
+
+    std::vector<double> E_plot;
+    std::vector<double> intensity_plot; // intensity of Raman signal at Ei
+
+    for(auto E=E_min; E < E_max; E += E_step) // Spectral energy
     {
-        E_sf[i_sf]*=1e-3*e/(h*c)/100;	/* convert from meV to cm^-1	*/
-        i_sf++;
-    }
+        auto intensity=0.0;
 
-    fclose(fE_sf);
-
-    N_rd=i_sf;				/* Assign final index to count	*/
-
-    /* Generate standard deviation from linewidths (FWHM)	*/
-    sigma=linewidth/(2*sqrt(2*log(2)));
-
-    /* Calculate intensity versus energy of spectra, using a
-       sum of Gaussians.                                     */
-    fI=fopen("I.r","w");
-
-    E=E_min;
-    do
-    {
-        intensity=0;
-        for(i_i=0;i_i<N_rd;i_i++)
-        {
+        for(unsigned int i_i=0;i_i<N_rd;i_i++)
             intensity+=1/(sigma*sqrt(2*pi))*exp(-0.5*gsl_pow_2((E-E_sf[i_i])/sigma));
-        }
-        fprintf(fI,"%le %le\n",E,intensity); /* E in cm^-1, intensity in arb. units */
-        E+=E_step;
-    }while(E<E_max);
 
-    fclose(fI);
+        E_plot.push_back(E);
+        intensity_plot.push_back(intensity);
+    }
+
+    write_table("I.r", E_plot, intensity_plot);
 
     return EXIT_SUCCESS;
 }
