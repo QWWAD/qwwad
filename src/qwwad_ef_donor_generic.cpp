@@ -42,68 +42,68 @@ double Psi(const double psi,
 
 int main(int argc,char *argv[])
 {
-char	State[9];	/* string containing impurity level	*/
+    char	State[9];	/* string containing impurity level	*/
 
-/* default values */
-double epsilon = 13.18*eps0; // Permittivity [F/m]
-double m       = 0.067*me;   // Mass of particle [kg]
-char   p       = 'e';        // Particle ID
-int    state   = 1;          // Principal quantum number
-int    S       = 1;          // Impurity level `1s', `2px', etc
+    /* default values */
+    double epsilon = 13.18*eps0; // Permittivity [F/m]
+    double m       = 0.067*me;   // Mass of particle [kg]
+    char   p       = 'e';        // Particle ID
+    int    state   = 1;          // Principal quantum number
+    int    S       = 1;          // Impurity level `1s', `2px', etc
 
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'e':
-	   epsilon=atof(argv[2])*eps0;
-	   break;
-  case 'm':
-	   m=atof(argv[2])*me;
-	   break;
-  case 's':
-	   state=atoi(argv[2]);
-	   break;
-  case 'S':
-	   strcpy(State,argv[2]);
-           if(!strcmp(State,"1s"))S=9;
-           if(!strcmp(State,"2s"))S=2;
-           if(!strcmp(State,"2px"))S=3;
-           if(!strcmp(State,"2pz"))S=4;
-           switch(S)
-           {
-	    case 2 :break;
-	    case 3 :break;
-	    case 4 :break;
-	    case 9 :S=1;break;
-	    default:
-		    printf("The `%s' impurity level wave function is not defined\n",State);
-		    exit(0);
-		    break;
-	   }
-	   break;
-  case 'p':
-	   p=*argv[2];
-	   switch(p)
-	   {
-	    case 'e': break;
-	    case 'h': break;
-	    case 'l': break;
-	    default:  printf("Usage:  qwwad_ef_donor_generic [-p particle (e, h, or l)]\n");
-                      exit(0);
-	   }
-	   break;
-  default :
-           printf("Usage:  qwwad_ef_donor_generic [-e relative permittivity \033[1m13.18\033[0m]\n");
-	   printf("           [-m mass (\033[1m0.067\033[0mm0)]\n");
-	   printf("           [-s subband (\033[1m1\033[0m)][-S impurity level (\033[1m1s\033[0m)]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
+    while((argc>1)&&(argv[1][0]=='-'))
+    {
+        switch(argv[1][1])
+        {
+            case 'e':
+                epsilon=atof(argv[2])*eps0;
+                break;
+            case 'm':
+                m=atof(argv[2])*me;
+                break;
+            case 's':
+                state=atoi(argv[2]);
+                break;
+            case 'S':
+                strcpy(State,argv[2]);
+                if(!strcmp(State,"1s"))S=9;
+                if(!strcmp(State,"2s"))S=2;
+                if(!strcmp(State,"2px"))S=3;
+                if(!strcmp(State,"2pz"))S=4;
+                switch(S)
+                {
+                    case 2 :break;
+                    case 3 :break;
+                    case 4 :break;
+                    case 9 :S=1;break;
+                    default:
+                            printf("The `%s' impurity level wave function is not defined\n",State);
+                            exit(0);
+                            break;
+                }
+                break;
+            case 'p':
+                p=*argv[2];
+                switch(p)
+                {
+                    case 'e': break;
+                    case 'h': break;
+                    case 'l': break;
+                    default:  printf("Usage:  qwwad_ef_donor_generic [-p particle (e, h, or l)]\n");
+                              exit(0);
+                }
+                break;
+            default :
+                printf("Usage:  qwwad_ef_donor_generic [-e relative permittivity \033[1m13.18\033[0m]\n");
+                printf("           [-m mass (\033[1m0.067\033[0mm0)]\n");
+                printf("           [-s subband (\033[1m1\033[0m)][-S impurity level (\033[1m1s\033[0m)]\n");
+                exit(0);
+        }
+        argv++;
+        argv++;
+        argc--;
+        argc--;
+    }
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
@@ -115,70 +115,70 @@ while((argc>1)&&(argv[1][0]=='-'))
     std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
     read_table(filename, z_tmp, wf);
 
-  const double lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
+    const double lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
-  /* Open files for output of data */
+    /* Open files for output of data */
 
-  FILE *fe=fopen("e.r","w");           /* E versus r_i	*/
-  FILE *fl=fopen("l.r","w");           /* lambda versus r_i	*/
+    FILE *fe=fopen("e.r","w");           /* E versus r_i	*/
+    FILE *fl=fopen("l.r","w");           /* lambda versus r_i	*/
 
-  // Read list of donor (or acceptor) positions
-  std::valarray<double> r_d; // [m]
-  read_table("r_d.r", r_d);
+    // Read list of donor (or acceptor) positions
+    std::valarray<double> r_d; // [m]
+    read_table("r_d.r", r_d);
 
-  // Perform variational calculation for each donor/acceptor position
-  for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
-  {
-   double lambda=lambda_0;	// initial lambda guess
+    // Perform variational calculation for each donor/acceptor position
+    for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
+    {
+        double lambda=lambda_0;	// initial lambda guess
 
-   // Double the estimate of Bohr radius if we're in a second orbital
-   // This isn't correct for 2pz, but it's still better than the 1s
-   // estimate!
-   if((S==2)||(S==3)||(S==4))lambda*=2;
+        // Double the estimate of Bohr radius if we're in a second orbital
+        // This isn't correct for 2pz, but it's still better than the 1s
+        // estimate!
+        if((S==2)||(S==3)||(S==4))lambda*=2;
 
-   /* Newton-Raphson iteration for solution of lambda, this occurs when
-      dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
-    								*/
-   EnergyParams params = {wf, V, z, epsilon, m, r_d[i_d], S};
+        /* Newton-Raphson iteration for solution of lambda, this occurs when
+           dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
+           */
+        EnergyParams params = {wf, V, z, epsilon, m, r_d[i_d], S};
 
-   // Set up the numerical solver using GSL
-   gsl_function f;
-   f.function = &Energy;
-   f.params   = &params;
+        // Set up the numerical solver using GSL
+        gsl_function f;
+        f.function = &Energy;
+        f.params   = &params;
 
-   gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-   gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
+        gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
+        gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
 
-   size_t max_iter = 100; // Maximum number of iterations before giving up
-   int status = 0;        // Error flag for GSL
-   unsigned int iter=0;   // The number of iterations attempted so far
+        size_t max_iter = 100; // Maximum number of iterations before giving up
+        int status = 0;        // Error flag for GSL
+        unsigned int iter=0;   // The number of iterations attempted so far
 
-   double E = 1000*e; // Minimum energy of carrier [J]
+        double E = 1000*e; // Minimum energy of carrier [J]
 
-   // Variational calculation (search over lambda)
-   do
-   {
-       ++iter;
-       status  = gsl_min_fminimizer_iterate(s);
-       const double lambda_lo = gsl_min_fminimizer_x_lower(s);
-       const double lambda_hi = gsl_min_fminimizer_x_upper(s);
-       lambda = gsl_min_fminimizer_x_minimum(s);
-       E      = gsl_min_fminimizer_f_minimum(s);
-       status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-       printf("r_d %le lambda %le energy %le meV\n", r_d[i_d], lambda, E/(1e-3*e));
-   }while((status == GSL_CONTINUE) && (iter < max_iter));
+        // Variational calculation (search over lambda)
+        do
+        {
+            ++iter;
+            status  = gsl_min_fminimizer_iterate(s);
+            const double lambda_lo = gsl_min_fminimizer_x_lower(s);
+            const double lambda_hi = gsl_min_fminimizer_x_upper(s);
+            lambda = gsl_min_fminimizer_x_minimum(s);
+            E      = gsl_min_fminimizer_f_minimum(s);
+            status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
+            printf("r_d %le lambda %le energy %le meV\n", r_d[i_d], lambda, E/(1e-3*e));
+        }while((status == GSL_CONTINUE) && (iter < max_iter));
 
-   gsl_min_fminimizer_free(s);
-   /* Output total energy (E) of impurity/heterostructure system 
-      and Bohr radii (lambda), in meV and Angstrom respectively */
-   fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
-   fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda/1e-10);
-  }/* end while r_i */
+        gsl_min_fminimizer_free(s);
+        /* Output total energy (E) of impurity/heterostructure system 
+           and Bohr radii (lambda), in meV and Angstrom respectively */
+        fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
+        fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda/1e-10);
+    }/* end while r_i */
 
-  fclose(fe);
-  fclose(fl);
+    fclose(fe);
+    fclose(fl);
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 } /* end main */
 
 /* This function calculates the expectation value (the energy) of the
