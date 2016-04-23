@@ -29,7 +29,8 @@ set -e
 # Initialise files
 outfile_E_pm="spin-flip-E.dat"
 outfile_dE="spin-flip-dE.dat"
-rm -f $outfile_E_pm $outfile_dE
+outfile_spectra="spin-flip-spectra.dat"
+rm -f $outfile_E_pm $outfile_dE $outfile_spectra
 
 # Define structure
 cat > s.r << EOF
@@ -66,46 +67,49 @@ for QWWAD_DONORPOSITION in `seq 0 10 230`; do
 	qwwad_ef_donor_specific --symmetry 3D  --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_down.r
 	Eminus=`awk '{print $2}' Ee.r`
 
-	printf "%d\t%e\t%e\n" $QWWAD_DONORPOSITION $Eplus $Eminus >> $outfile_E_pm
+	printf "%d\t%e\t%e\n" $QWWAD_DONORPOSITION $Eplus $Eminus >> E_pm.tmp
 done
 
 # Now produce the energy difference between the states
-awk '{print $1, $2-$3}' $outfile_E_pm > $outfile_dE
+awk '{print $1, $2-$3}' E_pm.tmp > $outfile_dE
 
-# With only a few donor points, calculating the spin-flip spectra produces
-# a very spiky Intensity-energy curve.  So take a spline of the spin-flip
-# energies in e_sf.r-raw to simulate a continuous donor distribution and
-# save in file `e_sf.r'.
+# Save the energies and the band potentials to file
+awk '{print $1, $2}' E_pm.tmp > $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1, $3}' E_pm.tmp >> $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1*1e10, $2*1000/1.6e-19}' v_up.r   >> $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1*1e10, $2*1000/1.6e-19}' v_down.r   >> $outfile_E_pm
 
 export QWWAD_WAVENUMBERMIN=13
 export QWWAD_WAVENUMBERMAX=23
 export QWWAD_WAVENUMBERSTEP=0.1
 export QWWAD_SPINFLIPFILE=$outfile_dE
 
-qwwad_spin_flip_raman -l 0.5
-mv I.r Il-0.5.dat
+export QWWAD_LINEWIDTH
+for QWWAD_LINEWIDTH in 0.5 1.0 2.0; do
+	qwwad_spin_flip_raman
 
-qwwad_spin_flip_raman
-mv I.r Il-1.0.dat
+	cat I.r     >> $outfile_spectra
+	printf "\n" >> $outfile_spectra
+done
 
-qwwad_spin_flip_raman -l 2
-mv I.r Il-2.0.dat
-
-# <Edit accordingly, to describe each output file>
 cat << EOF
-Results have been written to $outfile in the format:
+Results have been written to $outfile_E_pm, $outfile_dE and $outfile_spectra.
 
-  COLUMN 1 - <Whatever>
-  COLUMN 2 - <Something>
-  <...>
+$outfile_E_pm is in the format:
 
-  <Remove this chunk if only 1 data set is in the file>
-  The file contains <x> data sets, each set being separated
-  by a blank line, representing <whatever>:
+  COLUMN 1 - Donor position or spatial coordinate [Angstrom]
+  COLUMN 2 - Energy or potential [meV]
 
-  SET 1 - <Description of the 1st set>
-  SET 2 - <Description of the 2nd set>
-  <...>
+  The file contains 4 data sets, each set being separated
+  by a blank line, representing the Zeeman-split potentials and states:
+
+  SET 1 - Spin-up state as function of donor position
+  SET 2 - Spin-down state as function of donor position
+  SET 3 - Zeeman up-state potential as a function of position
+  SET 4 - Zeeman down-state potential as a function of position
 
 This script is part of the QWWAD software suite.
 
@@ -118,4 +122,4 @@ EOF
 
 # Clean up workspace
 # <Delete all temporary files you created>
-rm -f *.r
+rm -f *.r *.tmp

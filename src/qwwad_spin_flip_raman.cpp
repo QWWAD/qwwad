@@ -36,7 +36,7 @@
 #include <cstdlib>
 #include <strings.h>
 #include <cmath>
-#include <gsl/gsl_math.h>
+#include <gsl/gsl_randist.h>
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
@@ -60,6 +60,7 @@ Options configure_options(int argc, char* argv[])
     opt.add_option<double>     ("wavenumbermax,u",       100, "Maximum wavenumber for spectrum [cm^{-1}.");
     opt.add_option<double>     ("wavenumberstep,t",        1, "Step in wavenumber for spectrum [cm^{-1}.");
     opt.add_option<std::string>("spinflipfile",     "e_sf.r", "Table of spin-flip energies vs donor position.");
+    opt.add_option<std::string>("spectrumfile",        "I.r", "Filename for output spectrum.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -89,7 +90,6 @@ int main(int argc, char *argv[])
     // Standard deviation from linewidths (FWHM)
     const auto sigma=linewidth/(2*sqrt(2*log(2)));
 
-
     std::vector<double> E_plot;
     std::vector<double> intensity_plot; // intensity of Raman signal at Ei
 
@@ -98,13 +98,14 @@ int main(int argc, char *argv[])
         auto intensity=0.0;
 
         for(unsigned int i_i=0;i_i<N_rd;i_i++)
-            intensity+=1/(sigma*sqrt(2*pi))*exp(-0.5*gsl_pow_2((E-E_sf[i_i])/sigma));
+            intensity += gsl_ran_gaussian_pdf(E-E_sf[i_i], sigma);
 
         E_plot.push_back(E);
         intensity_plot.push_back(intensity);
     }
 
-    write_table("I.r", E_plot, intensity_plot);
+    const auto spectrumfile = opt.get_option<std::string>("spectrumfile");
+    write_table(spectrumfile, E_plot, intensity_plot);
 
     return EXIT_SUCCESS;
 }
