@@ -16,7 +16,9 @@ Fig 5.13: E-binding-3D.sh     => E-binding-3D-lambda.dat
 Fig 5.15: E-zeta.sh           => E-zeta.dat
 Fig 5.16: E-donor-variable.sh => E-donor-variable.dat
 Fig 5.17: E-donor-variable.sh => E-donor-variable-zeta-lambda.dat
-Fig 5.20: spin-flip-raman.sh  =>
+Fig 5.20: spin-flip-raman.sh  => spin-flip-E.dat
+Fig 5.21: spin-flip-raman.sh  => spin-flip-dE.dat
+Fig 5.22: spin-flip-raman.sh  => spin-flip-spectra.dat
 
 Fig 5.21:
 Fig 5.22:

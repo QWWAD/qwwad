@@ -18,7 +18,7 @@ using namespace QWWAD;
 using namespace constants;
 
 /**
- * Configure command-line options for the program
+ * \brief Configure command-line options for the program
  */
 Options configure_options(int argc, char* argv[])
 {

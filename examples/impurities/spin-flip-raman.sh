@@ -28,7 +28,7 @@ set -e
 
 # Initialise files
 outfile_E_pm="spin-flip-E.dat"
-outfile_dE="spin-flip-dE.dat"
+export QWWAD_SPINFLIPFILE="spin-flip-dE.dat"
 outfile_spectra="spin-flip-spectra.dat"
 rm -f $outfile_E_pm $outfile_dE $outfile_spectra
 
@@ -55,7 +55,7 @@ qwwad_ef_zeeman --spinup --totalpotentialfile v_up.r
 qwwad_ef_zeeman --totalpotentialfile v_down.r
 
 export QWWAD_DONORPOSITION
-for QWWAD_DONORPOSITION in `seq 0 10 230`; do
+for QWWAD_DONORPOSITION in `seq 0 5 230`; do
 
 	# Find impurity states for spin-up and spin-down cases
 	qwwad_ef_donor_specific --symmetry 3D --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_up.r
@@ -70,22 +70,14 @@ for QWWAD_DONORPOSITION in `seq 0 10 230`; do
 	printf "%d\t%e\t%e\n" $QWWAD_DONORPOSITION $Eplus $Eminus >> E_pm.tmp
 done
 
-# Now produce the energy difference between the states
-awk '{print $1, $2-$3}' E_pm.tmp > $outfile_dE
+# Now store the spin-flip energy between the states
+# as a function of the donor position
+awk '{print $1, $2-$3}' E_pm.tmp > $QWWAD_SPINFLIPFILE
 
-# Save the energies and the band potentials to file
-awk '{print $1, $2}' E_pm.tmp > $outfile_E_pm
-printf "\n"  >> $outfile_E_pm
-awk '{print $1, $3}' E_pm.tmp >> $outfile_E_pm
-printf "\n"  >> $outfile_E_pm
-awk '{print $1*1e10, $2*1000/1.6e-19}' v_up.r   >> $outfile_E_pm
-printf "\n"  >> $outfile_E_pm
-awk '{print $1*1e10, $2*1000/1.6e-19}' v_down.r   >> $outfile_E_pm
-
+# Run the spectral calculation for a range of linewidths
 export QWWAD_WAVENUMBERMIN=13
 export QWWAD_WAVENUMBERMAX=23
 export QWWAD_WAVENUMBERSTEP=0.1
-export QWWAD_SPINFLIPFILE=$outfile_dE
 
 export QWWAD_LINEWIDTH
 for QWWAD_LINEWIDTH in 0.5 1.0 2.0; do
@@ -95,8 +87,17 @@ for QWWAD_LINEWIDTH in 0.5 1.0 2.0; do
 	printf "\n" >> $outfile_spectra
 done
 
+# Save the energies and the band potentials to file
+awk '{print $1, $2}' E_pm.tmp > $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1, $3}' E_pm.tmp >> $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1*1e10, $2*1000/1.6e-19}' v_up.r   >> $outfile_E_pm
+printf "\n"  >> $outfile_E_pm
+awk '{print $1*1e10, $2*1000/1.6e-19}' v_down.r >> $outfile_E_pm
+
 cat << EOF
-Results have been written to $outfile_E_pm, $outfile_dE and $outfile_spectra.
+Results have been written to $outfile_E_pm, $QWWAD_SPINFLIPFILE and $outfile_spectra.
 
 $outfile_E_pm is in the format:
 
@@ -110,6 +111,23 @@ $outfile_E_pm is in the format:
   SET 2 - Spin-down state as function of donor position
   SET 3 - Zeeman up-state potential as a function of position
   SET 4 - Zeeman down-state potential as a function of position
+
+$QWWAD_SPINFLIPFILE is in the format:
+
+  COLUMN 1 - Donor position [Angstrom]
+  COLUMN 2 - Spin-flip energy [meV]
+
+$outfile_spectra is in the forma:
+
+  COLUMN 1 - Raman shift [1/cm]
+  COLUMN 2 - Intensity [arb. units]
+
+  The file contains 3 data sets, each set being separated
+  by a blank line, representing the spectra with different linewidths:
+
+  SET 1 - Linewidth = 0.5 /cm
+  SET 2 - Linewidth = 1.0 /cm
+  SET 3 - Linewidth = 2.0 /cm
 
 This script is part of the QWWAD software suite.
 
