@@ -44,7 +44,7 @@ bin_PROGRAMS =  \
 	       	effv    \
 		efiwire \
 		qwwad_ef_superlattice  \
-	       	efmfv   \
+	       	qwwad_ef_zeeman   \
 		qwwad_ef_parabolic_well   \
 		efsdot  \
 		efsdwf  \
@@ -223,8 +223,8 @@ efiwire_LDADD   = libqwwad.la
 qwwad_ef_superlattice_SOURCES = src/qwwad_ef_superlattice.cpp
 qwwad_ef_superlattice_LDADD   = libqwwad.la
 
-efmfv_SOURCES = src/efmfv.cpp
-efmfv_LDADD   = libqwwad.la
+qwwad_ef_zeeman_SOURCES = src/qwwad_ef_zeeman.cpp
+qwwad_ef_zeeman_LDADD   = libqwwad.la
 
 qwwad_ef_parabolic_well_SOURCES = src/qwwad_ef_parabolic_well.cpp
 qwwad_ef_parabolic_well_LDADD   = libqwwad.la

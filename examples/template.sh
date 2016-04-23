@@ -11,9 +11,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.<chapter>
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -55,7 +55,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
