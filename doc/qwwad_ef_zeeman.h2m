@@ -1,0 +1,23 @@
+[FILES]
+.SS Input files:
+   'v_b.r'    Baseline potential:
+              Column 1: spatial location [m]
+              Column 2: potential [J]
+
+   'x.r'      Alloy composition:
+              Column 1: Spatial location [m]
+              Column 2: Alloy fraction (x)
+
+.SS Output files:
+   'v_z.r'    Zeeman potential:
+   'v.r'      Total potential (v_b + v_z):
+              Column 1: Spatial location [m]
+              Column 2: Potential [J]
+
+[EXAMPLES]
+
+Find the Zeeman potential for spin-up states in an 8 T magnetic field at 2 K:
+    qwwad_ef_zeeman --spinup --magneticfield 8 --Tl 2
+
+Find the Zeeman potential for spin-down states in a 40 T magnetic field at 100 K:
+    qwwad_ef_zeeman --magneticfield 40 --Tl 100

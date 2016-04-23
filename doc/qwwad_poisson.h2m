@@ -14,10 +14,7 @@
 
 .SS Output files
    'v_p.r'    Poisson potential:
-              Column 1: Spatial location [m]
-              Column 2: Potential [J]
-   
-   'v_t.r'    Total potential (v_b + v_p):
+   'v.r'      Total potential (v_b + v_p):
               Column 1: Spatial location [m]
               Column 2: Potential [J]
 
@@ -32,7 +29,7 @@ The baseline potential is entirely optional, and represents the part of
 the Hamiltonian that does not depend upon bulk charge density.
 For example, this could be the conduction band potential.
 The Poisson potential is written to the v_p.r file.
-If a baseline potential was specified, it is added to v_p.r and written to v_t.r.
+If a baseline potential was specified, it is added to v_p.r and written to v.r.
 
 [BOUNDARY CONDITIONS]
 Two sets of boundary conditions are available.

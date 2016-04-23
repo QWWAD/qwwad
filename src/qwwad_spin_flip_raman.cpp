@@ -5,33 +5,6 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-/*
-   This programme calculates a hypothetical spin-flip Raman
-   spectrum assuming a uniform distribution of dopants at 
-   positions r_d and assigning a Gaussian intensity curve, of
-   FWHM=linewidth, to each one.  The total signal is therefore
-   a simple sum of Gaussians.
-
-   Note the note about the form of the input file `e_sf.r' below.
-   Note also the shoddy use of oversized arrays, sorry.
-
-   Breaks the cardinal sin of dealing with energy and linewidths
-   in meV and cm^-1 (!).   This is Raman spectroscopy speak!
-
-		Input files
-
-		e_sf.r		Spin-flip energy, best produced
-				by splining a data from a donor
-				calculation with say 20 donor
-				positions, to several hundred
-				points with a simple graphics
-				programme
-
-		Output files
-
-		I.r		Raman signal intensity versus energy
-*/
-
 #include <cstdio>
 #include <cstdlib>
 #include <strings.h>
@@ -56,9 +29,9 @@ Options configure_options(int argc, char* argv[])
     std::string doc("Find the spin-flip Raman spectrum.");
 
     opt.add_option<double>     ("linewidth,l",             1, "Linewidth of all transitions [cm^{-1}].");
-    opt.add_option<double>     ("wavenumbermin,s",         0, "Minimum wavenumber for spectrum [cm^{-1}.");
-    opt.add_option<double>     ("wavenumbermax,u",       100, "Maximum wavenumber for spectrum [cm^{-1}.");
-    opt.add_option<double>     ("wavenumberstep,t",        1, "Step in wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>     ("wavenumbermin,s",         0, "Minimum wavenumber for spectrum [cm^{-1}].");
+    opt.add_option<double>     ("wavenumbermax,u",       100, "Maximum wavenumber for spectrum [cm^{-1}].");
+    opt.add_option<double>     ("wavenumberstep,t",        1, "Step in wavenumber for spectrum [cm^{-1}].");
     opt.add_option<std::string>("spinflipfile",     "e_sf.r", "Table of spin-flip energies vs donor position.");
     opt.add_option<std::string>("spectrumfile",        "I.r", "Filename for output spectrum.");
 

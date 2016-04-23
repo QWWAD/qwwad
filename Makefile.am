@@ -361,7 +361,9 @@ dist_man1_MANS = \
 		 man/qwwad_uncertainty.1                    \
 		 man/qwwad_population_init.1           \
 		 man/qwwad_charge_density.1          \
-		 man/qwwad_diffuse.1
+		 man/qwwad_diffuse.1                 \
+		 man/qwwad_ef_zeeman.1               \
+		 man/qwwad_spin_flip_raman.1
 
 CLEANFILES = $(dist_man1_MANS)
 
@@ -386,7 +388,9 @@ EXTRA_DIST += \
 	      doc/qwwad_population_init.h2m           \
 	      doc/qwwad_charge_density.h2m          \
 	      doc/qwwad_diffuse.h2m                    \
-	      doc/qwwad_ef_donor_specific.h2m 
+	      doc/qwwad_ef_donor_specific.h2m       \
+	      doc/qwwad_ef_zeeman.h2m               \
+	      doc/qwwad_ef_spin_flip_raman.h2m
 
 man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
 	$(MKDIR_P) man
@@ -482,6 +486,16 @@ man/qwwad_ef_donor_specific.1: src/qwwad_ef_donor_specific.cpp $(top_srcdir)/con
     $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m | qwwad_ef_donor_specific$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure." --include $(top_srcdir)/doc/qwwad_ef_donor_specific.h2m ./qwwad_ef_donor_specific$(EXEEXT) 
+
+man/qwwad_ef_zeeman.1: src/qwwad_ef_zeeman.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
+    $(top_srcdir)/doc/qwwad_ef_zeeman.h2m | qwwad_ef_zeeman$(EXEEXT)
+	$(MKDIR_P) man
+	help2man --output=$@ --name="find the Zeeman potential for a 2D system." --include $(top_srcdir)/doc/qwwad_ef_zeeman.h2m ./qwwad_ef_zeeman$(EXEEXT) 
+
+man/qwwad_spin_flip_raman.1: src/qwwad_spin_flip_raman.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
+    $(top_srcdir)/doc/qwwad_spin_flip_raman.h2m | qwwad_spin_flip_raman$(EXEEXT)
+	$(MKDIR_P) man
+	help2man --output=$@ --name="find the spin-flip Raman spectrum." --include $(top_srcdir)/doc/qwwad_spin_flip_raman.h2m ./qwwad_spin_flip_raman$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
