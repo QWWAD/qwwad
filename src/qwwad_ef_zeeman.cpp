@@ -5,7 +5,7 @@
  * \author Alex Valavanis <a.valavania@leeds.ac.uk>
  */
 
-#include <cstdio>
+#include <iostream>
 #include <cstdlib>
 #include <cmath>
 #include <gsl/gsl_math.h>
@@ -71,11 +71,12 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the Zeeman splitting contribution to a potential profile.");
 
-    opt.add_option<double>("magneticfield,B",   0.0, "Magnetic field along growth axis [T].");
-    opt.add_option<char>  ("particle,p",        'e', "ID of particle to be used: 'e', 'h' or 'l', for "
-                                                     "electrons, heavy holes or light holes respectively.");
-    opt.add_option<bool>  ("spinup",                 "Spin direction is 'up'. Down-spin assumed if this flag is not used.");
-    opt.add_option<double>("Tl",                1.8, "Temperature of crystal lattice [K]");
+    opt.add_option<double>     ("magneticfield,B",      0.0, "Magnetic field along growth axis [T].");
+    opt.add_option<char>       ("particle,p",           'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                             "electrons, heavy holes or light holes respectively.");
+    opt.add_option<bool>       ("spinup",                    "Spin direction is 'up'. Down-spin assumed if this flag is not used.");
+    opt.add_option<double>     ("Tl",                   1.8, "Temperature of crystal lattice [K]");
+    opt.add_option<std::string>("material,M",      "cdmnte", "Material ID: Currently, only \"cdmnte\" for Cd(1-x)Mn(x)Te is supported");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -87,10 +88,17 @@ int main(int argc,char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto MF     = opt.get_option<double>("magneticfield"); // [T]
-    const auto p      = opt.get_option<char>  ("particle");
-    const auto spinup = opt.get_option<bool>  ("spinup");        // True = 'up spin'; False = 'down spin'
-    const auto Tl     = opt.get_option<double>("Tl");            // Lattice temperature [K]
+    const auto MF       = opt.get_option<double>("magneticfield"); // [T]
+    const auto p        = opt.get_option<char>  ("particle");
+    const auto spinup   = opt.get_option<bool>  ("spinup");        // True = 'up spin'; False = 'down spin'
+    const auto Tl       = opt.get_option<double>("Tl");            // Lattice temperature [K]
+    const auto material = opt.get_option<std::string>("material");
+
+    if(material != "cdmnte")
+    {
+        std::cerr << "Only CdMnTe is supported at present" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     double N0alpha = 0.220*e; // Magnetic parameter
     double N0beta  = 0.880*e; // Magnetic parameter
