@@ -40,21 +40,39 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
 
 #define N 1000
 
-int main(int argc,char *argv[])
+/**
+ * \brief Configure command-line options for the program
+ */
+Options configure_options(int argc, char* argv[])
 {
+    Options opt;
+
+    std::string doc("Find the spin-flip Raman spectrum.");
+
+    opt.add_option<double>("linewidth,l",        1, "Linewidth of all transitions [cm^{-1}].");
+    opt.add_option<double>("wavenumbermin,s",    0, "Minimum wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>("wavenumbermax,u",  100, "Maximum wavenumber for spectrum [cm^{-1}.");
+    opt.add_option<double>("wavenumberstep,t",   1, "Step in wavenumber for spectrum [cm^{-1}.");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+};
+
+int main(int argc, char *argv[])
+{
+    const auto opt = configure_options(argc, argv);
+
     double	E;		/* spectral energy			*/
     double	E_sf[N];	/* spin-flip energy for each r_d	*/
-    double	E_min;		/* lower limit of spectrum		*/
-    double	E_max;		/* upper limit of spectrum		*/
-    double	E_step;		/* energy increment along spectrum	*/
     double	intensity;	/* intensity of Raman signal at E	*/
-    double	linewidth;	/* linewidth of signal from each r_d	*/
     double	r_d[N];		/* donor positions (r_d)		*/
     double	sigma;		/* standard deviation of Gaussians	*/
     int	i_i;		/* index over r_d for intensity sum	*/
@@ -63,41 +81,11 @@ int main(int argc,char *argv[])
     FILE	*fE_sf;		/* file pointer to input file e_sf.r	*/
     FILE	*fI;		/* file pointer to output file I.r	*/
 
-
-    /* default values */
-
-    E_min=0;
-    E_max=100;
-    E_step=1.0;
-    linewidth=1.0;
-
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'l':
-                linewidth=atof(argv[2]);
-                break;
-            case 's':
-                E_min=atof(argv[2]);
-                break;
-            case 't':
-                E_step=atof(argv[2]);
-                break;
-            case 'u':
-                E_max=atof(argv[2]);
-                break;
-            default:
-                printf("Usage:  sfr [-l linewidth (\033[1m1\033[0mcm^-1)]\n");
-                printf("            [-s lower limit of Raman spectra (\033[1m0\033[0mcm^-1)]\n");
-                printf("            [-t increment (\033[1m1\033[0mcm^-1)][-u upper limit (\033[1m100\033[0mcm^-1)]\n");
-                exit(0);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
+    // Spectral parameters [1/cm]
+    const auto E_min  = opt.get_option<double>("wavenumbermin");
+    const auto E_max  = opt.get_option<double>("wavenumbermax");
+    const auto E_step = opt.get_option<double>("wavenumberstep");
+    const auto linewidth = opt.get_option<double>("linewidth");
 
     /* Read spin-flip energies in from spline file
        in units of wavenumbers                              */
