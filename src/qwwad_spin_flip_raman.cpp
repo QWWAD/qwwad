@@ -1,6 +1,9 @@
-/*=========================================================
-       sfr    Splin-Flip Raman 
-  =========================================================*/
+/**
+ * \file   qwwad_spin_flip_raman.cpp
+ * \brief  Calculate spin-flip Raman spectrum
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
 /*
    This programme calculates a hypothetical spin-flip Raman
@@ -27,22 +30,19 @@
 		Output files
 
 		I.r		Raman signal intensity versus energy
+*/
 
-
-  Paul Harrison.
-
-  Substantially modified February 1998.
-
-                                                                 */
-
-#include <stdio.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdlib>
 #include <strings.h>
-#include <math.h>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 #define N 1000
 

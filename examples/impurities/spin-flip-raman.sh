@@ -59,7 +59,7 @@ for QWWAD_DONORPOSITION in `seq 0 10 230`; do
 	# Find impurity states for spin-up and spin-down cases
 	qwwad_ef_donor_specific --symmetry 3D --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_up.r
 
-	# Save all data for this the `+' spin state
+	# Save all data for the spin-up state
 	Eplus=`awk '{print $2}' Ee.r`
 
 #	mv e.r e.r+

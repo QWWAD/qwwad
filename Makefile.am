@@ -66,7 +66,7 @@ bin_PROGRAMS =  \
 		rlv-sc  \
 		rlv-ss  \
 	       	qwwad_fermi_distribution     \
-		sfr     \
+		qwwad_spin_flip_raman     \
 		slk     \
 		specheat \
 		sradp   \
@@ -305,7 +305,8 @@ rlv_ss_SOURCES = src/rlv-ss.c
 qwwad_fermi_distribution_SOURCES  = src/qwwad_fermi_distribution.cpp
 qwwad_fermi_distribution_LDADD    = libqwwad.la
 
-sfr_SOURCES  = src/sfr.c
+qwwad_spin_flip_raman_SOURCES  = src/qwwad_spin_flip_raman.cpp
+qwwad_spin_flip_raman_LDADD    = libqwwad.la
 
 slk_SOURCES  = src/slk.c
 
