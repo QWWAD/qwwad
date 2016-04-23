@@ -63,7 +63,7 @@ static double Seff(const double N0alpha,
 }
 
 /**
- * Configure command-line options for the program
+ * \brief Configure command-line options for the program
  */
 Options configure_options(int argc, char* argv[])
 {
@@ -71,12 +71,15 @@ Options configure_options(int argc, char* argv[])
 
     std::string doc("Find the Zeeman splitting contribution to a potential profile.");
 
-    opt.add_option<double>     ("magneticfield,B",      0.0, "Magnetic field along growth axis [T].");
-    opt.add_option<char>       ("particle,p",           'e', "ID of particle to be used: 'e', 'h' or 'l', for "
-                                                             "electrons, heavy holes or light holes respectively.");
-    opt.add_option<bool>       ("spinup",                    "Spin direction is 'up'. Down-spin assumed if this flag is not used.");
-    opt.add_option<double>     ("Tl",                   1.8, "Temperature of crystal lattice [K]");
-    opt.add_option<std::string>("material,M",      "cdmnte", "Material ID: Currently, only \"cdmnte\" for Cd(1-x)Mn(x)Te is supported");
+    opt.add_option<double>     ("magneticfield,B",            0.0, "Magnetic field along growth axis [T].");
+    opt.add_option<char>       ("particle,p",                 'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                                   "electrons, heavy holes or light holes respectively.");
+    opt.add_option<bool>       ("spinup",                          "Spin direction is 'up'. Down-spin assumed if this flag is not used.");
+    opt.add_option<double>     ("Tl",                         1.8, "Temperature of crystal lattice [K]");
+    opt.add_option<std::string>("material,M",            "cdmnte", "Material ID: Currently, only \"cdmnte\" for Cd(1-x)Mn(x)Te is supported");
+    opt.add_option<std::string>("bandedgepotentialfile",  "v_b.r", "File containing baseline potential to be added to Zeeman potential");
+    opt.add_option<std::string>("totalpotentialfile",       "v.r", "Filename to which the total potential is written.");
+    opt.add_option<std::string>("zeemanpotentialfile",    "v_z.r", "Filename to which the Zeeman potential is written.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -107,7 +110,9 @@ int main(int argc,char *argv[])
     // Open baseline potential and alloy files
     std::valarray<double> z;  // Spatial locations [m]
     std::valarray<double> Vb; // Band-edge potential [J]
-    read_table("v_b.r", z, Vb);
+
+    const auto bandedgefilename = opt.get_option<std::string>("bandedgepotentialfile");
+    read_table(bandedgefilename, z, Vb);
 
     const auto nz = z.size(); // Number of spatial points
 
@@ -150,7 +155,10 @@ int main(int argc,char *argv[])
     const std::valarray<double> V_total = Vb + V_zeeman;
 
     // Write data to file
-    write_table("v.r", z, V_total);
+    const auto totalpotentialfile  = opt.get_option<std::string>("totalpotentialfile");
+    const auto zeemanpotentialfile = opt.get_option<std::string>("zeemanpotentialfile");
+    write_table(totalpotentialfile,  z, V_total);
+    write_table(zeemanpotentialfile, z, V_zeeman);
 
     return EXIT_SUCCESS;
 }

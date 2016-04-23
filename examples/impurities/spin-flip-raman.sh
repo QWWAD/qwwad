@@ -27,7 +27,9 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-
+outfile_E_pm="spin-flip-E.dat"
+outfile_dE="spin-flip-dE.dat"
+rm -f $outfile_E_pm $outfile_dE
 
 # Define structure
 cat > s.r << EOF
@@ -36,44 +38,49 @@ cat > s.r << EOF
 200 0.15 0.0
 EOF
 
-# Generate alloy profile
+# Set some fixed material system parameters
+export QWWAD_MATERIAL=cdmnte
+export QWWAD_MASS=0.096
+export QWWAD_DCPERMITTIVITY=10.6
+
+export QWWAD_MAGNETICFIELD=8
+
+# Generate alloy profile and band-edge parameters
 qwwad_mesh
+qwwad_ef_band_edge
 
-# Generate potential profile, note the use of the paramagnetic
-# Cd(1-x)Mn(x)Te
-qwwad_ef_band_edge --material cdmnte
+# Find Zeeman splitting to conduction-band due to magnetic field for both spin-up and spin-down cases
+qwwad_ef_zeeman --spinup --totalpotentialfile v_up.r
+qwwad_ef_zeeman --totalpotentialfile v_down.r
 
-# Add an 8 Tesla magnetic field to the potential
-qwwad_ef_zeeman --magneticfield 8 --spinup # add Zeeman splitting due to 8 T, default electron, spin up
+export QWWAD_DONORPOSITION
+for QWWAD_DONORPOSITION in `seq 0 10 230`; do
 
-exit
+	# Find impurity states for spin-up and spin-down cases
+	qwwad_ef_donor_specific --symmetry 3D --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_up.r
 
-seq 0 10e-10 230e-10 > r_d.r
+	# Save all data for this the `+' spin state
+	Eplus=`awk '{print $2}' Ee.r`
 
-# Calculate electron-donor energy with cdmnte parameters, let's just use
-# the 3D (spherical) trial wave function---it's very quick
-qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 --lambdastart 40 --lambdastop 300 > output 
+#	mv e.r e.r+
+#	mv l.r l.r+
+#	mv v.r v.r+
 
-# Save all data for this the `+' spin state
+	# Now repeat for the spin-down state
+	qwwad_ef_donor_specific --symmetry 3D  --lambdastart 10 --lambdastop 1000 --totalpotentialfile v_down.r
+	Eminus=`awk '{print $2}' Ee.r`
 
-mv e.r e.r+	
-mv l.r l.r+
-mv v.r v.r+
+	printf "%d\t%e\t%e\n" $QWWAD_DONORPOSITION $Eplus $Eminus >> $outfile_E_pm
 
-# Now repeat for the `-' spin state
-
-efmfv -B 8 -s -		# Generate the potential profile
-
-qwwad_find_donor_state --symmetry 3D -m 0.096 -e 10.6 --lambdastart 40 --lambdastop 300 >> output		# donor calculation
-
-mv e.r e.r-		# Save all data
-mv l.r l.r-
-mv v.r v.r-
+#	mv e.r e.r-
+#	mv l.r l.r-
+#	mv v.r v.r-
+done
 
 # Now produce the energy difference between the states
+awk '{print $1, $2-$3}' $outfile_E_pm > $outfile_dE
 
-nawk '{Eplus=$2;getline<"e.r-";printf("%e %e\n",$1,Eplus-$2)}' e.r+ > e_sf.r-raw
-
+exit
 # With only a few donor points, calculating the spin-flip spectra produces
 # a very spiky Intensity-energy curve.  So take a spline of the spin-flip
 # energies in e_sf.r-raw to simulate a continuous donor distribution and

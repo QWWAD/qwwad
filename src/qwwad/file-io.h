@@ -29,8 +29,8 @@ namespace QWWAD
  */
 class FileLinesExceedBufferSize : public std::exception {
 public:
-FileLinesExceedBufferSize(const char   *fname,
-                          const size_t  buffer_size);
+FileLinesExceedBufferSize(const std::string &fname,
+                          const size_t       buffer_size);
 
 FileLinesExceedBufferSize(const FileLinesExceedBufferSize &other);
 
@@ -51,9 +51,9 @@ size_t      _buffer_size; ///< The buffer size that has been exceeded
 class FileLinesNotAsExpected : public std::exception
 {
 public:
-FileLinesNotAsExpected(const char   *fname,
-                       const size_t  nexpected,
-                       const size_t  nread);
+FileLinesNotAsExpected(const std::string &fname,
+                       const size_t       nexpected,
+                       const size_t       nread);
 
 FileLinesNotAsExpected(const FileLinesNotAsExpected &other);
 
@@ -313,9 +313,10 @@ int read_line(Tx &destx, Ty &desty, Tz &destz, Tu &destu, std::ifstream& stream)
  * \param[in]  fname Filename from which to read data
  * \param[out] x     Value array into which data will be written
  */
-template <template<typename, typename...> class Tcontainer,
+template <class Tstring,
+          template<typename, typename...> class Tcontainer,
           class T>
-void read_table(const char* fname, Tcontainer<T>& x)
+void read_table(const Tstring fname, Tcontainer<T>& x)
 {
     std::ifstream stream(fname);
 
@@ -357,9 +358,10 @@ void read_table(const char* fname, Tcontainer<T>& x)
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision The number of decimal places to use in output
  */
-template <template<typename, typename...> class Tcontainer,
+template <class Tstring,
+          template<typename, typename...> class Tcontainer,
           class T>
-void write_table(const char          *fname,
+void write_table(const Tstring        fname,
                  const Tcontainer<T> &x,
                  const bool           with_num = false,
                  const int            precision = 12)
@@ -403,12 +405,12 @@ void write_table(const char          *fname,
  *       size of the data.  It might be sensible to allow it to be used for
  *       sizing the output arrays.  Probably a bit more efficient.
  */
-template <
+template <class Tstring,
           template<typename, typename...> class Tcontainerx,
           template<typename, typename...> class Tcontainery,
           class Tx,
           class Ty>
-void read_table(const char      *fname,
+void read_table(const Tstring    fname,
                 Tcontainerx<Tx> &x,
                 Tcontainery<Ty> &y,
                 const size_t     n_expected = 0)
@@ -473,13 +475,13 @@ void read_table(const char      *fname,
  * \param[in] with_num  Add an initial column containing the line number
  * \param[in] precision Precision with which to output floating point numbers
  */
-template<
+template<class Tstring,
          template<typename, typename...> class Tcontainerx,
          template<typename, typename...> class Tcontainery,
          class Tx,
          class Ty
         >
-void write_table(const char            *fname,
+void write_table(const Tstring          fname,
                  const Tcontainerx<Tx> &x,
                  const Tcontainery<Ty> &y,
                  const bool             with_num = false,
@@ -684,13 +686,14 @@ void read_table(const char* fname,
  * \param[in] z         Value array containing z data
  * \param[in] with_num  Add an initial column containing the line number
  */
-template <template<typename, typename...> class Tcontainerx,
+template <class Tstring,
+          template<typename, typename...> class Tcontainerx,
           template<typename, typename...> class Tcontainery,
           template<typename, typename...> class Tcontainerz,
-          typename Tx,
-          typename Ty,
-          typename Tz>
-void write_table(const char              *fname,
+          class Tx,
+          class Ty,
+          class Tz>
+void write_table(const Tstring          fname,
                  const Tcontainerx<Tx> &x,
                  const Tcontainery<Ty> &y,
                  const Tcontainerz<Tz> &z,
@@ -736,7 +739,7 @@ void write_table(const char              *fname,
  * \param[in] u         Value array containing u data
  * \param[in] with_num  Add an initial column containing the line number
  */
-template<
+template<class Tstring,
          template<typename, typename...> class Tcontainerx,
          template<typename, typename...> class Tcontainery,
          template<typename, typename...> class Tcontainerz,
@@ -745,7 +748,7 @@ template<
          class Ty,
          class Tz,
          class Tu>
-void write_table(const char            *fname,
+void write_table(const Tstring          fname,
                  const Tcontainerx<Tx> &x,
                  const Tcontainery<Ty> &y,
                  const Tcontainerz<Tz> &z,

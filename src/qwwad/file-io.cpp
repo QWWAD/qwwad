@@ -9,8 +9,8 @@
 
 namespace QWWAD
 {
-FileLinesExceedBufferSize::FileLinesExceedBufferSize(const char   *fname,
-                                                     const size_t  buffer_size) :
+FileLinesExceedBufferSize::FileLinesExceedBufferSize(const std::string &fname,
+                                                     const size_t       buffer_size) :
     filename(fname),
     _buffer_size(buffer_size)
 {}
@@ -35,9 +35,9 @@ const char* FileLinesExceedBufferSize::what() const throw()
     return cstr;
 }
 
-FileLinesNotAsExpected::FileLinesNotAsExpected(const char   *fname,
-                                               const size_t  nexpected,
-                                               const size_t  nread) :
+FileLinesNotAsExpected::FileLinesNotAsExpected(const std::string &fname,
+                                               const size_t       nexpected,
+                                               const size_t       nread) :
     filename(fname),
     nlines_expected(nexpected),
     nlines_read(nread)

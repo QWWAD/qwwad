@@ -23,25 +23,36 @@
 using namespace QWWAD;
 using namespace constants;
 
-int main(int argc,char *argv[])
+/**
+ * \brief Configure command-line options
+ */
+Options configure_options(int argc, char* argv[])
 {
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system");
 
-    opt.add_option<double>     ("dE,d",                 1, "Energy step for Shooting solver [meV]");
-    opt.add_option<double>     ("dcpermittivity,e", 13.18, "Bulk relative permittivity");
-    opt.add_option<double>     ("mass,m",           0.067, "Bulk effective mass (relative to free electron)");
-    opt.add_option<double>     ("lambdastart,s",       50, "Initial value for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("lambdastep,t",         1, "Step size for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("lambdastop,u",        -1, "Final value for Bohr radius search [Angstrom]");
-    opt.add_option<double>     ("donorposition,r",         "Location of donor ion [Angstrom]");
-    opt.add_option<double>     ("zetastart,w",      0.001, "Initial value for symmetry parameter search");
-    opt.add_option<double>     ("zetastep,x",        0.01, "Step size for symmetry parameter search");
-    opt.add_option<double>     ("zetastop,y",          -1, "Final value for symmetry parameter search");
-    opt.add_option<std::string>("searchmethod",    "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
-    opt.add_option<std::string>("symmetry",          "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
+    opt.add_option<double>     ("dE,d",                   1, "Energy step for Shooting solver [meV]");
+    opt.add_option<double>     ("dcpermittivity,e",   13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("mass,m",             0.067, "Bulk effective mass (relative to free electron)");
+    opt.add_option<double>     ("lambdastart,s",         50, "Initial value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastep,t",           1, "Step size for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("lambdastop,u",          -1, "Final value for Bohr radius search [Angstrom]");
+    opt.add_option<double>     ("donorposition,r",           "Location of donor ion [Angstrom]");
+    opt.add_option<double>     ("zetastart,w",        0.001, "Initial value for symmetry parameter search");
+    opt.add_option<double>     ("zetastep,x",          0.01, "Step size for symmetry parameter search");
+    opt.add_option<double>     ("zetastop,y",            -1, "Final value for symmetry parameter search");
+    opt.add_option<std::string>("searchmethod",      "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
+    opt.add_option<std::string>("symmetry",            "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
+    opt.add_option<std::string>("totalpotentialfile", "v.r", "Filename from which the total potential is read.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
+int main(int argc,char *argv[])
+{
+    const auto opt = configure_options(argc, argv);
 
     const auto delta_E = opt.get_option<double>("dE") * 1e-3*e;    // Energy increment [J]
     const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
@@ -60,7 +71,8 @@ int main(int argc,char *argv[])
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
-    read_table("v.r", z, V);
+    const auto totalpotentialfile = opt.get_option<std::string>("totalpotentialfile");
+    read_table(totalpotentialfile, z, V);
 
     // Get donor location [m].  If unspecified, assume it's in the middle
     auto r_d = 0.0;
