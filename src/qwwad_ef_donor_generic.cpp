@@ -21,6 +21,17 @@
 using namespace QWWAD;
 using namespace constants;
 
+/**
+ * \brief Identifiers for different states
+ */
+enum StateID
+{
+    STATE_1S,
+    STATE_2S,
+    STATE_2PX,
+    STATE_2PZ
+};
+
 struct EnergyParams
 {
     std::valarray<double> wf;
@@ -29,18 +40,18 @@ struct EnergyParams
     double                epsilon;
     double                m;
     double                r_i;
-    int	                  S;
+    StateID               S;
 };
 
 double Energy(double lambda,
               void   *params);
 
-double Psi(const double psi,
-           const double lambda,
-           const double x,
-           const double y,
-           const double z,
-           const int    S);
+double Psi(const double  psi,
+           const double  lambda,
+           const double  x,
+           const double  y,
+           const double  z,
+           const StateID S);
 
 /**
  * \brief Configure command-line options
@@ -62,17 +73,6 @@ Options configure_options(int argc, char* argv[])
 
     return opt;
 }
-
-/**
- * \brief Identifiers for different states
- */
-enum StateID
-{
-    STATE_1S,
-    STATE_2S,
-    STATE_2PX,
-    STATE_2PZ
-};
 
 int main(int argc,char *argv[])
 {
@@ -291,12 +291,12 @@ double Energy(double  lambda,
 /**
  * \brief The wave function psi(z)phi(r)
  */
-double Psi(const double psi,
-           const double lambda,
-           const double x,
-           const double y,
-           const double z,
-           const int    S)
+double Psi(const double  psi,
+           const double  lambda,
+           const double  x,
+           const double  y,
+           const double  z,
+           const StateID S)
 {
     const double r = sqrt(x*x+y*y+z*z);
 
@@ -304,20 +304,20 @@ double Psi(const double psi,
 
     switch(S)
     {
-        case 1:
-            result = psi*exp(-r/lambda); /* 1s	*/
+        case STATE_1S:
+            result = psi*exp(-r/lambda);
             break;
-        case 2:
-            result = psi*(1-r/lambda)*exp(-r/lambda);	/* 2s	*/
+        case STATE_2S:
+            result = psi*(1-r/lambda)*exp(-r/lambda);
             break;
-        case 3:
-            result = psi*fabs(x)*exp(-r/lambda); /* 2px	*/
+        case STATE_2PX:
+            result = psi*fabs(x)*exp(-r/lambda);
             break;
-        case 4:
-            result = psi*fabs(z)*exp(-r/lambda); /* 2pz	*/
+        case STATE_2PZ:
+            result = psi*fabs(z)*exp(-r/lambda);
             break;
         default:
-            fprintf(stderr, "Unrecognised orbital\n");
+            std::cerr << "Unrecognised orbital" << std::endl;
             exit(EXIT_FAILURE);
     }
 
