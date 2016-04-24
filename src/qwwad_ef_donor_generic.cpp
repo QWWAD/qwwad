@@ -5,6 +5,7 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
+#include <iostream>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -15,6 +16,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/maths-helpers.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -40,140 +42,133 @@ double Psi(const double psi,
            const double z,
            const int    S);
 
+/**
+ * \brief Configure command-line options
+ */
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+    std::string doc("Find state of electron attached to donor in 2D system using a generic search");
+
+    opt.add_option<double>     ("dcpermittivity,e",   13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("mass,m",             0.067, "Bulk effective mass (relative to free electron)");
+    opt.add_option<char>       ("particle,p",           'e', "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                             "electrons, heavy holes or light holes respectively.");
+    opt.add_option<size_t>     ("subband",                1, "Principal quantum number of subband for which to find impurity state.");
+    opt.add_option<std::string>("impuritystate",       "1s", "Symmetry of impurity state (1s, 2s, 2px, or 2pz)");
+    opt.add_option<double>     ("donorposition,r",           "Location of donor ion [Angstrom]");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
+/**
+ * \brief Identifiers for different states
+ */
+enum StateID
+{
+    STATE_1S,
+    STATE_2S,
+    STATE_2PX,
+    STATE_2PZ
+};
+
 int main(int argc,char *argv[])
 {
-    char	State[9];	/* string containing impurity level	*/
+    const auto opt = configure_options(argc, argv);
 
-    /* default values */
-    double epsilon = 13.18*eps0; // Permittivity [F/m]
-    double m       = 0.067*me;   // Mass of particle [kg]
-    char   p       = 'e';        // Particle ID
-    int    state   = 1;          // Principal quantum number
-    int    S       = 1;          // Impurity level `1s', `2px', etc
+    const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
+    const auto m       = opt.get_option<double>("mass") * me;             // Effective mass [kg]
+    const auto p       = opt.get_option<char>  ("particle");              // particle ID (e, h or l)
+    const auto subband = opt.get_option<size_t>("subband");               // Principal quantum number of state to find
 
-    while((argc>1)&&(argv[1][0]=='-'))
+    StateID S = STATE_1S;
+
+    const auto impuritystate_string = opt.get_option<std::string>("impuritystate");
+
+    if (impuritystate_string == "1s")
+        S = STATE_1S;
+    else if(impuritystate_string == "2s")
+        S = STATE_2S;
+    else if(impuritystate_string == "2px")
+        S = STATE_2PX;
+    else if(impuritystate_string == "2pz")
+        S = STATE_2PZ;
+    else
     {
-        switch(argv[1][1])
-        {
-            case 'e':
-                epsilon=atof(argv[2])*eps0;
-                break;
-            case 'm':
-                m=atof(argv[2])*me;
-                break;
-            case 's':
-                state=atoi(argv[2]);
-                break;
-            case 'S':
-                strcpy(State,argv[2]);
-                if(!strcmp(State,"1s"))S=9;
-                if(!strcmp(State,"2s"))S=2;
-                if(!strcmp(State,"2px"))S=3;
-                if(!strcmp(State,"2pz"))S=4;
-                switch(S)
-                {
-                    case 2 :break;
-                    case 3 :break;
-                    case 4 :break;
-                    case 9 :S=1;break;
-                    default:
-                            printf("The `%s' impurity level wave function is not defined\n",State);
-                            exit(0);
-                            break;
-                }
-                break;
-            case 'p':
-                p=*argv[2];
-                switch(p)
-                {
-                    case 'e': break;
-                    case 'h': break;
-                    case 'l': break;
-                    default:  printf("Usage:  qwwad_ef_donor_generic [-p particle (e, h, or l)]\n");
-                              exit(0);
-                }
-                break;
-            default :
-                printf("Usage:  qwwad_ef_donor_generic [-e relative permittivity \033[1m13.18\033[0m]\n");
-                printf("           [-m mass (\033[1m0.067\033[0mm0)]\n");
-                printf("           [-s subband (\033[1m1\033[0m)][-S impurity level (\033[1m1s\033[0m)]\n");
-                exit(0);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
+        std::cerr << "Unknown impurity state ID: " << impuritystate_string << std::endl;
+        exit(EXIT_FAILURE);
     }
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
     read_table("v.r", z, V);
 
-    char	filename[9];	/* input filename			*/
-    sprintf(filename,"wf_%c%i.r",p,state);
+    std::ostringstream filename; // input filename
+    filename << "wf_" << p << subband << ".r";
     std::valarray<double> z_tmp; // Dummy file for unused spatial locations
     std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
-    read_table(filename, z_tmp, wf);
+    read_table(filename.str(), z_tmp, wf);
 
     const double lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
-    /* Open files for output of data */
+    // Get donor location [m].  If unspecified, assume it's in the middle
+    auto r_d = 0.0;
 
+    if (opt.get_argument_known("donorposition") > 0)
+        r_d = opt.get_option<double>("donorposition") * 1e-10;
+    else
+        r_d = (z[z.size()-1] + z[0])/2.0;
+
+    // Perform variational calculation
+    double lambda=lambda_0;	// initial lambda guess
+
+    // Double the estimate of Bohr radius if we're in a second orbital
+    // This isn't correct for 2pz, but it's still better than the 1s
+    // estimate!
+    if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ))lambda*=2;
+
+    // Define the "fixed" parameters for iterative solution of lambda
+    EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
+
+    // Set up the numerical solver using GSL
+    gsl_function f;
+    f.function = &Energy;
+    f.params   = &params;
+
+    gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
+    gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
+
+    size_t max_iter = 100; // Maximum number of iterations before giving up
+    int status = 0;        // Error flag for GSL
+    unsigned int iter=0;   // The number of iterations attempted so far
+
+    double E = 1000*e; // Minimum energy of carrier [J]
+
+    // Variational calculation (search over lambda)
+    do
+    {
+        ++iter;
+        status  = gsl_min_fminimizer_iterate(s);
+        const double lambda_lo = gsl_min_fminimizer_x_lower(s);
+        const double lambda_hi = gsl_min_fminimizer_x_upper(s);
+        lambda = gsl_min_fminimizer_x_minimum(s);
+        E      = gsl_min_fminimizer_f_minimum(s);
+        status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
+        printf("r_d %le lambda %le energy %le meV\n", r_d, lambda, E/(1e-3*e));
+    }while((status == GSL_CONTINUE) && (iter < max_iter));
+
+    gsl_min_fminimizer_free(s);
+
+    /* Open files for output of data */
     FILE *fe=fopen("e.r","w");           /* E versus r_i	*/
     FILE *fl=fopen("l.r","w");           /* lambda versus r_i	*/
 
-    // Read list of donor (or acceptor) positions
-    std::valarray<double> r_d; // [m]
-    read_table("r_d.r", r_d);
-
-    // Perform variational calculation for each donor/acceptor position
-    for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
-    {
-        double lambda=lambda_0;	// initial lambda guess
-
-        // Double the estimate of Bohr radius if we're in a second orbital
-        // This isn't correct for 2pz, but it's still better than the 1s
-        // estimate!
-        if((S==2)||(S==3)||(S==4))lambda*=2;
-
-        /* Newton-Raphson iteration for solution of lambda, this occurs when
-           dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
-           */
-        EnergyParams params = {wf, V, z, epsilon, m, r_d[i_d], S};
-
-        // Set up the numerical solver using GSL
-        gsl_function f;
-        f.function = &Energy;
-        f.params   = &params;
-
-        gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-        gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
-
-        size_t max_iter = 100; // Maximum number of iterations before giving up
-        int status = 0;        // Error flag for GSL
-        unsigned int iter=0;   // The number of iterations attempted so far
-
-        double E = 1000*e; // Minimum energy of carrier [J]
-
-        // Variational calculation (search over lambda)
-        do
-        {
-            ++iter;
-            status  = gsl_min_fminimizer_iterate(s);
-            const double lambda_lo = gsl_min_fminimizer_x_lower(s);
-            const double lambda_hi = gsl_min_fminimizer_x_upper(s);
-            lambda = gsl_min_fminimizer_x_minimum(s);
-            E      = gsl_min_fminimizer_f_minimum(s);
-            status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-            printf("r_d %le lambda %le energy %le meV\n", r_d[i_d], lambda, E/(1e-3*e));
-        }while((status == GSL_CONTINUE) && (iter < max_iter));
-
-        gsl_min_fminimizer_free(s);
-        /* Output total energy (E) of impurity/heterostructure system 
-           and Bohr radii (lambda), in meV and Angstrom respectively */
-        fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
-        fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda/1e-10);
-    }/* end while r_i */
+    /* Output total energy (E) of impurity/heterostructure system 
+       and Bohr radii (lambda), in meV and Angstrom respectively */
+    fprintf(fe,"%le %le\n",r_d/1e-10,E/(1e-3*e));
+    fprintf(fl,"%le %le\n",r_d/1e-10,lambda/1e-10);
 
     fclose(fe);
     fclose(fl);
