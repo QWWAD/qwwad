@@ -115,12 +115,9 @@ int main(int argc,char *argv[])
 
     const auto lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
-    /* Open files for output of data */
-
-    FILE *fe=fopen("e.r","w");           /* E versus r_i	*/
-    FILE *fl=fopen("l.r","w");           /* lambda versus r_i	*/
-
-    auto r_d = (z[z.size()-1] + z[0])/2.0;
+    // Get donor location [m].  If unspecified, assume it's in the middle
+    const auto nz = z.size();
+    auto r_d = (z[nz-1] + z[0])/2.0;
 
     if (opt.get_argument_known("donorposition") > 0)
         r_d = opt.get_option<double>("donorposition") * 1e-10;
@@ -133,9 +130,6 @@ int main(int argc,char *argv[])
     // estimate!
     if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ))lambda*=2;
 
-    /* Newton-Raphson iteration for solution of lambda, this occurs when
-       dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
-       */
     EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
 
     // Set up the numerical solver using GSL
@@ -152,31 +146,55 @@ int main(int argc,char *argv[])
 
     double E = 1000*e; // Minimum energy of carrier [J]
 
+    // Vectors to store the history of the search
+    std::vector<double> lambda_history;
+    std::vector<double> E_history;
+
     // Variational calculation (search over lambda)
     do
     {
         ++iter;
         status  = gsl_min_fminimizer_iterate(s);
-        const double lambda_lo = gsl_min_fminimizer_x_lower(s);
-        const double lambda_hi = gsl_min_fminimizer_x_upper(s);
+        const auto lambda_lo = gsl_min_fminimizer_x_lower(s);
+        const auto lambda_hi = gsl_min_fminimizer_x_upper(s);
         lambda = gsl_min_fminimizer_x_minimum(s);
         E      = gsl_min_fminimizer_f_minimum(s);
+
+        // Update the search history
+        lambda_history.push_back(lambda);
+        E_history.push_back(E);
+
         status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-        printf("r_d %le lambda %le energy %le meV\n", r_d, lambda, E/(1e-3*e));
     }while((status == GSL_CONTINUE) && (iter < max_iter));
 
     gsl_min_fminimizer_free(s);
 
-    /* Output total energy (E) of impurity/heterostructure system 
-       and Bohr radii (lambda), in meV and Angstrom respectively */
-    fprintf(fe,"%le %le\n", r_d/1e-10,E/(1e-3*e));
-    fprintf(fl,"%le %le\n", r_d/1e-10,lambda/1e-10);
+    // Save the search log
+    write_table("searchlog.r",
+                lambda_history,
+                E_history);
 
-    fclose(fe);
-    fclose(fl);
+    // Output neutral dopant binding energies (E) and 
+    // Bohr radii (lambda) in meV and Angstrom respectively
+    std::vector<unsigned int> indices(1, subband);
+    std::vector<double> E_out(1, E*1000.0/e);
+    std::vector<double> lambda_out(1,lambda*1.0e10);
+    write_table("Ee.r", indices, E_out);
+    write_table("l.r",  indices, lambda_out);
+
+
+    // Get wavefunction at (x,y=0)
+    std::valarray<double> wf_out(nz);
+
+    for(unsigned int iz = 0; iz < nz; ++iz)
+        wf_out[iz] = Psi(wf[iz], lambda, 0, 0, z[iz], S);
+
+    std::ostringstream wf_file;
+    wf_file << "wf_" << p << subband << ".r";
+    write_table(wf_file.str(), z, wf_out);
 
     return EXIT_SUCCESS;
-} /* end main */
+}
 
 /* This function calculates the expectation value (the energy) of the
    Hamiltonian operator	*/
