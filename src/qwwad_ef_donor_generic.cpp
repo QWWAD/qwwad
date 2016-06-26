@@ -131,7 +131,7 @@ int main(int argc,char *argv[])
     // Double the estimate of Bohr radius if we're in a second orbital
     // This isn't correct for 2pz, but it's still better than the 1s
     // estimate!
-    if((S==2)||(S==3)||(S==4))lambda*=2;
+    if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ))lambda*=2;
 
     /* Newton-Raphson iteration for solution of lambda, this occurs when
        dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
