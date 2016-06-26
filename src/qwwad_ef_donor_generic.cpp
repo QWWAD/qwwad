@@ -126,51 +126,51 @@ int main(int argc,char *argv[])
         r_d = opt.get_option<double>("donorposition") * 1e-10;
 
     // Perform variational calculation for each donor/acceptor position
-        double lambda=lambda_0;	// initial lambda guess
+    double lambda=lambda_0;	// initial lambda guess
 
-        // Double the estimate of Bohr radius if we're in a second orbital
-        // This isn't correct for 2pz, but it's still better than the 1s
-        // estimate!
-        if((S==2)||(S==3)||(S==4))lambda*=2;
+    // Double the estimate of Bohr radius if we're in a second orbital
+    // This isn't correct for 2pz, but it's still better than the 1s
+    // estimate!
+    if((S==2)||(S==3)||(S==4))lambda*=2;
 
-        /* Newton-Raphson iteration for solution of lambda, this occurs when
-           dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
-           */
-        EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
+    /* Newton-Raphson iteration for solution of lambda, this occurs when
+       dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
+       */
+    EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
 
-        // Set up the numerical solver using GSL
-        gsl_function f;
-        f.function = &Energy;
-        f.params   = &params;
+    // Set up the numerical solver using GSL
+    gsl_function f;
+    f.function = &Energy;
+    f.params   = &params;
 
-        gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-        gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
+    gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
+    gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
 
-        size_t max_iter = 100; // Maximum number of iterations before giving up
-        int status = 0;        // Error flag for GSL
-        unsigned int iter=0;   // The number of iterations attempted so far
+    size_t max_iter = 100; // Maximum number of iterations before giving up
+    int status = 0;        // Error flag for GSL
+    unsigned int iter=0;   // The number of iterations attempted so far
 
-        double E = 1000*e; // Minimum energy of carrier [J]
+    double E = 1000*e; // Minimum energy of carrier [J]
 
-        // Variational calculation (search over lambda)
-        do
-        {
-            ++iter;
-            status  = gsl_min_fminimizer_iterate(s);
-            const double lambda_lo = gsl_min_fminimizer_x_lower(s);
-            const double lambda_hi = gsl_min_fminimizer_x_upper(s);
-            lambda = gsl_min_fminimizer_x_minimum(s);
-            E      = gsl_min_fminimizer_f_minimum(s);
-            status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-            printf("r_d %le lambda %le energy %le meV\n", r_d, lambda, E/(1e-3*e));
-        }while((status == GSL_CONTINUE) && (iter < max_iter));
+    // Variational calculation (search over lambda)
+    do
+    {
+        ++iter;
+        status  = gsl_min_fminimizer_iterate(s);
+        const double lambda_lo = gsl_min_fminimizer_x_lower(s);
+        const double lambda_hi = gsl_min_fminimizer_x_upper(s);
+        lambda = gsl_min_fminimizer_x_minimum(s);
+        E      = gsl_min_fminimizer_f_minimum(s);
+        status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
+        printf("r_d %le lambda %le energy %le meV\n", r_d, lambda, E/(1e-3*e));
+    }while((status == GSL_CONTINUE) && (iter < max_iter));
 
-        gsl_min_fminimizer_free(s);
+    gsl_min_fminimizer_free(s);
 
-        /* Output total energy (E) of impurity/heterostructure system 
-           and Bohr radii (lambda), in meV and Angstrom respectively */
-        fprintf(fe,"%le %le\n", r_d/1e-10,E/(1e-3*e));
-        fprintf(fl,"%le %le\n", r_d/1e-10,lambda/1e-10);
+    /* Output total energy (E) of impurity/heterostructure system 
+       and Bohr radii (lambda), in meV and Angstrom respectively */
+    fprintf(fe,"%le %le\n", r_d/1e-10,E/(1e-3*e));
+    fprintf(fl,"%le %le\n", r_d/1e-10,lambda/1e-10);
 
     fclose(fe);
     fclose(fl);
