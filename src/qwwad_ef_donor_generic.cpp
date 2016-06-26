@@ -9,15 +9,29 @@
 #include <cstdlib>
 #include <cstring>
 #include <cmath>
+#include <iostream>
+#include <sstream>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/maths-helpers.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
+
+/**
+ * \brief Identifiers for different states
+ */
+enum StateID
+{
+    STATE_1S,
+    STATE_2S,
+    STATE_2PX,
+    STATE_2PZ
+};
 
 struct EnergyParams
 {
@@ -27,108 +41,91 @@ struct EnergyParams
     double                epsilon;
     double                m;
     double                r_i;
-    int	                  S;
+    StateID               S;
 };
 
 double Energy(double lambda,
               void   *params);
 
-double Psi(const double psi,
-           const double lambda,
-           const double x,
-           const double y,
-           const double z,
-           const int    S);
+double Psi(const double  psi,
+           const double  lambda,
+           const double  x,
+           const double  y,
+           const double  z,
+           const StateID S);
+
+/**
+ * \brief Configure command-line options
+ */
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+    std::string doc("Find state of electron attached to a donor in a 2D system using a generic search");
+
+    opt.add_option<double>     ("dcpermittivity,e",   13.18, "Bulk relative permittivity");
+    opt.add_option<double>     ("mass,m",             0.067, "Bulk effective mass (relative to free electron)");
+    opt.add_option<char>       ("particle,p",           'e', "ID of particle to be used: 'e', 'h' or 'l' for "
+                                                             "electrons, heavy holes or light holes respectively.");
+    opt.add_option<size_t>     ("subband",                1, "Principal quantum number of subband for which to find impurity state.");
+    opt.add_option<std::string>("impuritystate",       "1s", "Symmetry of impurity state (1s, 2s, 2px, or 2pz)");
+    opt.add_option<double>     ("donorposition,r",           "Location of donor ion [Angstrom]");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
 
 int main(int argc,char *argv[])
 {
-    char	State[9];	/* string containing impurity level	*/
+    const auto opt = configure_options(argc, argv);
 
-    /* default values */
-    double epsilon = 13.18*eps0; // Permittivity [F/m]
-    double m       = 0.067*me;   // Mass of particle [kg]
-    char   p       = 'e';        // Particle ID
-    int    state   = 1;          // Principal quantum number
-    int    S       = 1;          // Impurity level `1s', `2px', etc
+    const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
+    const auto m       = opt.get_option<double>("mass") * me;             // Effective mass [kg]
+    const auto p       = opt.get_option<char>  ("particle");              // Particle ID (e, h, or l)
+    const auto subband = opt.get_option<size_t>("subband");               // Principal quantum number of state to find
 
-    while((argc>1)&&(argv[1][0]=='-'))
+    StateID S = STATE_1S;
+
+    const auto impuritystate_string = opt.get_option<std::string>("impuritystate");
+
+    if (impuritystate_string == "1s")
+        S = STATE_1S;
+    else if (impuritystate_string == "2s")
+        S = STATE_2S;
+    else if (impuritystate_string == "2px")
+        S = STATE_2PX;
+    else if (impuritystate_string == "2pz")
+        S = STATE_2PZ;
+    else
     {
-        switch(argv[1][1])
-        {
-            case 'e':
-                epsilon=atof(argv[2])*eps0;
-                break;
-            case 'm':
-                m=atof(argv[2])*me;
-                break;
-            case 's':
-                state=atoi(argv[2]);
-                break;
-            case 'S':
-                strcpy(State,argv[2]);
-                if(!strcmp(State,"1s"))S=9;
-                if(!strcmp(State,"2s"))S=2;
-                if(!strcmp(State,"2px"))S=3;
-                if(!strcmp(State,"2pz"))S=4;
-                switch(S)
-                {
-                    case 2 :break;
-                    case 3 :break;
-                    case 4 :break;
-                    case 9 :S=1;break;
-                    default:
-                            printf("The `%s' impurity level wave function is not defined\n",State);
-                            exit(0);
-                            break;
-                }
-                break;
-            case 'p':
-                p=*argv[2];
-                switch(p)
-                {
-                    case 'e': break;
-                    case 'h': break;
-                    case 'l': break;
-                    default:  printf("Usage:  qwwad_ef_donor_generic [-p particle (e, h, or l)]\n");
-                              exit(0);
-                }
-                break;
-            default :
-                printf("Usage:  qwwad_ef_donor_generic [-e relative permittivity \033[1m13.18\033[0m]\n");
-                printf("           [-m mass (\033[1m0.067\033[0mm0)]\n");
-                printf("           [-s subband (\033[1m1\033[0m)][-S impurity level (\033[1m1s\033[0m)]\n");
-                exit(0);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
+        std::cerr << "Unknown impurity state ID: " << impuritystate_string << std::endl;
+        exit(EXIT_FAILURE);
     }
 
     std::valarray<double> z; // Spatial location [m]
     std::valarray<double> V; // Confining potential [J]
     read_table("v.r", z, V);
 
-    char	filename[9];	/* input filename			*/
-    sprintf(filename,"wf_%c%i.r",p,state);
+    std::ostringstream filename; // input filename
+    filename << "wf_" << p << subband << ".r";
+
     std::valarray<double> z_tmp; // Dummy file for unused spatial locations
     std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
-    read_table(filename, z_tmp, wf);
+    read_table(filename.str(), z_tmp, wf);
 
-    const double lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
+    const auto lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
 
     /* Open files for output of data */
 
     FILE *fe=fopen("e.r","w");           /* E versus r_i	*/
     FILE *fl=fopen("l.r","w");           /* lambda versus r_i	*/
 
-    // Read list of donor (or acceptor) positions
-    std::valarray<double> r_d; // [m]
-    read_table("r_d.r", r_d);
+    auto r_d = (z[z.size()-1] + z[0])/2.0;
+
+    if (opt.get_argument_known("donorposition") > 0)
+        r_d = opt.get_option<double>("donorposition") * 1e-10;
 
     // Perform variational calculation for each donor/acceptor position
-    for(unsigned int i_d = 0; i_d < r_d.size(); ++i_d)
-    {
         double lambda=lambda_0;	// initial lambda guess
 
         // Double the estimate of Bohr radius if we're in a second orbital
@@ -139,7 +136,7 @@ int main(int argc,char *argv[])
         /* Newton-Raphson iteration for solution of lambda, this occurs when
            dE/dlambda=0, hence the function f is dE/dlambda and f'=d2E/dlambda^2
            */
-        EnergyParams params = {wf, V, z, epsilon, m, r_d[i_d], S};
+        EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
 
         // Set up the numerical solver using GSL
         gsl_function f;
@@ -165,15 +162,15 @@ int main(int argc,char *argv[])
             lambda = gsl_min_fminimizer_x_minimum(s);
             E      = gsl_min_fminimizer_f_minimum(s);
             status = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);
-            printf("r_d %le lambda %le energy %le meV\n", r_d[i_d], lambda, E/(1e-3*e));
+            printf("r_d %le lambda %le energy %le meV\n", r_d, lambda, E/(1e-3*e));
         }while((status == GSL_CONTINUE) && (iter < max_iter));
 
         gsl_min_fminimizer_free(s);
+
         /* Output total energy (E) of impurity/heterostructure system 
            and Bohr radii (lambda), in meV and Angstrom respectively */
-        fprintf(fe,"%le %le\n",r_d[i_d]/1e-10,E/(1e-3*e));
-        fprintf(fl,"%le %le\n",r_d[i_d]/1e-10,lambda/1e-10);
-    }/* end while r_i */
+        fprintf(fe,"%le %le\n", r_d/1e-10,E/(1e-3*e));
+        fprintf(fl,"%le %le\n", r_d/1e-10,lambda/1e-10);
 
     fclose(fe);
     fclose(fl);
@@ -186,11 +183,11 @@ int main(int argc,char *argv[])
 double Energy(double  lambda,
               void   *params)
 {
-    EnergyParams *p = reinterpret_cast<EnergyParams *>(params);
-    const double dz  = p->z[1] - p->z[0]; // z- (growth) direction step length [m]
-    const size_t nz  = p->z.size();       // Number of spatial samples in z direction
-    const double dxy = lambda/10;         // Step size for in-plane integration [m]
-    const size_t nxy = 31;                // Number of samples to use in integration over x and y
+    auto *p = reinterpret_cast<EnergyParams *>(params);
+    const auto dz  = p->z[1] - p->z[0]; // z- (growth) direction step length [m]
+    const auto nz  = p->z.size();       // Number of spatial samples in z direction
+    const auto dxy = lambda/10;         // Step size for in-plane integration [m]
+    const auto nxy = 31;                // Number of samples to use in integration over x and y
 
     // Integrands wrt z for calculating wavefunction overlap
     // and Hamiltonian
@@ -198,23 +195,23 @@ double Energy(double  lambda,
     std::valarray<double> H_integrand_z(nz);
 
     // Pre-calculate a couple of params to speed things up
-    const double hBar_sq_by_2m  = hBar*hBar/(2.0*p->m);
-    const double e_sq_by_4pieps = e*e/(4.0*pi*p->epsilon);
+    const auto hBar_sq_by_2m  = hBar*hBar/(2.0*p->m);
+    const auto e_sq_by_4pieps = e*e/(4.0*pi*p->epsilon);
 
     // Compute integrand over the z-axis, skipping both end-points since we
     // need the 2nd derivatives
-    for(unsigned int iz=1;iz < nz-1;iz++)
+    for(unsigned int iz=1; iz < nz-1; ++iz)
     {
         // Integrands wrt (x,z) for calculating wavefunction overlap
         // and Hamiltonian
         std::valarray<double> PD_integrand_xz(nxy);
         std::valarray<double> H_integrand_xz(nxy);
 
-        const double z_dash = p->z[iz] - p->r_i; // Separation from donor in z-direction [m]
+        const auto z_dash = p->z[iz] - p->r_i; // Separation from donor in z-direction [m]
 
         for(unsigned int ix=0; ix<nxy; ++ix)	
         {
-            const double x = ix*dxy;
+            const auto x = ix*dxy;
 
             // Integrands wrt (x,y,z) for calculating wavefunction overlap
             // and Hamiltonian
@@ -222,36 +219,36 @@ double Energy(double  lambda,
             std::valarray<double> H_integrand_xyz(nxy);
 
             // Wavefunction at (x, y - dy, z_dash)
-            double Psixyz_last_y = Psi(p->wf[iz], lambda, x, -dxy, z_dash, p->S);
+            auto Psixyz_last_y = Psi(p->wf[iz], lambda, x, -dxy, z_dash, p->S);
 
             // Wavefunction at (x,y,z_dash)
-            double Psixyz = Psi(p->wf[iz],lambda, x, 0, z_dash, p->S);
+            auto Psixyz = Psi(p->wf[iz],lambda, x, 0, z_dash, p->S);
 
-            const double rsq_xz = x*x + z_dash*z_dash;
-
+            const auto r_xz = hypot(x, z_dash);
+            
             for(unsigned int iy=0; iy<nxy; ++iy)
             {
-                const double y = iy*dxy;
+                const auto y = iy*dxy;
 
                 // Wavefunction at (x, y+dy, z_dash)
-                const double Psixyz_next_y = Psi(p->wf[iz],lambda,x,y+dxy, z_dash, p->S);
+                const auto Psixyz_next_y = Psi(p->wf[iz],lambda,x,y+dxy, z_dash, p->S);
 
                 // Calculate the second derivatives along x, y and z
-                const double d2Pdx2=(Psi(p->wf[iz],lambda,x+dxy,y, z_dash, p->S)-
+                const auto d2Pdx2=(Psi(p->wf[iz],lambda,x+dxy,y, z_dash, p->S)-
                         2*Psixyz+
                         Psi(p->wf[iz],lambda,x-dxy,y, z_dash, p->S))/(dxy*dxy);
 
-                const double d2Pdy2=(Psixyz_next_y - 2*Psixyz + Psixyz_last_y)/(dxy*dxy);
+                const auto d2Pdy2=(Psixyz_next_y - 2*Psixyz + Psixyz_last_y)/(dxy*dxy);
 
-                const double d2Pdz2=(Psi(p->wf[iz+1],lambda,x,y,p->z[iz+1]-p->r_i,p->S)-
+                const auto d2Pdz2=(Psi(p->wf[iz+1],lambda,x,y,p->z[iz+1]-p->r_i,p->S)-
                         2*Psixyz+
                         Psi(p->wf[iz-1],lambda,x,y,p->z[iz-1]-p->r_i,p->S))/(dz*dz);
 
                 // Distance from impurity for Coloumb term [m]
-                const double r = sqrt(y*y + rsq_xz);
+                const auto r = hypot(y, r_xz);
 
                 // The Laplacian of Psi
-                const double laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
+                const auto laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
 
                 // The integrand for the Hamiltonian expectation value
                 // QWWAD 3, Eq. 5.142
@@ -267,7 +264,7 @@ double Energy(double  lambda,
 
             // Approximate the singularity at r=0 with value at (r=dy)
             // Note that this preserves the symmetry of the function around (x,y) = 0.
-            if(ix==0 && z_dash == 0)
+            if(ix==0 && abs(z_dash) < dz)
                 H_integrand_xyz[0] = H_integrand_xyz[1];
 
             // Perform integration over y, noting that a factor of 2 is included
@@ -286,9 +283,9 @@ double Energy(double  lambda,
     // psi decays to zero at infinity
 
     // Compute the final value of the energy using Eq. 5.141, QWWAD3
-    const double H_exp = integral(H_integrand_z, dz);
-    const double norm  = integral(PD_integrand_z, dz);
-    const double E = H_exp/norm;
+    const auto H_exp = integral(H_integrand_z, dz);
+    const auto norm  = integral(PD_integrand_z, dz);
+    const auto E = H_exp/norm;
 
     return E;
 }
@@ -296,33 +293,34 @@ double Energy(double  lambda,
 /**
  * \brief The wave function psi(z)phi(r)
  */
-double Psi(const double psi,
-           const double lambda,
-           const double x,
-           const double y,
-           const double z,
-           const int    S)
+double Psi(const double  psi,
+           const double  lambda,
+           const double  x,
+           const double  y,
+           const double  z,
+           const StateID S)
 {
-    const double r = sqrt(x*x+y*y+z*z);
+    const auto r_xy = hypot(x,y);
+    const auto r    = hypot(r_xy,z);
 
     double result = 0.0;
 
     switch(S)
     {
-        case 1:
-            result = psi*exp(-r/lambda); /* 1s	*/
+        case STATE_1S:
+            result = psi*exp(-r/lambda);
             break;
-        case 2:
-            result = psi*(1-r/lambda)*exp(-r/lambda);	/* 2s	*/
+        case STATE_2S:
+            result = psi*(1-r/lambda)*exp(-r/lambda);
             break;
-        case 3:
-            result = psi*fabs(x)*exp(-r/lambda); /* 2px	*/
+        case STATE_2PX:
+            result = psi*fabs(x)*exp(-r/lambda);
             break;
-        case 4:
-            result = psi*fabs(z)*exp(-r/lambda); /* 2pz	*/
+        case STATE_2PZ:
+            result = psi*fabs(z)*exp(-r/lambda);
             break;
         default:
-            fprintf(stderr, "Unrecognised orbital\n");
+            std::cerr << "Unrecognised orbital" << std::endl;
             exit(EXIT_FAILURE);
     }
 
