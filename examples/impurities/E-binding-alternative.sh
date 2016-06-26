@@ -7,9 +7,9 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.5
 #
-# (c) Copyright 1996-2014
+# (c) Copyright 1996-2016
 #     Paul Harrison  <p.harrison@shu.ac.uk>
 #     Alex Valavanis <a.valavanis@leeds.ac.uk>
 #
@@ -32,7 +32,7 @@ outfile_lambda=E-binding-3D-lambda.dat
 rm -f $outfile_E $outfile_lambda
 
 # Loop over alloy concentration
-for x in 0.1; do
+for x in 0.1 0.2 0.3; do
 
 # Loop over well width
 for LW in 10 20 30 40 50 60 80 100 140 180 220 250; do
@@ -45,34 +45,32 @@ $LW 0.0 0.0
 EOF
 
 # Generate alloy profile
-find_heterostructure --dz-max 1
+qwwad_mesh --dzmax 1
 
 # Generate potential profile for Ga(1-x)Al(x)As, can use defaults
-efxv --mass 0.067 
-
-# Create r_d.r with single entry at centre of well
-echo $LW | awk '{print (200+$1/2)/1e10}' > r_d.r
+qwwad_ef_band_edge --mass 0.067 --bandedgepotentialfile v.r 
 
 # Calculate electron energy for same quantum well but without donor
-efss
-
-# Start donor binding energy calculation
-qwwad_find_donor_state --lambdastart 10 --lambdastop 300 --symmetry 3D > garbage.r
-
-# Energy with donor present
-E=`awk '{printf(" %e",$2)}' e.r`
-
-# Store the Bohr radius to file
-lambda=`awk '{print $2}' l.r`
+qwwad_ef_generic --nst 1
 
 # Energy without donor present
 E0=`awk '{printf(" %20.17e\n",$2)}' Ee.r`
 
-# Repeat donor calculation using new method
-i0
+# Start donor binding energy calculation
+qwwad_ef_donor_specific --lambdastart 10 --lambdastop 300 --symmetry 3D
 
 # Energy with donor present
-Enew=`awk '{printf(" %e",$2)}' e.r`
+E=`awk '{printf(" %e",$2)}' Ee.r`
+
+# Store the Bohr radius to file
+lambda=`awk '{print $2}' l.r`
+
+# Repeat donor calculation using new method
+qwwad_ef_generic
+qwwad_ef_donor_generic
+
+# Energy with donor present
+Enew=`awk '{printf(" %e",$2)}' Ee.r`
 
 # Store data to file, i.e. energy with donor (from e.r), energy
 # without donor (from Ee.r) versus well width (lw)
@@ -101,7 +99,8 @@ Results have been written to $outfile_E and $outfile_lambda.
 $outfile_E is in the format:
 
   COLUMN 1 - Quantum well width [Angstrom]
-  COLUMN 2 - Binding energy [meV]
+  COLUMN 2 - Binding energy [meV] (semi-analytical)
+  COLUMN 3 - Binding energy [meV] (direct integration)
 
 $outfile_lambda is in the format:
 
@@ -115,11 +114,11 @@ $outfile_lambda is in the format:
   SET 1  - 10% aluminium barriers
   SET 2  - 20% aluminium barriers
   SET 3  - 30% aluminium barriers 
-  SET 4  - Bulk material
+  SET 4  - Bulk material (in $outfile_lambda only)
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
