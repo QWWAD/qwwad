@@ -27,9 +27,8 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile_E=E-binding-3D.dat
-outfile_lambda=E-binding-3D-lambda.dat
-rm -f $outfile_E $outfile_lambda
+outfile_E=E-binding-alternative.dat
+rm -f $outfile_E
 
 # Loop over alloy concentration
 for x in 0.1 0.2 0.3; do
@@ -74,47 +73,27 @@ Enew=`awk '{printf(" %e",$2)}' Ee.r`
 
 # Store data to file, i.e. energy with donor (from e.r), energy
 # without donor (from Ee.r) versus well width (lw)
-echo $LW $E $Enew $E0 | awk '{print $1, $4 - $2, $4 - $3, 5.3}' >> $outfile_E
-
-# Store the Bohr radius to file
-lambda_new=`awk '{print $2}' l.r`
-
-echo $LW $lambda $lambda_new >> $outfile_lambda
+echo $LW $E $Enew $E0 | awk '{print $1, $4 - $2, $4 - $3}' >> $outfile_E
 
 done # End loop over well width
 
 printf "\n" >> $outfile_E
-printf "\n" >> $outfile_lambda
 done # End loop over alloy concentration
 
-# Output the bulk Bohr radius
-cat >> $outfile_lambda << EOF
-10   103
-1000 103
-EOF
-
 cat << EOF
-Results have been written to $outfile_E and $outfile_lambda.
-
-$outfile_E is in the format:
+Results have been written to $outfile_E in the format:
 
   COLUMN 1 - Quantum well width [Angstrom]
   COLUMN 2 - Binding energy [meV] (semi-analytical)
   COLUMN 3 - Binding energy [meV] (direct integration)
 
-$outfile_lambda is in the format:
-
-  COLUMN 1 - Quantum well width [Angstrom]
-  COLUMN 2 - Bohr radius [Angstrom]
-
-  Each file contains 4 data sets, each set being separated
+  The file contains 3 data sets, each set being separated
   by a blank line, representing wells with different barrier
-  compositions, and the donor in bulk GaAs for comparison.
+  compositions.
 
   SET 1  - 10% aluminium barriers
   SET 2  - 20% aluminium barriers
   SET 3  - 30% aluminium barriers 
-  SET 4  - Bulk material (in $outfile_lambda only)
 
 This script is part of the QWWAD software suite.
 
