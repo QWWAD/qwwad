@@ -66,9 +66,45 @@ public:
             S(S)
     {}
 
+private:
+    static double get_psi_y(double  y,
+                            void   *params);
+
+    static double get_d_psi_dy(double  y,
+                               void   *params);
+
+    double get_d2_psi_dy2(double       x,
+                          double       y,
+                          unsigned int iz) const;
+    
+    static double get_psi_x(double  x,
+                            void   *params);
+
+    static double get_d_psi_dx(double  x,
+                               void   *params);
+
+    double get_d2_psi_dx2(double       x,
+                          double       y,
+                          unsigned int iz) const;
+
+    double get_d2_psi_dz2(double x,
+                          double y,
+                          unsigned int iz) const;
+
+    double get_Laplacian(double x,
+                         double y,
+                         unsigned int iz) const;
+public:
+    /**
+     * \brief Set the Bohr radius
+     */
     void set_lambda(const double lambda) {_lambda = lambda;}
 
-    double get_psi(double x, double y, unsigned int iz);
+    double get_psi(double x, double y, unsigned int iz) const;
+
+    double get_energy_integrand(double       x,
+                                double       y,
+                                unsigned int iz) const;
 };
 
 double Energy(double lambda,
@@ -219,7 +255,7 @@ int main(int argc,char *argv[])
 
 struct Psi_y_params
 {
-    Wavefunction3D *wf3d;
+    const Wavefunction3D *wf3d;
     double          x;
     unsigned int    iz;
 };
@@ -227,8 +263,8 @@ struct Psi_y_params
 /**
  * \brief Get the wavefunction as a function of y-position
  */
-double Psi_y(double  y,
-             void   *params)
+double Wavefunction3D::get_psi_y(double  y,
+                                 void   *params)
 {
     auto *p = reinterpret_cast<Psi_y_params *>(params);
     auto psi = p->wf3d->get_psi(p->x, y, p->iz);
@@ -239,11 +275,11 @@ double Psi_y(double  y,
 /**
  * \brief Get the derivative of the wavefunction as a function of y-position
  */
-double diff_Psi_y(double y,
-                  void   *params)
+double Wavefunction3D::get_d_psi_dy(double  y,
+                                    void   *params)
 {
     gsl_function F;
-    F.function = &Psi_y;
+    F.function = &get_psi_y;
     F.params   = params;
 
     double result = 0.0;
@@ -254,9 +290,25 @@ double diff_Psi_y(double y,
     return result;
 }
 
+double Wavefunction3D::get_d2_psi_dy2(double x,
+                                      double y,
+                                      unsigned int iz) const
+{
+    Psi_y_params psi_y_params = {this, x, iz};
+
+    gsl_function F_diff_Psi_y;
+    F_diff_Psi_y.function = &get_d_psi_dy;
+    F_diff_Psi_y.params   = &psi_y_params;
+    double d2Pdy2 = 0.0;
+    double abserr = 0.0;
+    gsl_deriv_central(&F_diff_Psi_y, y, 1e-8, &d2Pdy2, &abserr);
+
+    return d2Pdy2;
+}
+
 struct Psi_x_params
 {
-    Wavefunction3D *wf3d;
+    const Wavefunction3D *wf3d;
     double          y;
     unsigned int    iz;
 };
@@ -264,8 +316,8 @@ struct Psi_x_params
 /**
  * \brief Get the wavefunction as a function of x-position
  */
-double Psi_x(double  x,
-             void   *params)
+double Wavefunction3D::get_psi_x(double  x,
+                                 void   *params)
 {
     auto *p = reinterpret_cast<Psi_x_params *>(params);
     return p->wf3d->get_psi(x, p->y, p->iz);
@@ -274,11 +326,11 @@ double Psi_x(double  x,
 /**
  * \brief Get the derivative of the wavefunction as a function of x-position
  */
-double diff_Psi_x(double  x,
-                  void   *params)
+double Wavefunction3D::get_d_psi_dx(double  x,
+                                    void   *params)
 {
     gsl_function F;
-    F.function = &Psi_x;
+    F.function = &get_psi_x;
     F.params   = params;
 
     double result = 0.0;
@@ -287,6 +339,74 @@ double diff_Psi_x(double  x,
     gsl_deriv_central(&F, x, 1e-8, &result, &abserr);
 
     return result;
+}
+
+double Wavefunction3D::get_d2_psi_dx2(double x,
+                                      double y,
+                                      unsigned int iz) const
+{
+    Psi_x_params psi_x_params = {this, y, iz};
+
+    gsl_function F_diff_Psi_x;
+    F_diff_Psi_x.function = &get_d_psi_dx;
+    F_diff_Psi_x.params   = &psi_x_params;
+    double d2Pdx2 = 0.0;
+    double abserr = 0.0;
+    gsl_deriv_central(&F_diff_Psi_x, x, 1e-8, &d2Pdx2, &abserr);
+
+    return d2Pdx2;
+}
+
+/// Perform sampled differentiation along z-axis
+double Wavefunction3D::get_d2_psi_dz2(double x,
+                                      double y,
+                                      unsigned int iz) const
+{
+    const auto dz = z[1] - z[0];
+
+    const auto Psixyz     = get_psi(x, y, iz);
+    const auto Psi_next_z = get_psi(x, y, iz+1);
+    const auto Psi_last_z = get_psi(x, y, iz-1);
+    const auto d2Pdz2=(Psi_next_z - 2*Psixyz + Psi_last_z)/(dz*dz);
+
+    return d2Pdz2;
+}
+
+/// The Laplacian of Psi
+double Wavefunction3D::get_Laplacian(double x,
+                                     double y,
+                                     unsigned int iz) const
+{
+    const auto d2Pdx2 = get_d2_psi_dx2(x,y,iz);
+    const auto d2Pdy2 = get_d2_psi_dy2(x,y,iz);
+    const auto d2Pdz2 = get_d2_psi_dz2(x,y,iz);
+
+    const auto laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
+
+    return laplace_Psi;
+}
+
+/// Get the energy integrand
+double Wavefunction3D::get_energy_integrand(double       x,
+                                            double       y,
+                                            unsigned int iz) const
+{
+    // Pre-calculate a couple of params
+    const auto hBar_sq_by_2m  = hBar*hBar/(2.0*m);
+    const auto e_sq_by_4pieps = e*e/(4.0*pi*epsilon);
+
+    const auto z_dash = z[iz] - r_i; // Separation from donor in z-direction [m]
+    const auto r_xz   = hypot(x, z_dash);
+    const auto r      = hypot(y, r_xz);
+
+    const auto laplace_Psi = get_Laplacian(x, y, iz);
+
+    // The integrand for the Hamiltonian expectation value
+    // QWWAD 3, Eq. 5.142
+    const auto Psixyz = get_psi(x, y, iz);
+
+    return Psixyz*(-hBar_sq_by_2m*laplace_Psi
+                   + (V[iz]-e_sq_by_4pieps/r)*Psixyz);
 }
 
 /**
@@ -306,10 +426,6 @@ double Energy(double  lambda,
     // and Hamiltonian
     std::valarray<double> PD_integrand_z(nz);
     std::valarray<double> H_integrand_z(nz);
-
-    // Pre-calculate a couple of params to speed things up
-    const auto hBar_sq_by_2m  = hBar*hBar/(2.0*p->m);
-    const auto e_sq_by_4pieps = e*e/(4.0*pi*p->epsilon);
 
     // Compute integrand over the z-axis, skipping both end-points since we
     // need the 2nd derivatives
@@ -331,44 +447,13 @@ double Energy(double  lambda,
             std::valarray<double> PD_integrand_xyz(nxy);
             std::valarray<double> H_integrand_xyz(nxy);
 
-            const auto r_xz = hypot(x, z_dash);
-
-            Psi_y_params psi_y_params = {p, x, iz};
-
             for(unsigned int iy=0; iy<nxy; ++iy)
             {
                 // Distance from impurity for Coloumb term [m]
                 const auto y = iy*dxy;
-                const auto r = hypot(y, r_xz);
 
-                gsl_function F_diff_Psi_y;
-                F_diff_Psi_y.function = &diff_Psi_y;
-                F_diff_Psi_y.params   = &psi_y_params;
-                double d2Pdy2 = 0.0;
-                double abserr = 0.0;
-                gsl_deriv_central(&F_diff_Psi_y, y, 1e-8, &d2Pdy2, &abserr);
-
-                Psi_x_params psi_x_params = {p, y, iz};
-                gsl_function F_diff_Psi_x;
-                F_diff_Psi_x.function = &diff_Psi_x;
-                F_diff_Psi_x.params   = &psi_x_params;
-                double d2Pdx2 = 0.0;
-                gsl_deriv_central(&F_diff_Psi_x, x, 1e-8, &d2Pdx2, &abserr);
-
-                // Perform sampled differentiation along z-axis
-                const auto Psixyz     = p->get_psi(x, y, iz);
-                const auto Psi_next_z = p->get_psi(x, y, iz+1);
-                const auto Psi_last_z = p->get_psi(x, y, iz-1);
-                const auto d2Pdz2=(Psi_next_z - 2*Psixyz + Psi_last_z)/(dz*dz);
-
-                // The Laplacian of Psi
-                const auto laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
-
-                // The integrand for the Hamiltonian expectation value
-                // QWWAD 3, Eq. 5.142
-                H_integrand_xyz[iy] = Psixyz*(-hBar_sq_by_2m*laplace_Psi
-                        + (p->V[iz]-e_sq_by_4pieps/r)*Psixyz);
-
+                const auto Psixyz = p->get_psi(x, y, iz);
+                H_integrand_xyz[iy]  = p->get_energy_integrand(x, y, iz);
                 PD_integrand_xyz[iy] = Psixyz*Psixyz;
             }
 
@@ -405,7 +490,7 @@ double Energy(double  lambda,
  */
 double Wavefunction3D::get_psi(const double       x,
                                const double       y,
-                               const unsigned int iz)
+                               const unsigned int iz) const
 {
     const double z_dash = std::abs(z[iz] - r_i);
     const auto r_xy = hypot(x,y);
