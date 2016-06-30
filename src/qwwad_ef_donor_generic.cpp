@@ -11,7 +11,9 @@
 #include <cmath>
 #include <iostream>
 #include <sstream>
+
 #include <gsl/gsl_errno.h>
+#include <gsl/gsl_deriv.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
 #include "qwwad/constants.h"
@@ -33,26 +35,44 @@ enum StateID
     STATE_2PZ
 };
 
-struct EnergyParams
+class Wavefunction3D
 {
-    std::valarray<double> wf;
-    std::valarray<double> V;
-    std::valarray<double> z;
-    double                epsilon;
-    double                m;
-    double                r_i;
-    StateID               S;
+private:
+    double _lambda; ///< Bohr radius
+
+public:
+    std::valarray<double> wf;      ///< Wavefunction
+    std::valarray<double> V;       ///< Potential profile
+    std::valarray<double> z;       ///< Spatial samples in z
+    double                epsilon; ///< Permittivity
+    double                m;       ///< Effective mass
+    double                r_i;     ///< z-position of dopant
+    StateID               S;       ///< State ID
+
+    Wavefunction3D(std::valarray<double> &wf,
+                   std::valarray<double> &V,
+                   std::valarray<double> &z,
+                   double                 epsilon,
+                   double                 m,
+                   double                 r_i,
+                   StateID                S)
+        :
+            wf(wf),
+            V(V),
+            z(z),
+            epsilon(epsilon),
+            m(m),
+            r_i(r_i),
+            S(S)
+    {}
+
+    void set_lambda(const double lambda) {_lambda = lambda;}
+
+    double get_psi(double x, double y, unsigned int iz);
 };
 
 double Energy(double lambda,
               void   *params);
-
-double Psi(const double  psi,
-           const double  lambda,
-           const double  x,
-           const double  y,
-           const double  z,
-           const StateID S);
 
 /**
  * \brief Configure command-line options
@@ -79,10 +99,10 @@ int main(int argc,char *argv[])
 {
     const auto opt = configure_options(argc, argv);
 
-    const auto epsilon = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
-    const auto m       = opt.get_option<double>("mass") * me;             // Effective mass [kg]
-    const auto p       = opt.get_option<char>  ("particle");              // Particle ID (e, h, or l)
-    const auto subband = opt.get_option<size_t>("subband");               // Principal quantum number of state to find
+    const auto epsilon    = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
+    const auto m          = opt.get_option<double>("mass") * me;             // Effective mass [kg]
+    const auto p          = opt.get_option<char>  ("particle");              // Particle ID (e, h, or l)
+    const auto subband    = opt.get_option<size_t>("subband");               // Principal quantum number of state to find
 
     StateID S = STATE_1S;
 
@@ -130,12 +150,13 @@ int main(int argc,char *argv[])
     // estimate!
     if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ))lambda*=2;
 
-    EnergyParams params = {wf, V, z, epsilon, m, r_d, S};
+    // The 3D wavefunction calculator for the system
+    Wavefunction3D wf3d(wf, V, z, epsilon, m, r_d, S);
 
     // Set up the numerical solver using GSL
     gsl_function f;
     f.function = &Energy;
-    f.params   = &params;
+    f.params   = &wf3d;
 
     gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
     gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
@@ -184,24 +205,98 @@ int main(int argc,char *argv[])
 
 
     // Get wavefunction at (x,y=0)
-    std::valarray<double> wf_out(nz);
+//    std::valarray<double> wf_out(nz);
 
-    for(unsigned int iz = 0; iz < nz; ++iz)
-        wf_out[iz] = Psi(wf[iz], lambda, 0, 0, z[iz], S);
+//    for(unsigned int iz = 0; iz < nz; ++iz)
+//        wf_out[iz] = Psi(wf[iz], lambda, 0, 0, z[iz], S);
 
-    std::ostringstream wf_file;
-    wf_file << "wf_" << p << subband << ".r";
-    write_table(wf_file.str(), z, wf_out);
+//    std::ostringstream wf_file;
+//    wf_file << "wf_" << p << subband << "_out.r";
+//    write_table(wf_file.str(), z, wf_out);
 
     return EXIT_SUCCESS;
 }
 
-/* This function calculates the expectation value (the energy) of the
-   Hamiltonian operator	*/
+struct Psi_y_params
+{
+    Wavefunction3D *wf3d;
+    double          x;
+    unsigned int    iz;
+};
+
+/**
+ * \brief Get the wavefunction as a function of y-position
+ */
+double Psi_y(double  y,
+             void   *params)
+{
+    auto *p = reinterpret_cast<Psi_y_params *>(params);
+    auto psi = p->wf3d->get_psi(p->x, y, p->iz);
+
+    return psi;
+}
+
+/**
+ * \brief Get the derivative of the wavefunction as a function of y-position
+ */
+double diff_Psi_y(double y,
+                  void   *params)
+{
+    gsl_function F;
+    F.function = &Psi_y;
+    F.params   = params;
+
+    double result = 0.0;
+    double abserr = 0.0;
+
+    gsl_deriv_central(&F, y, 1e-8, &result, &abserr);
+
+    return result;
+}
+
+struct Psi_x_params
+{
+    Wavefunction3D *wf3d;
+    double          y;
+    unsigned int    iz;
+};
+
+/**
+ * \brief Get the wavefunction as a function of x-position
+ */
+double Psi_x(double  x,
+             void   *params)
+{
+    auto *p = reinterpret_cast<Psi_x_params *>(params);
+    return p->wf3d->get_psi(x, p->y, p->iz);
+}
+
+/**
+ * \brief Get the derivative of the wavefunction as a function of x-position
+ */
+double diff_Psi_x(double  x,
+                  void   *params)
+{
+    gsl_function F;
+    F.function = &Psi_x;
+    F.params   = params;
+
+    double result = 0.0;
+    double abserr = 0.0;
+
+    gsl_deriv_central(&F, x, 1e-8, &result, &abserr);
+
+    return result;
+}
+
+/**
+ * \brief Calculates the expectation value (the energy) of the Hamiltonian operator
+ */
 double Energy(double  lambda,
               void   *params)
 {
-    auto *p = reinterpret_cast<EnergyParams *>(params);
+    auto *p = reinterpret_cast<Wavefunction3D *>(params);
+    p->set_lambda(lambda);
     const auto dz  = p->z[1] - p->z[0]; // z- (growth) direction step length [m]
     const auto nz  = p->z.size();       // Number of spatial samples in z direction
     const auto dxy = lambda/10;         // Step size for in-plane integration [m]
@@ -236,34 +331,35 @@ double Energy(double  lambda,
             std::valarray<double> PD_integrand_xyz(nxy);
             std::valarray<double> H_integrand_xyz(nxy);
 
-            // Wavefunction at (x, y - dy, z_dash)
-            auto Psixyz_last_y = Psi(p->wf[iz], lambda, x, -dxy, z_dash, p->S);
-
-            // Wavefunction at (x,y,z_dash)
-            auto Psixyz = Psi(p->wf[iz],lambda, x, 0, z_dash, p->S);
-
             const auto r_xz = hypot(x, z_dash);
-            
+
+            Psi_y_params psi_y_params = {p, x, iz};
+
             for(unsigned int iy=0; iy<nxy; ++iy)
             {
-                const auto y = iy*dxy;
-
-                // Wavefunction at (x, y+dy, z_dash)
-                const auto Psixyz_next_y = Psi(p->wf[iz],lambda,x,y+dxy, z_dash, p->S);
-
-                // Calculate the second derivatives along x, y and z
-                const auto d2Pdx2=(Psi(p->wf[iz],lambda,x+dxy,y, z_dash, p->S)-
-                        2*Psixyz+
-                        Psi(p->wf[iz],lambda,x-dxy,y, z_dash, p->S))/(dxy*dxy);
-
-                const auto d2Pdy2=(Psixyz_next_y - 2*Psixyz + Psixyz_last_y)/(dxy*dxy);
-
-                const auto d2Pdz2=(Psi(p->wf[iz+1],lambda,x,y,p->z[iz+1]-p->r_i,p->S)-
-                        2*Psixyz+
-                        Psi(p->wf[iz-1],lambda,x,y,p->z[iz-1]-p->r_i,p->S))/(dz*dz);
-
                 // Distance from impurity for Coloumb term [m]
+                const auto y = iy*dxy;
                 const auto r = hypot(y, r_xz);
+
+                gsl_function F_diff_Psi_y;
+                F_diff_Psi_y.function = &diff_Psi_y;
+                F_diff_Psi_y.params   = &psi_y_params;
+                double d2Pdy2 = 0.0;
+                double abserr = 0.0;
+                gsl_deriv_central(&F_diff_Psi_y, y, 1e-8, &d2Pdy2, &abserr);
+
+                Psi_x_params psi_x_params = {p, y, iz};
+                gsl_function F_diff_Psi_x;
+                F_diff_Psi_x.function = &diff_Psi_x;
+                F_diff_Psi_x.params   = &psi_x_params;
+                double d2Pdx2 = 0.0;
+                gsl_deriv_central(&F_diff_Psi_x, x, 1e-8, &d2Pdx2, &abserr);
+
+                // Perform sampled differentiation along z-axis
+                const auto Psixyz     = p->get_psi(x, y, iz);
+                const auto Psi_next_z = p->get_psi(x, y, iz+1);
+                const auto Psi_last_z = p->get_psi(x, y, iz-1);
+                const auto d2Pdz2=(Psi_next_z - 2*Psixyz + Psi_last_z)/(dz*dz);
 
                 // The Laplacian of Psi
                 const auto laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
@@ -271,13 +367,9 @@ double Energy(double  lambda,
                 // The integrand for the Hamiltonian expectation value
                 // QWWAD 3, Eq. 5.142
                 H_integrand_xyz[iy] = Psixyz*(-hBar_sq_by_2m*laplace_Psi
-                        +(p->V[iz]-e_sq_by_4pieps/r)*Psixyz);
+                        + (p->V[iz]-e_sq_by_4pieps/r)*Psixyz);
 
                 PD_integrand_xyz[iy] = Psixyz*Psixyz;
-
-                // Reuse values for next iteration
-                Psixyz_last_y = Psixyz;
-                Psixyz        = Psixyz_next_y;
             }
 
             // Approximate the singularity at r=0 with value at (r=dy)
@@ -311,31 +403,29 @@ double Energy(double  lambda,
 /**
  * \brief The wave function psi(z)phi(r)
  */
-double Psi(const double  psi,
-           const double  lambda,
-           const double  x,
-           const double  y,
-           const double  z,
-           const StateID S)
+double Wavefunction3D::get_psi(const double       x,
+                               const double       y,
+                               const unsigned int iz)
 {
+    const double z_dash = std::abs(z[iz] - r_i);
     const auto r_xy = hypot(x,y);
-    const auto r    = hypot(r_xy,z);
+    const auto r    = hypot(r_xy,z_dash);
 
     double result = 0.0;
 
     switch(S)
     {
         case STATE_1S:
-            result = psi*exp(-r/lambda);
+            result = wf[iz]*exp(-r/_lambda);
             break;
         case STATE_2S:
-            result = psi*(1-r/lambda)*exp(-r/lambda);
+            result = wf[iz]*(1.0-r/_lambda)*exp(-r/_lambda);
             break;
         case STATE_2PX:
-            result = psi*fabs(x)*exp(-r/lambda);
+            result = wf[iz]*fabs(x)*exp(-r/_lambda);
             break;
         case STATE_2PZ:
-            result = psi*fabs(z)*exp(-r/lambda);
+            result = wf[iz]*fabs(z_dash)*exp(-r/_lambda);
             break;
         default:
             std::cerr << "Unrecognised orbital" << std::endl;
