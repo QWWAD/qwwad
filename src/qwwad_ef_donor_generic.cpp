@@ -105,6 +105,9 @@ public:
     double get_energy_integrand(double       x,
                                 double       y,
                                 unsigned int iz) const;
+
+    static double get_energy_integrand_y(double  y,
+                                         void   *params);
 };
 
 double Energy(double lambda,
@@ -256,8 +259,8 @@ int main(int argc,char *argv[])
 struct Psi_y_params
 {
     const Wavefunction3D *wf3d;
-    double          x;
-    unsigned int    iz;
+    double                x;
+    unsigned int          iz;
 };
 
 /**
@@ -309,8 +312,8 @@ double Wavefunction3D::get_d2_psi_dy2(double x,
 struct Psi_x_params
 {
     const Wavefunction3D *wf3d;
-    double          y;
-    unsigned int    iz;
+    double                y;
+    unsigned int          iz;
 };
 
 /**
@@ -409,6 +412,14 @@ double Wavefunction3D::get_energy_integrand(double       x,
                    + (V[iz]-e_sq_by_4pieps/r)*Psixyz);
 }
 
+double Wavefunction3D::get_energy_integrand_y(double  y,
+                                              void   *params)
+{
+    auto *p = reinterpret_cast<Psi_y_params *>(params);
+
+    return p->wf3d->get_energy_integrand(p->x, y, p->iz);
+}
+
 /**
  * \brief Calculates the expectation value (the energy) of the Hamiltonian operator
  */
@@ -436,8 +447,6 @@ double Energy(double  lambda,
         std::valarray<double> PD_integrand_xz(nxy);
         std::valarray<double> H_integrand_xz(nxy);
 
-        const auto z_dash = p->z[iz] - p->r_i; // Separation from donor in z-direction [m]
-
         for(unsigned int ix=0; ix<nxy; ++ix)	
         {
             const auto x = ix*dxy;
@@ -445,7 +454,6 @@ double Energy(double  lambda,
             // Integrands wrt (x,y,z) for calculating wavefunction overlap
             // and Hamiltonian
             std::valarray<double> PD_integrand_xyz(nxy);
-            std::valarray<double> H_integrand_xyz(nxy);
 
             for(unsigned int iy=0; iy<nxy; ++iy)
             {
@@ -453,18 +461,19 @@ double Energy(double  lambda,
                 const auto y = iy*dxy;
 
                 const auto Psixyz = p->get_psi(x, y, iz);
-                H_integrand_xyz[iy]  = p->get_energy_integrand(x, y, iz);
                 PD_integrand_xyz[iy] = Psixyz*Psixyz;
             }
 
-            // Approximate the singularity at r=0 with value at (r=dy)
-            // Note that this preserves the symmetry of the function around (x,y) = 0.
-            if(ix==0 && abs(z_dash) < dz)
-                H_integrand_xyz[0] = H_integrand_xyz[1];
-
             // Perform integration over y, noting that a factor of 2 is included
             // to account for even symmetry
-            H_integrand_xz[ix]  = 2*simps(H_integrand_xyz, dxy);
+            gsl_function F;
+            Psi_y_params psi_y_params = {p, x, iz};
+            auto w = gsl_integration_workspace_alloc(100);
+            F.function = &Wavefunction3D::get_energy_integrand_y;
+            F.params   = &psi_y_params;
+            double result, error;
+            gsl_integration_qags(&F, 0, 5*lambda, 1e-12, 1e-12, 100, w, &result, &error);
+            H_integrand_xz[ix]  = 2*result;//2*simps(H_integrand_xyz, dxy);
             PD_integrand_xz[ix] = 2*simps(PD_integrand_xyz, dxy);
         }
 
