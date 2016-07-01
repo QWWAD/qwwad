@@ -184,7 +184,7 @@ int main(int argc,char *argv[])
     f.params   = &wf3d;
 
     gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
-    gsl_min_fminimizer_set(s, &f, lambda, lambda/5, lambda*10);
+    gsl_min_fminimizer_set(s, &f, lambda*10, lambda/100, lambda*100);
 
     size_t max_iter = 100; // Maximum number of iterations before giving up
     int status = 0;        // Error flag for GSL

@@ -599,7 +599,8 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/E-donor-comparison.sh            \
 		 $(eximpsrcdir)/E-donor-comparison.dat           \
 		 $(eximpsrcdir)/spin-flip-raman.sh               \
-		 $(eximpsrcdir)/E-binding-alternative.sh
+		 $(eximpsrcdir)/E-binding-alternative.sh \
+		 $(eximpsrcdir)/E-new-vs-old.sh
 
 exqwddatadir = $(exdatadir)/simple-wires-and-dots
 exqwdsrcdir  = examples/simple-wires-and-dots
