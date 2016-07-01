@@ -21,12 +21,12 @@ Fig 5.21: spin-flip-raman.sh       => spin-flip-dE.dat
 Fig 5.22: spin-flip-raman.sh       => spin-flip-spectra.dat
 Fig 5.24: E-binding-alternative.sh => E-binding-alternative.dat
 Fig 5.26: E-new-vs-old.sh          => E-new-vs-old.dat
-Fig 5.27: E-1s-2s.sh               => E-1s-2s.dat
-Fig 5.28: E-1s-2s.sh               => E-1s-2s-ratio.dat
-Fig 5.29:
-Fig 5.30:
-Fig 5.31:
-Fig 5.32:
+Fig 5.27: E-excited-states.sh      => E-1s-2s.dat
+Fig 5.28: E-excited-states.sh      => E-1s-2s-ratio.dat
+Fig 5.29: E-excited-states.sh      => E-2s-2px.dat
+Fig 5.30: E-excited-states.sh      => lambda-2px-1s.dat
+Fig 5.31: E-excited-states.sh      => lambda-2px-1s-ratio.dat
+Fig 5.32: E-excited-states.sh      => E-2pz.dat
 Fig 5.33:
 Fig 5.34:
 

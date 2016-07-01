@@ -601,7 +601,7 @@ eximpdata_DATA = $(eximpsrcdir)/index                \
 		 $(eximpsrcdir)/spin-flip-raman.sh               \
 		 $(eximpsrcdir)/E-binding-alternative.sh \
 		 $(eximpsrcdir)/E-new-vs-old.sh          \ 
-		 $(eximpsrcdir)/E-1s-2s.sh          
+		 $(eximpsrcdir)/E-excited-states.sh
 
 exqwddatadir = $(exdatadir)/simple-wires-and-dots
 exqwdsrcdir  = examples/simple-wires-and-dots
