@@ -21,8 +21,8 @@ Fig 5.21: spin-flip-raman.sh       => spin-flip-dE.dat
 Fig 5.22: spin-flip-raman.sh       => spin-flip-spectra.dat
 Fig 5.24: E-binding-alternative.sh => E-binding-alternative.dat
 Fig 5.26: E-new-vs-old.sh          => E-new-vs-old.dat
-Fig 5.27:
-Fig 5.28:
+Fig 5.27: E-1s-2s.sh               => E-1s-2s.dat
+Fig 5.28: E-1s-2s.sh               => E-1s-2s-ratio.dat
 Fig 5.29:
 Fig 5.30:
 Fig 5.31:
