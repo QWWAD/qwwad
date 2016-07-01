@@ -13,7 +13,6 @@
 #include <sstream>
 
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_deriv.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_min.h>
 #include "qwwad/constants.h"
@@ -67,30 +66,6 @@ public:
     {}
 
 private:
-    static double get_psi_y(double  y,
-                            void   *params);
-
-    static double get_d_psi_dy(double  y,
-                               void   *params);
-
-    double get_d2_psi_dy2(double       x,
-                          double       y,
-                          unsigned int iz) const;
-    
-    static double get_psi_x(double  x,
-                            void   *params);
-
-    static double get_d_psi_dx(double  x,
-                               void   *params);
-
-    double get_d2_psi_dx2(double       x,
-                          double       y,
-                          unsigned int iz) const;
-
-    double get_d2_psi_dz2(double x,
-                          double y,
-                          unsigned int iz) const;
-
     double get_Laplacian(double x,
                          double y,
                          unsigned int iz) const;
@@ -108,10 +83,21 @@ public:
 
     static double get_energy_integrand_y(double  y,
                                          void   *params);
-};
 
-double Energy(double lambda,
-              void   *params);
+    static double get_PD_integrand_y(double  y,
+                                     void   *params);
+
+    static double get_energy_integrand_x(double  x,
+                                         void   *params);
+    
+    static double get_PD_integrand_x(double  x,
+                                     void   *params);
+
+    static double get_energy(double  lambda,
+                             void   *params);
+
+    double get_energy() const;
+};
 
 /**
  * \brief Configure command-line options
@@ -194,7 +180,7 @@ int main(int argc,char *argv[])
 
     // Set up the numerical solver using GSL
     gsl_function f;
-    f.function = &Energy;
+    f.function = &Wavefunction3D::get_energy;
     f.params   = &wf3d;
 
     gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
@@ -256,134 +242,27 @@ int main(int argc,char *argv[])
     return EXIT_SUCCESS;
 }
 
-struct Psi_y_params
-{
-    const Wavefunction3D *wf3d;
-    double                x;
-    unsigned int          iz;
-};
-
-/**
- * \brief Get the wavefunction as a function of y-position
- */
-double Wavefunction3D::get_psi_y(double  y,
-                                 void   *params)
-{
-    auto *p = reinterpret_cast<Psi_y_params *>(params);
-    auto psi = p->wf3d->get_psi(p->x, y, p->iz);
-
-    return psi;
-}
-
-/**
- * \brief Get the derivative of the wavefunction as a function of y-position
- */
-double Wavefunction3D::get_d_psi_dy(double  y,
-                                    void   *params)
-{
-    gsl_function F;
-    F.function = &get_psi_y;
-    F.params   = params;
-
-    double result = 0.0;
-    double abserr = 0.0;
-
-    gsl_deriv_central(&F, y, 1e-8, &result, &abserr);
-
-    return result;
-}
-
-double Wavefunction3D::get_d2_psi_dy2(double x,
-                                      double y,
-                                      unsigned int iz) const
-{
-    Psi_y_params psi_y_params = {this, x, iz};
-
-    gsl_function F_diff_Psi_y;
-    F_diff_Psi_y.function = &get_d_psi_dy;
-    F_diff_Psi_y.params   = &psi_y_params;
-    double d2Pdy2 = 0.0;
-    double abserr = 0.0;
-    gsl_deriv_central(&F_diff_Psi_y, y, 1e-8, &d2Pdy2, &abserr);
-
-    return d2Pdy2;
-}
-
-struct Psi_x_params
-{
-    const Wavefunction3D *wf3d;
-    double                y;
-    unsigned int          iz;
-};
-
-/**
- * \brief Get the wavefunction as a function of x-position
- */
-double Wavefunction3D::get_psi_x(double  x,
-                                 void   *params)
-{
-    auto *p = reinterpret_cast<Psi_x_params *>(params);
-    return p->wf3d->get_psi(x, p->y, p->iz);
-}
-
-/**
- * \brief Get the derivative of the wavefunction as a function of x-position
- */
-double Wavefunction3D::get_d_psi_dx(double  x,
-                                    void   *params)
-{
-    gsl_function F;
-    F.function = &get_psi_x;
-    F.params   = params;
-
-    double result = 0.0;
-    double abserr = 0.0;
-
-    gsl_deriv_central(&F, x, 1e-8, &result, &abserr);
-
-    return result;
-}
-
-double Wavefunction3D::get_d2_psi_dx2(double x,
-                                      double y,
-                                      unsigned int iz) const
-{
-    Psi_x_params psi_x_params = {this, y, iz};
-
-    gsl_function F_diff_Psi_x;
-    F_diff_Psi_x.function = &get_d_psi_dx;
-    F_diff_Psi_x.params   = &psi_x_params;
-    double d2Pdx2 = 0.0;
-    double abserr = 0.0;
-    gsl_deriv_central(&F_diff_Psi_x, x, 1e-8, &d2Pdx2, &abserr);
-
-    return d2Pdx2;
-}
-
-/// Perform sampled differentiation along z-axis
-double Wavefunction3D::get_d2_psi_dz2(double x,
-                                      double y,
-                                      unsigned int iz) const
-{
-    const auto dz = z[1] - z[0];
-
-    const auto Psixyz     = get_psi(x, y, iz);
-    const auto Psi_next_z = get_psi(x, y, iz+1);
-    const auto Psi_last_z = get_psi(x, y, iz-1);
-    const auto d2Pdz2=(Psi_next_z - 2*Psixyz + Psi_last_z)/(dz*dz);
-
-    return d2Pdz2;
-}
-
 /// The Laplacian of Psi
 double Wavefunction3D::get_Laplacian(double x,
                                      double y,
                                      unsigned int iz) const
 {
-    const auto d2Pdx2 = get_d2_psi_dx2(x,y,iz);
-    const auto d2Pdy2 = get_d2_psi_dy2(x,y,iz);
-    const auto d2Pdz2 = get_d2_psi_dz2(x,y,iz);
+    // For the in-plane derivative, use a very small step, for accuracy
+    // For the growth direction, use the sample spacing
+    const auto dxy = _lambda/100;
+    const auto dz = z[1] - z[0];
 
+    const auto psi_111 = get_psi(x, y, iz);
+    const auto psi_110 = get_psi(x, y, iz-1);
+    const auto psi_112 = get_psi(x, y, iz+1);
+    const auto psi_101 = get_psi(x, y-dxy, iz);
+    const auto psi_121 = get_psi(x, y+dxy, iz);
+    const auto psi_011 = get_psi(x-dxy, y, iz);
+    const auto psi_211 = get_psi(x+dxy, y, iz);
+
+    const auto d2Pdx2 = (psi_011 - 2*psi_111 + psi_211)/(dxy*dxy);
+    const auto d2Pdy2 = (psi_101 - 2*psi_111 + psi_121)/(dxy*dxy);
+    const auto d2Pdz2 = (psi_110 - 2*psi_111 + psi_112)/(dz*dz);
     const auto laplace_Psi = d2Pdx2 + d2Pdy2 + d2Pdz2;
 
     return laplace_Psi;
@@ -412,76 +291,123 @@ double Wavefunction3D::get_energy_integrand(double       x,
                    + (V[iz]-e_sq_by_4pieps/r)*Psixyz);
 }
 
+struct Integrand_y_params
+{
+    const Wavefunction3D *wf3d;
+    double                x;
+    unsigned int          iz;
+};
+
 double Wavefunction3D::get_energy_integrand_y(double  y,
                                               void   *params)
 {
-    auto *p = reinterpret_cast<Psi_y_params *>(params);
+    auto *p = reinterpret_cast<Integrand_y_params *>(params);
 
     return p->wf3d->get_energy_integrand(p->x, y, p->iz);
+}
+
+double Wavefunction3D::get_PD_integrand_y(double  y,
+                                          void   *params)
+{
+    auto *p = reinterpret_cast<Integrand_y_params *>(params);
+    auto psi = p->wf3d->get_psi(p->x, y, p->iz);
+
+    return psi*psi;
+}
+
+struct Integrand_x_params
+{
+    const Wavefunction3D *wf3d;
+    unsigned int          iz;
+};
+
+double Wavefunction3D::get_energy_integrand_x(double  x,
+                                              void   *params)
+{
+    auto *p = reinterpret_cast<Integrand_x_params *>(params);
+    auto wf3d = p->wf3d;
+
+    // Perform integration over y, noting that a factor of 2 is included
+    // to account for even symmetry
+    gsl_function F;
+    Integrand_y_params integrand_y_params = {wf3d, x, p->iz};
+    auto w = gsl_integration_workspace_alloc(1000);
+    F.function = &Wavefunction3D::get_energy_integrand_y;
+    F.params   = &integrand_y_params;
+    double result, error;
+    gsl_integration_qags(&F, 0, 5*wf3d->_lambda, 0, 1e-3, 1000, w, &result, &error);
+    gsl_integration_workspace_free(w);
+
+    return 2.0*result;
+}
+
+double Wavefunction3D::get_PD_integrand_x(double  x,
+                                          void   *params)
+{
+    auto *p = reinterpret_cast<Integrand_x_params *>(params);
+    auto wf3d = p->wf3d;
+
+    // Perform integration over y, noting that a factor of 2 is included
+    // to account for even symmetry
+    gsl_function F;
+    Integrand_y_params integrand_y_params = {wf3d, x, p->iz};
+    auto w = gsl_integration_workspace_alloc(1000);
+    F.function = &Wavefunction3D::get_PD_integrand_y;
+    F.params   = &integrand_y_params;
+    double result, error;
+    gsl_integration_qags(&F, 0, 5*wf3d->_lambda, 0, 1e-3, 1000, w, &result, &error);
+    gsl_integration_workspace_free(w);
+
+    return 2.0*result;
 }
 
 /**
  * \brief Calculates the expectation value (the energy) of the Hamiltonian operator
  */
-double Energy(double  lambda,
-              void   *params)
+double Wavefunction3D::get_energy(double  lambda,
+                                  void   *params)
 {
     auto *p = reinterpret_cast<Wavefunction3D *>(params);
     p->set_lambda(lambda);
-    const auto dz  = p->z[1] - p->z[0]; // z- (growth) direction step length [m]
-    const auto nz  = p->z.size();       // Number of spatial samples in z direction
-    const auto dxy = lambda/10;         // Step size for in-plane integration [m]
-    const auto nxy = 31;                // Number of samples to use in integration over x and y
+
+    return p->get_energy();
+}
+
+double Wavefunction3D::get_energy() const
+{
+    const auto dz  = z[1] - z[0]; // z- (growth) direction step length [m]
+    const auto nz  = z.size();    // Number of spatial samples in z direction
+
+    const size_t nslice = 1000; // Maximum number of slices for in-plane integration
+    const double relerr = 1e-3; // Maximum relative error for in-plane integration
 
     // Integrands wrt z for calculating wavefunction overlap
     // and Hamiltonian
     std::valarray<double> PD_integrand_z(nz);
     std::valarray<double> H_integrand_z(nz);
+    auto w = gsl_integration_workspace_alloc(nslice);
 
     // Compute integrand over the z-axis, skipping both end-points since we
     // need the 2nd derivatives
     for(unsigned int iz=1; iz < nz-1; ++iz)
     {
-        // Integrands wrt (x,z) for calculating wavefunction overlap
-        // and Hamiltonian
-        std::valarray<double> PD_integrand_xz(nxy);
-        std::valarray<double> H_integrand_xz(nxy);
+        Integrand_x_params integrand_x_params = {this, iz};
+        double result, error;
+        
+        gsl_function F_energy;
+        F_energy.function = &Wavefunction3D::get_energy_integrand_x;
+        F_energy.params   = &integrand_x_params;
+        gsl_integration_qags(&F_energy, 0, 5*_lambda, 0, relerr, nslice, w, &result, &error);
+        H_integrand_z[iz]  = 2*result;
 
-        for(unsigned int ix=0; ix<nxy; ++ix)	
-        {
-            const auto x = ix*dxy;
-
-            // Integrands wrt (x,y,z) for calculating wavefunction overlap
-            // and Hamiltonian
-            std::valarray<double> PD_integrand_xyz(nxy);
-
-            for(unsigned int iy=0; iy<nxy; ++iy)
-            {
-                // Distance from impurity for Coloumb term [m]
-                const auto y = iy*dxy;
-
-                const auto Psixyz = p->get_psi(x, y, iz);
-                PD_integrand_xyz[iy] = Psixyz*Psixyz;
-            }
-
-            // Perform integration over y, noting that a factor of 2 is included
-            // to account for even symmetry
-            gsl_function F;
-            Psi_y_params psi_y_params = {p, x, iz};
-            auto w = gsl_integration_workspace_alloc(100);
-            F.function = &Wavefunction3D::get_energy_integrand_y;
-            F.params   = &psi_y_params;
-            double result, error;
-            gsl_integration_qags(&F, 0, 5*lambda, 1e-12, 1e-12, 100, w, &result, &error);
-            H_integrand_xz[ix]  = 2*result;//2*simps(H_integrand_xyz, dxy);
-            PD_integrand_xz[ix] = 2*simps(PD_integrand_xyz, dxy);
-        }
-
-        // Perform integration over x, noting that a factor of 2 is included
-        // to account for even symmetry
-        PD_integrand_z[iz] = 2*simps(PD_integrand_xz, dxy);
-        H_integrand_z[iz]  = 2*simps(H_integrand_xz, dxy);
+        gsl_function F_PD;
+        F_PD.function = &Wavefunction3D::get_PD_integrand_x;
+        F_PD.params   = &integrand_x_params;
+        gsl_integration_qags(&F_PD, 0, 5*_lambda, 0, relerr, nslice, w, &result, &error);
+        PD_integrand_z[iz] = 2*result; //simps(PD_integrand_xz, dxy);
     }
+
+    gsl_integration_workspace_free(w);
 
     // Note that endpoints of the integral can keep their default value of zero, since
     // psi decays to zero at infinity
@@ -522,8 +448,7 @@ double Wavefunction3D::get_psi(const double       x,
             result = wf[iz]*fabs(z_dash)*exp(-r/_lambda);
             break;
         default:
-            std::cerr << "Unrecognised orbital" << std::endl;
-            exit(EXIT_FAILURE);
+            throw std::runtime_error("Unrecognised orbital");
     }
 
     return result;
