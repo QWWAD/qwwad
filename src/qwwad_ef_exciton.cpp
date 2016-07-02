@@ -3,20 +3,9 @@
  * \brief Find exciton binding energies
  * \author Paul Harrison  <p.harrison@shu.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ */
 
-   Input files:
-     wf_eX.r      electron wavefunction versus z  
-     wf_hX.r      hole wavefunction versus z  
-
-   Output files:
-     ABC.r         terms A, B, Ct and Cv versus lambda
-     beta.r        beta corresponding to minimum Eb versus lambda
-     EX0.r         minimum binding energy, corresponding lambda and beta
-     EX0-lambda.r  minimum binding energy versus lambda
-     p.r           uncorrelated probaility of e-h separation
-   */
-
-#include <cstdio>
+//#include <cstdio>
 #include <cstdlib>
 #include <valarray>
 
@@ -84,18 +73,19 @@ Options configure_options(int argc, char* argv[])
     Options opt;
     std::string doc("Find exciton binding energy");
 
-    opt.add_option<double>      ("dcpermittivity,e", 13.18,  "Bulk relative permittivity");
-    opt.add_option<double>      ("betastart,w",       0.001, "Initial value for beta symmetry parameter search");
-    opt.add_option<double>      ("betastep,x",        0.05,  "Increment for beta symmetry parameter search");
-    opt.add_option<double>      ("betastop,y",       -1.0,   "Final value for beta symmetry parameter search");
-    opt.add_option<double>      ("lambdastart,s",    70.0,   "Initial value for Bohr radius search [Angstrom]");
-    opt.add_option<double>      ("lambdastep,t",      1.0,   "Increment for beta symmetry parameter search");
-    opt.add_option<double>      ("lambdastop,u",     -1.0,   "Final value for beta symmetry parameter search");
-    opt.add_option<double>      ("electronmass,m",    0.067, "Bulk electron effective mass (relative to free electron)");
-    opt.add_option<double>      ("holemass,n",        0.62,  "Bulk hole effective mass (relative to free electron)");
-    opt.add_option<unsigned int>("electronstate,a",   1,     "Index of electron state");
-    opt.add_option<unsigned int>("holestate,b",       1,     "Index of hole state");
-    opt.add_option<size_t>      ("nx,N",            100,     "Number of samples for x-integration");
+    opt.add_option<double>      ("dcpermittivity,e",     13.18,  "Bulk relative permittivity");
+    opt.add_option<double>      ("betastart,w",           0.001, "Initial value for beta symmetry parameter search");
+    opt.add_option<double>      ("betastep,x",            0.05,  "Increment for beta symmetry parameter search");
+    opt.add_option<double>      ("betastop,y",           -1.0,   "Final value for beta symmetry parameter search");
+    opt.add_option<double>      ("lambdastart,s",        70.0,   "Initial value for Bohr radius search [Angstrom]");
+    opt.add_option<double>      ("lambdastep,t",          1.0,   "Increment for beta symmetry parameter search");
+    opt.add_option<double>      ("lambdastop,u",         -1.0,   "Final value for beta symmetry parameter search");
+    opt.add_option<double>      ("electronmass,m",        0.067, "Bulk electron effective mass (relative to free electron)");
+    opt.add_option<double>      ("holemass,n",            0.62,  "Bulk hole effective mass (relative to free electron)");
+    opt.add_option<unsigned int>("electronstate,a",       1,     "Index of electron state");
+    opt.add_option<unsigned int>("holestate,b",           1,     "Index of hole state");
+    opt.add_option<size_t>      ("nx,N",                100,     "Number of samples for x-integration");
+    opt.add_option<std::string> ("searchlogfile", "searchlog.r", "Filename for search log");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -144,8 +134,8 @@ int main(int argc,char *argv[])
 
     const double mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
 
-    FILE *Fbeta = fopen("beta-lambda.r","w");
-    FILE *FEX0l=fopen("EX0-lambda.r","w");
+//    FILE *Fbeta = fopen("beta-lambda.r","w");
+//    FILE *FEX0l=fopen("EX0-lambda.r","w");
 
     // calculates p and P's, returns start address of structure
     const auto pP_start = pP_calc(z, psi_e, psi_h);
@@ -158,6 +148,11 @@ int main(int argc,char *argv[])
     // TODO: lambda_0 is found iteratively. Check that this is a sensible initial value
     double lambda_0 = 0;            // lambda for Eb_min
     bool repeat_flag_lambda=true; // repeat variational lambda loop
+
+    // Tables for the search log
+    std::vector<double> lambda_log; 
+    std::vector<double> beta_log;
+    std::vector<double> Eb_log;
 
     do
     {
@@ -176,11 +171,16 @@ int main(int argc,char *argv[])
 
             repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
+            // Update search log
+            lambda_log.push_back(lambda*1e10);
+            beta_log.push_back(beta);
+            Eb_log.push_back(Eb_min_beta*1000/e);
+
             beta+=beta_step;
         }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
 
-        fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
-        fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
+//        fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
+//        fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
 
         repeat_flag_lambda=repeat_lambda(&beta_0,beta_0_lambda,Eb_min_beta,&Eb_min,
                 lambda,&lambda_0);
@@ -188,13 +188,16 @@ int main(int argc,char *argv[])
         lambda+=lambda_step;   /* increment Bohr radius */
     }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
 
-    /* Write out final data to file	*/
-    FILE *FEX0=fopen("EX0.r","w");
-    fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
-    fclose(FEX0);
+    // Write out final data to file
+    std::ofstream FEX0("EX0.r");
+    FEX0 << Eb_min*1000/e << " " << lambda_0*1e10 << " " << beta_0 << std::endl;
+    FEX0.close();
+    
+    const auto searchlogfile = opt.get_option<std::string>("searchlogfile");
+    write_table(searchlogfile, lambda_log, beta_log, Eb_log);
 
-    fclose(Fbeta);
-    fclose(FEX0l);
+//    fclose(Fbeta);
+//    fclose(FEX0l);
 
     return EXIT_SUCCESS;
 }
