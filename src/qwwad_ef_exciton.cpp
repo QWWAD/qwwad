@@ -18,11 +18,10 @@
 
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
 #include <gsl/gsl_math.h>
+
 #include "qwwad/constants.h"
-#include "struct.h"
-#include "maths.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -64,7 +63,7 @@ static double Eb_1S(files        *fdata,
                     const int     n,
                     const bool    output_flag);
 
-files * read_data(int state[], int *n);
+files * read_data(unsigned int state[], int *n);
 
 double read_delta_z(files *Vp);
 
@@ -91,91 +90,56 @@ double K(double a,
          double lambda,
          int N_x);
 
+/**
+ * \brief Configure command-line options
+ */
+Options configure_options(int argc, char* argv[])
+{
+    Options opt;
+    std::string doc("Find exciton binding energy");
+
+    opt.add_option<double>      ("dcpermittivity,e", 13.18,  "Bulk relative permittivity");
+    opt.add_option<double>      ("betastart,w",       0.001, "Initial value for beta symmetry parameter search");
+    opt.add_option<double>      ("betastep,x",        0.05,  "Increment for beta symmetry parameter search");
+    opt.add_option<double>      ("betastop,y",       -1.0,   "Final value for beta symmetry parameter search");
+    opt.add_option<double>      ("lambdastart,s",    70.0,   "Initial value for Bohr radius search [Angstrom]");
+    opt.add_option<double>      ("lambdastep,t",      1.0,   "Increment for beta symmetry parameter search");
+    opt.add_option<double>      ("lambdastop,u",     -1.0,   "Final value for beta symmetry parameter search");
+    opt.add_option<double>      ("electronmass,m",    0.067, "Bulk electron effective mass (relative to free electron)");
+    opt.add_option<double>      ("holemass,n",        0.62,  "Bulk hole effective mass (relative to free electron)");
+    opt.add_option<unsigned int>("electronstate,a",   1,     "Index of electron state");
+    opt.add_option<unsigned int>("holestate,b",       1,     "Index of hole state");
+    opt.add_option<size_t>      ("nx,N",            100,     "Number of samples for x-integration");
+
+    opt.add_prog_specific_options_and_parse(argc, argv, doc);
+
+    return opt;
+}
+
 int main(int argc,char *argv[])
 {
+    const auto opt = configure_options(argc, argv);
+
+    const auto epsilon      = opt.get_option<double>("dcpermittivity") * eps0; // Permittivity [F/m]
+    const auto beta_start   = opt.get_option<double>("betastart");             // Initial beta
+    const auto beta_step    = opt.get_option<double>("betastep");              // beta increment
+    const auto beta_stop    = opt.get_option<double>("betastop");              // Final beta
+    const auto lambda_start = opt.get_option<double>("lambdastart") * 1e-10;   // Initial Bohr radius [m]
+    const auto lambda_step  = opt.get_option<double>("lambdastep")  * 1e-10;   // Bohr radius increment [m]
+    const auto lambda_stop  = opt.get_option<double>("lambdastop")  * 1e-10;   // Final Bohr radius [m]
+    const auto N_x          = opt.get_option<size_t>("nx");                    // Number of steps for x-integration
+
     // default values
-    double beta_start   = 0.001;      // initial beta
-    double beta_step    = 0.05;       // beta increment
-    double beta_stop    = -1.0;       // final beta
-    double epsilon      = 13.18*eps0; // relative permittivity of material
-    double lambda_start = 70e-10;     // initial Bohr radius
-    double lambda_step  = 1e-10;      // lambda increment
-    double lambda_stop  = -1e-10;     // final lambda
+    unsigned int state[2]; // electron and hole states
+    state[0] = opt.get_option<unsigned int>("electronstate");
+    state[1] = opt.get_option<unsigned int>("holestate");
 
-    int state[2]; // electron and hole states
-    state[0]=1;
-    state[1]=1;
-    
-    double m[2];  // e and h z-axis masses
-    m[0]=0.067*me;
-    m[1]=0.62*me;
+    // e and h z-axis masses
+    double m[2];
+    m[0] = opt.get_option<double>("electronmass") * me;
+    m[1] = opt.get_option<double>("holemass") * me;
 
-    bool output_flag=false; // if set, write data to screen
-    bool repeat_flag_lambda=true; // repeat variational lambda loop
-
-    // computational default values
-    int N_x = 100;                 /* number of points in x integration */
-
-    while((argc>1)&&(argv[1][0]=='-'))
-    {
-        switch(argv[1][1])
-        {
-            case 'a':
-                state[0]=atoi(argv[2]);
-                break;
-            case 'b':
-                state[1]=atoi(argv[2]);
-                break;
-            case 'e':
-                epsilon=atof(argv[2])*eps0;
-                break;
-            case 'm':
-                m[0]=atof(argv[2])*me;
-                break;
-            case 'n':
-                m[1]=atof(argv[2])*me;
-                break;
-            case 'N':
-                N_x=atoi(argv[2]);
-                break;
-            case 'o':
-                output_flag=true;
-                argv--;
-                argc++;
-                break;
-            case 's':
-                lambda_start=atof(argv[2])*1e-10;
-                break;
-            case 't':
-                lambda_step=atof(argv[2])*1e-10;
-                break;
-            case 'u':
-                lambda_stop=atof(argv[2])*1e-10;
-                break;
-            case 'w':
-                beta_start=atof(argv[2]);
-                break;
-            case 'x':
-                beta_step=atof(argv[2]);
-                break;
-            case 'y':
-                beta_stop=atof(argv[2]);
-                break;
-            default :
-                printf("Usage:  ebe [-a # electron eigenstate \033[1m1\033[0m][-b # hole eigenstate \033[1m1\033[0m]\n");
-                printf("            [-e relative permittivity \033[1m13.18\033[0m]\n");
-                printf("            [-m electron mass (\033[1m0.067\033[0mm0)][-n hole mass (\033[1m0.62\033[0mm0)]\n");
-                printf("            [-N # points in w integration \033[1m100\033[0m][-o output data to screen \033[1mfalse\033[0m]\n");
-                printf("            [-s starting lambda (\033[1m70\033[0mA)][-t lambda increment (\033[1m1\033[0mA)]\n");
-                printf("            [-u final lambda (\033[1m-1\033[0mA)]\n");
-                printf("            [-w starting beta \033[1m0.001\033[0m][-x beta increment \033[1m0.05\033[0m][-y final beta \033[1m-1\033[0m]\n");
-                exit(EXIT_FAILURE);
-        }
-        argv++;
-        argv++;
-        argc--;
-        argc--;
-    }
+    const auto output_flag = opt.get_verbose(); // if set, write data to screen
 
     int n; // length of potential file
     files *data_start = read_data(state,&n); // reads wave functions
@@ -204,6 +168,7 @@ int main(int argc,char *argv[])
 
     // TODO: lambda_0 is found iteratively. Check that this is a sensible initial value
     double lambda_0 = 0;            // lambda for Eb_min
+    bool repeat_flag_lambda=true; // repeat variational lambda loop
 
     do
     {
@@ -247,7 +212,7 @@ int main(int argc,char *argv[])
     free(pP_start);
 
     return EXIT_SUCCESS;
-} /* end main */
+}
 
 /**
  * \brief Find binding energy of 1S exciton
@@ -486,7 +451,7 @@ double read_delta_z(files *Vp)
  * \brief reads the potential into memory and returns the start
  *        address of this block of memory and the number of lines
  */
-files * read_data(int state[], int *n)
+files * read_data(unsigned int state[], int *n)
 {
  char	filenamee[9];	/* filename of electron wave function		*/
  char	filenameh[9];	/* filename of hole wave function		*/
