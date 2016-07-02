@@ -116,10 +116,8 @@ int main(int argc,char *argv[])
     const auto lambda_stop  = opt.get_option<double>("lambdastop")  * 1e-10;   // Final Bohr radius [m]
     const auto N_x          = opt.get_option<size_t>("nx");                    // Number of steps for x-integration
 
-    // default values
-    unsigned int state[2]; // electron and hole states
-    state[0] = opt.get_option<unsigned int>("electronstate");
-    state[1] = opt.get_option<unsigned int>("holestate");
+    const auto e_state = opt.get_option<unsigned int>("electronstate");
+    const auto h_state = opt.get_option<unsigned int>("holestate");
 
     // e and h z-axis masses
     double m[2];
@@ -131,8 +129,8 @@ int main(int argc,char *argv[])
     // Construct filenames for wavefunction input and read data
     // TODO: We've assumed for now that the spatial positions are identical in each file
     std::ostringstream psi_e_file, psi_h_file;
-    psi_e_file << "wf_e" << state[0] << ".r";
-    psi_h_file << "wf_h" << state[1] << ".r";
+    psi_e_file << "wf_e" << e_state << ".r";
+    psi_h_file << "wf_h" << h_state << ".r";
 
     std::valarray<double> z;     // Spatial location [m]
     std::valarray<double> psi_e; // Electron wave function [m^{-0.5}]
