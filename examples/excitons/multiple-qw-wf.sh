@@ -1,7 +1,7 @@
 #! /bin/sh
 set -e
 
-# Calculate exciton binding-energies in a multiple quantum well system
+# Calculate wavefunctions and overlap probability in a multiple quantum well system
 #
 # This script is part of the QWWAD software suite. Any use of this code
 # or its derivatives in published work must be accompanied by a citation
@@ -27,16 +27,12 @@ set -e
 # along with QWWAD.  If not, see <http://www.gnu.org/licenses/>.
 
 # Initialise files
-outfile=multiple-qw-EX0-lw.dat
-rm -f $outfile
+outfile_wf=multiple-qw-wf.dat
+outfile_p=multiple-qw-p-vs-a.dat
+rm -f $outfile_wf $outfile_p
 
-# Loop for different alloys
-for xb in 0.1 0.2; do
-
-# Loop for different well widths
-for LW in 20 30 40 50 60 70 80; do
-
-echo Calculating for alloy: $xb, width: $LW Angstrom...
+xb=0.1
+LW=50
 
 cat > s.r << EOF
 200 $xb 0.0
@@ -64,19 +60,36 @@ qwwad_ef_exciton --lambdastart 80    \
 	         --betastart   0.001 \
 		 --betastep    0.01
 
-EX0=`awk '{print $1}' EX0.r`
+# Output wavefunction data to file
+awk '{print $1*1e10, $2}' wf_e1.r >> $outfile_wf
+printf "\n" >> $outfile_wf
+awk '{print $1*1e10, $2}' wf_h1.r >> $outfile_wf
+printf "\n" >> $outfile_wf
+awk '{print $1*1e10, $2*70000}' x.r >> $outfile_wf
 
-echo $LW $EX0 >> $outfile
-done
-
-printf "\n" >> $outfile
-done
+mv p.r $outfile_p
 
 cat << EOF
-Results have been written to $outfile in the format:
+Results have been written to $outfile_wf and $outfile_p.
 
-  COLUMN 1 - Well and barrier width [Angstrom]
-  COLUMN 2 - Binding energy [meV]
+$outfile_wf contains the wavefunctions and barrier potential
+in the format:
+
+  COLUMN 1 - Spatial location [Angstrom]
+  COLUMN 2 - Wavefunction or barrier potential
+
+  The file contains 3 data sets, each set being separated
+  by a blank line, representing either the wavefunction or
+  barrier potential in arbitrary units:
+
+  SET 1 - Electron wavefunction
+  SET 2 - Hole wavefunction
+  SET 3 - Barrier potential
+
+$outfile_p contains the separation probability in the format:
+
+  COLUMN 1 - Electron/hole separation [Angstrom]
+  COLUMN 2 - Probability [1/Angstrom]
 
 This script is part of the QWWAD software suite.
 
@@ -88,4 +101,4 @@ Report bugs to https://bugs.launchpad.net/qwwad
 EOF
 
 # Clean up workspace
-rm -f *.r
+#rm -f *.r

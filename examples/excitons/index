@@ -9,8 +9,8 @@ Fig 6.7:   finite-well.sh     => finite-well-EX0-lw.dat
 Fig 6.8:   finite-well.sh     => finite-well-lambda-lw.dat
 Fig 6.9a:  finite-well.sh     => finite-well-beta-lw.dat
 Fig 6.9b:  finite-well.sh     => finite-well-zeta-lw.dat
-Fig 6.10:
-Fig 6.11:
+Fig 6.10:  multiple-qw-wf.sh  => multiple-qw-wf.dat
+Fig 6.11:  multiple-qw-wf.sh  => multiple-qw-p-vs-a.dat
 Fig 6.12:  multiple-qw.sh     => multiple-qw-wf.dat
 Fig 6.13:
 Fig 6.14a:
