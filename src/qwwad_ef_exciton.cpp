@@ -93,180 +93,178 @@ double K(double a,
 
 int main(int argc,char *argv[])
 {
-void   input();
+    double beta_start=0.001; // initial beta
+    double beta_step;           /* beta increment                    */
+    double beta_stop;           /* final beta                        */
+    double beta_0;              /* beta for Eb_min                   */
+    double delta_a;             /* separation of adjacent a values   */
+    double delta_z;             /* z separation of input potentials  */
+    double Eb_min;              /* minimum Eb for lambda variation   */
+    double epsilon;             /* relative permittivity of material */
+    double lambda;              /* Bohr radius                       */
+    double lambda_start;        /* initial Bohr radius               */
+    double lambda_step;         /* lambda increment                  */
+    double lambda_stop;         /* final lambda                      */
 
-double beta_start;          /* initial beta                      */
-double beta_step;           /* beta increment                    */
-double beta_stop;           /* final beta                        */
-double beta_0;              /* beta for Eb_min                   */
-double delta_a;             /* separation of adjacent a values   */
-double delta_z;             /* z separation of input potentials  */
-double Eb_min;              /* minimum Eb for lambda variation   */
-double epsilon;             /* relative permittivity of material */
-double lambda;              /* Bohr radius                       */
-double lambda_start;        /* initial Bohr radius               */
-double lambda_step;         /* lambda increment                  */
-double lambda_stop;         /* final lambda                      */
+    /* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
+    double lambda_0=0;            /* lambda for Eb_min                 */
+    double m[2];		    /* e and h z-axis masses		 */
+    double m_xy[2];		    /* e and h x-y plane masses		 */
+    double mu_xy;		    /* exciton reduced mass in x-y plane */
+    int    n;		    /* length of potential file		 */
+    int    N_x;                 /* number of points in x integration */
+    int    state[2];	    /* electron and hole states          */
+    bool   output_flag;        /* if set, write data to screen      */
+    bool   repeat_flag_lambda; /* repeat variational lambda loop    */
+    FILE   *FABC;               /* file pointer to ABC.r             */
+    FILE   *Fbeta;              /* file pointer to beta.r            */
+    FILE   *FEX0l;              /* file pointer to EX0-lambda.r      */
+    FILE   *FEX0;               /* file pointer to EX0.r             */
+    files  *data_start;    	    /* start address of wavefunction	 */
+    probs  *pP_start;           /* start address of probabilities    */
 
-/* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
-double lambda_0=0;            /* lambda for Eb_min                 */
-double m[2];		    /* e and h z-axis masses		 */
-double m_xy[2];		    /* e and h x-y plane masses		 */
-double mu_xy;		    /* exciton reduced mass in x-y plane */
-int    n;		    /* length of potential file		 */
-int    N_x;                 /* number of points in x integration */
-int    state[2];	    /* electron and hole states          */
-bool   output_flag;        /* if set, write data to screen      */
-bool   repeat_flag_lambda; /* repeat variational lambda loop    */
-FILE   *FABC;               /* file pointer to ABC.r             */
-FILE   *Fbeta;              /* file pointer to beta.r            */
-FILE   *FEX0l;              /* file pointer to EX0-lambda.r      */
-FILE   *FEX0;               /* file pointer to EX0.r             */
-files  *data_start;    	    /* start address of wavefunction	 */
-probs  *pP_start;           /* start address of probabilities    */
+    /* default values */
+    state[0]=1;
+    state[1]=1;
+    beta_start=0.001;
+    beta_step=0.05;
+    beta_stop=-1.0;
+    epsilon=13.18*eps0;
+    lambda_start=70e-10;
+    lambda_step=1e-10;
+    lambda_stop=-1e-10;
+    m[0]=0.067*me;
+    m[1]=0.62*me;
+    output_flag=false;
+    repeat_flag_lambda=true;
 
-/* default values */
-state[0]=1;
-state[1]=1;
-beta_start=0.001;
-beta_step=0.05;
-beta_stop=-1.0;
-epsilon=13.18*eps0;
-lambda_start=70e-10;
-lambda_step=1e-10;
-lambda_stop=-1e-10;
-m[0]=0.067*me;
-m[1]=0.62*me;
-output_flag=false;
-repeat_flag_lambda=true;
+    /* computational default values */
 
-/* computational default values */
+    N_x=100;
 
-N_x=100;
+    while((argc>1)&&(argv[1][0]=='-'))
+    {
+        switch(argv[1][1])
+        {
+            case 'a':
+                state[0]=atoi(argv[2]);
+                break;
+            case 'b':
+                state[1]=atoi(argv[2]);
+                break;
+            case 'e':
+                epsilon=atof(argv[2])*eps0;
+                break;
+            case 'm':
+                m[0]=atof(argv[2])*me;
+                break;
+            case 'n':
+                m[1]=atof(argv[2])*me;
+                break;
+            case 'N':
+                N_x=atoi(argv[2]);
+                break;
+            case 'o':
+                output_flag=true;
+                argv--;
+                argc++;
+                break;
+            case 's':
+                lambda_start=atof(argv[2])*1e-10;
+                break;
+            case 't':
+                lambda_step=atof(argv[2])*1e-10;
+                break;
+            case 'u':
+                lambda_stop=atof(argv[2])*1e-10;
+                break;
+            case 'w':
+                beta_start=atof(argv[2]);
+                break;
+            case 'x':
+                beta_step=atof(argv[2]);
+                break;
+            case 'y':
+                beta_stop=atof(argv[2]);
+                break;
+            default :
+                printf("Usage:  ebe [-a # electron eigenstate \033[1m1\033[0m][-b # hole eigenstate \033[1m1\033[0m]\n");
+                printf("            [-e relative permittivity \033[1m13.18\033[0m]\n");
+                printf("            [-m electron mass (\033[1m0.067\033[0mm0)][-n hole mass (\033[1m0.62\033[0mm0)]\n");
+                printf("            [-N # points in w integration \033[1m100\033[0m][-o output data to screen \033[1mfalse\033[0m]\n");
+                printf("            [-s starting lambda (\033[1m70\033[0mA)][-t lambda increment (\033[1m1\033[0mA)]\n");
+                printf("            [-u final lambda (\033[1m-1\033[0mA)]\n");
+                printf("            [-w starting beta \033[1m0.001\033[0m][-x beta increment \033[1m0.05\033[0m][-y final beta \033[1m-1\033[0m]\n");
+                exit(EXIT_FAILURE);
+        }
+        argv++;
+        argv++;
+        argc--;
+        argc--;
+    }
 
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'a':
-	   state[0]=atoi(argv[2]);
-	   break;
-  case 'b':
-	   state[1]=atoi(argv[2]);
-	   break;
-  case 'e':
-           epsilon=atof(argv[2])*eps0;
-           break;
-  case 'm':
-           m[0]=atof(argv[2])*me;
-           break;
-  case 'n':
-           m[1]=atof(argv[2])*me;
-           break;
-  case 'N':
-	   N_x=atoi(argv[2]);
-	   break;
-  case 'o':
-	   output_flag=true;
- 	   argv--;
-	   argc++;
-           break;
-  case 's':
-           lambda_start=atof(argv[2])*1e-10;
-           break;
-  case 't':
-           lambda_step=atof(argv[2])*1e-10;
-           break;
-  case 'u':
-           lambda_stop=atof(argv[2])*1e-10;
-           break;
-  case 'w':
-           beta_start=atof(argv[2]);
-           break;
-  case 'x':
-           beta_step=atof(argv[2]);
-           break;
-  case 'y':
-           beta_stop=atof(argv[2]);
-           break;
-  default :
-           printf("Usage:  ebe [-a # electron eigenstate \033[1m1\033[0m][-b # hole eigenstate \033[1m1\033[0m]\n");
-           printf("            [-e relative permittivity \033[1m13.18\033[0m]\n");
-           printf("            [-m electron mass (\033[1m0.067\033[0mm0)][-n hole mass (\033[1m0.62\033[0mm0)]\n");
-           printf("            [-N # points in w integration \033[1m100\033[0m][-o output data to screen \033[1mfalse\033[0m]\n");
-           printf("            [-s starting lambda (\033[1m70\033[0mA)][-t lambda increment (\033[1m1\033[0mA)]\n");
-           printf("            [-u final lambda (\033[1m-1\033[0mA)]\n");
-           printf("            [-w starting beta \033[1m0.001\033[0m][-x beta increment \033[1m0.05\033[0m][-y final beta \033[1m-1\033[0m]\n");
-           exit(EXIT_FAILURE);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
+    data_start=read_data(state,&n);	/* reads wave functions */
 
-data_start=read_data(state,&n);	/* reads wave functions */
+    delta_z=read_delta_z(data_start);
+    delta_a=delta_z;
+    Eb_min=1*e;			/* i.e. 1eV ! */
+    m_xy[0]=m[0];	m_xy[1]=m[1];	/* assumes isotropic mass for now	*/
+    mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
 
-delta_z=read_delta_z(data_start);
-delta_a=delta_z;
-Eb_min=1*e;			/* i.e. 1eV ! */
-m_xy[0]=m[0];	m_xy[1]=m[1];	/* assumes isotropic mass for now	*/
-mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
+    FABC=fopen("ABC.r","w");
+    Fbeta=fopen("beta-lambda.r","w");
+    FEX0l=fopen("EX0-lambda.r","w");
 
-FABC=fopen("ABC.r","w");
-Fbeta=fopen("beta-lambda.r","w");
-FEX0l=fopen("EX0-lambda.r","w");
+    pP_start=pP_calc(delta_z,n,data_start); /* calculates p and P's, returns start
+                                               address of structure               */
 
-pP_start=pP_calc(delta_z,n,data_start); /* calculates p and P's, returns start
-                                           address of structure               */
- 
-if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
+    if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
 
-lambda=lambda_start;
-beta_0 = beta_start;
+    lambda=lambda_start;
+    beta_0 = beta_start;
 
-do
-{
-    /* Find minimum binding energy for beta variation */
-    double Eb_min_beta = e; /* Start with 1 eV as a huge initial estimate */
-    bool   repeat_flag_beta = true;   /* repeat variational beta loop flag */
-    double beta=beta_start;
-    double beta_0_lambda = beta; /* Value of beta that gives the minimum binding energy */
-
-    /* Loop through beta values and store the minimum binding energy as
-     * Eb_min_beta.  The corresponding beta value is stored as beta_0_lambda */ 
     do
     {
-        /* Find exciton binding energy (<0=bound) */
-        const double Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag);
+        /* Find minimum binding energy for beta variation */
+        double Eb_min_beta = e; /* Start with 1 eV as a huge initial estimate */
+        bool   repeat_flag_beta = true;   /* repeat variational beta loop flag */
+        double beta=beta_start;
+        double beta_0_lambda = beta; /* Value of beta that gives the minimum binding energy */
 
-        repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
+        /* Loop through beta values and store the minimum binding energy as
+         * Eb_min_beta.  The corresponding beta value is stored as beta_0_lambda */ 
+        do
+        {
+            /* Find exciton binding energy (<0=bound) */
+            const double Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag);
 
-        beta+=beta_step;
-    }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
+            repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
-    fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
-    fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
+            beta+=beta_step;
+        }while((repeat_flag_beta&&(beta_stop<0))||(beta<beta_stop));
 
-    repeat_flag_lambda=repeat_lambda(&beta_0,beta_0_lambda,Eb_min_beta,&Eb_min,
-            lambda,&lambda_0);
+        fprintf(FEX0l,"%lf %lf\n",lambda/1e-10,Eb_min_beta/(1e-3*e));
+        fprintf(Fbeta,"%lf %lf\n",lambda/1e-10,beta_0_lambda);
 
-    lambda+=lambda_step;   /* increment Bohr radius */
-}while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
-  
-/* Write out final data to file	*/
-FEX0=fopen("EX0.r","w");
-fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
-fclose(FEX0);
+        repeat_flag_lambda=repeat_lambda(&beta_0,beta_0_lambda,Eb_min_beta,&Eb_min,
+                lambda,&lambda_0);
 
-fclose(FABC);
-fclose(Fbeta);
-fclose(FEX0l);
+        lambda+=lambda_step;   /* increment Bohr radius */
+    }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
 
-free(data_start);
-free(pP_start);
+    /* Write out final data to file	*/
+    FEX0=fopen("EX0.r","w");
+    fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
+    fclose(FEX0);
 
-return EXIT_SUCCESS;
+    fclose(FABC);
+    fclose(Fbeta);
+    fclose(FEX0l);
+
+    free(data_start);
+    free(pP_start);
+
+    return EXIT_SUCCESS;
 } /* end main */
 
 /**
