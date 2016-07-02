@@ -610,7 +610,8 @@ exexcdata_DATA = $(exexcsrcdir)/index              \
 		 $(exexcsrcdir)/infinite-well.sh   \
 		 $(exexcsrcdir)/lambda-beta-map.sh \
 		 $(exexcsrcdir)/p-vs-a.sh          \
-		 $(exexcsrcdir)/finite-well.sh
+		 $(exexcsrcdir)/finite-well.sh     \
+		 $(exexcsrcdir)/multiple-qw.sh
 
 exqwddatadir = $(exdatadir)/simple-wires-and-dots
 exqwdsrcdir  = examples/simple-wires-and-dots
