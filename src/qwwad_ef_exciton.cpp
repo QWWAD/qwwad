@@ -93,54 +93,28 @@ double K(double a,
 
 int main(int argc,char *argv[])
 {
-    double beta_start=0.001; // initial beta
-    double beta_step;           /* beta increment                    */
-    double beta_stop;           /* final beta                        */
-    double beta_0;              /* beta for Eb_min                   */
-    double delta_a;             /* separation of adjacent a values   */
-    double delta_z;             /* z separation of input potentials  */
-    double Eb_min;              /* minimum Eb for lambda variation   */
-    double epsilon;             /* relative permittivity of material */
-    double lambda;              /* Bohr radius                       */
-    double lambda_start;        /* initial Bohr radius               */
-    double lambda_step;         /* lambda increment                  */
-    double lambda_stop;         /* final lambda                      */
+    // default values
+    double beta_start   = 0.001;      // initial beta
+    double beta_step    = 0.05;       // beta increment
+    double beta_stop    = -1.0;       // final beta
+    double epsilon      = 13.18*eps0; // relative permittivity of material
+    double lambda_start = 70e-10;     // initial Bohr radius
+    double lambda_step  = 1e-10;      // lambda increment
+    double lambda_stop  = -1e-10;     // final lambda
 
-    /* TODO: lambda_0 is found iteratively. Check that this is a sensible initial value */
-    double lambda_0=0;            /* lambda for Eb_min                 */
-    double m[2];		    /* e and h z-axis masses		 */
-    double m_xy[2];		    /* e and h x-y plane masses		 */
-    double mu_xy;		    /* exciton reduced mass in x-y plane */
-    int    n;		    /* length of potential file		 */
-    int    N_x;                 /* number of points in x integration */
-    int    state[2];	    /* electron and hole states          */
-    bool   output_flag;        /* if set, write data to screen      */
-    bool   repeat_flag_lambda; /* repeat variational lambda loop    */
-    FILE   *FABC;               /* file pointer to ABC.r             */
-    FILE   *Fbeta;              /* file pointer to beta.r            */
-    FILE   *FEX0l;              /* file pointer to EX0-lambda.r      */
-    FILE   *FEX0;               /* file pointer to EX0.r             */
-    files  *data_start;    	    /* start address of wavefunction	 */
-    probs  *pP_start;           /* start address of probabilities    */
-
-    /* default values */
+    int state[2]; // electron and hole states
     state[0]=1;
     state[1]=1;
-    beta_start=0.001;
-    beta_step=0.05;
-    beta_stop=-1.0;
-    epsilon=13.18*eps0;
-    lambda_start=70e-10;
-    lambda_step=1e-10;
-    lambda_stop=-1e-10;
+    
+    double m[2];  // e and h z-axis masses
     m[0]=0.067*me;
     m[1]=0.62*me;
-    output_flag=false;
-    repeat_flag_lambda=true;
 
-    /* computational default values */
+    bool output_flag=false; // if set, write data to screen
+    bool repeat_flag_lambda=true; // repeat variational lambda loop
 
-    N_x=100;
+    // computational default values
+    int N_x = 100;                 /* number of points in x integration */
 
     while((argc>1)&&(argv[1][0]=='-'))
     {
@@ -203,25 +177,33 @@ int main(int argc,char *argv[])
         argc--;
     }
 
-    data_start=read_data(state,&n);	/* reads wave functions */
+    int n; // length of potential file
+    files *data_start = read_data(state,&n); // reads wave functions
 
-    delta_z=read_delta_z(data_start);
-    delta_a=delta_z;
-    Eb_min=1*e;			/* i.e. 1eV ! */
-    m_xy[0]=m[0];	m_xy[1]=m[1];	/* assumes isotropic mass for now	*/
-    mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
+    // z separation of input potentials 
+    double delta_z = read_delta_z(data_start);
+    double delta_a = delta_z; // separation of adjacent a values
+    double Eb_min  = e;       // minimum Eb for lambda variation, i.e., 1 eV !
 
-    FABC=fopen("ABC.r","w");
-    Fbeta=fopen("beta-lambda.r","w");
-    FEX0l=fopen("EX0-lambda.r","w");
+    double m_xy[2]; // e and h x-y plane masses
+    m_xy[0]=m[0];	m_xy[1]=m[1];	// assumes isotropic mass for now
 
-    pP_start=pP_calc(delta_z,n,data_start); /* calculates p and P's, returns start
-                                               address of structure               */
+    const double mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
+
+    FILE *FABC  = fopen("ABC.r","w");
+    FILE *Fbeta = fopen("beta-lambda.r","w");
+    FILE *FEX0l=fopen("EX0-lambda.r","w");
+
+    // calculates p and P's, returns start address of structure
+    probs *pP_start=pP_calc(delta_z,n,data_start);
 
     if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
 
-    lambda=lambda_start;
-    beta_0 = beta_start;
+    double lambda=lambda_start; // Bohr radius
+    double beta_0 = beta_start; // beta for Eb_min
+
+    // TODO: lambda_0 is found iteratively. Check that this is a sensible initial value
+    double lambda_0 = 0;            // lambda for Eb_min
 
     do
     {
@@ -253,7 +235,7 @@ int main(int argc,char *argv[])
     }while((repeat_flag_lambda&&(lambda_stop<0))||(lambda<lambda_stop));
 
     /* Write out final data to file	*/
-    FEX0=fopen("EX0.r","w");
+    FILE *FEX0=fopen("EX0.r","w");
     fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
     fclose(FEX0);
 
