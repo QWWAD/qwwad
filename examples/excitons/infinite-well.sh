@@ -16,7 +16,7 @@ do
 	cat Ee.r >> Ee-lw.r
 	cat Eh.r >> Eh-lw.r
 
-	ebe -e 10.6 -m 0.096 -n 0.6 -s 30 	   # start variational calculation
+	qwwad_ef_exciton -e 10.6 -m 0.096 -n 0.6 -s 30 	   # start variational calculation
 	printf "%f\t" $QWWAD_WELLWIDTH >> EX0-lw.r # write well width to file
 	cat EX0.r >> EX0-lw.r			   # send data to file
 done

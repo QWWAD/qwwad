@@ -27,46 +27,48 @@ noinst_HEADERS = src/ef-helpers.h    \
 #		 src/ppff.h
 
 bin_PROGRAMS =  \
-		qwwad_ef_dispersion    \
-		qwwad_ef_infinite_well \
-		qwwad_ef_plot          \
-		qwwad_ef_square_well   \
+		qwwad_charge_density       \
+		qwwad_density_of_states    \
+		qwwad_diffuse              \
+		qwwad_ef_band_edge         \
+		qwwad_ef_dispersion        \
+		qwwad_ef_donor_generic     \
+		qwwad_ef_donor_specific    \
+		qwwad_ef_exciton           \
+		qwwad_ef_generic           \
+		qwwad_ef_infinite_well     \
+		qwwad_ef_parabolic_well    \
+		qwwad_ef_plot              \
+		qwwad_ef_poeschl_teller    \
+		qwwad_ef_square_well       \
+		qwwad_ef_superlattice      \
+	       	qwwad_ef_zeeman            \
+	       	qwwad_fermi_distribution   \
+		qwwad_mesh                 \
+		qwwad_poisson              \
+		qwwad_population_init      \
+		qwwad_spin_flip_raman      \
+	       	qwwad_tx_double_barrier    \
+		qwwad_tx_double_barrier_iv \
+	       	qwwad_tx_single_barrier    \
+		qwwad_uncertainty          \
 		ado                \
-		qwwad_charge_density \
 		critical-thickness \
                 csss    \
 		cszb    \
-		qwwad_population_init \
-		qwwad_density_of_states     \
-		ebe     \
 		efcwire \
 		efcwwf  \
 	       	effv    \
 		efiwire \
-		qwwad_ef_superlattice  \
-	       	qwwad_ef_zeeman   \
-		qwwad_ef_parabolic_well   \
 		efsdot  \
 		efsdwf  \
-		qwwad_ef_generic    \
 	       	efsx    \
-		qwwad_ef_band_edge    \
-		qwwad_mesh \
-		qwwad_poisson \
-		qwwad_diffuse     \
-		qwwad_uncertainty    \
 		ifr     \
 		imp     \
-		qwwad_tx_double_barrier_iv    \
 		matlib-query \
-		qwwad_ef_poeschl_teller     \
-		qwwad_ef_donor_generic      \
-		qwwad_ef_donor_specific     \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
-	       	qwwad_fermi_distribution     \
-		qwwad_spin_flip_raman     \
 		slk     \
 		specheat \
 		sradp   \
@@ -74,9 +76,7 @@ bin_PROGRAMS =  \
 		srelo   \
 	       	srrad   \
 		thermal1d \
-		thermalrc \
-	       	qwwad_tx_double_barrier     \
-	       	qwwad_tx_single_barrier
+		thermalrc
 
 #		ppcd    \
 #		ppee    \
@@ -206,7 +206,8 @@ qwwad_ef_dispersion_LDADD   = libqwwad.la
 qwwad_density_of_states_SOURCES  = src/qwwad_density_of_states.cpp
 qwwad_density_of_states_LDADD    = libqwwad.la
 
-ebe_SOURCES = src/ebe.c
+qwwad_ef_exciton_SOURCES = src/qwwad_ef_exciton.cpp
+qwwad_ef_exciton_LDADD   = libqwwad.la
 
 efcwire_SOURCES = src/efcwire.c
 

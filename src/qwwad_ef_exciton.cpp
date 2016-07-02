@@ -1,10 +1,8 @@
-/*==================================================================
-                                 ebe
-  ==================================================================*/
-
-/* This program calculates the exciton binding energy from 
-   user supplied uncorrelated (or correlated) wavefunctions,
-   usually read in from the files wf_pX.r.
+/**
+ * \file  qwwad_ef_exciton.cpp
+ * \brief Find exciton binding energies
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
 
    Input files:
      wf_eX.r      electron wavefunction versus z  
@@ -16,18 +14,18 @@
      EX0.r         minimum binding energy, corresponding lambda and beta
      EX0-lambda.r  minimum binding energy versus lambda
      p.r           uncorrelated probaility of e-h separation
+   */
 
-   Paul Harrison, March 1994                                  */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
 #include "struct.h"
 #include "maths.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 typedef
 struct	{
@@ -66,12 +64,35 @@ static double Eb_1S(files        *fdata,
                     const int     n,
                     const bool    output_flag);
 
+files * read_data(int state[], int *n);
+
+double read_delta_z(files *Vp);
+
+probs * pP_calc(double  delta_a,
+                int     n,
+                files  *data_start);
+
+double F(double a,
+         double beta,
+         double lambda);
+
+double G(double a,
+         double beta,
+         double lambda,
+         int    N_x);
+
+double J(double a,
+         double beta,
+         double lambda,
+         int    N_x);
+
+double K(double a,
+         double beta,
+         double lambda,
+         int N_x);
+
 int main(int argc,char *argv[])
 {
-double read_delta_z();
-files  *read_data();        /* reads data from external files    */
-probs  *pP_calc();          /* calculates p(a), Pm(a) and
-                                 Pmu(a)                          */
 void   input();
 
 double beta_start;          /* initial beta                      */
@@ -268,10 +289,6 @@ static double Eb_1S(files        *fdata,
                     const int     n,
                     const bool    output_flag)
 {
- double F();                 /* F(a)---see notes!                 */
- double G();                 /* G(a)---see notes!                 */
- double J();                 /* J(a)---see notes!                 */
- double K();                 /* K(a)---see notes!                 */
  double A  = 0;              /* {\cal A}, see notes!              */
  double B  = 0;              /* {\cal B}, see notes!              */
  double Ct = 0;              /* kinetic energy component of C     */
@@ -360,14 +377,12 @@ static bool repeat_lambda(double       *beta_0,
     return flag;
 }
 
-double 
-F(a,beta,lambda)
-
-/* This function returns the value of F(a) */
-
-double a;
-double beta;
-double lambda;
+/**
+ * \brief returns the value of F(a)
+ */
+double F(double a,
+         double beta,
+         double lambda)
 {
  double f;
  f=2*pi*lambda*(sqrt(1-gsl_pow_2(beta))*a/2+lambda/4)*
@@ -376,20 +391,14 @@ double lambda;
  return(f);
 }
 
-
-
-double 
-G(a,beta,lambda,N_x)
-
 /* This function returns the value of G(a),
    to overcome the problem of divergence when
    x=0, the integration is performed using a
    midpoint sum, the strip width being delta_x */
-
-double a;
-double beta;
-double lambda;
-int    N_x;
+double G(double a,
+         double beta,
+         double lambda,
+         int    N_x)
 {
  double delta_x;
  double g;
@@ -409,20 +418,16 @@ int    N_x;
  return(g);
 }
 
-
-
-double 
-J(a,beta,lambda,N_x)
-
-/* This function returns the value of J(a),
-   to overcome the problem of divergence when
-   x=0, the integration is performed using a
-   midpoint sum, the strip width being delta_x */
-
-double a;
-double beta;
-double lambda;
-int    N_x;
+/**
+ * \brief returns the value of J(a)
+ *
+ * \details To overcome the problem of divergence when x=0, the integration is performed
+ *          using a midpoint sum, the strip width being delta_x
+ */
+double J(double a,
+         double beta,
+         double lambda,
+         int    N_x)
 {
  double delta_x;
  double j13;     /* J1+J3---see notes! */
@@ -450,20 +455,14 @@ int    N_x;
  return(j13+j24);
 }
 
-
-
-double 
-K(a,beta,lambda,N_x)
-
-/* This function returns the value of K(a),
-   to overcome the problem of divergence when
-   x=0, the integration is performed using a
-   midpoint sum, the strip width being delta_x */
-
-double a;
-double beta;
-double lambda;
-int N_x;
+/**
+ * \brief returns the value of K(a), to overcome the problem of divergence when
+ *        x=0, the integration is performed using a midpoint sum, the strip width being delta_x
+ */
+double K(double a,
+         double beta,
+         double lambda,
+         int N_x)
 {
  double delta_x;      /* step length of integration */
  double k;    
@@ -488,15 +487,12 @@ int N_x;
  return(k);
 }
 
-
-double 
-read_delta_z(Vp)
-
-/* This function calculates the separation along the z (growth) 
-   direction of the user supplied wave functions, assumes regular
-   one-dimensional mesh                                        */
-
-files *Vp;
+/**
+ * \brief Calculates the separation along the z (growth)
+ *        direction of the user supplied wave functions, assumes regular
+ *        one-dimensional mesh
+ */
+double read_delta_z(files *Vp)
 {
  double z[2];           /* displacement along growth direction     */
 
@@ -506,19 +502,11 @@ files *Vp;
  return(z[1]-z[0]);
 }
 
-
-
-
-
-files
-*read_data(state,n)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-int	state[];
-int	*n;
-
+/**
+ * \brief reads the potential into memory and returns the start
+ *        address of this block of memory and the number of lines
+ */
+files * read_data(int state[], int *n)
 {
  char	filenamee[9];	/* filename of electron wave function		*/
  char	filenameh[9];	/* filename of hole wave function		*/
@@ -574,18 +562,16 @@ int	*n;
 
 }
 
-
-
-probs
-*pP_calc(delta_a,n,data_start)
-
-/* This function calculates the probabilities known as p(a), Pm(a)
-   and Pmu(a) and returns the start address of the structure */
-
-double  delta_a;        /* distance between adjacent points        */
-int	n;              /* number of lines in wavefunction file    */
-files   *data_start;    /* pointer to beginning of wavefunctions   */
-
+/**
+ * \brief Calculate probabilities known as p(a), Pm(a) and Pmu(a)
+ *
+ * \param[in] delta_a    distance between adjacent points
+ * \param[in] n          number of lines in wavefunction file
+ * \param[in] data_start pointer to beginning of wavefunctions
+ */
+probs * pP_calc(double  delta_a,
+                int     n,
+                files  *data_start)
 {
  double temp_sum;
  int    i;
@@ -637,4 +623,4 @@ files   *data_start;    /* pointer to beginning of wavefunctions   */
  /*printf("temp_sum=%20.17le\n",temp_sum);*/
  return(pP_start);
 }
-
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
