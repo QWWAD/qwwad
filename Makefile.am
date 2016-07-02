@@ -608,7 +608,8 @@ exexcsrcdir = examples/excitons
 
 exexcdata_DATA = $(exexcsrcdir)/index              \
 		 $(exexcsrcdir)/infinite-well.sh   \
-		 $(exexcsrcdir)/lambda-beta-map.sh
+		 $(exexcsrcdir)/lambda-beta-map.sh \
+		 $(exexcsrcdir)/p-vs-a.sh
 
 exqwddatadir = $(exdatadir)/simple-wires-and-dots
 exqwdsrcdir  = examples/simple-wires-and-dots

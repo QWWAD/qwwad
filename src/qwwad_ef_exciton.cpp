@@ -137,8 +137,12 @@ int main(int argc,char *argv[])
 //    FILE *Fbeta = fopen("beta-lambda.r","w");
 //    FILE *FEX0l=fopen("EX0-lambda.r","w");
 
-    // calculates p and P's, returns start address of structure
-    const auto pP_start = pP_calc(z, psi_e, psi_h);
+    // calculate probabilities
+    const auto p = pP_calc(z, psi_e, psi_h);
+
+    // Output table of probabilities
+    const std::valarray<double> p_Angstrom = p*1e-10;
+    write_table("p.r", z, p_Angstrom);
 
     if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
 
@@ -167,7 +171,7 @@ int main(int argc,char *argv[])
         do
         {
             // Find exciton binding energy (<0=bound)
-            const auto Eb = Eb_1S(z, psi_e, psi_h, pP_start, beta, epsilon, lambda, m, mu_xy, N_x, output_flag);
+            const auto Eb = Eb_1S(z, psi_e, psi_h, p, beta, epsilon, lambda, m, mu_xy, N_x, output_flag);
 
             repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
@@ -438,8 +442,6 @@ std::valarray<double> pP_calc(const std::valarray<double> &z,
                      +psi_h[iz+ia]*psi_h[iz+ia]*psi_e[iz]*psi_e[iz]) * dz;
         }
     }
-
-    write_table("p.r", z, p);
 
     return p;
 }
