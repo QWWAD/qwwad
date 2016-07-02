@@ -18,25 +18,16 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <valarray>
+
 #include <gsl/gsl_math.h>
 
 #include "qwwad/constants.h"
+#include "qwwad/file-io.h"
 #include "qwwad/options.h"
 
 using namespace QWWAD;
 using namespace constants;
-
-typedef
-struct	{
- double	z;		    /* z value of files    		  */
- double	wf[2];		    /* electron and hole values   	  */
-} files;
- 
-typedef
-struct  {
- double a;                  /* electron and hole separation       */
- double p;                  /* probability of separation by a     */
-} probs;
 
 static bool repeat_beta(const double  beta,
                         double       *beta_0_lambda,
@@ -50,26 +41,22 @@ static bool repeat_lambda(double       *beta_0,
                           const double  lambda,
                           double       *lambda_0);
 
-static double Eb_1S(files        *fdata,
-                    probs        *ppP,
+static double Eb_1S(const std::valarray<double> z,
+                    const std::valarray<double> psi_e,
+                    const std::valarray<double> psi_h,
+                    const std::valarray<double> p,
                     FILE         *FABC,
                     const double  beta,
-                    const double  delta_a,
                     const double  epsilon,
                     const double  lambda,
                     const double  m[],
                     const double  mu_xy,
                     const int     N_x,
-                    const int     n,
                     const bool    output_flag);
 
-files * read_data(unsigned int state[], int *n);
-
-double read_delta_z(files *Vp);
-
-probs * pP_calc(double  delta_a,
-                int     n,
-                files  *data_start);
+std::valarray<double> pP_calc(const std::valarray<double> &z,
+                              const std::valarray<double> &psi_e,
+                              const std::valarray<double> &psi_h);
 
 double F(double a,
          double beta,
@@ -141,13 +128,19 @@ int main(int argc,char *argv[])
 
     const auto output_flag = opt.get_verbose(); // if set, write data to screen
 
-    int n; // length of potential file
-    files *data_start = read_data(state,&n); // reads wave functions
+    // Construct filenames for wavefunction input and read data
+    // TODO: We've assumed for now that the spatial positions are identical in each file
+    std::ostringstream psi_e_file, psi_h_file;
+    psi_e_file << "wf_e" << state[0] << ".r";
+    psi_h_file << "wf_h" << state[1] << ".r";
 
-    // z separation of input potentials 
-    double delta_z = read_delta_z(data_start);
-    double delta_a = delta_z; // separation of adjacent a values
-    double Eb_min  = e;       // minimum Eb for lambda variation, i.e., 1 eV !
+    std::valarray<double> z;     // Spatial location [m]
+    std::valarray<double> psi_e; // Electron wave function [m^{-0.5}]
+    std::valarray<double> psi_h; // Hole wave function [m^{-0.5}]
+    read_table(psi_e_file.str(), z, psi_e);
+    read_table(psi_h_file.str(), z, psi_h);
+
+    double Eb_min = e;       // minimum Eb for lambda variation, i.e., 1 eV !
 
     double m_xy[2]; // e and h x-y plane masses
     m_xy[0]=m[0];	m_xy[1]=m[1];	// assumes isotropic mass for now
@@ -159,7 +152,7 @@ int main(int argc,char *argv[])
     FILE *FEX0l=fopen("EX0-lambda.r","w");
 
     // calculates p and P's, returns start address of structure
-    probs *pP_start=pP_calc(delta_z,n,data_start);
+    const auto pP_start = pP_calc(z, psi_e, psi_h);
 
     if(output_flag)printf("  l/A   beta   Eb/meV  T/meV  V/meV   OS/arb.\n");
 
@@ -183,7 +176,7 @@ int main(int argc,char *argv[])
         do
         {
             /* Find exciton binding energy (<0=bound) */
-            const double Eb=Eb_1S(data_start,pP_start,FABC,beta,delta_a,epsilon,lambda,m,mu_xy,N_x,n,output_flag);
+            const double Eb=Eb_1S(z, psi_e, psi_h, pP_start,FABC,beta,epsilon,lambda,m,mu_xy,N_x,output_flag);
 
             repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
@@ -208,72 +201,68 @@ int main(int argc,char *argv[])
     fclose(Fbeta);
     fclose(FEX0l);
 
-    free(data_start);
-    free(pP_start);
-
     return EXIT_SUCCESS;
 }
 
 /**
  * \brief Find binding energy of 1S exciton
  *
- * \param fdata pointer to data structure
  * \param probs pointer to pP structure
  * \param FABC  file pointer to ABC.r
  */
-static double Eb_1S(files        *fdata,
-                    probs        *ppP,
+static double Eb_1S(const std::valarray<double> z,
+                    const std::valarray<double> psi_e,
+                    const std::valarray<double> psi_h,
+                    const std::valarray<double> p,
                     FILE         *FABC,
                     const double  beta,
-                    const double  delta_a,
                     const double  epsilon,
                     const double  lambda,
                     const double  m[],
                     const double  mu_xy,
                     const int     N_x,
-                    const int     n,
                     const bool    output_flag)
 {
- double A  = 0;              /* {\cal A}, see notes!              */
- double B  = 0;              /* {\cal B}, see notes!              */
- double Ct = 0;              /* kinetic energy component of C     */
- double Cv = 0;              /* potential energy component of C   */
- double D  = 0;              /* {\cal D}, see notes!              */
- double Eb;                  /* exciton binding energy (<0=bound) */
- double O  = 0;              /* {\cal O}, overlap integral        */
- int    i_a;                 /* index through a values            */
- double C  = 0;              /* electron--hole interaction term */
- 
- for(i_a=0;i_a<n;i_a++)
- {
-  A+=(ppP->p)*G(ppP->a,beta,lambda,N_x)*delta_a;
-  B+=(ppP->p)*G(ppP->a,beta,lambda,N_x)*delta_a;
-  Ct+=(ppP->p)*J(ppP->a,beta,lambda,N_x)*delta_a;
-  Cv+=(ppP->p)*K(ppP->a,beta,lambda,N_x)*delta_a;
-  D+=(ppP->p)*F(ppP->a,beta,lambda)*delta_a;
-  
-  O+=(fdata->wf[0])*(fdata->wf[1])*delta_a;  /* strictly delta_z, but = */
+    double A  = 0;              /* {\cal A}, see notes!              */
+    double B  = 0;              /* {\cal B}, see notes!              */
+    double Ct = 0;              /* kinetic energy component of C     */
+    double Cv = 0;              /* potential energy component of C   */
+    double D  = 0;              /* {\cal D}, see notes!              */
+    double Eb;                  /* exciton binding energy (<0=bound) */
+    double O  = 0;              /* {\cal O}, overlap integral        */
+    double C  = 0;              /* electron--hole interaction term */
 
-  ppP++;
-  fdata++;
- }
+    const auto nz = z.size();
+    const auto dz = z[1] - z[0];
 
- A*=hBar*hBar/(2*m[0]);         /* multiply integrals by constant factors */
- B*=hBar*hBar/(2*m[1]);
- Ct*=-hBar*hBar/(2*mu_xy);
- Cv*=-e*e/(4*pi*epsilon);
+    // Loop over spatial separations
+    for(unsigned int ia=0; ia<nz; ++ia)
+    {
+        A  += p[ia] * G(z[ia], beta,lambda,N_x)*dz;
+        B  += p[ia] * G(z[ia], beta,lambda,N_x)*dz;
+        Ct += p[ia] * J(z[ia], beta,lambda,N_x)*dz;
+        Cv += p[ia] * K(z[ia], beta,lambda,N_x)*dz;
+        D  += p[ia] * F(z[ia], beta,lambda)*dz;
 
- fprintf(FABC,"%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf\n",lambda/1e-10,
-         A/D/(1e-3*e),B/D/(1e-3*e),Ct/D/(1e-3*e),Cv/D/(1e-3*e));
+        O += psi_e[ia]*psi_h[ia]*dz;
+    }
 
- C = Ct + Cv;  /* Find e--h term [QWWAD4, eq. 6.36] */
- Eb=(A+B+C)/D; /* Binding energy [QWWAD4, eq. 6.44] */
+    A*=hBar*hBar/(2*m[0]);         /* multiply integrals by constant factors */
+    B*=hBar*hBar/(2*m[1]);
+    Ct*=-hBar*hBar/(2*mu_xy);
+    Cv*=-e*e/(4*pi*epsilon);
 
- if(output_flag)
-  printf("%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf %6.3le\n",lambda/1e-10,beta,
-         Eb/(1e-3*e),(A+B+Ct)/D/(1e-3*e),Cv/D/(1e-3*e),gsl_pow_2(O)/D);
+    fprintf(FABC,"%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf\n",lambda/1e-10,
+            A/D/(1e-3*e),B/D/(1e-3*e),Ct/D/(1e-3*e),Cv/D/(1e-3*e));
 
- return Eb;
+    C = Ct + Cv;  /* Find e--h term [QWWAD4, eq. 6.36] */
+    Eb=(A+B+C)/D; /* Binding energy [QWWAD4, eq. 6.44] */
+
+    if(output_flag)
+        printf("%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf %6.3le\n",lambda/1e-10,beta,
+                Eb/(1e-3*e),(A+B+Ct)/D/(1e-3*e),Cv/D/(1e-3*e),gsl_pow_2(O)/D);
+
+    return Eb;
 }
 
 /**
@@ -433,139 +422,32 @@ double K(double a,
 }
 
 /**
- * \brief Calculates the separation along the z (growth)
- *        direction of the user supplied wave functions, assumes regular
- *        one-dimensional mesh
- */
-double read_delta_z(files *Vp)
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0] = Vp->z;
- Vp++;
- z[1] = Vp->z;
- return(z[1]-z[0]);
-}
-
-/**
- * \brief reads the potential into memory and returns the start
- *        address of this block of memory and the number of lines
- */
-files * read_data(unsigned int state[], int *n)
-{
- char	filenamee[9];	/* filename of electron wave function		*/
- char	filenameh[9];	/* filename of hole wave function		*/
- FILE 	*Fwfe;		/* file pointer to electron wavefunction file	*/
- FILE 	*Fwfh;		/* file pointer to hole wavefunction file	*/
- files  *ft;		/* temporary pointer to wavefunction		*/
- files  *data_start;	/* start address of wavefunction		*/
-
- /* Generate electron and hole filenames	*/
-
- sprintf(filenamee,"wf_e%i.r",state[0]);
- sprintf(filenameh,"wf_h%i.r",state[1]);
-
- /* open files	*/
-
- if((Fwfe=fopen(filenamee,"r"))==0)
-  {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filenamee);exit(0);}
-
- if((Fwfh=fopen(filenameh,"r"))==0)
-  {fprintf(stderr,"Error: Cannot open input file '%s'!\n",filenameh);exit(0);}
-
- /* count number of lines in wave function files	*/
-
- *n=0;
- while(fscanf(Fwfe,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(Fwfe);
-
- /* allocate memory for wave functions	*/
-
- data_start=(files *)calloc(*n,sizeof(files));
- if (data_start==0)  
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
- ft=data_start;
-
- /* read wave functions into memory	*/
-
- while(fscanf(Fwfe,"%le %le",&(ft->z),&(ft->wf[0]))!=EOF)
- {
-  int n_read = fscanf(Fwfh,"%*e %le",&(ft->wf[1]));
-
-  if (n_read == 2)
-    ft++;
- }
-
- fclose(Fwfe);
- fclose(Fwfh);
-
- return(data_start);
-
-}
-
-/**
  * \brief Calculate probabilities known as p(a), Pm(a) and Pmu(a)
- *
- * \param[in] delta_a    distance between adjacent points
- * \param[in] n          number of lines in wavefunction file
- * \param[in] data_start pointer to beginning of wavefunctions
  */
-probs * pP_calc(double  delta_a,
-                int     n,
-                files  *data_start)
+std::valarray<double> pP_calc(const std::valarray<double> &z,
+                              const std::valarray<double> &psi_e,
+                              const std::valarray<double> &psi_h)
 {
- double temp_sum;
- int    i;
- int    j;
- FILE   *Fp;            /* file pointer to p(a) versus a, p.r      */
- files  *fdata;		/* pointer to wavefunctions                */
- probs  *pP_start;	/* start address of pP                     */
- probs  *ppP;           /* start address of pP                     */
+    const auto nz = z.size();    // Number of spatial samples  
+    const auto dz = z[1] - z[0]; // Separation between spatial samples [m]
 
- pP_start=(probs *)calloc(n,sizeof(probs));
- if (pP_start==0)  
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
- }
+    std::valarray<double> p(nz);
 
- /* Note integrals are calculated with a simple sum of left hand
-   ordinate times strip width.  Hence the total number of ordinates
-   is simply n.                                                    */
-  
- temp_sum=0;
- ppP=pP_start;
- for(i=0;i<n;i++)
- {
-  ppP->a=delta_a*(float)i;
-  ppP->p=0;                /* initialize variable to zero */
+    // Loop over spatial separation
+    for(unsigned int ia=0; ia<nz; ++ia)
+    {
+        p[ia] = 0.0;    // initialize probability to zero
 
-  fdata=data_start;      /* reset wavefunction pointer  */
-  for(j=0;j<n-i;j++)
-  {
-   ppP->p+=(gsl_pow_2((fdata+i)->wf[0])*gsl_pow_2(fdata->wf[1])
-            +gsl_pow_2(fdata->wf[0])*gsl_pow_2((fdata+i)->wf[1])
-           )*delta_a;
-   fdata++;
-  }
-  temp_sum+=ppP->p*delta_a;
-  ppP++;
- }
+        // Loop over hole location and find p(a) [QWWAD4, 6.23]
+        for(unsigned int iz = 0; iz < nz-ia; ++iz)
+        {
+            p[ia] += (psi_e[iz+ia]*psi_e[iz+ia]*psi_h[iz]*psi_h[iz]
+                     +psi_h[iz+ia]*psi_h[iz+ia]*psi_e[iz]*psi_e[iz]) * dz;
+        }
+    }
 
- Fp=fopen("p.r","w");
- ppP=pP_start;
- for(i=0;i<n;i++)
- {
-  fprintf(Fp,"%20.17le %20.17le\n",ppP->a,ppP->p);
-  ppP++;
- }
- fclose(Fp);
+    write_table("p.r", z, p);
 
- /*printf("temp_sum=%20.17le\n",temp_sum);*/
- return(pP_start);
+    return p;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
