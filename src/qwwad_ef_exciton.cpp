@@ -45,7 +45,6 @@ static double Eb_1S(const std::valarray<double> z,
                     const std::valarray<double> psi_e,
                     const std::valarray<double> psi_h,
                     const std::valarray<double> p,
-                    FILE         *FABC,
                     const double  beta,
                     const double  epsilon,
                     const double  lambda,
@@ -145,7 +144,6 @@ int main(int argc,char *argv[])
 
     const double mu_xy=1/(1/m_xy[0]+1/m_xy[1]);	/* calculate reduced mass in-plane	*/
 
-    FILE *FABC  = fopen("ABC.r","w");
     FILE *Fbeta = fopen("beta-lambda.r","w");
     FILE *FEX0l=fopen("EX0-lambda.r","w");
 
@@ -173,8 +171,8 @@ int main(int argc,char *argv[])
          * Eb_min_beta.  The corresponding beta value is stored as beta_0_lambda */ 
         do
         {
-            /* Find exciton binding energy (<0=bound) */
-            const double Eb=Eb_1S(z, psi_e, psi_h, pP_start,FABC,beta,epsilon,lambda,m,mu_xy,N_x,output_flag);
+            // Find exciton binding energy (<0=bound)
+            const auto Eb = Eb_1S(z, psi_e, psi_h, pP_start, beta, epsilon, lambda, m, mu_xy, N_x, output_flag);
 
             repeat_flag_beta=repeat_beta(beta,&beta_0_lambda,Eb,&Eb_min_beta);
 
@@ -195,7 +193,6 @@ int main(int argc,char *argv[])
     fprintf(FEX0,"%6.3lf %6.2lf %6.3lf\n",Eb_min/(1e-3*e),lambda_0/1e-10,beta_0);
     fclose(FEX0);
 
-    fclose(FABC);
     fclose(Fbeta);
     fclose(FEX0l);
 
@@ -206,13 +203,11 @@ int main(int argc,char *argv[])
  * \brief Find binding energy of 1S exciton
  *
  * \param probs pointer to pP structure
- * \param FABC  file pointer to ABC.r
  */
 static double Eb_1S(const std::valarray<double> z,
                     const std::valarray<double> psi_e,
                     const std::valarray<double> psi_h,
                     const std::valarray<double> p,
-                    FILE         *FABC,
                     const double  beta,
                     const double  epsilon,
                     const double  lambda,
@@ -249,9 +244,6 @@ static double Eb_1S(const std::valarray<double> z,
     B*=hBar*hBar/(2*m[1]);
     Ct*=-hBar*hBar/(2*mu_xy);
     Cv*=-e*e/(4*pi*epsilon);
-
-    fprintf(FABC,"%6.2lf %6.3lf %6.3lf %6.3lf %6.3lf\n",lambda/1e-10,
-            A/D/(1e-3*e),B/D/(1e-3*e),Ct/D/(1e-3*e),Cv/D/(1e-3*e));
 
     C = Ct + Cv;  /* Find e--h term [QWWAD4, eq. 6.36] */
     Eb=(A+B+C)/D; /* Binding energy [QWWAD4, eq. 6.44] */

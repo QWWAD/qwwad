@@ -3,7 +3,7 @@ set -e
 
 # Initialise files
 
-rm -f Ee-lw.r Eh-lw.r Eb-lw.r EX0-lw.r
+rm -f EX0-lw.r
 
 # Loop for different well widths
 export QWWAD_WELLWIDTH
@@ -13,10 +13,8 @@ do
 	# Find ground states for electron and hole
 	qwwad_ef_infinite_well --mass 0.096 --particle e # infinite well electron ground state
 	qwwad_ef_infinite_well --mass 0.6   --particle h # infinite well hole ground state
-	cat Ee.r >> Ee-lw.r
-	cat Eh.r >> Eh-lw.r
 
-	qwwad_ef_exciton -e 10.6 -m 0.096 -n 0.6 -s 30 	   # start variational calculation
+	qwwad_ef_exciton --dcpermittivity 10.6 --electronmass 0.096 --holemass 0.6 --lambdastart 30 	   # start variational calculation
 	printf "%f\t" $QWWAD_WELLWIDTH >> EX0-lw.r # write well width to file
 	cat EX0.r >> EX0-lw.r			   # send data to file
 done
