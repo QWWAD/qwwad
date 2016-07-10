@@ -1,0 +1,37 @@
+[FILES]
+.SS Input files:
+   'v.r'         Confining potential for heterostructure:
+                 Column 1: position [m].
+                 Column 2: potential [J].
+
+   'wf_*i.r'     Wave function amplitude at each position:
+                 Column 1: position [m]
+                 Column 2: wave function amplitude [m^{-1/2}].
+
+.SS Output files:
+   'E*.r'        Energy of each state:
+                 Column 1: state index.
+                 Column 2: energy [meV].
+
+   'l.r'         Bohr radius of ion:
+                 Column 1: Dopant location (from r_d.r file) [Angstrom]
+                 Column 2: Bohr radius [Angstrom]
+   
+   'searchlog.r' Log of the search algorithm progress:
+                 Column 1: Bohr radius [m]
+                 Column 2: Energy [J]
+
+In each case, the '*' is replaced by the particle ID and the 'i' is replaced by the number of the state.
+The zeta.r file is only created if a variable symmetry waveform is used.
+
+[IMPURITY STATE OPTIONS]
+This program provides several different options for the symmetry of the dopant orbit.
+This can be selected using the --impuritystate option, and may take the values: '1s', '2s', '2px' or '2pz'.
+
+[EXAMPLES]
+
+Find the 2s eigenstate for a donor at z = 10 Angstrom:
+    qwwad_ef_donor_generic --donorposition 10 --impuritystate 2s
+
+Find the 2px eigenstate for a donor at z = 100 Angstrom, for the 2nd principal subband:
+    qwwad_ef_donor_generic --donorposition 100 --impuritystate 2px --subband 2

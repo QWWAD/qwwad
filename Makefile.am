@@ -358,6 +358,7 @@ dist_man1_MANS = \
 		 man/qwwad_ef_parabolic_well.1                \
 		 man/qwwad_ef_poeschl_teller.1                  \
 		 man/qwwad_ef_donor_specific.1 \
+		 man/qwwad_ef_donor_generic.1 \
 		 man/qwwad_poisson.1 \
 		 man/qwwad_uncertainty.1                    \
 		 man/qwwad_population_init.1           \
@@ -390,6 +391,7 @@ EXTRA_DIST += \
 	      doc/qwwad_charge_density.h2m          \
 	      doc/qwwad_diffuse.h2m                    \
 	      doc/qwwad_ef_donor_specific.h2m       \
+	      doc/qwwad_ef_donor_generic.h2m       \
 	      doc/qwwad_ef_zeeman.h2m               \
 	      doc/qwwad_ef_spin_flip_raman.h2m
 
@@ -497,6 +499,11 @@ man/qwwad_spin_flip_raman.1: src/qwwad_spin_flip_raman.cpp $(top_srcdir)/configu
     $(top_srcdir)/doc/qwwad_spin_flip_raman.h2m | qwwad_spin_flip_raman$(EXEEXT)
 	$(MKDIR_P) man
 	help2man --output=$@ --name="find the spin-flip Raman spectrum." --include $(top_srcdir)/doc/qwwad_spin_flip_raman.h2m ./qwwad_spin_flip_raman$(EXEEXT) 
+
+man/qwwad_ef_donor_generic.1: src/qwwad_ef_donor_generic.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
+    $(top_srcdir)/doc/qwwad_ef_donor_generic.h2m | qwwad_ef_donor_generic$(EXEEXT)
+	$(MKDIR_P) man
+	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure using a generic search." --include $(top_srcdir)/doc/qwwad_ef_donor_generic.h2m ./qwwad_ef_donor_generic$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples
