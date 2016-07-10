@@ -358,7 +358,8 @@ dist_man1_MANS = \
 		 man/qwwad_ef_parabolic_well.1                \
 		 man/qwwad_ef_poeschl_teller.1                  \
 		 man/qwwad_ef_donor_specific.1 \
-		 man/qwwad_ef_donor_generic.1 \
+		 man/qwwad_ef_donor_generic.1  \
+		 man/qwwad_ef_exciton.1        \
 		 man/qwwad_poisson.1 \
 		 man/qwwad_uncertainty.1                    \
 		 man/qwwad_population_init.1           \
@@ -390,9 +391,10 @@ EXTRA_DIST += \
 	      doc/qwwad_population_init.h2m           \
 	      doc/qwwad_charge_density.h2m          \
 	      doc/qwwad_diffuse.h2m                    \
-	      doc/qwwad_ef_donor_specific.h2m       \
+	      doc/qwwad_ef_donor_specific.h2m      \
 	      doc/qwwad_ef_donor_generic.h2m       \
-	      doc/qwwad_ef_zeeman.h2m               \
+	      doc/qwwad_ef_exciton.h2m             \
+	      doc/qwwad_ef_zeeman.h2m              \
 	      doc/qwwad_ef_spin_flip_raman.h2m
 
 man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
@@ -503,7 +505,12 @@ man/qwwad_spin_flip_raman.1: src/qwwad_spin_flip_raman.cpp $(top_srcdir)/configu
 man/qwwad_ef_donor_generic.1: src/qwwad_ef_donor_generic.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
     $(top_srcdir)/doc/qwwad_ef_donor_generic.h2m | qwwad_ef_donor_generic$(EXEEXT)
 	$(MKDIR_P) man
-	help2man --output=$@ --name="find ground state of electron orbiting a donor ion in a heterostructure using a generic search." --include $(top_srcdir)/doc/qwwad_ef_donor_generic.h2m ./qwwad_ef_donor_generic$(EXEEXT) 
+	help2man --output=$@ --name="find state of electron orbiting a donor ion in a heterostructure using a generic search." --include $(top_srcdir)/doc/qwwad_ef_donor_generic.h2m ./qwwad_ef_donor_generic$(EXEEXT) 
+
+man/qwwad_ef_exciton.1: src/qwwad_ef_exciton.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp \
+    $(top_srcdir)/doc/qwwad_ef_exciton.h2m | qwwad_ef_exciton$(EXEEXT)
+	$(MKDIR_P) man
+	help2man --output=$@ --name="find ground state of an exciton within a heterostructure." --include $(top_srcdir)/doc/qwwad_ef_exciton.h2m ./qwwad_ef_exciton$(EXEEXT) 
 
 # Install examples
 exdatadir = $(datadir)/qwwad/examples

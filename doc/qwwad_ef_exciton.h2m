@@ -1,0 +1,31 @@
+[FILES]
+.SS Input files:
+   'wf_ei.r'     Electron wave function amplitude at each position:
+   'wf_hi.r'     Hole wave function amplitude at each position:
+                 Column 1: position [m]
+                 Column 2: wave function amplitude [m^{-1/2}].
+
+The 'i' is replaced by the number of the state in each subband.
+
+.SS Output files:
+   'EX0.r'       Binding energy and symmetry parameters:
+                 Column 1: Binding energy [meV].
+                 Column 2: Bohr radius [Angstrom].
+                 Column 3: Symmetry parameter
+
+   'p.r'         Probability density of carrier separation:
+                 Column 1: Carrier separation
+                 Column 2: Probability density [1/Angstrom]
+   
+   'searchlog.r' Log of the search algorithm progress:
+                 Column 1: Bohr radius [m]
+                 Column 2: Symmetry parameter
+                 Column 3: Binding energy [J]
+
+[EXAMPLES]
+
+Find the exciton binding energy, with the Bohr radius being between 50 and 100 Angstrom:
+    qwwad_ef_exciton --lambdastart 50 --lambdastop 100
+
+Find the exciton binding energy for the first electron state and second hole state.
+    qwwad_ef_exciton --electronstate 1 --holestate 2

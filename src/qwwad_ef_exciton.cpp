@@ -71,7 +71,7 @@ double K(double a,
 Options configure_options(int argc, char* argv[])
 {
     Options opt;
-    std::string doc("Find exciton binding energy");
+    std::string doc("Find exciton binding energy within a heterostructure");
 
     opt.add_option<double>      ("dcpermittivity,e",     13.18,  "Bulk relative permittivity");
     opt.add_option<double>      ("betastart,w",           0.001, "Initial value for beta symmetry parameter search");
