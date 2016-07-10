@@ -15,8 +15,7 @@ EXTRA_DIST=autogen.sh                     \
 	   m4/ax_blas.m4                  \
 	   m4/ax_boost_base.m4            \
 	   m4/ax_boost_program_options.m4 \
-	   m4/ax_lapack.m4                \
-	   m4/ax_make_man_page.m4
+	   m4/ax_lapack.m4
 
 dist_pkgdata_DATA = src/material-library.xml
 
@@ -395,7 +394,7 @@ EXTRA_DIST += \
 	      doc/qwwad_ef_donor_generic.h2m       \
 	      doc/qwwad_ef_exciton.h2m             \
 	      doc/qwwad_ef_zeeman.h2m              \
-	      doc/qwwad_ef_spin_flip_raman.h2m
+	      doc/qwwad_spin_flip_raman.h2m
 
 man/qwwad_density_of_states.1: src/qwwad_density_of_states.cpp $(top_srcdir)/configure.ac src/qwwad/options.cpp $(top_srcdir)/doc/qwwad_density_of_states.h2m | qwwad_density_of_states$(EXEEXT) 
 	$(MKDIR_P) man

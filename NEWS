@@ -1,3 +1,25 @@
+2016-07-10 (QWWAD 1.4.0):
+	* This preview release adds the programs for Ch5 and 6:
+	  Impurities and Excitons
+	* New program: qwwad_ef_donor_specific - calculate the ground
+	  state for donors in a heterostructure using a semi-analytical solution
+	* New program: qwwad_ef_donor_generic - calculate the 1s, 2s, 2px or 2py
+	  state for donors in a heterostructure by direct evaluation of the
+	  expectation energy
+	* New program: qwwad_ef_zeeman - calculate the Zeeman potential for a
+	  heterostructure in a magnetic field
+	* New program: qwwad_spin_flip_raman - calculate the spin-flip Raman
+	  spectrum for a structure
+	* New program: qwwad_ef_donor_generic - calculate the exciton-binding
+	  energy for a heterostructure
+	* Bug fix: Correct namespace error to fix build with new C++ libraries
+	* Removed feature: Unused (and unreliable) Inverse Laplace solver removed
+	  from maths-helpers library
+	* Performance: Used new (fast) C++11 math functions in preference to GSL
+	* New feature: Added Brillouin function calculation to math-helpers library
+	* Enhancement: Arbitrary string types can now be used in filename
+	  specifications in file-io library
+
 2016-03-12 (QWWAD 1.3.0):
         * This preview release renames the programs for Ch1-4 to a more user
           friendly and consistent format: qwwad_*
