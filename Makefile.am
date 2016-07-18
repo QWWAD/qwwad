@@ -71,7 +71,7 @@ bin_PROGRAMS =  \
 		slk     \
 		specheat \
 		sradp   \
-		srcc    \
+		qwwad_sr_carrier_carrier    \
 		qwwad_sr_lo_phonon   \
 	       	srrad   \
 		thermal1d \
@@ -313,8 +313,8 @@ slk_SOURCES  = src/slk.c
 sradp_SOURCES = src/sradp.cpp
 sradp_LDADD   = libqwwad.la
 
-srcc_SOURCES  = src/srcc.cpp
-srcc_LDADD    = libqwwad.la
+qwwad_sr_carrier_carrier_SOURCES  = src/qwwad_sr_carrier_carrier.cpp
+qwwad_sr_carrier_carrier_LDADD    = libqwwad.la
 
 qwwad_sr_lo_phonon_SOURCES  = src/qwwad_sr_lo_phonon.cpp
 qwwad_sr_lo_phonon_LDADD    = libqwwad.la
