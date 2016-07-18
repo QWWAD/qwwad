@@ -72,7 +72,7 @@ bin_PROGRAMS =  \
 		specheat \
 		sradp   \
 		srcc    \
-		srelo   \
+		qwwad_sr_lo_phonon   \
 	       	srrad   \
 		thermal1d \
 		thermalrc
@@ -316,8 +316,8 @@ sradp_LDADD   = libqwwad.la
 srcc_SOURCES  = src/srcc.cpp
 srcc_LDADD    = libqwwad.la
 
-srelo_SOURCES  = src/srelo.cpp
-srelo_LDADD    = libqwwad.la
+qwwad_sr_lo_phonon_SOURCES  = src/qwwad_sr_lo_phonon.cpp
+qwwad_sr_lo_phonon_LDADD    = libqwwad.la
 
 srrad_SOURCES  = src/srrad.c
 
