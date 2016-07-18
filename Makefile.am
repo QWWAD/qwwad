@@ -51,7 +51,7 @@ bin_PROGRAMS =  \
 		qwwad_tx_double_barrier_iv \
 	       	qwwad_tx_single_barrier    \
 		qwwad_uncertainty          \
-		ado                \
+		qwwad_sr_alloy_disorder                \
 		critical-thickness \
                 csss    \
 		cszb    \
@@ -183,8 +183,8 @@ libqwwad_la_LIBADD = $(GSL_LIBS) \
 		     $(BLAS_LIBS)   \
 		     $(FLIBS)
 
-ado_SOURCES = src/ado.cpp
-ado_LDADD   = libqwwad.la
+qwwad_sr_alloy_disorder_SOURCES = src/qwwad_sr_alloy_disorder.cpp
+qwwad_sr_alloy_disorder_LDADD   = libqwwad.la
 
 qwwad_charge_density_SOURCES = src/qwwad_charge_density.cpp
 qwwad_charge_density_LDADD   = libqwwad.la
