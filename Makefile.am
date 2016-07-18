@@ -63,7 +63,7 @@ bin_PROGRAMS =  \
 		efsdwf  \
 	       	efsx    \
 		ifr     \
-		imp     \
+		qwwad_sr_impurity     \
 		matlib-query \
 		rlv-fcc \
 		rlv-sc  \
@@ -262,8 +262,8 @@ ifr_LDADD   = libqwwad.la
 qwwad_ef_donor_generic_SOURCES  = src/qwwad_ef_donor_generic.cpp
 qwwad_ef_donor_generic_LDADD    = libqwwad.la
 
-imp_SOURCES  = src/imp.cpp
-imp_LDADD    = libqwwad.la
+qwwad_sr_impurity_SOURCES  = src/qwwad_sr_impurity.cpp
+qwwad_sr_impurity_LDADD    = libqwwad.la
 
 qwwad_tx_double_barrier_iv_SOURCES = src/qwwad_tx_double_barrier_iv.cpp
 qwwad_tx_double_barrier_iv_LDADD   = libqwwad.la
