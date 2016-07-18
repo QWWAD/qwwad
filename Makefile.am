@@ -62,7 +62,7 @@ bin_PROGRAMS =  \
 		efsdot  \
 		efsdwf  \
 	       	efsx    \
-		ifr     \
+		qwwad_sr_interface_roughness     \
 		qwwad_sr_impurity     \
 		matlib-query \
 		rlv-fcc \
@@ -256,8 +256,8 @@ qwwad_diffuse_LDADD   = libqwwad.la
 qwwad_uncertainty_SOURCES = src/qwwad_uncertainty.cpp
 qwwad_uncertainty_LDADD   = libqwwad.la
 
-ifr_SOURCES = src/ifr.cpp
-ifr_LDADD   = libqwwad.la
+qwwad_sr_interface_roughness_SOURCES = src/qwwad_sr_interface_roughness.cpp
+qwwad_sr_interface_roughness_LDADD   = libqwwad.la
 
 qwwad_ef_donor_generic_SOURCES  = src/qwwad_ef_donor_generic.cpp
 qwwad_ef_donor_generic_LDADD    = libqwwad.la
