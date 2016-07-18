@@ -70,7 +70,7 @@ bin_PROGRAMS =  \
 		rlv-ss  \
 		slk     \
 		specheat \
-		sradp   \
+		qwwad_sr_acoustic_phonon   \
 		qwwad_sr_carrier_carrier    \
 		qwwad_sr_lo_phonon   \
 	       	srrad   \
@@ -310,8 +310,8 @@ qwwad_spin_flip_raman_LDADD    = libqwwad.la
 
 slk_SOURCES  = src/slk.c
 
-sradp_SOURCES = src/sradp.cpp
-sradp_LDADD   = libqwwad.la
+qwwad_sr_acoustic_phonon_SOURCES = src/qwwad_sr_acoustic_phonon.cpp
+qwwad_sr_acoustic_phonon_LDADD   = libqwwad.la
 
 qwwad_sr_carrier_carrier_SOURCES  = src/qwwad_sr_carrier_carrier.cpp
 qwwad_sr_carrier_carrier_LDADD    = libqwwad.la
