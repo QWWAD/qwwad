@@ -19,12 +19,16 @@ EXTRA_DIST=autogen.sh                     \
 
 dist_pkgdata_DATA = src/material-library.xml
 
+# Deprecated header files that:
+# 1. will never be part of libqwwad
+# 2. are used by multiple programs
 noinst_HEADERS = src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/struct.h 
 
 #		 src/ppff.h
 
+# The full set of QWWAD programs, to be installed into the user's bin folder
 bin_PROGRAMS =  \
 		qwwad_charge_density       \
 		qwwad_density_of_states    \
@@ -83,91 +87,109 @@ bin_PROGRAMS =  \
 #		pplbso  \
 #		ppsg 
 
+# Executable scripts to be installed into the user's
+# bin folder
 dist_bin_SCRIPTS = src/xyz2pdb
 
 # Build most functionality into library infrastructure
 lib_LTLIBRARIES = libqwwad.la
+
+# Version info for the shared library.
+# Note that the numbers must be set as follows:
+# (1) "current"  - the latest MAJOR ABI version. Increase this if it is incompatible with the last version
+# (2) "revision" - the latest MINOR ABI version. Increase this if minor,
+#                  compatible changes have been introduced.
+#                  Reset to zero if the current ABI version increases.
+# (3) "age"      - the number of historical major ABI versions that are backward-compatible with the current
+#                  version. This should stay as zero unless the current version is guaranteed to
+#                  support older interfaces
+libqwwadversionflags = -version-info 1:0:0
+
+# Shared library header files that will be installed into the user's system
+includeqwwaddir=$(includedir)/qwwad
+includeqwwad_HEADERS = \
+			   src/qwwad/constants.h                          \
+			   src/qwwad/donor-energy-minimiser-fast.h        \
+			   src/qwwad/donor-energy-minimiser-linear.h      \
+			   src/qwwad/donor-energy-minimiser.h             \
+			   src/qwwad/dos-functions.h                      \
+			   src/qwwad/double-barrier.h                     \
+			   src/qwwad/eigenstate.h                         \
+			   src/qwwad/fermi.h                              \
+			   src/qwwad/file-io.h                            \
+			   src/qwwad/linear-algebra.h                     \
+			   src/qwwad/maths-helpers.h                      \
+			   src/qwwad/mesh.h                               \
+			   src/qwwad/options.h                            \
+			   src/qwwad/schroedinger-solver.h                \
+			   src/qwwad/schroedinger-solver-donor.h          \
+			   src/qwwad/schroedinger-solver-donor-2D.h       \
+			   src/qwwad/schroedinger-solver-donor-3D.h       \
+			   src/qwwad/schroedinger-solver-donor-variable.h \
+			   src/qwwad/schroedinger-solver-finite-well.h    \
+			   src/qwwad/schroedinger-solver-full.h           \
+			   src/qwwad/schroedinger-solver-infinite-well.h  \
+			   src/qwwad/schroedinger-solver-kronig-penney.h  \
+			   src/qwwad/schroedinger-solver-poeschl-teller.h \
+			   src/qwwad/schroedinger-solver-shooting.h       \
+			   src/qwwad/schroedinger-solver-taylor.h         \
+			   src/qwwad/schroedinger-solver-tridiagonal.h    \
+			   src/qwwad/subband.h
+
+# Source files for libqwwad that will be compiled into the binary library
 libqwwad_la_SOURCES =  \
-			   src/qwwad/dos-functions.cpp \
-			   src/qwwad/dos-functions.h   \
-			   src/qwwad/double-barrier.cpp \
-			   src/qwwad/double-barrier.h   \
-			   src/qwwad/fermi.cpp        \
-			   src/qwwad/fermi.h          \
-			   src/qwwad-material.cpp     \
-			   src/qwwad-material.h       \
-			   src/qwwad-material-property.cpp     \
-			   src/qwwad-material-property.h       \
-			   src/qwwad-material-property-constant.cpp \
-			   src/qwwad-material-property-constant.h   \
-			   src/qwwad-material-property-numeric.cpp \
-			   src/qwwad-material-property-numeric.h   \
-			   src/qwwad-material-property-interp.cpp     \
-			   src/qwwad-material-property-interp.h       \
-			   src/qwwad-material-property-poly.cpp     \
-			   src/qwwad-material-property-poly.h       \
-			   src/qwwad-material-property-string.cpp    \
-			   src/qwwad-material-property-string.h      \
-			   src/qclsim_poisson_solver.cpp \
-			   src/qclsim_poisson_solver.h   \
-			   src/material_library.cpp       \
-			   src/material_library.h         \
-			   src/qwwad/constants.h      \
-			   src/qwwad-debye.cpp \
-			   src/qwwad-debye.h   \
-			   src/qwwad/donor-energy-minimiser.cpp \
-			   src/qwwad/donor-energy-minimiser.h   \
-			   src/qwwad/donor-energy-minimiser-linear.cpp \
-			   src/qwwad/donor-energy-minimiser-linear.h   \
-			   src/qwwad/donor-energy-minimiser-fast.cpp \
-			   src/qwwad/donor-energy-minimiser-fast.h   \
-			   src/qwwad/mesh.cpp \
-			   src/qwwad/mesh.h   \
-			   src/qwwad/file-io.cpp          \
-			   src/qwwad/file-io.h            \
-			   src/qwwad/file-io-deprecated.cpp \
-			   src/qwwad/file-io-deprecated.h   \
-			   src/qwwad/options.cpp         \
-			   src/qwwad/options.h           \
-			   src/qwwad/intersubband-transition.h   \
-			   src/qwwad/intersubband-transition.cpp \
-			   src/qwwad/linear-algebra.cpp       \
-			   src/qwwad/linear-algebra.h         \
-			   src/qwwad/maths-helpers.cpp        \
-			   src/qwwad/maths-helpers.h          \
-			   src/qwwad/scattering-calculator-LO.h   \
-			   src/qwwad/scattering-calculator-LO.cpp \
-			   src/qwwad/schroedinger-solver.cpp    \
-			   src/qwwad/schroedinger-solver.h      \
-			   src/qwwad/schroedinger-solver-donor.h      \
-			   src/qwwad/schroedinger-solver-donor.cpp    \
-			   src/qwwad/schroedinger-solver-donor-2D.h      \
-			   src/qwwad/schroedinger-solver-donor-2D.cpp    \
-			   src/qwwad/schroedinger-solver-donor-3D.h      \
-			   src/qwwad/schroedinger-solver-donor-3D.cpp    \
-			   src/qwwad/schroedinger-solver-donor-variable.h   \
+			   src/qwwad/dos-functions.cpp                      \
+			   src/qwwad/double-barrier.cpp                     \
+			   src/qwwad/fermi.cpp                              \
+			   src/qwwad/donor-energy-minimiser.cpp             \
+			   src/qwwad/donor-energy-minimiser-linear.cpp      \
+			   src/qwwad/donor-energy-minimiser-fast.cpp        \
+			   src/qwwad/mesh.cpp                               \
+			   src/qwwad/file-io.cpp                            \
+			   src/qwwad/file-io-deprecated.cpp                 \
+			   src/qwwad/file-io-deprecated.h                   \
+			   src/qwwad/options.cpp                            \
+			   src/qwwad/intersubband-transition.h              \
+			   src/qwwad/intersubband-transition.cpp            \
+			   src/qwwad/linear-algebra.cpp                     \
+			   src/qwwad/maths-helpers.cpp                      \
+			   src/qwwad/scattering-calculator-LO.h             \
+			   src/qwwad/scattering-calculator-LO.cpp           \
+			   src/qwwad/schroedinger-solver.cpp                \
+			   src/qwwad/schroedinger-solver-donor.cpp          \
+			   src/qwwad/schroedinger-solver-donor-2D.cpp       \
+			   src/qwwad/schroedinger-solver-donor-3D.cpp       \
 			   src/qwwad/schroedinger-solver-donor-variable.cpp \
-			   src/qwwad/schroedinger-solver-finite-well.cpp \
-			   src/qwwad/schroedinger-solver-finite-well.h   \
-			   src/qwwad/schroedinger-solver-full.h          \
-			   src/qwwad/schroedinger-solver-full.cpp        \
-			   src/qwwad/schroedinger-solver-infinite-well.cpp \
-			   src/qwwad/schroedinger-solver-infinite-well.h   \
-			   src/qwwad/schroedinger-solver-kronig-penney.cpp \
-			   src/qwwad/schroedinger-solver-kronig-penney.h   \
+			   src/qwwad/schroedinger-solver-finite-well.cpp    \
+			   src/qwwad/schroedinger-solver-full.cpp           \
+			   src/qwwad/schroedinger-solver-infinite-well.cpp  \
+			   src/qwwad/schroedinger-solver-kronig-penney.cpp  \
 			   src/qwwad/schroedinger-solver-poeschl-teller.cpp \
-			   src/qwwad/schroedinger-solver-poeschl-teller.h   \
-			   src/qwwad/schroedinger-solver-shooting.cpp      \
-			   src/qwwad/schroedinger-solver-shooting.h        \
-			   src/qwwad/schroedinger-solver-taylor.cpp        \
-			   src/qwwad/schroedinger-solver-taylor.h          \
-			   src/qwwad/schroedinger-solver-tridiagonal.cpp   \
-			   src/qwwad/schroedinger-solver-tridiagonal.h     \
-			   src/qwwad/eigenstate.h   \
-			   src/qwwad/eigenstate.cpp \
-			   src/qwwad/subband.cpp      \
-			   src/qwwad/subband.h        \
-			   src/wf_options.cpp                       \
+			   src/qwwad/schroedinger-solver-shooting.cpp       \
+			   src/qwwad/schroedinger-solver-taylor.cpp         \
+			   src/qwwad/schroedinger-solver-tridiagonal.cpp    \
+			   src/qwwad/eigenstate.cpp                         \
+			   src/qwwad/subband.cpp                            \
+			   src/qwwad-material.cpp                           \
+			   src/qwwad-material-property.cpp                  \
+			   src/qwwad-material-property.h                    \
+			   src/qwwad-material-property-constant.cpp         \
+			   src/qwwad-material-property-constant.h           \
+			   src/qwwad-material-property-numeric.cpp          \
+			   src/qwwad-material-property-numeric.h            \
+			   src/qwwad-material-property-interp.cpp           \
+			   src/qwwad-material-property-interp.h             \
+			   src/qwwad-material-property-poly.cpp             \
+			   src/qwwad-material-property-poly.h               \
+			   src/qwwad-material-property-string.cpp           \
+			   src/qwwad-material-property-string.h             \
+			   src/qclsim_poisson_solver.cpp                    \
+			   src/qclsim_poisson_solver.h                      \
+			   src/material_library.cpp                         \
+			   src/material_library.h                           \
+			   src/qwwad-debye.cpp                              \
+			   src/qwwad-debye.h                                \
+			   src/wf_options.cpp                               \
 			   src/wf_options.h
 #			   src/pplb-functions.cpp \
 #			   src/pplb-functions.h
@@ -175,7 +197,8 @@ libqwwad_la_SOURCES =  \
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)
 
-libqwwad_la_LDFLAGS = $(BOOST_LDFLAGS)
+libqwwad_la_LDFLAGS = $(BOOST_LDFLAGS) \
+		      $(libqwwadversionflags)
 
 libqwwad_la_LIBADD = $(GSL_LIBS) \
                      $(BOOST_PROGRAM_OPTIONS_LIB) \
@@ -613,7 +636,7 @@ eximpdata_DATA = $(eximpsrcdir)/index                    \
 		 $(eximpsrcdir)/E-donor-comparison.sh    \
 		 $(eximpsrcdir)/spin-flip-raman.sh       \
 		 $(eximpsrcdir)/E-binding-alternative.sh \
-		 $(eximpsrcdir)/E-new-vs-old.sh          \ 
+		 $(eximpsrcdir)/E-new-vs-old.sh          \
 		 $(eximpsrcdir)/E-excited-states.sh
 
 exexcdatadir = $(exdatadir)/excitons
