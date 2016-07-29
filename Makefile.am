@@ -19,6 +19,10 @@ EXTRA_DIST=autogen.sh                     \
 
 dist_pkgdata_DATA = src/material-library.xml
 
+# Install pkg-config support file
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = qwwad.pc
+
 # Deprecated header files that:
 # 1. will never be part of libqwwad
 # 2. are used by multiple programs

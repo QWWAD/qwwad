@@ -3,6 +3,9 @@
 
 AC_PREREQ([2.63])
 
+dnl List the required versions for dependencies here
+m4_define([libxmlpp_required_version], [2.30])
+
 AC_INIT([Quantum Wells, Wires and Dots], [1.4+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
 
 dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
@@ -28,6 +31,9 @@ AC_CONFIG_HEADERS([config.h])
 
 dnl Quieten the Make output
 AM_SILENT_RULES([yes])
+
+LIBXMLPP_REQUIRED_VERSION=libxmlpp_required_version
+AC_SUBST(LIBXMLPP_REQUIRED_VERSION)
 
 AC_LANG([C++])
 
@@ -59,6 +65,8 @@ AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])
 LT_PREREQ([2.2])
 LT_INIT
 
+PKG_PROG_PKG_CONFIG(0.24)
+
 # Check for Boost Program Options
 
 # This hack automatically checks for boost in the BOOST_HOME directory if
@@ -80,8 +88,6 @@ LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
 
 dnl Check for GNU Scientific Library
 PKG_CHECK_MODULES(GSL, gsl)
-AC_SUBST(GSL_CFLAGS)
-AC_SUBST(GSL_LIBS)
 
 # Check if we have the new "official" C header for LAPACK.  Also, note that
 # there is a bug in LAPACK that causes incorrect linkage with C++11. See
@@ -111,9 +117,7 @@ if test "x$have_armadillo" = "xno"; then
 	AC_MSG_ERROR([Armadillo library is not usable])
 fi
 
-PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6 >= 2.30])
-LIBS="$LIBS $LIBXMLXX_LIBS"
-CXXFLAGS="$CXXFLAGS $LIBXMLXX_CFLAGS"
+PKG_CHECK_MODULES([LIBXMLXX], [libxml++-2.6 >= libxmlpp_required_version])
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h strings.h complex.h])
@@ -131,5 +135,6 @@ AC_SUBST(PTHREAD_LIBS)
 # Checks for library functions.
 AC_CHECK_FUNCS([floor modf sqrt])
 
-AC_CONFIG_FILES([Makefile])
+AC_CONFIG_FILES([Makefile
+                 qwwad.pc])
 AC_OUTPUT
