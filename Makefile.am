@@ -34,33 +34,42 @@ noinst_HEADERS = src/ef-helpers.h    \
 
 # The full set of QWWAD programs, to be installed into the user's bin folder
 bin_PROGRAMS =  \
-		qwwad_charge_density       \
-		qwwad_density_of_states    \
-		qwwad_diffuse              \
-		qwwad_ef_band_edge         \
-		qwwad_ef_dispersion        \
-		qwwad_ef_donor_generic     \
-		qwwad_ef_donor_specific    \
-		qwwad_ef_exciton           \
-		qwwad_ef_generic           \
-		qwwad_ef_infinite_well     \
-		qwwad_ef_parabolic_well    \
-		qwwad_ef_plot              \
-		qwwad_ef_poeschl_teller    \
-		qwwad_ef_square_well       \
-		qwwad_ef_superlattice      \
-	       	qwwad_ef_zeeman            \
-	       	qwwad_fermi_distribution   \
-		qwwad_mesh                 \
-		qwwad_poisson              \
-		qwwad_population_init      \
-		qwwad_spin_flip_raman      \
-	       	qwwad_tx_double_barrier    \
-		qwwad_tx_double_barrier_iv \
-	       	qwwad_tx_single_barrier    \
-		qwwad_uncertainty          \
-		qwwad_sr_alloy_disorder                \
-		critical-thickness \
+		qwwad_charge_density         \
+		qwwad_density_of_states      \
+		qwwad_diffuse                \
+		qwwad_ef_band_edge           \
+		qwwad_ef_dispersion          \
+		qwwad_ef_donor_generic       \
+		qwwad_ef_donor_specific      \
+		qwwad_ef_exciton             \
+		qwwad_ef_generic             \
+		qwwad_ef_infinite_well       \
+		qwwad_ef_parabolic_well      \
+		qwwad_ef_plot                \
+		qwwad_ef_poeschl_teller      \
+		qwwad_ef_square_well         \
+		qwwad_ef_superlattice        \
+	       	qwwad_ef_zeeman              \
+	       	qwwad_fermi_distribution     \
+		qwwad_material_property      \
+		qwwad_mesh                   \
+		qwwad_poisson                \
+		qwwad_population_init        \
+		qwwad_specific_heat_capacity \
+		qwwad_spin_flip_raman        \
+		qwwad_sr_acoustic_phonon     \
+		qwwad_sr_alloy_disorder      \
+		qwwad_sr_carrier_carrier     \
+		qwwad_sr_interface_roughness \
+		qwwad_sr_impurity            \
+		qwwad_sr_lo_phonon           \
+		qwwad_thermal_1d             \
+		qwwad_thermal_rc             \
+	       	qwwad_tx_double_barrier      \
+		qwwad_tx_double_barrier_iv   \
+	       	qwwad_tx_single_barrier      \
+		qwwad_uncertainty            \
+		qwwad_critical_thickness     \
                 csss    \
 		cszb    \
 		efcwire \
@@ -70,20 +79,11 @@ bin_PROGRAMS =  \
 		efsdot  \
 		efsdwf  \
 	       	efsx    \
-		qwwad_sr_interface_roughness     \
-		qwwad_sr_impurity     \
-		matlib-query \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
 		slk     \
-		specheat \
-		qwwad_sr_acoustic_phonon   \
-		qwwad_sr_carrier_carrier    \
-		qwwad_sr_lo_phonon   \
-	       	srrad   \
-		thermal1d \
-		thermalrc
+	       	srrad
 
 #		ppcd    \
 #		ppee    \
@@ -175,6 +175,7 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/eigenstate.cpp                         \
 			   src/qwwad/subband.cpp                            \
 			   src/qwwad-material.cpp                           \
+			   src/qwwad-material.h                             \
 			   src/qwwad-material-property.cpp                  \
 			   src/qwwad-material-property.h                    \
 			   src/qwwad-material-property-constant.cpp         \
@@ -216,8 +217,8 @@ qwwad_sr_alloy_disorder_LDADD   = libqwwad.la
 qwwad_charge_density_SOURCES = src/qwwad_charge_density.cpp
 qwwad_charge_density_LDADD   = libqwwad.la
 
-critical_thickness_SOURCES = src/critical-thickness.cpp
-critical_thickness_LDADD   = libqwwad.la
+qwwad_critical_thickness_SOURCES = src/qwwad_critical_thickness.cpp
+qwwad_critical_thickness_LDADD   = libqwwad.la
 
 csss_SOURCES = src/csss.c
 
@@ -295,8 +296,8 @@ qwwad_sr_impurity_LDADD    = libqwwad.la
 qwwad_tx_double_barrier_iv_SOURCES = src/qwwad_tx_double_barrier_iv.cpp
 qwwad_tx_double_barrier_iv_LDADD   = libqwwad.la
 
-matlib_query_SOURCES = src/matlib-query.cpp
-matlib_query_LDADD   = libqwwad.la
+qwwad_material_property_SOURCES = src/qwwad_material_property.cpp
+qwwad_material_property_LDADD   = libqwwad.la
 
 #ppcd_SOURCES = src/ppcd.cpp
 #ppcd_LDADD   = libqwwad.la
@@ -348,17 +349,17 @@ qwwad_sr_lo_phonon_LDADD    = libqwwad.la
 
 srrad_SOURCES  = src/srrad.c
 
-specheat_SOURCES = src/specheat.cpp
-specheat_LDADD   = libqwwad.la
+qwwad_specific_heat_capacity_SOURCES = src/qwwad_specific_heat_capacity.cpp
+qwwad_specific_heat_capacity_LDADD   = libqwwad.la
 
 qwwad_tx_double_barrier_SOURCES  = src/qwwad_tx_double_barrier.cpp
 qwwad_tx_double_barrier_LDADD    = libqwwad.la
 
-thermal1d_SOURCES = src/thermal1d.cpp
-thermal1d_LDADD   = libqwwad.la
+qwwad_thermal_1d_SOURCES = src/qwwad_thermal_1d.cpp
+qwwad_thermal_1d_LDADD   = libqwwad.la
 
-thermalrc_SOURCES = src/thermalrc.cpp
-thermalrc_LDADD   = libqwwad.la
+qwwad_thermal_rc_SOURCES = src/qwwad_thermal_rc.cpp
+qwwad_thermal_rc_LDADD   = libqwwad.la
 
 qwwad_tx_single_barrier_SOURCES  = src/qwwad_tx_single_barrier.cpp
 qwwad_tx_single_barrier_LDADD    = libqwwad.la
