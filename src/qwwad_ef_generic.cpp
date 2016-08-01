@@ -14,7 +14,7 @@
 
 #include <iostream>
 #include <cstdlib>
-#include "qwwad/options.h"
+
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"
@@ -22,6 +22,8 @@
 #include "qwwad/schroedinger-solver-shooting.h"
 #include "qwwad/schroedinger-solver-taylor.h"
 #include "qwwad/schroedinger-solver-tridiagonal.h"
+
+#include "wf_options.h"
 
 using namespace QWWAD;
 using namespace constants;
@@ -70,7 +72,7 @@ enum SolverType {
 /** 
  * \brief Store for command line inputs
  */
-class FwfOptions : public Options {
+class FwfOptions : public WfOptions {
     private:
         SolverType type; ///< The type of Schroedinger solver to use
 
@@ -90,7 +92,6 @@ class FwfOptions : public Options {
             add_option<std::string>("massfile",  "m.r",      "Filename from which effective mass profile is read. "
                                                              "This is only needed if you are not using constant effective "
                                                              "mass.");
-            add_option<char>       ("particle,p", 'e',       "Particle to be used: 'e', 'h' or 'l'");
             add_option<std::string>("alphafile", "alpha.r",  "Filename from which nonparabolicity parameter profile is read.");
             add_option<std::string>("totalpotentialfile", "v.r", "Filename from which confining potential is read.");
             add_option<size_t>     ("nstmax",     0,         "Maximum number of subbands to find.  The default (0) means "
@@ -158,17 +159,11 @@ static void output(const std::vector<Eigenstate> &solutions,
                 std::cout << ist << "\t" << std::fixed << solutions[ist].get_energy() * 1000/e << " meV" << std::endl;
         }
 
-        const auto p = opt.get_option<char>("particle");
-        std::ostringstream energy_filename;
-        energy_filename << "E" << p << ".r";
-        std::ostringstream wf_prefix;
-        wf_prefix << "wf_" << p;
-
-        Eigenstate::write_to_file(energy_filename.str(),
-                             wf_prefix.str(),
-                             ".r",
-                             solutions,
-                             true);
+        Eigenstate::write_to_file(opt.get_energy_filename(),
+                                  opt.get_wf_prefix(),
+                                  opt.get_wf_ext(),
+                                  solutions,
+                                  true);
     }
 }
 
@@ -280,7 +275,7 @@ int main(int argc, char *argv[]){
             std::cerr << "Warning: Wavefunction is not tightly bound" << std::endl;
 
         std::ostringstream wf_filename;
-        wf_filename << "wf_" << opt.get_option<char>("particle") << "E.r";
+        wf_filename << opt.get_wf_prefix() << "E.r";
         write_table(wf_filename.str().c_str(), z, psi);
     }
     else // Output all wavefunctions
