@@ -81,6 +81,22 @@ AX_BOOST_BASE([1.35],,
 
 AX_BOOST_PROGRAM_OPTIONS
 
+LIBS="$LIBS $BOOST_PROGRAM_OPTIONS_LIB"
+dnl Check whether new Boost program options API is available
+AC_MSG_CHECKING([whether Boost::program_options case-insensitive matching is supported])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <boost/program_options.hpp>]],
+	                        [[boost::program_options::options_description od;
+	             		   od.find("test", false, false);]])],
+		[have_boost_case_insensitive_matching=yes],
+		[have_boost_case_insensitive_matching=no])
+AC_MSG_RESULT([$have_boost_case_insensitive_matching])
+
+if [[ "x$have_boost_case_insensitive_matching" = "xyes" ]]; then
+	AC_DEFINE(HAVE_BOOST_CASE_INSENSITIVE_MATCHING,1,[Can use case-insensitive matching of long program-option names (Boost >= 1.42)])
+else
+	AC_MSG_WARN([Unable to use case-insensitive matching of long program-option names. This is fixed in Boost >= 1.42])
+fi
+
 # Check for linear algebra libraries
 AX_BLAS(,AC_MSG_ERROR([BLAS library unavailable.  Please install it and try again]))
 AX_LAPACK(,AC_MSG_ERROR([LAPACK library unavailable.  Please install it and try again]))

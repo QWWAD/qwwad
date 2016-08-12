@@ -233,7 +233,16 @@ std::string Options::name_mapper(std::string environment_variable) const
         // See if this exists in the configuration options
         try
         {
-            option_name = config_options.find(suffix, false, true).long_name();
+            // Conditional build allows case-insensitive matching on systems with
+            // Boost >= 1.42.  This is currently needed to support CentOS 6
+            //
+            // TODO: Get rid of this and bump to a hard Boost >= 1.42 dependency
+            // when all supported distros provide it.
+            option_name = config_options.find(suffix, false
+#if HAVE_BOOST_CASE_INSENSITIVE_MATCHING
+                                                    , true
+#endif
+                                             ).long_name();
         }
         catch(std::exception &e)
         {}
