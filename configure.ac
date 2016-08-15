@@ -81,6 +81,7 @@ AX_BOOST_BASE([1.35],,
 
 AX_BOOST_PROGRAM_OPTIONS
 
+CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
 LIBS="$LIBS $BOOST_PROGRAM_OPTIONS_LIB"
 dnl Check whether new Boost program options API is available
 AC_MSG_CHECKING([whether Boost::program_options case-insensitive matching is supported])
