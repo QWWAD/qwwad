@@ -62,6 +62,7 @@ bin_PROGRAMS =  \
 		qwwad_population_init         \
 		qwwad_pp_charge_density       \
 		qwwad_pp_dispersion           \
+		qwwad_pp_form_factor          \
 		qwwad_pp_large_basis          \
 		qwwad_pp_large_basis_so       \
 		qwwad_pp_lattice_vector_table \
@@ -316,8 +317,8 @@ qwwad_pp_lattice_vector_table_LDADD = libqwwad.la
 qwwad_pp_superlattice_SOURCES = src/qwwad_pp_superlattice.cpp src/ppff.h src/ppff.cpp
 qwwad_pp_superlattice_LDADD   = libqwwad.la
 
-#ppvfq_SOURCES = src/ppvfq.cpp src/ppff.h
-#ppvfq_LDADD   = libqwwad.la
+qwwad_pp_form_factor_SOURCES = src/qwwad_pp_form_factor.cpp src/ppff.h src/ppff.cpp
+qwwad_pp_form_factor_LDADD   = libqwwad.la
 
 qwwad_pp_large_basis_so_SOURCES = src/qwwad_pp_large_basis_so.cpp src/pplb-functions.h src/pplb-functions.cpp src/ppff.h src/ppff.cpp src/ppsop.h src/ppsop.cpp
 qwwad_pp_large_basis_so_LDADD   = libqwwad.la

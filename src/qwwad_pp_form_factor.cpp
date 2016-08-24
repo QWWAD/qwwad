@@ -1,31 +1,32 @@
-/*=================================================================
-              ppvfq   Pseudo-Potential form factor (Vf) of Q 
-  =================================================================
+/**
+ * \file    qwwad_pp_form_factor.cpp
+ * \brief   Pseudo-Potential form factor (Vf) of Q 
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ * \details This program generates the pseudopotential as a function of 
+ *          the reciprocal lattice vector q=G'-G, and stores in a file for
+ *          viewing.
+ * 
+ *          Input files:
+ *
+ *          Output files:
+ *   			Vfq`TYPE'.r	Vf(q) in eV versus q in (2pi/A0)
+ */
 
-   This program generates the pseudopotential as a function of 
-   the reciprocal lattice vector q=G'-G, and stores in a file for
-   viewing.
- 
-   Input files:
-
-   Output files:
-   			Vfq`TYPE'.r	Vf(q) in eV versus q in (2pi/A0)
-
-   Paul Harrison, July 1998
-								*/
-
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
 
 #include "ppff.h"
 
+using namespace QWWAD;
+using namespace constants;
+
 int main(int argc,char *argv[])
 {
-extern double	Vf();	/* the form factor function			*/
 double	A0;		/* Lattice constant				*/
 double	G_max;		/* maximum reciprocal lattice vector		*/
 double	m_per_au;	/* unit conversion factor, m/a.u.		*/
