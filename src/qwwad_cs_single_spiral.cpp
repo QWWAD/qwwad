@@ -1,17 +1,17 @@
-/*=================================================================
-       csss     Crystal Structure Single Spiral
-  =================================================================
+/**
+ * \file   qwwad_cs_single_spiral.cpp
+ * \brief  Crystal Structure Single Spiral
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program generates the atomic positions of a single spiral
+ *          along the z-axis of a zinc blende crystal and writes them in 
+ *          XYZ format to the file zb.xyz
+ */
 
-   This program generates the atomic positions of a single spiral
-   along the z-axis of a zinc blende crystal and writes them in 
-   XYZ format to the file zb.xyz
-
-   Paul Harrison, July 1998		                         */
-
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <strings.h>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
 #include "struct.h"
 
 static void write_ap(const double A0,
@@ -75,9 +75,6 @@ write_ap(A0,n_z,a,T,anion,cation);
 return EXIT_SUCCESS;
 }/* end main */
 
-
-
-
 /**
  * \param A0     lattice constant
  * \param n_z    number of lattice points along z-axis of cell
@@ -94,7 +91,7 @@ static void write_ap(const double A0,
                      char         cation[])
 {
  int    i_n_z;  /* index to n_z */
- vector t;      /* general vertor representing atom within cell  */
+ vector t;      /* general vector representing atom within cell  */
  FILE	*Fap;	/* pointer to output file	*/
 
  Fap=fopen("atoms.xyz","w");

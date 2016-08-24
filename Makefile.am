@@ -35,6 +35,8 @@ noinst_HEADERS = src/ef-helpers.h    \
 # The full set of QWWAD programs, to be installed into the user's bin folder
 bin_PROGRAMS =  \
 		qwwad_charge_density         \
+		qwwad_cs_single_spiral       \ 
+		qwwad_cs_zinc_blende         \ 
 		qwwad_density_of_states      \
 		qwwad_diffuse                \
 		qwwad_ef_band_edge           \
@@ -76,8 +78,6 @@ bin_PROGRAMS =  \
 	       	qwwad_tx_single_barrier      \
 		qwwad_uncertainty            \
 		qwwad_critical_thickness     \
-                csss    \
-		cszb    \
 	       	effv    \
 	       	efsx    \
 		rlv-fcc \
@@ -220,9 +220,11 @@ qwwad_charge_density_LDADD   = libqwwad.la
 qwwad_critical_thickness_SOURCES = src/qwwad_critical_thickness.cpp
 qwwad_critical_thickness_LDADD   = libqwwad.la
 
-csss_SOURCES = src/csss.c
+qwwad_cs_single_spiral_SOURCES = src/qwwad_cs_single_spiral.cpp
+qwwad_cs_single_spiral_LDADD   = libqwwad.la
 
-cszb_SOURCES = src/cszb.c
+qwwad_cs_zinc_blende_SOURCES = src/qwwad_cs_zinc_blende.cpp
+qwwad_cs_zinc_blende_LDADD   = libqwwad.la
 
 qwwad_population_init_SOURCES = src/qwwad_population_init.cpp
 qwwad_population_init_LDADD   = libqwwad.la

@@ -1,16 +1,16 @@
-/*=================================================================
-       cszb     Crystal Structure Zinc Blende 
-  =================================================================
+/**
+ * \file   qwwad_cs_zinc_blende.cpp
+ * \brief  Crystal Structure Zinc Blende 
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program generates the atomic positions of a zinc blende 
+ *          crystal and writes them in XYZ format to the file atoms.xyz
+ */
 
-   This program generates the atomic positions of a zinc blende 
-   crystal and writes them in XYZ format to the file atoms.xyz
-
-   Paul Harrison, July 1998		                         */
-
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
-#include <strings.h>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
 
 typedef struct
 {
@@ -19,11 +19,17 @@ typedef struct
  double z;
 }vector;
 
+static void write_ap(double A0,
+                     int    n_x,
+                     int    n_y,
+                     int    n_z,
+                     vector a[],
+                     vector T[],
+                     char   anion[],
+                     char   cation[]);
+
 int main(int argc,char *argv[])
 {
-int	*read_as();	/* function to read in atomic species		*/
-void	write_ap();	/* writes the atomic positions/species to file	*/
-
 double	A0;		/* the lattice constant				*/
 int	n_x;		/* number of lattice points along x-axis of cell*/
 int	n_y;		/* number of lattice points along y-axis of cell*/
@@ -87,21 +93,24 @@ write_ap(A0,n_x,n_y,n_z,a,T,anion,cation);
 return EXIT_SUCCESS;
 }/* end main */
 
-
-
-
-
-void 
-write_ap(A0,n_x,n_y,n_z,a,T,anion,cation)
-
-double	A0;	/* lattice constant				*/
-int	n_x;	/* number of lattice points along x-axis of cell */
-int	n_y;	/* number of lattice points along y-axis of cell */
-int	n_z;	/* number of lattice points along z-axis of cell */
-vector a[];     /* lattice vectors (a1, a2, a3 plus null vector) */
-vector T[];     /* basis vector   */
-char	anion[4];	/* anion species				*/
-char	cation[4];	/* cation species				*/
+/**
+ * \param A0     lattice constant
+ * \param n_x    number of lattice points along x-axis of cell
+ * \param n_y    number of lattice points along y-axis of cell
+ * \param n_z    number of lattice points along z-axis of cell
+ * \param a      lattice vectors (a1, a2, a3 plus null vector)
+ * \param T      basis vector
+ * \param anion  anion species
+ * \param cation cation species
+ */
+static void write_ap(double A0,
+                     int    n_x,
+                     int    n_y,
+                     int    n_z,
+                     vector a[],
+                     vector T[],
+                     char   anion[],
+                     char   cation[])
 {
  int    i_a;    /* index across primitive vectors `a' */
  int    i_n_x;  /* index to n_x */
