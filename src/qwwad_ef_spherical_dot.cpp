@@ -1,30 +1,35 @@
-/*==================================================================
-              efsdot  Envelope Function Spherical DOT 
-  ==================================================================*/
+/**
+ * \file    qwwad_ef_spherical_dot.cpp
+ * \brief   Envelope Function Spherical DOT 
+ * \details This program uses a shooting technique to calculate the
+ *          uncorrelated one particle energies of any user supplied
+ *          radial potential.  The potential is read from the file v.r
+ *
+ *          This prgram has been butchered from `efshoot', there may be 
+ *          a little redundant code lying around...
+ */
 
-/* This program uses a shooting technique to calculate the
-   uncorrelated one particle energies of any user supplied
-   radial potential.  The potential is read from the file v.r
-
-   This prgram has been butchered from `efshoot', there may be 
-   a little redundant code lieing around...
-
-   Paul Harrison, December 1998                                   */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "qwwad/constants.h"
 #include "maths.h"
 
+using namespace QWWAD;
+using namespace constants;
+
+static double psi_at_inf(double  E,
+                         double  delta_z,
+                         files  *fdata,
+                         data11 *data_m0Eg,
+                         int     n,
+                         bool    np_flag);
+
 int main(int argc,char *argv[])
 {
-double psi_at_inf();
 double d_E;		/* infinitesmal energy               */
 double delta_E;		/* small but finite energy           */
 double delta_z;		/* z separation of input potentials  */
@@ -153,19 +158,17 @@ if(np_flag)free(data_m0Eg);
 return EXIT_SUCCESS;
 } /* end main */
 
-double
-psi_at_inf(E,delta_z,fdata,data_m0Eg,n,np_flag)
-
-/* This function returns the value of the wavefunction (psi)
-   at +infinity for a given value of the energy.  The solution
-   to the energy occurs for psi(+infinity)=0.                      */
-
-double E;
-double delta_z;
-files  *fdata;
-data11 *data_m0Eg;
-int    n;
-bool   np_flag;
+/**
+ * \brief returns the value of the wavefunction (psi) at +infinity for a given energy
+ *
+ * \details The solution to the energy occurs for psi(+infinity)=0
+ */
+static double psi_at_inf(double  E,
+                         double  delta_z,
+                         files  *fdata,
+                         data11 *data_m0Eg,
+                         int     n,
+                         bool    np_flag)
 {
  double alpha;		     /* non-parabolicity parameter   */
  double psi[3];              /* wavefunction at z-delta_z,

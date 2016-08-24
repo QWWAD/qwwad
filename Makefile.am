@@ -50,6 +50,7 @@ bin_PROGRAMS =  \
 		qwwad_ef_parabolic_well      \
 		qwwad_ef_plot                \
 		qwwad_ef_poeschl_teller      \
+		qwwad_ef_spherical_dot       \
 		qwwad_ef_square_well         \
 		qwwad_ef_superlattice        \
 	       	qwwad_ef_zeeman              \
@@ -77,7 +78,6 @@ bin_PROGRAMS =  \
                 csss    \
 		cszb    \
 	       	effv    \
-		efsdot  \
 		efsdwf  \
 	       	efsx    \
 		rlv-fcc \
@@ -259,7 +259,8 @@ qwwad_ef_zeeman_LDADD   = libqwwad.la
 qwwad_ef_parabolic_well_SOURCES = src/qwwad_ef_parabolic_well.cpp
 qwwad_ef_parabolic_well_LDADD   = libqwwad.la
 
-efsdot_SOURCES = src/efsdot.c
+qwwad_ef_spherical_dot_SOURCES = src/qwwad_ef_spherical_dot.cpp
+qwwad_ef_spherical_dot_LDADD   = libqwwad.la
 
 efsdwf_SOURCES = src/efsdwf.c
 
