@@ -1,36 +1,25 @@
-/*=================================================================
-              pplb   Pseudo-Potential Large Basis 
-  =================================================================
-
-   This program performs a PseudoPotential Large Basis calculation
-   on a user-defined cell, the atomic species of which are defined
-   in the file atoms.xyz (XYZ format file).
- 
-   Note this code is written for clarity of understanding and not
-   solely computational speed.  
-
-   Input files:
-		atoms.xyz	atomic species and positions
-		G.r		reciprocal lattice vectors
-		k.r		electron wave vectors (k)
-
-   Output files:
-		ank.r		eigenvectors	
-		Ek?.r		eigenenergies for each k
-
-
-   Paul Harrison, November 1994                                
- 
-   Major modifications, 1996
-	Command line arguments
-
-   Major Modifications, July 1998
-	Move to XYZ format 
-	Reading in atomic positions from a general basis
-  
-   Modifications, December 1999
-   	Use of LAPACK diagonalisation routine
-								*/
+/**
+ * \file   qwwad_pp_large_basis.cpp
+ * \brief  Pseudo-Potential Large Basis
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program performs a PseudoPotential Large Basis calculation
+ *          on a user-defined cell, the atomic species of which are defined
+ *          in the file atoms.xyz (XYZ format file).
+ *
+ *          Note this code is written for clarity of understanding and not
+ *          solely computational speed.  
+ *
+ *          Input files:
+ *		atoms.xyz	atomic species and positions
+ *		G.r		reciprocal lattice vectors
+ *		k.r		electron wave vectors (k)
+ *
+ *          Output files:
+ *		ank.r		eigenvectors	
+ *		Ek?.r		eigenenergies for each k
+ */
 
 #if HAVE_CONFIG_H
 # include <config.h>
@@ -50,9 +39,13 @@
 #include "qwwad/constants.h"
 #include "qwwad/linear-algebra.h"
 #include "qwwad/options.h"
+#include "qwwad/file-io.h"
 
 #include "pplb-functions.h"
 #include "ppff.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 Options configure_options(int argc, char* argv[])
 {

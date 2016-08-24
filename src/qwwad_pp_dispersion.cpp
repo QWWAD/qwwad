@@ -1,30 +1,29 @@
-/*=================================================================
-                  ppee    PseudoPotential EigenEnergies 
-  =================================================================
+/**
+ * \file    qwwad_pp_dispersion.cpp
+ * \brief   PseudoPotential EigenEnergies
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program gathers together the eigenenergies from the series of files
+ *          Ek#.r and gathers them together in a format suitable for plotting the
+ *          dispersion curves with xmgr.
+ *
+ *          Input files:
+ *		Ek#.r		expansion coefficients of eigenvectors
+ *
+ *          Output files:
+ *
+ *		Ek.r		dispersion curves
+ */
 
-   This program gathers together the eigenenergies from the series of files
-   Ek#.r and gathers them together in a format suitable for plotting the
-   dispersion curves with xmgr.
-
-   Input files:
-		Ek#.r		expansion coefficients of eigenvectors
-
-   Output files:
-
-		Ek.r		dispersion curves
-
-   Paul Harrison, September 1997                                 */
-
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include "struct.h"
 #include "maths.h"
 
 int main(int argc,char *argv[])
 {
-extern double atof();
-extern int atoi();
 double	*Ek;
 int	ik;		/* index over k-points				*/
 int	in;		/* index over bands				*/
@@ -48,10 +47,10 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'n':
-	   n_min=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
+	   n_min=::atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
            break;
   case 'm':
-	   n_max=atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
+	   n_max=::atoi(argv[2])-1;         /* Note -1=>top VB=4, CB=5 */
            break;
   default :
            printf("Usage:  ppee [-n first band \033[1m1\033[0m][-m last band \033[1m4\033[0m]\n");

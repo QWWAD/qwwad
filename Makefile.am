@@ -62,6 +62,9 @@ bin_PROGRAMS =  \
 		qwwad_mesh                   \
 		qwwad_poisson                \
 		qwwad_population_init        \
+		qwwad_pp_charge_density      \
+		qwwad_pp_dispersion          \
+		qwwad_pp_large_basis         \
 		qwwad_specific_heat_capacity \
 		qwwad_spin_flip_raman        \
 		qwwad_sr_acoustic_phonon     \
@@ -85,9 +88,6 @@ bin_PROGRAMS =  \
 		rlv-ss  \
 		slk
 
-#		ppcd    \
-#		ppee    \
-#		pplb    \
 #		pplbso  \
 #		ppsg 
 
@@ -196,8 +196,6 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-debye.h                                \
 			   src/wf_options.cpp                               \
 			   src/wf_options.h
-#			   src/pplb-functions.cpp \
-#			   src/pplb-functions.h
 
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)
@@ -305,13 +303,14 @@ qwwad_tx_double_barrier_iv_LDADD   = libqwwad.la
 qwwad_material_property_SOURCES = src/qwwad_material_property.cpp
 qwwad_material_property_LDADD   = libqwwad.la
 
-#ppcd_SOURCES = src/ppcd.cpp
-#ppcd_LDADD   = libqwwad.la
+qwwad_pp_charge_density_SOURCES = src/qwwad_pp_charge_density.cpp src/ppff.h src/ppff.cpp
+qwwad_pp_charge_density_LDADD   = libqwwad.la
 
-#ppee_SOURCES = src/ppee.c
+qwwad_pp_dispersion_SOURCES = src/qwwad_pp_dispersion.cpp
+qwwad_pp_dispersion_LDADD   = libqwwad.la
 
-#pplb_SOURCES  = src/pplb.cpp
-#pplb_LDADD    = libqwwad.la
+qwwad_pp_large_basis_SOURCES  = src/qwwad_pp_large_basis.cpp src/pplb-functions.cpp src/pplb-functions.h src/ppff.h src/ppff.cpp
+qwwad_pp_large_basis_LDADD    = libqwwad.la
 
 #ppsg_SOURCES = src/ppsg.c
 
