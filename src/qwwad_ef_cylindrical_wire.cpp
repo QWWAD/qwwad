@@ -1,26 +1,28 @@
-/*==================================================================
-              efcwire  Envelope Function Circular WIRE
-  ==================================================================*/
+/**
+ * \file   qwwad_ef_cylindrical_wire.cpp
+ * \brief  Envelope Function Circular WIRE
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program uses a shooting technique to calculate the
+ *          uncorrelated one particle energies of any user supplied
+ *          radial potential.  The potential is read from the file v.r
+ *
+ *          This program has been butchered from `efshoot', there may be 
+ *          a little redundant code lying around...
+ */
 
-/* This program uses a shooting technique to calculate the
-   uncorrelated one particle energies of any user supplied
-   radial potential.  The potential is read from the file v.r
-
-   This program has been butchered from `efshoot', there may be 
-   a little redundant code lying around...
-
-   Paul Harrison, December 1998                                   */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 static double psi_at_inf(const double  E,
                          const double  delta_z,
@@ -29,12 +31,12 @@ static double psi_at_inf(const double  E,
                          const int     n,
                          const bool    np_flag);
 
+static double read_delta_z(files *fdata);
+static double V_min(files *fdata, int n);
+static files * read_data(int *n);
+
 int main(int argc,char *argv[])
 {
-double read_delta_z();
-double V_min();
-files  *read_data();	/* reads potential file into memory  */
-
 double d_E;		/* infinitesmal energy               */
 double delta_E;		/* small but finite energy           */
 double delta_z;		/* z separation of input potentials  */
@@ -163,16 +165,14 @@ if(np_flag)free(data_m0Eg);
 return EXIT_SUCCESS;
 } /* end main */
 
-
-
-double 
-read_delta_z(fdata)
-
-/* This function opens the external file v.r and calculates
-   the separation along the z (growth) direction of the
-   user supplied potentials                                        */
-
-files *fdata;
+/**
+ * \brief Calculates separation between spatial points
+ *
+ * \details Opens the external file v.r and calculates
+ *          the separation along the z (growth) direction of the
+ *          user supplied potentials
+ */
+static double read_delta_z(files *fdata)
 {
  double z[2];           /* displacement along growth direction     */
 
@@ -182,9 +182,13 @@ files *fdata;
  return(z[1]-z[0]);
 }
 
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-files * read_data(int *n)
+/**
+ * \brief Reads potential into memory and returns the start
+ *        address of this block of memory and the number of lines
+ *
+ * \param[out] n number of lines in file
+ */
+static files * read_data(int *n)
 {
  FILE 	*Fv;            /* file pointer to potential file          */
  FILE 	*Fm;            /* file pointer to potential file          */
@@ -294,16 +298,19 @@ static double psi_at_inf(const double  E,
     return psi[2];
 }
 
-double 
-V_min(fdata,n)       
-
-/* This function opens the external file v.r and finds     
-   the minimum value for the potential energy, this value
-   is used as the initial energy estimate.                         */
-
-files *fdata;		/* pointer to potential			   */
-int   n;		/* number of steps in potential		   */
-
+/**
+ * \brief Finds minimum value for potential energy
+ *
+ * \param[in] fdata pointer to potential
+ * \param[in] n     number of steps in potential
+ *
+ * \returns minimum value of potential
+ *
+ * \details This function opens the external file v.r and finds     
+ *          the minimum value for the potential energy, this value
+ *          is used as the initial energy estimate.
+ */
+static double V_min(files *fdata, int n)       
 {
  double min;            /* minimum value of potential energy       */
  int  i;                /* index                                   */
