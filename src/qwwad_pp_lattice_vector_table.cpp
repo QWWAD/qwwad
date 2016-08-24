@@ -1,29 +1,30 @@
-/*=================================================================
-                    ppsg PseudoPotential Sort G             
-  =================================================================
+/**
+ * \file   qwwad_pp_lattice_vector_table.cpp
+ * \brief  PseudoPotential Sort G
+ * \author Paul Harrison  <p.harrison@leeds.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program sorts the reciprocal lattice or G vectors into
+ *          ascending magnitude.
+ *
+ *          Input files:
+ *                 G.r       reciprocal lattice vectors
+ *
+ *          Output files:
+ *                 G.r~      original reciprocal lattice vectors
+ *                 G.r       sorted reciprocal lattice vectors
+ */
 
-   This program sorts the reciprocal lattice or G vectors into
-   ascending magnitude.
-
-   Input files:
-                  G.r       reciprocal lattice vectors
-
-   Output files:
-
-                  G.r~      original reciprocal lattice vectors
-                  G.r       sorted reciprocal lattice vectors
-
-   Paul Harrison, October 1996                                */
-
-#include<math.h>
-#include<stdio.h>
-#include<stdlib.h>
+#include<cmath>
+#include<cstdio>
+#include<cstdlib>
 #include"struct.h"
 #include"maths.h"
 
+static vector * read_rlv(int *N);
+
 int main()
 {
-vector	*read_rlv();	/* function to read reciprocal lattice vectors	*/
 int	i;		/* index					*/
 int	iG;		/* index over G vectors				*/
 int	N;		/* number of reciprocal lattice vectors		*/
@@ -65,18 +66,14 @@ free(G);
 return EXIT_SUCCESS;
 }/* end main */
 
-
-/******************************************************************************/
-
-
-
-vector
-*read_rlv(N)
-
-/* This function reads the reciprocal lattice vectors (defined in 
-   the file G.r) into the array G[] and then converts into SI units */
-
-int	*N;
+/**
+ * \brief reads the reciprocal lattice vectors
+ *
+ * \details lattice vectors (defined in 
+ *          the file G.r) are read into the array G[] and then converted
+ *          into SI units
+ */
+static vector * read_rlv(int *N)
 {
  int	i=0;
  vector	*G;

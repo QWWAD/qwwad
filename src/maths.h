@@ -36,11 +36,12 @@ double Theta (const double x);
 
 /**
  * \brief Form the transpose of a complex matrix
- * \param[in] N the matrix order
+ *
+ * \param[in,out] M The matrix to be transposed
  */
 void ctranspose(
 #if __cplusplus
-        std::valarray<std::complex<double> > M
+        std::valarray<std::complex<double> > &M
 #else
         complex double *M,
         int             N

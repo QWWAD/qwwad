@@ -21,6 +21,11 @@
    Paul Harrison, April 2000                                
  
 								*/
+
+#if HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -28,11 +33,15 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
+#include "qwwad/file-io.h"
 #include "qwwad/options.h"
 
 #include "ppff.h"	/* the PseudoPotential Form Factors	*/
 #include "pplb-functions.h"
 #include "ppsop.h"	/* the Spin-Orbit Parameters		*/
+
+using namespace QWWAD;
+using namespace constants;
 
 std::complex<double>
 Vso(const atom                   *atoms,

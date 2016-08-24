@@ -30,66 +30,64 @@ noinst_HEADERS = src/ef-helpers.h    \
 		 src/maths.h         \
 		 src/struct.h 
 
-#		 src/ppff.h
-
 # The full set of QWWAD programs, to be installed into the user's bin folder
 bin_PROGRAMS =  \
-		qwwad_charge_density         \
-		qwwad_cs_single_spiral       \ 
-		qwwad_cs_zinc_blende         \ 
-		qwwad_density_of_states      \
-		qwwad_diffuse                \
-		qwwad_ef_band_edge           \
-		qwwad_ef_cylindrical_wire    \
-		qwwad_ef_cylindrical_wire_wf \
-		qwwad_ef_dispersion          \
-		qwwad_ef_donor_generic       \
-		qwwad_ef_donor_specific      \
-		qwwad_ef_exciton             \
-		qwwad_ef_generic             \
-		qwwad_ef_infinite_well       \
-		qwwad_ef_infinite_wire       \
-		qwwad_ef_parabolic_well      \
-		qwwad_ef_plot                \
-		qwwad_ef_poeschl_teller      \
-		qwwad_ef_spherical_dot       \
-		qwwad_ef_spherical_dot_wf    \
-		qwwad_ef_square_well         \
-		qwwad_ef_superlattice        \
-	       	qwwad_ef_zeeman              \
-	       	qwwad_fermi_distribution     \
-		qwwad_material_property      \
-		qwwad_mesh                   \
-		qwwad_poisson                \
-		qwwad_population_init        \
-		qwwad_pp_charge_density      \
-		qwwad_pp_dispersion          \
-		qwwad_pp_large_basis         \
-		qwwad_specific_heat_capacity \
-		qwwad_spin_flip_raman        \
-		qwwad_sr_acoustic_phonon     \
-		qwwad_sr_alloy_disorder      \
-		qwwad_sr_carrier_carrier     \
-		qwwad_sr_interface_roughness \
-		qwwad_sr_impurity            \
-		qwwad_sr_lo_phonon           \
-		qwwad_sr_radiative           \
-		qwwad_thermal_1d             \
-		qwwad_thermal_rc             \
-	       	qwwad_tx_double_barrier      \
-		qwwad_tx_double_barrier_iv   \
-	       	qwwad_tx_single_barrier      \
-		qwwad_uncertainty            \
-		qwwad_critical_thickness     \
+		qwwad_charge_density          \
+		qwwad_cs_single_spiral        \
+		qwwad_cs_zinc_blende          \ 
+		qwwad_density_of_states       \
+		qwwad_diffuse                 \
+		qwwad_ef_band_edge            \
+		qwwad_ef_cylindrical_wire     \
+		qwwad_ef_cylindrical_wire_wf  \
+		qwwad_ef_dispersion           \
+		qwwad_ef_donor_generic        \
+		qwwad_ef_donor_specific       \
+		qwwad_ef_exciton              \
+		qwwad_ef_generic              \
+		qwwad_ef_infinite_well        \
+		qwwad_ef_infinite_wire        \
+		qwwad_ef_parabolic_well       \
+		qwwad_ef_plot                 \
+		qwwad_ef_poeschl_teller       \
+		qwwad_ef_spherical_dot        \
+		qwwad_ef_spherical_dot_wf     \
+		qwwad_ef_square_well          \
+		qwwad_ef_superlattice         \
+	       	qwwad_ef_zeeman               \
+	       	qwwad_fermi_distribution      \
+		qwwad_material_property       \
+		qwwad_mesh                    \
+		qwwad_poisson                 \
+		qwwad_population_init         \
+		qwwad_pp_charge_density       \
+		qwwad_pp_dispersion           \
+		qwwad_pp_large_basis          \
+		qwwad_pp_large_basis_so       \
+		qwwad_pp_lattice_vector_table \
+		qwwad_pp_superlattice         \
+		qwwad_specific_heat_capacity  \
+		qwwad_spin_flip_raman         \
+		qwwad_sr_acoustic_phonon      \
+		qwwad_sr_alloy_disorder       \
+		qwwad_sr_carrier_carrier      \
+		qwwad_sr_interface_roughness  \
+		qwwad_sr_impurity             \
+		qwwad_sr_lo_phonon            \
+		qwwad_sr_radiative            \
+		qwwad_thermal_1d              \
+		qwwad_thermal_rc              \
+	       	qwwad_tx_double_barrier       \
+		qwwad_tx_double_barrier_iv    \
+	       	qwwad_tx_single_barrier       \
+		qwwad_uncertainty             \
+		qwwad_critical_thickness      \
 	       	effv    \
 	       	efsx    \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
 		slk
-
-#		pplbso  \
-#		ppsg 
 
 # Executable scripts to be installed into the user's
 # bin folder
@@ -312,16 +310,17 @@ qwwad_pp_dispersion_LDADD   = libqwwad.la
 qwwad_pp_large_basis_SOURCES  = src/qwwad_pp_large_basis.cpp src/pplb-functions.cpp src/pplb-functions.h src/ppff.h src/ppff.cpp
 qwwad_pp_large_basis_LDADD    = libqwwad.la
 
-#ppsg_SOURCES = src/ppsg.c
+qwwad_pp_lattice_vector_table_SOURCES = src/qwwad_pp_lattice_vector_table.cpp
+qwwad_pp_lattice_vector_table_LDADD = libqwwad.la
 
-#ppsl_SOURCES = src/ppsl.cpp
-#ppsl_LDADD   = libqwwad.la
+qwwad_pp_superlattice_SOURCES = src/qwwad_pp_superlattice.cpp src/ppff.h src/ppff.cpp
+qwwad_pp_superlattice_LDADD   = libqwwad.la
 
 #ppvfq_SOURCES = src/ppvfq.cpp src/ppff.h
 #ppvfq_LDADD   = libqwwad.la
 
-#pplbso_SOURCES = src/pplbso.cpp src/ppsop.h
-#pplbso_LDADD   = libqwwad.la
+qwwad_pp_large_basis_so_SOURCES = src/qwwad_pp_large_basis_so.cpp src/pplb-functions.h src/pplb-functions.cpp src/ppff.h src/ppff.cpp src/ppsop.h src/ppsop.cpp
+qwwad_pp_large_basis_so_LDADD   = libqwwad.la
 
 qwwad_ef_poeschl_teller_SOURCES = src/qwwad_ef_poeschl_teller.cpp
 qwwad_ef_poeschl_teller_LDADD   = libqwwad.la
