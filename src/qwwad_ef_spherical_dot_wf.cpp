@@ -1,30 +1,38 @@
-/*==================================================================
-            efsdwf   Envelope Function Spherical Dot Wave Functions
-  ==================================================================*/
+/**
+ * \file   qwwad_ef_spherical_dot_wf.cpp
+ * \brief  Envelope Function Spherical Dot Wave Functions
+ * \author Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program uses a shooting technique to calculate the
+ *          uncorrelated one particle wavefunctions of any user supplied
+ *          radial potential.  The potential is read from the file v.r
+ *          The eigenenergies have been calculated previously with `efsdot'
+ *          and are stored in the file E?.r
+ */
 
-/* This program uses a shooting technique to calculate the
-   uncorrelated one particle wavefunctions of any user supplied
-   radial potential.  The potential is read from the file v.r
-   The eigenenergies have been calculated previously with `efsdot'
-   and are stored in the file E?.r
-
-   Paul Harrison, December 1998                                   */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "qwwad/constants.h"
 #include "maths.h"
 
+using namespace QWWAD;
+using namespace constants;
+
+static double wf(double  E,
+                 double  delta_z,
+                 files  *fdata,
+                 data11 *data_m0Eg,
+                 data11 *data_zwf,
+                 int     n,
+                 bool    np_flag);
+
 int main(int argc,char *argv[])
 {
-double	wf();		/* calculates wavefunctions		*/
-
 double	delta_z;	/* z separation of input potentials	*/
 double	E;		/* electron and hole energies		*/
 double	N;		/* normalization integral		*/
@@ -120,20 +128,18 @@ free(data_zwf);
 return EXIT_SUCCESS;
 } /* end main */
 
-double
-wf(E,delta_z,fdata,data_m0Eg,data_zwf,n,np_flag)
-
-/* This function returns the value of the wavefunction (psi)
-   at +infinity for a given value of the energy.  The solution
-   to the energy occurs for psi(+infinity)=0.                      */
-
-double E;
-double delta_z;
-files  *fdata;
-data11 *data_m0Eg;
-data11 *data_zwf;
-int    n;
-bool   np_flag;
+/**
+ * \brief returns the value of the wavefunction (psi) at +infinity for a given energy
+ *
+ * \details The solution to the energy occurs for psi(+infinity)=0
+ */
+static double wf(double  E,
+                 double  delta_z,
+                 files  *fdata,
+                 data11 *data_m0Eg,
+                 data11 *data_zwf,
+                 int     n,
+                 bool    np_flag)
 {
  double alpha;		     /* non-parabolicity parameter   */
  double N=0;		     /* normalization integral       */
