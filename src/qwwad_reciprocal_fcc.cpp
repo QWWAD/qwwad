@@ -1,14 +1,15 @@
-/*======================================================================
-        rlv-fcc  Reciprocal Lattice Vectors-Face Centred Cubic
-  ======================================================================
-
-This program calculates the reciprocal lattice vectors for a
-face-centred cubic crystal.  The maximum magnitude of the vectors
-begin read in as the only command line argument.
-
-The reciprocal lattice vector is assumed to be constructed from linear
-combinations of the reciprocal lattice basis vectors, i.e.
-
+/**
+ * \file    qwwad_reciprocal_fcc.cpp
+ * \brief   Reciprocal Lattice Vectors-Face Centred Cubic
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ * \details This program calculates the reciprocal lattice vectors for a
+ *          face-centred cubic crystal.  The maximum magnitude of the vectors
+ *          begin read in as the only command line argument.
+ *
+ *          The reciprocal lattice vector is assumed to be constructed from linear
+ *          combinations of the reciprocal lattice basis vectors, i.e.
+ *
   G=2*pi/A0*(beta_1*b_1+beta_2*b_2+beta_3*b_3)
                     ---        ---        ---
 
@@ -17,14 +18,12 @@ then
   G=2*pi/A0*(gamma_1*i+gamma_2*j+gamma_3*k)
                       -         -         -
 
-where i, j and k are the cartesian basis vectors.  
-      -  -     -
-
-Paul Harrison, March 1995                                                */
+where i, j and k are the cartesian basis vectors.
+*/
  
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include "struct.h"
 #include "maths.h"
 

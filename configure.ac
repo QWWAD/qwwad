@@ -25,7 +25,7 @@ AC_CONFIG_AUX_DIR([config])
 # of Automake that can be accepted
 AM_INIT_AUTOMAKE([-W -Wall 1.11 subdir-objects])
 
-AC_CONFIG_SRCDIR([src/csss.c])
+AC_CONFIG_SRCDIR([src/qwwad_ef_infinite_well.cpp])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
