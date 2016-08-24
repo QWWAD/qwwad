@@ -1,12 +1,11 @@
-/*===================================================================
-	efiwire Envelope Function Infinite Wire
-===================================================================*/
-
-/* This program calculates the eigenfunctions and eigenenergies of
-   an infinitely deep rectangular cross-section quantum wire. The 
-   relevant parameters are passed via command line arguments.
-
-   Paul Harrison, November 1998				 */
+/**
+ * \file  qwwad_ef_infinite_wire.cpp
+ * \brief Envelope Function Infinite Wire
+ *
+ * \details This program calculates the eigenfunctions and eigenenergies of
+ *          an infinitely deep rectangular cross-section quantum wire. The 
+ *          relevant parameters are passed via command line arguments.
+ */
 
 #include <cstdio>
 #include <cstdlib>

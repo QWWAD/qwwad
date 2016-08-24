@@ -46,6 +46,7 @@ bin_PROGRAMS =  \
 		qwwad_ef_exciton             \
 		qwwad_ef_generic             \
 		qwwad_ef_infinite_well       \
+		qwwad_ef_infinite_wire       \
 		qwwad_ef_parabolic_well      \
 		qwwad_ef_plot                \
 		qwwad_ef_poeschl_teller      \
@@ -76,7 +77,6 @@ bin_PROGRAMS =  \
                 csss    \
 		cszb    \
 	       	effv    \
-		efiwire \
 		efsdot  \
 		efsdwf  \
 	       	efsx    \
@@ -247,8 +247,8 @@ effv_SOURCES = src/effv.c
 qwwad_ef_infinite_well_SOURCES = src/qwwad_ef_infinite_well.cpp
 qwwad_ef_infinite_well_LDADD   = libqwwad.la
 
-efiwire_SOURCES = src/efiwire.cpp
-efiwire_LDADD   = libqwwad.la
+qwwad_ef_infinite_wire_SOURCES = src/qwwad_ef_infinite_wire.cpp
+qwwad_ef_infinite_wire_LDADD   = libqwwad.la
 
 qwwad_ef_superlattice_SOURCES = src/qwwad_ef_superlattice.cpp
 qwwad_ef_superlattice_LDADD   = libqwwad.la
