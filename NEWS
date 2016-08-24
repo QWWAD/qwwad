@@ -1,3 +1,12 @@
+2016-08-24 (QWWAD 1.5.0):
+        * This preview release adds a first version of the libqwwad API, allowing
+          you to incorporate QWWAD functionality into your own C++ programs.
+        * A pkg-config module has been added.  Use `pkg-config qwwad' to find the
+          flags needed to compile/link against the libqwwad library.
+        * A uniform naming scheme has been adopted for all QWWAD programs.
+          See bug #1452777 for details
+        * All (non-deprecated) QWWAD programs are now ported to C++.
+
 2016-07-10 (QWWAD 1.4.0):
 	* This preview release adds the programs for Ch5 and 6:
 	  Impurities and Excitons
