@@ -1,22 +1,18 @@
-/*====================================================================
-                     srrad Scattering Rate---RADiative
-  ====================================================================*/
+/**
+ * \file    qwwad_sr_radiative.cpp
+ * \brief   Scattering Rate---RADiative
+ * \author  Paul Harrison  <p.harrison@shu.ac.uk>
+ * \author  Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program calculates the spontaneous radiative lifetime between
+ *          two quantum well subbands.  The user is able to choose between the
+ *          3D and 2D forms (see Smet, J. Appl. Phys. 79 (9305) (1996).
+ *
+ *          wf_e1.r
+ *          wf_e2.r    etc.
+ *          Ee.r       Note standard setup for electrons only!
+ */
 
-/* This program calculates the spontaneous radiative lifetime between
-   two quantum well subbands.  The user is able to choose between the
-   3D and 2D forms (see Smet, J. Appl. Phys. 79 (9305) (1996).
-
-   Input files:       wf_e1.r
-                      wf_e2.r    etc.
-		      Ee.r             Note standard setup for
-					electrons only!
-
-   Output files:    
-
-   Paul Harrison
-
-                                                                */
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -26,14 +22,26 @@
 #include "maths.h"
 #include "qwwad/constants.h"
 
+using namespace QWWAD;
+using namespace constants;
+
+static double M(data11 *pointer_wf1,
+                data11 *pointer_wf2,
+                int     N);
+
+static double ri(double lambda);
+
+static data11 * read_data(char  filename [],
+                          int  *N);
+
+static void read_E(double E[]);
+
 int main(int argc, char *argv[])
 {
 double	E[9];		/* Energy levels			*/
 double	gamma;		/* constant, see Smet			*/
 double	lambda;		/* wavelength of radiation		*/
-double	M();		/* Momentum matrix element <i|d/dz|f>	*/
 double	mstar;		/* effective mass			*/
-double	ri();		/* refractive index			*/
 double	OS;		/* Oscillator Strength			*/
 double	omega;		/* angular velocity of radiation	*/
 double	rad;		/* Radiative lifetime, 
@@ -43,14 +51,12 @@ int	N_1;		/* number of lines in data files	*/
 int	N_2;		/* number of lines in data files	*/
 int	state_i;	/* Initial state			*/
 int	state_f;	/* Final state 				*/
-void	read_E();	/* Reads energy levels			*/
 char	filename_1[9];	/* character string for wavefunction 
                    		input file			*/
 char	filename_2[9];	/* character string for wavefunction 
                  		input file			*/
 char	p;		/* particle (e, h, or l)		*/
 bool	D3_flag;	/* if set, use 3D form of lifetime	*/
-data11	*read_data();
 data11	*start_wf1;	/* start address of data		*/
 data11	*start_wf2;	/* start address of data		*/
 
@@ -149,16 +155,18 @@ free(start_wf2);
 return EXIT_SUCCESS;
 }        /* end main */
 
-
-
-double
-M(pointer_wf1,pointer_wf2,N)
-
-/* This function calculates the momentum matrix element <i|d/dz|f> */
-
-data11 *pointer_wf1;       /* pointer to first wavefunction data */
-data11 *pointer_wf2;       /* pointer to first wavefunction data */
-int     N;                 /* number of wavefucntion points      */
+/**
+ * \brief calculates the momentum matrix element <i|d/dz|f>
+ *
+ * \param[in] pointer_wf1 pointer to 1st wavefunction data
+ * \param[in] pointer_wf2 pointer to 2nd wavefunction data
+ * \param[in] N           number of wavefucntion points
+ *
+ * \return momentum matrix element
+ */
+static double M(data11 *pointer_wf1,
+                data11 *pointer_wf2,
+                int     N)
 {
  double delta_z;
  double matrix_element=0;
@@ -177,17 +185,14 @@ int     N;                 /* number of wavefucntion points      */
  return(matrix_element);
 }
 
-
-
-data11
-*read_data(filename,N)
-
-/* This function reads the potential and masses into memory and returns
-   the start address of this block of memory and the number of lines   */
- 
-char       filename[];
-int        *N;              /* number of lines in data files     */
-
+/**
+ * \brief Reads the potential and masses into memory
+ *
+ * \param[out] N the number of lines in the data files
+ *
+ * \returns the start address of this block of memory
+ */
+static data11 *read_data(char filename [], int *N)
 {
  FILE      *Fwf;            /* pointer to v.r                    */
  data11    *pointer_wf;     /* pointer to the data structure     */
@@ -219,14 +224,10 @@ int        *N;              /* number of lines in data files     */
  return(start_wf);
 }
 
-
-
-void
-read_E(E)
-
-/* This function reads the energy level file */
-
-double	E[];
+/**
+ * \brief Reads the energy level file
+ */
+static void read_E(double E[])
 {
 int	i=0;	/* index					*/
 FILE	*FE;	/* file pointer to Ee.r				*/
@@ -242,18 +243,13 @@ while(fscanf(FE,"%*i %le",&E[i])!=EOF)
 fclose(FE);
 }
 
-
-
-double 
-ri(lambda)
-
-/* This function calculates the refractive index of the semiconductor
-   using the expressions of Sellmeier and the data of Seraphin, see Adachi,
-   `GaAs and related materials p423                          
-                                                                */
-
-double lambda;
-
+/**
+ * \brief Calculates the refractive index of the semiconductor
+ *
+ * \details Uses the expressions of Sellmeier and the data of
+ *          Seraphin, see Adachi, `GaAs and related materials', p423
+ */
+static double ri(double lambda)
 {
  double A;     /*  Coefficients of empirical fit */
  double B; 
@@ -266,3 +262,4 @@ double lambda;
  return(sqrt(A+B*(gsl_pow_2(lambda/1e-6)/(gsl_pow_2(lambda/1e-6)-gsl_pow_2(C)))));
 
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

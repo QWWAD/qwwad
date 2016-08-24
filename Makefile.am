@@ -63,6 +63,7 @@ bin_PROGRAMS =  \
 		qwwad_sr_interface_roughness \
 		qwwad_sr_impurity            \
 		qwwad_sr_lo_phonon           \
+		qwwad_sr_radiative           \
 		qwwad_thermal_1d             \
 		qwwad_thermal_rc             \
 	       	qwwad_tx_double_barrier      \
@@ -82,8 +83,7 @@ bin_PROGRAMS =  \
 		rlv-fcc \
 		rlv-sc  \
 		rlv-ss  \
-		slk     \
-	       	srrad
+		slk
 
 #		ppcd    \
 #		ppee    \
@@ -347,7 +347,8 @@ qwwad_sr_carrier_carrier_LDADD    = libqwwad.la
 qwwad_sr_lo_phonon_SOURCES  = src/qwwad_sr_lo_phonon.cpp
 qwwad_sr_lo_phonon_LDADD    = libqwwad.la
 
-srrad_SOURCES  = src/srrad.c
+qwwad_sr_radiative_SOURCES  = src/qwwad_sr_radiative.cpp
+qwwad_sr_radiative_LDADD    = libqwwad.la
 
 qwwad_specific_heat_capacity_SOURCES = src/qwwad_specific_heat_capacity.cpp
 qwwad_specific_heat_capacity_LDADD   = libqwwad.la
