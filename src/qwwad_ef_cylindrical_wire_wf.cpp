@@ -1,25 +1,27 @@
-/*==================================================================
-              efcwwf   Envelope Function Circular Wire Wave Functions
-  ==================================================================*/
+/**
+ * \file   qwwad_ef_cylindrical_wire_wf.cpp
+ * \brief  Envelope Function Circular Wire Wave Functions
+ * \author Paul Harrison <p.harrison@shu.ac.uk>
+ * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
+ *
+ * \details This program uses a shooting technique to calculate the
+ *          uncorrelated one particle wavefunctions of any user supplied
+ *          radial potential.  The potential is read from the file v.r
+ *          The eigenenergies have been calculated previously with
+ *          `qwwad_ef_cylindrical_wire'
+ *          and are stored in the file E?.r
+ */
 
-/* This program uses a shooting technique to calculate the
-   uncorrelated one particle wavefunctions of any user supplied
-   radial potential.  The potential is read from the file v.r
-   The eigenenergies have been calculated previously with `efcwire'
-   and are stored in the file E?.r
-
-   Paul Harrison, December 1998                                   */
-
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <signal.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include "ef-helpers.h"
-#include "struct.h"
 #include "qwwad/constants.h"
 #include "maths.h"
+
+using namespace QWWAD;
+using namespace constants;
 
 static double wf(const double  E,
                  const double  delta_z,
@@ -31,9 +33,6 @@ static double wf(const double  E,
 
 int main(int argc,char *argv[])
 {
-double	read_delta_z();
-files	*read_data();	/* reads potential file into memory	*/
-
 double	delta_z;	/* z separation of input potentials	*/
 double	E;		/* electron and hole energies		*/
 double	N;		/* normalization integral		*/
@@ -129,68 +128,6 @@ free(data_zwf);
 return EXIT_SUCCESS;
 } /* end main */
 
-double
-read_delta_z(fdata)
-
-/* This function opens the external file v.r and calculates
-   the separation along the z (growth) direction of the
-   user supplied potentials                                        */
-
-files *fdata;
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0]=fdata->z;
- fdata++;
- z[1]=fdata->z;
- return(z[1]-z[0]);
-}
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-files * read_data(int *n)
-{
- FILE 	*Fv;            /* file pointer to potential file          */
- FILE 	*Fm;            /* file pointer to potential file          */
- files  *fdata;	/* start address of potential		   */
- int i;
-
- if((Fm=fopen("m.r","r"))==0)
- {
-     fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");
-     exit(0);
- }
-
- if((Fv=fopen("v.r","r"))==0)
- {
-     fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");
-     exit(0);
- }
-
- *n=0;
- while(fscanf(Fv,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(Fv);
-
- fdata=(files *)calloc(*n,sizeof(files));
-
- if(fdata==0){
-     fprintf(stderr,"Cannot allocate memory!\n");
-     exit(0);
- }
-
- for(i=0; i<*n; ++i)
- {
-     int n_read = fscanf(Fv,"%le %le",&(fdata[i].z),&(fdata[i].V));
-     n_read = fscanf(Fm,"%*e %le",&(fdata[i].mstar));
- }
-
- fclose(Fm);
- fclose(Fv);
-
- return(fdata);
-}
-
 /**
  * Finds the wavefunction (\f$\psi\f$) for a given energy
  *
@@ -261,33 +198,3 @@ static double wf(const double  E,
 
  return N*delta_z;
 }
-
-
-
-double 
-V_min(fdata,n)       
-
-/* This function opens the external file v.r and finds     
-   the minimum value for the potential energy, this value
-   is used as the initial energy estimate.                         */
-
-files *fdata;		/* pointer to potential			   */
-int   n;		/* number of steps in potential		   */
-
-{
- double min;            /* minimum value of potential energy       */
- int  i;                /* index                                   */
- 
- min=1;
-
- for(i=0;i<n;i++)
- {
-  if(fdata->V<min)
-  {
-   min=fdata->V;
-  }
-  fdata++;
- }
- return(min);
-}
-

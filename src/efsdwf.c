@@ -23,9 +23,7 @@
 
 int main(int argc,char *argv[])
 {
-double	read_delta_z();
 double	wf();		/* calculates wavefunctions		*/
-files	*read_data();	/* reads potential file into memory	*/
 
 double	delta_z;	/* z separation of input potentials	*/
 double	E;		/* electron and hole energies		*/
@@ -122,73 +120,6 @@ free(data_zwf);
 return EXIT_SUCCESS;
 } /* end main */
 
-
-
-
-double
-read_delta_z(fdata)
-
-/* This function opens the external file v.r and calculates
-   the separation along the z (growth) direction of the
-   user supplied potentials                                        */
-
-files *fdata;
-{
- double z[2];           /* displacement along growth direction     */
-
- z[0]=fdata->z;
- fdata++;
- z[1]=fdata->z;
- return(z[1]-z[0]);
-}
-
-
-
-files
-*read_data(n)
-
-/* This function reads the potential into memory and returns the start
-   address of this block of memory and the number of lines	   */
-
-int	*n;
-
-{
- FILE 	*Fv;            /* file pointer to potential file          */
- FILE 	*Fm;            /* file pointer to potential file          */
- files  *fdata;		/* temporary pointer to potential	   */
- files  *data_start;	/* start address of potential		   */
-
- if((Fm=fopen("m.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'm.r'!\n");exit(0);}
-
- if((Fv=fopen("v.r","r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'v.r'!\n");exit(0);}
-
- *n=0;
- while(fscanf(Fv,"%*e %*e")!=EOF)
-  (*n)++;
- rewind(Fv);
-
- data_start=(files *)calloc(*n,sizeof(files));
- if(data_start==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
- fdata=data_start;
-
- while(fscanf(Fv,"%le %le",&(fdata->z),&(fdata->V))!=EOF)
- {
-  int n_read = fscanf(Fm,"%*e %le",&(fdata->mstar));
-
-  if (n_read == 2)
-    fdata++;
- }
-
- fclose(Fm);
- fclose(Fv);
-
- return(data_start);
-
-}
-
 double
 wf(E,delta_z,fdata,data_m0Eg,data_zwf,n,np_flag)
 
@@ -251,33 +182,3 @@ bool   np_flag;
 
  return(N*delta_z);
 }
-
-
-
-double 
-V_min(fdata,n)       
-
-/* This function opens the external file v.r and finds     
-   the minimum value for the potential energy, this value
-   is used as the initial energy estimate.                         */
-
-files *fdata;		/* pointer to potential			   */
-int   n;		/* number of steps in potential		   */
-
-{
- double min;            /* minimum value of potential energy       */
- int  i;                /* index                                   */
- 
- min=1;
-
- for(i=0;i<n;i++)
- {
-  if(fdata->V<min)
-  {
-   min=fdata->V;
-  }
-  fdata++;
- }
- return(min);
-}
-

@@ -39,6 +39,7 @@ bin_PROGRAMS =  \
 		qwwad_diffuse                \
 		qwwad_ef_band_edge           \
 		qwwad_ef_cylindrical_wire    \
+		qwwad_ef_cylindrical_wire_wf \
 		qwwad_ef_dispersion          \
 		qwwad_ef_donor_generic       \
 		qwwad_ef_donor_specific      \
@@ -74,7 +75,6 @@ bin_PROGRAMS =  \
 		qwwad_critical_thickness     \
                 csss    \
 		cszb    \
-		efcwwf  \
 	       	effv    \
 		efiwire \
 		efsdot  \
@@ -239,7 +239,8 @@ qwwad_ef_exciton_LDADD   = libqwwad.la
 qwwad_ef_cylindrical_wire_SOURCES = src/qwwad_ef_cylindrical_wire.cpp
 qwwad_ef_cylindrical_wire_LDADD   = libqwwad.la
 
-efcwwf_SOURCES = src/efcwwf.c
+qwwad_ef_cylindrical_wire_wf_SOURCES = src/qwwad_ef_cylindrical_wire_wf.cpp
+qwwad_ef_cylindrical_wire_wf_LDADD   = libqwwad.la
 
 effv_SOURCES = src/effv.c
 
