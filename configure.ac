@@ -65,7 +65,7 @@ AC_SEARCH_LIBS([cos],[imf m],[have_imf=yes],[have_imf=no])
 LT_PREREQ([2.2])
 LT_INIT
 
-PKG_PROG_PKG_CONFIG(0.24)
+PKG_PROG_PKG_CONFIG(0.23)
 
 # Check for Boost Program Options
 
