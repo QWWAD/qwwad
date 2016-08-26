@@ -6,7 +6,7 @@ AC_PREREQ([2.63])
 dnl List the required versions for dependencies here
 m4_define([libxmlpp_required_version], [2.30])
 
-AC_INIT([Quantum Wells, Wires and Dots], [1.4+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
+AC_INIT([Quantum Wells, Wires and Dots], [1.5+devel], [https://bugs.launchpad.net/qwwad], [qwwad], [https://launchpad.net/qwwad])
 
 dnl If we have an old version of Autoconf, then we need to set the PACKAGE_URL variable
 dnl manually.

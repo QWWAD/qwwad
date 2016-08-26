@@ -1,4 +1,4 @@
-2016-08-24 (QWWAD 1.5.0):
+2016-08-26 (QWWAD 1.5.1):
         * This preview release adds a first version of the libqwwad API, allowing
           you to incorporate QWWAD functionality into your own C++ programs.
         * A pkg-config module has been added.  Use `pkg-config qwwad' to find the
