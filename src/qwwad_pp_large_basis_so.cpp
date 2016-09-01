@@ -44,9 +44,8 @@ using namespace QWWAD;
 using namespace constants;
 
 std::complex<double>
-Vso(const atom                   *atoms,
+Vso(const std::vector<atom>      &atoms,
     const std::vector<arma::vec> &G,
-    const size_t                  n_atoms,
     arma::vec const              &k,
     const unsigned int            i,
     const unsigned int            j,
@@ -95,9 +94,8 @@ int main(int argc,char *argv[])
         k[ik] *= 2.0*pi/A0;
     }
 
-    size_t	n_atoms;	/* number of atoms in (large) cell		*/
     std::string filename("atoms.xyz");
-    const auto atoms = read_atoms(&n_atoms, filename.c_str()); // read in atomic basis
+    const auto atoms = read_atoms(filename.c_str()); // read in atomic basis
 
     const auto G  = read_rlv(A0); // read in reciprocal lattice vectors
     const auto N  = G.size(); // number of reciprocal lattice vectors
@@ -115,7 +113,7 @@ int main(int argc,char *argv[])
         for(unsigned int j=i; j<N; j++)
         {
             const auto q = G[i] - G[j];
-            V_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
+            V_GG(i,j) = V(A0,m_per_au,atoms,q);
 
             // Copy elements to upper triangle of all other blocks
             V_GG(i+N, j) = V_GG(i, j+N) = V_GG(i+N, j+N) = V_GG(i,j);
@@ -149,7 +147,7 @@ int main(int argc,char *argv[])
         {
             for(unsigned int j=0;j<=i;j++)	
             {
-                H_GG(i,j) += Vso(atoms,G,n_atoms,k[ik],i,j,N);
+                H_GG(i,j) += Vso(atoms,G,k[ik],i,j,N);
             }
         }
 
@@ -175,8 +173,6 @@ int main(int argc,char *argv[])
         }
     }
 
-    free(atoms);
-
     return EXIT_SUCCESS;
 }/* end main */
 
@@ -185,16 +181,14 @@ int main(int argc,char *argv[])
  *
  * \param[in] atoms   atomic definitions
  * \param[in] G	      reciprocal lattice vectors
- * \param[in] n_atoms number of atoms in structure
  * \param[in] k       the electron momentum
  * \param[in] i	      index
  * \param[in] j       index
  * \param[in] N       number of reciprocal lattice vectors
  */
 std::complex<double>
-Vso(const atom                   *atoms,
+Vso(const std::vector<atom>      &atoms,
     const std::vector<arma::vec> &G,
-    const size_t                  n_atoms,
     arma::vec const              &k,
     const unsigned int            i,
     const unsigned int            j,
@@ -232,15 +226,15 @@ Vso(const atom                   *atoms,
     // Potential term
     std::complex<double> v=0;				/* Initialise for sum	*/
 
-    for(unsigned int ia=0;ia<n_atoms;ia++)
+    for(auto const atom : atoms)
     {
-        const double q_dot_t = dot(q, atoms[ia].r);
-        const auto Lambda = lambda(atoms[ia].type);
+        const double q_dot_t = dot(q, atom.r);
+        const auto Lambda = lambda(atom.type);
         v += Lambda * exp(std::complex<double>(0.0,-q_dot_t)); // [QWWAD3, 15.81]
     }
 
     v *= vso;
-    v/=(double)(n_atoms);
+    v/=atoms.size();
 
     return v;
 }

@@ -34,7 +34,7 @@ noinst_HEADERS = src/ef-helpers.h    \
 bin_PROGRAMS = \
 		qwwad_charge_density           \
 		qwwad_cs_single_spiral         \
-		qwwad_cs_zinc_blende           \ 
+		qwwad_cs_zinc_blende           \
 		qwwad_density_of_states        \
 		qwwad_diffuse                  \
 		qwwad_ef_band_edge             \

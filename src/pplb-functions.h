@@ -14,9 +14,8 @@ write_ank(arma::cx_mat &ank,
           int           n_min,
           int           n_max);
 
-std::complex<double> V(double           A0,
-                       double           m_per_au,
-                       atom            *atoms,
-                       size_t           n_atoms,
-                       arma::vec const &q);
+std::complex<double> V(double                   A0,
+                       double                   m_per_au,
+                       std::vector<atom> const &atoms,
+                       arma::vec const         &q);
 #endif

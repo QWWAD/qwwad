@@ -20,6 +20,7 @@ if test -z $WHICH_LIBTOOLIZE; then
         exit 1
 fi
 
+mkdir -p config
 autoreconf -I m4 -I config --force --install
 
 cd $olddir

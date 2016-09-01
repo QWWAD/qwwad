@@ -447,43 +447,37 @@ double Vf(const double  A0,
 
 }
  
-/* This function reads the atomic species (defined in the file as.r)
-   into memory (addressed by the pointer as) and returns the start
-   address of this block of memory and the number of lines	   */
-atom *read_atoms(long unsigned int *n_atoms, const char * filename)
+/**
+ * \brief Reads the atomic species into memory
+ */
+std::vector<atom> read_atoms(const char * filename)
 {
- int    ia=0;
  FILE 	*Fatoms;        /* file pointer to wavefunction file       */
- atom	*atoms;		/* atomic definitions			*/
 
  if((Fatoms=fopen(filename,"r"))==0)
  {
-  fprintf(stderr,"Error: Cannot open input file 'atoms.xyz'!\n");
-  exit(0);
+     std::ostringstream oss;
+     oss << "Cannot open input file " << filename;
+     throw std::runtime_error(oss.str());
  }
 
  /* Read in the first line and hence the number of atoms	*/
-
- size_t n_read = fscanf(Fatoms,"%lu",n_atoms);
+ int n_atoms=0;
+ size_t n_read = fscanf(Fatoms,"%d", &n_atoms);
  
  /* Allocate memory for atom definitions	*/
- if (n_read == 1)
-   atoms=(atom *)calloc(*n_atoms,sizeof(atom));
- else
- {
-   fprintf(stderr, "Could not read number of atoms!\n");
-   exit(EXIT_FAILURE);
+ std::vector<atom> atoms;
+ if (n_read == 1) {
+   atoms.resize(n_atoms);
  }
-
- if(atoms==0)
- {
-  fprintf(stderr,"Cannot allocate memory!\n");
-  exit(0);
+ else {
+     throw std::runtime_error("Could not read number of atoms");
  }
 
  double rx;
  double ry;
  double rz;
+ int ia=0;
  while((fscanf(Fatoms,"%s %lf %lf %lf",atoms[ia].type,
         &rx,&ry,&rz))!=EOF)
  {
@@ -496,11 +490,11 @@ atom *read_atoms(long unsigned int *n_atoms, const char * filename)
      r *= 1e-10;
 
      atoms[ia].r = r;
-  ia++;
+     ia++;
  }
  fclose(Fatoms);
 
- return(atoms);
+ return atoms;
 }   
 
 /* This function reads the reciprocal lattice vectors (defined in

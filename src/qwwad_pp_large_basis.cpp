@@ -90,9 +90,8 @@ int main(int argc,char *argv[])
         k[ik] *= 2.0*pi/A0;
     }
 
-    size_t	n_atoms;	/* number of atoms in (large) cell		*/
     std::string filename("atoms.xyz");
-    atom *atoms = read_atoms(&n_atoms, filename.c_str());		/* read in atomic basis	*/
+    auto const atoms = read_atoms(filename.c_str());		/* read in atomic basis	*/
 
     const auto G = read_rlv(A0); // read in reciprocal lattice vectors
     const auto N = G.size(); // number of reciprocal lattice vectors
@@ -109,7 +108,7 @@ int main(int argc,char *argv[])
         for(unsigned int j=i;j<N;j++)
         {
             const auto q = G[i] - G[j];
-            V_GG(i,j) = V(A0,m_per_au,atoms,n_atoms,q);
+            V_GG(i,j) = V(A0,m_per_au,atoms,q);
 
             // Fill in the lower triangle by taking the Hermitian transpose of the elements
             V_GG(j,i) = conj(V_GG(i,j));
@@ -157,8 +156,6 @@ int main(int argc,char *argv[])
             write_ank(ank,ik,N,n_min,n_max);
         }
     }/* end while*/
-
-    free(atoms);
 
     return EXIT_SUCCESS;
 }/* end main */

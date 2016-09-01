@@ -11,6 +11,8 @@
 #define PPFF_H
 
 #include <armadillo>
+#include <vector>
+
 typedef struct
 {
  char	type[12];
@@ -22,7 +24,7 @@ double Vf(const double  A0,
           double        q_sqr,
           const char   *type);
 
-atom * read_atoms(long unsigned int *n_atoms, const char * filename);
+std::vector<atom> read_atoms(const char * filename);
 
 std::vector<arma::vec> read_rlv(double A0);
 #endif

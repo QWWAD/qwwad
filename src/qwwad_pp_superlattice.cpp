@@ -46,17 +46,15 @@ static std::complex<double> i1(0,1);
 static std::complex<double>
 V(double           A0,
   double           m_per_au,
-  atom            *atoms,
-  atom            *atomsp,
-  int              n_atoms,
+  std::vector<atom> const &atoms,
+  std::vector<atom> const &atomsp,
   arma::vec const &g);
 
 static std::complex<double>
 VF(double           A0,
    double           F,
    double           q,
-   atom            *atoms,
-   int              n_atoms,
+   std::vector<atom> const &atoms,
    arma::vec const &g);
 
 static std::valarray<std::complex<double>> read_ank(int N,
@@ -73,8 +71,7 @@ static std::vector<arma::vec> read_kxi(double  A0);
 static void write_VF(double  A0,
                      double  F,
                      double  q,
-                     atom   *atoms,
-                     int     n_atoms);
+                     std::vector<atom> const &atoms);
 
 static void clean_Hdash(std::complex<double> *Hdash,
                         int                   order);
@@ -92,7 +89,6 @@ double	*RWORK;		/* LAPACK: workspace				*/
 int	INFO;		/* LAPACK: information integer			*/
 int	Nn;		/* number of bands in calculation		*/
 int	Nkxi;		/* number of k points in calculation		*/
-size_t	n_atoms;	/* number of atoms in (large) cell		*/
 int     n_min;          /* lowest output band                           */
 int     n_max;          /* highest output band                          */
 int	i;		/* loop index for matrix rows			*/
@@ -111,8 +107,6 @@ char	JOBZ='V';	/* LAPACK: compute eigenvectors and eigenvalues	*/
 char	p;		/* the particle					*/
 char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
 FILE	*FExi;		/* pointer to output energy file `Exi.r'	*/
-atom	*atoms;		/* the type and position of the atoms		*/
-atom	*atomsp;	/* the type and position of the perturbed atoms	*/
 bool	o;		/* if set, output the Fourier Transform VF(g)	*/
 
 /* default values	*/
@@ -170,9 +164,9 @@ while((argc>1)&&(argv[1][0]=='-'))
  argc--;
 }
 strcpy(filename,"atoms.xyz");
-atoms=read_atoms(&n_atoms,filename);	/* read in atomic basis	*/
+auto const atoms=read_atoms(filename);	/* read in atomic basis	*/
 strcpy(filename,"atomsp.xyz");
-atomsp=read_atoms(&n_atoms,filename);	/* read in perturbation	*/
+auto const atomsp=read_atoms(filename);	/* read in perturbation	*/
 
 auto G = read_rlv(A0); // read in reciprocal lattice vectors
 auto N = G.size(); // number of reciprocal lattice vectors
@@ -187,7 +181,7 @@ Enk=read_Enk(Nn,Nkxi);	/* read in bulk eigenvalues		*/
 
 /* Output the  Fourier Transform of the electric field	*/
 
-if(o) write_VF(A0,F,q,atoms,n_atoms);
+if(o) write_VF(A0,F,q,atoms);
 
 /* Allocate memory */
 
@@ -249,8 +243,8 @@ for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
             )
             *
             (
-             V(A0,m_per_au,atoms,atomsp,n_atoms,g) +
-             VF(A0,F,q,atoms,n_atoms,g)
+             V(A0,m_per_au,atoms,atomsp,g) +
+             VF(A0,F,q,atoms,g)
             )
            );
    } /* end iG */
@@ -282,8 +276,6 @@ fclose(FExi);
 free(Hdash);
 free(Exi);
 free(Enk);
-free(atoms);
-free(atomsp);
 
 return EXIT_SUCCESS;
 }/* end main */
@@ -492,15 +484,13 @@ static std::vector<arma::vec> read_kxi(double  A0)
  * \param m_per_au conversion factor from SI to a.u.
  * \param atoms    atomic definitions
  * \param atomsp   atomic definitions
- * \param n_atoms  number of atoms in structure
  * \param g        the vector, g=G'-G+kxi'-kxi
  */
 static std::complex<double>
 V(double           A0,
   double           m_per_au,
-  atom            *atoms,
-  atom            *atomsp,
-  int              n_atoms,
+  std::vector<atom> const &atoms,
+  std::vector<atom> const &atomsp,
   arma::vec const &g)
 {
  std::complex<double> v;     /* potential					*/
@@ -509,7 +499,8 @@ V(double           A0,
  v=0;
 
  // Sum over atoms [QWWAD4, 16.50]
- for(int ia=0;ia<n_atoms;ia++)
+ auto const n_atoms = atoms.size();
+ for(unsigned int ia=0;ia<n_atoms;ia++)
  {
      // general vector representing atom within cell
      auto const t = atoms[ia].r;
@@ -535,19 +526,17 @@ V(double           A0,
  * \param F       the electric field strength
  * \param q       the carrier charge
  * \param atoms   atomic definitions
- * \param n_atoms number of atoms in structure
  * \param g       the vector, g=G'-G+kxi'-kxi
  */
 static std::complex<double>
 VF(double           A0,
    double           F,
    double           q,
-   atom            *atoms,
-   int              n_atoms,
+   std::vector<atom> const &atoms,
    arma::vec const &g)
 {
     // Calculate the number of lattice constants in each superlattice period
-    int const n_z=n_atoms/4;
+    int const n_z=atoms.size()/4;
 
     /* The smallest reciprocal lattice vector is therefore pi/(n_z*A0), thus 
        anything less than this must be zero				*/
@@ -567,8 +556,8 @@ VF(double           A0,
     else
     {
         // Get midpoint of unit cell
-        const auto z_first = atoms[0].r(2); // z-position of first atom
-        const auto z_last  = atoms[n_atoms-1].r(2); // z-position of last atom
+        const auto z_first = atoms.front().r(2); // z-position of first atom
+        const auto z_last  = atoms.back().r(2); // z-position of last atom
         double const z0=(z_last + z_first)/2;
 
         std::complex<double> v1;	/* first term in potential			*/
@@ -609,13 +598,11 @@ VF(double           A0,
  * \param F       the electric field strength
  * \param q       the carrier charge
  * \param atoms   atomic definitions
- * \param n_atoms number of atoms in structure
  */
 static void write_VF(double  A0,
                      double  F,
                      double  q,
-                     atom   *atoms,
-                     int     n_atoms)
+                     std::vector<atom> const &atoms)
 {
  FILE	*FVFg;		/* pointer to output file	*/
  int	i;		/* index			*/
@@ -629,7 +616,7 @@ static void write_VF(double  A0,
      g(1)=0;
      g(2)=((float)i*4/500)*pi/A0;
 
-     fprintf(FVFg,"%le %le\n",g(2)/(pi/A0),abs(VF(A0,F,q,atoms,n_atoms,g)));
+     fprintf(FVFg,"%le %le\n",g(2)/(pi/A0),abs(VF(A0,F,q,atoms,g)));
  }
 
  fclose(FVFg);
