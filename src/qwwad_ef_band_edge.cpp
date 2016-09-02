@@ -69,6 +69,33 @@ class BandEdgeOptions : public Options
         }
 };
 
+/**
+ * \brief dc relative permittivity values
+ *
+ * \todo Read from material library
+ */
+static double const eps_dc_GaAs = 12.9;
+static double const eps_dc_AlAs = 10.06;
+static double const eps_dc_InAs = 15.15;
+
+/**
+ * \brief Heavy-hole effective masses
+ *
+ * \todo Read from material library
+ */
+static double const m_hh_GaAs = 0.51;
+static double const m_hh_AlAs = 0.76;
+static double const m_hh_InAs = 0.41;
+
+/**
+ * \brief Light-hole effective masses
+ *
+ * \todo Read from material library
+ */
+static double const m_lh_GaAs = 0.082;
+static double const m_lh_AlAs = 0.15;
+static double const m_lh_InAs = 0.026;
+
 int main(int argc,char *argv[])
 {
     const BandEdgeOptions opt(argc, argv);
@@ -146,7 +173,7 @@ int main(int argc,char *argv[])
                 }
 
                 Eg     = 1.426*e+dV;
-                eps_dc = ((x-1.0)*(-12.9) + x*10.06)*eps0;
+                eps_dc = ((1.0-x)*eps_dc_GaAs + x*eps_dc_AlAs)*eps0;
             }
             break;
 
@@ -233,19 +260,31 @@ int main(int argc,char *argv[])
                     case 'h':
                         {
                             V=0.47*dV;
-                            if(compute_mass)
-                                std::cerr << "Warning: Mass data not defined for In(1-x-y)Al(x)Ga(y)As light-hole" << std::endl;
+                            if(compute_mass) {
+                                // Linearly interpolate between InAs, AlAs and GaAs for now
+                                // TODO: Find a more accurate interpolation
+                                m = (m_hh_InAs * (1.0-x-y) + m_hh_GaAs * y + m_hh_AlAs * x)*me;
+                            }
                         }
                         break;
                     case 'l':
                         {
-                            std::cerr << "Data not defined for In(1-x-y)Al(x)Ga(y)As light-hole" << std::endl;
-                            exit(EXIT_FAILURE);
+                            std::cerr << "Warning: Potential data not defined for In(1-x-y)Al(x)Ga(y)As light-hole" << std::endl;
+
+                            if(compute_mass) {
+                                // Linearly interpolate between InAs, AlAs and GaAs for now
+                                // TODO: Find a more accurate interpolation
+                                m = (m_lh_InAs * (1.0-x-y) + m_lh_GaAs * y + m_lh_AlAs * x)*me;
+                            }
+
                         }
                 }
 
                 Eg=0.36*e+dV;
-                std::cerr << "Warning: Unknown dc permittivity for InAlGaAs" << std::endl;
+
+                // Linearly interpolate between InAs, AlAs and GaAs for now
+                // TODO: Find a more accurate interpolation
+                eps_dc = (eps_dc_InAs * (1.0-x-y) + eps_dc_GaAs * y + eps_dc_AlAs * x)*eps0;
             }
             break;
     }
