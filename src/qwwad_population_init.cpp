@@ -19,7 +19,7 @@
 #include "qwwad/maths-helpers.h"
 #include "qwwad/file-io.h"
 #include "qwwad/fermi.h"
-#include "wf_options.h"
+#include "qwwad/wf_options.h"
 
 using namespace QWWAD;
 using namespace constants;

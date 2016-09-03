@@ -173,6 +173,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/schroedinger-solver-tridiagonal.cpp    \
 			   src/qwwad/eigenstate.cpp                         \
 			   src/qwwad/subband.cpp                            \
+			   src/qwwad/wf_options.cpp                         \
+			   src/qwwad/wf_options.h                           \
 			   src/qwwad-material.cpp                           \
 			   src/qwwad-material.h                             \
 			   src/qwwad-material-property.cpp                  \
@@ -192,9 +194,7 @@ libqwwad_la_SOURCES =  \
 			   src/material_library.cpp                         \
 			   src/material_library.h                           \
 			   src/qwwad-debye.cpp                              \
-			   src/qwwad-debye.h                                \
-			   src/wf_options.cpp                               \
-			   src/wf_options.h
+			   src/qwwad-debye.h
 
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)

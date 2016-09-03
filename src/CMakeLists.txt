@@ -8,18 +8,24 @@ set( wf_options wf_options.cpp wf_options.h )
 
 add_subdirectory( qwwad )
 
-add_executable( qwwad_find_donor_state qwwad_find_donor_state.cpp )
-target_link_libraries( qwwad_find_donor_state qwwad )
+add_executable( qwwad_ef_donor_generic
+                qwwad_ef_donor_generic.cpp )
 
-add_executable( dispersion_relation dispersion_relation.cpp ${wf_options} )
-target_link_libraries( dispersion_relation qwwad )
+target_link_libraries( qwwad_ef_donor_generic qwwad )
 
-add_executable( dos dos.cpp ${qwwad_options} )
-target_link_libraries( dos qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} )
+add_executable( qwwad_ef_dispersion
+                qwwad_ef_dispersion.cpp )
+
+target_link_libraries( qwwad_ef_dispersion qwwad )
+
+add_executable( qwwad_density_of_states
+                qwwad_density_of_states.cpp )
+
+target_link_libraries( qwwad_density_of_states qwwad )
 
 install( PROGRAMS
-           ${CMAKE_BINARY_DIR}/src/dispersion_relation
-           ${CMAKE_BINARY_DIR}/src/dos
-           ${CMAKE_BINARY_DIR}/src/qwwad_find_donor_state
+           ${CMAKE_BINARY_DIR}/src/qwwad_ef_dispersion
+           ${CMAKE_BINARY_DIR}/src/qwwad_ef_donor_generic
+           ${CMAKE_BINARY_DIR}/src/qwwad_density_of_states
          DESTINATION
            ${CMAKE_INSTALL_PREFIX}/bin )

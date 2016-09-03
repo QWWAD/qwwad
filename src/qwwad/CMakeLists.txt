@@ -14,7 +14,7 @@ set( qwwad_src
         maths-helpers.cpp
         options.cpp
         subband.cpp
-        heterostructure.cpp
+        mesh.cpp
         schroedinger-solver.cpp
         schroedinger-solver-donor.cpp
         schroedinger-solver-donor-2D.cpp
@@ -25,6 +25,7 @@ set( qwwad_src
         schroedinger-solver-infinite-well.cpp
         schroedinger-solver-taylor.cpp
         schroedinger-solver-tridiagonal.cpp
+	wf_options.cpp
     )
 
 set( qwwad_h
@@ -40,7 +41,7 @@ set( qwwad_h
         options.h
         subband.h
         qwwad-constants.h
-        heterostructure.h
+        mesh.h
         schroedinger-solver.h
         schroedinger-solver-donor.h
         schroedinger-solver-donor-2D.h
@@ -51,6 +52,7 @@ set( qwwad_h
         qwwad-schroedinger-infinite-well.h
         qwwad-schroedinger-taylor.h
         qwwad-schroedinger-tridiagonal.h
+	wf_options.h
     )
 
 add_library( qwwad ${qwwad_src} )

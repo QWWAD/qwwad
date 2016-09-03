@@ -73,52 +73,22 @@ static void write_VF(double  A0,
                      double  q,
                      std::vector<atom> const &atoms);
 
-static void clean_Hdash(std::complex<double> *Hdash,
-                        int                   order);
+static void clean_Hdash(arma::cx_mat &Hdash);
 
 int main(int argc,char *argv[])
 {
-std::complex<double>	*WORK;		/* LAPACK: workspace				*/
-double	A0;		/* Lattice constant				*/
 double	*Enk;		/* bulk energy eigenvalues			*/
-double	*Exi;		/* energy eigenvalues				*/
-double	F;		/* the electric field strength			*/
-double	m_per_au;	/* unit conversion factor, m/a.u.		*/
-double	q;		/* the carrier charge, e=-e_0, h=+e_0		*/
-double	*RWORK;		/* LAPACK: workspace				*/
-int	INFO;		/* LAPACK: information integer			*/
-int	Nn;		/* number of bands in calculation		*/
-int	Nkxi;		/* number of k points in calculation		*/
-int     n_min;          /* lowest output band                           */
-int     n_max;          /* highest output band                          */
-int	i;		/* loop index for matrix rows			*/
-int	iE;		/* loop index for energy eigenvalues		*/
-unsigned int	iG;		/* index over G					*/
-unsigned int	iGdash;		/* index over G'				*/
-int	ikxi;		/* index for kxi 				*/
-int	ikxidash;	/* index for kxidash 				*/
-int	in;		/* index over the bulk band n			*/
-int	indash;		/* index over the bulk band n'			*/
-int	j;		/* loop index for matrix columns		*/
-int	LWORK;		/* LAPACK: workspace				*/
-int	OH;		/* the order of Hdash				*/
 char	filename[12];	/* character string for Energy output filename	*/
-char	JOBZ='V';	/* LAPACK: compute eigenvectors and eigenvalues	*/
-char	p;		/* the particle					*/
-char	UPLO='L';	/* LAPACK: diagonalise `L'ower triangle 	*/
-FILE	*FExi;		/* pointer to output energy file `Exi.r'	*/
-bool	o;		/* if set, output the Fourier Transform VF(g)	*/
 
 /* default values	*/
-
-A0=5.65e-10;
-F=0.0;
-q=e;
-n_min=0;
-n_max=3;
-o=false;
-p='h';
-m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me;
+double A0=5.65e-10; // Lattice constant
+double F=0.0;       // Electric field strength
+double q=e;         // carrier charge
+size_t n_min=0;     // Lowest output band
+size_t n_max=3;     // Highest output band
+bool o=false; // if set, output the Fourier Transform VF(g)
+char p='h'; // Particle ID
+double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Conversion factor, m/a.u.
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -168,113 +138,89 @@ auto const atoms=read_atoms(filename);	/* read in atomic basis	*/
 strcpy(filename,"atomsp.xyz");
 auto const atomsp=read_atoms(filename);	/* read in perturbation	*/
 
-auto G = read_rlv(A0); // read in reciprocal lattice vectors
-auto N = G.size(); // number of reciprocal lattice vectors
-Nn=read_ank0(N);	/* reads a single ank.r file just to 
-			   deduce the number of bands Nn	*/
+auto const G = read_rlv(A0); // read in reciprocal lattice vectors
+auto const N = G.size(); // number of reciprocal lattice vectors
+auto const Nn=read_ank0(N); /* reads a single ank.r file just to 
+		        	   deduce the number of bands Nn	*/
 
-auto kxi = read_kxi(A0); // read in set of kxi points
-Nkxi = kxi.size();
+auto const kxi = read_kxi(A0); // read in set of kxi points
+auto const Nkxi = kxi.size();  // Number of k-points
 
-auto ank=read_ank(N,Nn,Nkxi);/* read in bulk eigenvectors		*/
+auto const ank=read_ank(N,Nn,Nkxi);/* read in bulk eigenvectors		*/
 Enk=read_Enk(Nn,Nkxi);	/* read in bulk eigenvalues		*/
 
 /* Output the  Fourier Transform of the electric field	*/
 
 if(o) write_VF(A0,F,q,atoms);
 
-/* Allocate memory */
-
-LWORK=2*Nn*Nkxi;		/* LAPACK workspace definition		*/
-
-WORK=(std::complex<double> *)calloc(LWORK,sizeof(std::complex<double>));
- if(WORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-RWORK=(double *)calloc(3*Nn*Nkxi-2,sizeof(double));
- if(RWORK==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-/* end of LAPACK definitions	*/
-auto Hdash=(std::complex<double> *)calloc(Nn*Nkxi*Nn*Nkxi,sizeof(std::complex<double>));
- if(Hdash==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-Exi=(double *)calloc(Nn*Nkxi,sizeof(double));
- if(Exi==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
-
-// coefficients of eigenvectors
-auto Ank= std::valarray<std::complex<double>>(Nn*Nkxi*Nn*Nkxi);
+arma::cx_mat Hdash(Nn*Nkxi, Nn*Nkxi);
 
 /* Create H' matrix elements	*/
-for(i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
+for(unsigned int i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
 {
- for(j=0;j<=i;j++)	/* index across cols, including diagonal elements */
- {
-  /* Deduce the indices of of the bulk eigenvectors for each H' element	*/
+    // TODO: Just fill in the upper triangle 
+    for(unsigned int j=0; j<N;j++)
+    {
+        /* Deduce the indices of of the bulk eigenvectors for each H' element	*/
+        auto const ikxidash=i/Nn;
+        auto const ikxi=j/Nn;
 
-  ikxidash=i/Nn;
-  ikxi=j/Nn;
+        auto const indash=i%Nn;
+        auto const in=j%Nn;
 
-  indash=i%Nn;
-  in=j%Nn;
+        /* Initialise the matrix element before the sum and add energy
+           eigenvalues as specified by delta functions 	*/
+        if((indash==in)&&(ikxidash==ikxi))
+            Hdash(i, j) = Enk[ikxi*Nn+in];
+        else
+            Hdash(i, j) = 0;
 
-  /* Initialise the matrix element before the sum and add energy
-     eigenvalues as specified by delta functions 	*/
+        for(unsigned int iGdash=0;iGdash<N;iGdash++)	/* sum over G'	*/
+        {
+            for(unsigned int iG=0;iG<N;iG++)			/* sum over G	*/
+            {
+                // Calculate appropriate g vector [QWWAD4, 16.38]
+                auto g = G[iGdash] - G[iG] + kxi[ikxidash] - kxi[ikxi];
 
-  if((indash==in)&&(ikxidash==ikxi))
-   Hdash[i*Nn*Nkxi+j] = Enk[ikxi*Nn+in];
-  else
-   Hdash[i*Nn*Nkxi+j] = 0;
+                // Add on potential term
+                Hdash(i, j) +=
+                    (
+                     ( conj(   ank[ikxidash*N*Nn+iGdash*Nn+indash]   )
 
-  for(iGdash=0;iGdash<N;iGdash++)	/* sum over G'	*/
-  {
-   for(iG=0;iG<N;iG++)			/* sum over G	*/
-   {
-       // Calculate appropriate g vector [QWWAD4, 16.38]
-       auto g = G[iGdash] - G[iG] + kxi[ikxidash] - kxi[ikxi];
+                       *
 
-       /* Add on potential term	*/
-
-       Hdash[i*Nn*Nkxi+j] +=
-           (
-            ( conj(   ank[ikxidash*N*Nn+iGdash*Nn+indash]   )
-
-              *
-
-              ank[ikxi*N*Nn+iG*Nn+in]
-            )
-            *
-            (
-             V(A0,m_per_au,atoms,atomsp,g) +
-             VF(A0,F,q,atoms,g)
-            )
-           );
-   } /* end iG */
-  } /* end iGdash */
-
-
- } /* end j */
+                       ank[ikxi*N*Nn+iG*Nn+in]
+                     )
+                     *
+                     (
+                      V(A0,m_per_au,atoms,atomsp,g) +
+                      VF(A0,F,q,atoms,g)
+                     )
+                    );
+            } /* end iG */
+        } /* end iGdash */
+    } /* end j */
 } /* end i */
 
-/* Clean up matrix H'	*/
-clean_Hdash(Hdash,Nn*Nkxi);
+// Clean up matrix H'
+clean_Hdash(Hdash);
 
-for(i=0;i<Nn*Nkxi;i++)		/* LAPACK routine zheev() writes vectors */
- for(j=0;j<=i;j++)		/* over original matrix, so copy matrix  */
-  Ank[i*Nn*Nkxi+j]=Hdash[i*Nn*Nkxi+j]; // to eigenvector space
+// Energy eigenvalues
+arma::vec Exi(Nn*Nkxi);
 
-/* call LAPACK diagonalisation routine	*/
+// coefficients of eigenvectors
+arma::cx_mat Ank(Nn*Nkxi, Nn*Nkxi);
 
-OH=Nn*Nkxi;			/* the order of Hdash	*/
-ctranspose(Ank); //,Nn*Nkxi);	/* because of FORTRAN LAPACK	*/
-zheev_(&JOBZ,&UPLO,&OH,&Ank[0],&OH,Exi,WORK,&LWORK,RWORK,&INFO);
+// Find eigenvalue solutions
+arma::eig_sym(Exi, Ank, Hdash);
 
 /* Output eigenvalues in a separate file for each k point */
-
-FExi=fopen("Exi.r","w");
-for(iE=n_min;iE<=n_max;iE++)fprintf(FExi,"%10.6f\n",*(Exi+iE)/e);
+auto FExi=fopen("Exi.r","w");
+for(unsigned int iE=n_min;iE<=n_max;iE++) {
+    fprintf(FExi,"%10.6f\n", Exi(iE)/e);
+}
 fclose(FExi);
 
-free(Hdash);
-free(Exi);
 free(Enk);
 
 return EXIT_SUCCESS;
@@ -287,21 +233,21 @@ return EXIT_SUCCESS;
  * \brief removes round-up errors => makes H' Hermitian
  *
  * \param Hdash The matrix to be `cleaned'
- * \param N 	the order of the matrix
  *
  * \details This function accounts for any computational errors in the diagonal of
  *          H', it ensures that the imaginary components of these elements are zero	
  */
-static void clean_Hdash(std::complex<double> *Hdash,
-                        int                   N)
+static void clean_Hdash(arma::cx_mat &Hdash)
 {
- for(int i=0; i<N; i++)
- {
-  if(Hdash[i*N+i].imag() / Hdash[i*N+i].real() < 1e-10){
-      Hdash[i*N+i] = Hdash[i*N+i].real();
-  }
- }
+    auto const N = Hdash.n_rows; // Assume the matrix is square for now
 
+    // Traverse the diagonal
+    for(unsigned int i=0; i<N; i++)
+    {
+        if(Hdash(i,i).imag() / Hdash(i, i).real() < 1e-10){
+            Hdash(i,i) = Hdash(i,i).real();
+        }
+    }
 }
 
 /**
@@ -604,12 +550,9 @@ static void write_VF(double  A0,
                      double  q,
                      std::vector<atom> const &atoms)
 {
- FILE	*FVFg;		/* pointer to output file	*/
- int	i;		/* index			*/
+ auto FVFg=fopen("VFg.r","w");
 
- FVFg=fopen("VFg.r","w");
-
- for(i=-500;i<500;i++)
+ for(int i=-500;i<500;i++)
  {
      arma::vec g(3); // The vector, g=G'-G+kxi'-kxi
      g(0)=0;
@@ -620,5 +563,5 @@ static void write_VF(double  A0,
  }
 
  fclose(FVFg);
-
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

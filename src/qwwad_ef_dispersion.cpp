@@ -8,7 +8,7 @@
 #include <iostream>
 #include <valarray>
 
-#include "wf_options.h"
+#include "qwwad/wf_options.h"
 #include "qwwad/subband.h"
 #include "qwwad/file-io.h"
 #include "qwwad/constants.h"

@@ -22,8 +22,7 @@
 #include "qwwad/schroedinger-solver-shooting.h"
 #include "qwwad/schroedinger-solver-taylor.h"
 #include "qwwad/schroedinger-solver-tridiagonal.h"
-
-#include "wf_options.h"
+#include "qwwad/wf_options.h"
 
 using namespace QWWAD;
 using namespace constants;

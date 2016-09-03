@@ -2,7 +2,7 @@ cmake_minimum_required( VERSION 2.8.11 )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 
 project( "Quantum Wells, Wires and Dots" )
-set( QWWAD_VERSION 1.2+devel )
+set( QWWAD_VERSION 1.5+devel )
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 

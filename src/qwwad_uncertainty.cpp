@@ -14,7 +14,7 @@
 #include <gsl/gsl_math.h>
 #include "qwwad/eigenstate.h"
 #include "qwwad/file-io.h"
-#include "wf_options.h"
+#include "qwwad/wf_options.h"
 #include "qwwad/constants.h"
 #include "qwwad/maths-helpers.h"
 
