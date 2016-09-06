@@ -18,17 +18,19 @@ namespace QWWAD
  */
 class SchroedingerSolverTridiag : public SchroedingerSolver
 {
+private:
+    arma::vec _m;   ///< Effective mass at each point
+    arma::vec diag; ///< Diagonal elements of matrix
+    arma::vec sub;  ///< Sub-diagonal elements of matrix
 public:
-    SchroedingerSolverTridiag(const std::valarray<double>& me,
-                              const std::valarray<double>& V,
-                              const std::valarray<double>& z,
-                              const unsigned int           nst_max=0);
+    SchroedingerSolverTridiag(const decltype(_m) &me,
+                              const decltype(_V) &V,
+                              const decltype(_z) &z,
+                              const unsigned int  nst_max=0);
 
     std::string get_name() {return "tridiagonal";}
 private:
     void calculate();
-    std::valarray<double> diag; ///< Diagonal elements of matrix
-    std::valarray<double> sub; ///< Sub-diagonal elements of matrix
 };
 }
 #endif

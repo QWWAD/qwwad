@@ -29,8 +29,8 @@ SchroedingerSolverPoeschlTeller::SchroedingerSolverPoeschlTeller(const double al
                                                                  const double mass,
                                                                  const size_t nz,
                                                                  const unsigned int nst_max) :
-    SchroedingerSolver(std::valarray<double>(nz),
-                       std::valarray<double>(nz),
+    SchroedingerSolver(arma::vec(nz),
+                       arma::vec(nz),
                        nst_max),
     _alpha(alpha),
     _lambda(lambda),
@@ -60,8 +60,8 @@ void SchroedingerSolverPoeschlTeller::calculate()
     const size_t nst = get_n_bound();
     const size_t nz  = _z.size();
 
-    const std::valarray<double> sinh_alpha_z = sinh(_alpha*_z);
-    const std::valarray<double> _x = -pow(sinh_alpha_z,2.0);
+    const auto sinh_alpha_z = sinh(_alpha*_z);
+    const auto _x = -square(sinh_alpha_z);
 
     for (unsigned int ist=0; (_nst_max == 0 || ist < _nst_max) && ist < nst; ++ist)
     {
@@ -74,7 +74,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
         // factor depend on whether the state has odd or even parity.
         
         double arg1, arg2, arg3;    // Arguments for hypergeometric function
-        std::valarray<double> fact; // Prefactor for hypergeometric function
+        arma::vec fact; // Prefactor for hypergeometric function
 
         // Flugge, 39.24
         const double a = 0.5 * (_lambda - kappa/_alpha);
@@ -97,7 +97,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
             fact = pow(cosh(_alpha*_z),_lambda);
         }
 
-        std::valarray<double> psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::vec psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         for(unsigned int iz = 0; iz < nz; ++iz)
         {

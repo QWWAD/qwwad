@@ -24,14 +24,14 @@ using namespace constants;
  * \details If nst_max=0 (the default), all states will be found
  *          that lie within the range of the input potential profile
  */
-SchroedingerSolverTaylor::SchroedingerSolverTaylor(const std::valarray<double> &me,
-                                       const std::valarray<double> &alpha,
-                                       const std::valarray<double> &V,
-                                       const std::valarray<double> &z,
-                                       const unsigned int           nst_max) :
+SchroedingerSolverTaylor::SchroedingerSolverTaylor(const decltype(_m)     &me,
+                                                   const decltype(_alpha) &alpha,
+                                                   const decltype(_V)     &V,
+                                                   const decltype(_z)     &z,
+                                                   const unsigned int           nst_max) :
     SchroedingerSolver(V,z,nst_max),
-    AB(std::valarray<double>(2*z.size())),
-    BB(std::valarray<double>(2*z.size()))
+    AB(arma::vec(2*z.size())),
+    BB(arma::vec(2*z.size()))
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];

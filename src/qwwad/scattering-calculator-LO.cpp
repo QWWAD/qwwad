@@ -160,7 +160,7 @@ double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
     if(ki >= ki_min)
     {
         const auto nKz = _Kz.size();
-        std::valarray<double> Wif_integrand_dKz(nKz); // Integrand for scattering rate
+        arma::vec Wif_integrand_dKz(nKz); // Integrand for scattering rate
 
         const auto isb = _subbands[i];
         const auto fsb = _subbands[f];
@@ -231,8 +231,8 @@ IntersubbandTransition ScatteringCalculatorLO::get_transition(const unsigned int
     const auto kimax  = get_ki_cutoff(i, f);
     const auto dki    = (kimax - kimin)/((_nki-1)); // Step length for integration [1/m]
 
-    std::valarray<double> ki(_nki);  // Initial wave vectors [1/m]
-    std::valarray<double> Wif(_nki); // Scattering rate at each wave-vector [1/s]
+    arma::vec ki(_nki);  // Initial wave vectors [1/m]
+    arma::vec Wif(_nki); // Scattering rate at each wave-vector [1/s]
 
     for (unsigned int iki = 0; iki < _nki; ++iki)
     {
@@ -306,7 +306,7 @@ double ScatteringCalculatorLO::Gsqr(const double   Kz,
     std::complex<double> I(0,1); // Imaginary unit
 
     // Find form-factor integral
-    std::valarray<std::complex<double>> G_integrand_dz(nz);
+    arma::cx_vec G_integrand_dz(nz);
 
     for(unsigned int iz=0; iz<nz; ++iz)
         G_integrand_dz[iz] = exp(Kz*z[iz]*I) * psi_i[iz] * psi_f[iz];
@@ -316,8 +316,8 @@ double ScatteringCalculatorLO::Gsqr(const double   Kz,
     return norm(G);
 }
 
-std::valarray<double> ScatteringCalculatorLO::get_ff_table(const unsigned int i,
-                                                           const unsigned int f) const
+arma::vec ScatteringCalculatorLO::get_ff_table(const unsigned int i,
+                                               const unsigned int f) const
 {
     const auto idx = std::make_pair(i,f);
     const auto G = ff_table.at(idx);

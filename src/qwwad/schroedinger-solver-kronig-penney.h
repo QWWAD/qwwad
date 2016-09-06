@@ -49,7 +49,7 @@ private:
     void calculate();
 
     arma::cx_mat get_matching_matrix(const double E) const;
-    std::valarray<double> get_wavefunction(const double E) const;
+    arma::vec get_wavefunction(const double E) const;
 };
 } // namespace
 #endif

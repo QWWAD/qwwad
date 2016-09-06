@@ -46,12 +46,12 @@ eigen_general(double       A[],
               unsigned int n_max)
 {
     // Real and imaginary parts of the computed eigenvalues
-    std::valarray<double> WR(N);
-    std::valarray<double> WI(N);
+    arma::vec WR(N);
+    arma::vec WI(N);
 
     // Computed left and right eigenvectors
-    std::valarray<double> V_left(N*N);
-    std::valarray<double> V_right(N*N);
+    std::vector<double> V_left(N*N);
+    std::vector<double> V_right(N*N);
 
     // Run LAPACK function to solve eigenproblem
 #if HAVE_LAPACKE
@@ -91,7 +91,8 @@ eigen_general(double       A[],
             // If we specify a range of eigenvalues, filter the
             // solutions by that range, otherwise keep all of them
             if((n_max > 0) or (WR[i] < VU)){
-                const std::valarray<double> psi = V_right[std::slice(i*N, N, 1)];
+                std::vector<double> psi(V_right.begin() + i*N,
+                                        V_right.begin() + (i+1)*N);
                 solutions[nst] = EVP_solution<double>(WR[i], psi);
 
                 nst++; // Register solution found
@@ -106,23 +107,20 @@ eigen_general(double       A[],
     solutions.resize(nst, EVP_solution<double>(N));
 
     // Create temporary storage for sorting the eigenvalues
-    std::valarray<double> E_tmp(nst);
+    arma::vec E_tmp(nst);
 
     for(unsigned int ist=0; ist < nst; ist++)
         E_tmp[ist] = solutions[ist].get_E();
 
     // Indices of the eigenvalues after sorting
-    std::valarray<size_t> sorted_E_indices(nst);
-
-    // Find the correct order of the eigenvalues
-    gsl_sort_index(&sorted_E_indices[0], &E_tmp[0], 1, nst);
+    arma::uvec sorted_E_indices = sort_index(E_tmp);
 
     // Copy the solutions into the desired output array
     std::vector<EVP_solution<double>> solutions_sorted;
 
-    for(unsigned int ist=0; ist < nst; ist++)
+    for(auto idx : sorted_E_indices)
     {
-        solutions_sorted.push_back(solutions[sorted_E_indices[ist]]);
+        solutions_sorted.push_back(solutions[idx]);
 
         // Stop if we reach the maximum permitted number of states
         if(n_max > 0 and solutions_sorted.size() == n_max)
@@ -155,12 +153,12 @@ eigen_banded(double       AB[],
              unsigned int n_max)
 {
     // Workspace to normalise eigenproblem
-    std::valarray<double> Q(n*n);
+    arma::vec Q(n*n);
 
     // LAPACK workspace
-    std::valarray<int>    ifail(n);// Failure bits for LAPACK
-    std::valarray<double> W(n);    // Temporary storage for eigenvalues
-    std::valarray<double> Z(n*n);  // Temp. storage for eigenvectors
+    arma::Col<int> ifail(n); // Failure bits for LAPACK
+    arma::vec  W(n);    // Temporary storage for eigenvalues
+    arma::vec  Z(n*n);  // Temp. storage for eigenvectors
     int                   M;       // Number of solutions found
 
     // Specify range of solutions by value, unless n_max is given
@@ -225,7 +223,8 @@ eigen_banded(double       AB[],
     std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );
 
     for(int i = 0; i < M; i++){
-        const std::valarray<double> psi = Z[std::slice(n*i, n, 1)];
+        const std::vector<double> psi(Z.begin() + n*i,
+                                      Z.begin() + n*(i+1));
         solutions[i] = EVP_solution<double>(W[i], psi);
     }
 
@@ -254,9 +253,9 @@ eigen_tridiag(double       D[],
               int          n,
               unsigned int n_max)
 {
-    std::valarray<int>    ifail(n); // Failure bits for LAPACK
-    std::valarray<double> W(n);     // Temporary storage for eigenvalues
-    std::valarray<double> Z(n*n);   // Temp. storage for eigenvectors
+    arma::Col<int>    ifail(n); // Failure bits for LAPACK
+    arma::vec         W(n);     // Temporary storage for eigenvalues
+    arma::vec         Z(n*n);   // Temp. storage for eigenvectors
     int M; // Number of solutions found
 
     // Specify range of solutions by value, unless n_max is given
@@ -308,7 +307,8 @@ eigen_tridiag(double       D[],
     std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );
 
     for(int i = 0; i < M; i++){
-        const std::valarray<double> psi = Z[std::slice(n*i, n, 1)];
+        const std::vector<double> psi(Z.begin() + n*i,
+                                      Z.begin() + n*(i+1));
         solutions[i] = EVP_solution<double>(W[i], psi);		
     }
 
@@ -328,14 +328,14 @@ eigen_tridiag(double       D[],
  *             boundaries to a discretised PDE problem. For more details of this optimised
  *             algorithm (probably) see Jonathan Cooper's thesis.
  */
-std::valarray<double> solve_cyclic_matrix(std::valarray<double> A_sub,
-                                          std::valarray<double> A_diag,
-                                          double cyclic,
-                                          std::valarray<double> b)
+arma::vec solve_cyclic_matrix(arma::vec A_sub,
+                              arma::vec A_diag,
+                              double cyclic,
+                              arma::vec b)
 {
     unsigned int ni = A_diag.size();
-    std::valarray<double> z(ni);
-    std::valarray<double> A_super(A_sub);
+    arma::vec z(ni);
+    arma::vec A_super(A_sub);
     //A_sub = A_super;
     //Forward sweep
     // Initial elements (don't need to set A_diag and b!)

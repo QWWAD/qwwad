@@ -16,13 +16,13 @@ namespace QWWAD {
 class SchroedingerSolverDonor : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverDonor(const double                 m,
-                            const std::valarray<double> &V,
-                            const std::valarray<double> &z,
-                            const double                 eps,
-                            const double                 r_d,
-                            const double                 lambda,
-                            const double                 dE);
+    SchroedingerSolverDonor(const double        m,
+                            const decltype(_V) &V,
+                            const decltype(_z) &z,
+                            const double        eps,
+                            const double        r_d,
+                            const double        lambda,
+                            const double        dE);
 
     virtual std::string get_name() = 0;
 
@@ -31,8 +31,8 @@ public:
     static double chi_at_inf(double  E,
                              void   *params);
 
-    double shoot_wavefunction(const double E,
-                              std::valarray<double> &chi) const;
+    double shoot_wavefunction(const double  E,
+                              arma::vec    &chi) const;
 
     void   set_lambda(const double lambda) {_lambda = lambda; _solutions.clear(); calculate();}
     double get_lambda() const {return _lambda;}

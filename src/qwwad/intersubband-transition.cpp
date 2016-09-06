@@ -39,7 +39,7 @@ double IntersubbandTransition::get_average_rate() const
     const auto nki = _ki.size();
     const auto dki = _ki[1] - _ki[0];
 
-    std::valarray<double> Wbar_integrand_ki(nki);
+    arma::vec Wbar_integrand_ki(nki);
 
     for(unsigned int iki=0; iki<nki; ++iki)
     {

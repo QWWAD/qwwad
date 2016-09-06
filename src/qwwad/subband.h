@@ -41,7 +41,12 @@ public:
 
     inline decltype(_ground_state) get_ground() const {return _ground_state;}
 
-    inline std::valarray<double>       z_array()    const {return _ground_state.get_position_samples();}
+    inline auto z_array() const
+        -> decltype(_ground_state.get_position_samples())
+    {
+        return _ground_state.get_position_samples();
+    }
+
     inline double                      get_dz()     const {return z_array()[1]-z_array()[0];}
     inline double                      get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
 
@@ -57,7 +62,12 @@ public:
 
     double                             get_total_population()    const;
 
-    inline std::valarray<double>       psi_array()  const {return _ground_state.get_wavefunction_samples();}
+    inline auto psi_array() const
+        -> decltype(_ground_state.get_wavefunction_samples())
+    {
+        return _ground_state.get_wavefunction_samples();
+    }
+
     inline double                      get_condband_edge() const {return _V;}
 
     double                             get_k_fermi() const;

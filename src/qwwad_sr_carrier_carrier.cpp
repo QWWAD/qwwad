@@ -92,7 +92,7 @@ int main(int argc,char *argv[])
     const double dtheta=2*pi/((float)ntheta - 1); // step length for theta integration
 
     // Can save a bit of time by calculating cosines in advance
-    std::valarray<double> cos_theta(ntheta);
+    arma::vec cos_theta(ntheta);
 
     for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
         cos_theta[itheta] = cos(itheta*dtheta);
@@ -109,8 +109,8 @@ int main(int argc,char *argv[])
             m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
@@ -118,10 +118,10 @@ int main(int argc,char *argv[])
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> j_indices;
-    std::valarray<unsigned int> f_indices;
-    std::valarray<unsigned int> g_indices;
+    arma::uvec i_indices;
+    arma::uvec j_indices;
+    arma::uvec f_indices;
+    arma::uvec g_indices;
 
     read_table("rr.r", i_indices, j_indices, f_indices, g_indices);
 
@@ -182,9 +182,9 @@ int main(int argc,char *argv[])
         const double dki=kimax/((float)nki - 1); // step length for loop over ki
         const double dkj=kjmax/((float)nkj - 1); // step length for kj integration
 
-        std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
-        std::valarray<double> Wijfg(nki);             // Scattering rate for a given initial wave vector
-        std::valarray<double> Ei_t(nki);              // Total energy of initial state (for output file) [meV]
+        arma::vec Wbar_integrand_ki(nki); // initialise integral for average scattering rate
+        arma::vec Wijfg(nki);             // Scattering rate for a given initial wave vector
+        arma::vec Ei_t(nki);              // Total energy of initial state (for output file) [meV]
 
         // calculate c-c rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
@@ -192,7 +192,7 @@ int main(int argc,char *argv[])
             const double ki=dki*(float)iki; // carrier momentum
 
             // integrate over |kj|
-            std::valarray<double> Wijfg_integrand_kj(nkj);
+            arma::vec Wijfg_integrand_kj(nkj);
 
             for(unsigned int ikj=0;ikj<nkj;ikj++)
             {
@@ -202,7 +202,7 @@ int main(int argc,char *argv[])
                 const double P=jsb.get_occupation_at_k(kj);
 
                 // Integral over alpha
-                std::valarray<double> Wijfg_integrand_alpha(nalpha);
+                arma::vec Wijfg_integrand_alpha(nalpha);
 
                 for(unsigned int ialpha=0;ialpha<nalpha;ialpha++)
                 {
@@ -220,7 +220,7 @@ int main(int argc,char *argv[])
                     const double two_kij_kfg = 2 * kij * kfg;
 
                     // Now perform innermost integral (over theta)
-                    std::valarray<double> Wijfg_integrand_theta(ntheta);
+                    arma::vec Wijfg_integrand_theta(ntheta);
 
                     for(unsigned int itheta=0;itheta<ntheta;itheta++)
                     {
@@ -284,12 +284,12 @@ return EXIT_SUCCESS;
  *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
  *  for a given wavevector, with respect to position
  */
-std::valarray<double> find_Cif_p(const std::valarray<double>& psi_if, 
-                                 const std::valarray<double>& exp_qz,
-                                 const std::valarray<double>& z)
+arma::vec find_Cif_p(const arma::vec &psi_if, 
+                     const arma::vec &exp_qz,
+                     const arma::vec &z)
 {
     const size_t nz = z.size();
-    std::valarray<double> Cif_p(nz);
+    arma::vec Cif_p(nz);
     const double dz=z[1]-z[0];
 
     Cif_p[nz-1] = psi_if[nz-1] / exp_qz[nz-1] * dz;
@@ -310,12 +310,12 @@ std::valarray<double> find_Cif_p(const std::valarray<double>& psi_if,
  * Note that the upper limit has to be the point just BEFORE each z'
  * value so that we don't double count
  */
-std::valarray<double> find_Cif_m(const std::valarray<double>& psi_if, 
-                                 const std::valarray<double>& exp_qz,
-                                 const std::valarray<double>& z)
+arma::vec find_Cif_m(const arma::vec &psi_if, 
+                     const arma::vec &exp_qz,
+                     const arma::vec &z)
 {
     const size_t nz = z.size();
-    std::valarray<double> Cif_m(nz);
+    arma::vec Cif_m(nz);
     const double dz = z[1]-z[0];
 
     // Seed the first value as zero
@@ -338,7 +338,7 @@ std::valarray<double> find_Cif_m(const std::valarray<double>& psi_if,
  *
  * \todo  This is also useful for e-e scattering. Push into library
  */
-std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z)
+arma::vec find_exp_qz(const double q, const arma::vec &z)
 {
     //const double Lp = z.max() - z.min();
 
@@ -360,10 +360,10 @@ std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z
  * Therefore, we have separated the z' dependence from the
  * z dependence of the matrix element.
  */
-double Iif(const unsigned int iz0,
-           const std::valarray<double>& Cif_p,
-           const std::valarray<double>& Cif_m, 
-           const std::valarray<double>& exp_qz)
+double Iif(const unsigned int  iz0,
+           const arma::vec    &Cif_p,
+           const arma::vec    &Cif_m, 
+           const arma::vec    &exp_qz)
 {
     return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
 }
@@ -376,25 +376,25 @@ double A(const double   q_perp,
          const Subband &fsb,
          const Subband &gsb)
 {
- const std::valarray<double> z = isb.z_array();
+ const auto z = isb.z_array();
  const size_t nz = z.size();
  const double dz = z[1] - z[0];
 
  // Convenience labels for wave-functions in each subband
- const std::valarray<double> psi_i = isb.psi_array();
- const std::valarray<double> psi_j = jsb.psi_array();
- const std::valarray<double> psi_f = fsb.psi_array();
- const std::valarray<double> psi_g = gsb.psi_array();
+ const auto psi_i = isb.psi_array();
+ const auto psi_j = jsb.psi_array();
+ const auto psi_f = fsb.psi_array();
+ const auto psi_g = gsb.psi_array();
 
  // Products of wavefunctions can be computed in advance
- const std::valarray<double> psi_if = psi_i * psi_f;
- const std::valarray<double> psi_jg = psi_j * psi_g;
+ const auto psi_if = psi_i % psi_f;
+ const auto psi_jg = psi_j % psi_g;
 
- const std::valarray<double> expTerm = find_exp_qz(q_perp, z);
- const std::valarray<double> Cjg_plus  = find_Cif_p(psi_jg, expTerm, z);
- const std::valarray<double> Cjg_minus = find_Cif_m(psi_jg, expTerm, z);
+ const auto expTerm   = find_exp_qz(q_perp, z);
+ const auto Cjg_plus  = find_Cif_p(psi_jg, expTerm, z);
+ const auto Cjg_minus = find_Cif_m(psi_jg, expTerm, z);
 
- std::valarray<double> Aijfg_integrand(nz);
+ arma::vec Aijfg_integrand(nz);
 
  // Integral of i(=0) and f(=2) over z
  for(unsigned int iz=0;iz<nz;iz++)
@@ -422,7 +422,7 @@ double PI(const Subband &isb,
     const size_t nE = 101;
     const double dE = Ek_max/(nE-1);
 
-    std::valarray<double> PI_integrand_dE(nE);
+    arma::vec PI_integrand_dE(nE);
 
     // Integrate from bottom of subband up to Ek_max (Ef + 5kT)
     for(unsigned int iE = 0; iE < nE; ++iE)
@@ -481,8 +481,8 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
 
     const double dq=q_perp_max/((float)(nq-1));	// interval in q_perp
 
-    std::valarray<double> q_perp(nq);
-    std::valarray<double> FF(nq);
+    arma::vec q_perp(nq);
+    arma::vec FF(nq);
 
     for(unsigned int iq=0;iq<nq;iq++)
     {

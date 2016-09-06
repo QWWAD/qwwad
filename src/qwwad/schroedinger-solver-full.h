@@ -17,17 +17,21 @@ namespace QWWAD
  */
 class SchroedingerSolverFull : public SchroedingerSolver
 {
+private:
+    arma::vec _m;     ///< Effective mass at each point
+    arma::vec _alpha; ///< Non-parabolicity parameter at each point
+    arma::vec _A;     ///< Hamiltonian matrix
+
 public:
-    SchroedingerSolverFull(const std::valarray<double>& me,
-                           const std::valarray<double>& alpha,
-                           const std::valarray<double>& V,
-                           const std::valarray<double>& z,
-                           const unsigned int           nst_max=0);
+    SchroedingerSolverFull(const decltype(_m)     &m,
+                           const decltype(_alpha) &alpha,
+                           const decltype(_V)     &V,
+                           const decltype(_z)     &z,
+                           const unsigned int      nst_max=0);
 
     std::string get_name() {return "full";}
 
 private:
-    std::valarray<double> A;
     void calculate();
 };
 } // namespace

@@ -117,12 +117,12 @@ double find_pop_error(double E_F, void *params)
  * \brief Parameters used for checking the population of multiple subbands
  */
 struct total_pop_params {
-    std::valarray<double> Esb; ///< Subband minimum [J]
-    double m0;                 ///< Band-edge effective mass [kg]
-    double Te;                 ///< Temperature of carrier distribution [K]
-    double alpha;              ///< Nonparabolicity [1/J]
-    double V;                  ///< Band-edge [J]
-    double N;                  ///< Population we expect to find [m^{-3}]
+    arma::vec Esb;   ///< Subband minimum [J]
+    double    m0;    ///< Band-edge effective mass [kg]
+    double    Te;    ///< Temperature of carrier distribution [K]
+    double    alpha; ///< Nonparabolicity [1/J]
+    double    V;     ///< Band-edge [J]
+    double    N;     ///< Population we expect to find [m^{-3}]
 };
 
 /**
@@ -247,7 +247,7 @@ double find_fermi_global(const std::vector<Eigenstate> &states,
                          const double                   alpha,
                          const double                   V)
 {
-    std::valarray<double> E(states.size());
+    std::vector<double> E(states.size());
 
     for(unsigned int ist = 0; ist < E.size(); ++ist)
         E[ist] = states[ist].get_energy();
@@ -267,12 +267,12 @@ double find_fermi_global(const std::vector<Eigenstate> &states,
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const std::valarray<double> &Esb,
-                         const double                 m0,
-                         const double                 N,
-                         const double                 Te,
-                         const double                 alpha,
-                         const double                 V)
+double find_fermi_global(const arma::vec &Esb,
+                         const double     m0,
+                         const double     N,
+                         const double     Te,
+                         const double     alpha,
+                         const double     V)
 {
     const size_t nst = Esb.size();
 

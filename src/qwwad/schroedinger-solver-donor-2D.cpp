@@ -19,13 +19,13 @@ namespace QWWAD
 {
 using namespace constants;
 
-SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double                 m,
-                                                     const std::valarray<double> &V,
-                                                     const std::valarray<double> &z,
-                                                     const double                 eps,
-                                                     const double                 r_d,
-                                                     const double                 lambda,
-                                                     const double                 dE) :
+SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double        m,
+                                                     const decltype(_V) &V,
+                                                     const decltype(_z) &z,
+                                                     const double        eps,
+                                                     const double        r_d,
+                                                     const double        lambda,
+                                                     const double        dE) :
     SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE)
 {}
 

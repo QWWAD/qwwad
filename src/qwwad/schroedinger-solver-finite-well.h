@@ -43,8 +43,8 @@ private:
 
     void calculate();
     
-    std::valarray<double> get_wavefunction(const double E,
-                                           const bool   parity_flag) const;
+    arma::vec get_wavefunction(const double E,
+                               const bool   parity_flag) const;
 };
 } // namespace
 #endif

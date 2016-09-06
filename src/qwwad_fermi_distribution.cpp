@@ -93,15 +93,15 @@ int main(int argc,char *argv[])
     // Read energies from file
     std::ostringstream Efile;
     Efile << "E" << p << ".r";
-    std::valarray<unsigned int> idx;
-    std::valarray<double> E;
+    arma::uvec idx;
+    arma::vec  E;
     read_table(Efile.str().c_str(), idx, E);
     E*=e/1000; // Rescale to J
 
     const auto nst = E.size();
 
-    std::valarray<double> Ef(nst); // Fermi energies for each subband [J]
-    std::valarray<double> N(nst); // Population of each subband [m^{-2}]
+    arma::vec Ef(nst); // Fermi energies for each subband [J]
+    arma::vec N(nst); // Population of each subband [m^{-2}]
 
     if(opt.equilibrium())
     {
@@ -120,7 +120,7 @@ int main(int argc,char *argv[])
     else
     {
         // reads subband populations file
-        std::valarray<double> N;
+        arma::vec N;
         read_table("N.r", idx, N);
 
         if(N.size() != nst)
@@ -178,8 +178,8 @@ static double calc_dist(const double       Emin,
 
     if(Emax<Emin) Emax=Emin+10*kB*T;
 
-    std::valarray<double> E(nE); // Array of energies for plot
-    std::valarray<double> f(nE); // Occupation probabilities
+    arma::vec E(nE); // Array of energies for plot
+    arma::vec f(nE); // Occupation probabilities
 
     const auto dE=(Emax-Emin)/(nE-1); // Energy increment for integration
     for(unsigned int i=0; i<nE; i++)

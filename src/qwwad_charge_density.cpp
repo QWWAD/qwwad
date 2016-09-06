@@ -58,8 +58,8 @@ class ChargeDensityData
         ChargeDensityData(const ChargeDensityOptions& opt);
         std::vector<Eigenstate> states;  ///< Wf and energy data
     public:
-        std::valarray<double> pop; ///< Subband population [m^{-2}]
-        std::valarray<unsigned int> nval; ///< Degeneracy of subbands
+        arma::vec  pop;  ///< Subband population [m^{-2}]
+        arma::uvec nval; ///< Degeneracy of subbands
 };
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
@@ -106,22 +106,22 @@ int main(int argc, char* argv[])
     const auto nst  = data.states.size();          // Number of states localised in one period
 
     // Read doping profile (for entire multi-period structure)
-    std::valarray<double> z; // Spatial location [m]
-    std::valarray<double> d; // Spatial profile of doping in structure [Cm^{-3}]
+    arma::vec z; // Spatial location [m]
+    arma::vec d; // Spatial profile of doping in structure [Cm^{-3}]
     read_table(opt.get_option<std::string>("dopingfile").c_str(), z, d);
 
     // Compute the spatial points for a single period
     const size_t nz_1per = z.size() / nper; // Number of points in a single period
 
     // Get doping for one period by slicing it from total profile
-    const std::valarray<double> z_1per = z[std::slice(0, nz_1per, 1)];
-    const std::valarray<double> d_1per = d[std::slice(0, nz_1per, 1)];
+    const arma::vec z_1per = z.subvec(0, nz_1per-1);
+    const auto d_1per = d.subvec(0, nz_1per-1);
 
     // Find carrier density at each point in a single period
     // by summing the "tails" of wavefunctions in each period.
     // This implements the summation in [QWWAD4, 3.108]
     // [m^{-3}]
-    std::valarray<double> carrier_density_1per(0.0, nz_1per);
+    arma::vec carrier_density_1per = arma::zeros<arma::vec>(nz_1per);
 
     for(unsigned int iper = 0; iper < nper; iper++)
     {
@@ -131,7 +131,7 @@ int main(int argc, char* argv[])
             const auto PD     = data.states[ist].get_PD();
 
             // Grab the part of the PDF that lies in this period
-            const auto PD_per = PD[std::slice(iper*nz_1per, nz_1per, 1)];
+            const arma::vec PD_per = PD.subvec(iper*nz_1per, (iper+1)*nz_1per-1);
 
             // Add this into the total carrier density profile
             carrier_density_1per += data.pop[ist] * data.nval[ist] * PD_per;
@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
 
     // Charge density is obtained by subtracting carrier density from doping density
     // [QWWAD4, 3.108]. Note q = -e by default (for electrons). [C m^{-3}]
-    std::valarray<double> rho_1per = e*(d - carrier_density_1per);
+    arma::vec rho_1per = e*(d - carrier_density_1per);
 
     // Invert charge profile if it's a p-type system
     if (opt.get_option<bool>("ptype"))

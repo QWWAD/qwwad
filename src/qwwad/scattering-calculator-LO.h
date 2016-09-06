@@ -44,7 +44,7 @@ private:
     decltype(_A0)      _lambda_s_sq; ///< Squared screening length [m^2]
 
     typedef std::pair<unsigned int, unsigned int> map_key;
-    std::valarray<decltype(_A0)>   _Kz; ///< Wave vector samples [1/m]
+    arma::vec _Kz; ///< Wave vector samples [1/m]
 
     /**
      * \brief Table of form factors
@@ -52,7 +52,7 @@ private:
      * \details The key refers to the initial and final subband indices
      *          The map contains a table of \f$G_{if}^2(Kz)\f$
      */
-    std::map<map_key, std::valarray<double>> ff_table;
+    std::map<map_key, arma::vec> ff_table;
 
     void calculate_screening_length();
 
@@ -102,7 +102,7 @@ public:
                const Subband &isb,
                const Subband &fsb);
 
-   std::valarray<double> get_ff_table(const unsigned int i, const unsigned int f) const;
+   arma::vec get_ff_table(const unsigned int i, const unsigned int f) const;
    inline decltype(_Kz)  get_Kz_table() const {return _Kz;}
 };
 } // namespace

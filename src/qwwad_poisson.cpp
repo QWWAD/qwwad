@@ -11,7 +11,6 @@
 
 #include <iostream>
 #include <cstdlib>
-#include <valarray>
 
 #include "qwwad/options.h"
 #include "qclsim_poisson_solver.h"
@@ -64,14 +63,14 @@ int main(int argc, char* argv[])
     Options opt = get_options(argc, argv);
 
     // Read low-frequency permittivity from file [F/m]
-    std::valarray<double> z;
-    std::valarray<double> _eps;
+    arma::vec z;
+    arma::vec _eps;
     read_table(opt.get_option<std::string>("dcpermittivityfile").c_str(), z, _eps);
 
     const size_t nz = z.size();
 
-    std::valarray<double> z2(nz);
-    std::valarray<double> rho(nz); // Charge-profile [C/m^2]
+    arma::vec z2(nz);
+    arma::vec rho(nz); // Charge-profile [C/m^2]
 
     // Read space-charge profile, or just leave it as zero if desired
     if(!opt.get_option<bool>("uncharged"))
@@ -89,7 +88,7 @@ int main(int argc, char* argv[])
     const auto length = dz * nz;     // Total length of structure [m]
 
     // Calculate Poisson potential due to charge within structure
-    std::valarray<double> phi(nz);   // Poisson potential
+    arma::vec phi(nz);   // Poisson potential
 
     // Pin the potential at the start, and make the field identical at either end
     if(opt.get_option<bool>("mixed"))
@@ -158,7 +157,7 @@ int main(int argc, char* argv[])
     phi *= -1;
 
     // Get field profile [V/m]
-    std::valarray<double> F(z.size());
+    arma::vec F(z.size());
     for(unsigned int iz = 1; iz < nz-1; ++iz)
         F[iz] = (phi[iz+1] - phi[iz-1])/(2*dz*e);
 
@@ -167,12 +166,12 @@ int main(int argc, char* argv[])
 
     // Calculate total potential and add on the baseline
     // potential if desired:
-    std::valarray<double> Vtotal = phi;
-    std::valarray<double> Vbase(phi.size());
+    arma::vec Vtotal = phi;
+    arma::vec Vbase(phi.size());
 
     if (opt.get_argument_known("bandedgepotentialfile"))
     {
-        std::valarray<double> zbase(phi.size());
+        arma::vec zbase(phi.size());
         read_table(opt.get_option<std::string>("bandedgepotentialfile").c_str(), zbase, Vbase);
 
         // TODO: Add more robust checking of z, zbase identicality here

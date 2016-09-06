@@ -22,14 +22,14 @@ namespace QWWAD
 class SchroedingerSolverDonorVariable : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonorVariable(const double                 m,
-                                    const std::valarray<double> &V,
-                                    const std::valarray<double> &z,
-                                    const double                 eps,
-                                    const double                 r_d,
-                                    const double                 lambda,
-                                    const double                 zeta,
-                                    const double                 dE);
+    SchroedingerSolverDonorVariable(const double        m,
+                                    const decltype(_V) &V,
+                                    const decltype(_z) &z,
+                                    const double        eps,
+                                    const double        r_d,
+                                    const double        lambda,
+                                    const double        zeta,
+                                    const double        dE);
 
     std::string get_name() {return "donor-variable";}
     void   set_zeta       (const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
@@ -46,7 +46,7 @@ private:
             const auto chi = _solutions_chi[0].get_wavefunction_samples();
             const double E = _solutions_chi[0].get_energy();
 
-            std::valarray<double> psi = chi*exp(-_zeta*abs(_z - _r_d)/_lambda);
+            auto const psi = chi*exp(-_zeta*abs(_z - _r_d)/_lambda);
             _solutions.push_back(Eigenstate(E,_z,psi));
         }
     }

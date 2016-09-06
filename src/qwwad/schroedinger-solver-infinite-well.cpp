@@ -21,8 +21,8 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                                                      const double       alpha,
                                                      const double       V,
                                                      const unsigned int nst_max) :
-    SchroedingerSolver(std::valarray<double>(nz),
-                       std::valarray<double>(nz),
+    SchroedingerSolver(arma::vec(nz),
+                       arma::vec(nz),
                        nst_max),
     _me(me),
     _L(L),
@@ -73,7 +73,7 @@ void SchroedingerSolverInfWell::calculate()
         if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
             break;
 
-        std::valarray<double> psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::vec psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         // Loop over spatial locations and find wavefunction
         // amplitude at each point (QWWAD3, 2.15)

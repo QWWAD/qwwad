@@ -8,10 +8,12 @@
 #define QWWAD_MATHS_HELPERS_H
 
 #include <cstddef>
-#include <valarray>
 #include <stdexcept>
-#include <gsl/gsl_math.h>
 #include <sstream>
+
+#include <gsl/gsl_math.h>
+
+#include <armadillo>
 
 namespace QWWAD
 {
@@ -26,7 +28,7 @@ namespace QWWAD
  * \returns The integral
  */
 template <class complex_type, class real_type>
-complex_type simps(const std::valarray<complex_type>& y, const real_type dx)
+complex_type simps(const arma::Col<complex_type>& y, const real_type dx)
 {
     const size_t n = y.size();
 
@@ -59,7 +61,7 @@ complex_type simps(const std::valarray<complex_type>& y, const real_type dx)
  * \returns The integral
  */
 template <class complex_type, class real_type>
-complex_type trapz(const std::valarray<complex_type>& y, const real_type dx)
+complex_type trapz(const arma::Col<complex_type>& y, const real_type dx)
 {
     const size_t n = y.size();
 
@@ -90,9 +92,11 @@ complex_type trapz(const std::valarray<complex_type>& y, const real_type dx)
  *          this function instead of directly calling trapz or simps.
  *
  *          Complex functions of real variables are supported
+ *
+ * \todo Replace with arma::trapz when available in all distros (Armadillo >= 6.5)
  */
 template <class complex_type, class real_type>
-complex_type integral(const std::valarray<complex_type>& y, const real_type dx)
+complex_type integral(const arma::Col<complex_type>& y, const real_type dx)
 {
     const size_t n = y.size();
 
@@ -105,9 +109,9 @@ complex_type integral(const std::valarray<complex_type>& y, const real_type dx)
         return trapz(y, dx);
 }
 
-double lookup_y_from_x(const std::valarray<double>& x_values,
-        const std::valarray<double>& y_values,
-        const double x0);
+double lookup_y_from_x(const arma::vec &x_values,
+                       const arma::vec &y_values,
+                       const double     x0);
 
 double lin_interp(const double y0,
                   const double y1,

@@ -8,8 +8,7 @@
 #define QWWAD_EIGENSTATE
 
 #include <string>
-#include <valarray>
-#include <vector>
+#include <armadillo>
 
 namespace QWWAD {
 
@@ -20,8 +19,8 @@ class Eigenstate {
 private:
     double _E; ///< The energy of the state [J]
 
-    std::valarray<double> _z;   ///< Spatial sampling positions [m]
-    std::valarray<double> _psi; ///< Wave function [m^{-0.5}]
+    arma::vec _z;   ///< Spatial sampling positions [m]
+    arma::vec _psi; ///< Wave function [m^{-0.5}]
 
     double get_total_probability() const;
     void normalise();
@@ -34,7 +33,7 @@ public:
     inline decltype(_E)   get_energy() const {return _E;}
     inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
     inline decltype(_psi) get_wavefunction_samples() const {return _psi;}
-    inline decltype(_psi) get_PD() const {return _psi*_psi;}
+    inline decltype(_psi) get_PD() const {return square(_psi);}
     inline decltype(_z)   get_position_samples() const {return _z;}
 
     static double psi_squared_max(const std::vector<Eigenstate> &EVP);

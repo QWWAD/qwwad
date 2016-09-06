@@ -65,8 +65,8 @@ int main(int argc,char *argv[])
                                                             m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
@@ -74,17 +74,17 @@ int main(int argc,char *argv[])
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read potential profile
-    std::valarray<double> z;
-    std::valarray<double> V;
+    arma::vec z;
+    arma::vec V;
     read_table("v.r", z, V);
 
     // Read interface locations
-    std::valarray<unsigned int> iz_I;
+    arma::uvec iz_I;
     read_table("interfaces.r", iz_I);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> f_indices;
+    arma::uvec i_indices;
+    arma::uvec f_indices;
 
     read_table("rrp.r", i_indices, f_indices);
 
@@ -140,14 +140,14 @@ int main(int argc,char *argv[])
 
         const double dki=(kimax-kimin)/((float)nki - 1); // step length for loop over ki
 
-        std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
-        std::valarray<double> Wif(nki);               // Scattering rate for a given initial wave vector
-        std::valarray<double> Ei_t(nki);              // Total energy of initial state (for output file) [meV]
+        arma::vec Wbar_integrand_ki(nki); // initialise integral for average scattering rate
+        arma::vec Wif(nki);               // Scattering rate for a given initial wave vector
+        arma::vec Ei_t(nki);              // Total energy of initial state (for output file) [meV]
 
         // Find interface-roughness scattering matrix element
         const double dz = z[1] - z[0];
         const size_t nz = z.size();
-        std::valarray<double> dV_dz(nz); // Derivative of potential profile [J/m]
+        arma::vec dV_dz(nz); // Derivative of potential profile [J/m]
 
         for (unsigned int iz = 1; iz < nz-1; ++iz)
             dV_dz[iz] = (V[iz+1] - V[iz-1])/dz;
@@ -156,9 +156,9 @@ int main(int argc,char *argv[])
         dV_dz[0]    = (V[1] - V[nz-1])/dz;
         dV_dz[nz-1] = (V[0] - V[nz-2])/dz;
 
-        const std::valarray<double> psi_i  = isb.psi_array();
-        const std::valarray<double> psi_f  = fsb.psi_array();
-        const std::valarray<double> psi_if = psi_i*psi_f;
+        const auto psi_i  = isb.psi_array();
+        const auto psi_f  = fsb.psi_array();
+        const arma::vec psi_if = psi_i%psi_f;
         double F_if_sq = 0.0;
 
         // Get contributions from each interface
@@ -176,7 +176,7 @@ int main(int argc,char *argv[])
 
             iz_U = (iz_I[I] + iz_I[I+1])/2;
 
-            std::valarray<double> F_integrand_dz(iz_U-iz_L);
+            arma::vec F_integrand_dz(iz_U-iz_L);
             for (unsigned int iz = iz_L; iz < iz_U; ++iz)
                 F_integrand_dz[iz-iz_L] = psi_if[iz]*dV_dz[iz];
 

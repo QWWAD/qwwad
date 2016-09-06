@@ -36,14 +36,14 @@ static void ff_table(const double   dKz,
                      const Subband &isb,
                      const Subband &fsb,
                      unsigned int   nKz,
-                     std::valarray<double> &Kz,
-                     std::valarray<double> &Gifsqr);
+                     arma::vec     &Kz,
+                     arma::vec     &Gifsqr);
 
 /* This function outputs the formfactors into files	*/
-static void ff_output(const std::valarray<double> &Kz,
-               const std::valarray<double> &Gifsqr,
-               unsigned int        i,
-               unsigned int        f)
+static void ff_output(const arma::vec &Kz,
+                      const arma::vec &Gifsqr,
+                      unsigned int        i,
+                      unsigned int        f)
 {
     char	filename[9];	/* output filename				*/
     sprintf(filename,"G%i%i.r",i,f);	
@@ -107,7 +107,7 @@ int main(int argc,char *argv[])
     const double dtheta=pi/static_cast<double>(ntheta-1); // theta integration from 0 to pi
 
     // Can save a bit of time by calculating cosines in advance
-    std::valarray<double> cos_theta(ntheta);
+    arma::vec cos_theta(ntheta);
 
     for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
         cos_theta[itheta]     = cos(itheta*dtheta);
@@ -131,8 +131,8 @@ int main(int argc,char *argv[])
             m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
@@ -140,13 +140,13 @@ int main(int argc,char *argv[])
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], Te);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> f_indices;
+    arma::uvec i_indices;
+    arma::uvec f_indices;
 
     read_table("rrp.r", i_indices, f_indices);
     const size_t ntx = i_indices.size();
-    std::valarray<double> Wabar(ntx);
-    std::valarray<double> Webar(ntx);
+    arma::vec Wabar(ntx);
+    arma::vec Webar(ntx);
 
     // Loop over all desired transitions
     for(unsigned int itx = 0; itx < ntx; ++itx)
@@ -163,10 +163,10 @@ int main(int argc,char *argv[])
         const double Ei = isb.get_E_min();
         const double Ef = fsb.get_E_min();
 
-        std::valarray<double> Kz(nKz);
-        std::valarray<double> Gifsqr(nKz);
+        arma::vec Kz(nKz);
+        arma::vec Gifsqr(nKz);
         ff_table(dKz,isb,fsb,nKz,Kz,Gifsqr);		/* generates formfactor table	*/
-        std::valarray<double> Kz_sqr(nKz);
+        arma::vec Kz_sqr(nKz);
 
         for(unsigned int iKz = 0; iKz < nKz; ++iKz)
             Kz_sqr[iKz] = Kz[iKz]*Kz[iKz];
@@ -212,22 +212,22 @@ int main(int argc,char *argv[])
         kimax = isb.get_k_at_Ek(Ecutoff);
 
         const double dki=kimax/((float)nki);
-        std::valarray<double> Waif(nki); // Absorption scattering rate at this wave-vector [1/s]
-        std::valarray<double> Weif(nki); // Emission scattering rate at this wave-vector [1/s]
-        std::valarray<double> Wabar_integrand_ki(nki); // Average scattering rate [1/s]
-        std::valarray<double> Webar_integrand_ki(nki); // Average scattering rate [1/s]
+        arma::vec Waif(nki); // Absorption scattering rate at this wave-vector [1/s]
+        arma::vec Weif(nki); // Emission scattering rate at this wave-vector [1/s]
+        arma::vec Wabar_integrand_ki(nki); // Average scattering rate [1/s]
+        arma::vec Webar_integrand_ki(nki); // Average scattering rate [1/s]
         const double tmp = 2*m*DeltaE/(hBar*hBar);
 
         for(unsigned int iki=0;iki<nki;iki++)       /* calculate e-AC rate for all ki	*/
         {
             const double ki=dki*(float)iki+dki/100;	/* second term avoids ki=0 pole	*/
 
-            std::valarray<double> Wif_integrand_dtheta(ntheta);
+            arma::vec Wif_integrand_dtheta(ntheta);
 
             /* Integral around angle theta	*/
             for(unsigned int itheta=0;itheta<ntheta;itheta++)
             {
-                std::valarray<double> Wif_integrand_dKz(nKz);
+                arma::vec Wif_integrand_dKz(nKz);
 
                 /* Integral over phonon wavevector Kz	*/
                 for(unsigned int iKz=0;iKz<nKz;iKz++)
@@ -317,21 +317,21 @@ static double Gsqr(const double   Kz,
                    const Subband &isb,
                    const Subband &fsb)
 {
- const std::valarray<double> z = isb.z_array();
+ const auto z = isb.z_array();
  const double dz = z[1] - z[0];
  const double nz = z.size();
- const std::valarray<double> psi_i = isb.psi_array();
- const std::valarray<double> psi_f = fsb.psi_array();
+ const auto psi_i = isb.psi_array();
+ const auto psi_f = fsb.psi_array();
 
  std::complex<double> I(0,1); // Imaginary unit
 
  // Find form-factor integral
- std::valarray< std::complex<double> > G_integrand_dz(nz);
+ arma::cx_vec G_integrand_dz(nz);
 
  for(unsigned int iz=0; iz<nz; ++iz)
      G_integrand_dz[iz] = exp(Kz*z[iz]*I) * psi_i[iz] * psi_f[iz];
 
- std::complex<double> G = integral(G_integrand_dz, dz);
+ auto G = integral(G_integrand_dz, dz);
 
  return norm(G);
 }
@@ -343,8 +343,8 @@ static void ff_table(const double   dKz,
                      const Subband &isb,
                      const Subband &fsb,
                      unsigned int   nKz,
-                     std::valarray<double> &Kz,
-                     std::valarray<double> &Gifsqr)
+                     arma::vec     &Kz,
+                     arma::vec     &Gifsqr)
 {
     for(unsigned int iKz=0;iKz<nKz;iKz++)
     {

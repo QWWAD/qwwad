@@ -118,8 +118,8 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         throw std::runtime_error("No states found in file");
 
     // Read effective mass table
-    std::valarray<double> z; // m
-    std::valarray<double> m_d_z; // kg
+    arma::vec z; // m
+    arma::vec m_d_z; // kg
     read_table(m_d_filename.c_str(), z, m_d_z);
 
     // Copy subband data to vector
@@ -133,7 +133,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         const auto z  = ground_state[ist].get_position_samples();
         const auto dz = z[1] - z[0];
 
-        const std::valarray<double> mass_integrand = 1.0 / m_d_z * ground_state[ist].get_PD();
+        const arma::vec mass_integrand = 1.0 / m_d_z * ground_state[ist].get_PD();
         const auto mass = 1.0 / integral(mass_integrand, dz);
 
         subbands.push_back(Subband(ground_state[ist], mass));
@@ -205,16 +205,16 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         throw std::runtime_error("No states found in file");
 
     // Read effective mass table
-    std::valarray<double> z; // m
-    std::valarray<double> m; // kg
+    arma::vec z; // m
+    arma::vec m; // kg
     read_table(m_filename.c_str(), z, m);
 
     // Read non-parabolicity parameter
-    std::valarray<double> alpha; // [1/J]
+    arma::vec alpha; // [1/J]
     read_table(alpha_filename.c_str(), z, alpha);
 
     // Read band-edge potential
-    std::valarray<double> V; // [J]
+    arma::vec V; // [J]
     read_table(potential_filename.c_str(), z, V);
 
     // Copy subband data to vector
@@ -228,15 +228,15 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         const auto z  = ground_state[ist].get_position_samples();
         const auto dz = z[1] - z[0];
 
-        const std::valarray<double> mass_integrand = 1.0 / m * ground_state[ist].get_PD();
+        const arma::vec mass_integrand = 1.0 / m % ground_state[ist].get_PD();
         const auto mass = 1.0 / integral(mass_integrand, dz);
 
         // Get "expectation values" for potential and non-parabolicity too
         // TODO: Check whether these make sense!
-        const std::valarray<double> V_integrand = V * ground_state[ist].get_PD();
+        const arma::vec V_integrand = V % ground_state[ist].get_PD();
         const auto V_exp = integral(V_integrand, dz);
 
-        const std::valarray<double> alpha_integrand = alpha * ground_state[ist].get_PD();
+        const arma::vec alpha_integrand = alpha % ground_state[ist].get_PD();
         const auto alpha_exp = integral(alpha_integrand, dz);
 
         Subband sb(ground_state[ist],

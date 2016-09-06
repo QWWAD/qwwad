@@ -18,8 +18,8 @@ private:
     Subband _isb; ///< The initial subband
     Subband _fsb; ///< The final subband
 
-    std::valarray<double> _ki;  ///< Array of initial wave-vectors     [1/m]
-    //std::valarray<double> _kf;     ///< Array of corresponding energy-conserving final wave-vectors [1/m]
+    arma::vec _ki;  ///< Array of initial wave-vectors     [1/m]
+    //arma::vec _kf;     ///< Array of corresponding energy-conserving final wave-vectors [1/m]
 
     /**
      * \brief Array of scattering rates [1/s]
@@ -27,10 +27,10 @@ private:
      * \details Each element in the array gives the total scattering rate from the
      *          initial state to ALL permitted states in the final subband
      */
-    std::valarray<double> _Wif;
+    arma::vec _Wif;
 
     // Derived properties
-    std::valarray<double> _Eki; ///< Array of initial kinetic energies [1/m]
+    arma::vec _Eki; ///< Array of initial kinetic energies [1/m]
 
 public:
     IntersubbandTransition(const decltype(_isb)    isb,

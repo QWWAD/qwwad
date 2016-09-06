@@ -13,7 +13,7 @@
 # include "config.h"
 #endif //HAVE_CONFIG_H
 
-#include <valarray>
+#include <armadillo>
 
 namespace QWWAD
 {
@@ -35,13 +35,18 @@ enum PoissonBoundaryType
 
 class Poisson
 {
+private:
+    arma::vec _eps;       ///< Permittivity at each point [F/m]
+
 public:
-    Poisson(const std::valarray<double>& eps, const double dx, PoissonBoundaryType bt=DIRICHLET);
+    Poisson(const decltype(_eps) &eps,
+            const double          dx,
+            PoissonBoundaryType   bt=DIRICHLET);
     
-    std::valarray<double> solve(const std::valarray<double> &rho) const;
-    std::valarray<double> solve(const std::valarray<double> &rho,
-                                const double                 V_drop) const;
-    std::valarray<double> solve_laplace(const double V_drop) const;
+    arma::vec solve(const arma::vec &rho) const;
+    arma::vec solve(const arma::vec &rho,
+                    const double     V_drop) const;
+    arma::vec solve_laplace(const double V_drop) const;
 
 private:
     void factorise_dirichlet();
@@ -49,15 +54,14 @@ private:
     void factorise_zerofield();
     void compute_half_index_permittivity();
 
-    std::valarray<double> _eps;       ///< Permittivity at each point [F/m]
-    std::valarray<double> _eps_minus; ///< Permittivity half a point to left [F/m]
-    std::valarray<double> _eps_plus;  ///< Permittivity half a point to right [F/m]
+    arma::vec _eps_minus; ///< Permittivity half a point to left [F/m]
+    arma::vec _eps_plus;  ///< Permittivity half a point to right [F/m]
 
     double _dx;    ///< Spatial step size [m]
     double _L;     ///< Total length of structure [m]
         
-    std::valarray<double> diag;     ///< Diagonal of Poisson matrix
-    std::valarray<double> sub_diag; ///< Sub-diagonal of Poisson matrix
+    arma::vec _diag;     ///< Diagonal of Poisson matrix
+    arma::vec _sub_diag; ///< Sub-diagonal of Poisson matrix
     double corner_point;            ///< Corner point in matrix resulting from mixed boundary conditions
 
     PoissonBoundaryType boundary_type; ///< Boundary condition type for Poisson solver

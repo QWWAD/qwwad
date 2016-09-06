@@ -20,10 +20,10 @@
 using namespace QWWAD;
 using namespace constants;
 
-void ff_output(const std::valarray<double> &Kz,
-               const std::valarray<double> &Gifsqr,
-               unsigned int        i,
-               unsigned int        f);
+void ff_output(const arma::vec &Kz,
+               const arma::vec &Gifsqr,
+               unsigned int     i,
+               unsigned int     f);
 
 static Options configure_options(int argc, char* argv[])
 {
@@ -81,8 +81,8 @@ int main(int argc,char *argv[])
                                             m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
@@ -102,14 +102,14 @@ int main(int argc,char *argv[])
     ab_calculator.set_ki_samples(nki);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> f_indices;
+    arma::uvec i_indices;
+    arma::uvec f_indices;
 
     read_table("rrp.r", i_indices, f_indices);
     const size_t ntx = i_indices.size();
 
-    std::valarray<double> Wabar(ntx);
-    std::valarray<double> Webar(ntx);
+    arma::vec Wabar(ntx);
+    arma::vec Webar(ntx);
 
     // Loop over all desired transitions
     for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
@@ -158,10 +158,10 @@ int main(int argc,char *argv[])
 /**
  * \brief outputs the formfactors into files
  */
-void ff_output(const std::valarray<double> &Kz,
-               const std::valarray<double> &Gifsqr,
-               unsigned int        i,
-               unsigned int        f)
+void ff_output(const arma::vec &Kz,
+               const arma::vec &Gifsqr,
+               unsigned int     i,
+               unsigned int     f)
 {
  char	filename[9];	/* output filename				*/
  sprintf(filename,"G%i%i.r",i,f);	

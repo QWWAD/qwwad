@@ -66,8 +66,8 @@ int main(int argc,char *argv[])
                                                             m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
@@ -75,13 +75,13 @@ int main(int argc,char *argv[])
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read alloy profile
-    std::valarray<double> z;
-    std::valarray<double> x;
+    arma::vec z;
+    arma::vec x;
     read_table("x.r", z, x);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> f_indices;
+    arma::uvec i_indices;
+    arma::uvec f_indices;
 
     read_table("rrp.r", i_indices, f_indices);
 
@@ -137,14 +137,14 @@ int main(int argc,char *argv[])
 
         const double dki=(kimax-kimin)/((float)nki - 1); // step length for loop over ki
 
-        std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
-        std::valarray<double> Wif(nki);               // Scattering rate for a given initial wave vector
-        std::valarray<double> Ei_t(nki);              // Total energy of initial state (for output file) [meV]
+        arma::vec Wbar_integrand_ki(nki); // initialise integral for average scattering rate
+        arma::vec Wif(nki);               // Scattering rate for a given initial wave vector
+        arma::vec Ei_t(nki);              // Total energy of initial state (for output file) [meV]
 
         // Find alloy-disorder matrix element
-        const std::valarray<double> psi_i = isb.psi_array();
-        const std::valarray<double> psi_f = fsb.psi_array();
-        const std::valarray<double> integrand_dz = psi_i*psi_i*psi_f*psi_f*x*(1.0-x);
+        const auto psi_i = isb.psi_array();
+        const auto psi_f = fsb.psi_array();
+        const arma::vec integrand_dz = psi_i%psi_i%psi_f%psi_f%x%(1.0-x);
         const double dz = z[1] - z[0];
         const double Omega = alatt*alatt*alatt/Ncell;
         const double I = m*Omega*Vad*Vad/(hBar*hBar*hBar) * integral(integrand_dz, dz);

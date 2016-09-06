@@ -108,8 +108,8 @@ int main(int argc,char *argv[])
     double J       = 2.5;     // magnetic ion spin
 
     // Open baseline potential and alloy files
-    std::valarray<double> z;  // Spatial locations [m]
-    std::valarray<double> Vb; // Band-edge potential [J]
+    arma::vec z;  // Spatial locations [m]
+    arma::vec Vb; // Band-edge potential [J]
 
     const auto bandedgefilename = opt.get_option<std::string>("bandedgepotentialfile");
     read_table(bandedgefilename, z, Vb);
@@ -117,11 +117,11 @@ int main(int argc,char *argv[])
     const auto nz = z.size(); // Number of spatial points
 
     // TODO: Check that alloy file uses same coordinates
-    std::valarray<double> z_tmp;
-    std::valarray<double> x;     // Alloy fraction at each point
+    arma::vec z_tmp;
+    arma::vec x;     // Alloy fraction at each point
     read_table("x.r", z_tmp, x);
 
-    std::valarray<double> V_zeeman(nz);
+    arma::vec V_zeeman(nz);
 
     // Add field in the form +/- 3A, +/- 3B or +/- B depending on spin
     for(unsigned int iz=0; iz<nz; iz++)
@@ -152,7 +152,7 @@ int main(int argc,char *argv[])
         }
     }
 
-    const std::valarray<double> V_total = Vb + V_zeeman;
+    const arma::vec V_total = Vb + V_zeeman;
 
     // Write data to file
     const auto totalpotentialfile  = opt.get_option<std::string>("totalpotentialfile");

@@ -21,13 +21,13 @@ using namespace constants;
  * \details If nst_max=0 (the default), all states will be found
  *          that lie within the range of the input potential profile
  */
-SchroedingerSolverTridiag::SchroedingerSolverTridiag(const std::valarray<double>& me,
-                                                     const std::valarray<double>& V,
-                                                     const std::valarray<double>& z,
-                                                     const unsigned int           nst_max) :
+SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
+                                                     const decltype(_V) &V,
+                                                     const decltype(_z) &z,
+                                                     const unsigned int  nst_max) :
     SchroedingerSolver(V,z,nst_max),
-    diag(std::valarray<double>(z.size())),
-    sub(std::valarray<double>(z.size()))
+    diag(arma::vec(z.size())),
+    sub(arma::vec(z.size()))
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];

@@ -18,13 +18,13 @@
 namespace QWWAD
 {
 using namespace constants;
-SchroedingerSolverDonor::SchroedingerSolverDonor(const double                 m,
-                                                 const std::valarray<double> &V,
-                                                 const std::valarray<double> &z,
-                                                 const double                 eps,
-                                                 const double                 r_d,
-                                                 const double                 lambda,
-                                                 const double                 dE) :
+SchroedingerSolverDonor::SchroedingerSolverDonor(const double        m,
+                                                 const decltype(_V) &V,
+                                                 const decltype(_z) &z,
+                                                 const double        eps,
+                                                 const double        r_d,
+                                                 const double        lambda,
+                                                 const double        dE) :
     SchroedingerSolver(V, z, 1),
     _me(m),
     _eps(eps),
@@ -42,13 +42,12 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double                 m,
  *          values are computed using QWWAD3, Eq. 5.28.
  *
  * \param[in]  E       Energy at which to compute wavefunction
- * \param[out] psi     Array to which complete wavefunction will be written [m^{-1/2}]
  * \param[out] chi     Array to which wavefunction envelope will be written [m^{-1/2}]
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-double SchroedingerSolverDonor::shoot_wavefunction(const double           E,
-                                                   std::valarray<double> &chi) const
+double SchroedingerSolverDonor::shoot_wavefunction(const double  E,
+                                                   arma::vec    &chi) const
 {
     const size_t nz = _z.size();
     const double dz = _z[1] - _z[0];
@@ -92,7 +91,7 @@ double SchroedingerSolverDonor::shoot_wavefunction(const double           E,
     }
 
     // calculate normalisation integral
-    const std::valarray<double> chi_sqr = chi*chi;
+    const arma::vec chi_sqr = square(chi);
     double Nchi=integral(chi_sqr,dz); // normalisation integral for chi
 
     /* divide unnormalised wavefunction by square root
@@ -113,7 +112,7 @@ double SchroedingerSolverDonor::chi_at_inf (double  E,
                                             void   *params)
 {
     const SchroedingerSolverDonor *se = reinterpret_cast<SchroedingerSolverDonor *>(params);
-    std::valarray<double> chi(se->get_z().size()); // Wavefunction envelope amplitude
+    arma::vec chi(se->get_z().size()); // Wavefunction envelope amplitude
     return se->shoot_wavefunction(E, chi);
 }
 
@@ -169,7 +168,7 @@ void SchroedingerSolverDonor::calculate()
     if(gsl_fcmp(E, _V.max()+e, e*1e-12) == 1)
         throw std::runtime_error("Energy exceeded Vmax");
 
-    std::valarray<double> chi(_z.size());
+    arma::vec chi(_z.size());
     const auto chi_inf = shoot_wavefunction(E, chi);
     _solutions_chi.push_back(Eigenstate(E, _z, chi));
 

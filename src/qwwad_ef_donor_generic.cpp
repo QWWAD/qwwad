@@ -37,28 +37,28 @@ enum StateID
 class Wavefunction3D
 {
 private:
-    double _lambda; ///< Bohr radius
+    double    _lambda; ///< Bohr radius
+    arma::vec _wf;     ///< Wavefunction
+    arma::vec _V;      ///< Potential profile
+    arma::vec _z;      ///< Spatial samples in z
 
 public:
-    std::valarray<double> wf;      ///< Wavefunction
-    std::valarray<double> V;       ///< Potential profile
-    std::valarray<double> z;       ///< Spatial samples in z
-    double                epsilon; ///< Permittivity
-    double                m;       ///< Effective mass
-    double                r_i;     ///< z-position of dopant
-    StateID               S;       ///< State ID
+    double    epsilon; ///< Permittivity
+    double    m;       ///< Effective mass
+    double    r_i;     ///< z-position of dopant
+    StateID   S;       ///< State ID
 
-    Wavefunction3D(std::valarray<double> &wf,
-                   std::valarray<double> &V,
-                   std::valarray<double> &z,
+    Wavefunction3D(decltype(_wf) const   &wf,
+                   decltype(_V)  const   &V,
+                   decltype(_z)  const   &z,
                    double                 epsilon,
                    double                 m,
                    double                 r_i,
                    StateID                S)
         :
-            wf(wf),
-            V(V),
-            z(z),
+            _wf(wf),
+            _V(V),
+            _z(z),
             epsilon(epsilon),
             m(m),
             r_i(r_i),
@@ -147,15 +147,15 @@ int main(int argc,char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    std::valarray<double> z; // Spatial location [m]
-    std::valarray<double> V; // Confining potential [J]
+    arma::vec z; // Spatial location [m]
+    arma::vec V; // Confining potential [J]
     read_table("v.r", z, V);
 
     std::ostringstream filename; // input filename
     filename << "wf_" << p << subband << ".r";
 
-    std::valarray<double> z_tmp; // Dummy file for unused spatial locations
-    std::valarray<double> wf;    // Wave function samples at each point [m^{-1/2}]
+    arma::vec z_tmp; // Dummy file for unused spatial locations
+    arma::vec wf;    // Wave function samples at each point [m^{-1/2}]
     read_table(filename.str(), z_tmp, wf);
 
     const auto lambda_0=4*pi*epsilon*(hBar/e)*(hBar/e)/m;/* Bohr	theory (1s)	*/
@@ -250,7 +250,7 @@ double Wavefunction3D::get_Laplacian(double x,
     // For the in-plane derivative, use a very small step, for accuracy
     // For the growth direction, use the sample spacing
     const auto dxy = _lambda/100;
-    const auto dz = z[1] - z[0];
+    const auto dz = _z[1] - _z[0];
 
     const auto psi_111 = get_psi(x, y, iz);
     const auto psi_110 = get_psi(x, y, iz-1);
@@ -277,7 +277,7 @@ double Wavefunction3D::get_energy_integrand(double       x,
     const auto hBar_sq_by_2m  = hBar*hBar/(2.0*m);
     const auto e_sq_by_4pieps = e*e/(4.0*pi*epsilon);
 
-    const auto z_dash = z[iz] - r_i; // Separation from donor in z-direction [m]
+    const auto z_dash = _z[iz] - r_i; // Separation from donor in z-direction [m]
     const auto r_xz   = hypot(x, z_dash);
     const auto r      = hypot(y, r_xz);
 
@@ -288,7 +288,7 @@ double Wavefunction3D::get_energy_integrand(double       x,
     const auto Psixyz = get_psi(x, y, iz);
 
     return Psixyz*(-hBar_sq_by_2m*laplace_Psi
-                   + (V[iz]-e_sq_by_4pieps/r)*Psixyz);
+                   + (_V[iz]-e_sq_by_4pieps/r)*Psixyz);
 }
 
 struct Integrand_y_params
@@ -375,16 +375,16 @@ double Wavefunction3D::get_energy(double  lambda,
 
 double Wavefunction3D::get_energy() const
 {
-    const auto dz  = z[1] - z[0]; // z- (growth) direction step length [m]
-    const auto nz  = z.size();    // Number of spatial samples in z direction
+    const auto dz  = _z[1] - _z[0]; // z- (growth) direction step length [m]
+    const auto nz  = _z.size();    // Number of spatial samples in z direction
 
     const size_t nslice = 1000; // Maximum number of slices for in-plane integration
     const double relerr = 1e-3; // Maximum relative error for in-plane integration
 
     // Integrands wrt z for calculating wavefunction overlap
     // and Hamiltonian
-    std::valarray<double> PD_integrand_z(nz);
-    std::valarray<double> H_integrand_z(nz);
+    arma::vec PD_integrand_z(nz);
+    arma::vec H_integrand_z(nz);
     auto w = gsl_integration_workspace_alloc(nslice);
 
     // Compute integrand over the z-axis, skipping both end-points since we
@@ -427,7 +427,7 @@ double Wavefunction3D::get_psi(const double       x,
                                const double       y,
                                const unsigned int iz) const
 {
-    const double z_dash = std::abs(z[iz] - r_i);
+    const double z_dash = std::abs(_z[iz] - r_i);
     const auto r_xy = hypot(x,y);
     const auto r    = hypot(r_xy,z_dash);
 
@@ -436,16 +436,16 @@ double Wavefunction3D::get_psi(const double       x,
     switch(S)
     {
         case STATE_1S:
-            result = wf[iz]*exp(-r/_lambda);
+            result = _wf[iz]*exp(-r/_lambda);
             break;
         case STATE_2S:
-            result = wf[iz]*(1.0-r/_lambda)*exp(-r/_lambda);
+            result = _wf[iz]*(1.0-r/_lambda)*exp(-r/_lambda);
             break;
         case STATE_2PX:
-            result = wf[iz]*fabs(x)*exp(-r/_lambda);
+            result = _wf[iz]*fabs(x)*exp(-r/_lambda);
             break;
         case STATE_2PZ:
-            result = wf[iz]*fabs(z_dash)*exp(-r/_lambda);
+            result = _wf[iz]*fabs(z_dash)*exp(-r/_lambda);
             break;
         default:
             throw std::runtime_error("Unrecognised orbital");

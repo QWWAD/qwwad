@@ -28,16 +28,16 @@ namespace QWWAD
  * \param[in] dx  Spatial step [m]
  * \param[in] bt  Poisson boundary condition type
  */
-Poisson::Poisson(const std::valarray<double> &eps,
-                 const double                 dx,
-                 PoissonBoundaryType          bt) :
+Poisson::Poisson(const decltype(_eps) &eps,
+                 const double          dx,
+                 PoissonBoundaryType   bt) :
     _eps(eps),
     _eps_minus(eps), // Set the half-index permittivities
     _eps_plus(eps),  // to a default for now
     _dx(dx), // Size of cells in mesh
     _L(_eps.size() * _dx), // Samples are at CENTRE of each cell so total length of structure is nx dx
-    diag(std::valarray<double>(_eps.size())),
-    sub_diag(std::valarray<double>(_eps.size()-1)),
+    _diag(arma::vec(_eps.size())),
+    _sub_diag(arma::vec(_eps.size()-1)),
     corner_point(0.0),
     boundary_type(bt)
 {
@@ -92,20 +92,20 @@ void Poisson::factorise_dirichlet()
     for(unsigned int i=0; i < ni; i++)
     {
         // Diagonal elements b_i [QWWAD4, 3.80]
-        diag[i] = (_eps_plus[i] + _eps_minus[i]) / (_dx * _dx);
+        _diag[i] = (_eps_plus[i] + _eps_minus[i]) / (_dx * _dx);
 
         // Sub-diagonal elements a_(i+1), c_i [QWWAD4, 3.80]
         if(i>0)
-            sub_diag[i-1] = -_eps_minus[i] / (_dx * _dx);
+            _sub_diag[i-1] = -_eps_minus[i] / (_dx * _dx);
     }
 
     // Factorise matrix
     int info = 0;
 #if HAVE_LAPACKE
-    info = LAPACKE_dpttrf(ni, &diag[0], &sub_diag[0]);
+    info = LAPACKE_dpttrf(ni, &_diag[0], &_sub_diag[0]);
 #else
     const int N = ni;
-    dpttrf_(&N, &diag[0], &sub_diag[0], &info);
+    dpttrf_(&N, &_diag[0], &_sub_diag[0], &info);
 #endif
 
     if(info != 0)
@@ -124,16 +124,16 @@ void Poisson::factorise_mixed()
     {
         // Diagonal elements
         if(i<ni-1)
-            diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
+            _diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
         else
         {
-            diag[i] = (1/(_dx*_dx))*_eps_minus[i];
+            _diag[i] = (1/(_dx*_dx))*_eps_minus[i];
             corner_point = (1/(_dx*_dx))*_eps_plus[i];
         }
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(_dx*_dx))*_eps_minus[i];
+            _sub_diag[i-1] = -(1/(_dx*_dx))*_eps_minus[i];
     }
 }
 
@@ -145,15 +145,15 @@ void Poisson::factorise_zerofield()
     {
         // Diagonal elements
         if(i==0)
-            diag[i] = (1/(_dx*_dx))*_eps_plus[i];
+            _diag[i] = (1/(_dx*_dx))*_eps_plus[i];
         else if(i==ni-1)
-            diag[i] = (1/(_dx*_dx))*_eps_minus[i];
+            _diag[i] = (1/(_dx*_dx))*_eps_minus[i];
         else
-            diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
+            _diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
 
         // Sub-diagonal elements
         if(i>0)
-            sub_diag[i-1] = -(1/(_dx*_dx))*_eps_plus[i];
+            _sub_diag[i-1] = -(1/(_dx*_dx))*_eps_plus[i];
     }
 }
 
@@ -164,7 +164,7 @@ void Poisson::factorise_zerofield()
  *
  * \return The potential profile [J]
  */
-std::valarray<double> Poisson::solve(const std::valarray<double> &rho) const
+arma::vec Poisson::solve(const arma::vec &rho) const
 {
     const auto n = _eps.size();
 
@@ -175,8 +175,8 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho) const
 
     // Create temporary copies of the diagonal and subdiagonal arrays since this
     // function promises not to change any member variables
-    auto diag_tmp = diag;
-    auto sub_diag_tmp = sub_diag;
+    auto diag_tmp     = _diag;
+    auto sub_diag_tmp = _sub_diag;
 
     auto phi = rhs; // Array in which to output the potential [J]
 
@@ -204,7 +204,8 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho) const
             break;
         case MIXED:
         case ZERO_FIELD:
-            phi = solve_cyclic_matrix(sub_diag, diag, corner_point, rho);
+            phi = solve_cyclic_matrix(_sub_diag,
+                                      _diag, corner_point, rho);
             break;
     }
 
@@ -219,8 +220,8 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho) const
  *
  * \return The potential profile [J]
  */
-std::valarray<double> Poisson::solve(const std::valarray<double> &rho,
-                                     const double                 V_drop) const
+arma::vec Poisson::solve(const arma::vec &rho,
+                         const double     V_drop) const
 {
     const auto n = _eps.size();
 
@@ -231,8 +232,8 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho,
 
     // Create temporary copies of the diagonal and subdiagonal arrays since this
     // function promises not to change any member variables
-    auto diag_tmp = diag;
-    auto sub_diag_tmp = sub_diag;
+    auto diag_tmp     = _diag;
+    auto sub_diag_tmp = _sub_diag;
 
     switch(boundary_type)
     {
@@ -252,7 +253,7 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho,
                 const auto next_potential = V_drop * n / (n+1);
 
                 // The boundary condition is then set according to QWWAD4, 3.110.
-                rhs[n-1] += diag[n-1] * next_potential;
+                rhs[n-1] += _diag[n-1] * next_potential;
 #if HAVE_LAPACKE
                 info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], n);
 #else
@@ -288,12 +289,12 @@ std::valarray<double> Poisson::solve(const std::valarray<double> &rho,
  *
  * \return The potential profile [J]
  */
-std::valarray<double> Poisson::solve_laplace(const double V_drop) const
+arma::vec Poisson::solve_laplace(const double V_drop) const
 {
     const size_t n = _eps.size();
 
     // Create an empty charge profile and solve the Poisson equation
-    std::valarray<double> rho(0.0, n);
+    auto rho = arma::zeros<arma::vec>(n);
     const auto phi = solve(rho, V_drop);
 
     return phi; 

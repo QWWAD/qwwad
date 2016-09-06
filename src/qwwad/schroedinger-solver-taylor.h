@@ -17,18 +17,22 @@ namespace QWWAD
  */
 class SchroedingerSolverTaylor : public SchroedingerSolver
 {
+private:
+    arma::vec _m;     ///< Effective mass at each position
+    arma::vec _alpha; ///< Nonparabolicity parameter at each position
+    arma::vec AB; ///< Upper triangle of Hamiltonian matrix
+    arma::vec BB; ///< Lower triangle of Hamiltonian matrix
+
 public:
-    SchroedingerSolverTaylor(const std::valarray<double> &me,
-                             const std::valarray<double> &alpha,
-                             const std::valarray<double> &V,
-                             const std::valarray<double> &z,
-                             const unsigned int           nst_max=0);
+    SchroedingerSolverTaylor(const decltype(_m)     &me,
+                             const decltype(_alpha) &alpha,
+                             const decltype(_V)     &V,
+                             const decltype(_z)     &z,
+                             const unsigned int      nst_max=0);
     
     std::string get_name() {return "Taylor";}
 private:
     void calculate();
-    std::valarray<double> AB; ///< Upper triangle of Hamiltonian matrix
-    std::valarray<double> BB; ///< Lower triangle of Hamiltonian matrix
 };
 } // namespace
 #endif

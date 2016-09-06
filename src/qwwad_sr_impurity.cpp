@@ -25,15 +25,15 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const std::vector<Subband> &subbands,
                       const unsigned int  i,
                       const unsigned int  f,
-                      const std::valarray<double> &d);
+                      const arma::vec    &d);
 
-gsl_spline * FF_table(const double                 epsilon,
-                      const Subband               &isb,
-                      const Subband               &fsb,
-                      const std::valarray<double> &d,
-                      const size_t                 nq,
-                      const bool                   S_flag,
-                      const double                 E_cutoff);
+gsl_spline * FF_table(const double     epsilon,
+                      const Subband   &isb,
+                      const Subband   &fsb,
+                      const arma::vec &d,
+                      const size_t     nq,
+                      const bool       S_flag,
+                      const double     E_cutoff);
 
 Options configure_options(int argc, char* argv[])
 {
@@ -80,7 +80,7 @@ int main(int argc,char *argv[])
     const double dtheta=2*pi/((float)ntheta - 1); // step length for theta integration
 
     // Can save a bit of time by calculating cosines in advance
-    std::valarray<double> cos_theta(ntheta);
+    arma::vec cos_theta(ntheta);
 
     for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
         cos_theta[itheta] = cos(itheta*dtheta);
@@ -91,32 +91,32 @@ int main(int argc,char *argv[])
     wf_prefix << "wf_" << p;
 
     // Read data for all subbands from file
-    std::vector<Subband> subbands = Subband::read_from_file(E_filename.str(),
-                                                            wf_prefix.str(),
-                                                            ".r",
-                                                            m);
+    auto subbands = Subband::read_from_file(E_filename.str(),
+                                            wf_prefix.str(),
+                                            ".r",
+                                            m);
 
     // Read and set carrier distributions within each subband
-    std::valarray<double>       Ef;      // Fermi energies [J]
-    std::valarray<unsigned int> indices; // Subband indices (garbage)
+    arma::vec  Ef;      // Fermi energies [J]
+    arma::uvec indices; // Subband indices (garbage)
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
     // Read doping profile
-    std::valarray<double> z_d; // Spatial location
-    std::valarray<double> d;   // Volume doping [m^{-3}]
+    arma::vec z_d; // Spatial location
+    arma::vec d;   // Volume doping [m^{-3}]
     read_table("d.r", z_d, d);
 
     for(unsigned int isb = 0; isb < subbands.size(); ++isb)
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
 
     // Read list of wanted transitions
-    std::valarray<unsigned int> i_indices;
-    std::valarray<unsigned int> f_indices;
+    arma::uvec i_indices;
+    arma::uvec f_indices;
 
     read_table("rrp.r", i_indices, f_indices);
 
-    FILE *Favg=fopen("imp-avg.dat","w");	/* open file for output of weighted means */
+    auto Favg=fopen("imp-avg.dat","w");	/* open file for output of weighted means */
 
     // Loop over all desired transitions
     for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
@@ -177,9 +177,9 @@ int main(int argc,char *argv[])
         /* calculate maximum value of ki & kj and hence kj step length	*/
         const double dki=(kimax-kimin)/((float)nki - 1); // step length for loop over ki
 
-        std::valarray<double> Wbar_integrand_ki(nki); // initialise integral for average scattering rate
-        std::valarray<double> Wif(nki);               // Scattering rate for a given initial wave vector
-        std::valarray<double> Ei_t(nki);              // Total energy of initial state (for output file) [meV]
+        arma::vec Wbar_integrand_ki(nki); // initialise integral for average scattering rate
+        arma::vec Wif(nki);               // Scattering rate for a given initial wave vector
+        arma::vec Ei_t(nki);              // Total energy of initial state (for output file) [meV]
 
         // calculate scattering rate for all ki
         for(unsigned int iki=0;iki<nki;iki++)
@@ -197,7 +197,7 @@ int main(int argc,char *argv[])
             const double ki_sqr_plus_kf_sqr = ki_sqr + kf_sqr;
 
             // Now perform innermost integral (over theta)
-            std::valarray<double> Wif_integrand_theta(ntheta);
+            arma::vec Wif_integrand_theta(ntheta);
 
             for(unsigned int itheta=0;itheta<ntheta;itheta++)
             {
@@ -253,12 +253,12 @@ return EXIT_SUCCESS;
  *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
  *  for a given wavevector, with respect to position
  */
-std::valarray<double> find_Cif_p(const std::valarray<double>& psi_if, 
-                                 const std::valarray<double>& exp_qz,
-                                 const std::valarray<double>& z)
+arma::vec find_Cif_p(const arma::vec &psi_if, 
+                     const arma::vec &exp_qz,
+                     const arma::vec &z)
 {
     const size_t nz = z.size();
-    std::valarray<double> Cif_p(nz);
+    arma::vec Cif_p(nz);
     const double dz=z[1]-z[0];
 
     Cif_p[nz-1] = psi_if[nz-1] / exp_qz[nz-1] * dz;
@@ -279,12 +279,12 @@ std::valarray<double> find_Cif_p(const std::valarray<double>& psi_if,
  * Note that the upper limit has to be the point just BEFORE each z'
  * value so that we don't double count
  */
-std::valarray<double> find_Cif_m(const std::valarray<double>& psi_if, 
-                                 const std::valarray<double>& exp_qz,
-                                 const std::valarray<double>& z)
+arma::vec find_Cif_m(const arma::vec &psi_if, 
+                     const arma::vec &exp_qz,
+                     const arma::vec &z)
 {
     const size_t nz = z.size();
-    std::valarray<double> Cif_m(nz);
+    arma::vec Cif_m(nz);
     const double dz = z[1]-z[0];
 
     // Seed the first value as zero
@@ -307,7 +307,7 @@ std::valarray<double> find_Cif_m(const std::valarray<double>& psi_if,
  *
  * \todo  This is also useful for e-e scattering. Push into library
  */
-std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z)
+arma::vec find_exp_qz(const double q, const arma::vec &z)
 {
     //const double Lp = z.max() - z.min();
 
@@ -330,36 +330,36 @@ std::valarray<double> find_exp_qz(const double q, const std::valarray<double>& z
  * z dependence of the matrix element.
  */
 double Iif(const unsigned int iz0,
-           const std::valarray<double>& Cif_p,
-           const std::valarray<double>& Cif_m, 
-           const std::valarray<double>& exp_qz)
+           const arma::vec &Cif_p,
+           const arma::vec &Cif_m, 
+           const arma::vec &exp_qz)
 {
     return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
 }
 
 /* This function calculates the overlap integral
  */
-double J(const double   q_perp,
-         const Subband &isb,
-         const Subband &fsb,
-         const std::valarray<double> d)
+double J(const double     q_perp,
+         const Subband   &isb,
+         const Subband   &fsb,
+         const arma::vec &d)
 {
- const std::valarray<double> z = isb.z_array();
- const size_t nz = z.size();
- const double dz = z[1] - z[0];
+ const auto z = isb.z_array();
+ const auto nz = z.size();
+ const auto dz = z[1] - z[0];
 
  // Convenience labels for wave-functions in each subband
- const std::valarray<double> psi_i = isb.psi_array();
- const std::valarray<double> psi_f = fsb.psi_array();
+ const auto psi_i = isb.psi_array();
+ const auto psi_f = fsb.psi_array();
 
  // Products of wavefunctions can be computed in advance
- const std::valarray<double> psi_if = psi_i * psi_f;
+ const auto psi_if = psi_i % psi_f;
 
- const std::valarray<double> expTerm   = find_exp_qz(q_perp, z);
- const std::valarray<double> Cif_plus  = find_Cif_p(psi_if, expTerm, z);
- const std::valarray<double> Cif_minus = find_Cif_m(psi_if, expTerm, z);
+ const auto expTerm   = find_exp_qz(q_perp, z);
+ const auto Cif_plus  = find_Cif_p(psi_if, expTerm, z);
+ const auto Cif_minus = find_Cif_m(psi_if, expTerm, z);
 
- std::valarray<double> Jif_integrand(nz);
+ arma::vec Jif_integrand(nz);
 
  // Integral of i(=0) and f(=2) over z
  for(unsigned int iz=0;iz<nz;iz++)
@@ -376,13 +376,13 @@ double J(const double   q_perp,
 /**
  *  \brief Compute the form factor Jif/q^2
  */
-gsl_spline * FF_table(const double                 epsilon,
-                      const Subband               &isb,
-                      const Subband               &fsb,
-                      const std::valarray<double> &d,
-                      const size_t                 nq,
-                      const bool                   S_flag,
-                      const double                 E_cutoff)
+gsl_spline * FF_table(const double     epsilon,
+                      const Subband   &isb,
+                      const Subband   &fsb,
+                      const arma::vec &d,
+                      const size_t     nq,
+                      const bool       S_flag,
+                      const double     E_cutoff)
 {
     const double kimax = isb.get_k_at_Ek(E_cutoff*1.1); // Max value of ki [1/m]
     const double Ei = isb.get_E_min();
@@ -395,8 +395,8 @@ gsl_spline * FF_table(const double                 epsilon,
 
     const double dq=q_max/((float)(nq-1));	// interval in q_perp
 
-    std::valarray<double> q(nq);
-    std::valarray<double> FF(nq);
+    arma::vec q(nq);
+    arma::vec FF(nq);
 
     for(unsigned int iq=0;iq<nq;iq++)
     {
@@ -433,7 +433,7 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const std::vector<Subband> &subbands,
                       const unsigned int  i,
                       const unsigned int  f,
-                      const std::valarray<double> &d)
+                      const arma::vec    &d)
 {
  char	filename[9];	/* output filename				*/
  FILE	*FA;		/* output file for form factors versus q_perp	*/

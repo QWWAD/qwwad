@@ -51,16 +51,16 @@ int main(int argc, char *argv[])
 
     // TODO: read z-coordinates in from the ground state
     // There should probably be an option in the State class for this
-    std::valarray<double> z;
-    std::valarray<double> _psi;
+    arma::vec z;
+    arma::vec _psi;
     read_table("wf_e1.r", z, _psi);
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
     const auto psi = all_states.at(state-1).get_wavefunction_samples();
 
-    std::valarray<double> d_psi_dz(0.0, nz);   // Derivative of wavefunction
-    std::valarray<double> d2_psi_dz2(0.0, nz); // 2nd Derivative of wavefunction
+    arma::vec d_psi_dz(0.0, nz);   // Derivative of wavefunction
+    arma::vec d2_psi_dz2(0.0, nz); // 2nd Derivative of wavefunction
 
     // Note that we can take the end points as zero, since this is
     // guaranteed for any valid wavefunction
@@ -70,16 +70,16 @@ int main(int argc, char *argv[])
         d2_psi_dz2[i] = (psi[i+1] - 2*psi[i] + psi[i-1])/(dz*dz);
     }
 
-    const std::valarray<double> ev_z_integrand_dz = psi*z*psi;
-    const double ev_z    = integral(ev_z_integrand_dz, dz);       // Expectation position [m]
+    const arma::vec ev_z_integrand_dz = square(psi)%z;
+    const auto ev_z = integral(ev_z_integrand_dz, dz);       // Expectation position [m]
 
-    const std::valarray<double> ev_zsqr_integrand_dz = psi*z*z*psi;
-    const double ev_zsqr = integral(ev_zsqr_integrand_dz, dz);     // Expectation for z*z [m^2]
+    const arma::vec ev_zsqr_integrand_dz = square(psi%z);
+    const auto ev_zsqr = integral(ev_zsqr_integrand_dz, dz);     // Expectation for z*z [m^2]
 
-    const std::valarray<double> ev_p_integrand_dz = -psi*d_psi_dz;
+    const arma::vec ev_p_integrand_dz = -psi%d_psi_dz;
     const double ev_p    = integral(ev_p_integrand_dz, dz);   // Expectation momentum [relative to i hBar]
 
-    const std::valarray<double> ev_psqr_integrand_dz = -psi*d2_psi_dz2;
+    const arma::vec ev_psqr_integrand_dz = -psi%d2_psi_dz2;
     const double ev_psqr = integral(ev_psqr_integrand_dz, dz); // Expectation for p*p [relative to hBar^2]
 
     // Find uncertainty in position and momentum

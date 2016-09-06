@@ -18,13 +18,13 @@ namespace QWWAD
 class SchroedingerSolverDonor3D : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonor3D(const double                 m,
-                              const std::valarray<double> &V,
-                              const std::valarray<double> &z,
-                              const double                 eps,
-                              const double                 r_d,
-                              const double                 lambda,
-                              const double                 dE);
+    SchroedingerSolverDonor3D(const double        m,
+                              const decltype(_V) &V,
+                              const decltype(_z) &z,
+                              const double        eps,
+                              const double        r_d,
+                              const double        lambda,
+                              const double        dE);
 
     std::string get_name() {return "donor-3D";}
 
@@ -37,8 +37,7 @@ private:
         {
             const auto E   = ist.get_energy();
             const auto chi = ist.get_wavefunction_samples();
-
-            const std::valarray<double> psi = exp(-abs(_z - _r_d)/_lambda) * chi;
+            const auto psi = exp(-abs(_z - _r_d)/_lambda) * chi;
 
             const auto psi_state = Eigenstate(E,_z,psi);
 

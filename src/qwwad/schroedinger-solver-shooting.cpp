@@ -27,12 +27,12 @@ using namespace constants;
  * \param[in] dE      Minimum energy separation between states [J]
  * \param[in] nst_max Maximum number of states to find
  */
-SchroedingerSolverShooting::SchroedingerSolverShooting(const std::valarray<double>& me,
-                                                       const std::valarray<double>& alpha,
-                                                       const std::valarray<double>& V,
-                                                       const std::valarray<double>& z,
-                                                       const double                 dE,
-                                                       const unsigned int           nst_max) :
+SchroedingerSolverShooting::SchroedingerSolverShooting(const decltype(_me)    &me,
+                                                       const decltype(_alpha) &alpha,
+                                                       const decltype(_V)     &V,
+                                                       const decltype(_z)     &z,
+                                                       const double            dE,
+                                                       const unsigned int      nst_max) :
     SchroedingerSolver(V,z,nst_max),
     _me(me),
     _alpha(alpha),
@@ -104,7 +104,7 @@ void SchroedingerSolverShooting::calculate()
         if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
             break;
 
-        std::valarray<double> psi(_z.size());
+        arma::vec psi(_z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);
 
         _solutions.push_back(Eigenstate(E,_z,psi));
@@ -132,7 +132,7 @@ double SchroedingerSolverShooting::psi_at_inf(double  E,
                                               void   *params)
 {
     const SchroedingerSolverShooting *se = reinterpret_cast<SchroedingerSolverShooting *>(params);
-    std::valarray<double> psi(se->get_z().size());
+    arma::vec psi(se->get_z().size());
 
     const double psi_inf = se->shoot_wavefunction(psi, E);
     return psi_inf;
@@ -150,15 +150,15 @@ double SchroedingerSolverShooting::psi_at_inf(double  E,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
-                                                      const double           E) const
+double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
+                                                      const double  E) const
 {
     const size_t nz = _z.size();
     wf.resize(nz);
     const double dz = _z[1] - _z[0];
 
     // Recalculate effective mass with non-parabolicity at this energy
-    const std::valarray<double> m = _me*(1.0+_alpha*(E-_V));
+    const arma::vec m = _me*(1.0+_alpha*(E-_V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf[0]   = 1.0;
@@ -197,7 +197,7 @@ double SchroedingerSolverShooting::shoot_wavefunction(std::valarray<double> &wf,
     }
 
     // Normalise the stored wave function
-    const std::valarray<double> PD = wf*wf;
+    const arma::vec PD = square(wf);
     const auto PD_integral = integral(PD, dz);
 
     wf /= sqrt(PD_integral);

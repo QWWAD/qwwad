@@ -69,8 +69,8 @@ int main(int argc,char *argv[])
     const auto zeta_step    = opt.get_option<double>("zetastep");  // Symmetry parameter increment
     const auto zeta_stop    = opt.get_option<double>("zetastop");  // Final symmetry parameter
 
-    std::valarray<double> z; // Spatial location [m]
-    std::valarray<double> V; // Confining potential [J]
+    arma::vec z; // Spatial location [m]
+    arma::vec V; // Confining potential [J]
     const auto totalpotentialfile = opt.get_option<std::string>("totalpotentialfile");
     read_table(totalpotentialfile, z, V);
 

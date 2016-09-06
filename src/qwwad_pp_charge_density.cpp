@@ -30,12 +30,11 @@
 
 #include "ppff.h"
 
-static std::valarray<std::complex<double> > read_ank(const int  N,
-                                                     int       *Nn);
+static arma::cx_vec read_ank(const int  N,
+                             int       *Nn);
 
 int main(int argc,char *argv[])
 {
-std::valarray<std::complex<double> > ank;	/* real coefficients of eigenvectors		*/
 std::complex<double> psi;    	/* the wave function psi_nk(r)			*/
 double A0;		/* Lattice constant			       	*/
 double Gdotr;		/* G.r						*/
@@ -128,7 +127,7 @@ Omega=1.0;
 
 std::vector<arma::vec> G=read_rlv(A0);	/* read in reciprocal lattice vectors	*/
 size_t	N = G.size();		/* number of reciprocal lattice vectors		*/
-ank=read_ank(N,&Nn);
+auto ank=read_ank(N,&Nn); // real coefficients of eigenvectors
 
 /* Check number of eigenvectors in file is greater than or equal to number
    required for summation						*/
@@ -211,8 +210,8 @@ return EXIT_SUCCESS;
  * \param[in] N  The number of terms in each eigenvector
  * \param     Nn The number of bands in file
  */
-static std::valarray<std::complex<double> > read_ank(const int  N,
-                                                     int       *Nn)
+static arma::cx_vec read_ank(const int  N,
+                             int       *Nn)
 {
  int	in;		/* index across bands				*/
  int	iG;		/* index across G vectors			*/
@@ -239,7 +238,7 @@ rewind(Fank);
 
 /* Allocate memory for eigenvectors	*/
 
-std::valarray<std::complex<double> > ank(n);
+arma::cx_vec ank(n);
 
 /* Finally read eigenvectors into structure	*/
 
@@ -261,3 +260,4 @@ fclose(Fank);
 
 return(ank);
 }
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

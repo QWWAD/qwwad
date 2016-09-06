@@ -12,10 +12,11 @@
 #endif //HAVE_CONFIG_H
 
 #include <complex>
-#include <valarray>
 #include <vector>
 #include <sstream>
 #include <stdexcept>
+
+#include <armadillo>
 
 // Declaration of external LAPACK functions
 extern "C" {
@@ -112,14 +113,14 @@ template <class T>
 class EVP_solution {
 protected:
     T _E; ///< Eigenvalue
-    std::valarray<T> _psi; ///< Eigenvector
+    std::vector<T> _psi; ///< Eigenvector
 
 public:
     /**
      * Initialise an EVP solution by copying known eigenvalue/
      * eigenvector pair
      */
-    EVP_solution(T E, std::valarray<T> psi)
+    EVP_solution(T E, std::vector<T> psi)
         : _E(E), _psi(psi)
     {}
 
@@ -146,7 +147,7 @@ public:
     /**
      * Return the entire eigenvector as an array
      */
-    std::valarray<T> psi_array() const
+    std::vector<T> psi_array() const
     {
         return _psi;
     }
@@ -192,7 +193,7 @@ public:
     /**
      * Get an array of squared eigenvector values
      */
-    std::valarray<T> psi_squared() const
+    std::vector<T> psi_squared() const
     {
         return _psi*_psi;
     }
@@ -239,11 +240,11 @@ eigen_tridiag(double       D[],
               int          n,
               unsigned int n_max = 0);
 
-std::valarray<double>
-solve_cyclic_matrix(std::valarray<double> A_sub,
-                    std::valarray<double> A_diag,
-                    double                cyclic,
-                    std::valarray<double> b);
+arma::vec
+solve_cyclic_matrix(arma::vec A_sub,
+                    arma::vec A_diag,
+                    double    cyclic,
+                    arma::vec  b);
 
 void matrixProduct(double*      pB,
                    double*      pA,

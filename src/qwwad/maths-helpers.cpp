@@ -46,9 +46,9 @@ double lin_interp(const double y0,
  *
  * \todo This is a very inefficient way of doing it.  Use splines!
  */
-double lookup_y_from_x(const std::valarray<double>& x_values,
-        const std::valarray<double>& y_values,
-        const double x0)
+double lookup_y_from_x(const arma::vec &x_values,
+                       const arma::vec &y_values,
+                       const double x0)
 {
     if (x0 > x_values.max() or x0 < x_values.min())
     {

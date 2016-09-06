@@ -191,13 +191,12 @@ public:
     Thermal1DData(const Thermal1DOptions &opt,
                   const MaterialLibrary  &lib);
     std::vector<Material const *> mat_layer; ///< Material in each layer
-    std::valarray<double>   x;         ///< Alloy composition in each layer
-    std::valarray<double>   d;         ///< Layer thickness [m]
+    arma::vec x;         ///< Alloy composition in each layer
+    arma::vec d;         ///< Layer thickness [m]
 };
 
 Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
-                             const MaterialLibrary  &material_library) :
-    d(0)
+                             const MaterialLibrary  &material_library)
 {
     std::vector<double> d_tmp; // Temp storage for layer thickness
     std::vector<double> x_tmp; // Temp storage for alloy composition
@@ -268,19 +267,19 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
     }
 }
 
-static double calctave(const std::valarray<double> &g,
-                       const std::valarray<double> &T);
+static double calctave(const arma::vec &g,
+                       const arma::vec &T);
 
 static void calctemp(double dt,
                      double *Told,
                      double q_old[],
                      double q_new[], 
-                     std::valarray<unsigned int>   &iLayer,
+                     arma::uvec &iLayer,
                      const std::vector<Material const *> &mat,
-                     const std::valarray<double>   &x,
+                     const arma::vec   &x,
                      const std::vector<DebyeModel> &dm_layer,
-                     const std::valarray<double>   &rho_layer,
-                     std::valarray<double>& T,
+                     const arma::vec   &rho_layer,
+                     arma::vec &T,
                      Thermal1DOptions& opt);
 
 int main(int argc, char *argv[])
@@ -291,7 +290,7 @@ int main(int argc, char *argv[])
     const Thermal1DData data(opt, material_library);
 
     const auto dy = opt.get_option<double>("dy");
-    const auto L  = data.d.sum(); // Length of structure [m]
+    const auto L  = sum(data.d); // Length of structure [m]
     const size_t ny = ceil(L/dy);   // Find number of points in structure
 
     if(opt.get_verbose())
@@ -315,16 +314,16 @@ int main(int argc, char *argv[])
         printf("Pulse width = %5.1f ns.\n",pw*1e9);
     }
 
-    std::valarray<double> y(ny);                // Spatial coordinates [m]
-    std::valarray<double> g(ny);                // Power density profile [W/m^3]
-    std::valarray<unsigned int> iLayer(ny);     // Index of layer containing each point
+    arma::vec  y(ny);                // Spatial coordinates [m]
+    arma::vec  g(ny);                // Power density profile [W/m^3]
+    arma::uvec iLayer(ny);     // Index of layer containing each point
 
     double bottom_of_layer=0;
     unsigned int iy=1;
 
     std::vector<DebyeModel> dm_layer;
     const size_t nL = data.d.size();
-    std::valarray<double> rho_layer(nL);
+    arma::vec rho_layer(nL);
 
     // Loop through each layer and figure out which points it contains
     for(unsigned int iL=0; iL < nL; iL++){
@@ -368,7 +367,7 @@ int main(int argc, char *argv[])
     
     // Spatial temperature profile through structure [K].
     // Assume that initially all points are in thermal equilibrium with heat sink.
-    std::valarray<double> T(_Tsink, ny); 
+    arma::vec T(_Tsink, ny); 
     
     double* Told = new double[ny];
 
@@ -409,27 +408,27 @@ int main(int argc, char *argv[])
     const auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
    
     // Samples of average T_AR at each time-step 
-    std::valarray<double> t(nt_per * _n_rep);
-    std::valarray<double> T_avg(nt_per * _n_rep);
+    arma::vec t(nt_per * _n_rep);
+    arma::vec T_avg(nt_per * _n_rep);
     
     // Samples of average T_AR in the middle of each pulse
-    std::valarray<double> t_mid(_n_rep); // Time at middle of each pulse
-    std::valarray<double> T_mid(_n_rep); // Average AR temperature at middle of each pulse
+    arma::vec t_mid(_n_rep); // Time at middle of each pulse
+    arma::vec T_mid(_n_rep); // Average AR temperature at middle of each pulse
 
     // Samples of maximum T_AR in each pulse
-    std::valarray<double> t_max(_n_rep); // Time at which peak temp occurs in each pulse
-    std::valarray<double> T_max(_n_rep); // Peak AR temperature of each pulse
+    arma::vec t_max(_n_rep); // Time at which peak temp occurs in each pulse
+    arma::vec T_max(_n_rep); // Peak AR temperature of each pulse
 
     // Samples of minimum T_AR in each pulse
-    std::valarray<double> t_min(_n_rep); // Time at which minimum temp occurs in each pulse
-    std::valarray<double> T_min(1e9, _n_rep); // Minimum AR temperature of each pulse
+    arma::vec t_min(_n_rep); // Time at which minimum temp occurs in each pulse
+    arma::vec T_min(1e9, _n_rep); // Minimum AR temperature of each pulse
 
     // Samples of average T_AR across final pulse
-    std::valarray<double> t_period(nt_per);
-    std::valarray<double> T_period(nt_per);
+    arma::vec t_period(nt_per);
+    arma::vec T_period(nt_per);
 
     // Temperature profile at end of final pulse
-    std::valarray<double> T_y_max(ny);
+    arma::vec T_y_max(ny);
 
     // Rising and falling edge of final pulse in temperature profile
     std::vector<double> _t_rise;
@@ -528,15 +527,15 @@ int main(int argc, char *argv[])
         }
     }// end period loop
 
-    std::valarray<double> t_rise(&_t_rise[0], _t_rise.size());
-    std::valarray<double> T_rise(&_T_rise[0], _T_rise.size());
-    std::valarray<double> t_fall(&_t_fall[0], _t_fall.size());
-    std::valarray<double> T_fall(&_T_fall[0], _T_fall.size());
+    arma::vec t_rise(&_t_rise[0], _t_rise.size());
+    arma::vec T_rise(&_T_rise[0], _T_rise.size());
+    arma::vec t_fall(&_t_fall[0], _t_fall.size());
+    arma::vec T_fall(&_T_fall[0], _T_fall.size());
 
-    write_table("T_t.dat", std::valarray<double>(1e6*t), T_avg);
-    write_table("T-mid_t.dat",std::valarray<double>(1e6*t_mid), T_mid);
-    write_table("Tmax_t.dat", std::valarray<double>(1e6*t_max), T_max);
-    write_table("Tmin_t.dat", std::valarray<double>(1e6*t_min), T_min);
+    write_table("T_t.dat",    arma::vec(1e6*t), T_avg);
+    write_table("T-mid_t.dat",arma::vec(1e6*t_mid), T_mid);
+    write_table("Tmax_t.dat", arma::vec(1e6*t_max), T_max);
+    write_table("Tmin_t.dat", arma::vec(1e6*t_min), T_min);
     write_table("Trise_t.dat", t_rise, T_rise);
     write_table("Tfall_t.dat", t_fall, T_fall);
     write_table("T_y.dat", y, T);
@@ -556,12 +555,12 @@ static void calctemp(double dt,
                      double *Told,
                      double q_old[],
                      double q_new[],
-                     std::valarray<unsigned int>   &iLayer,
+                     arma::uvec &iLayer,
                      const std::vector<Material const *> &mat_layer,
-                     const std::valarray<double>   &x,
+                     const arma::vec &x,
                      const std::vector<DebyeModel> &dm_layer,
-                     const std::valarray<double> &rho_layer,
-                     std::valarray<double>& T,
+                     const arma::vec &rho_layer,
+                     arma::vec &T,
                      Thermal1DOptions& opt)
 {
     const auto ny = iLayer.size();
@@ -681,8 +680,8 @@ static void calctemp(double dt,
  *          such that heating in the contacts etc can be modelled without
  *          affecting this function.
  */
-static double calctave(const std::valarray<double> &g,
-                       const std::valarray<double> &T)
+static double calctave(const arma::vec &g,
+                       const arma::vec &T)
 {
     double T_AR_cumulative=0;
     unsigned int n_AR=0;

@@ -55,7 +55,7 @@ WfOptions configure_options(int argc, char* argv[])
  *          number of states and the maximum probability density.
  */
 static double scaling_factor(const std::vector<Eigenstate> &states,
-                             const std::valarray<double>   &V)
+                             const arma::vec               &V)
 {
     double Vrange = V.max() - V.min();
 
@@ -73,8 +73,8 @@ static double scaling_factor(const std::vector<Eigenstate> &states,
  */
 static void output_plot(const WfOptions               &opt,
                         const std::vector<Eigenstate> &states,
-                        const std::valarray<double>   &V,
-                        const std::valarray<double>   &z)
+                        const arma::vec               &V,
+                        const arma::vec               &z)
 {
     const auto dz    = z[1] - z[0];
     const auto scale = scaling_factor(states, V);
@@ -154,8 +154,8 @@ int main(int argc, char* argv[])
     if(opt.get_verbose())
         std::cout << "Read data for " << states.size() << " wave functions" << std::endl;
 
-    std::valarray<double> V;
-    std::valarray<double> z;
+    arma::vec V;
+    arma::vec z;
     const auto totalpotentialfile = opt.get_option<std::string>("totalpotentialfile");
     read_table(totalpotentialfile.c_str(), z, V);
 

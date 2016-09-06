@@ -16,13 +16,18 @@ namespace QWWAD
  */
 class SchroedingerSolverShooting : public SchroedingerSolver
 {
+private:
+    arma::vec _me;    ///< Band-edge effective mass [kg]
+    arma::vec _alpha; ///< Nonparabolicity parameter [J^{-1}]
+    double                _dE;    ///< Minimum energy separation between states [J]
+
 public:
-    SchroedingerSolverShooting(const std::valarray<double>& me,
-                               const std::valarray<double>& alpha,
-                               const std::valarray<double>& V,
-                               const std::valarray<double>& z,
-                               const double                 dE,
-                               const unsigned int           nst_max=0);
+    SchroedingerSolverShooting(const decltype(_me)    &me,
+                               const decltype(_alpha) &alpha,
+                               const decltype(_V)     &V,
+                               const decltype(_z)     &z,
+                               const double            dE,
+                               const unsigned int      nst_max=0);
 
     std::string get_name() {return "shooting";}
 
@@ -31,13 +36,10 @@ public:
     static double psi_at_inf(double  E,
                              void   *params);
 
-    double shoot_wavefunction(std::valarray<double> &wf,
-                              const double           E) const;
+    double shoot_wavefunction(arma::vec    &wf,
+                              const double  E) const;
 
 private:
-    std::valarray<double> _me;    ///< Band-edge effective mass [kg]
-    std::valarray<double> _alpha; ///< Nonparabolicity parameter [J^{-1}]
-    double                _dE;    ///< Minimum energy separation between states [J]
     void calculate();
 };
 } // namespace

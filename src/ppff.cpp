@@ -502,9 +502,9 @@ std::vector<atom> read_atoms(const char * filename)
 std::vector<arma::vec>
 read_rlv(double A0)
 {
-    std::valarray<double> Gx;
-    std::valarray<double> Gy;
-    std::valarray<double> Gz;
+    arma::vec Gx;
+    arma::vec Gy;
+    arma::vec Gz;
     read_table("G.r", Gx, Gy, Gz);
 
     std::vector<arma::vec> G;

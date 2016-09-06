@@ -19,22 +19,36 @@ namespace QWWAD
  */
 class SchroedingerSolver
 {
+protected:
+    virtual void calculate() = 0;
+
+    arma::vec    _V;       ///< Confining potential [J]
+    arma::vec    _z;       ///< Spatial points [m]
+    unsigned int _nst_max; ///< Maximum number of states to find
+
+    // Options for specifying cut-off energy
+    double _E_cutoff;     ///< Cut-off energy for solutions
+    bool   _E_cutoff_set; ///< True if a cut-off energy has been set
+
+    ///< Set of solutions to the Schroedinger equation
+    std::vector<Eigenstate> _solutions;
+
 public:
-    SchroedingerSolver(const std::valarray<double> &V,
-                       const std::valarray<double> &z,
-                       const unsigned int           nst_max=0);
+    SchroedingerSolver(const decltype(_V)       &V,
+                       const decltype(_z)       &z,
+                       const decltype(_nst_max)  nst_max=0);
 
     std::vector<Eigenstate> get_solutions(const bool convert_to_meV=false);
 
     /**
      * \returns the array of spatial positions [m]
      */
-    std::valarray<double> get_z() const {return _z;}
+    decltype(_z) get_z() const {return _z;}
 
     /**
      * \returns the potential profile [J]
      */
-    std::valarray<double> get_V() const {return _V;}
+    decltype(_V) get_V() const {return _V;}
 
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() {};
@@ -48,20 +62,6 @@ public:
     {
         _E_cutoff_set = false;
     }
-
-protected:
-    virtual void calculate() = 0;
-
-    std::valarray<double> _V; ///< Confining potential [J]
-    std::valarray<double> _z; ///< Spatial points [m]
-    unsigned int    _nst_max; ///< Maximum number of states to find
-
-    // Options for specifying cut-off energy
-    double _E_cutoff;     ///< Cut-off energy for solutions
-    bool   _E_cutoff_set; ///< True if a cut-off energy has been set
-
-    ///< Set of solutions to the Schroedinger equation
-    std::vector<Eigenstate> _solutions;
 };
 } // namespace QWWAD
 

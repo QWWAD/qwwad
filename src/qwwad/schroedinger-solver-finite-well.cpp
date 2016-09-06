@@ -23,8 +23,8 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                                                            const double m_b,
                                                            const size_t nz,
                                                            const unsigned int nst_max) :
-    SchroedingerSolver(std::valarray<double>(nz),
-                       std::valarray<double>(nz),
+    SchroedingerSolver(arma::vec(nz),
+                       arma::vec(nz),
                        nst_max),
     _l_w(l_w),
     _V0(V0),
@@ -123,15 +123,15 @@ double SchroedingerSolverFiniteWell::test_matching(double  v,
  * \param[in] E           local energy
  * \param[in] odd_parity  true for odd states, false for even
  */
-std::valarray<double> SchroedingerSolverFiniteWell::get_wavefunction(const double E,
-                                                                     const bool   odd_parity) const
+arma::vec SchroedingerSolverFiniteWell::get_wavefunction(const double E,
+                                                         const bool   odd_parity) const
 {
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
     const double K=sqrt(2*_m_b/hBar*(_V0-E)/hBar); // decay constant in barrier
 
     const size_t N = _z.size();
-    std::valarray<double> psi(N); // wavefunction
+    arma::vec psi(N); // wavefunction
     const double dz = _z[1] - _z[0];
     const double epsilon = dz/1000;
 

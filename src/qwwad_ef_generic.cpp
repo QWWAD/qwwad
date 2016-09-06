@@ -170,16 +170,16 @@ int main(int argc, char *argv[]){
     const FwfOptions opt(argc, argv);
 
     // Read data from file
-    std::valarray<double> z; // Spatial locations [m]
-    std::valarray<double> V; // Potential profile [J]
+    arma::vec z; // Spatial locations [m]
+    arma::vec V; // Potential profile [J]
     read_table(opt.get_option<std::string>("totalpotentialfile").c_str(), z, V);
 
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
-    std::valarray<double> z_tmp;
-    std::valarray<double> m(nz); // Band-edge effective mass [kg]
-    std::valarray<double> alpha(nz); // Nonparabolicity parameter [1/J]
+    arma::vec z_tmp;
+    arma::vec m(nz); // Band-edge effective mass [kg]
+    arma::vec alpha(nz); // Nonparabolicity parameter [1/J]
 
     // Read nonparabolicity data from file if needed
     if(opt.get_type() == MATRIX_TAYLOR_NONPARABOLIC ||
@@ -265,7 +265,7 @@ int main(int argc, char *argv[]){
     if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
     {
         const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
-        std::valarray<double> psi;
+        arma::vec psi;
         const double psi_inf = dynamic_cast<SchroedingerSolverShooting *>(se)->shoot_wavefunction(psi, E_trial);
 
         // Check that wavefunction is tightly bound

@@ -27,8 +27,8 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
                                                                const size_t nz,
                                                                const size_t nper,
                                                                const unsigned int nst_max) :
-    SchroedingerSolver(std::valarray<double>(nz*nper),
-                       std::valarray<double>(nz*nper),
+    SchroedingerSolver(arma::vec(nz*nper),
+                       arma::vec(nz*nper),
                        nst_max),
     _l_w(l_w),
     _l_b(l_b),
@@ -139,10 +139,10 @@ arma::cx_mat SchroedingerSolverKronigPenney::get_matching_matrix(const double E)
  *
  * \param[in] E Energy [J]
  */
-std::valarray<double> SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
+arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
 {
     const auto nz = _z.size();
-    std::valarray<double> psi(nz); // wavefunction
+    arma::vec psi(nz); // wavefunction
 
     // Normalisation constants
     const auto I = std::complex<double>(0,1);

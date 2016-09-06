@@ -62,9 +62,9 @@ std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_
  * \details If nst_max=0 (the default), all states will be found
  *          that lie within the range of the input potential profile
  */
-SchroedingerSolver::SchroedingerSolver(const std::valarray<double> &V,
-                                       const std::valarray<double> &z,
-                                       const unsigned int           nst_max) :
+SchroedingerSolver::SchroedingerSolver(const decltype(_V)       &V,
+                                       const decltype(_z)       &z,
+                                       const decltype(_nst_max)  nst_max) :
     _V(V),
     _z(z),
     _nst_max(nst_max),

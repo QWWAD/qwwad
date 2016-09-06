@@ -67,11 +67,11 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
     std::vector<Eigenstate> states;
 
     // Read eigenvalues into tempory memory
-    std::valarray<double> E_temp;
+    arma::vec E_temp;
 
     if(ignore_first_column)
     {
-        std::valarray<unsigned int> indices;
+        arma::vec indices;
         read_table(Eigenval_name.c_str(), indices, E_temp);
     }
     else
@@ -89,8 +89,8 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
     }
 
     // Read first eigenvector into tempory memory to get size of vectors
-    std::valarray<double> z_temp;
-    std::valarray<double> psi_temp;
+    arma::vec z_temp;
+    arma::vec psi_temp;
     std::string Eigenvect_name = Eigenvect_prefix + "1" + Eigenvect_ext;
     read_table(Eigenvect_name.c_str(), z_temp, psi_temp);
 
@@ -136,7 +136,7 @@ void Eigenstate::write_to_file(const std::string             &Eigenval_name,
                                const bool                     with_num)
 {
     // Output eigenvalues
-    std::valarray<double> E_temp(states.size());
+    arma::vec E_temp(states.size());
     for(unsigned int ist=0; ist < states.size(); ist++)
         E_temp[ist] = states[ist].get_energy();
 
@@ -203,7 +203,7 @@ double mij(const Eigenstate &i, const Eigenstate &j)
     const auto psi_i = i.get_wavefunction_samples();
     const auto psi_j = j.get_wavefunction_samples();
 
-    const std::valarray<double> dmij = psi_i * (z - z0) * psi_j;
+    const arma::vec dmij = psi_i * (z - z0) * psi_j;
 
     return integral(dmij, dz);
 }
