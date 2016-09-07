@@ -39,12 +39,13 @@ namespace QWWAD
  *             eigenvalues in the range [VL,VU] will be found.
  */
 std::vector< EVP_solution<double> >
-eigen_general(double       A[],
-              const double VL,
-              const double VU,
-              int          N,
-              unsigned int n_max)
+eigen_general(arma::mat    &A,
+              const double  VL,
+              const double  VU,
+              unsigned int  n_max)
 {
+    const auto N = sqrt(A.size());
+
     // Real and imaginary parts of the computed eigenvalues
     arma::vec WR(N);
     arma::vec WI(N);
@@ -58,7 +59,7 @@ eigen_general(double       A[],
     int info = LAPACKE_dgeev(LAPACK_COL_MAJOR,
             'N', // Don't compute left eigenvectors
             'V', // DO compute right eigenvectors
-            N, A, N, &WR[0], &WI[0], &V_left[0], N, &V_right[0], N);
+            N, &A[0], N, &WR[0], &WI[0], &V_left[0], N, &V_right[0], N);
 
 #else
     int  info  = 0;   // Output code from LAPACK

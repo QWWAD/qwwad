@@ -158,7 +158,7 @@ double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
     const double dz = _z[1] - _z[0];
 
     // Recalculate effective mass with non-parabolicity at this energy
-    const arma::vec m = _me*(1.0+_alpha*(E-_V));
+    const arma::vec m = _me%(1.0+_alpha%(E-_V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf[0]   = 1.0;

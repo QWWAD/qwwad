@@ -20,7 +20,7 @@ class SchroedingerSolverFull : public SchroedingerSolver
 private:
     arma::vec _m;     ///< Effective mass at each point
     arma::vec _alpha; ///< Non-parabolicity parameter at each point
-    arma::vec _A;     ///< Hamiltonian matrix
+    arma::mat _A;     ///< Hamiltonian matrix
 
 public:
     SchroedingerSolverFull(const decltype(_m)     &m,

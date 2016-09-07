@@ -219,10 +219,9 @@ public:
 };
 
 std::vector< EVP_solution<double> >
-eigen_general(double       A[],
+eigen_general(arma::mat    &A,
               const double VL,
               const double VU,
-              int          N,
               unsigned int n_max=0);
 
 std::vector< EVP_solution<double> >

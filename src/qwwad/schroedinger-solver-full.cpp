@@ -29,11 +29,21 @@ SchroedingerSolverFull::SchroedingerSolverFull(const decltype(_m)     &m,
     SchroedingerSolver(V,z,nst_max),
     _m(m),
     _alpha(alpha),
-    _A(arma::vec(9*z.size()*z.size()))
+    _A(arma::mat(3*z.size(), 3*z.size()))
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
     arma::vec B(3*nz*nz);
+
+    // Declare diagonal views
+    arma::vec a_elem(nz-1);
+    arma::vec b_elem(nz);
+    arma::vec c_elem(nz-1);
+    arma::vec d_elem(nz-1);
+    arma::vec e_elem(nz);
+    arma::vec g_elem(nz);
+
+    double const hBar_dz_sq = hBar*hBar/(dz*dz);
 
     for(unsigned int i=0; i < nz; i++){
         double m_minus;
@@ -61,41 +71,55 @@ SchroedingerSolverFull::SchroedingerSolverFull(const decltype(_m)     &m,
 
         // Calculate a points
         if(i!=0)
-            _A[(2*nz)+i+((i-1)*3*nz)] = -0.5*gsl_pow_2(hBar/dz)*\
+            a_elem(i-1) = -0.5*hBar_dz_sq*\
                                        (1-alpha_plus*V_plus)/(m_minus*alpha_plus*alpha_minus);
 
         // Calculate b points
-        _A[(2*nz)+i+(i*3*nz)] = 0.5*gsl_pow_2(hBar/dz)/(alpha_plus*alpha_minus)*
+        b_elem(i) = 0.5*hBar_dz_sq/(alpha_plus*alpha_minus)*
             ((1-alpha_minus*V_minus)/m_plus + (1-alpha_plus*V_plus)/m_minus)
             + V[i]*(1 - alpha_minus*V_minus - alpha_plus*V_plus +\
                     alpha_plus*alpha_minus*V_plus*V_minus)/(alpha_plus*alpha_minus);
 
         // Calculate c points
         if(i!=nz-1)
-            _A[(2*nz)+i+((i+1)*3*nz)] = -0.5*gsl_pow_2(hBar/dz)*\
+           c_elem(i) = -0.5*hBar_dz_sq*\
                                        (1-alpha_minus*V_minus)/(m_plus*alpha_plus*alpha_minus);
 
         // Calculate d points
         if(i!=0)
-            _A[(3*nz*nz)+(2*nz)+i+((i-1)*3*nz)] = -0.5*gsl_pow_2(hBar/dz)/(m_minus*alpha_minus);
+            d_elem(i-1) = -0.5*hBar_dz_sq/(m_minus*alpha_minus);
 
         // Calculate e points
-        _A[(3*nz*nz)+(2*nz)+i+(i*3*nz)] = 0.5*gsl_pow_2(hBar/dz)*
+        e_elem(i) = 0.5*hBar_dz_sq*
             (1/(m_plus*alpha_plus) + 1/(m_minus*alpha_minus))\
             - (1 - alpha_minus*(V_minus+V[i]) - alpha_plus*(V_plus+V[i])\
                     + alpha_plus*alpha_minus*(V_plus*V_minus+V[i]*V_plus+V[i]*V_minus))/(alpha_plus*alpha_minus);
 
-        // Calculate f points
-        if(i!=nz-1)
-            _A[(3*nz*nz)+(2*nz)+i+((i+1)*3*nz)] = -0.5*gsl_pow_2(hBar/dz)/(m_plus*alpha_plus);
-
         // Calcualte g points
-        _A[(6*nz*nz)+(2*nz)+i+(i*3*nz)] = -1/alpha_plus - 1/alpha_minus + V_plus + V[i]+V_minus;
-
-        // Insert identity matrices
-        _A[(3*nz*nz)+i+(i*3*nz)] = 1;
-        _A[(6*nz*nz)+nz+i+(i*3*nz)] = 1;
+        g_elem(i) = -1/alpha_plus - 1/alpha_minus + V_plus + V[i]+V_minus;
     }
+
+    // Declare submatrices
+    arma::mat A31(nz,nz);
+    A31.diag(-1) = a_elem;
+    A31.diag()   = b_elem;
+    A31.diag(1)  = c_elem;
+
+    // Note that the A32 block is symmetrical so we reuse the d-elements
+    arma::mat A32(nz,nz);
+    A32.diag(-1) = d_elem;
+    A32.diag(0)  = e_elem;
+    A32.diag(1)  = d_elem;
+
+    arma::mat A33(nz,nz);
+    A33.diag() = g_elem;
+
+    // Insert submatrices into full Hamiltonian matrix
+    _A.submat(0,    nz,     nz-1,   2*nz-1).eye(); // A12
+    _A.submat(nz,   2*nz,   2*nz-1, 3*nz-1).eye(); // A23
+    _A.submat(2*nz, 0,      3*nz-1, nz-1)   = A31;
+    _A.submat(2*nz, nz,     3*nz-1, 2*nz-1) = A32;
+    _A.submat(2*nz, 2*nz,   3*nz-1, 3*nz-1) = A33;
 }
 
 /**
@@ -105,7 +129,7 @@ void SchroedingerSolverFull::calculate()
 {
     // Find solutions, including all the unwanted "padding" in the eigenvector
     // that comes from the cubic EVP.  See J. Cooper et al., APL 2010
-    const auto solutions_tmp = eigen_general(&_A[0], _V.min(), _V.max(), 3*_z.size(), _nst_max);
+    const auto solutions_tmp = eigen_general(_A, _V.min(), _V.max(), _nst_max);
 
     // Now chop off the padding from the eigenvector
     const size_t nst = solutions_tmp.size();
