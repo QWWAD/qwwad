@@ -238,7 +238,6 @@ eigen_banded(double       AB[],
  * \param[in]  E     Array holding all sub-diag. elements of matrix
  * \param[in]  VL    Lowest value for eigenvalue search
  * \param[in]  VU    Highest value for eigenvalue search
- * \param[in]  n     Order of matrix
  * \param[in]  n_max Max number of eigenvalues to find
  *
  * \details    Creates standard inputs for dstevx func. before
@@ -246,13 +245,13 @@ eigen_banded(double       AB[],
  *             eigenvalues in the range [VL,VU] will be found.
  */
 std::vector< EVP_solution<double> >
-eigen_tridiag(double       D[],
-              double       E[],
+eigen_tridiag(arma::vec &diag,
+              arma::vec &subdiag,
               double       VL,
               double       VU,
-              int          n,
               unsigned int n_max)
 {
+    const auto n = diag.size();
     arma::Col<int>    ifail(n); // Failure bits for LAPACK
     arma::vec         W(n);     // Temporary storage for eigenvalues
     arma::vec         Z(n*n);   // Temp. storage for eigenvectors
@@ -277,7 +276,8 @@ eigen_tridiag(double       D[],
             'V',   // Find eigenvectors and eigenvalues
             range,
             n,     // Order of matrix
-            D, E,
+            &diag[0],
+            &subdiag[0],
             VL, VU,
             1, n_max,   // Index range for eigenvalue search
             2.0 * LAPACKE_dlamch('S'), // Error tolerance (2*machine_precision)
@@ -295,7 +295,7 @@ eigen_tridiag(double       D[],
     double abstol = 2.0 * dlamch_(&retval); // Error tolerance
 
     // Run LAPACK function to solve eigenproblem
-    dstevx_(&jobz, &range, &n, D, E, &VL, &VU, &IL, &IU, &abstol, &M, &W[0],
+    dstevx_(&jobz, &range, &n, &diag[0], &subdiag[0], &VL, &VU, &IL, &IU, &abstol, &M, &W[0],
             &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
 #endif
 

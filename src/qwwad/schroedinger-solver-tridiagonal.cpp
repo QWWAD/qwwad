@@ -27,7 +27,7 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
                                                      const unsigned int  nst_max) :
     SchroedingerSolver(V,z,nst_max),
     diag(arma::vec(z.size())),
-    sub(arma::vec(z.size()))
+    sub(arma::vec(z.size()-1))
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
@@ -60,9 +60,9 @@ void SchroedingerSolverTridiag::calculate()
 {
     const auto EVP_solutions =
         _E_cutoff_set ?
-        eigen_tridiag(&diag[0], &sub[0], _V.min(), _E_cutoff, _V.size())
+        eigen_tridiag(diag, sub, _V.min(), _E_cutoff)
         :
-        eigen_tridiag(&diag[0], &sub[0], _V.min(), _V.max(), _V.size(), _nst_max);
+        eigen_tridiag(diag, sub, _V.min(), _V.max(), _nst_max);
 
     _solutions.clear();
 

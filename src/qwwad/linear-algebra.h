@@ -112,21 +112,22 @@ namespace QWWAD
 template <class T>
 class EVP_solution {
 protected:
-    T _E; ///< Eigenvalue
-    std::vector<T> _psi; ///< Eigenvector
+    T _E;              ///< Eigenvalue
+    arma::Col<T> _psi; ///< Eigenvector
 
 public:
     /**
      * Initialise an EVP solution by copying known eigenvalue/
      * eigenvector pair
      */
-    EVP_solution(T E, std::vector<T> psi)
+    EVP_solution(const             T   E,
+                 const decltype(_psi) &psi)
         : _E(E), _psi(psi)
     {}
 
     EVP_solution(const size_t n) : 
         _E(0),
-        _psi(0.0,n)
+        _psi(arma::Col<T>(n))
     {}
 
     /**
@@ -147,7 +148,7 @@ public:
     /**
      * Return the entire eigenvector as an array
      */
-    std::vector<T> psi_array() const
+    inline decltype(_psi) psi_array() const
     {
         return _psi;
     }
@@ -193,9 +194,9 @@ public:
     /**
      * Get an array of squared eigenvector values
      */
-    std::vector<T> psi_squared() const
+    decltype(_psi) psi_squared() const
     {
-        return _psi*_psi;
+        return square(_psi);
     }
 
     /**
@@ -233,11 +234,10 @@ eigen_banded(double       AB[],
              unsigned int n_max = 0);
 
 std::vector< EVP_solution<double> >
-eigen_tridiag(double       D[],
-              double       E[],
+eigen_tridiag(arma::vec   &D,
+              arma::vec   &E,
               const double VL,
               const double VU,
-              int          n,
               unsigned int n_max = 0);
 
 arma::vec
