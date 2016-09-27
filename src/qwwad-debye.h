@@ -27,9 +27,9 @@ public:
     double get_cp_high_T() const;
 
 private:
-    double T_D;    ///< Debye temperature [K]
-    double M;      ///< Molar mass [kg/mol]
-    size_t natoms; ///< Number of atoms per molecular unit
+    double _T_D;    ///< Debye temperature [K]
+    double _M;      ///< Molar mass [kg/mol]
+    size_t _natoms; ///< Number of atoms per molecular unit
 
     static double find_U(double T, void *params);
 };

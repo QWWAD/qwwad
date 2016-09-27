@@ -296,12 +296,21 @@ int read_line(Tx &destx, Ty &desty, Tz &destz, Tu &destu, std::ifstream& stream)
 
     if(getline(stream, linebuffer) and !linebuffer.empty())
     {
-        std::istringstream oss(linebuffer);
+        std::istringstream iss(linebuffer);
 
-        if(oss >> destx >> desty >> destz >> destu)
+        if(iss >> destx >> desty >> destz >> destu)
             scan_result = 0; // Mark scan as successful
         else
-            throw std::runtime_error("Some data missing on line");
+        {
+            std::ostringstream oss;
+            oss << "Some data missing on line. Read: " << std::endl
+                << "Item 1: " << destx << std::endl
+                << "Item 2: " << desty << std::endl
+                << "Item 3: " << destz << std::endl
+                << "Item 4: " << destu << std::endl;
+
+            throw std::runtime_error(oss.str());
+        }
     }
 
     return scan_result;
@@ -592,7 +601,6 @@ void read_table(const char      *fname,
     stream.close();	
 }
 
-
 /**
  * Read numerical data from a file containing data in four columns
  *
@@ -602,7 +610,7 @@ void read_table(const char      *fname,
  * \param[out] z     Value array into which data from 3rd column will be written
  * \param[out] u     Value array into which data from 4th column will be written
  */
-template<
+template<class Tstring,
          template<typename, typename...> class Tcontainerx,
          template<typename, typename...> class Tcontainery,
          template<typename, typename...> class Tcontainerz,
@@ -611,7 +619,7 @@ template<
          class Ty,
          class Tz,
          class Tu>
-void read_table(const char* fname,
+void read_table(const Tstring    fname,
                 Tcontainerx<Tx>& x,
                 Tcontainery<Ty>& y,
                 Tcontainerz<Tz>& z,
@@ -629,17 +637,17 @@ void read_table(const char* fname,
     std::vector<Tx> x_temp;
     std::vector<Ty> y_temp;
     std::vector<Tz> z_temp;
-    std::vector<Tz> u_temp;
+    std::vector<Tu> u_temp;
     unsigned int nlines=0;
 
     while(!stream.eof()){
         if(nlines >= nlines_max)
             throw FileLinesExceedBufferSize(fname, nlines_max);
 
-        Tx buffer_x = 0; // Buffer for x input data
-        Ty buffer_y = 0; // Buffer for y input data
-        Tz buffer_z = 0; // Buffer for z input data
-        Tz buffer_u = 0; // Buffer for u input data
+        Tx buffer_x; // Buffer for x input data
+        Ty buffer_y; // Buffer for y input data
+        Tz buffer_z; // Buffer for z input data
+        Tu buffer_u; // Buffer for u input data
 
         // If data is valid, stick it into temp vector
         if(!read_line(buffer_x, buffer_y, buffer_z, buffer_u, stream))
@@ -784,66 +792,6 @@ void write_table(const Tstring          fname,
     }
 
     stream.close();	
-}
-
-/** 
- * Read 3 numerical data items and a character string from a line of input
- */
-    template <class T1, class T2, class T3>
-int read_line_xyz_char(T1& dest1, T2& dest2, T3& dest3, char*& dest4, std::ifstream& stream)
-{
-    std::streamsize nbytes=100; // Initial size of buffer
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    char* linebuffer = new char[nbytes+1];
-
-    if(stream.getline(linebuffer, nbytes) and linebuffer[0] != '\0')
-    {
-        // Pointer to a token on the line
-        char* pch=strtok(linebuffer, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        dest1=static_cast<T1>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        dest2=static_cast<T2>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        dest3=static_cast<T3>(atof(pch));
-        pch=strtok(NULL, "\t ");
-
-        if(pch == NULL)
-        {
-            delete[] linebuffer;
-            throw std::runtime_error("Some data missing on at least one line");
-        }
-
-        dest4=strdup(pch);
-        scan_result = 0; // Mark scan as successful
-    }
-
-    delete[] linebuffer;
-    return scan_result;
 }
 } // namespace
 #endif

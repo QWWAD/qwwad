@@ -9,6 +9,7 @@
 #include "qwwad-debye.h"
 
 #include <cmath>
+#include <sstream>
 
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
@@ -18,12 +19,19 @@ namespace QWWAD
 {
 using namespace constants;
 
+/**
+ * \brief Default constructor
+ *
+ * \param[in] T_D    Debye temperature [K]
+ * \param[in] M      Molar mass [kg/mol]
+ * \param[in] natoms Number of atoms per molecular unit
+ */
 DebyeModel::DebyeModel(const double T_D,
                        const double M,
                        const size_t natoms)
-    : T_D(T_D),
-      M(M),
-      natoms(natoms)
+    : _T_D(T_D),
+      _M(M),
+      _natoms(natoms)
 {}
 
 /**
@@ -31,7 +39,16 @@ DebyeModel::DebyeModel(const double T_D,
  */
 double DebyeModel::get_internal_energy(const double T) const
 {
-    return 3.0 * Na * kB * T * gsl_sf_debye_3(T_D/T) * natoms/M;
+    if(T <= 0)
+    {
+        std::ostringstream oss;
+        oss << "Cannot find internal energy for T = " << T << " K." << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
+    auto const D_3 = gsl_sf_debye_3(_T_D/T);
+
+    return 3.0 * Na * kB * T * D_3 * _natoms/_M;
 }
 
 // Find the molar specific heat capacity by differentiating
@@ -42,6 +59,13 @@ double DebyeModel::get_internal_energy(const double T) const
 // calculating the specific heat capacity.
 double DebyeModel::get_cp(const double T) const
 {
+    if(T <= 0)
+    {
+        std::ostringstream oss;
+        oss << "Cannot find specific heat capacity for T = " << T << " K." << std::endl;
+        throw std::runtime_error(oss.str());
+    }
+
     gsl_function f;
     f.function = &find_U;
     f.params   = const_cast<DebyeModel *>(this);
@@ -58,7 +82,7 @@ double DebyeModel::get_cp(const double T) const
 double DebyeModel::get_cp_low_T(const double T) const
 {
     const double pi_sq = pi*pi;
-    return 12*pi_sq*pi_sq*Na*kB*T*T*T/(T_D*T_D*T_D*5)*natoms/M;
+    return 12*pi_sq*pi_sq*Na*kB*T*T*T/(_T_D*_T_D*_T_D*5)*_natoms/_M;
 }
 
 /**
@@ -66,7 +90,7 @@ double DebyeModel::get_cp_low_T(const double T) const
  */
 double DebyeModel::get_cp_high_T() const
 {
-    return 3*Na*kB*natoms/M;
+    return 3*Na*kB*_natoms/_M;
 }
 
 /**
@@ -86,7 +110,7 @@ double DebyeModel::get_cp_approx(const double T) const
     double cp = 0.0;
 
     // Temperature at which high and low-temperature models meet
-    const double T_match = T_D * std::cbrt(1.25/(pi_sq*pi_sq));
+    const double T_match = _T_D * std::cbrt(1.25/(pi_sq*pi_sq));
 
     if (T > T_match)
         cp = get_cp_high_T();

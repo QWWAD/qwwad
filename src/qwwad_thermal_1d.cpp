@@ -33,7 +33,7 @@ using namespace QWWAD;
  * \todo These values only work for a limited range of
  *       temperatures. Restrict the domain accordingly?
  */
-static double thermal_cond(const Material *mat,
+static double thermal_cond(const Material &mat,
                            const double    x,
                            const double    T)
 {
@@ -41,16 +41,16 @@ static double thermal_cond(const Material *mat,
 
     try
     {
-        k = mat->get_property_value("thermal-conductivity-vs-alloy", x);
+        k = mat.get_property_value("thermal-conductivity-vs-alloy", x);
     }
     catch(std::exception &e)
     {
         try
         {
-            double k0_1  = mat->get_property_value("thermal-conductivity-0K-1");
-            double k0_2  = mat->get_property_value("thermal-conductivity-0K-2");
-            double tau_1 = mat->get_property_value("thermal-conductivity-decay-index-1");
-            double tau_2 = mat->get_property_value("thermal-conductivity-decay-index-2");
+            double k0_1  = mat.get_property_value("thermal-conductivity-0K-1");
+            double k0_2  = mat.get_property_value("thermal-conductivity-0K-2");
+            double tau_1 = mat.get_property_value("thermal-conductivity-decay-index-1");
+            double tau_2 = mat.get_property_value("thermal-conductivity-decay-index-2");
             double k_1 = k0_1*pow(T,tau_1);
             double k_2 = k0_2*pow(T,tau_2);
             k = lin_interp(k_1,k_2, x);
@@ -59,21 +59,21 @@ static double thermal_cond(const Material *mat,
         {
             try
             {
-                const double k0  = mat->get_property_value("thermal-conductivity-0K");
-                const double tau = mat->get_property_value("thermal-conductivity-decay-index");
+                const double k0  = mat.get_property_value("thermal-conductivity-0K");
+                const double tau = mat.get_property_value("thermal-conductivity-decay-index");
                 k = k0 * pow(T,tau);
             }
             catch(std::exception &e)
             {
                 try
                 {
-                    const double k_hi    = mat->get_property_value("thermal-conductivity-high-T");
-                    const double k_decay = mat->get_property_value("thermal-conductivity-inverse-T");
+                    const double k_hi    = mat.get_property_value("thermal-conductivity-high-T");
+                    const double k_decay = mat.get_property_value("thermal-conductivity-inverse-T");
                     k = k_hi + k_decay/T;
                 }
                 catch(std::exception &e)
                 {
-                    k = mat->get_property_value("thermal-conductivity-T", T);
+                    k = mat.get_property_value("thermal-conductivity-T", T);
                 }
             }
         }
@@ -190,7 +190,7 @@ class Thermal1DData {
 public:
     Thermal1DData(const Thermal1DOptions &opt,
                   const MaterialLibrary  &lib);
-    std::vector<Material const *> mat_layer; ///< Material in each layer
+    std::vector<Material> mat_layer; ///< Material in each layer
     arma::vec x;         ///< Alloy composition in each layer
     arma::vec d;         ///< Layer thickness [m]
 };
@@ -198,89 +198,43 @@ public:
 Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
                              const MaterialLibrary  &material_library)
 {
-    std::vector<double> d_tmp; // Temp storage for layer thickness
-    std::vector<double> x_tmp; // Temp storage for alloy composition
-    const size_t nbuff = 10000;
+    arma::vec doping; // Unused doping data
+    std::vector<std::string> mat_name; // Materialname
+    auto infile = opt.get_option<std::string>("infile");
+    read_table(infile, d, x, doping, mat_name);
 
-    std::string infile(opt.get_option<std::string>("infile"));
-    std::ifstream stream(infile.c_str());
+    d *= 1e-6; // Rescale thickness to metres
 
-    if(!stream.is_open())
+    for(auto name : mat_name)
     {
-        std::ostringstream oss;
-        oss << "Could not open " << infile << ".";
-        throw std::runtime_error(oss.str());
-    }
-    
-    while(!stream.eof())
-    {
-        // Check for buffer overflow
-        if(d_tmp.size() >= nbuff)
-            throw std::length_error("Buffer overflow.  Increase size of QCLSIM_BUFFER_SIZE variable");
-
-        double thickness_buffer = 0.0;
-        double alloy_buffer     = 0.0;
-        double doping_buffer    = 0.0;
-        char* mat_string;
-
-        // Read four columns from input file:
-        // - thickness
-        // - alloy fraction
-        // - doping
-        // - material name
-        if(!read_line_xyz_char(thickness_buffer,
-                               alloy_buffer,
-                               doping_buffer,
-                               mat_string,
-                               stream))
-        {
-            check_positive(&thickness_buffer);
-            check_c_interval_0_1(&alloy_buffer);
-            check_not_negative(&doping_buffer);
-            
-            mat_layer.push_back(material_library.get_material(mat_string));
-            free(mat_string);
-            x_tmp.push_back(alloy_buffer);
-
-            // Copy thickness to array and scale to metres
-            d_tmp.push_back(thickness_buffer*1e-6);
-        }
+        auto material = material_library.get_material(name);
+        mat_layer.push_back(*material);
     }
 
     if(opt.get_verbose())
-        std::cout << "Read " << d_tmp.size() << " layers from " << infile << std::endl;
+        std::cout << "Read " << d.size() << " layers from " << infile << std::endl;
 
-    if(d_tmp.empty())
+    if(d.empty())
     {
         std::ostringstream oss;
         oss << "Could not read any layers from " << infile;
         throw std::runtime_error(oss.str());
-    }
-
-    d.resize(d_tmp.size());
-    x.resize(x_tmp.size());
-
-    for(unsigned int iL = 0; iL < d_tmp.size(); ++iL)
-    {
-        x[iL] = x_tmp[iL];
-        d[iL] = d_tmp[iL];
     }
 }
 
 static double calctave(const arma::vec &g,
                        const arma::vec &T);
 
-static void calctemp(double dt,
-                     double *Told,
-                     double q_old[],
-                     double q_new[], 
-                     arma::uvec &iLayer,
-                     const std::vector<Material const *> &mat,
-                     const arma::vec   &x,
-                     const std::vector<DebyeModel> &dm_layer,
-                     const arma::vec   &rho_layer,
-                     arma::vec &T,
-                     Thermal1DOptions& opt);
+static arma::vec calctemp(double dt,
+                          arma::vec        &Told,
+                          arma::vec  const &q_old,
+                          arma::vec  const &q_new,
+                          arma::uvec const &iLayer,
+                          const std::vector<Material> &mat,
+                          const arma::vec   &x,
+                          const std::vector<DebyeModel> &dm_layer,
+                          const arma::vec   &rho_layer,
+                          Thermal1DOptions& opt);
 
 int main(int argc, char *argv[])
 {
@@ -314,16 +268,17 @@ int main(int argc, char *argv[])
         printf("Pulse width = %5.1f ns.\n",pw*1e9);
     }
 
-    arma::vec  y(ny);                // Spatial coordinates [m]
-    arma::vec  g(ny);                // Power density profile [W/m^3]
-    arma::uvec iLayer(ny);     // Index of layer containing each point
+    auto const y = arma::linspace(0, L, ny);                // Spatial coordinates [m]
+
+    arma::vec  g = arma::zeros(ny); // Power density profile [W/m^3]
+    arma::uvec iLayer = arma::zeros<arma::uvec>(ny);     // Index of layer containing each point
 
     double bottom_of_layer=0;
     unsigned int iy=1;
 
     std::vector<DebyeModel> dm_layer;
     const size_t nL = data.d.size();
-    arma::vec rho_layer(nL);
+    arma::vec rho_layer = arma::zeros(nL);
 
     // Loop through each layer and figure out which points it contains
     for(unsigned int iL=0; iL < nL; iL++){
@@ -331,14 +286,13 @@ int main(int argc, char *argv[])
 
         // Check that we haven't finished filling the array and that
         // the next point is still in this layer
-        while(iy<ny and y[iy-1]+dy < bottom_of_layer)
+        while(iy<ny and y(iy-1)+dy < bottom_of_layer)
         {
-            y[iy]      = dy*iy; // Fill in the position at this point
-            iLayer[iy] = iL;    // Note the layer containing this point
+            iLayer(iy) = iL;    // Note the layer containing this point
 
             // Assume that only the active-region is heated
             if (iL == iAR)
-                g[iy] = power_density;
+                g(iy) = power_density;
 
             iy++;
         }
@@ -349,14 +303,15 @@ int main(int argc, char *argv[])
 
         try
         {
-            T_D = data.mat_layer[iL]->get_property_value("debye-temperature", data.x[iL]);
-            M   = data.mat_layer[iL]->get_property_value("molar-mass", data.x[iL]);
-            natoms = data.mat_layer[iL]->get_property_value("natoms");
-            rho_layer[iL] = data.mat_layer[iL]->get_property_value("density", data.x[iL]);
+            T_D = data.mat_layer[iL].get_property_value("debye-temperature", data.x[iL]);
+            M   = data.mat_layer[iL].get_property_value("molar-mass", data.x[iL]);
+            natoms = data.mat_layer[iL].get_property_value("natoms");
+            rho_layer[iL] = data.mat_layer[iL].get_property_value("density", data.x[iL]);
         }
         catch (std::exception &e)
         {
-            std::cerr << "Could not find material parameters for " << data.mat_layer[iL]->get_description() << std::endl;
+            std::cerr << "Could not find material parameters for "
+                      << data.mat_layer[iL].get_description() << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -367,28 +322,24 @@ int main(int argc, char *argv[])
     
     // Spatial temperature profile through structure [K].
     // Assume that initially all points are in thermal equilibrium with heat sink.
-    arma::vec T(_Tsink, ny); 
+    arma::vec T = arma::zeros(ny);
+    T.fill(_Tsink);
     
-    double* Told = new double[ny];
+    arma::vec Told = arma::zeros(ny);
+    Told.fill(_Tsink);
 
-    for(unsigned int iy=0; iy<ny; iy++) // sink
-        Told[iy]=_Tsink;
-
-    FILE* FT=fopen("struct.dat","w");
+    std::ofstream FT("struct.dat");
 
     for(unsigned int iy=0; iy<ny; iy++)
     {
-        unsigned int iL = iLayer[iy]; // Look up layer containing this point
-        auto mat = data.mat_layer[iL]; // Get the material in the layer
+        auto const iL = iLayer(iy); // Look up layer containing this point
+        auto const mat = data.mat_layer[iL]; // Get the material in the layer
 
         // Now save the material to file
-        fprintf(FT,"%20.8e  %s\n", iy*dy*1e6, mat->get_description().c_str());
+        FT << iy*dy*1e6 << "\t" << mat.get_description() << std::endl;
     }
 
-    fclose(FT);
-
-    // A null vector, just for convenience in linear algebra
-    double* null_vec = new double[ny]();
+    FT.close();
 
     // TODO: The Crank-Nicolson method allows quite large timesteps to be 
     // used... however, it's only going to give a sane result if the 
@@ -408,27 +359,28 @@ int main(int argc, char *argv[])
     const auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
    
     // Samples of average T_AR at each time-step 
-    arma::vec t(nt_per * _n_rep);
-    arma::vec T_avg(nt_per * _n_rep);
+    arma::vec t = arma::zeros(nt_per * _n_rep);
+    arma::vec T_avg = arma::zeros(nt_per * _n_rep);
     
     // Samples of average T_AR in the middle of each pulse
-    arma::vec t_mid(_n_rep); // Time at middle of each pulse
-    arma::vec T_mid(_n_rep); // Average AR temperature at middle of each pulse
+    arma::vec t_mid = arma::zeros(_n_rep); // Time at middle of each pulse
+    arma::vec T_mid = arma::zeros(_n_rep); // Average AR temperature at middle of each pulse
 
     // Samples of maximum T_AR in each pulse
-    arma::vec t_max(_n_rep); // Time at which peak temp occurs in each pulse
-    arma::vec T_max(_n_rep); // Peak AR temperature of each pulse
+    arma::vec t_max = arma::zeros(_n_rep); // Time at which peak temp occurs in each pulse
+    arma::vec T_max = arma::zeros(_n_rep); // Peak AR temperature of each pulse
 
     // Samples of minimum T_AR in each pulse
-    arma::vec t_min(_n_rep); // Time at which minimum temp occurs in each pulse
-    arma::vec T_min(1e9, _n_rep); // Minimum AR temperature of each pulse
+    arma::vec t_min = arma::zeros(_n_rep); // Time at which minimum temp occurs in each pulse
+    arma::vec T_min = arma::zeros(_n_rep); // Minimum AR temperature of each pulse
+    T_min.fill(1e9);
 
     // Samples of average T_AR across final pulse
-    arma::vec t_period(nt_per);
-    arma::vec T_period(nt_per);
+    arma::vec t_period = arma::zeros(nt_per);
+    arma::vec T_period = arma::zeros(nt_per);
 
     // Temperature profile at end of final pulse
-    arma::vec T_y_max(ny);
+    arma::vec T_y_max = arma::zeros(ny);
 
     // Rising and falling edge of final pulse in temperature profile
     std::vector<double> _t_rise;
@@ -451,69 +403,69 @@ int main(int argc, char *argv[])
 
             // Heating term at this time-step and at the last
             // timestep
-            double* q_old = null_vec;
-            double* q_now = null_vec;
+            arma::vec q_old = arma::zeros(ny);
+            arma::vec q_now = arma::zeros(ny);
 
             // If this time-step is within the pulse, then
             // "switch on" the electrical power
             if (dt*it <= pw)
-                q_now = &(g[0]);
+                q_now = g;
 
             // Likewise for the previous time-step
             if (it > 0 and dt*(it-1) <= pw)
-                q_old = &(g[0]);
+                q_old = g;
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, data.x, dm_layer, rho_layer, T, opt);
+            T = calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, data.x, dm_layer, rho_layer, opt);
 
             // Find spatial average of T_AR
-            T_avg[it_total] = calctave(g, T);
+            T_avg(it_total) = calctave(g, T);
             
             // Find T_AR at middle of the pulse
 	    if(dt*it <= pw/2.0)
             {
-		    t_mid[iper] = t[it_total];
-                    T_mid[iper] = T_avg[it_total];
+                t_mid(iper) = t(it_total);
+                T_mid(iper) = T_avg(it_total);
             }
 
             // Copy temperatures to old time step 
             for(unsigned int iy=0; iy<ny; iy++)
-                Told[iy] = T[iy];
+                Told(iy) = T(iy);
 
             // Find maximum AR temperature
-            if(T_avg[it_total] > T_max[iper])
+            if(T_avg(it_total) > T_max(iper))
             {
-                T_max[iper] = T_avg[it_total];
-                t_max[iper] = t[it_total];
+                T_max(iper) = T_avg(it_total);
+                t_max(iper) = t(it_total);
 
                 for(unsigned int iy = 0; iy < ny; ++iy)
-                    T_y_max[iy] = T[iy];
+                    T_y_max(iy) = T(iy);
             }
 
             // Find minimum AR temperature
-            if(T_avg[it_total] < T_min[iper])
+            if(T_avg(it_total) < T_min(iper))
             {
-                T_min[iper] = T_avg[it_total];
-                t_min[iper] = t[it_total];
+                T_min(iper) = T_avg(it_total);
+                t_min(iper) = t(it_total);
             }
 
             // Record rising and falling edges if this is the last pulse
             if(iper == _n_rep-1)
             {
-                if(fmod(t[it_total], time_period) <= pw) // if during pulse
+                if(fmod(t(it_total), time_period) <= pw) // if during pulse
                 {
-                    _t_rise.push_back(t[it_total]*1e6);
-                    _T_rise.push_back(T_avg[it_total]);
+                    _t_rise.push_back(t(it_total)*1e6);
+                    _T_rise.push_back(T_avg(it_total));
                 }
                 else
                 {
-                    _t_fall.push_back(t[it_total]*1e6);
-                    _T_fall.push_back(T_avg[it_total]);
+                    _t_fall.push_back(t(it_total)*1e6);
+                    _T_fall.push_back(T_avg(it_total));
                 }
 
-                t_period[it] = t[it_total]*1e6;
-                T_period[it] = T_avg[it_total];
+                t_period(it) = t(it_total)*1e6;
+                T_period(it) = T_avg(it_total);
             }
         }// end time loop
 
@@ -522,115 +474,108 @@ int main(int argc, char *argv[])
         {
             printf("Period=%u Tmax= %.4f K at t=%.2f microseconds\n",
                    iper+1,
-                   T_max[iper],
-                   t_max[iper]*1e6);
+                   T_max(iper),
+                   t_max(iper)*1e6);
         }
     }// end period loop
-
-    arma::vec t_rise(&_t_rise[0], _t_rise.size());
-    arma::vec T_rise(&_T_rise[0], _T_rise.size());
-    arma::vec t_fall(&_t_fall[0], _t_fall.size());
-    arma::vec T_fall(&_T_fall[0], _T_fall.size());
 
     write_table("T_t.dat",    arma::vec(1e6*t), T_avg);
     write_table("T-mid_t.dat",arma::vec(1e6*t_mid), T_mid);
     write_table("Tmax_t.dat", arma::vec(1e6*t_max), T_max);
     write_table("Tmin_t.dat", arma::vec(1e6*t_min), T_min);
-    write_table("Trise_t.dat", t_rise, T_rise);
-    write_table("Tfall_t.dat", t_fall, T_fall);
+    write_table("Trise_t.dat", _t_rise, _T_rise);
+    write_table("Tfall_t.dat", _t_fall, _T_fall);
     write_table("T_y.dat", y, T);
     write_table("T_y_max.dat", y, T_y_max);
     write_table("T-period_t.dat", t_period, T_period);
 
-    delete[] Told;
-    delete[] null_vec;
-
     return EXIT_SUCCESS;
 }
 
-
 // Calculate the spatial temperature profile across the device at the
 // next time step in the sequence.
-static void calctemp(double dt,
-                     double *Told,
-                     double q_old[],
-                     double q_new[],
-                     arma::uvec &iLayer,
-                     const std::vector<Material const *> &mat_layer,
-                     const arma::vec &x,
-                     const std::vector<DebyeModel> &dm_layer,
-                     const arma::vec &rho_layer,
-                     arma::vec &T,
-                     Thermal1DOptions& opt)
+static arma::vec calctemp(double dt,
+                          arma::vec  &Told,
+                          arma::vec  const &q_old,
+                          arma::vec  const &q_new,
+                          arma::uvec const &iLayer,
+                          const std::vector<Material> &mat_layer,
+                          const arma::vec &x,
+                          const std::vector<DebyeModel> &dm_layer,
+                          const arma::vec &rho_layer,
+                          Thermal1DOptions& opt)
 {
     const auto ny = iLayer.size();
     const auto dy = opt.get_option<double>("dy");
-    double dy_sq = dy*dy;
-    auto RHS_subdiag   = new double[ny-1];
-    auto RHS_diag      = new double[ny];
-    auto RHS_superdiag = new double[ny-1];
-    auto LHS_subdiag   = new double[ny-1];
-    auto LHS_diag      = new double[ny];
-    auto LHS_superdiag = new double[ny-1];
+    const auto dy_sq = dy*dy;
 
     // Note that the bottom of the device is not calculated.  We leave it
     // set to the heatsink temperature (Dirichlet boundary)
-    LHS_diag[0] = 1.0;
-    LHS_superdiag[0] = 0.0;
+    arma::vec LHS_diag      = arma::ones(ny);
+    arma::vec LHS_subdiag   = arma::zeros(ny-1);
+    arma::vec LHS_superdiag = arma::zeros(ny-1);
 
-    RHS_diag[0] = 1.0;
-    RHS_superdiag[0] = 0.0;
+    arma::vec RHS_diag      = arma::ones(ny);
+    arma::vec RHS_superdiag = arma::zeros(ny-1);
+    arma::vec RHS_subdiag   = arma::zeros(ny-1);
 
-    T[0] = 0.0;
+    arma::vec T = Told;
 
-    double k_last = thermal_cond(mat_layer[iLayer[0]], x[iLayer[0]], Told[0]);
-    double k      = thermal_cond(mat_layer[iLayer[1]], x[iLayer[1]], Told[1]);
-    double k_next = thermal_cond(mat_layer[iLayer[2]], x[iLayer[2]], Told[2]);
+    // Indices of layers containing the current, previous and next points
+    auto iL_prev = iLayer(0);
+    auto iL_this = iLayer(1);
+    auto iL_next = iLayer(2);
+
+    double k_prev = thermal_cond(mat_layer[iL_prev], x(iL_prev), Told(0));
+    double k_this = thermal_cond(mat_layer[iL_this], x(iL_this), Told(1));
+    double k_next = thermal_cond(mat_layer[iL_next], x(iL_next), Told(2));
 
     double rho_cp = 0;
 
     for(unsigned int iy=1; iy<ny-1; iy++)
     {
+        iL_this = iLayer(iy); // Update the current layer index
+        iL_next = iLayer(iy+1);
+
         // Product of density and spec. heat cap [J/(m^3.K)]
-        const double _cp = dm_layer[iLayer[iy]].get_cp(Told[iy]);
-        rho_cp = rho_layer[iLayer[iy]] * _cp;
+        const auto _cp = dm_layer[iL_this].get_cp(Told(iy));
+        rho_cp = rho_layer(iL_this) * _cp;
 
         // Find interface values of the thermal conductivity using
         // Eq. 3.25 in Craig's thesis.
-        double kn=(2*k*k_next)/(k+k_next);
-        double ks=(2*k*k_last)/(k+k_last);
-        double r = dt/(2.0*rho_cp);
-        double alpha = r*ks/dy_sq;
-        double gamma = r*kn/dy_sq;
+        const auto kn=(2*k_this*k_next)/(k_this+k_next);
+        const auto ks=(2*k_this*k_prev)/(k_this+k_prev);
+        const auto r = dt/(2.0*rho_cp);
+        const auto alpha = r*ks/dy_sq;
+        const auto gamma = r*kn/dy_sq;
 
-        RHS_subdiag[iy-1] = alpha;
-        RHS_superdiag[iy] = gamma;
-        RHS_diag[iy] = 1.0 - (alpha+gamma);
+        RHS_subdiag(iy-1) = alpha;
+        RHS_superdiag(iy) = gamma;
+        RHS_diag(iy) = 1.0 - (alpha+gamma);
 
-        LHS_subdiag[iy-1] = -alpha;
-        LHS_superdiag[iy] = -gamma;
-        LHS_diag[iy] = 1.0 + (alpha+gamma);
+        LHS_subdiag(iy-1) = -alpha;
+        LHS_superdiag(iy) = -gamma;
+        LHS_diag(iy) = 1.0 + (alpha+gamma);
 
-        T[iy] = r*(q_old[iy]+q_new[iy]);
+        T(iy) = r*(q_old(iy)+q_new(iy));
 
-        k_last = k;
-        k = k_next;
-
-        k_next = thermal_cond(mat_layer[iLayer[iy+1]], x[iLayer[iy+1]], Told[iy+1]);
+        k_prev = k_this;
+        k_this = k_next;
+        k_next = thermal_cond(mat_layer[iL_next], x(iL_next), Told(iy+1));
     }
 
     // At last point, use Neumann boundary, i.e. dT/dy=0, which gives
     // T[n] = T[n-2] in the finite-difference approximation
-    double kns=(2*k_next*k)/(k_next+k);
-    const double rho = rho_layer[iLayer[ny-1]];
-    rho_cp = rho * dm_layer[iLayer[ny-1]].get_cp(Told[ny-1]);
+    double kns=(2*k_next*k_this)/(k_next+k_this);
+    const double rho = rho_layer[iLayer(ny-1)];
+    rho_cp = rho * dm_layer[iLayer(ny-1)].get_cp(Told(ny-1));
     double r = dt/(2.0*rho_cp);
     double alpha_gamma = r*kns/dy_sq;
-    RHS_subdiag[ny-2] = 2.0*alpha_gamma;
-    RHS_diag[ny-1] = 1.0 - 2.0*alpha_gamma;
-    LHS_subdiag[ny-2] = -2.0*alpha_gamma;
-    LHS_diag[ny-1] = 1.0 + 2.0*alpha_gamma;
-    T[ny-1] = r*(q_old[ny-1]+q_new[ny-1]);
+    RHS_subdiag(ny-2) = 2.0*alpha_gamma;
+    RHS_diag(ny-1) = 1.0 - 2.0*alpha_gamma;
+    LHS_subdiag(ny-2) = -2.0*alpha_gamma;
+    LHS_diag(ny-1) = 1.0 + 2.0*alpha_gamma;
+    T(ny-1) = r*(q_old(ny-1)+q_new(ny-1));
 
     int N = ny;
     double scale = 1;
@@ -639,17 +584,20 @@ static void calctemp(double dt,
 
     // Perform matrix multiplication using LAPACK
     // result:-> result + RHS*Told
-    dlagtm_(&TRANS, &N, &NRHS, &scale, RHS_subdiag, RHS_diag, RHS_superdiag,
-            Told, &N, &scale, &T[0], &N);
+    dlagtm_(&TRANS, &N, &NRHS, &scale,
+            &RHS_subdiag[0],
+            &RHS_diag[0],
+            &RHS_superdiag[0],
+            &Told[0], &N, &scale, &T[0], &N);
 
 #if HAVE_LAPACKE
     int INFO=LAPACKE_dgtsv(LAPACK_COL_MAJOR, // Use column-major ordering
             ny, // Order of matrix
             1,  // Number of right-hand-side
-            LHS_subdiag,
-            LHS_diag,
-            LHS_superdiag,
-            &T[0],
+            &LHS_subdiag(0),
+            &LHS_diag(0),
+            &LHS_superdiag(0),
+            &T(0),
             ny);
 #else
     int INFO=1;
@@ -659,12 +607,7 @@ static void calctemp(double dt,
     if(INFO!=0)
         throw std::runtime_error("Could not solve matrix inversion problem. Check all input parameters!");
 
-    delete[] RHS_diag;
-    delete[] RHS_subdiag;
-    delete[] RHS_superdiag;
-    delete[] LHS_diag;
-    delete[] LHS_subdiag;
-    delete[] LHS_superdiag;
+    return T;
 }
 
 /**

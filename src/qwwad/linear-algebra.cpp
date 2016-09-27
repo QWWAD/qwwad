@@ -23,6 +23,86 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sort.h>
 
+// Declaration of external LAPACK functions
+extern "C" {
+// If we don't have the official LAPACK C bindings, we need to declare
+// the necessary external functions
+//
+// TODO: Kill all this once all supported platforms have LAPACK >= 3.4
+#if !HAVE_LAPACKE
+/** Determine double-precision machine parameters */
+double dlamch_(const char* returnValue);
+
+/** Solve general eigenproblem */
+void dgeev_(const char *JOBVL,
+            const char *JOBVR,
+            const int  *N,
+            double      A[],
+            const int  *LDA,
+            double      WR[],
+            double      WI[],
+            double      VL[],
+            const int  *LDVL,
+            double      VR[],
+            const int  *LDVR,
+            double      WORK[],
+            int        *LWORK,
+            int        *INFO);
+
+/** Solve symmetric-definite banded eigenproblem*/
+void dsbgvx_(const char* JOBZ,
+             const char* RANGE,
+             const char* UPLO,
+             const int* N, const int* KA, const int* KB, double AB[], const int* LDAB,
+             double BB[], const int* LDBB, double* Q, const int* LDQ, const double* VL,
+             const double* VU, const int* IL, const int* IU, const double* ABSTOL, int* M,
+             double W[], double Z[], const int* LDZ, double WORK[], int IWORK[],
+             int IFAIL[], int* INFO);
+
+/** Solve real symmetric tridiagonal eigenproblem */
+void dstevx_(const char* JOBZ, const char* RANGE, const int* N, double D[],
+             double E[], const double* VL, const double* VU,
+             const int* IL, const int* IU, const double* ABSTOL, int* M, 
+             double W[], double Z[], const int* LDZ, double WORK[], int IWORK[], 
+             int IFAIL[], int* INFO);
+
+/**
+ * Solve a tridiagonal inversion problem: \f$ x := A^{-1} x\f$
+ */
+void dgtsv_(const int* N, const int* NRHS, double DL[], double D[], 
+            double DU[], double B[], int* LDB, int* INFO);
+
+/**
+ * Factorise real symmetric positive definate tridagonal matrix
+ */
+void dpttrf_(const int* N, double D[], double E[], int* INFO);
+
+/**
+ * Solve real symmetric positive definite tridagonal matrix
+ */
+void dpttrs_(const int* N, const int* NRHS, double D[], double E[],
+             double B[], const int* LDB, int* INFO);
+
+/**
+ * Factorise general matrix
+ */
+void dgetrf_(const int* M, const int* N, double A[], const int* LDA,
+             int IPIV[], int* INFO);
+
+/**
+ * Solve general matrix
+ */
+void dgetrs_(const char* TRANS, const int* N, const int* NRHS, double A[],
+             const int* LDA, int IPIV[], double B[], const int* LDB, int* INFO);
+
+/**
+ * \brief Solve eigenvalue problem for complex matrix
+ */
+void zheev_(const char *JOBZ, const char *UPLO, const int* N, std::complex<double> ank[],
+            const int *LDA, double E[], std::complex<double> WORK[], int *LWORK, double RWORK[], int *INFO);
+#endif // !HAVE_LAPACKE
+} // extern
+
 namespace QWWAD
 {
 /**
@@ -51,8 +131,8 @@ eigen_general(arma::mat    &A,
     arma::vec WI(N);
 
     // Computed left and right eigenvectors
-    std::vector<double> V_left(N*N);
-    std::vector<double> V_right(N*N);
+    arma::mat V_left(N,N);
+    arma::mat V_right(N,N);
 
     // Run LAPACK function to solve eigenproblem
 #if HAVE_LAPACKE
@@ -66,7 +146,7 @@ eigen_general(arma::mat    &A,
     char jobvl = 'N'; // Specify range of solutions by value
     char jobvr = 'V';
     int  lwork = 4*N;
-    std::valarray<double> work(4*N); // LAPACK workspace
+    arma::vec work(4*N); // LAPACK workspace
 
     dgeev_(&jobvl, &jobvr, &N, A, &N, &WR[0], &WI[0], &V_left[0], &N, &V_right[0], &N,
             &work[0], &lwork, &info);
@@ -92,8 +172,7 @@ eigen_general(arma::mat    &A,
             // If we specify a range of eigenvalues, filter the
             // solutions by that range, otherwise keep all of them
             if((n_max > 0) or (WR[i] < VU)){
-                std::vector<double> psi(V_right.begin() + i*N,
-                                        V_right.begin() + (i+1)*N);
+                arma::vec const psi = V_right.col(i);
                 solutions[nst] = EVP_solution<double>(WR[i], psi);
 
                 nst++; // Register solution found
@@ -199,8 +278,8 @@ eigen_banded(double       AB[],
     double abstol = 2.0 * dlamch_(&retval); // Error tolerance
 
     // LAPACK workspace
-    std::valarray<double> work(7*(size_t)n);
-    std::valarray<int>    iwork(5*(size_t)n);
+    arma::vec  work(7*(size_t)n);
+    arma::ivec iwork(5*(size_t)n);
 
     // Run LAPACK function to solve eigenproblem
     char jobz  = 'V';   // Task descriptor for LAPACK
@@ -246,11 +325,11 @@ eigen_banded(double       AB[],
  *             eigenvalues in the range [VL,VU] will be found.
  */
 std::vector< EVP_solution<double> >
-eigen_tridiag(arma::vec &diag,
-              arma::vec &subdiag,
-              double       VL,
-              double       VU,
-              unsigned int n_max)
+eigen_tridiag(arma::vec    &diag,
+              arma::vec    &subdiag,
+              double        VL,
+              double        VU,
+              unsigned int  n_max)
 {
     const auto n = diag.size();
     arma::Col<int>    ifail(n); // Failure bits for LAPACK
@@ -288,8 +367,8 @@ eigen_tridiag(arma::vec &diag,
     char jobz='V'; // Task descriptor for LAPACK
     int  IL=1;
     int  IU=n_max;
-    std::valarray<double> work(5*n); // LAPACK workspace
-    std::valarray<int>    iwork(5*n);
+    arma::vec  work(5*n); // LAPACK workspace
+    arma::ivec iwork(5*n);
 
     // Find error tolerance
     char retval='S'; // Return value for LAPACK
