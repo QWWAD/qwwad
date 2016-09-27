@@ -120,6 +120,7 @@ includeqwwad_HEADERS = \
 			   src/qwwad/eigenstate.h                         \
 			   src/qwwad/fermi.h                              \
 			   src/qwwad/file-io.h                            \
+			   src/qwwad/lapack-declarations.h                \
 			   src/qwwad/linear-algebra.h                     \
 			   src/qwwad/maths-helpers.h                      \
 			   src/qwwad/mesh.h                               \

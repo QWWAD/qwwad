@@ -18,14 +18,29 @@
 
 #include <armadillo>
 
-extern "C" {
 /**
- * Tridiagonal matrix multiplication: \f$B := \alpha A X + \beta B\f$
+ * Factorise real symmetric positive definate tridagonal matrix
  */
-void dlagtm_(const char* TRANS, int* N, const int* NRHS, double* ALPHA,
-             double DL[], double D[], double DU[], double X[], int* LDX,
-             double* BETA, double B[], int* LDB);
-}
+void dpttrf_(const int* N, double D[], double E[], int* INFO);
+
+/**
+ * Solve real symmetric positive definite tridagonal matrix
+ */
+void dpttrs_(const int* N, const int* NRHS, double D[], double E[],
+             double B[], const int* LDB, int* INFO);
+
+/**
+ * Solve a tridiagonal inversion problem: \f$ x := A^{-1} x\f$
+ */
+void dgtsv_(const int    *N,
+            const int    *NRHS,
+            const double *DL,
+            const double *D, 
+            const double *DU,
+            double       *B,
+            const int    *LDB,
+            int          *INFO);
+
 namespace QWWAD
 {
 /**
@@ -160,6 +175,19 @@ eigen_tridiag(arma::vec   &D,
               const double VL,
               const double VU,
               unsigned int n_max = 0);
+
+arma::vec
+multiply_vec_tridiag(arma::vec const &M_sub,
+                     arma::vec const &M_diag,
+                     arma::vec const &M_super,
+                     arma::vec const &x,
+                     arma::vec const &c);
+
+arma::vec
+solve_tridiag(arma::vec const &A_sub,
+              arma::vec const &A_diag,
+              arma::vec const &A_super,
+              arma::vec const &x);
 
 arma::vec
 solve_cyclic_matrix(arma::vec A_sub,

@@ -10,10 +10,7 @@
 #include <iostream>
 #include "qclsim_poisson_solver.h"
 
-#if HAVE_LAPACKE
-# include <lapacke.h>
-#endif
-
+#include "qwwad/lapack-declarations.h"
 #include "qwwad/linear-algebra.h"
 
 #include <stdexcept>
@@ -101,12 +98,8 @@ void Poisson::factorise_dirichlet()
 
     // Factorise matrix
     int info = 0;
-#if HAVE_LAPACKE
-    info = LAPACKE_dpttrf(ni, &_diag[0], &_sub_diag[0]);
-#else
     const int N = ni;
     dpttrf_(&N, &_diag[0], &_sub_diag[0], &info);
-#endif
 
     if(info != 0)
     {
@@ -186,12 +179,8 @@ arma::vec Poisson::solve(const arma::vec &rho) const
             {
                 int nrhs = 1;
                 int info = 0;
-#if HAVE_LAPACKE
-                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], n);
-#else
                 const int _N = n;
                 dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
-#endif
                 if(info != 0)
                 {
                     std::ostringstream oss;
@@ -254,12 +243,8 @@ arma::vec Poisson::solve(const arma::vec &rho,
 
                 // The boundary condition is then set according to QWWAD4, 3.110.
                 rhs[n-1] += _diag[n-1] * next_potential;
-#if HAVE_LAPACKE
-                info = LAPACKE_dpttrs(LAPACK_COL_MAJOR, n, nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], n);
-#else
                 const int _N = n;
                 dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
-#endif
                 if(info != 0)
                 {
                     std::ostringstream oss;

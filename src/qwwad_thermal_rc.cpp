@@ -6,11 +6,8 @@
 #include <valarray>
 #include "qwwad/options.h"
 #include "qwwad/file-io.h"
+#include "qwwad/lapack-declarations.h"
 #include "qwwad/linear-algebra.h"
-
-#if HAVE_LAPACKE
-# include <lapacke.h>
-#endif
 
 using namespace QWWAD;
 
@@ -236,18 +233,10 @@ int main(int argc, char *argv[])
 	    B[it] = _q[it];
     }
 
-#if HAVE_LAPACKE
-    LAPACKE_dgtsv(LAPACK_COL_MAJOR,
-                  nt,
-		  1,
-		  &DL[0], &D[0], &DU[0],
-		  &B[0], nt);
-#else
     int INFO = 1;
     int N    = nt;
     int NRHS = 1;
     dgtsv_(&N, &NRHS, &DL[0], &D[0], &DU[0], &B[0], &N, &INFO);
-#endif
 
     std::valarray<double> t(&_t[0], nt);
     std::valarray<double> q(&_q[0], nt);

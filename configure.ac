@@ -106,21 +106,6 @@ LIBS="$LAPACK_LIBS $BLAS_LIBS $LIBS $FLIBS"
 dnl Check for GNU Scientific Library
 PKG_CHECK_MODULES(GSL, gsl)
 
-# Check if we have the new "official" C header for LAPACK.  Also, note that
-# there is a bug in LAPACK that causes incorrect linkage with C++11. See
-# http://icl.cs.utk.edu/lapack-forum/viewtopic.php?f=2&t=4221
-AC_CHECK_HEADER([lapacke.h],
-		AC_CHECK_LIB([lapacke], [LAPACKE_dlamch], with_lapacke=yes, with_lapacke=no),
-		with_lapacke=no)
-
-if test "x$with_lapacke" = "xyes"; then
-	AC_MSG_RESULT([Using official C bindings for LAPACK])
-	AC_DEFINE(HAVE_LAPACKE,1,[Build with lapacke.h])
-	LIBS="$LIBS -llapacke"
-else
-	AC_MSG_WARN([Official C bindings for LAPACK unavailable.  Using our own bindings instead!])
-fi
-
 dnl Check for an armadillo implementation
 AC_CHECK_HEADER([armadillo])
 AC_MSG_CHECKING([whether we can link to the Armadillo library])

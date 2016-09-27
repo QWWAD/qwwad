@@ -16,10 +16,6 @@
 #include <glibmm/ustring.h>
 #include "qwwad-debye.h"
 
-#if HAVE_LAPACKE
-# include <lapacke.h>
-#endif
-
 using namespace QWWAD;
 
 /**
@@ -515,11 +511,10 @@ static arma::vec calctemp(double dt,
     arma::vec LHS_subdiag   = arma::zeros(ny-1);
     arma::vec LHS_superdiag = arma::zeros(ny-1);
 
-    arma::vec RHS_diag      = arma::ones(ny);
-    arma::vec RHS_superdiag = arma::zeros(ny-1);
-    arma::vec RHS_subdiag   = arma::zeros(ny-1);
-
-    arma::vec T = Told;
+    // Material parameter matrix for RHS of Crank-Nicolson solver
+    arma::vec B_diag      = arma::ones(ny);
+    arma::vec B_superdiag = arma::zeros(ny-1);
+    arma::vec B_subdiag   = arma::zeros(ny-1);
 
     // Indices of layers containing the current, previous and next points
     auto iL_prev = iLayer(0);
@@ -531,6 +526,8 @@ static arma::vec calctemp(double dt,
     double k_next = thermal_cond(mat_layer[iL_next], x(iL_next), Told(2));
 
     double rho_cp = 0;
+
+    arma::vec q = arma::zeros(ny); // heating vector for RHS of Crank-Nicolson solver
 
     for(unsigned int iy=1; iy<ny-1; iy++)
     {
@@ -549,15 +546,15 @@ static arma::vec calctemp(double dt,
         const auto alpha = r*ks/dy_sq;
         const auto gamma = r*kn/dy_sq;
 
-        RHS_subdiag(iy-1) = alpha;
-        RHS_superdiag(iy) = gamma;
-        RHS_diag(iy) = 1.0 - (alpha+gamma);
+        B_subdiag(iy-1) = alpha;
+        B_superdiag(iy) = gamma;
+        B_diag(iy)      = 1.0 - (alpha+gamma);
 
         LHS_subdiag(iy-1) = -alpha;
         LHS_superdiag(iy) = -gamma;
-        LHS_diag(iy) = 1.0 + (alpha+gamma);
+        LHS_diag(iy)      = 1.0 + (alpha+gamma);
 
-        T(iy) = r*(q_old(iy)+q_new(iy));
+        q(iy) = r*(q_old(iy)+q_new(iy));
 
         k_prev = k_this;
         k_this = k_next;
@@ -567,45 +564,30 @@ static arma::vec calctemp(double dt,
     // At last point, use Neumann boundary, i.e. dT/dy=0, which gives
     // T[n] = T[n-2] in the finite-difference approximation
     double kns=(2*k_next*k_this)/(k_next+k_this);
-    const double rho = rho_layer[iLayer(ny-1)];
+    const double rho = rho_layer(iLayer(ny-1));
     rho_cp = rho * dm_layer[iLayer(ny-1)].get_cp(Told(ny-1));
     double r = dt/(2.0*rho_cp);
     double alpha_gamma = r*kns/dy_sq;
-    RHS_subdiag(ny-2) = 2.0*alpha_gamma;
-    RHS_diag(ny-1) = 1.0 - 2.0*alpha_gamma;
+    B_subdiag(ny-2) = 2.0*alpha_gamma;
+    B_diag(ny-1)    = 1.0 - 2.0*alpha_gamma;
+
     LHS_subdiag(ny-2) = -2.0*alpha_gamma;
     LHS_diag(ny-1) = 1.0 + 2.0*alpha_gamma;
-    T(ny-1) = r*(q_old(ny-1)+q_new(ny-1));
 
-    int N = ny;
-    double scale = 1;
-    char TRANS='N';
-    int NRHS=1;
+    q(ny-1) = r*(q_old(ny-1)+q_new(ny-1));
 
-    // Perform matrix multiplication using LAPACK
-    // result:-> result + RHS*Told
-    dlagtm_(&TRANS, &N, &NRHS, &scale,
-            &RHS_subdiag[0],
-            &RHS_diag[0],
-            &RHS_superdiag[0],
-            &Told[0], &N, &scale, &T[0], &N);
+    // Perform matrix multiplication to get the RHS vector of the
+    // Crank-Nicolson solver
+    auto RHS = multiply_vec_tridiag(B_subdiag,
+                                    B_diag,
+                                    B_superdiag,
+                                    Told,
+                                    q);
 
-#if HAVE_LAPACKE
-    int INFO=LAPACKE_dgtsv(LAPACK_COL_MAJOR, // Use column-major ordering
-            ny, // Order of matrix
-            1,  // Number of right-hand-side
-            &LHS_subdiag(0),
-            &LHS_diag(0),
-            &LHS_superdiag(0),
-            &T(0),
-            ny);
-#else
-    int INFO=1;
-    dgtsv_(&N, &NRHS, LHS_subdiag, LHS_diag, LHS_superdiag, &T[0], &N, &INFO);
-#endif
-    
-    if(INFO!=0)
-        throw std::runtime_error("Could not solve matrix inversion problem. Check all input parameters!");
+    auto T = solve_tridiag(LHS_subdiag,
+                           LHS_diag,
+                           LHS_superdiag,
+                           RHS);
 
     return T;
 }

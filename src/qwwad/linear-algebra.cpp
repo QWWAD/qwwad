@@ -11,10 +11,7 @@
 # include "config.h"
 #endif //HAVE_CONFIG_H
 
-#if HAVE_LAPACKE
-# include <lapacke.h>
-#endif
-
+#include "lapack-declarations.h"
 #include "linear-algebra.h"
 
 #include <cstdlib>
@@ -22,86 +19,6 @@
 #include "maths-helpers.h"
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sort.h>
-
-// Declaration of external LAPACK functions
-extern "C" {
-// If we don't have the official LAPACK C bindings, we need to declare
-// the necessary external functions
-//
-// TODO: Kill all this once all supported platforms have LAPACK >= 3.4
-#if !HAVE_LAPACKE
-/** Determine double-precision machine parameters */
-double dlamch_(const char* returnValue);
-
-/** Solve general eigenproblem */
-void dgeev_(const char *JOBVL,
-            const char *JOBVR,
-            const int  *N,
-            double      A[],
-            const int  *LDA,
-            double      WR[],
-            double      WI[],
-            double      VL[],
-            const int  *LDVL,
-            double      VR[],
-            const int  *LDVR,
-            double      WORK[],
-            int        *LWORK,
-            int        *INFO);
-
-/** Solve symmetric-definite banded eigenproblem*/
-void dsbgvx_(const char* JOBZ,
-             const char* RANGE,
-             const char* UPLO,
-             const int* N, const int* KA, const int* KB, double AB[], const int* LDAB,
-             double BB[], const int* LDBB, double* Q, const int* LDQ, const double* VL,
-             const double* VU, const int* IL, const int* IU, const double* ABSTOL, int* M,
-             double W[], double Z[], const int* LDZ, double WORK[], int IWORK[],
-             int IFAIL[], int* INFO);
-
-/** Solve real symmetric tridiagonal eigenproblem */
-void dstevx_(const char* JOBZ, const char* RANGE, const int* N, double D[],
-             double E[], const double* VL, const double* VU,
-             const int* IL, const int* IU, const double* ABSTOL, int* M, 
-             double W[], double Z[], const int* LDZ, double WORK[], int IWORK[], 
-             int IFAIL[], int* INFO);
-
-/**
- * Solve a tridiagonal inversion problem: \f$ x := A^{-1} x\f$
- */
-void dgtsv_(const int* N, const int* NRHS, double DL[], double D[], 
-            double DU[], double B[], int* LDB, int* INFO);
-
-/**
- * Factorise real symmetric positive definate tridagonal matrix
- */
-void dpttrf_(const int* N, double D[], double E[], int* INFO);
-
-/**
- * Solve real symmetric positive definite tridagonal matrix
- */
-void dpttrs_(const int* N, const int* NRHS, double D[], double E[],
-             double B[], const int* LDB, int* INFO);
-
-/**
- * Factorise general matrix
- */
-void dgetrf_(const int* M, const int* N, double A[], const int* LDA,
-             int IPIV[], int* INFO);
-
-/**
- * Solve general matrix
- */
-void dgetrs_(const char* TRANS, const int* N, const int* NRHS, double A[],
-             const int* LDA, int IPIV[], double B[], const int* LDB, int* INFO);
-
-/**
- * \brief Solve eigenvalue problem for complex matrix
- */
-void zheev_(const char *JOBZ, const char *UPLO, const int* N, std::complex<double> ank[],
-            const int *LDA, double E[], std::complex<double> WORK[], int *LWORK, double RWORK[], int *INFO);
-#endif // !HAVE_LAPACKE
-} // extern
 
 namespace QWWAD
 {
@@ -124,7 +41,7 @@ eigen_general(arma::mat    &A,
               const double  VU,
               unsigned int  n_max)
 {
-    const auto N = sqrt(A.size());
+    const int N = sqrt(A.size());
 
     // Real and imaginary parts of the computed eigenvalues
     arma::vec WR(N);
@@ -135,22 +52,14 @@ eigen_general(arma::mat    &A,
     arma::mat V_right(N,N);
 
     // Run LAPACK function to solve eigenproblem
-#if HAVE_LAPACKE
-    int info = LAPACKE_dgeev(LAPACK_COL_MAJOR,
-            'N', // Don't compute left eigenvectors
-            'V', // DO compute right eigenvectors
-            N, &A[0], N, &WR[0], &WI[0], &V_left[0], N, &V_right[0], N);
-
-#else
     int  info  = 0;   // Output code from LAPACK
     char jobvl = 'N'; // Specify range of solutions by value
     char jobvr = 'V';
     int  lwork = 4*N;
     arma::vec work(4*N); // LAPACK workspace
 
-    dgeev_(&jobvl, &jobvr, &N, A, &N, &WR[0], &WI[0], &V_left[0], &N, &V_right[0], &N,
+    dgeev_(&jobvl, &jobvr, &N, &A(0), &N, &WR[0], &WI[0], &V_left[0], &N, &V_right[0], &N,
             &work[0], &lwork, &info);
-#endif
 
     if(info!=0)
         throw std::runtime_error("Could not solve "
@@ -244,42 +153,13 @@ eigen_banded(double       AB[],
     // Specify range of solutions by value, unless n_max is given
     char range = (n_max==0) ? 'V' : 'I';
 
-    // TODO: Once all supported platforms can provide LAPACK > 3.4, kill this conditional code!
-#if HAVE_LAPACKE
-    // Run LAPACK function to solve eigenproblem
-    //
-    //   A*x = (lambda)*B*x,
-    // 
-    // where A and B are symmetric banded matrices
-    int info = LAPACKE_dsbgvx(LAPACK_COL_MAJOR, // Use column-major ordering
-                              'V',     // Compute eigenvalues and eigenvectors
-                              range,
-                              'U',     // Store upper triangle of matrix
-                              n,       // Order of the A and B matrices
-                              1,       // Number of superdiagonals in A
-                              1,       // Number of superdiagonals in B
-                              AB,      // Upper triangle of A
-                              2,       // Leading dimension of A
-                              BB,      // Upper triangle of B
-                              2,       // Leading dimension of B
-                              &Q[0],   // Workspace for normalising eigenproblem
-                              n,       // Leading dimension of Q
-                              VL, VU,
-                              1, n_max,   // Index range for eigenvalue search
-                              2.0 * LAPACKE_dlamch('S'), // Error tolerance (2*machine precision)
-                              &M,
-                              &W[0],
-                              &Z[0],
-                              n,
-                              &ifail[0]);
-#else
     // Find error tolerance
     char   retval = 'S';   // Return value for LAPACK
     double abstol = 2.0 * dlamch_(&retval); // Error tolerance
 
     // LAPACK workspace
     arma::vec  work(7*(size_t)n);
-    arma::ivec iwork(5*(size_t)n);
+    arma::Col<int> iwork(5*(size_t)n);
 
     // Run LAPACK function to solve eigenproblem
     char jobz  = 'V';   // Task descriptor for LAPACK
@@ -292,8 +172,7 @@ eigen_banded(double       AB[],
     int  info  = 0;     // Output code from LAPACK
 
     dsbgvx_(&jobz, &range, &uplo, &n, &KA, &KB, AB, &LD, BB, &LD, &Q[0], &n, &VL,
-            &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
-#endif // HAVE_LAPACKE
+            &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork(0), &ifail[0], &info);
 
     if(info!=0)
         throw std::runtime_error("Could not solve "
@@ -331,7 +210,7 @@ eigen_tridiag(arma::vec    &diag,
               double        VU,
               unsigned int  n_max)
 {
-    const auto n = diag.size();
+    const int n = diag.size();
     arma::Col<int>    ifail(n); // Failure bits for LAPACK
     arma::vec         W(n);     // Temporary storage for eigenvalues
     arma::vec         Z(n*n);   // Temp. storage for eigenvectors
@@ -349,26 +228,12 @@ eigen_tridiag(arma::vec    &diag,
         throw std::domain_error(oss.str());
     }
 
-    // TODO: Once all supported platforms can provide LAPACK > 3.4, kill this conditional code!
-#if HAVE_LAPACKE
-    // Run LAPACK function to solve eigenproblem
-    int info = LAPACKE_dstevx(LAPACK_COL_MAJOR,
-            'V',   // Find eigenvectors and eigenvalues
-            range,
-            n,     // Order of matrix
-            &diag[0],
-            &subdiag[0],
-            VL, VU,
-            1, n_max,   // Index range for eigenvalue search
-            2.0 * LAPACKE_dlamch('S'), // Error tolerance (2*machine_precision)
-            &M, &W[0], &Z[0], n, &ifail[0]);
-#else
     int  info = 0; // Output code from LAPACK
     char jobz='V'; // Task descriptor for LAPACK
     int  IL=1;
     int  IU=n_max;
     arma::vec  work(5*n); // LAPACK workspace
-    arma::ivec iwork(5*n);
+    arma::Col<int> iwork(5*n);
 
     // Find error tolerance
     char retval='S'; // Return value for LAPACK
@@ -377,7 +242,6 @@ eigen_tridiag(arma::vec    &diag,
     // Run LAPACK function to solve eigenproblem
     dstevx_(&jobz, &range, &n, &diag[0], &subdiag[0], &VL, &VU, &IL, &IU, &abstol, &M, &W[0],
             &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
-#endif
 
     if(info!=0)
         throw std::runtime_error("Could not solve "
@@ -447,6 +311,90 @@ arma::vec solve_cyclic_matrix(arma::vec A_sub,
         b[i] = b[i]-(A_super[i]*b[i+1])/A_diag[i+1];
 
     return b/A_diag;
+}
+
+/**
+ * \brief Perform matrix multiplication: y = Mx + c
+ *
+ * \details x and c are vectors, M is a tridiagonal matrix
+ *
+ * \param[in] M_sub   Subdiagonal of matrix M
+ * \param[in] M_diag  Diagonal of matrix M
+ * \param[in] M_super Superdiagonal of matrix M
+ * \param[in] x       Vector x
+ * \param[in] c       Vector c
+ *
+ * \return Vector y
+ */
+arma::vec
+multiply_vec_tridiag(arma::vec const &M_sub,
+                     arma::vec const &M_diag,
+                     arma::vec const &M_super,
+                     arma::vec const &x,
+                     arma::vec const &c)
+{
+    int N = M_diag.size(); // Order of matrix
+
+    double scale = 1;   // Don't scale the c or x vectors
+    char   TRANS = 'N'; // Don't transpose the M matrix
+    int    NRHS  = 1;   // Only solve for one column-vector
+
+    // Temp copy of x that will be overwritten by LAPACK
+    arma::vec x_tmp = x;
+
+    // Perform matrix multiplication using LAPACK
+    // result:-> result + RHS*Told
+    dlagtm_(&TRANS,
+            &N,
+            &NRHS,
+            &scale,
+            &M_sub(0),
+            &M_diag(0),
+            &M_super(0),
+            &x_tmp(0),
+            &N,
+            &scale,
+            &c(0),
+            &N);
+
+    // The x vector has now been overwritten by the resulting
+    // y vector, so we can return this
+    arma::vec y = x_tmp;
+    return y;
+}
+
+/**
+ * \brief Solve a linear equation x = Ay
+ *
+ * \param[in] x The vector x
+ * \param[in] A The matrix A
+ *
+ * \details where x is a vector and A is a tridiagonal matrix
+ *
+ * \return The vector y
+ */
+arma::vec
+solve_tridiag(arma::vec const &A_sub,
+              arma::vec const &A_diag,
+              arma::vec const &A_super,
+              arma::vec const &y)
+{
+    int N    = A_diag.size();
+    int NRHS = 1; // Solve for 1 RHS vector only
+
+    arma::vec x_tmp = y;
+
+    int INFO=1;
+    dgtsv_(&N,
+           &NRHS,
+           &A_sub(0),
+           &A_diag(0),
+           &A_super(0),
+           &x_tmp(0),
+           &N,
+           &INFO);
+
+    return x_tmp;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
