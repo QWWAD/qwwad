@@ -18,28 +18,6 @@
 
 #include <armadillo>
 
-/**
- * Factorise real symmetric positive definate tridagonal matrix
- */
-void dpttrf_(const int* N, double D[], double E[], int* INFO);
-
-/**
- * Solve real symmetric positive definite tridagonal matrix
- */
-void dpttrs_(const int* N, const int* NRHS, double D[], double E[],
-             double B[], const int* LDB, int* INFO);
-
-/**
- * Solve a tridiagonal inversion problem: \f$ x := A^{-1} x\f$
- */
-void dgtsv_(const int    *N,
-            const int    *NRHS,
-            const double *DL,
-            const double *D, 
-            const double *DU,
-            double       *B,
-            const int    *LDB,
-            int          *INFO);
 
 namespace QWWAD
 {
