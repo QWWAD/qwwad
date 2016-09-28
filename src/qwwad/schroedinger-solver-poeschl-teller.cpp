@@ -29,8 +29,8 @@ SchroedingerSolverPoeschlTeller::SchroedingerSolverPoeschlTeller(const double al
                                                                  const double mass,
                                                                  const size_t nz,
                                                                  const unsigned int nst_max) :
-    SchroedingerSolver(arma::vec(nz),
-                       arma::vec(nz),
+    SchroedingerSolver(arma::zeros(nz),
+                       arma::zeros(nz),
                        nst_max),
     _alpha(alpha),
     _lambda(lambda),
@@ -60,8 +60,8 @@ void SchroedingerSolverPoeschlTeller::calculate()
     const size_t nst = get_n_bound();
     const size_t nz  = _z.size();
 
-    const auto sinh_alpha_z = sinh(_alpha*_z);
-    const auto _x = -square(sinh_alpha_z);
+    const arma::vec sinh_alpha_z = sinh(_alpha*_z);
+    const arma::vec _x = -arma::square(sinh_alpha_z);
 
     for (unsigned int ist=0; (_nst_max == 0 || ist < _nst_max) && ist < nst; ++ist)
     {
@@ -86,7 +86,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
             arg1 = a+0.5;
             arg2 = b+0.5;
             arg3 = 1.5;
-            fact = pow(cosh(_alpha*_z),_lambda) * sinh_alpha_z;
+            fact = pow(cosh(_alpha*_z),_lambda) % sinh_alpha_z;
         }
         else // Even-parity states
         {
@@ -97,14 +97,14 @@ void SchroedingerSolverPoeschlTeller::calculate()
             fact = pow(cosh(_alpha*_z),_lambda);
         }
 
-        arma::vec psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         for(unsigned int iz = 0; iz < nz; ++iz)
         {
-            if(std::abs(_x[iz]) < 1)
+            if(std::abs(_x(iz)) < 1)
             {
-                psi[iz] = fact[iz] *
-                          gsl_sf_hyperg_2F1(arg1, arg2, arg3, _x[iz]);
+                psi(iz) = fact(iz) *
+                          gsl_sf_hyperg_2F1(arg1, arg2, arg3, _x(iz));
             }
             // If the argument is too large, we need to apply a linear
             // transformation such that |_x| < 1
