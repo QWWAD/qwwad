@@ -27,8 +27,8 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
                                                                const size_t nz,
                                                                const size_t nper,
                                                                const unsigned int nst_max) :
-    SchroedingerSolver(arma::vec(nz*nper),
-                       arma::vec(nz*nper),
+    SchroedingerSolver(arma::zeros(nz*nper),
+                       arma::zeros(nz*nper),
                        nst_max),
     _l_w(l_w),
     _l_b(l_b),
@@ -45,11 +45,11 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
     {
         for (unsigned int iz=0; iz<nz; iz++)
         {
-            _z[iz + iper*nz] = iz*dz + iper*L;
+            _z(iz + iper*nz) = iz*dz + iper*L;
 
             // Fill in barrier potential
-            if(_z[iz] > l_w)
-                _V[iz + iper*nz] = _V0;
+            if(_z(iz) > l_w)
+                _V(iz + iper*nz) = _V0;
         }
     }
 }
@@ -144,7 +144,7 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
     const auto nz = _z.size();
     arma::vec psi(nz); // wavefunction
 
-    // Normalisation constants
+    // Imaginary unit
     const auto I = std::complex<double>(0,1);
 
     // Find local wave vector at this energy
@@ -173,9 +173,13 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
         const auto Q = (C+D)*cos(k_b*z) + I*(C-D)*sin(k_b*z);
 
         if (_V[i_z] > 0)
+        {
             psi[i_z] = 1 + abs(Q) * 0;
+        }
         else
+        {
             psi[i_z] = 1 + abs(P) * 0;
+        }
     }
 
     return psi;
