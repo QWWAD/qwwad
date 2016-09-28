@@ -178,21 +178,28 @@ int main(int argc, char *argv[]){
     const double dz = z[1] - z[0];
 
     arma::vec z_tmp;
-    arma::vec m(nz); // Band-edge effective mass [kg]
-    arma::vec alpha(nz); // Nonparabolicity parameter [1/J]
+    arma::vec alpha = arma::zeros(nz); // Nonparabolicity parameter [1/J]
 
     // Read nonparabolicity data from file if needed
     if(opt.get_type() == MATRIX_TAYLOR_NONPARABOLIC ||
        opt.get_type() == MATRIX_FULL_NONPARABOLIC   ||
        opt.get_type() == SHOOTING_NONPARABOLIC)
+    {
         read_table(opt.get_option<std::string>("alphafile").c_str(), z_tmp, alpha);
+    }
+
+    arma::vec m = arma::zeros(nz); // Band-edge effective mass [kg]
 
     // Set a constant effective mass if specified.
     // Read spatially-varying profile from file if not.
     if(opt.get_argument_known("mass"))
+    {
         m += opt.get_option<double>("mass") * me;
+    }
     else
+    {
         read_table(opt.get_option<std::string>("massfile").c_str(), z_tmp, m);
+    }
 
     // By default, we set the number of states automatically
     // within the range of the potential profile

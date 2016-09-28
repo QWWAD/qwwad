@@ -37,7 +37,8 @@ SchroedingerSolverShooting::SchroedingerSolverShooting(const decltype(_me)    &m
     _me(me),
     _alpha(alpha),
     _dE(dE)
-{}
+{
+}
 
 /**
  * Find solution to eigenvalue problem
@@ -131,8 +132,8 @@ void SchroedingerSolverShooting::calculate()
 double SchroedingerSolverShooting::psi_at_inf(double  E,
                                               void   *params)
 {
-    const SchroedingerSolverShooting *se = reinterpret_cast<SchroedingerSolverShooting *>(params);
-    arma::vec psi(se->get_z().size());
+    const auto se = reinterpret_cast<SchroedingerSolverShooting *>(params);
+    arma::vec psi = arma::zeros(se->get_z().size());
 
     const double psi_inf = se->shoot_wavefunction(psi, E);
     return psi_inf;
@@ -155,13 +156,13 @@ double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
 {
     const size_t nz = _z.size();
     wf.resize(nz);
-    const double dz = _z[1] - _z[0];
+    const double dz = _z(1) - _z(0);
 
     // Recalculate effective mass with non-parabolicity at this energy
     const arma::vec m = _me%(1.0+_alpha%(E-_V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
-    wf[0]   = 1.0;
+    wf(0) = 1.0;
     double wf_next = 1.0;
 
     for(unsigned int i=0; i < nz; i++) // last potential not used
@@ -174,26 +175,26 @@ double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
 
         if(i != 0)
         {
-            wf_prev = wf[i-1];
-            m_prev = (m[i] + m[i-1])/2.0;
+            wf_prev = wf(i-1);
+            m_prev = (m(i) + m(i-1))/2.0;
         }
         else
         {
-            m_prev = m[i];
+            m_prev = m(i);
         }
 
         if(i != nz - 1)
-            m_next = (m[i] + m[i+1])/2.0;
+            m_next = (m(i) + m(i+1))/2.0;
         else
-            m_next = m[i];
+            m_next = m(i);
 
-        wf_next = (2*m_next*dz*dz/hBar/hBar*(_V[i]-E)+
-                1.0 + m_next/m_prev)*wf[i]
+        wf_next = (2*m_next*dz*dz/hBar/hBar*(_V(i)-E)+
+                1.0 + m_next/m_prev)*wf(i)
                 - wf_prev * m_next/m_prev;
         wf_prev += 0;
 
         // Now copy calculated wave function to array
-        if(i != nz-1) wf[i+1] = wf_next;
+        if(i != nz-1) wf(i+1) = wf_next;
     }
 
     // Normalise the stored wave function

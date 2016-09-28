@@ -19,7 +19,7 @@ class SchroedingerSolverShooting : public SchroedingerSolver
 private:
     arma::vec _me;    ///< Band-edge effective mass [kg]
     arma::vec _alpha; ///< Nonparabolicity parameter [J^{-1}]
-    double                _dE;    ///< Minimum energy separation between states [J]
+    double    _dE;    ///< Minimum energy separation between states [J]
 
 public:
     SchroedingerSolverShooting(const decltype(_me)    &me,
