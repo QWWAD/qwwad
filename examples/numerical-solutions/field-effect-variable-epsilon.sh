@@ -48,7 +48,7 @@ if ($2 > 0.5)
     print $1, 5*eps0;
 else
     print $1, 10*eps0;
-}' < x.r > eps-dc.r
+}' < x.r > eps_dc.r
 
 qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_5.r
 
@@ -60,7 +60,7 @@ if ($2 > 0.5)
     print $1, 10*eps0;
 else
     print $1, 10*eps0;
-}' < x.r > eps-dc.r
+}' < x.r > eps_dc.r
 
 qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_10.r
 
@@ -72,7 +72,7 @@ if ($2 > 0.5)
     print $1, 15*eps0;
 else
     print $1, 10*eps0;
-}' < x.r > eps-dc.r
+}' < x.r > eps_dc.r
 
 qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_15.r
 
@@ -99,7 +99,7 @@ Results have been written to $outfile in the format:
 
 This script is part of the QWWAD software suite.
 
-(c) Copyright 1996-2014
+(c) Copyright 1996-2016
     Alex Valavanis <a.valavanis@leeds.ac.uk>
     Paul Harrison  <p.harrison@leeds.ac.uk>
 
