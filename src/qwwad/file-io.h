@@ -49,9 +49,6 @@ size_t      nlines_expected; ///< Number of lines that were expected
 size_t      nlines_read;     ///< Number of lines that were read
 };
 
-/** Functions to check data */
-void check_c_interval_0_1(double*);
-
 /**
  * Read an array of size n from a single line
  *
