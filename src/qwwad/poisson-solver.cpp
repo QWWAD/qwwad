@@ -1,5 +1,5 @@
 /**
- * \file   qclsim_poisson_solver.cpp
+ * \file   poisson-solver.cpp
  *
  * \brief  Poisson solver class
  *
@@ -7,14 +7,10 @@
  * \author Alex Valavanis  <a.valavanis@leeds.ac.uk>
  */
 
-#include <iostream>
-#include "qclsim_poisson_solver.h"
-
-#include "qwwad/lapack-declarations.h"
-#include "qwwad/linear-algebra.h"
+#include "linear-algebra.h"
+#include "poisson-solver.h"
 
 #include <stdexcept>
-#include <iostream>
 
 namespace QWWAD
 {
@@ -33,14 +29,16 @@ Poisson::Poisson(const decltype(_eps) &eps,
     _eps_plus(eps),  // to a default for now
     _dx(dx), // Size of cells in mesh
     _L(_eps.size() * _dx), // Samples are at CENTRE of each cell so total length of structure is nx dx
-    _diag(arma::vec(_eps.size())),
-    _sub_diag(arma::vec(_eps.size()-1)),
-    corner_point(0.0),
-    boundary_type(bt)
+    _diag(arma::zeros(_eps.size())),
+    _sub_diag(arma::zeros(_eps.size()-1)),
+    _corner_point(0.0),
+    _D_diag(arma::zeros(_eps.size())),
+    _L_sub(arma::zeros(_eps.size()-1)),
+    _boundary_type(bt)
 {
     compute_half_index_permittivity();
 
-    switch(boundary_type)
+    switch(_boundary_type)
     {
         case DIRICHLET:
             factorise_dirichlet();
@@ -89,24 +87,17 @@ void Poisson::factorise_dirichlet()
     for(unsigned int i=0; i < ni; i++)
     {
         // Diagonal elements b_i [QWWAD4, 3.80]
-        _diag[i] = (_eps_plus[i] + _eps_minus[i]) / (_dx * _dx);
+        _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
 
         // Sub-diagonal elements a_(i+1), c_i [QWWAD4, 3.80]
         if(i>0)
-            _sub_diag[i-1] = -_eps_minus[i] / (_dx * _dx);
+        {
+            _sub_diag(i-1) = -_eps_minus(i) / (_dx * _dx);
+        }
     }
 
     // Factorise matrix
-    int info = 0;
-    const int N = ni;
-    dpttrf_(&N, &_diag[0], &_sub_diag[0], &info);
-
-    if(info != 0)
-    {
-        std::ostringstream oss;
-        oss << "Cannot factorise Poisson equation. (Lapack error code: " << info << ")";
-        throw std::runtime_error(oss.str());
-    }
+    factorise_tridiag_LDL_T(_diag, _sub_diag, _D_diag, _L_sub);
 }
 
 void Poisson::factorise_mixed()
@@ -117,16 +108,18 @@ void Poisson::factorise_mixed()
     {
         // Diagonal elements
         if(i<ni-1)
-            _diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
+            _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
         else
         {
-            _diag[i] = (1/(_dx*_dx))*_eps_minus[i];
-            corner_point = (1/(_dx*_dx))*_eps_plus[i];
+            _diag(i) = _eps_minus(i) / (_dx * _dx);
+            _corner_point = _eps_plus(i) / (_dx * _dx);
         }
 
         // Sub-diagonal elements
         if(i>0)
-            _sub_diag[i-1] = -(1/(_dx*_dx))*_eps_minus[i];
+        {
+            _sub_diag(i-1) = -_eps_minus(i)/(_dx * _dx);
+        }
     }
 }
 
@@ -138,15 +131,23 @@ void Poisson::factorise_zerofield()
     {
         // Diagonal elements
         if(i==0)
-            _diag[i] = (1/(_dx*_dx))*_eps_plus[i];
+        {
+            _diag(i) = _eps_plus(i) / (_dx * _dx);
+        }
         else if(i==ni-1)
-            _diag[i] = (1/(_dx*_dx))*_eps_minus[i];
+        {
+            _diag(i) = _eps_minus(i) / (_dx * _dx);
+        }
         else
-            _diag[i] = (1/(_dx*_dx))*(_eps_plus[i] + _eps_minus[i]);
+        {
+            _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
+        }
 
         // Sub-diagonal elements
         if(i>0)
-            _sub_diag[i-1] = -(1/(_dx*_dx))*_eps_plus[i];
+        {
+            _sub_diag(i-1) = -_eps_plus(i) / (_dx * _dx);
+        }
     }
 }
 
@@ -165,36 +166,17 @@ arma::vec Poisson::solve(const arma::vec &rho) const
         throw std::runtime_error("Permittivity and charge density arrays have different sizes");
 
     auto rhs = rho; // Set right-hand-side to the charge-density
-
-    // Create temporary copies of the diagonal and subdiagonal arrays since this
-    // function promises not to change any member variables
-    auto diag_tmp     = _diag;
-    auto sub_diag_tmp = _sub_diag;
-
     auto phi = rhs; // Array in which to output the potential [J]
 
-    switch(boundary_type)
+    switch(_boundary_type)
     {
         case DIRICHLET:
-            {
-                int nrhs = 1;
-                int info = 0;
-                const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
-                if(info != 0)
-                {
-                    std::ostringstream oss;
-                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
-                    throw std::runtime_error(oss.str());
-                }
-
-                phi = rhs;
-            }
+            phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
             break;
         case MIXED:
         case ZERO_FIELD:
             phi = solve_cyclic_matrix(_sub_diag,
-                                      _diag, corner_point, rho);
+                                      _diag, _corner_point, rho);
             break;
     }
 
@@ -219,18 +201,12 @@ arma::vec Poisson::solve(const arma::vec &rho,
 
     auto rhs = rho; // Set right-hand-side to the charge-density
 
-    // Create temporary copies of the diagonal and subdiagonal arrays since this
-    // function promises not to change any member variables
-    auto diag_tmp     = _diag;
-    auto sub_diag_tmp = _sub_diag;
+    auto phi = rhs;
 
-    switch(boundary_type)
+    switch(_boundary_type)
     {
         case DIRICHLET:
             {
-                int nrhs = 1; // number of right-hand-side columns
-                int info = 0; // return code for LAPACK
-
                 // We want to fix the potential just BEFORE the structure to 0
                 //   i.e., phi[-1] = 0
                 // If the voltage drop across the structure is V_drop, then the LAST
@@ -242,15 +218,9 @@ arma::vec Poisson::solve(const arma::vec &rho,
                 const auto next_potential = V_drop * n / (n+1);
 
                 // The boundary condition is then set according to QWWAD4, 3.110.
-                rhs[n-1] += _diag[n-1] * next_potential;
-                const int _N = n;
-                dpttrs_(&_N, &nrhs, &diag_tmp[0], &sub_diag_tmp[0], &rhs[0], &_N, &info);
-                if(info != 0)
-                {
-                    std::ostringstream oss;
-                    oss << "Cannot solve Poisson equation. (Lapack error code: " << info << ")";
-                    throw std::runtime_error(oss.str());
-                }
+                rhs(n-1) += _diag(n-1) * next_potential;
+
+                phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
             }
             break;
         case MIXED:
@@ -260,9 +230,6 @@ arma::vec Poisson::solve(const arma::vec &rho,
         default:
             throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
     }
-
-    // LAPACK outputs the potential in the right-hand-side vector on exit
-    const auto phi = rhs;
 
     return phi;
 }
@@ -284,6 +251,5 @@ arma::vec Poisson::solve_laplace(const double V_drop) const
 
     return phi; 
 }
-
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

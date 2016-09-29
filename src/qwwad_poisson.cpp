@@ -13,7 +13,7 @@
 #include <cstdlib>
 
 #include "qwwad/options.h"
-#include "qclsim_poisson_solver.h"
+#include "qwwad/poisson-solver.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 

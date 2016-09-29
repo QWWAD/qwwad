@@ -168,6 +168,17 @@ solve_tridiag(arma::vec const &A_sub,
               arma::vec const &x);
 
 arma::vec
+solve_tridiag_LDL_T(arma::vec const &D,
+                    arma::vec const &L,
+                    arma::vec const &x);
+
+void
+factorise_tridiag_LDL_T(arma::vec const &A_diag,
+                        arma::vec const &A_subdiag,
+                        arma::vec       &D,
+                        arma::vec       &L);
+
+arma::vec
 solve_cyclic_matrix(arma::vec A_sub,
                     arma::vec A_diag,
                     double    cyclic,

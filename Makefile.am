@@ -157,6 +157,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/intersubband-transition.cpp            \
 			   src/qwwad/linear-algebra.cpp                     \
 			   src/qwwad/maths-helpers.cpp                      \
+			   src/qwwad/poisson-solver.cpp                     \
+			   src/qwwad/poisson-solver.h                       \
 			   src/qwwad/scattering-calculator-LO.h             \
 			   src/qwwad/scattering-calculator-LO.cpp           \
 			   src/qwwad/schroedinger-solver.cpp                \
@@ -190,8 +192,6 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-material-property-poly.h               \
 			   src/qwwad-material-property-string.cpp           \
 			   src/qwwad-material-property-string.h             \
-			   src/qclsim_poisson_solver.cpp                    \
-			   src/qclsim_poisson_solver.h                      \
 			   src/material_library.cpp                         \
 			   src/material_library.h                           \
 			   src/qwwad-debye.cpp                              \

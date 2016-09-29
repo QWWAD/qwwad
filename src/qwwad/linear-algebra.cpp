@@ -364,27 +364,29 @@ multiply_vec_tridiag(arma::vec const &M_sub,
 }
 
 /**
- * \brief Solve a linear equation x = Ay
+ * \brief Solve a linear equation Ax = b
  *
- * \param[in] x The vector x
- * \param[in] A The matrix A
+ * \param[in] A_sub   The subdiagonal of matrix A
+ * \param[in] A_diag  The diagonal of matrix A
+ * \param[in] A_super The superdiagonal of matrix A
+ * \param[in] b       The right-hand-side vector b
  *
- * \details where x is a vector and A is a tridiagonal matrix
+ * \details where b is a vector and A is a tridiagonal matrix
  *
- * \return The vector y
+ * \return The vector x
  */
 arma::vec
 solve_tridiag(arma::vec const &A_sub,
               arma::vec const &A_diag,
               arma::vec const &A_super,
-              arma::vec const &y)
+              arma::vec const &b)
 {
     int N    = A_diag.size();
     int NRHS = 1; // Solve for 1 RHS vector only
 
-    arma::vec x_tmp = y;
+    arma::vec x_tmp = b;
 
-    int INFO=1;
+    int INFO=0;
     dgtsv_(&N,
            &NRHS,
            &A_sub(0),
@@ -394,7 +396,89 @@ solve_tridiag(arma::vec const &A_sub,
            &N,
            &INFO);
 
+    if(INFO != 0)
+    {
+        std::ostringstream oss;
+        oss << "Cannot solve matrix equation. (LAPACK error code: " << INFO << ")";
+        throw std::runtime_error(oss.str());
+    }
+
     return x_tmp;
+}
+
+/**
+ * \brief Solve a linear equation Ax = b using the L*D*L**T factorisation of A
+ *
+ * \param[in] D The diagonal of the factorisation matrix D
+ * \param[in] L The subdiagonal of the factorisation matrix L
+ * \param[in] b The right-hand-side vector b
+ *
+ * \details where b is a vector and A is a positive definite symmetrical tridiagonal matrix
+ *
+ * \return The vector x
+ */
+arma::vec
+solve_tridiag_LDL_T(arma::vec const &D,
+                    arma::vec const &L,
+                    arma::vec const &b)
+{
+    int N    = D.size();
+    int NRHS = 1; // Solve for 1 RHS vector only
+
+    arma::vec x_tmp = b;
+
+    int INFO=0;
+    dpttrs_(&N,
+            &NRHS,
+            &D(0),
+            &L(0),
+            &x_tmp(0),
+            &N,
+            &INFO);
+
+    if(INFO != 0)
+    {
+        std::ostringstream oss;
+        oss << "Cannot solve matrix equation. (LAPACK error code: " << INFO << ")";
+        throw std::runtime_error(oss.str());
+    }
+
+    return x_tmp;
+}
+
+/**
+ * \brief L*D*L**T factorisation of a positive definite tridiagonal matrix, A
+ *
+ * \param[in]  A_diag Diagonal of the matrix A
+ * \param[in]  A_sub  Subdiagonal of the matrix A
+ * \param[out] D      Diagonal of the factor matrix D
+ * \param[out] L      Subdiagonal of the factor matrix L
+ */
+void
+factorise_tridiag_LDL_T(arma::vec const &A_diag,
+                        arma::vec const &A_sub,
+                        arma::vec       &D,
+                        arma::vec       &L)
+{
+    int info = 0; // Return value for LAPACK
+    const int N = A_diag.size(); // Order of the matrix
+
+    // Temporary copies of the input vector.
+    // LAPACK overwrites these
+    arma::vec diag_tmp = A_diag;
+    arma::vec sub_tmp  = A_sub;
+
+    dpttrf_(&N, &diag_tmp[0], &sub_tmp[0], &info);
+
+    if(info != 0)
+    {
+        std::ostringstream oss;
+        oss << "Cannot factorise Poisson equation. (Lapack error code: " << info << ")";
+        throw std::runtime_error(oss.str());
+    }
+
+    D = diag_tmp;
+    L = sub_tmp;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

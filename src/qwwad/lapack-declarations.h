@@ -78,8 +78,13 @@ void dpttrf_(const int* N, double D[], double E[], int* INFO);
 /**
  * Solve real symmetric positive definite tridagonal matrix
  */
-void dpttrs_(const int* N, const int* NRHS, double D[], double E[],
-             double B[], const int* LDB, int* INFO);
+void dpttrs_(const  int   *N,
+             const  int   *NRHS,
+             double const *D,
+             double const *E,
+             double       *B,
+             const int    *LDB,
+             int          *INFO);
 
 
 /** Solve symmetric-definite banded eigenproblem*/

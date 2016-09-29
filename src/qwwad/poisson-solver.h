@@ -1,13 +1,13 @@
 /**
- * \file   qclsim_poisson_solver.h
+ * \file   poisson-solver.h
  * \brief  Poisson solver declarations
  * \author Jonathan Cooper <el06jdc@leeds.ac.uk>
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  * \date   2013-04-25
  */
 
-#ifndef QCLSIM_POISSON_SOLVER_H
-#define QCLSIM_POISSON_SOLVER_H
+#ifndef QWWAD_POISSON_SOLVER_H
+#define QWWAD_POISSON_SOLVER_H
 
 #if HAVE_CONFIG_H
 # include "config.h"
@@ -62,10 +62,14 @@ private:
         
     arma::vec _diag;     ///< Diagonal of Poisson matrix
     arma::vec _sub_diag; ///< Sub-diagonal of Poisson matrix
-    double corner_point;            ///< Corner point in matrix resulting from mixed boundary conditions
 
-    PoissonBoundaryType boundary_type; ///< Boundary condition type for Poisson solver
+    double _corner_point; ///< Corner point in matrix resulting from mixed boundary conditions
+
+    arma::vec _D_diag; ///< Diagonal of factorisation matrix, D
+    arma::vec _L_sub;  ///< Subdiagonal of factorisation matrix, L
+
+    PoissonBoundaryType _boundary_type; ///< Boundary condition type for Poisson solver
 };
 } // namespace
-#endif //QCLSIM_POISSON_SOLVER_H
+#endif //QWWAD_POISSON_SOLVER_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
