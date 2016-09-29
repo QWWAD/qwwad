@@ -74,18 +74,31 @@ int main(int argc, char* argv[])
 
     // Read space-charge profile, or just leave it as zero if desired
     if(!opt.get_option<bool>("uncharged"))
+    {
         read_table(opt.get_option<std::string>("chargefile").c_str(), z2, rho);
 
-    // Convert charge density into S.I. units
-    rho *= e;
+        // Convert charge density into S.I. units
+        rho *= e;
 
-    // If we're using a p-type system, invert the charge profile so we have
-    // a positive energy scale
-    if(opt.get_option<bool>("ptype"))
-        rho *= -1;
+        // If we're using a p-type system, invert the charge profile so we have
+        // a positive energy scale
+        if(opt.get_option<bool>("ptype"))
+        {
+            rho *= -1;
+        }
+    }
 
-    const auto dz     = z[1] - z[0]; // Size of cells in sampling mesh [m] 
+    const auto dz     = z(1) - z(0); // Size of cells in sampling mesh [m] 
     const auto length = dz * nz;     // Total length of structure [m]
+
+    double field  = 0.0; // Applied electric field [V/m]
+    double V_drop = 0.0; // Potential drop across the structure [J]
+
+    if(opt.get_argument_known("field"))
+    {
+        field  = opt.get_option<double>("field") * 1000 * 100.0;
+        V_drop = field * e * length;
+    }
 
     // Calculate Poisson potential due to charge within structure
     arma::vec phi = arma::zeros(nz);   // Poisson potential
@@ -94,101 +107,101 @@ int main(int argc, char* argv[])
     if(opt.get_option<bool>("mixed"))
     {
         // Solve the Poisson equation with zero field at the edges first
-        Poisson poisson(_eps, dz, MIXED);
+        PoissonSolver poisson(_eps, dz, MIXED);
         phi = poisson.solve(rho);
 
         // Only fix the voltage across the structure if an applied field is specified.
         // (Otherwise just return the zero-field cyclic solution!)
         if(opt.get_argument_known("field"))
         {
-            // Now solve the Laplace equation to find the contribution due to applied bias
-            // Find voltage drop per period and take off the voltage drop from the charge discontinuity
-            // within the structure. This will ensure that the voltage drop is equal to that specified
-            // rather than being the sum of applied bias and voltage due to charge which is an unknown
-            // quantity.
-            const auto field  = opt.get_option<double>("field") * 1000.0 * 100.0; // V/m
-            const auto V_drop = field * e * length - phi[nz-1];
+            // Subtract the potential drop caused by space-charge effects from the
+            // externally applied potential.
+            //
+            // This will ensure that the voltage drop is equal to that specified
+            // rather than being the sum of applied bias and voltage due to charge
+            // which is an unknown quantity.
+            V_drop -= phi(nz-1);
 
-            if(opt.get_verbose())
-                std::cout << "Voltage drop: " << V_drop / e << " V" << std::endl;
-
-            // Instantiate Poisson class to solve the Laplace equation
-            Poisson laplace(_eps, dz, DIRICHLET);
+            // Now solve the Laplace equation to find the contribution due to applied bias.
+            PoissonSolver laplace(_eps, dz, DIRICHLET);
             phi += laplace.solve_laplace(V_drop);
-
-            if(opt.get_option<bool>("centred"))
-                    phi -= V_drop/2.0;
         }
     }
     else
     {
+        PoissonSolver *poisson;
+
         // If a bias is specified, then pin the potential at each end
         if(opt.get_argument_known("field"))
         {
-            Poisson poisson(_eps, dz, DIRICHLET);
-            const auto field  = opt.get_option<double>("field") * 1000.0 * 100.0; // V/m
-            const auto V_drop = field * e * length;
-
-            if(opt.get_verbose())
-                std::cout << "Voltage drop: " << V_drop / e << " V" << std::endl;
-
-            phi = poisson.solve(rho, V_drop);
-
-            if(opt.get_option<bool>("centred"))
-            {
-                // We want the potential to equal the specified value at z=0
-                //   i.e., V(0) = V_drop/2
-                // However, remember that the first sample location in the system is at z = dz/2
-                // (i.e., in the MIDDLE of a sampling cell)
-                // Therefore the potential at the first sample is V_drop/2.0 - field*e*dz/2
-                phi -= (phi[0] + V_drop/2.0 - field*e*dz/2);
-            }
+            poisson = new PoissonSolver(_eps, dz, DIRICHLET);
         }
         else
         {
-            Poisson poisson(_eps, dz, ZERO_FIELD);
-            phi = poisson.solve(rho);
+            poisson = new PoissonSolver(_eps, dz, ZERO_FIELD);
         }
 
-        phi -= opt.get_option<double>("offset") * e/1000; // Minus offset since potential has not yet been inverted
+        phi = poisson->solve(rho, V_drop);
+
+        delete poisson;
+    }
+
+    // Subtract the desired potential offset (if specified)
+    // Note that we do this here, before we invert the potential
+    phi -= opt.get_option<double>("offset") * e/1000;
+
+    if(opt.get_verbose())
+    {
+        std::cout << "Voltage drop: " << V_drop / e << " V" << std::endl;
+    }
+
+    if(opt.get_option<bool>("centred"))
+    {
+        // We want the potential to equal the specified value at z=0
+        //   i.e., V(0) = V_drop/2
+        // However, remember that the first sample location in the system is at z = dz/2
+        // (i.e., in the MIDDLE of a sampling cell)
+        // Therefore the potential at the first sample is V_drop/2.0 - field*e*dz/2
+        phi -= (phi(0) + V_drop/2.0 - field*e*dz/2);
     }
 
     // Invert potential as we output in electron potential instead of absolute potential.
     phi *= -1;
+    write_table(opt.get_option<std::string>("poissonpotentialfile"), z, phi);
 
     // Get field profile [V/m]
     arma::vec F = arma::zeros(z.size());
 
     for(unsigned int iz = 1; iz < nz-1; ++iz)
     {
-        F(iz) = (phi(iz+1) - phi(iz-1))/(2*dz*e);
+        F(iz) = (phi(iz+1) - phi(iz-1))/(2*dz)/e;
     }
 
     write_table("field.r", z, F);
-    write_table(opt.get_option<std::string>("poissonpotentialfile").c_str(), z, phi);
 
-    // Calculate total potential and add on the baseline
-    // potential if desired:
-    arma::vec Vtotal = phi;
-    arma::vec Vbase(phi.size());
+    // Baseline potential (assume zero unless provided by user):
+    arma::vec Vbase = arma::zeros(phi.size());
 
     if (opt.get_argument_known("bandedgepotentialfile"))
     {
         arma::vec zbase(phi.size());
-        read_table(opt.get_option<std::string>("bandedgepotentialfile").c_str(), zbase, Vbase);
+        read_table(opt.get_option<std::string>("bandedgepotentialfile"), zbase, Vbase);
 
         // TODO: Add more robust checking of z, zbase identicality here
         if(zbase.size() != z.size())
         {
             std::ostringstream oss;
-            oss << "Baseline and Poisson potential profiles have different lengths (" << zbase.size() << ") and (" << z.size() << " respectively";
+            oss << "Baseline and Poisson potential profiles have different lengths "
+                   "(" << zbase.size() << ") and (" << z.size() << ") "
+                   "respectively";
+
             throw std::runtime_error(oss.str());
         }
-
-        Vtotal = phi + Vbase;
     }
 
-    write_table(opt.get_option<std::string>("totalpotentialfile").c_str(), z, Vtotal);
+    arma::vec Vtotal = phi + Vbase; // Total potential
+
+    write_table(opt.get_option<std::string>("totalpotentialfile"), z, Vtotal);
     
     return EXIT_SUCCESS;
 }

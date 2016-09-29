@@ -21,9 +21,9 @@ namespace QWWAD
  * \param[in] dx  Spatial step [m]
  * \param[in] bt  Poisson boundary condition type
  */
-Poisson::Poisson(const decltype(_eps) &eps,
-                 const double          dx,
-                 PoissonBoundaryType   bt) :
+PoissonSolver::PoissonSolver(const decltype(_eps) &eps,
+                             const double          dx,
+                             PoissonBoundaryType   bt) :
     _eps(eps),
     _eps_minus(eps), // Set the half-index permittivities
     _eps_plus(eps),  // to a default for now
@@ -37,6 +37,14 @@ Poisson::Poisson(const decltype(_eps) &eps,
     _boundary_type(bt)
 {
     compute_half_index_permittivity();
+
+    const size_t ni = _eps.size();
+
+    // Sub-diagonal elements a_(i+1), c_i [QWWAD4, 3.80]
+    for(unsigned int i=0; i < ni-1; ++i)
+    {
+        _sub_diag(i) = -_eps_plus(i) / (_dx * _dx);
+    }
 
     switch(_boundary_type)
     {
@@ -55,7 +63,7 @@ Poisson::Poisson(const decltype(_eps) &eps,
 /**
  * \brief Find the permittivity at half-index points
  */
-void Poisson::compute_half_index_permittivity()
+void PoissonSolver::compute_half_index_permittivity()
 {
     const size_t ni = _eps.size();
 
@@ -68,39 +76,41 @@ void Poisson::compute_half_index_permittivity()
         // (i.e., a periodic structure). This might not be ideal for structures
         // e.g., contained within a cladding material.
         if(i==0)
-            _eps_minus[i] = (_eps[i]   + _eps[ni-1]) / 2.0;
+        {
+            _eps_minus(i) = (_eps(i)   + _eps(ni-1)) / 2.0;
+        }
         else
-            _eps_minus[i] = (_eps[i]   + _eps[i-1] ) / 2.0;
+        {
+            _eps_minus(i) = (_eps(i)   + _eps(i-1) ) / 2.0;
+        }
 
         if(i==ni-1)
-            _eps_plus[i]  = (_eps[0]   + _eps[i]   ) / 2.0;
+        {
+            _eps_plus(i)  = (_eps(0)   + _eps(i)   ) / 2.0;
+        }
         else
-            _eps_plus[i]  = (_eps[i+1] + _eps[i]   ) / 2.0;
+        {
+            _eps_plus(i)  = (_eps(i+1) + _eps(i)   ) / 2.0;
+        }
     }
 }
 
-void Poisson::factorise_dirichlet()
+void PoissonSolver::factorise_dirichlet()
 {
     // Fill matrix to solve
     const size_t ni = _eps.size();
 
+    // Diagonal elements b_i [QWWAD4, 3.80]
     for(unsigned int i=0; i < ni; i++)
     {
-        // Diagonal elements b_i [QWWAD4, 3.80]
         _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
-
-        // Sub-diagonal elements a_(i+1), c_i [QWWAD4, 3.80]
-        if(i>0)
-        {
-            _sub_diag(i-1) = -_eps_minus(i) / (_dx * _dx);
-        }
     }
 
     // Factorise matrix
     factorise_tridiag_LDL_T(_diag, _sub_diag, _D_diag, _L_sub);
 }
 
-void Poisson::factorise_mixed()
+void PoissonSolver::factorise_mixed()
 {
     // Fill matrix to solve
     unsigned int ni = _eps.size();
@@ -108,22 +118,18 @@ void Poisson::factorise_mixed()
     {
         // Diagonal elements
         if(i<ni-1)
+        {
             _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
+        }
         else
         {
             _diag(i) = _eps_minus(i) / (_dx * _dx);
             _corner_point = _eps_plus(i) / (_dx * _dx);
         }
-
-        // Sub-diagonal elements
-        if(i>0)
-        {
-            _sub_diag(i-1) = -_eps_minus(i)/(_dx * _dx);
-        }
     }
 }
 
-void Poisson::factorise_zerofield()
+void PoissonSolver::factorise_zerofield()
 {
     // Fill matrix to solve
     unsigned int ni = _eps.size();
@@ -142,12 +148,6 @@ void Poisson::factorise_zerofield()
         {
             _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
         }
-
-        // Sub-diagonal elements
-        if(i>0)
-        {
-            _sub_diag(i-1) = -_eps_plus(i) / (_dx * _dx);
-        }
     }
 }
 
@@ -158,7 +158,7 @@ void Poisson::factorise_zerofield()
  *
  * \return The potential profile [J]
  */
-arma::vec Poisson::solve(const arma::vec &rho) const
+arma::vec PoissonSolver::solve(const arma::vec &rho) const
 {
     const auto n = _eps.size();
 
@@ -191,8 +191,8 @@ arma::vec Poisson::solve(const arma::vec &rho) const
  *
  * \return The potential profile [J]
  */
-arma::vec Poisson::solve(const arma::vec &rho,
-                         const double     V_drop) const
+arma::vec PoissonSolver::solve(const arma::vec &rho,
+                               const double     V_drop) const
 {
     const auto n = _eps.size();
 
@@ -201,35 +201,30 @@ arma::vec Poisson::solve(const arma::vec &rho,
 
     auto rhs = rho; // Set right-hand-side to the charge-density
 
-    auto phi = rhs;
+    // We want to fix the potential just BEFORE the structure to 0
+    //   i.e., phi[-1] = 0
+    // If the voltage drop across the structure is V_drop, then the LAST
+    // point in the system takes this value
+    //   i.e., phi[n-1] = V_drop = F * length
+    // so the first point AFTER the structure has the potential
+    //   phi[n] = F * (length + dz) = V_drop + F dz = V_drop (nz + 1) / nz
+    const auto V_next = V_drop * n / (n+1);
 
-    switch(_boundary_type)
+    // The boundary condition is then set according to QWWAD4, 3.110.
+    rhs(n-1) += _diag(n-1) * V_next;
+
+    if(_boundary_type == MIXED)
     {
-        case DIRICHLET:
-            {
-                // We want to fix the potential just BEFORE the structure to 0
-                //   i.e., phi[-1] = 0
-                // If the voltage drop across the structure is V_drop, then the LAST
-                // point in the system takes this value
-                //   i.e., phi[n-1] = V_drop = F * length
-                // so the first point AFTER the structure has the potential
-                //   phi[n] = F * (length + dz) = V_drop + F dz = V_drop (nz + 1) / nz
-
-                const auto next_potential = V_drop * n / (n+1);
-
-                // The boundary condition is then set according to QWWAD4, 3.110.
-                rhs(n-1) += _diag(n-1) * next_potential;
-
-                phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
-            }
-            break;
-        case MIXED:
-            throw std::runtime_error("Cannot apply bias directly when solving the Poisson equation with "
-                                     "mixed boundaries. Instead solve cyclic problem without bias, then solve Laplace "
-                                     "equation and sum the result.");
-        default:
-            throw std::runtime_error("Unrecognised boundary type for Poisson solver.");
+        throw std::runtime_error("Cannot apply bias directly when solving the Poisson equation with "
+                                 "mixed boundaries. Instead solve cyclic problem without bias, then solve Laplace "
+                                 "equation and sum the result.");
     }
+
+    auto phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
+
+    // TODO: This is a horrible hack... for some reason, there's an unwanted factor of 2 in the
+    // calculation
+    phi /= 2;
 
     return phi;
 }
@@ -241,7 +236,7 @@ arma::vec Poisson::solve(const arma::vec &rho,
  *
  * \return The potential profile [J]
  */
-arma::vec Poisson::solve_laplace(const double V_drop) const
+arma::vec PoissonSolver::solve_laplace(const double V_drop) const
 {
     const size_t n = _eps.size();
 

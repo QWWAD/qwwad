@@ -465,20 +465,17 @@ factorise_tridiag_LDL_T(arma::vec const &A_diag,
 
     // Temporary copies of the input vector.
     // LAPACK overwrites these
-    arma::vec diag_tmp = A_diag;
-    arma::vec sub_tmp  = A_sub;
+    D = A_diag;
+    L = A_sub;
 
-    dpttrf_(&N, &diag_tmp[0], &sub_tmp[0], &info);
+    dpttrf_(&N, &D[0], &L[0], &info);
 
     if(info != 0)
     {
         std::ostringstream oss;
-        oss << "Cannot factorise Poisson equation. (Lapack error code: " << info << ")";
+        oss << "Cannot factorise matrix. (LAPACK error code: " << info << ")";
         throw std::runtime_error(oss.str());
     }
-
-    D = diag_tmp;
-    L = sub_tmp;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

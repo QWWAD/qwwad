@@ -33,15 +33,15 @@ enum PoissonBoundaryType
     ZERO_FIELD
 };
 
-class Poisson
+class PoissonSolver
 {
 private:
     arma::vec _eps;       ///< Permittivity at each point [F/m]
 
 public:
-    Poisson(const decltype(_eps) &eps,
-            const double          dx,
-            PoissonBoundaryType   bt=DIRICHLET);
+    PoissonSolver(const decltype(_eps) &eps,
+                  const double          dx,
+                  PoissonBoundaryType   bt=DIRICHLET);
     
     arma::vec solve(const arma::vec &rho) const;
     arma::vec solve(const arma::vec &rho,
