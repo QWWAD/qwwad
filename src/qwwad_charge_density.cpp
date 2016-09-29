@@ -14,6 +14,7 @@
 #include <fstream>
 #include <gsl/gsl_math.h>
 
+#include "qwwad/data-checker.h"
 #include "qwwad/file-io.h"
 #include "qwwad/constants.h"
 #include "qwwad/eigenstate.h"
@@ -74,11 +75,10 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     const auto population_file = opt.get_option<std::string>("populationfile").c_str();
     read_table(population_file, pop);
     const size_t nst = pop.size();
-    
-    // Check that populations are all positive
-    for(unsigned int ist=0; ist < nst; ist++)
-        check_positive(&pop[ist]);
 
+    // Check that populations are all positive
+    DataChecker::check_positive(pop);
+    
     // Read state degeneracy if specified
     if(opt.get_argument_known("degeneracyfile"))
     {

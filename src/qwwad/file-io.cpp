@@ -50,28 +50,6 @@ void check_c_interval_0_1(double* px)
     }
 }
 
-/** Checks that a property is positive and nonzero */
-void check_positive(double* pW)
-{
-    if(*pW <= 0)
-    {
-        std::ostringstream oss;
-        oss << "Nonpositive value (" << *pW << ") detected.";
-        throw std::domain_error(oss.str());
-    }
-}
-
-/** Checks that a property is not negative */
-void check_not_negative(double* pW)
-{
-    if(*pW < 0)
-    {
-        std::ostringstream oss;
-        oss << "Negative value (" << *pW << ") detected.";
-        throw std::domain_error(oss.str());
-    }
-}
-
 void parse_items(std::istream &stream)
 {
     stream.clear();

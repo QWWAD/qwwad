@@ -51,8 +51,6 @@ size_t      nlines_read;     ///< Number of lines that were read
 
 /** Functions to check data */
 void check_c_interval_0_1(double*);
-void check_positive(double*);
-void check_not_negative(double*);
 
 /**
  * Read an array of size n from a single line

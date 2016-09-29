@@ -112,6 +112,7 @@ libqwwadversionflags = -version-info 1:0:0
 includeqwwaddir=$(includedir)/qwwad
 includeqwwad_HEADERS = \
 			   src/qwwad/constants.h                          \
+			   src/qwwad/data-checker.h                       \
 			   src/qwwad/donor-energy-minimiser-fast.h        \
 			   src/qwwad/donor-energy-minimiser-linear.h      \
 			   src/qwwad/donor-energy-minimiser.h             \
@@ -142,6 +143,7 @@ includeqwwad_HEADERS = \
 
 # Source files for libqwwad that will be compiled into the binary library
 libqwwad_la_SOURCES =  \
+		           src/qwwad/data-checker.cpp                       \
 			   src/qwwad/dos-functions.cpp                      \
 			   src/qwwad/double-barrier.cpp                     \
 			   src/qwwad/fermi.cpp                              \

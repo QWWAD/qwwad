@@ -13,6 +13,7 @@
 # include <iostream>
 #endif
 
+#include "data-checker.h"
 #include "file-io.h"
 
 namespace QWWAD
@@ -41,7 +42,7 @@ Mesh::Mesh(const decltype(_x_layer)    &x_layer,
     _z(_ncell_1per*_n_periods),
     _x(_z.size(), std::valarray<double>(_n_alloy)),
     _n3D(_z.size()),
-    _Lp(_W_layer.sum()),
+    _Lp(sum(_W_layer)),
     _dz(_Lp/_ncell_1per)
 {
     const auto n_layer_1per = _W_layer.size(); // Number of layers in one period
@@ -80,10 +81,10 @@ Mesh::Mesh(const decltype(_x_layer)    &x_layer,
 }
 
 
-void Mesh::read_layers_from_file(const std::string     &filename,
-                                            alloy_vector          &x_layer,
-                                            std::valarray<double> &W_layer,
-                                            std::valarray<double> &n3D_layer)
+void Mesh::read_layers_from_file(const std::string &filename,
+                                 alloy_vector      &x_layer,
+                                 arma::vec         &W_layer,
+                                 arma::vec         &n3D_layer)
 {
     std::valarray<double> coltemp; // A temporary vector containing the first column of the input file
     read_table(filename.c_str(), coltemp);
@@ -132,7 +133,7 @@ void Mesh::read_layers_from_file(const std::string     &filename,
             for(unsigned int j = 0; j < n_alloy; ++j)
                 x_layer.at(i)[j] = rowtemp[1+j];
 
-            n3D_layer[i] = rowtemp[n_alloy+1];
+            n3D_layer(i) = rowtemp[n_alloy+1];
         }
         else
             throw std::runtime_error("Could not read stream");
@@ -141,14 +142,14 @@ void Mesh::read_layers_from_file(const std::string     &filename,
     stream.close();
 
     // Check data integrity
+    DataChecker::check_positive(W_layer);
+    DataChecker::check_not_negative(n3D_layer);
+
+    // Check data integrity
     for(unsigned int iL = 0; iL < nL; iL++)
     {
-        check_positive(&W_layer[iL]);
-
         for(unsigned int ialloy = 0; ialloy < n_alloy; ++ialloy)
             check_c_interval_0_1(&x_layer.at(iL)[ialloy]);
-
-        check_not_negative(&n3D_layer[iL]);
     }
 
     // Scale layer widths angstrom -> metre
@@ -171,13 +172,13 @@ Mesh* Mesh::create_from_file_auto_nz(const std::string &layer_filename,
                                      const size_t       n_periods,
                                      const double       dz_max)
 {
-    alloy_vector          x_layer;   // Alloy fraction for each layer
-    std::valarray<double> W_layer;   // Thickness of each layer
-    std::valarray<double> n3D_layer; // Doping density of each layer
+    alloy_vector x_layer;   // Alloy fraction for each layer
+    arma::vec    W_layer;   // Thickness of each layer
+    arma::vec    n3D_layer; // Doping density of each layer
 
     read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
-    const double period_length = W_layer.sum();
+    const double period_length = sum(W_layer);
 
     // Round up to get the required number of cells per period
     const size_t nz_1per = ceil(period_length/dz_max);
@@ -199,9 +200,9 @@ Mesh* Mesh::create_from_file(const std::string &layer_filename,
                              const size_t       ncell_1per,
                              const size_t       n_periods)
 {
-    alloy_vector          x_layer;   // Alloy fraction for each layer
-    std::valarray<double> W_layer;   // Thickness of each layer
-    std::valarray<double> n3D_layer; // Doping density of each layer
+    alloy_vector x_layer;   // Alloy fraction for each layer
+    arma::vec    W_layer;   // Thickness of each layer
+    arma::vec    n3D_layer; // Doping density of each layer
 
     read_layers_from_file(layer_filename, x_layer, W_layer, n3D_layer);
 
@@ -278,14 +279,16 @@ unsigned int Mesh::get_layer_top_index(const unsigned int iL) const
  */
 double Mesh::get_height_at_top_of_layer(const unsigned int iL) const
 {
+    const arma::vec layer_tops = cumsum(_W_layer);
+
     // Find the height of the highest **incomplete** period
-    double height = _W_layer[std::slice(0, iL%_W_layer.size() + 1, 1)].sum();
+    double height = layer_tops(iL%_W_layer.size());
 
     // Add on the height of all the **complete** periods below this layer
     if(_n_periods > 1)
     {
         const auto n_previous_periods = iL / _W_layer.size(); // Integer division
-        height += _W_layer.sum() * n_previous_periods;
+        height += sum(_W_layer) * n_previous_periods;
     }
 
     return height;
