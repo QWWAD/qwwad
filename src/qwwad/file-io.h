@@ -21,32 +21,10 @@
 #include <sstream>
 #include <iomanip>
 #include <stdexcept>
+#include <iostream>
 
 namespace QWWAD
 {
-/**
- * Exception that occurs when a file contains too many lines to fit in a buffer
- */
-class FileLinesExceedBufferSize : public std::exception {
-public:
-FileLinesExceedBufferSize(const std::string &fname,
-                          const size_t       buffer_size);
-
-FileLinesExceedBufferSize(const FileLinesExceedBufferSize &other);
-
-#if HAVE_NOEXCEPT
-virtual const char* what() const noexcept;
-~FileLinesExceedBufferSize () noexcept {}
-#else
-virtual const char* what() const throw();
-~FileLinesExceedBufferSize () throw() {}
-#endif
-
-private:
-std::string filename;     ///< The name of the file with too many lines
-size_t      _buffer_size; ///< The buffer size that has been exceeded
-};
-
 /** Exception that occurs when a file contains wrong number of lines */
 class FileLinesNotAsExpected : public std::exception
 {
@@ -70,10 +48,6 @@ std::string filename;        ///< The name of the file with wrong number of line
 size_t      nlines_expected; ///< Number of lines that were expected
 size_t      nlines_read;     ///< Number of lines that were read
 };
-
-// TODO: Make this configurable
-/// Maximum number of lines allowed in input files
-const size_t nlines_max = 10000;
 
 /** Functions to check data */
 void check_c_interval_0_1(double*);
@@ -157,9 +131,6 @@ void read_line_array_u(Tcontainer<T>& dest, std::istream& stream)
 
     while(pch != NULL)
     {
-        if(dest_tmp.size() > nlines_max)
-            throw std::length_error("Buffer overflow. Too many lines in input file");
-
         dest_tmp.push_back(atof(pch)); // Copy data to array
         pch = strtok(NULL, "\t "); // Try to read next data from line
     } 
@@ -170,22 +141,57 @@ void read_line_array_u(Tcontainer<T>& dest, std::istream& stream)
     std::copy(dest_tmp.begin(), dest_tmp.end(), &dest[0]);
 }
 
+void parse_items(std::istream &stream);
 
-/** 
- * Read a single numerical value from a line of input
+/**
+ * \brief Recursively read all the data items in a stream into destination variables
  *
- * \param[out] dest    The variable to which the data will be written
- * \param[in]  stream  The stream from which to read the data
+ * \param[in]  stream    The stream from which to read
+ * \param[out] destx     The destination for the next data item
+ * \param[out] remainder A set of destinations for all remaining data items
  *
- * \return "0" if read was successful, "1" if not
+ * \details You probably don't want to call this directly.  Use read_line
+ *          where possible to get data from a single line
  */
-template <class T>
-int read_line(T& dest, std::istream& stream)
+template <class Tnext, class... Tremainder>
+void parse_items(std::istream  &stream,
+                 Tnext         &destx,
+                 Tremainder    &...remainder)
+{
+    if(!stream)
+    {
+        throw std::runtime_error("Could not read stream");
+    }
+
+    // Try to read a single item
+    if(!(stream >> destx))
+    {
+        std::cout << destx << std::endl;
+        throw std::runtime_error("Could not read item");
+    }
+
+    // Recursively read the remaining items
+    parse_items(stream, remainder...);
+}
+
+/**
+ * \brief Read data items from a line in a stream
+ *
+ * \param[in]  stream       The stream from which to read
+ * \param[out] destinations A set of locations to store the data items
+ *
+ * \return 0 if successful, 1 if not
+ */
+template <class... Targs>
+int read_line(std::istream &stream,
+              Targs        &...destinations)
 {
     int scan_result = 1; // Flag showing whether scan successful
 
     if(!stream)
+    {
         throw std::runtime_error("Could not read stream");
+    }
 
     std::string linebuffer; // Buffer for line data
 
@@ -193,123 +199,16 @@ int read_line(T& dest, std::istream& stream)
     {
         std::istringstream oss(linebuffer);
 
-        if(oss >> dest)
-            scan_result = 0; // Mark scan as successful
-        else
-            throw std::runtime_error("Some data missing on line");
-    }
-
-    return scan_result;
-}
-
-/** 
- * Read two data values from a line of input
- *
- * \param[out] destx   The variable to which the 1st data value will be written
- * \param[out] desty   The variable to which the 2nd data value will be written
- * \param[in]  stream  The stream from which to read the data
- *
- * \return "0" if read was successful, "1" if not
- */
-template <class Tx, class Ty>
-int read_line(Tx& destx, Ty& desty, std::istream& stream)
-{
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    std::string linebuffer; // Buffer for line data
-
-    if(getline(stream, linebuffer) and !linebuffer.empty())
-    {
-        std::istringstream oss(linebuffer);
-
-        if(oss >> destx >> desty)
-            scan_result = 0; // Mark scan as successful
-        else
-            throw std::runtime_error("Some data missing on line");
-    }
-
-    return scan_result;
-}
-
-/** 
- * \brief Read 3 data values from a line of input
- *
- * \param[out] destx   The destination for the first data item
- * \param[out] desty   The destination for the second data item
- * \param[out] destz   The destination for the third data item
- * \param[in]  stream  The input stream from which to read data.
- *
- * \details The first three whitespace-delimited values on a line are stored in
- *          the output variables \c dest1, \c dest2 and \c dest3.
- *
- * \returns 0 if successful, 1 if not.
- */
-template <class Tx, class Ty, class Tz>
-int read_line(Tx &destx, Ty &desty, Tz &destz, std::istream& stream)
-{
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    std::string linebuffer; // Buffer for line data
-
-    if(getline(stream, linebuffer) and !linebuffer.empty())
-    {
-        std::istringstream oss(linebuffer);
-
-        if(oss >> destx >> desty >> destz)
-            scan_result = 0; // Mark scan as successful
-        else
-            throw std::runtime_error("Some data missing on line");
-    }
-
-    return scan_result;
-}
-
-/** 
- * \brief Read 4 data values from a line of input
- *
- * \param[out] destx   The destination for the 1st data item
- * \param[out] desty   The destination for the 2nd data item
- * \param[out] destz   The destination for the 3rd data item
- * \param[out] destu   The destination for the 4th data item
- * \param[in]  stream  The input stream from which to read data.
- *
- * \details The first 4 whitespace-delimited values on a line are stored in
- *          the output variables \c destx, \c desty, \c destz and \c destu.
- *
- * \returns 0 if successful, 1 if not.
- */
-template <class Tx, class Ty, class Tz, class Tu>
-int read_line(Tx &destx, Ty &desty, Tz &destz, Tu &destu, std::ifstream& stream)
-{
-    int scan_result = 1; // Flag showing whether scan successful
-
-    if(!stream)
-        throw std::runtime_error("Could not read stream");
-
-    std::string linebuffer; // Buffer for line data
-
-    if(getline(stream, linebuffer) and !linebuffer.empty())
-    {
-        std::istringstream iss(linebuffer);
-
-        if(iss >> destx >> desty >> destz >> destu)
-            scan_result = 0; // Mark scan as successful
-        else
+        try
         {
-            std::ostringstream oss;
-            oss << "Some data missing on line. Read: " << std::endl
-                << "Item 1: " << destx << std::endl
-                << "Item 2: " << desty << std::endl
-                << "Item 3: " << destz << std::endl
-                << "Item 4: " << destu << std::endl;
-
-            throw std::runtime_error(oss.str());
+            parse_items(oss, destinations...);
+            scan_result = 0;
+        }
+        catch(std::runtime_error &e)
+        {
+            std::ostringstream err_ss;
+            err_ss << "Data missing on line: '" << linebuffer << "'";
+            throw std::runtime_error(err_ss.str());
         }
     }
 
@@ -337,17 +236,13 @@ void read_table(const Tstring fname, Tcontainer<T>& x)
     }
 
     std::vector<T> x_temp;
-    unsigned int nlines=0;
 
     while(!stream.eof())
     {
-        if(nlines >= nlines_max)
-            throw FileLinesExceedBufferSize(fname, nlines_max);
-
         T buffer = 0; // Buffer for input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line(buffer, stream))
+        if(!read_line(stream, buffer))
             x_temp.push_back(buffer);
     }
     
@@ -435,20 +330,26 @@ void read_table(const Tstring    fname,
 
     std::vector<Tx> x_temp;
     std::vector<Ty> y_temp;
-    unsigned int nlines=0;
 
     while(!stream.eof()){
-        if(nlines >= nlines_max)
-            throw FileLinesExceedBufferSize(fname, nlines_max);
-
         Tx buffer_x = 0; // Buffer for x input data
         Ty buffer_y = 0; // Buffer for y input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line(buffer_x, buffer_y, stream))
+        try
         {
-            x_temp.push_back(buffer_x);
-            y_temp.push_back(buffer_y);
+            if(!read_line(stream, buffer_x, buffer_y))
+            {
+                x_temp.push_back(buffer_x);
+                y_temp.push_back(buffer_y);
+            }
+        }
+        catch (std::runtime_error &e)
+        {
+            std::ostringstream err_st;
+            err_st << "Error reading " << fname << std::endl
+                   << e.what();
+            throw std::runtime_error(err_st.str());
         }
     }
 
@@ -562,18 +463,14 @@ void read_table(const char      *fname,
     std::vector<Tx> x_temp;
     std::vector<Ty> y_temp;
     std::vector<Tz> z_temp;
-    unsigned int nlines=0;
 
     while(!stream.eof()){
-        if(nlines >= nlines_max)
-            throw FileLinesExceedBufferSize(fname, nlines_max);
-
         Tx buffer_x = 0; // Buffer for x input data
         Ty buffer_y = 0; // Buffer for y input data
         Tz buffer_z = 0; // Buffer for z input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line(buffer_x, buffer_y, buffer_z, stream))
+        if(!read_line(stream, buffer_x, buffer_y, buffer_z))
         {
             x_temp.push_back(buffer_x);
             y_temp.push_back(buffer_y);
@@ -641,19 +538,15 @@ void read_table(const Tstring    fname,
     std::vector<Ty> y_temp;
     std::vector<Tz> z_temp;
     std::vector<Tu> u_temp;
-    unsigned int nlines=0;
 
     while(!stream.eof()){
-        if(nlines >= nlines_max)
-            throw FileLinesExceedBufferSize(fname, nlines_max);
-
         Tx buffer_x; // Buffer for x input data
         Ty buffer_y; // Buffer for y input data
         Tz buffer_z; // Buffer for z input data
         Tu buffer_u; // Buffer for u input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line(buffer_x, buffer_y, buffer_z, buffer_u, stream))
+        if(!read_line(stream, buffer_x, buffer_y, buffer_z, buffer_u))
         {
             x_temp.push_back(buffer_x);
             y_temp.push_back(buffer_y);

@@ -9,32 +9,6 @@
 
 namespace QWWAD
 {
-FileLinesExceedBufferSize::FileLinesExceedBufferSize(const std::string &fname,
-                                                     const size_t       buffer_size) :
-    filename(fname),
-    _buffer_size(buffer_size)
-{}
-
-FileLinesExceedBufferSize::FileLinesExceedBufferSize(const FileLinesExceedBufferSize &other) :
-    filename(other.filename),
-    _buffer_size(other._buffer_size)
-{}
-
-/** Message to describe the error */
-#if HAVE_NOEXCEPT
-const char* FileLinesExceedBufferSize::what() const noexcept
-#else
-const char* FileLinesExceedBufferSize::what() const throw()
-#endif
-{
-    std::ostringstream oss;
-    oss << "Number of lines in " << filename
-        << " exceeds the maximum permitted value (" << _buffer_size << ")";
-    const std::string  str  = oss.str();
-    const char        *cstr = str.c_str();
-    return cstr;
-}
-
 FileLinesNotAsExpected::FileLinesNotAsExpected(const std::string &fname,
                                                const size_t       nexpected,
                                                const size_t       nread) :
@@ -96,6 +70,11 @@ void check_not_negative(double* pW)
         oss << "Negative value (" << *pW << ") detected.";
         throw std::domain_error(oss.str());
     }
+}
+
+void parse_items(std::istream &stream)
+{
+    stream.clear();
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
