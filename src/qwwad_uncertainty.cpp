@@ -59,22 +59,22 @@ int main(int argc, char *argv[])
 
     const auto psi = all_states.at(state-1).get_wavefunction_samples();
 
-    arma::vec d_psi_dz(0.0, nz);   // Derivative of wavefunction
-    arma::vec d2_psi_dz2(0.0, nz); // 2nd Derivative of wavefunction
+    arma::vec d_psi_dz   = arma::zeros(nz);   // Derivative of wavefunction
+    arma::vec d2_psi_dz2 = arma::zeros(nz); // 2nd Derivative of wavefunction
 
     // Note that we can take the end points as zero, since this is
     // guaranteed for any valid wavefunction
     for(unsigned int i=1;i<nz-1;i++)
     {
-        d_psi_dz[i]   = (psi[i+1] - psi[i-1])/(2*dz);
-        d2_psi_dz2[i] = (psi[i+1] - 2*psi[i] + psi[i-1])/(dz*dz);
+        d_psi_dz[i]   = (psi(i+1) - psi(i-1))/(2*dz);
+        d2_psi_dz2[i] = (psi(i+1) - 2*psi(i) + psi(i-1))/(dz*dz);
     }
 
     const arma::vec ev_z_integrand_dz = square(psi)%z;
     const auto ev_z = integral(ev_z_integrand_dz, dz);       // Expectation position [m]
 
     const arma::vec ev_zsqr_integrand_dz = square(psi%z);
-    const auto ev_zsqr = integral(ev_zsqr_integrand_dz, dz);     // Expectation for z*z [m^2]
+    const auto ev_zsqr = integral(ev_zsqr_integrand_dz, dz); // Expectation for z*z [m^2]
 
     const arma::vec ev_p_integrand_dz = -psi%d_psi_dz;
     const double ev_p    = integral(ev_p_integrand_dz, dz);   // Expectation momentum [relative to i hBar]
