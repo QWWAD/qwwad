@@ -517,13 +517,16 @@ void write_table(const Tstring          fname,
     for(unsigned int i=0; i<nx; i++)
     {
         if(with_num)
-            stream << i+1 << "\t" << std::setprecision(precision)
-                            << std::scientific << x[i] << "\t" << y[i] << std::endl;
-        else
-            stream << std::setprecision(precision) << std::scientific << x[i] << "\t" << y[i] << std::endl;
+        {
+            stream << i+1 << "\t";
+        }
+
+        stream << std::setprecision(precision)
+               << std::scientific
+               << x[i] << "\t" << y[i] << std::endl;
     }
 
-    stream.close();	
+    stream.close();
 }
 
 
@@ -593,7 +596,7 @@ void read_table(const char      *fname,
         throw std::runtime_error(oss.str());
     }
 
-    // Copy data into output array
+    // Copy data into output container
     std::copy(x_temp.begin(), x_temp.end(), &x[0]);
     std::copy(y_temp.begin(), y_temp.end(), &y[0]);
     std::copy(z_temp.begin(), z_temp.end(), &z[0]);

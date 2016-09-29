@@ -69,8 +69,8 @@ int main(int argc, char* argv[])
 
     const size_t nz = z.size();
 
-    arma::vec z2(nz);
-    arma::vec rho(nz); // Charge-profile [C/m^2]
+    arma::vec z2  = arma::zeros(nz);
+    arma::vec rho = arma::zeros(nz); // Charge-profile [C/m^2]
 
     // Read space-charge profile, or just leave it as zero if desired
     if(!opt.get_option<bool>("uncharged"))
@@ -88,7 +88,7 @@ int main(int argc, char* argv[])
     const auto length = dz * nz;     // Total length of structure [m]
 
     // Calculate Poisson potential due to charge within structure
-    arma::vec phi(nz);   // Poisson potential
+    arma::vec phi = arma::zeros(nz);   // Poisson potential
 
     // Pin the potential at the start, and make the field identical at either end
     if(opt.get_option<bool>("mixed"))
@@ -157,9 +157,12 @@ int main(int argc, char* argv[])
     phi *= -1;
 
     // Get field profile [V/m]
-    arma::vec F(z.size());
+    arma::vec F = arma::zeros(z.size());
+
     for(unsigned int iz = 1; iz < nz-1; ++iz)
-        F[iz] = (phi[iz+1] - phi[iz-1])/(2*dz*e);
+    {
+        F(iz) = (phi(iz+1) - phi(iz-1))/(2*dz*e);
+    }
 
     write_table("field.r", z, F);
     write_table(opt.get_option<std::string>("poissonpotentialfile").c_str(), z, phi);
