@@ -53,7 +53,6 @@ AX_CXX_COMPILE_STDCXX_11([],[mandatory])
 dnl Enable some compiler flags by default
 CFLAGS="-Wall $CFLAGS"
 CXXFLAGS="-Wall $CXXFLAGS"
-LDFLAGS="-Wl,--as-needed $LDFLAGS"
 
 dnl Set up very strict build for development purposes
 CPPFLAGS="-W -Wall -Wformat -Wformat-security -Werror=format-security -O2 -DFORTIFY_SOURCE=2 $CPPFLAGS"
