@@ -14,7 +14,7 @@
 # include "config.h"
 #endif
 
-#include "qwwad/options.h"
+#include "options.h"
 
 namespace QWWAD {
 

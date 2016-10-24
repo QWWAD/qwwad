@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <sstream>
+#include <stdexcept>
 
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
