@@ -11,8 +11,8 @@
 # include "config.h"
 #endif //HAVE_CONFIG_H
 
-#include "lapack-declarations.h"
 #include "linear-algebra.h"
+#include "lapack-declarations.h"
 
 #include <cstdlib>
 
@@ -348,13 +348,13 @@ multiply_vec_tridiag(arma::vec const &M_sub,
             &N,
             &NRHS,
             &scale,
-            &M_sub(0),
-            &M_diag(0),
-            &M_super(0),
-            &x_tmp(0),
+            M_sub.memptr(),
+            M_diag.memptr(),
+            M_super.memptr(),
+            x_tmp.memptr(),
             &N,
             &scale,
-            &c(0),
+            c.memptr(),
             &N);
 
     // The x vector has now been overwritten by the resulting
@@ -389,10 +389,10 @@ solve_tridiag(arma::vec const &A_sub,
     int INFO=0;
     dgtsv_(&N,
            &NRHS,
-           &A_sub(0),
-           &A_diag(0),
-           &A_super(0),
-           &x_tmp(0),
+           A_sub.memptr(),
+           A_diag.memptr(),
+           A_super.memptr(),
+           x_tmp.memptr(),
            &N,
            &INFO);
 
@@ -430,9 +430,9 @@ solve_tridiag_LDL_T(arma::vec const &D,
     int INFO=0;
     dpttrs_(&N,
             &NRHS,
-            &D(0),
-            &L(0),
-            &x_tmp(0),
+            D.memptr(),
+            L.memptr(),
+            x_tmp.memptr(),
             &N,
             &INFO);
 
