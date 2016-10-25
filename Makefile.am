@@ -487,39 +487,33 @@ ex2data_DATA = $(ex2srcdir)/index                                 \
 exnsdatadir = $(exdatadir)/numerical-solutions
 exnssrcdir = examples/numerical-solutions
 
-exnsdata_DATA = $(exnssrcdir)/index \
-		$(exnssrcdir)/bisect-example.sh \
-		$(exnssrcdir)/shooting-method-wavefunctions.sh    \
-		$(exnssrcdir)/shooting-convergence.sh             \
-		$(exnssrcdir)/shooting-convergence-LB.sh           \
-		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh  \
-		$(exnssrcdir)/poeschl-teller-hole-E-lambda.dat    \
-		$(exnssrcdir)/poeschl-teller-hole-convergence.sh  \
-		$(exnssrcdir)/poeschl-teller-hole-convergence.dat \
-		$(exnssrcdir)/variable-mass-0.2-alloy.sh          \
-		$(exnssrcdir)/variable-mass-0.2-alloy.dat         \
-		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.sh  \
-		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.dat \
-		$(exnssrcdir)/variable-mass-0.75-alloy-dz.sh  \
-		$(exnssrcdir)/variable-mass-0.75-alloy-dz.dat \
-		$(exnssrcdir)/double-quantum-well.sh          \
-		$(exnssrcdir)/multiple-qw-40-40.sh            \
-		$(exnssrcdir)/multiple-qw-100-100.sh          \
-		$(exnssrcdir)/quantum-confined-stark-effect.sh \
-		$(exnssrcdir)/field-induced-anti-crossings.sh \
-		$(exnssrcdir)/symmetry-and-selection-rules.sh \
-		$(exnssrcdir)/field-effect-variable-epsilon.sh  \
-		$(exnssrcdir)/uncertainty-principle-finite-well.sh  \
-		$(exnssrcdir)/uncertainty-principle-mass-limit.sh  \
-		$(exnssrcdir)/nonparabolic-dE-vs-width.sh \
-		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.sh \
-		$(exnssrcdir)/poisson-schroedinger.sh \
-		$(exnssrcdir)/poisson-schroedinger-comp.sh \
-		$(exnssrcdir)/modulation-doping.sh \
-		$(exnssrcdir)/high-electron-mobility-transistor.sh \
-		$(exnssrcdir)/parabolic-well-solutions.sh \
-		$(exnssrcdir)/parabolic-well-E-10.sh \
-		$(exnssrcdir)/parabolic-well-E-10.dat
+exnsdata_DATA = $(exnssrcdir)/index                                  \
+		$(exnssrcdir)/bisect-example.sh                      \
+		$(exnssrcdir)/shooting-method-wavefunctions.sh       \
+		$(exnssrcdir)/shooting-convergence.sh                \
+		$(exnssrcdir)/shooting-convergence-LB.sh             \
+		$(exnssrcdir)/poeschl-teller-hole-vary-lambda.sh     \
+		$(exnssrcdir)/poeschl-teller-hole-convergence.sh     \
+		$(exnssrcdir)/variable-mass-0.2-alloy.sh             \
+		$(exnssrcdir)/variable-mass-0.75-alloy-well-width.sh \
+		$(exnssrcdir)/variable-mass-0.75-alloy-dz.sh         \
+		$(exnssrcdir)/double-quantum-well.sh                 \
+		$(exnssrcdir)/multiple-qw-40-40.sh                   \
+		$(exnssrcdir)/multiple-qw-100-100.sh                 \
+		$(exnssrcdir)/quantum-confined-stark-effect.sh       \
+		$(exnssrcdir)/field-induced-anti-crossings.sh        \
+		$(exnssrcdir)/symmetry-and-selection-rules.sh        \
+		$(exnssrcdir)/field-effect-variable-epsilon.sh       \
+		$(exnssrcdir)/uncertainty-principle-finite-well.sh   \
+		$(exnssrcdir)/uncertainty-principle-mass-limit.sh    \
+		$(exnssrcdir)/nonparabolic-dE-vs-width.sh            \
+		$(exnssrcdir)/nonparabolic-dE-vs-width-inalgaas.sh   \
+		$(exnssrcdir)/poisson-schroedinger.sh                \
+		$(exnssrcdir)/poisson-schroedinger-comp.sh           \
+		$(exnssrcdir)/modulation-doping.sh                   \
+		$(exnssrcdir)/high-electron-mobility-transistor.sh   \
+		$(exnssrcdir)/parabolic-well-solutions.sh            \
+		$(exnssrcdir)/parabolic-well-E-10.sh
 
 exdiffdatadir = $(exdatadir)/diffusion
 exdiffsrcdir = examples/diffusion
