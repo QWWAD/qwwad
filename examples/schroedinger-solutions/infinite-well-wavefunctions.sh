@@ -8,7 +8,7 @@ set -e
 # or its derivatives in published work must be accompanied by a citation
 # of:
 #   P. Harrison and A. Valavanis, Quantum Wells, Wires and Dots, 4th ed.
-#    Chichester, U.K.: J. Wiley, 2015, ch.2
+#    Chichester, U.K.: J. Wiley, 2016, ch.2
 #
 # (c) Copyright 1996-2015
 #     Paul Harrison <p.harrison@shu.ac.uk>

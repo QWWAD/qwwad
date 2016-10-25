@@ -73,7 +73,7 @@ void SchroedingerSolverInfWell::calculate()
         if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
             break;
 
-        arma::vec psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         // Loop over spatial locations and find wavefunction
         // amplitude at each point (QWWAD3, 2.15)
