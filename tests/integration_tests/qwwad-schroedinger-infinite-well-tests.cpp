@@ -58,7 +58,7 @@ TEST(SchroedingerSolverInfWell, parabolicTest)
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 
         // Check expectation position (should be middle of well)
-        const std::valarray<double> z_expt_dz = PD*z;
+        const arma::vec z_expt_dz = PD%z;
         const double z_expt = integral(z_expt_dz, dz);
         EXPECT_NEAR(L/2.0, z_expt, 0.001*L/2.0);
 
@@ -98,12 +98,12 @@ TEST(SchroedingerSolverInfWell, nonParabolicTest)
         EXPECT_DOUBLE_EQ(E_expected, E);
 
         // Check normalisation of state
-        const std::valarray<double> PD = solutions.at(ist).get_PD();
+        const auto PD = solutions.at(ist).get_PD();
         const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 
         // Check expectation position (should be middle of well)
-        const std::valarray<double> z_expt_dz = PD*z;
+        const arma::vec z_expt_dz = PD%z;
         const double z_expt = integral(z_expt_dz, dz);
         EXPECT_NEAR(L/2.0, z_expt, 0.001*L/2.0);
 

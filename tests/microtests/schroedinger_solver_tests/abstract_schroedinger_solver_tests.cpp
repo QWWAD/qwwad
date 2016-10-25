@@ -11,7 +11,7 @@ protected:
 
     void SetUp()
     {
-        std::valarray<double> temp; 
+        arma::vec temp;
         schroedinger_solver = new TestableAbstractSchroedingerSolver( temp, temp );
     }
 
@@ -22,8 +22,8 @@ protected:
 
     std::vector<Eigenstate> make_some_solutions()
     {
-        std::valarray<double> z(2);
-        std::valarray<double> some_wavefunction(2);
+        arma::vec z = arma::zeros(2);
+        arma::vec some_wavefunction = arma::zeros(2);
         some_wavefunction[0] = 1.0;
         some_wavefunction[1] = 2.0;
         z[0] = 1.0;

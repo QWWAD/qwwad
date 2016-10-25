@@ -13,22 +13,11 @@ TEST(SchroedingerSolverTridiag, parabolicInfTest)
     const size_t nz    = 500;
     const double nst   = 50;
 
-    std::valarray<double> m(nz);
-    std::valarray<double> V(nz);
-    std::valarray<double> z(nz);
-
-    // Note that the well is actually bounded by the
-    // box boundary conditions, so the walls lie at the points OUTSIDE the
-    // list of z-values
-    const double dz = L/(nz+1);
-
     // Create an infinite well (just rely on the box boundary)
-    for(unsigned int iz = 0; iz < nz; ++iz)
-    {
-        z[iz] = dz*(iz+1);
-        m[iz] = 1;
-        V[iz] = 0.0;
-    }
+    arma::vec m = arma::ones(nz);
+    arma::vec V = arma::zeros(nz);
+    const auto dz = L/(nz+1);
+    arma::vec z = arma::linspace(dz, L-dz, nz);
     EXPECT_DOUBLE_EQ(L-dz,z[z.size()-1]);
 
     SchroedingerSolverTridiag se(m, V, z, nst);
@@ -46,12 +35,12 @@ TEST(SchroedingerSolverTridiag, parabolicInfTest)
         EXPECT_NEAR(E_expected, E, E_expected/100);
 
         // Check normalisation of state
-        const std::valarray<double> PD = solutions.at(ist).get_PD();
+        const auto PD = solutions.at(ist).get_PD();
         const double integral_norm = integral(PD,dz);
         EXPECT_NEAR(1.0, integral_norm, 1e-10);
 
         // Check expectation position (should be middle of well)
-        const std::valarray<double> z_expt_dz = PD*z;
+        const arma::vec z_expt_dz = PD%z;
         const double z_expt = integral(z_expt_dz, dz);
         EXPECT_NEAR(L/2.0, z_expt, 0.001*L/2.0);
 

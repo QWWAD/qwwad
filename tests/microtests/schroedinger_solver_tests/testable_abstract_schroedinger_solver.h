@@ -10,9 +10,9 @@ namespace QWWAD
 class TestableAbstractSchroedingerSolver : public SchroedingerSolver
 {
 public:
-    TestableAbstractSchroedingerSolver( std::valarray<double> const &V,
-                                        std::valarray<double> const &z,
-                                        unsigned int const           nst_max=0 ) :
+    TestableAbstractSchroedingerSolver(arma::vec const    &V,
+                                       arma::vec const    &z,
+                                       unsigned int const  nst_max=0 ) :
         SchroedingerSolver( V, z, nst_max )
     {}
 
