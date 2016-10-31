@@ -68,8 +68,8 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     states(Eigenstate::read_from_file(opt.get_energy_filename(),
                                       opt.get_wf_prefix(),
                                       opt.get_wf_ext())),
-    pop(states.size()),
-    nval(1, states.size())
+    pop(arma::zeros(states.size())),
+    nval(arma::ones<arma::uvec>(states.size()))
 {
     // Read population of each subband
     const auto population_file = opt.get_option<std::string>("populationfile").c_str();

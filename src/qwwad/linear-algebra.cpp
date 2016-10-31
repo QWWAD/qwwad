@@ -193,11 +193,11 @@ eigen_banded(double       AB[],
 /**
  * \brief Find solution to eigenvalue problem from LAPACK
  *
- * \param[in]  D     Array holding all diagonal elements of matrix
- * \param[in]  E     Array holding all sub-diag. elements of matrix
- * \param[in]  VL    Lowest value for eigenvalue search
- * \param[in]  VU    Highest value for eigenvalue search
- * \param[in]  n_max Max number of eigenvalues to find
+ * \param[in]  diag    Array holding all diagonal elements of matrix
+ * \param[in]  subdiag Array holding all sub-diag. elements of matrix
+ * \param[in]  VL      Lowest value for eigenvalue search
+ * \param[in]  VU      Highest value for eigenvalue search
+ * \param[in]  n_max   Max number of eigenvalues to find
  *
  * \details    Creates standard inputs for dstevx func. before
  *             executing to return results.  If n_max=0, then all
@@ -210,11 +210,23 @@ eigen_tridiag(arma::vec    &diag,
               double        VU,
               unsigned int  n_max)
 {
-    const int n = diag.size();
-    arma::Col<int>    ifail(n); // Failure bits for LAPACK
-    arma::vec         W(n);     // Temporary storage for eigenvalues
-    arma::vec         Z(n*n);   // Temp. storage for eigenvectors
-    int M; // Number of solutions found
+    const int N    = diag.size();
+    const int Nsub = subdiag.size();
+
+    if (Nsub != N-1)
+    {
+        std::ostringstream oss;
+        oss << "Size mismatch for tridiagonal elements: "
+            << "(subdiagonal = " << Nsub << "; "
+            << "diagonal = " << N << ")";
+
+        throw std::runtime_error(oss.str());
+    }
+
+    arma::Col<int> ifail = arma::zeros<arma::Col<int>>(N); // Failure bits for LAPACK
+    arma::vec W = arma::zeros(N);     // Temporary storage for eigenvalues
+    arma::mat Z = arma::zeros(N,N);   // Temp. storage for eigenvectors
+    int M = 0; // Number of solutions found
 
     // Specify range of solutions by value, unless n_max is given
     char range = (n_max==0) ? 'V' : 'I';
@@ -232,28 +244,44 @@ eigen_tridiag(arma::vec    &diag,
     char jobz='V'; // Task descriptor for LAPACK
     int  IL=1;
     int  IU=n_max;
-    arma::vec  work(5*n); // LAPACK workspace
-    arma::Col<int> iwork(5*n);
+    arma::vec  work = arma::zeros(5*N); // LAPACK workspace
+    arma::Col<int> iwork = arma::zeros<arma::Col<int>>(5*N);
 
     // Find error tolerance
     char retval='S'; // Return value for LAPACK
     double abstol = 2.0 * dlamch_(&retval); // Error tolerance
 
     // Run LAPACK function to solve eigenproblem
-    dstevx_(&jobz, &range, &n, &diag[0], &subdiag[0], &VL, &VU, &IL, &IU, &abstol, &M, &W[0],
-            &Z[0], &n, &work[0], &iwork[0], &ifail[0], &info);
+    dstevx_(&jobz,
+            &range,
+            &N,
+            diag.memptr(),
+            subdiag.memptr(),
+            &VL, &VU,
+            &IL, &IU,
+            &abstol,
+            &M,
+            W.memptr(),
+            Z.memptr(),
+            &N,
+            work.memptr(),
+            iwork.memptr(),
+            ifail.memptr(),
+            &info);
 
     if(info!=0)
-        throw std::runtime_error("Could not solve "
-                "eigenproblem. Check all input parameters!");
+    {
+        std::ostringstream oss;
+        oss << "Could not solve eigenvalue problem. LAPACK error code: "
+            << info;
+        throw std::runtime_error(oss.str());
+    }
 
     // Extract solutions from LAPACK output
-    std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );
+    std::vector<EVP_solution<double>> solutions(M, EVP_solution<double>(N));
 
     for(int i = 0; i < M; i++){
-        const std::vector<double> psi(Z.begin() + n*i,
-                                      Z.begin() + n*(i+1));
-        solutions[i] = EVP_solution<double>(W[i], psi);		
+        solutions[i] = EVP_solution<double>(W(i), Z.col(i));
     }
 
     return solutions;

@@ -26,8 +26,8 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
                                                      const decltype(_z) &z,
                                                      const unsigned int  nst_max) :
     SchroedingerSolver(V,z,nst_max),
-    diag(arma::vec(z.size())),
-    sub(arma::vec(z.size()-1))
+    diag(arma::zeros(z.size())),
+    sub(arma::zeros(z.size()-1))
 {
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
