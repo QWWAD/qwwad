@@ -34,7 +34,8 @@ Options configure_options(int argc, char* argv[])
                                                  "electrons, heavy holes or light holes respectively.");
     opt.add_option<double>("vcb",          0.00, "Band-edge potential [eV]");
     opt.add_option<double>("alpha",        0.00, "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_option<double>("Ecutoff",            "Cut-off energy for solutions [meV]");
+    opt.add_option<double>("Emin",               "Lower cut-off energy for solutions [meV]");
+    opt.add_option<double>("Emax",               "Upper cut-off energy for solutions [meV]");
     opt.add_option<double>("barrierwidth", 0.00, "Width of barriers [angstrom]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
@@ -58,9 +59,15 @@ int main(int argc, char *argv[])
     SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
     se.set_padding_width(Lb);
 
-    // Set cut-off energy if desired
-    if(opt.get_argument_known("Ecutoff"))
-        se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
+    // Set cut-off energies if desired
+    if(opt.get_argument_known("Emin"))
+    {
+        se.set_E_min(opt.get_option<double>("Emin") * e/1000);
+    }
+    if(opt.get_argument_known("Emax"))
+    {
+        se.set_E_max(opt.get_option<double>("Emax") * e/1000);
+    }
 
     const auto solutions = se.get_solutions(true);
 

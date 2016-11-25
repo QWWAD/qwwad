@@ -27,8 +27,10 @@ protected:
     unsigned int _nst_max; ///< Maximum number of states to find
 
     // Options for specifying cut-off energy
-    double _E_cutoff;     ///< Cut-off energy for solutions
-    bool   _E_cutoff_set; ///< True if a cut-off energy has been set
+    double _E_min;        ///< Lower cut-off energy for solutions [J]
+    double _E_max;        ///< Upper cut-off energy for solutions [J]
+    bool   _E_min_set;    ///< True if lower cut-off energy has been set
+    bool   _E_max_set;    ///< True if upper cut-off energy has been set
 
     ///< Set of solutions to the Schroedinger equation
     std::vector<Eigenstate> _solutions;
@@ -53,14 +55,16 @@ public:
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() {};
 
-    void set_E_cutoff(const double E);
+    void set_E_min(const double E_min);
+    void set_E_max(const double E_max);
 
     /**
      * \brief Turn off filtering of solutions by energy
      */
     inline void unset_E_cutoff()
     {
-        _E_cutoff_set = false;
+        _E_min_set = false;
+        _E_max_set = false;
     }
 };
 } // namespace QWWAD

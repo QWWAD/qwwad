@@ -196,8 +196,17 @@ std::vector<Eigenstate> SchroedingerSolverDonor::get_solutions_chi(const bool co
         // Delete any states that are out of the desired energy range
         // Ideally, sub-classes should never compute anything outside this
         // range!
-        while(_E_cutoff_set && !_solutions_chi.empty() && gsl_fcmp(_solutions_chi.back().get_energy(), _E_cutoff, e*1e-12) == 1)
-            _solutions_chi.pop_back();
+        for(auto it = _solutions_chi.begin(); it != _solutions_chi.end(); ++it)
+        {
+            if (_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) == 1)
+            {
+                _solutions_chi.erase(it);
+            }
+            else if (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)
+            {
+                _solutions_chi.erase(it);
+            }
+        }
     }
 
     if(convert_to_meV)

@@ -70,8 +70,10 @@ void SchroedingerSolverInfWell::calculate()
             E = gsl_pow_2(pi*hBar*is/_L)/(2*_me) + _V;
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
+        {
             break;
+        }
 
         arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
@@ -83,7 +85,11 @@ void SchroedingerSolverInfWell::calculate()
                 psi[iz]=sqrt(2/_L)*sin(is*pi*(_z[iz]-_Lb)/_L); // Wavefunction [m^{-0.5}]
         }
 
-        _solutions.push_back(Eigenstate(E, _z, psi));
+        // Don't store the solution if it's below the minimum energy
+        if(!(_E_min_set && gsl_fcmp(E, _E_min, e*1e-12) == -1))
+        {
+            _solutions.push_back(Eigenstate(E, _z, psi));
+        }
     }
 }
     

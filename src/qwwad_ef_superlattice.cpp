@@ -59,8 +59,10 @@ int main(int argc,char *argv[])
     SchroedingerSolverKronigPenney se(a, b, V, m_w, m_b, k, N, 4, nst);
 
     // Set cut-off energy if desired
-    if(opt.get_argument_known("Ecutoff"))
-        se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
+    if(opt.get_argument_known("Emax"))
+    {
+        se.set_E_max(opt.get_option<double>("Emax") * e/1000);
+    }
 
     // Dump to file
     char energy_filename[9];

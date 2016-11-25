@@ -149,6 +149,9 @@ void PoissonSolver::factorise_zerofield()
             _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
         }
     }
+
+    // Factorise matrix
+    factorise_tridiag_LDL_T(_diag, _sub_diag, _D_diag, _L_sub);
 }
 
 /**
@@ -163,7 +166,9 @@ arma::vec PoissonSolver::solve(const arma::vec &rho) const
     const auto n = _eps.size();
 
     if (rho.size() != n)
+    {
         throw std::runtime_error("Permittivity and charge density arrays have different sizes");
+    }
 
     auto rhs = rho; // Set right-hand-side to the charge-density
     auto phi = rhs; // Array in which to output the potential [J]
@@ -197,7 +202,9 @@ arma::vec PoissonSolver::solve(const arma::vec &rho,
     const auto n = _eps.size();
 
     if (rho.size() != n)
+    {
         throw std::runtime_error("Permittivity and charge density arrays have different sizes");
+    }
 
     auto rhs = rho; // Set right-hand-side to the charge-density
 
@@ -224,8 +231,9 @@ arma::vec PoissonSolver::solve(const arma::vec &rho,
 
     // TODO: This is a horrible hack... for some reason, there's an unwanted factor of 2 in the
     // calculation
-    phi /= 2;
+    //phi /= 2;
 
+    phi = phi - phi(0);
     return phi;
 }
 

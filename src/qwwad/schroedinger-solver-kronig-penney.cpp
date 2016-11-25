@@ -261,11 +261,18 @@ void SchroedingerSolverKronigPenney::calculate()
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
+        {
             break;
+        }
 
         const auto psi = get_wavefunction(E);
-        _solutions.push_back(Eigenstate(E, _z, psi));
+
+        // Don't store the solution if it's below the minimum energy
+        if(!(_E_min_set && gsl_fcmp(E, _E_min, e*1e-12) == -1))
+        {
+            _solutions.push_back(Eigenstate(E, _z, psi));
+        }
     }
 
     gsl_root_fsolver_free(solver);

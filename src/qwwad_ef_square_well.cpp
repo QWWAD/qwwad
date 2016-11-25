@@ -45,7 +45,8 @@ Options configure_options(int argc, char* argv[])
     opt.add_option<size_t>("nz,N",             1000, "Number of spatial points for output file.");
     opt.add_option<size_t>("nst,s",              1,  "Number of states to find");
     opt.add_option<double>("barrierpotential",  100, "Barrier potential [meV]");
-    opt.add_option<double>("Ecutoff",                "Cut-off energy for solutions [meV]");
+    opt.add_option<double>("Emin",                   "Lower cut-off energy for solutions [meV]");
+    opt.add_option<double>("Emax",                   "Upper cut-off energy for solutions [meV]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -66,9 +67,15 @@ int main(int argc,char *argv[])
 
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
-    // Set cut-off energy if desired
-    if(opt.get_argument_known("E-cutoff"))
-        se.set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
+    // Set cut-off energies if desired
+    if(opt.get_argument_known("Emin"))
+    {
+        se.set_E_min(opt.get_option<double>("Emin") * e/1000);
+    }
+    if(opt.get_argument_known("Emax"))
+    {
+        se.set_E_max(opt.get_option<double>("Emax") * e/1000);
+    }
 
     if(opt.get_option<bool>("outputequations"))
     {

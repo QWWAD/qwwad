@@ -58,11 +58,15 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
  */
 void SchroedingerSolverTridiag::calculate()
 {
-    const auto EVP_solutions =
-        _E_cutoff_set ?
-        eigen_tridiag(diag, sub, _V.min(), _E_cutoff)
-        :
-        eigen_tridiag(diag, sub, _V.min(), _V.max(), _nst_max);
+    // Get limits for search
+    const double E_min = _E_min_set ? _E_min : _V.min();
+    const double E_max = _E_max_set ? _E_max : _V.max();
+
+    // Set number of states only if energy limits haven't been specified
+    // Note that '0' means that we should find all states in range
+    const double nst_max = (_E_min_set || _E_max_set) ? 0 : _nst_max;
+
+    const auto EVP_solutions = eigen_tridiag(diag, sub, E_min, E_max, nst_max);
 
     _solutions.clear();
 

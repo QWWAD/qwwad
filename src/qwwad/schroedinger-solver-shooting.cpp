@@ -102,8 +102,10 @@ void SchroedingerSolverShooting::calculate()
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_cutoff_set && gsl_fcmp(E, _E_cutoff, e*1e-12) == 1)
+        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
+        {
             break;
+        }
 
         arma::vec psi(_z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);

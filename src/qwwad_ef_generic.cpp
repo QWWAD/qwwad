@@ -83,7 +83,8 @@ class FwfOptions : public WfOptions {
         {
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!
-            add_option<double>     ("Ecutoff",               "Cut-off energy for solutions [meV]");
+            add_option<double>     ("Emin",                  "Lower cut-off energy for solutions [meV]");
+            add_option<double>     ("Emax",                  "Upper cut-off energy for solutions [meV]");
             add_option<double>     ("mass",                  "The constant effective mass to use across the entire structure. "
                                                              "If unspecified, the mass profile will be read from file.");
             add_option<double>     ("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
@@ -264,9 +265,16 @@ int main(int argc, char *argv[]){
                                                 nst_max);
     }
 
-    // Set cut-off energy if desired
-    if(opt.get_argument_known("Ecutoff"))
-        se->set_E_cutoff(opt.get_option<double>("Ecutoff") * e/1000);
+    // Set cut-off energies if desired
+    if(opt.get_argument_known("Emax"))
+    {
+        se->set_E_max(opt.get_option<double>("Emax") * e/1000);
+    }
+
+    if(opt.get_argument_known("Emin"))
+    {
+        se->set_E_min(opt.get_option<double>("Emin") * e/1000);
+    }
 
     // Output a single trial wavefunction
     if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))

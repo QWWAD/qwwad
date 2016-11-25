@@ -31,8 +31,17 @@ std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_
         // Delete any states that are out of the desired energy range
         // Ideally, sub-classes should never compute anything outside this
         // range!
-        while(_E_cutoff_set && !_solutions.empty() && gsl_fcmp(_solutions.back().get_energy(), _E_cutoff, e*1e-12) == 1)
-            _solutions.pop_back();
+        for(auto it = _solutions.begin(); it != _solutions.end(); ++it)
+        {
+            if (_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) == 1)
+            {
+                _solutions.erase(it);
+            }
+            else if (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)
+            {
+                _solutions.erase(it);
+            }
+        }
     }
 
     if(convert_to_meV)
@@ -68,27 +77,57 @@ SchroedingerSolver::SchroedingerSolver(const decltype(_V)       &V,
     _V(V),
     _z(z),
     _nst_max(nst_max),
-    _E_cutoff(0.0),
-    _E_cutoff_set(false),
+    _E_min(0.0),
+    _E_max(0.0),
+    _E_min_set(false),
+    _E_max_set(false),
     _solutions()
 {}
 
 /**
- * \brief Set the cut-off energy
+ * \brief Set the lower cut-off energy
  *
- * \param[in] E The new cut-off energy
+ * \param[in] E_min The new lower cut-off energy
  */
-void SchroedingerSolver::set_E_cutoff(const double E)
+void SchroedingerSolver::set_E_min(const double E_min)
 {
-    if(gsl_fcmp(_V.min(), E, _V.min()/1e6) != -1)
+    // If the upper limit has been set, check that we're not
+    // above it
+    if(_E_max_set)
     {
-        std::ostringstream oss;
-        oss << "Invalid cut-off energy: " << E * 1000/e << " meV is lower than band-edge potential: " << _V.min() * 1000/e << " meV.";
-        throw std::domain_error(oss.str());
+        if(gsl_fcmp(_E_max, E_min, _E_max/1e6) != 1)
+        {
+            std::ostringstream oss;
+            oss << "Desired lower cut-off energy: " << E_min * 1000/e << " meV is greater than upper cut-off energy: " << _E_max * 1000/e << " meV.";
+            throw std::domain_error(oss.str());
+        }
     }
 
-    _E_cutoff = E;
-    _E_cutoff_set = true;
+    _E_min = E_min;
+    _E_min_set = true;
+}
+
+/**
+ * \brief Set the upper cut-off energy
+ *
+ * \param[in] E_max The new upper cut-off energy
+ */
+void SchroedingerSolver::set_E_max(const double E_max)
+{
+    // If the lower limit has been set, check that we're not
+    // below that
+    if(_E_min_set)
+    {
+        if(gsl_fcmp(_E_min, E_max, _E_min/1e6) != -1)
+        {
+            std::ostringstream oss;
+            oss << "Desired upper cut-off energy: " << E_max * 1000/e << " meV is less than lower cut-off energy: " << _E_min * 1000/e << " meV.";
+            throw std::domain_error(oss.str());
+        }
+    }
+
+    _E_max = E_max;
+    _E_max_set = true;
 }
 } // namespace QWWAD
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
