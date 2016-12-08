@@ -35,6 +35,7 @@ WfOptions configure_options(int argc, char* argv[])
     opt.add_option<std::string>("plotfile",           "vwf.r", "Name of file to which plottable data will be written.");
     opt.add_option<size_t>     ("nstmax",                10,   "Maximum number of states to plot.");
     opt.add_option<std::string>("style",                "pd",  "Style of plot: 'pd' = probability density, 'wf' = wave functions.");
+    opt.add_option<bool>       ("scalebynstates",              "Scale the wavefunctions by the number of states");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -55,15 +56,27 @@ WfOptions configure_options(int argc, char* argv[])
  *          number of states and the maximum probability density.
  */
 static double scaling_factor(const std::vector<Eigenstate> &states,
-                             const arma::vec               &V)
+                             const arma::vec               &V,
+                             const bool                     scalebynstates)
 {
-    double Vrange = V.max() - V.min();
+    double scale = V.max() - V.min();
 
     // If the potential range is zero, use the state energy range instead
-    if (Vrange <= 0)
-        Vrange = states[states.size()-1].get_energy() - states[0].get_energy();
+    if (scale <= 0)
+    {
+        scale = states[states.size()-1].get_energy() - states[0].get_energy();
+    }
 
-    return Vrange/(Eigenstate::psi_squared_max(states)*states.size());
+    // Scale by the maximum probability density
+    scale /= (Eigenstate::psi_squared_max(states) * 5);
+
+    // Scale by number of states if desired
+    if(scalebynstates)
+    {
+        scale /= states.size();
+    }
+
+    return scale;
 }
 
 /**
@@ -77,7 +90,8 @@ static void output_plot(const WfOptions               &opt,
                         const arma::vec               &z)
 {
     const auto dz    = z[1] - z[0];
-    const auto scale = scaling_factor(states, V);
+    const auto scalebynstates = opt.get_option<bool>("scalebynstates");
+    const auto scale = scaling_factor(states, V, scalebynstates);
     const auto nz    = V.size();
     const auto plot_file = opt.get_option<std::string>("plotfile");
 
