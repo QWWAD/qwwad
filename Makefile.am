@@ -49,6 +49,7 @@ bin_PROGRAMS = \
 		qwwad_ef_infinite_wire         \
 		qwwad_ef_parabolic_well        \
 		qwwad_ef_plot                  \
+		qwwad_ef_plot_3d               \
 		qwwad_ef_poeschl_teller        \
 		qwwad_ef_spherical_dot         \
 		qwwad_ef_spherical_dot_wf      \
@@ -273,6 +274,7 @@ qwwad_thermal_1d_SOURCES = src/qwwad_thermal_1d.cpp
 qwwad_thermal_rc_SOURCES = src/qwwad_thermal_rc.cpp
 qwwad_tx_single_barrier_SOURCES  = src/qwwad_tx_single_barrier.cpp
 qwwad_ef_plot_SOURCES = src/qwwad_ef_plot.cpp
+qwwad_ef_plot_3d_SOURCES = src/qwwad_ef_plot_3d.cpp
 
 # Build rule for installing manual pages
 dist_man1_MANS = \
