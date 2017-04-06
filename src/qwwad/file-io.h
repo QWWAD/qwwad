@@ -383,14 +383,16 @@ void read_table(const Tstring    fname,
 template<class Tstring,
          template<typename, typename...> class Tcontainerx,
          template<typename, typename...> class Tcontainery,
-         class Tx,
-         class Ty
+         typename    Tx,
+         typename... TxParams,
+         typename    Ty,
+         typename... TyParams
         >
-void write_table(const Tstring          fname,
-                 const Tcontainerx<Tx> &x,
-                 const Tcontainery<Ty> &y,
-                 const bool             with_num = false,
-                 const size_t           precision = 12)
+void write_table(const Tstring                       fname,
+                 const Tcontainerx<Tx, TxParams...> &x,
+                 const Tcontainery<Ty, TyParams...> &y,
+                 const bool                          with_num = false,
+                 const size_t                        precision = 12)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
@@ -510,15 +512,20 @@ template<class Tstring,
          template<typename, typename...> class Tcontainery,
          template<typename, typename...> class Tcontainerz,
          template<typename, typename...> class Tcontaineru,
-         class Tx,
-         class Ty,
-         class Tz,
-         class Tu>
-void read_table(const Tstring    fname,
-                Tcontainerx<Tx>& x,
-                Tcontainery<Ty>& y,
-                Tcontainerz<Tz>& z,
-                Tcontaineru<Tu>& u)
+         typename    Tx,
+         typename... TxParams,
+         typename    Ty,
+         typename... TyParams,
+         typename    Tz,
+         typename... TzParams,
+         typename    Tu,
+         typename... TuParams
+        >
+void read_table(const Tstring                 fname,
+                Tcontainerx<Tx, TxParams...> &x,
+                Tcontainery<Ty, TyParams...> &y,
+                Tcontainerz<Tz, TzParams...> &z,
+                Tcontaineru<Tu, TuParams...> &u)
 {
     std::ifstream stream(fname);
 
@@ -589,14 +596,18 @@ template <class Tstring,
           template<typename, typename...> class Tcontainerx,
           template<typename, typename...> class Tcontainery,
           template<typename, typename...> class Tcontainerz,
-          class Tx,
-          class Ty,
-          class Tz>
-void write_table(const Tstring          fname,
-                 const Tcontainerx<Tx> &x,
-                 const Tcontainery<Ty> &y,
-                 const Tcontainerz<Tz> &z,
-                 const bool             with_num = false)
+          typename    Tx,
+          typename... TxParams,
+          typename    Ty,
+          typename... TyParams,
+          typename    Tz,
+          typename... TzParams
+         >
+void write_table(const Tstring                       fname,
+                 const Tcontainerx<Tx, TxParams...> &x,
+                 const Tcontainery<Ty, TyParams...> &y,
+                 const Tcontainerz<Tz, TzParams...> &z,
+                 const bool                          with_num = false)
 {
     std::ofstream stream(fname);
     const size_t nx = x.size();
