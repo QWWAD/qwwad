@@ -56,4 +56,4 @@ set( qwwad_h
     )
 
 add_library( qwwad ${qwwad_src} )
-target_link_libraries( qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} )
+target_link_libraries( qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} ${ARMADILLO_LIBRARIES} )
