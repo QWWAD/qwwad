@@ -36,6 +36,7 @@ if( VERBOSE )
 endif()
 
 add_subdirectory( src )
+add_subdirectory( doc )
 add_subdirectory( examples )
 
 setup_make_check()
