@@ -8,24 +8,21 @@ set( wf_options wf_options.cpp wf_options.h )
 
 add_subdirectory( qwwad )
 
-add_executable( qwwad_ef_donor_generic
-                qwwad_ef_donor_generic.cpp )
+# Compile all the QWWAD programs
+add_executable( qwwad_ef_donor_generic  qwwad_ef_donor_generic.cpp )
+add_executable( qwwad_ef_dispersion     qwwad_ef_dispersion.cpp )
+add_executable( qwwad_ef_infinite_well  qwwad_ef_infinite_well.cpp )
+add_executable( qwwad_density_of_states qwwad_density_of_states.cpp )
 
-target_link_libraries( qwwad_ef_donor_generic qwwad )
-
-add_executable( qwwad_ef_dispersion
-                qwwad_ef_dispersion.cpp )
-
-target_link_libraries( qwwad_ef_dispersion qwwad )
-
-add_executable( qwwad_density_of_states
-                qwwad_density_of_states.cpp )
-
+# Link QWWAD programs to the QWWAD library
+target_link_libraries( qwwad_ef_donor_generic  qwwad )
+target_link_libraries( qwwad_ef_dispersion     qwwad )
+target_link_libraries( qwwad_ef_infinite_well  qwwad )
 target_link_libraries( qwwad_density_of_states qwwad )
 
-install( PROGRAMS
-           ${CMAKE_BINARY_DIR}/src/qwwad_ef_dispersion
-           ${CMAKE_BINARY_DIR}/src/qwwad_ef_donor_generic
-           ${CMAKE_BINARY_DIR}/src/qwwad_density_of_states
-         DESTINATION
-           ${CMAKE_INSTALL_PREFIX}/bin )
+install( TARGETS
+           qwwad_ef_dispersion
+           qwwad_ef_donor_generic
+	   qwwad_ef_infinite_well
+           qwwad_density_of_states
+         RUNTIME DESTINATION bin )
