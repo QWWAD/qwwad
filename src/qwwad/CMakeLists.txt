@@ -23,6 +23,7 @@ set( qwwad_src
         schroedinger-solver-finite-well.cpp
         schroedinger-solver-full.cpp
         schroedinger-solver-infinite-well.cpp
+        schroedinger-solver-kronig-penney.cpp
         schroedinger-solver-taylor.cpp
         schroedinger-solver-tridiagonal.cpp
 	wf_options.cpp
@@ -47,6 +48,7 @@ set( qwwad_h
         schroedinger-solver-donor-2D.h
         schroedinger-solver-donor-3D.h
         schroedinger-solver-donor-variable.h
+	schroedinger-solver-kronig-penney.h
         qwwad-schroedinger-finite-well.h
         qwwad-schroedinger-full.h
         qwwad-schroedinger-infinite-well.h

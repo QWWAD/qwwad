@@ -159,7 +159,7 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
     rhs(2) = 0;
     rhs(3) = 1;
 
-    arma::cx_vec coeffs = arma::solve(M, rhs, "std");
+    arma::cx_vec coeffs = arma::solve(M, rhs);
 
     const auto A = coeffs(0);
     const auto B = coeffs(1);
