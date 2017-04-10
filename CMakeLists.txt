@@ -1,4 +1,7 @@
 cmake_minimum_required( VERSION 2.8.11 )
+
+include(CMakeScripts/ConfigEnv.cmake)
+
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 
 project( "Quantum Wells, Wires and Dots" )
@@ -33,6 +36,7 @@ if( VERBOSE )
 endif()
 
 add_subdirectory( src )
+add_subdirectory( examples )
 
 setup_make_check()
 add_subdirectory( gtest EXCLUDE_FROM_ALL )
