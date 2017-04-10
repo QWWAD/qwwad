@@ -4,6 +4,9 @@ include(CMakeScripts/ConfigEnv.cmake)
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 
+# set a default build configuration
+set(CMAKE_BUILD_TYPE_INIT "Release")
+
 project( "Quantum Wells, Wires and Dots" )
 set( QWWAD_VERSION 1.5+devel )
 set( QWWAD_URL "https://launchpad.net/qwwad" )
@@ -13,7 +16,7 @@ option( VERBOSE "Show information about CMake build configuration." )
 
 # Enable C++11 builds
 # TODO: With CMake > 3.1, can use target_compile_features() to do this automatically
-set(CMAKE_CXX_FLAGS "-std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 find_package( LAPACK REQUIRED )
 find_package( Armadillo 4.000 REQUIRED )

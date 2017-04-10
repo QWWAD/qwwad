@@ -6,6 +6,8 @@ include_directories( ${ARMADILLO_INCLUDE_DIRS} ${GSL_INCLUDE_DIR} )
 
 set( wf_options wf_options.cpp wf_options.h )
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
+
 add_subdirectory( qwwad )
 
 # A convenience function for adding an executable program
