@@ -106,18 +106,18 @@ void Options::print_version_then_exit(char* prog_name) const
  *          Command-line arguments are given after the name of the program,
  *          and may use either the short form e.g.
  *          \code
- *            efiw -L5
+ *            qwwad_ef_infinite_well -L100
  *          \endcode
  *          or the long form e.g.
  *          \code
- *            efiw --length=5
+ *            qwwad_ef_infinite_well --wellwidth 100
  *          \endcode
  *
  *          The equivalent configuration file items may be specified using the 
  *          format
  *          <tt>key = \<value\></tt>, for example
  *          \code
- *            length = 5
+ *            wellwidth = 100
  *          \endcode
  *          The default configuration file is called \c qwwad.cfg but the name
  *          can be overridden using the \c --config command-line option.
@@ -125,7 +125,7 @@ void Options::print_version_then_exit(char* prog_name) const
  *          The environment variables must be in block-capitals, and must begin 
  *          with the prefix \c QWWAD_ for example
  *          \code
- *            export QWWAD_LENGTH=5
+ *            export QWWAD_WELLWIDTH=100
  *          \endcode
  *
  * \todo The environment-parser will currently accept \a all known options, 
@@ -233,16 +233,7 @@ std::string Options::name_mapper(std::string environment_variable) const
         // See if this exists in the configuration options
         try
         {
-            // Conditional build allows case-insensitive matching on systems with
-            // Boost >= 1.42.  This is currently needed to support CentOS 6
-            //
-            // TODO: Get rid of this and bump to a hard Boost >= 1.42 dependency
-            // when all supported distros provide it.
-            option_name = config_options.find(suffix, false
-#if HAVE_BOOST_CASE_INSENSITIVE_MATCHING
-                                                    , true
-#endif
-                                             ).long_name();
+            option_name = config_options.find(suffix, false, true).long_name();
         }
         catch(std::exception &e)
         {}

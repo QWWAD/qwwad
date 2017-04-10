@@ -17,7 +17,7 @@ set(CMAKE_CXX_FLAGS "-std=c++11")
 
 find_package( LAPACK REQUIRED )
 find_package( Armadillo 4.000 REQUIRED )
-find_package( Boost 1.35 COMPONENTS program_options REQUIRED )
+find_package( Boost 1.42 COMPONENTS program_options REQUIRED )
 find_package( GSL REQUIRED )
 include( CMakeScripts/make_check_macros.cmake )
 
