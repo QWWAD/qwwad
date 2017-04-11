@@ -3,6 +3,7 @@ if( VERBOSE )
 endif()
 
 set( qwwad_src
+	data-checker.cpp
         donor-energy-minimiser.cpp
         dos-functions.cpp
         double-barrier.cpp
@@ -30,6 +31,7 @@ set( qwwad_src
     )
 
 set( qwwad_h
+	data-checker.h
         donor-energy-minimiser.h
         dos-functions.h
         double-barrier.h
@@ -41,21 +43,34 @@ set( qwwad_h
         maths-helpers.h
         options.h
         subband.h
-        qwwad-constants.h
+        constants.h
         mesh.h
         schroedinger-solver.h
         schroedinger-solver-donor.h
         schroedinger-solver-donor-2D.h
         schroedinger-solver-donor-3D.h
         schroedinger-solver-donor-variable.h
+        schroedinger-solver-finite-well.h
+        schroedinger-solver-full.h
+        schroedinger-solver-infinite-well.h
 	schroedinger-solver-kronig-penney.h
-        qwwad-schroedinger-finite-well.h
-        qwwad-schroedinger-full.h
-        qwwad-schroedinger-infinite-well.h
-        qwwad-schroedinger-taylor.h
-        qwwad-schroedinger-tridiagonal.h
+        schroedinger-solver-taylor.h
+        schroedinger-solver-tridiagonal.h
 	wf_options.h
     )
 
-add_library( qwwad ${qwwad_src} )
+add_library( qwwad SHARED ${qwwad_src} ${qwwad_h} )
+set_target_properties( qwwad
+	               PROPERTIES
+		       SOVERSION 1
+		       VERSION   ${QWWAD_VERSION} )
 target_link_libraries( qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} ${ARMADILLO_LIBRARIES} )
+
+# Install the shared QWWAD library
+install(TARGETS qwwad
+	ARCHIVE DESTINATION lib
+	LIBRARY DESTINATION lib)
+
+# Install the QWWAD API headers in the "qwwad" subfolder
+install(FILES ${qwwad_h}
+	DESTINATION ${INSTALL_INC_DIR}/qwwad)
