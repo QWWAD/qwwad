@@ -7,29 +7,55 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 # set a default build configuration
 set(CMAKE_BUILD_TYPE_INIT "Release")
 
+# Define project metadata
 project( "Quantum Wells, Wires and Dots" )
 set( QWWAD_VERSION 1.5+devel )
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 
+# Define user-configurable build options
 option( VERBOSE "Show information about CMake build configuration." )
 
 # Enable C++11 builds
 # TODO: With CMake > 3.1, can use target_compile_features() to do this automatically
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-find_package( LAPACK REQUIRED )
-find_package( Armadillo 4.000 REQUIRED )
-find_package( Boost 1.42 COMPONENTS program_options REQUIRED )
+# Define minimum versions of dependencies here
+set(ARMADILLO_REQUIRED_VERSION 4.000)
+set(BOOST_REQUIRED_VERSION     1.42)
+set(LIBXMLPP_REQUIRED_VERSION  2.30)
+
+# Check that required libraries are available
+find_package( Armadillo ${ARMADILLO_REQUIRED_VERSION} REQUIRED )
+find_package( Boost ${BOOST_REQUIRED_VERSION}
+	      COMPONENTS program_options
+	      REQUIRED )
 find_package( GSL REQUIRED )
+find_package( LAPACK REQUIRED )
+
 include( CMakeScripts/make_check_macros.cmake )
 
+# Define useful directory variables
+set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Installation directory for libraries")
+set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Installation directory for headers")
+
+# Create and install pkg-config file to help 3rd party programs discover the QWWAD
+# library
+if(VERBOSE)
+    message("Generating pkg-config file")
+endif()
+
+configure_file( ${CMAKE_SOURCE_DIR}/qwwad.pc.cmake ${CMAKE_BINARY_DIR}/qwwad.pc @ONLY )
+install(FILES ${CMAKE_BINARY_DIR}/qwwad.pc DESTINATION share/pkgconfig)
+
+# Create a shared header with platform-specific config data.  This is only used during
+# building, and isn't intended to be installed
 if( VERBOSE )
     message( "Generating config.h" )
 endif()
 
-
 configure_file( ${CMAKE_SOURCE_DIR}/config.h.cmake ${CMAKE_BINARY_DIR}/config.h )
+
 include_directories( ${CMAKE_BINARY_DIR} )
 
 add_definitions( -DHAVE_CONFIG_H )
