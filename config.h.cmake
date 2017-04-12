@@ -1,4 +1,4 @@
 #define PACKAGE_NAME      "${PROJECT_NAME}"
-#define PACKAGE_VERSION   "${QWWAD_VERSION}"
+#define PACKAGE_VERSION   "${qwwad_VERSION}"
 #define PACKAGE_URL       "${QWWAD_URL}"
 #define PACKAGE_BUGREPORT "${QWWAD_BUGREPORT}"

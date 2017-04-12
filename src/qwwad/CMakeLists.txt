@@ -59,15 +59,17 @@ set( qwwad_h
 	wf_options.h
     )
 
-add_library( qwwad SHARED ${qwwad_src} ${qwwad_h} )
-set_target_properties( qwwad
+add_library( libqwwad SHARED ${qwwad_src} ${qwwad_h} )
+set_target_properties( libqwwad
 	               PROPERTIES
-		       SOVERSION 1
-		       VERSION   ${QWWAD_VERSION} )
-target_link_libraries( qwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} ${ARMADILLO_LIBRARIES} )
+		       OUTPUT_NAME ${PROJECT_NAME}
+		       SOVERSION   1
+		       VERSION     ${qwwad_VERSION}
+		     )
+target_link_libraries( libqwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} ${ARMADILLO_LIBRARIES} )
 
 # Install the shared QWWAD library
-install(TARGETS qwwad
+install(TARGETS libqwwad
 	ARCHIVE DESTINATION lib
 	LIBRARY DESTINATION lib)
 

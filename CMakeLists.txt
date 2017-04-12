@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 2.8.11 )
+cmake_minimum_required( VERSION 3.0 )
 
 include(CMakeScripts/ConfigEnv.cmake)
 
@@ -7,9 +7,17 @@ list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
 # set a default build configuration
 set(CMAKE_BUILD_TYPE_INIT "Release")
 
+# Allow the version to be set in the project command
+cmake_policy(SET CMP0048 NEW)
+
 # Define project metadata
-project( "Quantum Wells, Wires and Dots" )
-set( QWWAD_VERSION 1.5+devel )
+# Use even minor-version numbers (e.g., 1.6.x) for development versions
+# Use odd  minor-version numbers (e.g., 1.7.x) for "stable" releases
+project(qwwad
+	VERSION 1.6
+       )
+
+message("-- Building ${PROJECT_NAME} version: ${qwwad_VERSION}")
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 
@@ -71,3 +79,19 @@ add_subdirectory( examples )
 setup_make_check()
 add_subdirectory( gtest EXCLUDE_FROM_ALL )
 add_subdirectory( tests EXCLUDE_FROM_ALL )
+
+# Configure tarball packaging
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Quantum wells, wires and dots")
+set(CPACK_PACKAGE_VENDOR              "Alexander Valavanis and Paul Harrison")
+set(CPACK_GENERATOR                   "TGZ")
+set(CPACK_SOURCE_GENERATOR            "TGZ")
+set(CPACK_PACKAGE_DESCRIPTION_FILE    "${CMAKE_SOURCE_DIR}/README")
+set(CPACK_RESOURCE_FILE_LICENSE       "${CMAKE_CURRENT_SOURCE_DIR}/COPYING")
+set(CPACK_PACKAGE_VERSION             "${qwwad_VERSION}")
+set(CPACK_PACKAGE_VERSION_MAJOR       "${qwwad_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR       "${qwwad_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_PATCH       "${qwwad_VERSION_PATCH}")
+set(CPACK_PACKAGE_NAME                "${PROJECT_NAME}")
+set(CPACK_SOURCE_PACKAGE_FILE_NAME    "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
+
+include(CPack)
