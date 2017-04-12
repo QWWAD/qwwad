@@ -72,6 +72,22 @@ if( VERBOSE )
     message( "Adding folders to build:" )
 endif()
 
+# A function to simplify building and installing QWWAD programs
+macro(add_qwwad_program program_name description)
+	list(APPEND qwwad_programs             ${program_name})
+	list(APPEND qwwad_program_descriptions ${description})
+endmacro(add_qwwad_program)
+
+# Define a list of all QWWAD programs, and their descriptions here
+add_qwwad_program(qwwad_density_of_states  "compute density of states in 1D, 2D and 3D systems")
+add_qwwad_program(qwwad_ef_dispersion      "compute the dispersion relation for a set of energy subbands")
+add_qwwad_program(qwwad_ef_donor_generic   "find eigenstates for a donor in a heterostructure (generic search)")
+add_qwwad_program(qwwad_ef_infinite_well   "compute eigenstates in an infinite quantum well")
+add_qwwad_program(qwwad_ef_plot            "translate wavefunction data into plottable form")
+add_qwwad_program(qwwad_ef_square_well     "compute eigenstates in a finite square quantum well")
+add_qwwad_program(qwwad_ef_superlattice    "compute eigenstates of a Kronig-Penney superlattice")
+add_qwwad_program(qwwad_fermi_distribution "find Fermi-Dirac distributions for a set of subbands")
+
 add_subdirectory( src )
 add_subdirectory( doc )
 add_subdirectory( examples )

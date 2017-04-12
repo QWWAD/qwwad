@@ -10,19 +10,11 @@ set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 add_subdirectory( qwwad )
 
-# A convenience function for adding an executable program
-function(add_qwwad_program progname)
-	set(_CPPSRC ${progname}.cpp)
-	add_executable(${progname} ${_CPPSRC})
-	target_link_libraries(${progname} libqwwad)
-	install(TARGETS ${progname} RUNTIME DESTINATION bin )
-endfunction()
-
-add_qwwad_program(qwwad_density_of_states)
-add_qwwad_program(qwwad_ef_dispersion)
-add_qwwad_program(qwwad_ef_donor_generic)
-add_qwwad_program(qwwad_ef_infinite_well)
-add_qwwad_program(qwwad_ef_plot)
-add_qwwad_program(qwwad_ef_square_well)
-add_qwwad_program(qwwad_ef_superlattice)
-add_qwwad_program(qwwad_fermi_distribution)
+# Loop through all the programs in the qwwad_program list
+# and specify their build, link & install "recipes"
+foreach(_prog IN LISTS qwwad_programs)
+	set(_CPPSRC ${_prog}.cpp)
+	add_executable(${_prog} ${_CPPSRC})
+	target_link_libraries(${_prog} libqwwad)
+	install(TARGETS ${_prog} RUNTIME DESTINATION bin )
+endforeach()
