@@ -14,7 +14,7 @@ add_subdirectory( qwwad )
 function(add_qwwad_program progname)
 	set(_CPPSRC ${progname}.cpp)
 	add_executable(${progname} ${_CPPSRC})
-	target_link_libraries(${progname} qwwad)
+	target_link_libraries(${progname} libqwwad)
 	install(TARGETS ${progname} RUNTIME DESTINATION bin )
 endfunction()
 
