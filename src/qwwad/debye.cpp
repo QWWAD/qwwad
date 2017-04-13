@@ -14,7 +14,7 @@
 
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
-#include "qwwad/constants.h"
+#include "constants.h"
 
 namespace QWWAD
 {
