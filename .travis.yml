@@ -1,2 +1,5 @@
 language: cpp
+dist: trusty
+sudo: required
+
 script: cmake . && make && ctest -V
