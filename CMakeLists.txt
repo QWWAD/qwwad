@@ -4,7 +4,6 @@ include(CMakeScripts/ConfigEnv.cmake)
 include(FindPkgConfig)
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
-enable_testing()
 add_custom_target( check COMMAND ${CMAKE_CTEST_COMMAND} -V -V)
 
 # set a default build configuration
@@ -24,6 +23,8 @@ message("-- Building ${PROJECT_NAME} version: ${qwwad_VERSION}")
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 
+enable_testing()
+
 # Define user-configurable build options
 option( VERBOSE "Show information about CMake build configuration." )
 
@@ -35,6 +36,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(ARMADILLO_REQUIRED_VERSION 4.000)
 set(BOOST_REQUIRED_VERSION     1.42)
 set(LIBXMLPP_REQUIRED_VERSION  2.30)
+
+include_directories(src src/googletest/googletest/include ${CMAKE_CURRENT_BINARY_DIR})
 
 # Check that required libraries are available
 find_package( Armadillo ${ARMADILLO_REQUIRED_VERSION} REQUIRED )
@@ -141,8 +144,6 @@ add_qwwad_program(qwwad_critical_thickness       "critical thickness for a strai
 add_subdirectory( src )
 add_subdirectory( doc )
 add_subdirectory( examples )
-
-include_directories(src src/googletest/googletest/include ${CMAKE_CURRENT_BINARY_DIR})
 
 # Configure tarball packaging
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Quantum wells, wires and dots")
