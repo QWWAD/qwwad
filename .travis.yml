@@ -6,7 +6,6 @@ addons:
   apt:
     packages:
       - libarmadillo-dev
-      - libatlas-base-dev
       - libboost-program-options-dev
       - libgsl0-dev
       - liblapack-dev
