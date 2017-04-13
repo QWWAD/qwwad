@@ -1,5 +1,5 @@
 /**
- * \file     material_library.cpp
+ * \file     material-library.cpp
  * \brief    Fundamental material data library
  *
  * \details  This is a set of functions for determining properties of a number
@@ -11,17 +11,17 @@
  * 	     Andrew Grier <el09a2g@leeds.ac.uk>
  */
 
-#include "material_library.h"
-#include "qwwad-material.h"
-#include "qwwad-material-property-numeric.h"
+#include "material-library.h"
+#include "material.h"
+#include "material-property-numeric.h"
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
 #include <assert.h>
 #include <cstring>
 #include <gsl/gsl_math.h>
-#include "qwwad/maths-helpers.h"
-#include "qwwad/constants.h"
+#include "maths-helpers.h"
+#include "constants.h"
 
 namespace QWWAD {
 using namespace constants;

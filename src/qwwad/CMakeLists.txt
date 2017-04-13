@@ -2,62 +2,56 @@ if( VERBOSE )
     message( "  /qwwad" )
 endif()
 
-set( qwwad_src
-	data-checker.cpp
-        donor-energy-minimiser.cpp
-        dos-functions.cpp
-        double-barrier.cpp
-        eigenstate.cpp
-        fermi.cpp
-        file-io.cpp
-        file-io-deprecated.cpp
-        linear-algebra.cpp
-        maths-helpers.cpp
-        options.cpp
-        subband.cpp
-        mesh.cpp
-        schroedinger-solver.cpp
-        schroedinger-solver-donor.cpp
-        schroedinger-solver-donor-2D.cpp
-        schroedinger-solver-donor-3D.cpp
-        schroedinger-solver-donor-variable.cpp
-        schroedinger-solver-finite-well.cpp
-        schroedinger-solver-full.cpp
-        schroedinger-solver-infinite-well.cpp
-        schroedinger-solver-kronig-penney.cpp
-        schroedinger-solver-taylor.cpp
-        schroedinger-solver-tridiagonal.cpp
-	wf_options.cpp
-    )
+# Convenience macro to add library modules
+macro(add_libqwwad_module modname)
+	list(APPEND qwwad_src ${modname}.cpp)
+	list(APPEND qwwad_h   ${modname}.h)
+endmacro()
 
-set( qwwad_h
-	data-checker.h
-        donor-energy-minimiser.h
-        dos-functions.h
-        double-barrier.h
-        eigenstate.h
-        fermi.h
-        file-io.h
-        file-io-deprecated.h
-        linear-algebra.h
-        maths-helpers.h
-        options.h
-        subband.h
-        constants.h
-        mesh.h
-        schroedinger-solver.h
-        schroedinger-solver-donor.h
-        schroedinger-solver-donor-2D.h
-        schroedinger-solver-donor-3D.h
-        schroedinger-solver-donor-variable.h
-        schroedinger-solver-finite-well.h
-        schroedinger-solver-full.h
-        schroedinger-solver-infinite-well.h
-	schroedinger-solver-kronig-penney.h
-        schroedinger-solver-taylor.h
-        schroedinger-solver-tridiagonal.h
-	wf_options.h
-    )
+add_libqwwad_module(data-checker)
+add_libqwwad_module(debye)
+add_libqwwad_module(donor-energy-minimiser)
+add_libqwwad_module(donor-energy-minimiser-fast)
+add_libqwwad_module(donor-energy-minimiser-linear)
+add_libqwwad_module(dos-functions)
+add_libqwwad_module(double-barrier)
+add_libqwwad_module(eigenstate)
+add_libqwwad_module(fermi)
+add_libqwwad_module(file-io)
+add_libqwwad_module(file-io-deprecated)
+add_libqwwad_module(intersubband-transition)
+add_libqwwad_module(linear-algebra)
+add_libqwwad_module(material)
+add_libqwwad_module(material-library)
+add_libqwwad_module(material-property)
+add_libqwwad_module(material-property-constant)
+add_libqwwad_module(material-property-interp)
+add_libqwwad_module(material-property-numeric)
+add_libqwwad_module(material-property-poly)
+add_libqwwad_module(material-property-string)
+add_libqwwad_module(maths-helpers)
+add_libqwwad_module(mesh)
+add_libqwwad_module(options)
+add_libqwwad_module(poisson-solver)
+add_libqwwad_module(ppff)
+add_libqwwad_module(pplb-functions)
+add_libqwwad_module(ppsop)
+add_libqwwad_module(subband)
+add_libqwwad_module(scattering-calculator-LO)
+add_libqwwad_module(schroedinger-solver)
+add_libqwwad_module(schroedinger-solver-donor)
+add_libqwwad_module(schroedinger-solver-donor-2D)
+add_libqwwad_module(schroedinger-solver-donor-3D)
+add_libqwwad_module(schroedinger-solver-donor-variable)
+add_libqwwad_module(schroedinger-solver-finite-well)
+add_libqwwad_module(schroedinger-solver-full)
+add_libqwwad_module(schroedinger-solver-infinite-well)
+add_libqwwad_module(schroedinger-solver-kronig-penney)
+add_libqwwad_module(schroedinger-solver-poeschl-teller)
+add_libqwwad_module(schroedinger-solver-shooting)
+add_libqwwad_module(schroedinger-solver-taylor)
+add_libqwwad_module(schroedinger-solver-tridiagonal)
+add_libqwwad_module(wf_options)
 
 add_library( libqwwad SHARED ${qwwad_src} ${qwwad_h} )
 set_target_properties( libqwwad
@@ -66,7 +60,13 @@ set_target_properties( libqwwad
 		       SOVERSION   1
 		       VERSION     ${qwwad_VERSION}
 		     )
-target_link_libraries( libqwwad ${Boost_LIBRARIES} ${GSL_LIBRARIES} ${ARMADILLO_LIBRARIES} )
+
+target_link_libraries( libqwwad
+	${GSL_LIBRARIES}
+	${Boost_LIBRARIES}
+	${LAPACK_LIBRARIES}
+	${ARMADILLO_LIBRARIES}
+	${LIBXMLPP_LIBRARIES} )
 
 # Install the shared QWWAD library
 install(TARGETS libqwwad

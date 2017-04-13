@@ -1,12 +1,12 @@
 /**
- * \file   qwwad-material-property-string.cpp
+ * \file   material-property-string.cpp
  * \brief  An individual property of a material, represented by a text string
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qwwad-material-property-string.h"
+#include "material-property-string.h"
 
 namespace QWWAD {
 MaterialPropertyString::MaterialPropertyString(xmlpp::Element *elem) :

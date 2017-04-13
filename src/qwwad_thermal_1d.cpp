@@ -7,14 +7,14 @@
 #include <string>
 #include <gsl/gsl_math.h>
 #include "qwwad/options.h"
-#include "qwwad-material.h"
-#include "material_library.h"
-#include "qwwad-material-property-numeric.h"
+#include "qwwad/material.h"
+#include "qwwad/material-library.h"
+#include "qwwad/debye.h"
+#include "qwwad/material-property-numeric.h"
 #include "qwwad/maths-helpers.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"
 #include <glibmm/ustring.h>
-#include "qwwad-debye.h"
 
 using namespace QWWAD;
 

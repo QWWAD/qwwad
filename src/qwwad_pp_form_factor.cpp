@@ -19,8 +19,7 @@
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
-
-#include "ppff.h"
+#include "qwwad/ppff.h"
 
 using namespace QWWAD;
 using namespace constants;

@@ -1,12 +1,12 @@
 /**
- * \file   qwwad-material-property-numeric.cpp
+ * \file   material-property-numeric.cpp
  * \brief  A class to handle an individual property of a material
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
-#include "qwwad-material-property-numeric.h"
+#include "material-property-numeric.h"
 
 namespace QWWAD {
 /**

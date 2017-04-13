@@ -35,10 +35,9 @@
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/options.h"
-
-#include "ppff.h"	/* the PseudoPotential Form Factors	*/
-#include "pplb-functions.h"
-#include "ppsop.h"	/* the Spin-Orbit Parameters		*/
+#include "qwwad/ppff.h"	/* the PseudoPotential Form Factors	*/
+#include "qwwad/pplb-functions.h"
+#include "qwwad/ppsop.h"	/* the Spin-Orbit Parameters		*/
 
 using namespace QWWAD;
 using namespace constants;

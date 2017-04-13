@@ -27,8 +27,7 @@
 #include <gsl/gsl_math.h>
 #include "qwwad/maths-helpers.h"
 #include "qwwad/constants.h"
-
-#include "ppff.h"
+#include "qwwad/ppff.h"
 
 static arma::cx_vec read_ank(const int  N,
                              int       *Nn);

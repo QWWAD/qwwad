@@ -1,7 +1,7 @@
 #ifndef QWWAD_MATERIAL_PROPERTY_STRING_H
 #define QWWAD_MATERIAL_PROPERTY_STRING_H
 
-#include "qwwad-material-property.h"
+#include "material-property.h"
 
 namespace QWWAD {
 class MaterialPropertyString : public MaterialProperty {

@@ -1,16 +1,17 @@
 /**
- * \file     matlib-query.cpp
+ * \file     qwwad_material_property.cpp
  * \brief    Queries parameters from the material library
  * \author   Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <iostream>
-#include "qwwad-material.h"
-#include "qwwad-material-property-numeric.h"
-#include "qwwad-material-property-string.h"
-#include "material_library.h"
-#include "qwwad/options.h"
 #include <glibmm/ustring.h>
+
+#include "qwwad/material.h"
+#include "qwwad/material-library.h"
+#include "qwwad/material-property-numeric.h"
+#include "qwwad/material-property-string.h"
+#include "qwwad/options.h"
 
 using namespace QWWAD;
 

@@ -1,16 +1,14 @@
 /**
- * \file   qwwad-material.cpp
+ * \file   material.cpp
  * \brief  Class to describe a material
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 #include <stdexcept>
-#include <iostream>
-#include "material_library.h"
-#include "qwwad-material.h"
-#include "qwwad-material-property-interp.h"
-#include "qwwad-material-property-poly.h"
-#include "qwwad-material-property-constant.h"
-#include "qwwad-material-property-string.h"
+#include "material.h"
+#include "material-property-interp.h"
+#include "material-property-poly.h"
+#include "material-property-constant.h"
+#include "material-property-string.h"
 
 namespace QWWAD {
 /** Return the name of the material */

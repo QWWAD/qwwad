@@ -1,7 +1,7 @@
 #ifndef QWWAD_MATERIAL_PROPERTY_INTERP_H
 #define QWWAD_MATERIAL_PROPERTY_INTERP_H
 
-#include "qwwad-material-property-numeric.h"
+#include "material-property-numeric.h"
 
 namespace QWWAD {
 /**

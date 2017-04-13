@@ -23,14 +23,18 @@ else()
 		set(_MANPAGESRC  ${CMAKE_CURRENT_SOURCE_DIR}/${_progname}.h2m)
 		set(_PROGPATH ${CMAKE_BINARY_DIR}/src/${_progname})
 
-		add_custom_command(OUTPUT ${_MANPAGENAME}
-			COMMAND ${HELP2MAN} --output=${_MANPAGENAME} --name=${_summary} --include=${_MANPAGESRC} ${_PROGPATH}
-			DEPENDS ${_MANPAGESRC} ${_PROGPATH}
-			COMMENT "Building manpage for ${_progname}"
-			VERBATIM
-			)
-
-		add_custom_target(manpage_${_progname} ALL DEPENDS ${_MANPAGENAME})
-		install(FILES ${_MANPAGENAME} DESTINATION share/man/man1)
+		# Only build manpage if the relevant input file exists
+		if(EXISTS ${_MANPAGESRC})
+			add_custom_command(OUTPUT ${_MANPAGENAME}
+				COMMAND ${HELP2MAN} --output=${_MANPAGENAME} --name=${_summary} --include=${_MANPAGESRC} ${_PROGPATH}
+				DEPENDS ${_MANPAGESRC} ${_PROGPATH}
+				COMMENT "Building manpage for ${_progname}"
+				VERBATIM
+				)
+			add_custom_target(manpage_${_progname} ALL DEPENDS ${_MANPAGENAME})
+			install(FILES ${_MANPAGENAME} DESTINATION share/man/man1)
+		else()
+			message(WARNING "Cannot find manpage input file for ${_progname}")
+		endif()
 	endforeach(_iprog)
 endif()

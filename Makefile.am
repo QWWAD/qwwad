@@ -114,6 +114,7 @@ includeqwwaddir=$(includedir)/qwwad
 includeqwwad_HEADERS = \
 			   src/qwwad/constants.h                          \
 			   src/qwwad/data-checker.h                       \
+			   src/qwwad/debye.h                              \
 			   src/qwwad/donor-energy-minimiser-fast.h        \
 			   src/qwwad/donor-energy-minimiser-linear.h      \
 			   src/qwwad/donor-energy-minimiser.h             \
@@ -145,6 +146,7 @@ includeqwwad_HEADERS = \
 # Source files for libqwwad that will be compiled into the binary library
 libqwwad_la_SOURCES =  \
 		           src/qwwad/data-checker.cpp                       \
+			   src/qwwad/debye.cpp                              \
 			   src/qwwad/dos-functions.cpp                      \
 			   src/qwwad/double-barrier.cpp                     \
 			   src/qwwad/fermi.cpp                              \
@@ -162,6 +164,8 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad/maths-helpers.cpp                      \
 			   src/qwwad/poisson-solver.cpp                     \
 			   src/qwwad/poisson-solver.h                       \
+			   src/qwwad/ppff.cpp                               \
+			   src/qwwad/ppff.h                                 \
 			   src/qwwad/scattering-calculator-LO.h             \
 			   src/qwwad/scattering-calculator-LO.cpp           \
 			   src/qwwad/schroedinger-solver.cpp                \
@@ -197,8 +201,6 @@ libqwwad_la_SOURCES =  \
 			   src/qwwad-material-property-string.h             \
 			   src/material_library.cpp                         \
 			   src/material_library.h                           \
-			   src/qwwad-debye.cpp                              \
-			   src/qwwad-debye.h
 
 libqwwad_la_CFLAGS = $(GSL_CFLAGS) \
 		     $(BOOST_CPPFLAGS)
@@ -215,9 +217,8 @@ libqwwad_la_LIBADD = $(GSL_LIBS) \
 LDADD = libqwwad.la
 
 # Deprecated programs
-# TODO: Remove these when they are no longer needed
-effv_SOURCES = src/effv.c
-efsx_SOURCES = src/efsx.c
+effv_SOURCES = src/effv.cpp
+efsx_SOURCES = src/efsx.cpp
 
 qwwad_sr_alloy_disorder_SOURCES = src/qwwad_sr_alloy_disorder.cpp
 qwwad_charge_density_SOURCES    = src/qwwad_charge_density.cpp
@@ -249,13 +250,13 @@ qwwad_ef_donor_generic_SOURCES  = src/qwwad_ef_donor_generic.cpp
 qwwad_sr_impurity_SOURCES  = src/qwwad_sr_impurity.cpp
 qwwad_tx_double_barrier_iv_SOURCES = src/qwwad_tx_double_barrier_iv.cpp
 qwwad_material_property_SOURCES = src/qwwad_material_property.cpp
-qwwad_pp_charge_density_SOURCES = src/qwwad_pp_charge_density.cpp src/ppff.h src/ppff.cpp
+qwwad_pp_charge_density_SOURCES = src/qwwad_pp_charge_density.cpp
 qwwad_pp_dispersion_SOURCES = src/qwwad_pp_dispersion.cpp
-qwwad_pp_large_basis_SOURCES  = src/qwwad_pp_large_basis.cpp src/pplb-functions.cpp src/pplb-functions.h src/ppff.h src/ppff.cpp
+qwwad_pp_large_basis_SOURCES  = src/qwwad_pp_large_basis.cpp src/pplb-functions.cpp src/pplb-functions.h
 qwwad_pp_lattice_vector_table_SOURCES = src/qwwad_pp_lattice_vector_table.cpp
-qwwad_pp_superlattice_SOURCES = src/qwwad_pp_superlattice.cpp src/ppff.h src/ppff.cpp
-qwwad_pp_form_factor_SOURCES = src/qwwad_pp_form_factor.cpp src/ppff.h src/ppff.cpp
-qwwad_pp_large_basis_so_SOURCES = src/qwwad_pp_large_basis_so.cpp src/pplb-functions.h src/pplb-functions.cpp src/ppff.h src/ppff.cpp src/ppsop.h src/ppsop.cpp
+qwwad_pp_superlattice_SOURCES = src/qwwad_pp_superlattice.cpp
+qwwad_pp_form_factor_SOURCES = src/qwwad_pp_form_factor.cpp
+qwwad_pp_large_basis_so_SOURCES = src/qwwad_pp_large_basis_so.cpp src/pplb-functions.h src/pplb-functions.cpp src/ppsop.h src/ppsop.cpp
 qwwad_ef_poeschl_teller_SOURCES = src/qwwad_ef_poeschl_teller.cpp
 qwwad_ef_donor_specific_SOURCES = src/qwwad_ef_donor_specific.cpp
 qwwad_reciprocal_fcc_SOURCES = src/qwwad_reciprocal_fcc.cpp

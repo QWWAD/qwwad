@@ -1,13 +1,13 @@
 /**
- * \file   qwwad-material-property-interp.cpp
+ * \file   material-property-interp.cpp
  * \brief  An individual property of a material that is interpolated between two values
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qwwad-material-property-interp.h"
-#include "qwwad/maths-helpers.h"
+#include "material-property-interp.h"
+#include "maths-helpers.h"
 
 namespace QWWAD {
 /**

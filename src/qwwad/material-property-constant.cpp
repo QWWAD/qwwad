@@ -1,12 +1,12 @@
 /**
- * \file   qwwad-material-property-constant.cpp
+ * \file   material-property-constant.cpp
  * \brief  An individual property of a material, represented by a constant value
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qwwad-material-property-constant.h"
+#include "material-property-constant.h"
 
 namespace QWWAD {
 /**

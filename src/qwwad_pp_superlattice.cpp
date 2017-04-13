@@ -35,8 +35,7 @@
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"
 #include "qwwad/linear-algebra.h"
-
-#include "ppff.h"
+#include "qwwad/ppff.h"
 
 using namespace QWWAD;
 using namespace constants;

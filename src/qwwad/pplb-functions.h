@@ -4,7 +4,12 @@
 
 #ifndef QWWAD_PPLB_FUNCTIONS_H
 #define QWWAD_PPLB_FUNCTIONS_H
+
 #include <complex>
+#include <vector>
+
+#include <armadillo>
+
 #include "ppff.h"
 
 void
@@ -19,3 +24,4 @@ std::complex<double> V(double                   A0,
                        std::vector<atom> const &atoms,
                        arma::vec const         &q);
 #endif
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

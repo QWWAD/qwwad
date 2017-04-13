@@ -1,12 +1,12 @@
 /**
- * \file   qwwad-material-property-poly.cpp
+ * \file   material-property-poly.cpp
  * \brief  An individual property of a material, represented by a polynomial fitting
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
 #include <stdexcept>
 #include <libxml++/libxml++.h>
-#include "qwwad-material-property-poly.h"
+#include "material-property-poly.h"
 #include <cmath>
 
 namespace QWWAD {

@@ -10,9 +10,9 @@
 #include <gsl/gsl_deriv.h>
 #include <gsl/gsl_sf_debye.h>
 #include "qwwad/constants.h"
+#include "qwwad/debye.h"
 #include "qwwad/options.h"
 #include "qwwad/file-io.h"
-#include "qwwad-debye.h"
 
 using namespace QWWAD;
 using namespace constants;

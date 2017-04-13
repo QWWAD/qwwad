@@ -1,5 +1,5 @@
 /**
- * \file   qwwad-material-property.cpp
+ * \file   material-property.cpp
  * \brief  A class to handle an individual property of a material
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
@@ -7,9 +7,9 @@
 #include <stdexcept>
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
-#include "qwwad/constants.h"
-#include "qwwad-material-property.h"
-#include "qwwad/maths-helpers.h"
+#include "constants.h"
+#include "material-property.h"
+#include "maths-helpers.h"
 
 namespace QWWAD {
 using namespace constants;

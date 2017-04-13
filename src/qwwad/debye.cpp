@@ -1,12 +1,12 @@
 /**
- * \file   qwwad-debye.cpp
+ * \file   debye.cpp
  *
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  *
  * \brief  A Debye model of specific heat capacity
  */
 
-#include "qwwad-debye.h"
+#include "debye.h"
 
 #include <cmath>
 #include <sstream>
