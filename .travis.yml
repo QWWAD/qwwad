@@ -2,4 +2,9 @@ language: cpp
 dist: trusty
 sudo: required
 
+addons:
+  apt:
+    packages:
+      - libarmadillo-dev
+
 script: cmake . && make && ctest -V
