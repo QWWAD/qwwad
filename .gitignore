@@ -1,3 +1,4 @@
+*.swp
 src/Makefile.backup
 src/Makefile.in
 Makefile.in
