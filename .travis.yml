@@ -12,4 +12,7 @@ addons:
       - liblapack-dev
       - libxml++2.6-dev
 
+before_script:
+  - git submodule update --init
+
 script: cmake . && make && ctest -V
