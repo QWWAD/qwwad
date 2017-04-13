@@ -4,9 +4,9 @@
 #include <complex>
 #include <armadillo>
 #include <gsl/gsl_math.h>
-#include "qwwad/constants.h"
-#include "qwwad/file-io.h"
-#include "qwwad/maths-helpers.h"
+#include "constants.h"
+#include "file-io.h"
+#include "maths-helpers.h"
 
 using namespace QWWAD;
 using namespace constants;
