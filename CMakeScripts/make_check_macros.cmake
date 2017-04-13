@@ -12,13 +12,9 @@
 # added as dependencies to the check project such that running 'make check'
 # before the test executables are run will cause the relevent projects to be built.
 
-macro( setup_make_check )
-    enable_testing()
-    set( CMAKE_CTEST_COMMAND ctest )
-    add_custom_target( check COMMAND ${CMAKE_CTEST_COMMAND} )
-endmacro()
-
-macro( add_test_to_make_check test_target )
-    add_test( ${test_target} ${test_target} )
-    add_dependencies( check ${test_target} )
+macro( add_qwwad_test test_name )
+	add_executable(${test_name} ${test_name}.cpp)
+	target_link_libraries(${test_name} libqwwad gtest gtest_main)
+	add_test(NAME ${test_name} COMMAND ${test_name})
+	add_dependencies( check ${test_name} )
 endmacro()

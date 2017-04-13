@@ -4,6 +4,8 @@ include(CMakeScripts/ConfigEnv.cmake)
 include(FindPkgConfig)
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
+enable_testing()
+add_custom_target( check COMMAND ${CMAKE_CTEST_COMMAND} -V -V)
 
 # set a default build configuration
 set(CMAKE_BUILD_TYPE_INIT "Release")
@@ -140,9 +142,7 @@ add_subdirectory( src )
 add_subdirectory( doc )
 add_subdirectory( examples )
 
-setup_make_check()
 include_directories(src src/googletest/googletest/include ${CMAKE_CURRENT_BINARY_DIR})
-add_subdirectory( tests EXCLUDE_FROM_ALL )
 
 # Configure tarball packaging
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Quantum wells, wires and dots")

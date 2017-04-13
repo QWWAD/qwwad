@@ -2,6 +2,7 @@ if( VERBOSE )
     message( "-src" )
 endif()
 
+add_subdirectory(tests)
 include_directories( ${ARMADILLO_INCLUDE_DIRS} ${GSL_INCLUDE_DIR} )
 
 set( wf_options wf_options.cpp wf_options.h )
