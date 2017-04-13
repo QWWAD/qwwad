@@ -7,5 +7,6 @@ addons:
     packages:
       - libarmadillo-dev
       - libboost-program-options-dev
+      - libgsl-dev
 
 script: cmake . && make && ctest -V
