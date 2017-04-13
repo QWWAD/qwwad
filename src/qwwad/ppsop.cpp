@@ -4,7 +4,7 @@
 #include <sstream>
 #include <stdexcept>
 
-#include "qwwad/constants.h"
+#include "constants.h"
 
 using namespace QWWAD;
 using namespace constants;
