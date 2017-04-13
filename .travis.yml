@@ -15,4 +15,4 @@ addons:
 before_script:
   - git submodule update --init
 
-script: cmake . && make && ctest -V
+script: cmake . && make VERBOSE=1 && ctest -V
