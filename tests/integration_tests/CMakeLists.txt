@@ -10,7 +10,7 @@ set( TARGET_SRC
 
 add_executable( integration_tests ${TARGET_SRC} )
 target_link_libraries( integration_tests
-                       qwwad
+                       libqwwad
                        ${GTEST_LIBS}
                      )
 

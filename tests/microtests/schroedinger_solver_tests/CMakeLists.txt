@@ -10,7 +10,7 @@ set( TARGET_SRC
 
 add_executable( schroedinger_solver_tests ${TARGET_SRC} )
 target_link_libraries( schroedinger_solver_tests
-                       qwwad
+                       libqwwad
                        ${GTEST_LIBS}
                      )
 
