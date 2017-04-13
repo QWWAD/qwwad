@@ -141,7 +141,7 @@ add_subdirectory( doc )
 add_subdirectory( examples )
 
 setup_make_check()
-add_subdirectory( gtest EXCLUDE_FROM_ALL )
+include_directories(src src/googletest/googletest/include ${CMAKE_CURRENT_BINARY_DIR})
 add_subdirectory( tests EXCLUDE_FROM_ALL )
 
 # Configure tarball packaging
