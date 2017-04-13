@@ -6,5 +6,6 @@ addons:
   apt:
     packages:
       - libarmadillo-dev
+      - libboost-program-options-dev
 
 script: cmake . && make && ctest -V
