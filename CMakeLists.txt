@@ -4,7 +4,6 @@ include(CMakeScripts/ConfigEnv.cmake)
 include(FindPkgConfig)
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeScripts" )
-add_custom_target( check COMMAND ${CMAKE_CTEST_COMMAND} -V -V)
 
 # set a default build configuration
 set(CMAKE_BUILD_TYPE_INIT "Release")
@@ -23,7 +22,16 @@ message("-- Building ${PROJECT_NAME} version: ${qwwad_VERSION}")
 set( QWWAD_URL "https://launchpad.net/qwwad" )
 set( QWWAD_BUGREPORT "https://bugs.launchpad.net/qwwad" )
 
-enable_testing()
+set(gtest_inc_path ${CMAKE_SOURCE_DIR}/src/googletest/googletest/include/)
+
+# Only enable testing if the googletest submodule has been included
+if(EXISTS ${gtest_inc_path})
+	add_custom_target( check COMMAND ${CMAKE_CTEST_COMMAND} -V -V)
+	enable_testing()
+	include_directories(${gtest_inc_path})
+else()
+	message(WARNING "Cannot find Googletest folder")
+endif()
 
 # Define user-configurable build options
 option( VERBOSE "Show information about CMake build configuration." )
@@ -37,7 +45,7 @@ set(ARMADILLO_REQUIRED_VERSION 4.000)
 set(BOOST_REQUIRED_VERSION     1.42)
 set(LIBXMLPP_REQUIRED_VERSION  2.30)
 
-include_directories(src src/googletest/googletest/include ${CMAKE_CURRENT_BINARY_DIR})
+include_directories(src ${CMAKE_CURRENT_BINARY_DIR})
 
 # Check that required libraries are available
 find_package( Armadillo ${ARMADILLO_REQUIRED_VERSION} REQUIRED )
@@ -50,7 +58,9 @@ find_package( LAPACK REQUIRED )
 pkg_check_modules( LIBXMLPP REQUIRED "libxml++-2.6 >= ${LIBXMLPP_REQUIRED_VERSION}" )
 include_directories(SYSTEM ${LIBXMLPP_INCLUDE_DIRS})
 
-include( CMakeScripts/make_check_macros.cmake )
+if(EXISTS ${gtest_inc_path})
+	include( CMakeScripts/make_check_macros.cmake )
+endif()
 
 # Create and install pkg-config file to help 3rd party programs discover the QWWAD
 # library

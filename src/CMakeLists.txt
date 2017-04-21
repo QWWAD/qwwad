@@ -2,7 +2,10 @@ if( VERBOSE )
     message( "-src" )
 endif()
 
-add_subdirectory(tests)
+if(EXISTS ${gtest_inc_path})
+	add_subdirectory(tests)
+endif()
+
 include_directories( ${ARMADILLO_INCLUDE_DIRS} ${GSL_INCLUDE_DIR} )
 
 set( wf_options wf_options.cpp wf_options.h )
@@ -20,6 +23,8 @@ foreach(_prog IN LISTS qwwad_programs)
 	install(TARGETS ${_prog} RUNTIME DESTINATION bin )
 endforeach()
 
-add_library(gtest SHARED googletest/googletest/src/gtest-all.cc)
-add_library(gtest_main STATIC googletest/googletest/src/gtest_main.cc)
-target_include_directories(gtest PRIVATE googletest/googletest)
+if(EXISTS ${gtest_inc_path})
+	add_library(gtest SHARED googletest/googletest/src/gtest-all.cc)
+	add_library(gtest_main STATIC googletest/googletest/src/gtest_main.cc)
+	target_include_directories(gtest PRIVATE googletest/googletest)
+endif()
