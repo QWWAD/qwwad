@@ -5,12 +5,8 @@ Homepage: https://www.launchpad.net/qwwad
 Vcs-Browser: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
 Vcs-bzr: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
 Maintainer: Alex Valavanis <valavanisalex@gmail.com>
-Build-Depends: autoconf,
-               automake,
-               autopoint,
+Build-Depends: cmake,
                debhelper (>= 8.0.0),
-               dh-autoreconf,
-               gfortran,
                help2man,
                libarmadillo-dev,
                libatlas-base-dev | libopenblas-dev | libblas-dev,
