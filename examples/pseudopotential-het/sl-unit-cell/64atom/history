@@ -1,9 +1,0 @@
-#!/bin/sh
-# Create 64 atom basis, i.e., a 2x2x2 cube, just use default atom types
-# of GA at cation and AS at ANION positions
-
-cszb -x 2 -y 2 -z 2
-
-# Convert also to pdb format for visual check
-
-xyz2pdb atoms

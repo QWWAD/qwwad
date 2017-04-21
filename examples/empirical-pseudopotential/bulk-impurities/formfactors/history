@@ -1,8 +1,0 @@
-#!/bin/sh
-# Compare the pseudopotentials of Cohen and Bergstresser with the more
-# complete ones of Friedel et al.
-
-ppvfq -A 5.43 -N 1000 -a SI
-ppvfq -A 5.43 -N 1000 -a SIcb
-ppvfq -A 5.66 -N 1000 -a GE
-ppvfq -A 5.66 -N 1000 -a GEcb
