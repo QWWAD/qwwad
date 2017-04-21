@@ -1,0 +1,11 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+export DH_VERBOSE=1
+
+%:
+	dh $@ --buildsystem cmake
+
+override_dh_auto_test:
+# disable for now
+#	make check

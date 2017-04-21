@@ -1,0 +1,35 @@
+Source: qwwad
+Section: science
+Priority: optional
+Homepage: https://www.launchpad.net/qwwad
+Vcs-Browser: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
+Vcs-bzr: https://code.launchpad.net/~qwwad-dev/qwwad/trunk
+Maintainer: Alex Valavanis <valavanisalex@gmail.com>
+Build-Depends: cmake (>= 3.0),
+               debhelper (>= 8.0.0),
+               help2man,
+               libarmadillo-dev,
+               libatlas-base-dev | libopenblas-dev | libblas-dev,
+               libboost-program-options-dev,
+               libgsl0-dev,
+               liblapack-dev,
+               libxml++2.6-dev,
+               pkg-config
+Standards-Version: 3.9.5
+
+Package: qwwad
+Architecture: any
+Depends: ${shlibs:Depends},
+         ${misc:Depends}
+Description: Simulation tools for semiconductor heterostructures
+ The "Quantum Wells, Wires and Dots" (qwwad) package provides a set of
+ programmes for simulating the electronic and optical properties of
+ semiconductor heterostructures. At present, it includes:
+  * solutions of the Schroedinger wave equation for a range of structures
+  * numerical solvers for the Schroedinger and Poisson equations
+  * diffusion calculations
+  * impurity binding energies
+  * exciton binding energies
+  * quantum wires and dots
+  * carrier scattering
+  * empirical pseudopotential calculations
