@@ -12,7 +12,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
-#include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "struct.h"
 #include "qwwad/constants.h"
@@ -181,7 +180,7 @@ static double psi_at_inf(double  E,
  {
   for(i=0;i<n;i++)
   {
-   alpha=gsl_pow_2(1-((data_m0Eg+i)->a)/me)/((data_m0Eg+i)->b);
+   alpha = pow(1.0 - data_m0Eg[i].a /me, 2) / data_m0Eg[i].b;
    (fdata+i)->mstar=((data_m0Eg+i)->a)*(1+alpha*(E-((fdata+i)->V)));
   }
  }
@@ -197,7 +196,7 @@ static double psi_at_inf(double  E,
   for(i=1;i<(n-1);i++)              /* last potential not used */
   {
    psi[2]=(
-           (fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+2)*
+           (fdata->z)*(2*(fdata->mstar)*pow(delta_z/hBar,2)*(fdata->V-E)+2)*
 	   psi[1]+
            (-(fdata->z)+delta_z)*psi[0]
           )
