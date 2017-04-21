@@ -17,7 +17,6 @@
 #include <stdlib.h>
 #include <strings.h>
 #include <math.h>
-#include <gsl/gsl_math.h>
 #include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
@@ -136,12 +135,12 @@ if(N_1!=N_2)
          filename_1,filename_2);exit(0);
  }
 
-OS=2*hBar/(mstar*omega)*gsl_pow_2(M(start_wf1,start_wf2,N_1));
+OS=2*hBar/(mstar*omega)*pow(M(start_wf1,start_wf2,N_1),2);
 
 printf("Oscillator strength %20.17le\n",OS);
 
-if(D3_flag)gamma=ri(lambda)*gsl_pow_2(e)*gsl_pow_2(omega)/(6*pi*eps0*mstar*c*c*c);
-else gamma=gsl_pow_2(e)*omega/(4*eps0*Wmz*c*c*mstar);
+if(D3_flag)gamma=ri(lambda)*pow(e,2)*pow(omega,2)/(6*pi*eps0*mstar*c*c*c);
+else gamma=pow(e,2)*omega/(4*eps0*Wmz*c*c*mstar);
 
 rad=1/(gamma*OS);
 
@@ -259,7 +258,7 @@ static double ri(double lambda)
 
  /* Note the 1e-6 factor converts lambda into microns */
 
- return(sqrt(A+B*(gsl_pow_2(lambda/1e-6)/(gsl_pow_2(lambda/1e-6)-gsl_pow_2(C)))));
+ return(sqrt(A+B*(pow(lambda/1e-6,2)/(pow(lambda/1e-6,2)-pow(C,2)))));
 
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

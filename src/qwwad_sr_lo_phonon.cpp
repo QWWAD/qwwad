@@ -10,7 +10,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <iostream>
-#include <gsl/gsl_math.h>
 #include "qwwad/constants.h"
 #include "qwwad/scattering-calculator-LO.h"
 #include "qwwad/file-io.h"
