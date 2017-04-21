@@ -15,7 +15,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
-#include <gsl/gsl_math.h>
 #include "ef-helpers.h"
 #include "qwwad/constants.h"
 #include "maths.h"
@@ -161,7 +160,7 @@ static double wf(const double  E,
   for(i=0;i<n;i++)
   {
    /* Find nonparabolicity parameter using Eq. 3.77, QWWAD3 */
-   const double alpha=gsl_pow_2(1-data_m0Eg[i].a/me)/data_m0Eg[i].b;
+   const double alpha=pow(1-data_m0Eg[i].a/me,2)/data_m0Eg[i].b;
 
    /* Find effective mass at the desired energy using Eq. 3.76, QWWAD3 */
    fdata[i].mstar=data_m0Eg[i].a*(1.0+alpha*(E-fdata[i].V));
@@ -175,8 +174,8 @@ static double wf(const double  E,
  data_zwf[0].b=psi[0];
  data_zwf[1].b=psi[1];
 
- N+=gsl_pow_2(psi[0]);
- N+=gsl_pow_2(psi[1]);
+ N+=pow(psi[0],2);
+ N+=pow(psi[1],2);
 
  fdata++;                    /* ignore data corresponding to psi[0] */
 
@@ -184,13 +183,13 @@ static double wf(const double  E,
   {
    /* Find wavefunction at next point, using Eq. 8.54, QWWAD3 */
    psi[2]=(
-           2*(fdata->z)*(2*(fdata->mstar)*gsl_pow_2(delta_z/hBar)*(fdata->V-E)+2)*
+           2*(fdata->z)*(2*(fdata->mstar)*pow(delta_z/hBar,2)*(fdata->V-E)+2)*
 	   psi[1]+
            (-2*(fdata->z)+delta_z)*psi[0]
           )
            /(2*(fdata->z)+delta_z);
    data_zwf[i+1].b=psi[2];
-   N+=gsl_pow_2(psi[2]);
+   N+=pow(psi[2],2);
    psi[0]=psi[1];
    psi[1]=psi[2];
    fdata++;
