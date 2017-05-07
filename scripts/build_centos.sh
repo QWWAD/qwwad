@@ -5,9 +5,9 @@ set -e
 #https://sourceforge.net/p/qwwad/wiki/Installing%20from%20a%20package/
 
 # This script builds qwwad on the centos 6 platform
-# to be more widely compatible across Linux distributions
-
-# To be run from project root
+# This successfully builds in a docker image with all of the
+# following dependencies installed
+# To be run from the project root
 
 yum install -y epel-release
 yum update -y
