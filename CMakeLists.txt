@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.0 )
+cmake_minimum_required( VERSION 3.1 )
 
 include(CMakeScripts/ConfigEnv.cmake)
 include(FindPkgConfig)
@@ -37,11 +37,8 @@ endif()
 option( VERBOSE "Show information about CMake build configuration." )
 
 # Enable C++11 builds
-# TODO: With CMake > 3.1, can use target_compile_features() to do this automatically
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#ADD_DEFINITIONS(-DARMA_DONT_USE_CXX11)
 
 # Define minimum versions of dependencies here
 set(ARMADILLO_REQUIRED_VERSION 4.000)

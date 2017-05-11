@@ -33,7 +33,9 @@ ln -sf /usr/include/boost148/boost /usr/include/boost
 ln -sf /usr/lib64/libboost_program_options-mt.so.1.48.0 /usr/lib64/libboost_program_options-mt.so
 ln -sf /usr/lib64/libboost_program_options.so.1.48.0 /usr/lib64/libboost_program_options.so
 
-(rm -rf build && mkdir build && cd build && cmake3 -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} ..)
+(rm -rf build && mkdir build && cd build && cmake3 -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX} \
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} \
+        ..)
 (cd build && make -j2)
 (cd build && make install)
 
