@@ -8,6 +8,8 @@ find_program(HELP2MAN help2man DOC "Location of the help2man program")
 # Only build manpages if the required tools are available
 if( NOT HELP2MAN )
 	message(WARNING "Unable to find help2man program.  UNIX manpages will not be installed")
+elseif(WIN32)
+	message(STATUS "Configuring Windows build.  UNIX manpages will not be installed")
 else()
 	message("help2man program found at: ${HELP2MAN}")
 
