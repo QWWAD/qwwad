@@ -76,153 +76,153 @@ static void clean_Hdash(arma::cx_mat &Hdash);
 
 int main(int argc,char *argv[])
 {
-double	*Enk;		/* bulk energy eigenvalues			*/
-char	filename[12];	/* character string for Energy output filename	*/
+    double	*Enk;		/* bulk energy eigenvalues			*/
+    char	filename[12];	/* character string for Energy output filename	*/
 
-/* default values	*/
-double A0=5.65e-10; // Lattice constant
-double F=0.0;       // Electric field strength
-double q=e;         // carrier charge
-size_t n_min=0;     // Lowest output band
-size_t n_max=3;     // Highest output band
-bool o=false; // if set, output the Fourier Transform VF(g)
-char p='h'; // Particle ID
-double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Conversion factor, m/a.u.
+    /* default values	*/
+    double A0=5.65e-10; // Lattice constant
+    double F=0.0;       // Electric field strength
+    double q=e;         // carrier charge
+    size_t n_min=0;     // Lowest output band
+    size_t n_max=3;     // Highest output band
+    bool o=false; // if set, output the Fourier Transform VF(g)
+    char p='h'; // Particle ID
+    double m_per_au=4*pi*eps0*gsl_pow_2(hBar/e)/me; // Conversion factor, m/a.u.
 
-while((argc>1)&&(argv[1][0]=='-'))
-{
- switch(argv[1][1])
- {
-  case 'A':
-	   A0=atof(argv[2])*1e-10;
-           break;
-  case 'f':
-	   F=atof(argv[2])*1e+5;	/* convert kV/cm->V/m	*/
-           break;
-  case 'n':
-           n_min=atoi(argv[2])-1;	/* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'm':
-           n_max=atoi(argv[2])-1;	/* Note -1=>top VB=4, CB=5 */
-           break;
-  case 'o':
-           o=true;
- 	   argv--;
-	   argc++;
-           break;
-  case 'p':
-           p=*argv[2];
-           switch(p)
-           {
-            case 'e': q=-e;break;
-            case 'h': q=+e;break;
-            default:  printf("Usage:  ppsl [-p particle (e or \033[1mh\033[0m)]\n");
-                      exit(0);
-           }
-           break;
-
-  default :
-	   printf("Usage:  ppsl [-A lattice constant (\033[1m5.65\033[0mA)][-f (\033[1m0\033[0mkV/cm)]\n");
-	   printf("             [-n # lowest band \033[1m1\033[0m][-m highest band \033[1m4\033[0m], output eigenvalues\n");
-	   printf("             [-o output field FT][-p particle (e or \033[1mh\033[0m)]\n");
-	   exit(0);
- }
- argv++;
- argv++;
- argc--;
- argc--;
-}
-strcpy(filename,"atoms.xyz");
-auto const atoms=read_atoms(filename);	/* read in atomic basis	*/
-strcpy(filename,"atomsp.xyz");
-auto const atomsp=read_atoms(filename);	/* read in perturbation	*/
-
-auto const G = read_rlv(A0); // read in reciprocal lattice vectors
-auto const N = G.size(); // number of reciprocal lattice vectors
-auto const Nn=read_ank0(N); /* reads a single ank.r file just to 
-		        	   deduce the number of bands Nn	*/
-
-auto const kxi = read_kxi(A0); // read in set of kxi points
-auto const Nkxi = kxi.size();  // Number of k-points
-
-auto const ank=read_ank(N,Nn,Nkxi);/* read in bulk eigenvectors		*/
-Enk=read_Enk(Nn,Nkxi);	/* read in bulk eigenvalues		*/
-
-/* Output the  Fourier Transform of the electric field	*/
-
-if(o) write_VF(A0,F,q,atoms);
-
-arma::cx_mat Hdash(Nn*Nkxi, Nn*Nkxi);
-
-/* Create H' matrix elements	*/
-for(unsigned int i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
-{
-    // TODO: Just fill in the upper triangle 
-    for(unsigned int j=0; j<N;j++)
+    while((argc>1)&&(argv[1][0]=='-'))
     {
-        /* Deduce the indices of of the bulk eigenvectors for each H' element	*/
-        auto const ikxidash=i/Nn;
-        auto const ikxi=j/Nn;
-
-        auto const indash=i%Nn;
-        auto const in=j%Nn;
-
-        /* Initialise the matrix element before the sum and add energy
-           eigenvalues as specified by delta functions 	*/
-        if((indash==in)&&(ikxidash==ikxi))
-            Hdash(i, j) = Enk[ikxi*Nn+in];
-        else
-            Hdash(i, j) = 0;
-
-        for(unsigned int iGdash=0;iGdash<N;iGdash++)	/* sum over G'	*/
+        switch(argv[1][1])
         {
-            for(unsigned int iG=0;iG<N;iG++)			/* sum over G	*/
+            case 'A':
+                A0=atof(argv[2])*1e-10;
+                break;
+            case 'f':
+                F=atof(argv[2])*1e+5;	/* convert kV/cm->V/m	*/
+                break;
+            case 'n':
+                n_min=atoi(argv[2])-1;	/* Note -1=>top VB=4, CB=5 */
+                break;
+            case 'm':
+                n_max=atoi(argv[2])-1;	/* Note -1=>top VB=4, CB=5 */
+                break;
+            case 'o':
+                o=true;
+                argv--;
+                argc++;
+                break;
+            case 'p':
+                p=*argv[2];
+                switch(p)
+                {
+                    case 'e': q=-e;break;
+                    case 'h': q=+e;break;
+                    default:  printf("Usage:  ppsl [-p particle (e or \033[1mh\033[0m)]\n");
+                              exit(0);
+                }
+                break;
+
+            default :
+                printf("Usage:  ppsl [-A lattice constant (\033[1m5.65\033[0mA)][-f (\033[1m0\033[0mkV/cm)]\n");
+                printf("             [-n # lowest band \033[1m1\033[0m][-m highest band \033[1m4\033[0m], output eigenvalues\n");
+                printf("             [-o output field FT][-p particle (e or \033[1mh\033[0m)]\n");
+                exit(0);
+        }
+        argv++;
+        argv++;
+        argc--;
+        argc--;
+    }
+    strcpy(filename,"atoms.xyz");
+    auto const atoms=read_atoms(filename);	/* read in atomic basis	*/
+    strcpy(filename,"atomsp.xyz");
+    auto const atomsp=read_atoms(filename);	/* read in perturbation	*/
+
+    auto const G = read_rlv(A0); // read in reciprocal lattice vectors
+    auto const N = G.size(); // number of reciprocal lattice vectors
+    auto const Nn=read_ank0(N); /* reads a single ank.r file just to 
+                                   deduce the number of bands Nn	*/
+
+    auto const kxi = read_kxi(A0); // read in set of kxi points
+    auto const Nkxi = kxi.size();  // Number of k-points
+
+    auto const ank=read_ank(N,Nn,Nkxi);/* read in bulk eigenvectors		*/
+    Enk=read_Enk(Nn,Nkxi);	/* read in bulk eigenvalues		*/
+
+    /* Output the  Fourier Transform of the electric field	*/
+
+    if(o) write_VF(A0,F,q,atoms);
+
+    arma::cx_mat Hdash(Nn*Nkxi, Nn*Nkxi);
+
+    /* Create H' matrix elements	*/
+    for(unsigned int i=0;i<Nn*Nkxi;i++)	/* index down rows, recall order of Hdash is Nn*Nkxi */
+    {
+        // TODO: Just fill in the upper triangle 
+        for(unsigned int j=0; j<N;j++)
+        {
+            /* Deduce the indices of of the bulk eigenvectors for each H' element	*/
+            auto const ikxidash=i/Nn;
+            auto const ikxi=j/Nn;
+
+            auto const indash=i%Nn;
+            auto const in=j%Nn;
+
+            /* Initialise the matrix element before the sum and add energy
+               eigenvalues as specified by delta functions 	*/
+            if((indash==in)&&(ikxidash==ikxi))
+                Hdash(i, j) = Enk[ikxi*Nn+in];
+            else
+                Hdash(i, j) = 0;
+
+            for(unsigned int iGdash=0;iGdash<N;iGdash++)	/* sum over G'	*/
             {
-                // Calculate appropriate g vector [QWWAD4, 16.38]
-                auto g = G[iGdash] - G[iG] + kxi[ikxidash] - kxi[ikxi];
+                for(unsigned int iG=0;iG<N;iG++)			/* sum over G	*/
+                {
+                    // Calculate appropriate g vector [QWWAD4, 16.38]
+                    auto g = G[iGdash] - G[iG] + kxi[ikxidash] - kxi[ikxi];
 
-                // Add on potential term
-                Hdash(i, j) +=
-                    (
-                     ( conj(   ank[ikxidash*N*Nn+iGdash*Nn+indash]   )
+                    // Add on potential term
+                    Hdash(i, j) +=
+                        (
+                         ( conj(   ank[ikxidash*N*Nn+iGdash*Nn+indash]   )
 
-                       *
+                           *
 
-                       ank[ikxi*N*Nn+iG*Nn+in]
-                     )
-                     *
-                     (
-                      V(A0,m_per_au,atoms,atomsp,g) +
-                      VF(A0,F,q,atoms,g)
-                     )
-                    );
-            } /* end iG */
-        } /* end iGdash */
-    } /* end j */
-} /* end i */
+                           ank[ikxi*N*Nn+iG*Nn+in]
+                         )
+                         *
+                         (
+                          V(A0,m_per_au,atoms,atomsp,g) +
+                          VF(A0,F,q,atoms,g)
+                         )
+                        );
+                } /* end iG */
+            } /* end iGdash */
+        } /* end j */
+    } /* end i */
 
-// Clean up matrix H'
-clean_Hdash(Hdash);
+    // Clean up matrix H'
+    clean_Hdash(Hdash);
 
-// Energy eigenvalues
-arma::vec Exi(Nn*Nkxi);
+    // Energy eigenvalues
+    arma::vec Exi(Nn*Nkxi);
 
-// coefficients of eigenvectors
-arma::cx_mat Ank(Nn*Nkxi, Nn*Nkxi);
+    // coefficients of eigenvectors
+    arma::cx_mat Ank(Nn*Nkxi, Nn*Nkxi);
 
-// Find eigenvalue solutions
-arma::eig_sym(Exi, Ank, Hdash);
+    // Find eigenvalue solutions
+    arma::eig_sym(Exi, Ank, Hdash);
 
-/* Output eigenvalues in a separate file for each k point */
-auto FExi=fopen("Exi.r","w");
-for(unsigned int iE=n_min;iE<=n_max;iE++) {
-    fprintf(FExi,"%10.6f\n", Exi(iE)/e);
-}
-fclose(FExi);
+    /* Output eigenvalues in a separate file for each k point */
+    auto FExi=fopen("Exi.r","w");
+    for(unsigned int iE=n_min;iE<=n_max;iE++) {
+        fprintf(FExi,"%10.6f\n", Exi(iE)/e);
+    }
+    fclose(FExi);
 
-free(Enk);
+    free(Enk);
 
-return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }/* end main */
 
 
@@ -295,47 +295,47 @@ static std::valarray<std::complex<double>> read_ank(int N,
                                                     int Nn,
                                                     int Nkxi)
 {
- char	filename[9];	/* eigenfunction output filename                */
- FILE   *Fank;		/* file pointer to eigenvectors file		*/
+    FILE   *Fank;		/* file pointer to eigenvectors file		*/
 
- /* Allocate memory for eigenvectors	*/
- std::valarray<std::complex<double> > ank(N*Nn*Nkxi);
+    /* Allocate memory for eigenvectors	*/
+    std::valarray<std::complex<double> > ank(N*Nn*Nkxi);
 
- /* Finally read eigenvectors into structure	*/
- for(int ikxi=0;ikxi<Nkxi;ikxi++)
- {
-     /* Open the bulk eigenvector file at each of the bulk k (kxi) points	*/
-     sprintf(filename,"ank%i.r",ikxi);
-     if((Fank=fopen(filename,"r"))==0)
-     {fprintf(stderr,"Error: Cannot open input file 'ank%i.r'!\n",ikxi);exit(0);}
+    /* Finally read eigenvectors into structure	*/
+    for(int ikxi=0;ikxi<Nkxi;ikxi++)
+    {
+        /* Open the bulk eigenvector file at each of the bulk k (kxi) points	*/
+        std::ostringstream filename; /* eigenfunction output filename                */
+        filename << "ank" << ikxi << ".r";
+        if((Fank=fopen(filename.str().c_str(),"r"))==0)
+        {fprintf(stderr,"Error: Cannot open input file 'ank%i.r'!\n",ikxi);exit(0);}
 
-     /* Read in data	*/
+        /* Read in data	*/
 
-     // Loop over all G vectors
-     for(int iG=0;iG<N;iG++)
-     {
-         // Loop over all bands
-         for(int in=0;in<Nn;in++)
-         {
-             double temp_re=0.0;
-             double temp_im=0.0;
-             int n_read = fscanf(Fank,"%lf %lf", &temp_re, &temp_im);
-             if (n_read == 2)
-             {
-                 ank[ikxi*N*Nn+iG*Nn+in] = std::complex<double>(temp_re, temp_im);
-             }
-             else
-             {
-                 fprintf(stderr, "Could not read number.\n");
-                 exit(EXIT_FAILURE);
-             }
-         }
-     }
+        // Loop over all G vectors
+        for(int iG=0;iG<N;iG++)
+        {
+            // Loop over all bands
+            for(int in=0;in<Nn;in++)
+            {
+                double temp_re=0.0;
+                double temp_im=0.0;
+                int n_read = fscanf(Fank,"%lf %lf", &temp_re, &temp_im);
+                if (n_read == 2)
+                {
+                    ank[ikxi*N*Nn+iG*Nn+in] = std::complex<double>(temp_re, temp_im);
+                }
+                else
+                {
+                    fprintf(stderr, "Could not read number.\n");
+                    exit(EXIT_FAILURE);
+                }
+            }
+        }
 
-     fclose(Fank);
- }
+        fclose(Fank);
+    }
 
-return(ank);
+    return(ank);
 }
 
 
@@ -349,45 +349,44 @@ return(ank);
 static double * read_Enk(int Nn,
                          int Nkxi)
 {
- int	in;		/* index across bands				*/
- int	ikxi;		/* index across kxi				*/
- char	filename[9];	/* eigenfunction output filename                */
- double	*Enk;
- FILE   *FEnk;		/* file pointer to eigenvectors file		*/
+    int	in;		/* index across bands				*/
+    int	ikxi;		/* index across kxi				*/
+    double	*Enk;
+    FILE   *FEnk;		/* file pointer to eigenvectors file		*/
 
-/* Allocate memory for eigenvalues	*/
+    /* Allocate memory for eigenvalues	*/
 
-Enk=(double *)calloc(Nn*Nkxi,sizeof(double));
-if(Enk==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
+    Enk=(double *)calloc(Nn*Nkxi,sizeof(double));
+    if(Enk==0){fprintf(stderr,"Cannot allocate memory!\n");exit(0);}
 
-/* Read eigenvalues into structure	*/
+    /* Read eigenvalues into structure	*/
 
-for(ikxi=0;ikxi<Nkxi;ikxi++)
-{
- /* Open the bulk eigenvalues file at each of the bulk k (kxi) points	*/
+    for(ikxi=0;ikxi<Nkxi;ikxi++)
+    {
+        /* Open the bulk eigenvalues file at each of the bulk k (kxi) points	*/
+        std::ostringstream filename; // eigenfunction output filename
+        filename << "Ek" << ikxi << ".r";
+        if((FEnk=fopen(filename.str().c_str(),"r"))==0)
+        {fprintf(stderr,"Error: Cannot open input file 'Ek%i.r'!\n",ikxi);exit(0);}
 
- sprintf(filename,"Ek%i.r",ikxi);
- if((FEnk=fopen(filename,"r"))==0)
- {fprintf(stderr,"Error: Cannot open input file 'Ek%i.r'!\n",ikxi);exit(0);}
+        /* Read in data	*/
 
- /* Read in data	*/
+        for(in=0;in<Nn;in++)
+        {
+            int n_read = fscanf(FEnk,"%lf",(Enk+ikxi*Nn+in));
+            if (n_read == 1)
+                Enk[ikxi*Nn+in] *= e;		/* convert from eV->S.I.	*/
+            else
+            {
+                fprintf(stderr, "Could not read number\n");
+                exit(EXIT_FAILURE);
+            }
+        }
 
- for(in=0;in<Nn;in++)
- {
-  int n_read = fscanf(FEnk,"%lf",(Enk+ikxi*Nn+in));
-  if (n_read == 1)
-      Enk[ikxi*Nn+in] *= e;		/* convert from eV->S.I.	*/
-  else
-  {
-      fprintf(stderr, "Could not read number\n");
-      exit(EXIT_FAILURE);
-  }
- }
+        fclose(FEnk);
+    }
 
- fclose(FEnk);
-}
-
-return(Enk);
+    return(Enk);
 }
 
 /**
