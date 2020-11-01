@@ -125,13 +125,13 @@ int main(int argc,char *argv[])
     if (opt.get_argument_known("mass"))
         compute_mass = false;
 
-    const auto alloyfile = opt.get_option<std::string>("alloyfile").c_str();
+    const auto alloyfile = opt.get_option<std::string>("alloyfile");
 
     switch(Material)
     {
         case 'a':	/* Ga(1-x)Al(x)As	*/
             {
-                read_table(alloyfile, z, x);
+                read_table(alloyfile.c_str(), z, x);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());
@@ -233,7 +233,7 @@ int main(int argc,char *argv[])
             {
                 std::valarray<double> y;
 
-                read_table(alloyfile, z, x, y);
+                read_table(alloyfile.c_str(), z, x, y);
                 V.resize(z.size());
                 Eg.resize(z.size());
                 m.resize(z.size());

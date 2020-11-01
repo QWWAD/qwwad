@@ -72,8 +72,8 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     nval(arma::ones<arma::uvec>(states.size()))
 {
     // Read population of each subband
-    const auto population_file = opt.get_option<std::string>("populationfile").c_str();
-    read_table(population_file, pop);
+    const auto population_file = opt.get_option<std::string>("populationfile");
+    read_table(population_file.c_str(), pop);
     const size_t nst = pop.size();
 
     // Check that populations are all positive
@@ -82,8 +82,8 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     // Read state degeneracy if specified
     if(opt.get_argument_known("degeneracyfile"))
     {
-        const auto degeneracy_file = opt.get_option<std::string>("degeneracyfile").c_str();
-        read_table(degeneracy_file, nval);
+        const auto degeneracy_file = opt.get_option<std::string>("degeneracyfile");
+        read_table(degeneracy_file.c_str(), nval);
 
         // Check that all input files have same size
         if(nval.size() != nst)
