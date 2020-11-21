@@ -25,30 +25,6 @@
 
 namespace QWWAD
 {
-/** Exception that occurs when a file contains wrong number of lines */
-class FileLinesNotAsExpected : public std::exception
-{
-public:
-FileLinesNotAsExpected(const std::string &fname,
-                       const size_t       nexpected,
-                       const size_t       nread);
-
-FileLinesNotAsExpected(const FileLinesNotAsExpected &other);
-
-#if HAVE_NOEXCEPT
-virtual const char * what() const noexcept;
-~FileLinesNotAsExpected () noexcept {}
-#else
-virtual const char * what() const throw();
-~FileLinesNotAsExpected () throw() {}
-#endif
-
-private:
-std::string filename;        ///< The name of the file with wrong number of lines
-size_t      nlines_expected; ///< Number of lines that were expected
-size_t      nlines_read;     ///< Number of lines that were read
-};
-
 /**
  * Read an array of size n from a single line
  *
@@ -361,7 +337,12 @@ void read_table(const Tstring    fname,
     }
 
     if(n_expected != 0 and nx != n_expected)
-        throw FileLinesNotAsExpected(fname, nx, n_expected);
+    {
+        std::ostringstream oss;
+        oss << fname << " contains " << nx
+            << " lines of data. Expected " << n_expected;
+        throw std::runtime_error(oss.str());
+    }
 
     // Copy data into output array
     std::copy(x_temp.begin(), x_temp.end(), &x[0]);
