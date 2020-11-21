@@ -26,9 +26,9 @@ private:
     void normalise();
 
 public:
-    Eigenstate(decltype(_E)   E,
-               decltype(_z)   z,
-               decltype(_psi) psi);
+    explicit Eigenstate(decltype(_E)   E,
+                        decltype(_z)   z,
+                        decltype(_psi) psi);
 
     inline decltype(_E)   get_energy() const {return _E;}
     inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}

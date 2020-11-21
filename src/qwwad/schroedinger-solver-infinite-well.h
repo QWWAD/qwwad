@@ -26,7 +26,7 @@ public:
 
     void set_padding_width(const double Lb);
 
-    std::string get_name() {return "infinite-square-well";}
+    std::string get_name() override {return "infinite-square-well";}
 
 private:
     double _me;    ///< Effective mass at band-edge (constant) [kg]
@@ -37,7 +37,7 @@ private:
     double _Lb;    ///< Width of padding regions [m]
 
     void make_z_array();
-    void calculate();
+    void calculate() override;
 };
 } // namespace
 #endif
