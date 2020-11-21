@@ -21,7 +21,7 @@ public:
                               const double       L,
                               const size_t       nz,
                               const double       alpha   = 0,
-                              const double       V       = 0,
+                              const double       V0      = 0,
                               const unsigned int nst_max = 1);
 
     void set_padding_width(const double Lb);
@@ -32,7 +32,7 @@ private:
     double _me;    ///< Effective mass at band-edge (constant) [kg]
     double _L;     ///< Width of quantum well [m]
     double _alpha; ///< Nonparabolicity [1/J]
-    double _V;     ///< Band edge [J]
+    double _V0;    ///< Potential at bottom of well [J]
     size_t _nz;    ///< Number of spatial points
     double _Lb;    ///< Width of padding regions [m]
 

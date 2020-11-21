@@ -19,7 +19,7 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
                                                      const double       L,
                                                      const size_t       nz,
                                                      const double       alpha,
-                                                     const double       V,
+                                                     const double       V0,
                                                      const unsigned int nst_max) :
     SchroedingerSolver(arma::vec(nz),
                        arma::vec(nz),
@@ -27,7 +27,7 @@ SchroedingerSolverInfWell::SchroedingerSolverInfWell(const double       me,
     _me(me),
     _L(L),
     _alpha(alpha),
-    _V(V),
+    _V0(V0),
     _nz(nz),
     _Lb(0)
 {
@@ -58,16 +58,17 @@ void SchroedingerSolverInfWell::calculate()
         double E = 0;
 
         // Energy of state [J] (QWWAD3, 2.13)
-        if(gsl_fcmp(_alpha, 0, 1e-6) == 1)
+        if(gsl_fcmp(_alpha, 0, 1e-6) == 1) {
             E = 1.0/(2.0*_alpha*_me*_L) * (
                     sqrt(_me*(
                             2.0*_alpha*gsl_pow_2(hBar*pi*is) + _me*_L*_L
                             )
                         )
                     -_me*_L
-                    ) + _V;
-        else
-            E = gsl_pow_2(pi*hBar*is/_L)/(2*_me) + _V;
+                    ) + _V0;
+        } else {
+            E = gsl_pow_2(pi*hBar*is/_L)/(2*_me) + _V0;
+        }
 
         // Stop if we've exceeded the cut-off energy
         if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
