@@ -120,7 +120,6 @@ int main(int argc,char *argv[])
     else
     {
         // reads subband populations file
-        arma::vec N;
         read_table("N.r", idx, N);
 
         if(N.size() != nst)
@@ -133,14 +132,13 @@ int main(int argc,char *argv[])
             Ef[i] = find_fermi(E[i],m,N[i],T,alpha,V);
     }
 
-    for(unsigned int i=0; i<nst; ++i)
-    {
-        if(FD_flag)
+    if(FD_flag) {
+        for(unsigned int i=0; i<nst; ++i)
         {
-            const auto N = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
+            const auto subband_pop = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
 
             if(opt.get_verbose())
-                printf("Ne=%20.17le\n", N/1e+14);
+                printf("Ne=%20.17le\n", subband_pop/1e+14);
         }
     }
 
@@ -161,6 +159,8 @@ int main(int argc,char *argv[])
  * \param[in] s     number of subband
  * \param[in] alpha nonparabolicity [1/J]
  * \param[in] V     band edge [J]
+ *
+ * \returns Total population of the subband [m^{-2}]
  */
 static double calc_dist(const double       Emin,
                         const double       Ef,
@@ -171,8 +171,9 @@ static double calc_dist(const double       Emin,
                         const double       alpha,
                         const double       V)
 {
-    char   filename[9]; // output filename for FD distribs
-    sprintf(filename,"FD%i.r",s+1);
+    // output filename for FD distribs
+    std::ostringstream filename_stream;
+    filename_stream << "FD" << s+1 << ".r";
 
     auto Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
 
@@ -190,7 +191,7 @@ static double calc_dist(const double       Emin,
 
     E/=(1e-3*e); // Convert to meV for output
 
-    write_table(filename, E, f);
+    write_table(filename_stream.str(), E, f);
     return find_pop(Emin, Ef, m, T,alpha,V);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
