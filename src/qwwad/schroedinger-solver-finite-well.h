@@ -25,7 +25,7 @@ public:
                                  const size_t nz,
                                  const unsigned int nst_max = 0);
 
-    std::string get_name() {return "finite-square-well";}
+    std::string get_name() override {return "finite-square-well";}
 
     double get_u0_max() const;
     size_t get_n_bound() const;
@@ -41,7 +41,7 @@ private:
     double _m_w; ///< Effective mass in well [kg]
     double _m_b; ///< Effective mass in barriers [kg]
 
-    void calculate();
+    void calculate() override;
     
     arma::vec get_wavefunction(const double E,
                                const bool   parity_flag) const;
