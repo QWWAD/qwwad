@@ -104,36 +104,6 @@ double SchroedingerSolverKronigPenney::get_lhs(const double E) const
     return lhs;
 }
 
-arma::cx_mat SchroedingerSolverKronigPenney::get_matching_matrix(const double E) const
-{
-    const auto I = std::complex<double>(0,1);
-    const auto L   = _l_w + _l_b; // Period length
-
-    // Find local wave vector at this energy
-    const auto k_w = sqrt(2.0*_m_w*E)/hBar; // wave vector in the well
-    const std::complex<double> k_b = sqrt(2.0*_m_b*std::complex<double>(E-_V0,0))/hBar; // Wave vector in barrier
-
-    arma::cx_mat M(4,4);
-    M(0,0) = +exp(+I*_k *L);
-    M(0,1) = +exp(+I*_k *L);
-    M(0,2) = -exp(+I*k_b*L);
-    M(0,3) = -exp(-I*k_b*L);
-    M(1,0) = +k_w/_m_w * exp(+I*_k *L);
-    M(1,1) = -k_w/_m_w * exp(+I*_k *L);
-    M(1,2) = -k_b/_m_b * exp(+I*k_b*L);
-    M(1,3) = +k_b/_m_b * exp(-I*k_b*L);
-    M(2,0) = +exp(+I*k_w*_l_w);
-    M(2,1) = +exp(-I*k_w*_l_w);
-    M(2,2) = -exp(+I*k_b*_l_w);
-    M(2,3) = -exp(-I*k_b*_l_w);
-    M(3,0) = +k_w/_m_w * exp(+I*k_w*_l_w);
-    M(3,1) = -k_w/_m_w * exp(-I*k_w*_l_w);
-    M(3,2) = -k_b/_m_b * exp(+I*k_b*_l_w);
-    M(3,3) = +k_b/_m_b * exp(-I*k_b*_l_w);
-
-    return M;
-}
-
 /**
  * \brief calculates the uncorrelated one particle wavefunction
  *
@@ -151,34 +121,22 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
     const auto k_w = sqrt(2.0*_m_w*E)/hBar; // wave vector in the well
     const auto k_b = sqrt(2.0*_m_b*std::complex<double>(E-_V0,0))/hBar; // Wave vector in barrier
 
-    const auto M = get_matching_matrix(E); 
-
-    arma::cx_vec rhs(4);
-    rhs(0) = 0;
-    rhs(1) = 0;
-    rhs(2) = 0;
-    rhs(3) = 1;
-
-    arma::cx_vec coeffs = arma::solve(M, rhs);
-
-    const auto A = coeffs(0);
-    const auto B = coeffs(1);
-    const auto C = coeffs(2);
-    const auto D = coeffs(3);
+    const auto L   = _l_w + _l_b; // Period length
 
     for (unsigned int i_z=0; i_z<nz; ++i_z)
     {
         const auto z = _z[i_z];
-        const auto P = (A+B)*cos(k_w*z) + I*(A-B)*sin(k_w*z);
-        const auto Q = (C+D)*cos(k_b*z) + I*(C-D)*sin(k_b*z);
 
-        if (_V[i_z] > 0)
-        {
-            psi[i_z] = 1 + abs(Q) * 0;
-        }
-        else
-        {
-            psi[i_z] = 1 + abs(P) * 0;
+        const auto A = std::complex<double>(1,0);
+        const auto B = A * (sin(k_w*_l_w) + _m_b*k_w/(_m_w*k_b)*sin(k_b*_l_b)) /
+            (exp(I*_k*L) * cos(k_b*_l_b) - cos(k_w*_l_w));
+        const auto D = B;
+        const auto C = _m_b*k_w / (_m_w*k_b) * A;
+
+        if (_V[i_z] > 0) { // In barriers
+            psi[i_z] = 1; //real(C*sin(k_b*z) + D*cos(k_b*z));
+        } else { // In wells
+            psi[i_z] = 1; //real(A*sin(k_w*z) + B*cos(k_w*z));
         }
     }
 
@@ -257,12 +215,13 @@ void SchroedingerSolverKronigPenney::calculate()
             E   = gsl_root_fsolver_root(solver);
             Elo = gsl_root_fsolver_x_lower(solver);
             Ehi = gsl_root_fsolver_x_upper(solver);
-            status = gsl_root_test_interval(Elo, Ehi, 1e-9*e, 0.000001);
+            status = gsl_root_test_interval(Elo, Ehi, 1e-9*e, 1e-6);
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
         if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
         {
+            std::cerr << "Solver hit cut-off energy" << std::endl;
             break;
         }
 

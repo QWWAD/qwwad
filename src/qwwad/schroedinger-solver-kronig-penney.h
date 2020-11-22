@@ -30,7 +30,7 @@ public:
                                    const size_t nper = 10,
                                    const unsigned int nst_max = 1);
 
-    std::string get_name() {return "kronig-penney";}
+    std::string get_name() override {return "kronig-penney";}
 
     static double test_matching(double v,
                                 void   *params);
@@ -46,9 +46,8 @@ private:
     double _m_b; ///< Effective mass in barriers [kg]
     double _k;   ///< Wave vector [1/m]
 
-    void calculate();
+    void calculate() override;
 
-    arma::cx_mat get_matching_matrix(const double E) const;
     arma::vec get_wavefunction(const double E) const;
 };
 } // namespace
