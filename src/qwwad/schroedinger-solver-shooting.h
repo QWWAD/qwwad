@@ -29,7 +29,7 @@ public:
                                const double            dE,
                                const unsigned int      nst_max=0);
 
-    std::string get_name() {return "shooting";}
+    std::string get_name() override {return "shooting";}
 
     std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
 
@@ -40,7 +40,7 @@ public:
                               const double  E) const;
 
 private:
-    void calculate();
+    void calculate() override;
 };
 } // namespace
 #endif
