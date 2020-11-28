@@ -19,8 +19,8 @@ void DonorEnergyMinimiserFast::minimise()
     unsigned int iter=0;   // The number of iterations attempted so far
 
     // See if we're using a variable symmetry form-factor
-    SchroedingerSolverDonorVariable *se_variable = dynamic_cast<SchroedingerSolverDonorVariable *>(_se);
-    if(se_variable != NULL) // If it's variable symmetry, try a range of symmetry parameters
+    auto se_variable = dynamic_cast<SchroedingerSolverDonorVariable *>(_se);
+    if(se_variable) // If it's variable symmetry, try a range of symmetry parameters
     {
         gsl_multimin_function f;
         f.f = &find_E_at_lambda_zeta; // Function to minimise
@@ -41,6 +41,11 @@ void DonorEnergyMinimiserFast::minimise()
         {
             ++iter;
             status  = gsl_multimin_fminimizer_iterate(s);
+
+            if(status) {
+                std::cerr << "GSL error in DonorEnergyMinimiserFast: " << std::endl;
+            }
+
             status  = gsl_multimin_test_size(s->size, 1e-5); // Second number is effectively the abs. tolerance in symmetry parameter
 
             // Save search history
@@ -51,11 +56,10 @@ void DonorEnergyMinimiserFast::minimise()
 
         gsl_multimin_fminimizer_free(s);
         gsl_vector_free(lambda_zeta);
-    }
-    else
-    {
-        if(_lambda_stop < 0)
+    } else if(_se) {
+        if(_lambda_stop < 0) {
             throw std::domain_error("Upper limit on Bohr radius must be set to a positive value using --lambdastop");
+        }
 
         double __lambda_start = _lambda_start;
 
@@ -68,10 +72,11 @@ void DonorEnergyMinimiserFast::minimise()
         const double Elo = GSL_FN_EVAL(&f, __lambda_start);
         const double Ehi = GSL_FN_EVAL(&f, _lambda_stop);
 
-        double E0 = Elo + Ehi; // Set initial estimate as being higher than Elo and Ehi
         _se->set_lambda(__lambda_start);
 
         const double dlambda = (_lambda_stop - __lambda_start)/4; // Separation between endpoints [m]
+
+        double E0; // Best estimate of solution
 
         // Search for a suitable lambda value until we find which quadrant the mimimum lies in
         do
@@ -93,6 +98,11 @@ void DonorEnergyMinimiserFast::minimise()
         {
             ++iter;
             status  = gsl_min_fminimizer_iterate(s);
+
+            if(status) {
+                std::cerr << "GSL error in DonorEnergyMinimiserFast." << std::endl;
+            }
+
             const double lambda_lo = gsl_min_fminimizer_x_lower(s);
             const double lambda_hi = gsl_min_fminimizer_x_upper(s);
             status  = gsl_min_test_interval(lambda_lo, lambda_hi, 0.1e-10, 0.0);

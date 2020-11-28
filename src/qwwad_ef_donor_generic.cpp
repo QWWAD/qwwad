@@ -201,6 +201,11 @@ int main(int argc,char *argv[])
     {
         ++iter;
         status  = gsl_min_fminimizer_iterate(s);
+
+        if(status) {
+            std::cerr << "GSL error in qwwad_ef_donor_generic: " << std::endl;
+        }
+
         const auto lambda_lo = gsl_min_fminimizer_x_lower(s);
         const auto lambda_hi = gsl_min_fminimizer_x_upper(s);
         lambda = gsl_min_fminimizer_x_minimum(s);

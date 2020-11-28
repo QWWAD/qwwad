@@ -224,7 +224,7 @@ void SchroedingerSolverFiniteWell::calculate()
         if (ist == nst - 1)
            vhi = u_0_max;
 
-        double v = 0.5 * (vlo+vhi); // Initial estimate of solution
+        double v; // Best estimate of solution
         gsl_root_fsolver_set(solver, &F, vlo, vhi);
         int status = 0;
 
@@ -233,6 +233,12 @@ void SchroedingerSolverFiniteWell::calculate()
         do
         {
             status = gsl_root_fsolver_iterate(solver);
+
+            if(status) {
+                std::cerr << "GSL error in SchroedingerSolverFiniteWell: " << std::endl
+                          << "   Singularity in range (" << vlo << "," << vhi << ")" << std::endl;
+            }
+
             v = gsl_root_fsolver_root(solver);
             vlo = gsl_root_fsolver_x_lower(solver);
             vhi = gsl_root_fsolver_x_upper(solver);

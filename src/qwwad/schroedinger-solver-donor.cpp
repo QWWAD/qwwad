@@ -141,15 +141,15 @@ void SchroedingerSolverDonor::calculate()
     // Note the end stop to prevent infinite loop in absence of solution
     //
     // TODO: Make the cut-off configurable
-    double y2 = y1;
     double Ehi = Elo;
-    do
-    {
+
+    double y2; // Value of f(x) at top of range
+    do {
         Ehi += _dE;
         y2=GSL_FN_EVAL(&f, Ehi);
     }while(y1*y2>0);
 
-    double E = (Elo + Ehi)/2;
+    double E; // Best estimate of solution [J]
     gsl_root_fsolver_set(solver, &f, Elo, Ehi);
     int status = 0;
 
@@ -158,6 +158,12 @@ void SchroedingerSolverDonor::calculate()
     do
     {
         status = gsl_root_fsolver_iterate(solver);
+
+        if(status) {
+                std::cerr << "GSL error in SchroedingerSolverDonor: " << std::endl
+                          << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
+        }
+
         E   = gsl_root_fsolver_root(solver);
         Elo = gsl_root_fsolver_x_lower(solver);
         Ehi = gsl_root_fsolver_x_upper(solver);

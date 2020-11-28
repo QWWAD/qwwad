@@ -77,7 +77,7 @@ void SchroedingerSolverShooting::calculate()
         // Note the end stop to prevent infinite loop in absence of solution
         //
         // TODO: Make the cut-off configurable
-        double y2 = y1;
+        double y2; // Value at top of search range
         double Ehi = Elo;
 
         do
@@ -86,7 +86,7 @@ void SchroedingerSolverShooting::calculate()
             y2=GSL_FN_EVAL(&f, Ehi);
         }while(y1*y2>0);
 
-        double E = (Elo + Ehi)/2;
+        double E; // The best estimate of the eigenstate
         gsl_root_fsolver_set(solver, &f, Elo, Ehi);
         int status = 0;
 
@@ -95,6 +95,12 @@ void SchroedingerSolverShooting::calculate()
         do
         {
             status = gsl_root_fsolver_iterate(solver);
+
+            if(status) {
+                std::cerr << "GSL error in SchroedingerSolverShooting: " << std::endl
+                          << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
+            }
+
             E   = gsl_root_fsolver_root(solver);
             Elo = gsl_root_fsolver_x_lower(solver);
             Ehi = gsl_root_fsolver_x_upper(solver);
@@ -175,25 +181,22 @@ double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
         double m_prev = 0.0;
         double m_next = 0.0;
 
-        if(i != 0)
-        {
+        if(i != 0) {
             wf_prev = wf(i-1);
             m_prev = (m(i) + m(i-1))/2.0;
-        }
-        else
-        {
+        } else {
             m_prev = m(i);
         }
 
-        if(i != nz - 1)
+        if(i != nz - 1) {
             m_next = (m(i) + m(i+1))/2.0;
-        else
+        } else {
             m_next = m(i);
+        }
 
         wf_next = (2*m_next*dz*dz/hBar/hBar*(_V(i)-E)+
                 1.0 + m_next/m_prev)*wf(i)
                 - wf_prev * m_next/m_prev;
-        wf_prev += 0;
 
         // Now copy calculated wave function to array
         if(i != nz-1) wf(i+1) = wf_next;

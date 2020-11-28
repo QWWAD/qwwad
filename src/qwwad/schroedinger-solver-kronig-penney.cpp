@@ -114,6 +114,8 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
     const auto nz = _z.size();
     arma::vec psi(nz); // wavefunction
 
+#if 0
+    // Temporarily disabled because this calculation doesn't work!
     // Imaginary unit
     const auto I = std::complex<double>(0,1);
 
@@ -122,9 +124,12 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
     const auto k_b = sqrt(2.0*_m_b*std::complex<double>(E-_V0,0))/hBar; // Wave vector in barrier
 
     const auto L   = _l_w + _l_b; // Period length
+#endif
 
     for (unsigned int i_z=0; i_z<nz; ++i_z)
     {
+        // Temporarily disabled because this calculation doesn't work!
+#if 0
         const auto z = _z[i_z];
 
         const auto A = std::complex<double>(1,0);
@@ -132,6 +137,7 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
             (exp(I*_k*L) * cos(k_b*_l_b) - cos(k_w*_l_w));
         const auto D = B;
         const auto C = _m_b*k_w / (_m_w*k_b) * A;
+#endif
 
         if (_V[i_z] > 0) { // In barriers
             psi[i_z] = 1; //real(C*sin(k_b*z) + D*cos(k_b*z));
@@ -195,7 +201,7 @@ void SchroedingerSolverKronigPenney::calculate()
         // Note the end stop to prevent infinite loop in absence of solution
         //
         // TODO: Make the cut-off configurable
-        double y2 = y1;
+        double y2; // Value of function at top of range
         double Ehi = Elo;
         do
         {
@@ -203,7 +209,7 @@ void SchroedingerSolverKronigPenney::calculate()
             y2=GSL_FN_EVAL(&F, Ehi);
         }while((y1*y2>0)&&(Ehi<100 * _V0));
 
-        auto E = (Elo + Ehi) / 2.0; // Initial estimate of energy of state
+        double E; // Best estimate of energy of state
         gsl_root_fsolver_set(solver, &F, Elo, Ehi);
         int status = 0;
 
@@ -212,6 +218,12 @@ void SchroedingerSolverKronigPenney::calculate()
         do
         {
             status = gsl_root_fsolver_iterate(solver);
+
+            if(status) {
+                std::cerr << "GSL error in SchroedingerKronigPenney: " << std::endl
+                          << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
+            }
+
             E   = gsl_root_fsolver_root(solver);
             Elo = gsl_root_fsolver_x_lower(solver);
             Ehi = gsl_root_fsolver_x_upper(solver);

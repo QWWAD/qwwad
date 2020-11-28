@@ -214,6 +214,12 @@ double find_fermi(const double Esb,
             do
             {
                 status = gsl_root_fsolver_iterate(solver);
+
+                if(status) {
+                    std::cerr << "GSL error in find_fermi: " << std::endl
+                              << "   Singularity in range (" << E_min << "," << E_max << ")" << std::endl;
+                }
+
                 E_F   = gsl_root_fsolver_root(solver);
                 E_min = gsl_root_fsolver_x_lower(solver);
                 E_max = gsl_root_fsolver_x_upper(solver);
@@ -280,9 +286,6 @@ double find_fermi_global(const arma::vec &Esb,
     double E_min=Esb[0]-100.0*kB*Te;
     double E_max=Esb[nst-1]+500.0*kB*Te;
 
-    // Find bisector of the limits [J]
-    double E_F=(E_min+E_max)/2.0;
-
     // Set parameters for search
     total_pop_params params = {Esb, m0, Te, alpha, V, N};
 
@@ -293,6 +296,8 @@ double find_fermi_global(const arma::vec &Esb,
     // We can solve the Fermi integral only if there is a sign-change 
     // between the limits
     const bool solvable=!(sign_min==sign_max);
+
+    double E_F; // Best estimate of solution [J]
 
     if(solvable)
     {
@@ -307,6 +312,12 @@ double find_fermi_global(const arma::vec &Esb,
         do
         {
             status = gsl_root_fsolver_iterate(solver);
+
+            if(status) {
+                std::cerr << "GSL error in find_fermi_global: " << std::endl
+                          << "   Singularity in range (" << E_min << "," << E_max << ")" << std::endl;
+            }
+
             E_F   = gsl_root_fsolver_root(solver);
             E_min = gsl_root_fsolver_x_lower(solver);
             E_max = gsl_root_fsolver_x_upper(solver);
