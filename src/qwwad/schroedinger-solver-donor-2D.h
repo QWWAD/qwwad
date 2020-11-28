@@ -30,8 +30,9 @@ private:
     void calculate_psi_from_chi(){
         _solutions.clear();
 
-        for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
-            _solutions.push_back(_solutions_chi[ist]);
+        for (auto & st : _solutions_chi) {
+            _solutions.push_back(st);
+        }
     }
     double I_1(const double z_dash) const;
     double I_2(const double z_dash) const;
