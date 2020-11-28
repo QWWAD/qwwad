@@ -16,9 +16,9 @@ public:
                          decltype(_unit)        unit,
                          decltype(_poly_coeffs) poly_coeffs);
 
-    virtual MaterialPropertyPoly * clone() const;
+    MaterialPropertyPoly * clone() const override;
 
-    double get_val(const double x = 0) const;
+    double get_val(const double x = 0) const override;
 };
 } // end namespace
 #endif

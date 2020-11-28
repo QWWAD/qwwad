@@ -26,10 +26,10 @@ public:
                               const double        lambda,
                               const double        dE);
 
-    std::string get_name() {return "donor-3D";}
+    std::string get_name() override {return "donor-3D";}
 
 private:
-    void calculate_psi_from_chi()
+    void calculate_psi_from_chi() override
     {
         _solutions.clear();
 
@@ -45,10 +45,10 @@ private:
         }
     }
 
-    double I_1(const double z_dash) const;
-    double I_2(const double z_dash) const;
-    double I_3(const double z_dash) const;
-    double I_4(const double z_dash) const;
+    double I_1(const double z_dash) const override;
+    double I_2(const double z_dash) const override;
+    double I_3(const double z_dash) const override;
+    double I_4(const double z_dash) const override;
 };
 } // namespace
 #endif

@@ -24,7 +24,7 @@ public:
                             const double        lambda,
                             const double        dE);
 
-    virtual std::string get_name() = 0;
+    std::string get_name() override = 0;
 
     std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
 
@@ -53,7 +53,7 @@ protected:
     ///< Set of solutions to the Schroedinger equation excluding hydrogenic component
     std::vector<Eigenstate> _solutions_chi;
 
-    void calculate();
+    void calculate() override;
     virtual void   calculate_psi_from_chi() = 0;
     virtual double I_1(const double z_dash) const = 0;
     virtual double I_2(const double z_dash) const = 0;

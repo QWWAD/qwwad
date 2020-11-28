@@ -17,9 +17,9 @@ public:
                              decltype(_unit)        unit,
                              decltype(_constant)    value);
 
-    virtual MaterialPropertyConstant * clone() const;
+    MaterialPropertyConstant * clone() const override;
 
-    decltype(_constant) get_val(const double x = 0) const;
+    decltype(_constant) get_val(const double x = 0) const override;
 };
 } // end namespace
 #endif

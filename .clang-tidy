@@ -1,2 +1,2 @@
-Checks: 'modernize-deprecated-headers,modernize-loop-convert'
+Checks: 'modernize-deprecated-headers,modernize-loop-convert,modernize-use-override'
 HeaderFilterRegex: '.*/src/[^3].*'

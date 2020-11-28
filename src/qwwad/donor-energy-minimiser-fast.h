@@ -16,7 +16,7 @@ public:
     {};
 
 private:
-    void minimise();
+    void minimise() override;
 };
 }
 #endif //QWWAD_DONOR_ENERGY_MINIMISER_FAST_H

@@ -15,7 +15,7 @@ public:
         : DonorEnergyMinimiser(se, lambda_start, lambda_step, lambda_stop)
     {};
 private:
-    void minimise();
+    void minimise() override;
 };
 } // namespace
 #endif // QWWAD_DONOR_ENERGY_MINIMISER_LINEAR_H

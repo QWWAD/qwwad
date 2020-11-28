@@ -24,7 +24,7 @@ public:
                                     const size_t nz,
                                     const unsigned int nst_max = 0);
 
-    std::string get_name() {return "poeschl-teller-potential-hole";}
+    std::string get_name() override {return "poeschl-teller-potential-hole";}
     size_t get_n_bound() const;
 private:
     double _alpha;  ///< Width parameter [1/m]
@@ -32,7 +32,7 @@ private:
     double _length; ///< Length of potential profile [m]
     double _mass;   ///< Effective mass in well [kg]
 
-    void calculate();
+    void calculate() override;
 };
 } // namespace
 #endif
