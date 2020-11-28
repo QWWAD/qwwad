@@ -37,7 +37,7 @@ endif()
 option( VERBOSE "Show information about CMake build configuration." )
 
 # Enable C++11 builds
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Define minimum versions of dependencies here
