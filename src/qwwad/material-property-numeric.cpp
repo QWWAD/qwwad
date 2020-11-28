@@ -6,6 +6,10 @@
 
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
+
+
+#include <utility>
+
 #include "material-property-numeric.h"
 
 namespace QWWAD {
@@ -37,7 +41,7 @@ MaterialPropertyNumeric::MaterialPropertyNumeric(decltype(_name)        name,
                                                  decltype(_reference)   reference,
                                                  decltype(_unit)        unit) :
     MaterialProperty(name, description, reference),
-    _unit(unit)
+    _unit(std::move(unit))
 {}
 
 /// Return the unit for the property

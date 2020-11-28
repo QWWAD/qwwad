@@ -1,4 +1,6 @@
 #include <complex>
+#include <utility>
+
 #include "scattering-calculator-LO.h"
 #include "constants.h"
 #include "maths-helpers.h"
@@ -28,7 +30,7 @@ ScatteringCalculatorLO::ScatteringCalculatorLO(decltype(_subbands)    subbands,
                                                decltype(_Te)          Te,
                                                decltype(_Tl)          Tl,
                                                decltype(_is_emission) is_emission) :
-    _subbands(subbands),
+    _subbands(std::move(subbands)),
     _A0(A0),
     _Ephonon(Ephonon),
     _epss(epss),

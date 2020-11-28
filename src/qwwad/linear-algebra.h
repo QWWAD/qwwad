@@ -12,6 +12,8 @@
 #endif //HAVE_CONFIG_H
 
 #include <complex>
+#include <utility>
+
 #include <vector>
 #include <sstream>
 #include <stdexcept>
@@ -35,9 +37,9 @@ public:
      * Initialise an EVP solution by copying known eigenvalue/
      * eigenvector pair
      */
-    EVP_solution(const             T   E,
-                 const decltype(_psi) &psi)
-        : _E(E), _psi(psi)
+    EVP_solution(const T        E,
+                 decltype(_psi) psi)
+        : _E(E), _psi(std::move(psi))
     {}
 
     EVP_solution(const size_t n) : 

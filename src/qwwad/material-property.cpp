@@ -5,6 +5,8 @@
  */
 
 #include <stdexcept>
+#include <utility>
+
 #include <glibmm/ustring.h>
 #include <libxml++/libxml++.h>
 #include "constants.h"
@@ -46,8 +48,8 @@ MaterialProperty::MaterialProperty(decltype(_name)        name,
                                    decltype(_reference)   reference)
     :
         _name(""),
-        _description(description),
-        _reference(reference)
+        _description(std::move(description)),
+        _reference(std::move(reference))
 {
     if(name == "")
         throw std::runtime_error("Material property must have a name");

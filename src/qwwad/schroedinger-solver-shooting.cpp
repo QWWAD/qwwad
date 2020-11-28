@@ -11,6 +11,10 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_roots.h>
 
+
+#include <utility>
+
+
 #include "maths-helpers.h"
 #include "constants.h"
 
@@ -27,15 +31,15 @@ using namespace constants;
  * \param[in] dE      Minimum energy separation between states [J]
  * \param[in] nst_max Maximum number of states to find
  */
-SchroedingerSolverShooting::SchroedingerSolverShooting(const decltype(_me)    &me,
-                                                       const decltype(_alpha) &alpha,
-                                                       const decltype(_V)     &V,
-                                                       const decltype(_z)     &z,
-                                                       const double            dE,
-                                                       const unsigned int      nst_max) :
+SchroedingerSolverShooting::SchroedingerSolverShooting(decltype(_me)       me,
+                                                       decltype(_alpha)    alpha,
+                                                       const decltype(_V) &V,
+                                                       const decltype(_z) &z,
+                                                       const double        dE,
+                                                       const unsigned int  nst_max) :
     SchroedingerSolver(V,z,nst_max),
-    _me(me),
-    _alpha(alpha),
+    _me(std::move(me)),
+    _alpha(std::move(alpha)),
     _dE(dE)
 {
 }

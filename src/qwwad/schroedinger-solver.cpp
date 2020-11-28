@@ -7,8 +7,10 @@
 
 #include "schroedinger-solver.h"
 
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
+#include <utility>
+
 #include "constants.h"
 
 namespace QWWAD
@@ -71,11 +73,11 @@ std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_
  * \details If nst_max=0 (the default), all states will be found
  *          that lie within the range of the input potential profile
  */
-SchroedingerSolver::SchroedingerSolver(const decltype(_V)       &V,
-                                       const decltype(_z)       &z,
+SchroedingerSolver::SchroedingerSolver(decltype (_V)             V,
+                                       decltype (_z)             z,
                                        const decltype(_nst_max)  nst_max) :
-    _V(V),
-    _z(z),
+    _V(std::move(V)),
+    _z(std::move(z)),
     _nst_max(nst_max),
     _E_min(0.0),
     _E_max(0.0),

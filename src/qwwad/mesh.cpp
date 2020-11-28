@@ -8,6 +8,8 @@
 #include "mesh.h"
 
 #include <fstream>
+#include <utility>
+
 
 #ifdef DEBUG
 # include <iostream>
@@ -28,14 +30,14 @@ namespace QWWAD
  * \param[in] n_periods  Number of periods of the structure to generate
  */
 Mesh::Mesh(const decltype(_x_layer)    &x_layer,
-           const decltype(_W_layer)    &W_layer,
-           const decltype(_n3D_layer)  &n3D_layer,
+           decltype(_W_layer)           W_layer,
+           decltype(_n3D_layer)         n3D_layer,
            const decltype(_ncell_1per)  ncell_1per,
            const decltype(_n_periods)   n_periods) :
     _n_alloy(x_layer.at(0).size()),
     _x_layer(x_layer),
-    _W_layer(W_layer),
-    _n3D_layer(n3D_layer),
+    _W_layer(std::move(W_layer)),
+    _n3D_layer(std::move(n3D_layer)),
     _n_periods(n_periods),
     _ncell_1per(ncell_1per),
     _layer_top_index(_x_layer.size() * n_periods),

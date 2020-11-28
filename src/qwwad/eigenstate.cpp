@@ -1,5 +1,7 @@
 #include "eigenstate.h"
 #include <sstream>
+#include <utility>
+
 #include "maths-helpers.h"
 #include "file-io.h"
 
@@ -8,8 +10,8 @@ Eigenstate::Eigenstate(decltype(_E)   E,
                        decltype(_z)   z,
                        decltype(_psi) psi) :
     _E(E),
-    _z(z),
-    _psi(psi)
+    _z(std::move(z)),
+    _psi(std::move(psi))
 {
     normalise();
 }

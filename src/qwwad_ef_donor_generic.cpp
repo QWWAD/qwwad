@@ -5,12 +5,14 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <cmath>
 #include <iostream>
 #include <sstream>
+#include <utility>
+
 
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_integration.h>
@@ -48,17 +50,17 @@ public:
     double    r_i;     ///< z-position of dopant
     StateID   S;       ///< State ID
 
-    Wavefunction3D(decltype(_wf) const   &wf,
-                   decltype(_V)  const   &V,
-                   decltype(_z)  const   &z,
-                   double                 epsilon,
-                   double                 m,
-                   double                 r_i,
-                   StateID                S)
+    Wavefunction3D(decltype(_wf) wf,
+                   decltype(_V)  V,
+                   decltype(_z)  z,
+                   double        epsilon,
+                   double        m,
+                   double        r_i,
+                   StateID       S)
         :
-            _wf(wf),
-            _V(V),
-            _z(z),
+            _wf(std::move(wf)),
+            _V(std::move(V)),
+            _z(std::move(z)),
             epsilon(epsilon),
             m(m),
             r_i(r_i),

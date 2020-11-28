@@ -36,8 +36,8 @@ protected:
     std::vector<Eigenstate> _solutions;
 
 public:
-    SchroedingerSolver(const decltype(_V)       &V,
-                       const decltype(_z)       &z,
+    SchroedingerSolver(decltype (_V)             V,
+                       decltype (_z)             z,
                        const decltype(_nst_max)  nst_max=0);
 
     std::vector<Eigenstate> get_solutions(const bool convert_to_meV=false);

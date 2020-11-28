@@ -8,6 +8,10 @@
 #include "schroedinger-solver-full.h"
 
 #include <gsl/gsl_math.h>
+
+
+#include <utility>
+
 #include "constants.h"
 #include "linear-algebra.h"
 
@@ -21,14 +25,14 @@ using namespace constants;
  * \details If nst_max=0 (the default), all states will be found
  *          that lie within the range of the input potential profile
  */
-SchroedingerSolverFull::SchroedingerSolverFull(const decltype(_m)     &m,
-                                               const decltype(_alpha) &alpha,
-                                               const decltype(_V)     &V,
-                                               const decltype(_z)     &z,
-                                               const unsigned int      nst_max) :
+SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
+                                               decltype(_alpha)    alpha,
+                                               const decltype(_V) &V,
+                                               const decltype(_z) &z,
+                                               const unsigned int  nst_max) :
     SchroedingerSolver(V,z,nst_max),
-    _m(m),
-    _alpha(alpha),
+    _m(std::move(m)),
+    _alpha(std::move(alpha)),
     _A(arma::mat(3*z.size(), 3*z.size()))
 {
     const size_t nz = z.size();

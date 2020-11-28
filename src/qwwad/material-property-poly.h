@@ -1,6 +1,7 @@
 #ifndef QWWAD_MATERIAL_PROPERTY_POLY_H
 #define QWWAD_MATERIAL_PROPERTY_POLY_H
 
+#include <map>
 #include "material-property-numeric.h"
 
 namespace QWWAD {

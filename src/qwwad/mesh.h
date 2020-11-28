@@ -52,11 +52,11 @@ private:
     double                _dz;  ///< Width of each cell [m]
 
 public:
-    Mesh(const decltype(_x_layer)    &x_layer,
-         const decltype(_W_layer)    &W_layer,
-         const decltype(_n3D_layer)  &n3D_layer,
-         const decltype(_ncell_1per)  ncell_1per,
-         const decltype(_n_periods)   n_periods = 1);
+    Mesh(const decltype(_x_layer)   &x_layer,
+         decltype(_W_layer)          W_layer,
+         decltype(_n3D_layer)        n3D_layer,
+         const decltype(_ncell_1per) ncell_1per,
+         const decltype(_n_periods)  n_periods = 1);
 
     static Mesh* create_from_file_auto_nz(const std::string &layer_filename,
                                           const size_t       n_periods,

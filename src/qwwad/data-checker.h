@@ -9,6 +9,8 @@
 #define QWWAD_DATA_CHECK_H
 
 #include <armadillo>
+#include <utility>
+
 
 namespace QWWAD {
 
@@ -18,8 +20,8 @@ private:
     arma::vec _data; // The data to test
 
 public:
-    DataChecker(const arma::vec &data)
-        : _data(data)
+    DataChecker(arma::vec data)
+        : _data(std::move(data))
     {}
 
     void check_positive() const;

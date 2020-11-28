@@ -4,10 +4,12 @@
  * \author Alex Valavanis <a.valavanis@leeds.ac.uk>
  */
 
-#include <stdexcept>
-#include <libxml++/libxml++.h>
 #include "material-property-poly.h"
 #include <cmath>
+#include <libxml++/libxml++.h>
+#include <stdexcept>
+#include <utility>
+
 
 namespace QWWAD {
 MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
@@ -68,7 +70,7 @@ MaterialPropertyPoly::MaterialPropertyPoly(decltype(_name)        name,
                                            decltype(_unit)        unit,
                                            decltype(_poly_coeffs) poly_coeffs) :
     MaterialPropertyNumeric(name, description, reference, unit),
-    _poly_coeffs(poly_coeffs)
+    _poly_coeffs(std::move(poly_coeffs))
 {}
 
 /**

@@ -22,12 +22,12 @@ private:
     double    _dE;    ///< Minimum energy separation between states [J]
 
 public:
-    SchroedingerSolverShooting(const decltype(_me)    &me,
-                               const decltype(_alpha) &alpha,
-                               const decltype(_V)     &V,
-                               const decltype(_z)     &z,
-                               const double            dE,
-                               const unsigned int      nst_max=0);
+    SchroedingerSolverShooting(decltype(_me)       me,
+                               decltype(_alpha)    alpha,
+                               const decltype(_V) &V,
+                               const decltype(_z) &z,
+                               const double        dE,
+                               const unsigned int  nst_max=0);
 
     std::string get_name() override {return "shooting";}
 
