@@ -54,7 +54,7 @@ std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_
             const auto z   = sol_J.get_position_samples();
             const auto psi = sol_J.get_wavefunction_samples();
 
-            sol_meV.push_back(Eigenstate(E*1000/e, z, psi));
+            sol_meV.emplace_back(E*1000/e, z, psi);
         }
 
         return sol_meV;

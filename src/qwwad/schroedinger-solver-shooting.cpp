@@ -116,7 +116,7 @@ void SchroedingerSolverShooting::calculate()
         arma::vec psi(_z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);
 
-        _solutions.push_back(Eigenstate(E,_z,psi));
+        _solutions.emplace_back(E,_z,psi);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check

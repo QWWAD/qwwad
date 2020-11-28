@@ -103,7 +103,7 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
 
     // Resize permanent store of eigen-solutions to correct size and copy in first eigen-solution
     const auto psi_size = z_temp.size();
-    states.push_back(Eigenstate(E_temp[0], z_temp, psi_temp));
+    states.emplace_back(E_temp[0], z_temp, psi_temp);
 
     // Read in remaining eigenvectors and copy into permanent store
     for(unsigned int ist=1; ist<nst; ist++){
@@ -111,7 +111,7 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
         Eigenvect_name_sstream << Eigenvect_prefix << ist+1 << Eigenvect_ext;
         Eigenvect_name = Eigenvect_name_sstream.str();
         read_table(Eigenvect_name.c_str(), z_temp, psi_temp, psi_size);
-        states.push_back(Eigenstate(E_temp[ist], z_temp, psi_temp));
+        states.emplace_back(E_temp[ist], z_temp, psi_temp);
     }
 
     return states;

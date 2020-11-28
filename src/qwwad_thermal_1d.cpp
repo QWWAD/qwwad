@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
             exit(EXIT_FAILURE);
         }
 
-        dm_layer.push_back(DebyeModel(T_D, M, natoms));
+        dm_layer.emplace_back(T_D, M, natoms);
     }
 
     const auto _Tsink = opt.get_option<double>("Tsink");

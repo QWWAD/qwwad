@@ -89,7 +89,7 @@ void SchroedingerSolverInfWell::calculate()
         // Don't store the solution if it's below the minimum energy
         if(!(_E_min_set && gsl_fcmp(E, _E_min, e*1e-12) == -1))
         {
-            _solutions.push_back(Eigenstate(E, _z, psi));
+            _solutions.emplace_back(E, _z, psi);
         }
     }
 }

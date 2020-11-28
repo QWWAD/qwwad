@@ -146,7 +146,7 @@ void SchroedingerSolverFull::calculate()
         const std::vector<double> psi(psi_full.begin(),
                                       psi_full.begin() + nz);
 
-        _solutions.push_back(Eigenstate(E, _z, psi));
+        _solutions.emplace_back(E, _z, psi);
     }
 }
 } // namespace

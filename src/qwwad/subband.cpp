@@ -136,7 +136,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
         const arma::vec mass_integrand = 1.0 / m_d_z * ground_state[ist].get_PD();
         const auto mass = 1.0 / integral(mass_integrand, dz);
 
-        subbands.push_back(Subband(ground_state[ist], mass));
+        subbands.emplace_back(ground_state[ist], mass);
     }
 
     return subbands;
@@ -170,7 +170,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     std::vector<Subband> subbands;
 
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d));
+        subbands.emplace_back(ground_state[ist], m_d);
 
     return subbands;
 }
@@ -282,7 +282,7 @@ std::vector<Subband> Subband::read_from_file(const std::string& energy_input_pat
     // Copy subband data to vector
     std::vector<Subband> subbands; // Output structure
     for (unsigned int ist = 0; ist < nst; ist++)
-        subbands.push_back(Subband(ground_state[ist], m_d, alphad, V));
+        subbands.emplace_back(ground_state[ist], m_d, alphad, V);
 
     return subbands;
 }

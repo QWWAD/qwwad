@@ -176,7 +176,7 @@ void SchroedingerSolverDonor::calculate()
 
     arma::vec chi(_z.size());
     const auto chi_inf = shoot_wavefunction(E, chi);
-    _solutions_chi.push_back(Eigenstate(E, _z, chi));
+    _solutions_chi.emplace_back(E, _z, chi);
 
     calculate_psi_from_chi(); // Finally, compute the complete solution
 
@@ -224,7 +224,7 @@ std::vector<Eigenstate> SchroedingerSolverDonor::get_solutions_chi(const bool co
             const auto E   = sol_J.get_energy();
             const auto z   = sol_J.get_position_samples();
             const auto psi = sol_J.get_wavefunction_samples();
-            sol_meV.push_back(Eigenstate(E, z, psi));
+            sol_meV.emplace_back(E, z, psi);
         }
 
         return sol_meV;

@@ -47,7 +47,7 @@ private:
             const double E = _solutions_chi[0].get_energy();
 
             auto const psi = chi*exp(-_zeta*abs(_z - _r_d)/_lambda);
-            _solutions.push_back(Eigenstate(E,_z,psi));
+            _solutions.emplace_back(E,_z,psi);
         }
     }
 

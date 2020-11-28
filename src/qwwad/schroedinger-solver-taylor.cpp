@@ -91,7 +91,7 @@ void SchroedingerSolverTaylor::calculate()
     {
         const auto E   = st.get_E();
         const auto psi = st.psi_array();
-        _solutions.push_back(Eigenstate(E, _z, psi));
+        _solutions.emplace_back(E, _z, psi);
     }
 }
 } // namespace
