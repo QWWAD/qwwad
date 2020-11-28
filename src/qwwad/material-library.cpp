@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <stdexcept>
 #include <sstream>
-#include <assert.h>
+#include <cassert>
 #include <cstring>
 #include <gsl/gsl_math.h>
 #include "maths-helpers.h"

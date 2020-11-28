@@ -12,9 +12,9 @@
 
    Paul Harrison, October 1998		                         */
 
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
 #include <strings.h>
 #include "struct.h"
 

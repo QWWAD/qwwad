@@ -1,0 +1,2 @@
+Checks: 'modernize-deprecated-headers'
+HeaderFilterRegex: '.*/src/[^3].*'
