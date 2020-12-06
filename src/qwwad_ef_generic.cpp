@@ -73,13 +73,12 @@ enum SolverType {
  */
 class FwfOptions : public WfOptions {
     private:
-        SolverType type; ///< The type of Schroedinger solver to use
+        SolverType type = MATRIX_PARABOLIC; ///< The type of Schroedinger solver to use
 
     public:
         SolverType get_type() const {return type;}
 
-        FwfOptions(int argc, char* argv[]) :
-            type(MATRIX_PARABOLIC)
+        FwfOptions(int argc, char** argv)
         {
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!

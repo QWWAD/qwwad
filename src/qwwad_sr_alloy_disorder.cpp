@@ -19,7 +19,7 @@
 using namespace QWWAD;
 using namespace constants;
 
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -41,7 +41,7 @@ Options configure_options(int argc, char* argv[])
     return opt;
 }
 
-int main(int argc,char *argv[])
+int main(int argc,char ** argv)
 {
     const auto opt = configure_options(argc, argv);
 
@@ -182,9 +182,9 @@ int main(int argc,char *argv[])
 
         /* output scattering rate versus carrier energy=subband minima+in-plane
            kinetic energy						*/
-        char	filename[9];	/* character string for output filename		*/
-        sprintf(filename,"ado%i%i.r",i,f);
-        write_table(filename, Ei_t, Wif);
+        std::ostringstream filename;	/* character string for output filename		*/
+        filename << "ado" << i << f << ".r";
+        write_table(filename.str(), Ei_t, Wif);
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 

@@ -104,7 +104,7 @@ public:
 /**
  * \brief Configure command-line options
  */
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system using a generic search");

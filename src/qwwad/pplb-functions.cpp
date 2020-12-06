@@ -16,11 +16,11 @@ write_ank(arma::cx_mat &ank,
 {
     int	iG;		/* index over G vectors				*/
     int	in;		/* index over bands				*/
-    char	filename[9];	/* eigenfunction output filename		*/
+    std::ostringstream filename;	/* eigenfunction output filename		*/
     FILE 	*Fank;		/* file pointer to eigenvectors file		*/
 
-    sprintf(filename,"ank%i.r",ik);
-    Fank=fopen(filename,"w");
+    filename << "ank" << ik << ".r";
+    Fank=fopen(filename.str().c_str(),"w");
 
     for(iG=0;iG<N;iG++)
     {

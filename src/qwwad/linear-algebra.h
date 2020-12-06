@@ -142,12 +142,12 @@ eigen_general(arma::mat    &A,
               unsigned int n_max=0);
 
 std::vector< EVP_solution<double> >
-eigen_banded(double       AB[],
-             double       BB[],
-             const double VL,
-             const double VU,
-             int          n,
-             unsigned int n_max = 0);
+eigen_banded(double       *AB,
+             double       *BB,
+             const double  VL,
+             const double  VU,
+             int           n,
+             unsigned int  n_max = 0);
 
 std::vector< EVP_solution<double> >
 eigen_tridiag(arma::vec   &D,

@@ -24,7 +24,7 @@ void ff_output(const arma::vec &Kz,
                unsigned int     i,
                unsigned int     f);
 
-static Options configure_options(int argc, char* argv[])
+static Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -136,12 +136,12 @@ int main(int argc,char *argv[])
         Ei_ab *= 1000.0/e; // Rescale to meV
 
         // output scattering rates versus TOTAL carrier energy
-        char	filename_em[9];
-        sprintf(filename_em, "LOe%i%i.r",i,f);	/* emission	*/
-        char	filename_ab[9];
-        sprintf(filename_ab,"LOa%i%i.r",i,f);	/* absorption	*/
-        write_table(filename_em, Ei_em, Weif);
-        write_table(filename_ab, Ei_ab, Waif);
+        std::ostringstream filename_em;
+        filename_em << "LOe" << i << f << ".r";	/* emission	*/
+        std::ostringstream filename_ab;
+        filename_ab << "LOa" << i << f << ".r";	/* absorption	*/
+        write_table(filename_em.str(), Ei_em, Weif);
+        write_table(filename_ab.str(), Ei_ab, Waif);
 
         // Average rates over entire subband
         Wabar[itx] = tx_ab.get_average_rate();
@@ -162,8 +162,8 @@ void ff_output(const arma::vec &Kz,
                unsigned int     i,
                unsigned int     f)
 {
- char	filename[9];	/* output filename				*/
- sprintf(filename,"G%i%i.r",i,f);	
- write_table(filename, Kz, Gifsqr);
+    std::ostringstream filename; /* output filename				*/
+    filename << "G" << i << f << ".r";	
+    write_table(filename.str(), Kz, Gifsqr);
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

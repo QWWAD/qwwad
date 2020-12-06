@@ -35,7 +35,7 @@ gsl_spline * FF_table(const double     epsilon,
                       const bool       S_flag,
                       const double     E_cutoff);
 
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -232,9 +232,9 @@ int main(int argc,char *argv[])
 
         /* output scattering rate versus carrier energy=subband minima+in-plane
            kinetic energy						*/
-        char	filename[9];	/* character string for output filename		*/
-        sprintf(filename,"imp%i%i.r",i,f);
-        write_table(filename, Ei_t, Wif);
+        std::ostringstream filename;	/* character string for output filename		*/
+        filename << "imp" << i << f << ".r";
+        write_table(filename.str(), Ei_t, Wif);
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 
@@ -435,15 +435,14 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const unsigned int  f,
                       const arma::vec    &d)
 {
- char	filename[9];	/* output filename				*/
+    std::ostringstream filename;	/* output filename				*/
  FILE	*FA;		/* output file for form factors versus q_perp	*/
 
  /* First generate filename and then open file	*/
-
- sprintf(filename,"J%i%i.r", i, f);	
- if((FA=fopen(filename,"w"))==0)
+ filename << "J" << i << f << ".r";
+ if((FA=fopen(filename.str().c_str(),"w"))==0)
  {
-     std::cerr << "Error: Cannot open input file '" << filename << "'." << std::endl;
+     std::cerr << "Error: Cannot open input file '" << filename.str() << "'." << std::endl;
      exit(EXIT_FAILURE);
  }
 

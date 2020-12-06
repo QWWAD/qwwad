@@ -34,17 +34,15 @@ enum DistributionType {
 class DensityinputOptions : public Options 
 {
     private:
-        DistributionType distType; ///< The type of carrier distribution to use
+        DistributionType distType = DIST_EVEN; ///< The type of carrier distribution to use
     public:
-        DensityinputOptions(int argc, char* argv[]);
+        DensityinputOptions(int argc, char** argv);
 
         // Program options
         DistributionType get_dist_type() const {return distType;}
 };
 
-DensityinputOptions::DensityinputOptions(int argc, char* argv[]) :
-    Options(),
-    distType(DIST_EVEN)
+DensityinputOptions::DensityinputOptions(int argc, char** argv)
 {
     std::string doc("Generate an approximate carrier energy distribution for a set of subbands");
 

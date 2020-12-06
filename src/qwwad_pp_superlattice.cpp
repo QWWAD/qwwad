@@ -30,7 +30,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <complex>
-#include "struct.h"
 #include "maths.h"
 #include "qwwad/constants.h"
 #include "qwwad/file-io.h"

@@ -23,7 +23,7 @@ using namespace QWWAD;
 class MatLibOptions : public Options
 {
     public:
-        MatLibOptions(int argc, char* argv[])
+        MatLibOptions(int argc, char** argv)
         {
             try
             {

@@ -134,12 +134,12 @@ eigen_general(arma::mat    &A,
  *             eigenvalues in the range [VL,VU] will be found.
  */
 std::vector< EVP_solution<double> >
-eigen_banded(double       AB[],
-             double       BB[],
-             double       VL,
-             double       VU,
-             int          n,
-             unsigned int n_max)
+eigen_banded(double       *AB,
+             double       *BB,
+             double        VL,
+             double        VU,
+             int           n,
+             unsigned int  n_max)
 {
     // Workspace to normalise eigenproblem
     arma::vec Q(n*n);

@@ -29,13 +29,13 @@ using namespace constants;
  */
 std::valarray<double> read_E(char p)
 {
-    char filename[9];	// filename string
+    std::ostringstream filename; // filename string
 
     std::valarray<double> indices;
     std::valarray<double> E;
 
-    sprintf(filename,"E%c.r",p);
-    read_table(filename, indices, E);
+    filename << "E" << p << ".r";
+    read_table(filename.str(), indices, E);
 
     E *= 1e-3*e; // convert meV->J
 

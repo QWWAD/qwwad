@@ -31,7 +31,7 @@ using namespace constants;
 class BandEdgeOptions : public Options
 {
     public:
-        BandEdgeOptions(int argc, char* argv[])
+        BandEdgeOptions(int argc, char** argv)
         {
             add_option<double>     ("mass,m",               "Set a constant effective-mass across the structure "
                                                             "(relative to free electron). "

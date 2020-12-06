@@ -80,11 +80,11 @@ static double thermal_cond(const Material &mat,
 
 class Thermal1DOptions: public Options
 {
-    double dc; // Duty cycle
-    double f; // Pulse repetition rate [Hz]
+    double dc = 0.02; // Duty cycle
+    double f  = 10e3; // Pulse repetition rate [Hz]
 
 public:
-    Thermal1DOptions(int argc, char* argv[]);
+    Thermal1DOptions(int argc, char** argv);
 
     /// Return fractional duty cycle (i.e. 0 to 1)
     double get_duty_cycle() const {return dc;}
@@ -97,9 +97,7 @@ public:
 
 
 // Define and parse all user options and return them in a structure
-Thermal1DOptions::Thermal1DOptions(int argc, char *argv[]) :
-    dc(0.02),
-    f(10e3)
+Thermal1DOptions::Thermal1DOptions(int argc, char ** argv)
 {
     std::string doc = "Calculate temperature variation in active region over time";
 

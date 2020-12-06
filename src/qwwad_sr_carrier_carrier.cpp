@@ -44,7 +44,7 @@ double PI(const Subband &isb,
           const size_t   q_perp,
           const double   T);
 
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -263,9 +263,9 @@ int main(int argc,char *argv[])
 
         /* output scattering rate versus carrier energy=subband minima+in-plane
            kinetic energy						*/
-        char	filename[9];	/* character string for output filename		*/
-        sprintf(filename,"cc%i%i%i%i.r",i,j,f,g);
-        write_table(filename, Ei_t, Wijfg);
+        std::ostringstream filename; // output filename
+        filename << "cc" << i << j << f << g << ".r";
+        write_table(filename.str(), Ei_t, Wijfg);
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 
@@ -526,15 +526,15 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const unsigned int  f,
                       const unsigned int  g)
 {
- char	filename[9];	/* output filename				*/
+    std::ostringstream filename; // output filename
  FILE	*FA;		/* output file for form factors versus q_perp	*/
 
  /* First generate filename and then open file	*/
 
- sprintf(filename,"A%i%i%i%i.r", i, j, f, g);	
- if((FA=fopen(filename,"w"))==0)
+ filename << "A" << i << j << f << g << ".r";	
+ if((FA=fopen(filename.str().c_str(),"w"))==0)
  {
-     std::cerr << "Error: Cannot open input file '" << filename << "'." << std::endl;
+     std::cerr << "Error: Cannot open input file '" << filename.str() << "'." << std::endl;
      exit(EXIT_FAILURE);
  }
 

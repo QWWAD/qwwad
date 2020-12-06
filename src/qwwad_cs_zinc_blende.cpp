@@ -8,9 +8,11 @@
  *          crystal and writes them in XYZ format to the file atoms.xyz
  */
 
+#include <array>
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
+#include <string>
 
 typedef struct
 {
@@ -19,14 +21,17 @@ typedef struct
  double z;
 }vector;
 
+static const size_t n_lattice = 4; // Number of lattice vectors
+static const size_t n_basis   = 2; // Number of basis vectors
+
 static void write_ap(double A0,
                      int    n_x,
                      int    n_y,
                      int    n_z,
-                     vector a[],
-                     vector T[],
-                     char   anion[],
-                     char   cation[]);
+                     const std::array<vector,n_lattice> &a,
+                     const std::array<vector,n_basis>   &T,
+                     const std::string                  &anion,
+                     const std::string                  &cation);
 
 int main(int argc,char *argv[])
 {
@@ -34,17 +39,15 @@ double	A0;		/* the lattice constant				*/
 int	n_x;		/* number of lattice points along x-axis of cell*/
 int	n_y;		/* number of lattice points along y-axis of cell*/
 int	n_z;		/* number of lattice points along z-axis of cell*/
-char	cation[12];	/* cation species				*/
-char	anion[12];	/* anion species				*/
-vector	a[4];		/* lattice vectors (a1, a2, a3 plus null vector)*/
-vector	T[2];		/* basis vector					*/
+std::string cation("GA");	/* cation species				*/
+std::string anion("AS");	/* anion species				*/
+std::array<vector,n_lattice> a;	/* lattice vectors (a1, a2, a3 plus null vector)*/
+std::array<vector,n_basis>   T;	/* basis vector					*/
 
 /* default values	*/
 
 n_x=1;n_y=1;n_z=1;
 A0=5.65;		/* break all the rules and keep in Angstrom	*/
-sprintf(cation,"GA");
-sprintf(anion,"AS");
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -54,10 +57,10 @@ while((argc>1)&&(argv[1][0]=='-'))
            A0=atof(argv[2]);
            break;
   case 'a':
-           sprintf(anion,"%s",argv[2]);
+           anion = argv[2];
            break;
   case 'c':
-           sprintf(cation,"%s",argv[2]);
+           cation = argv[2];
            break;
   case 'x':
            n_x=atoi(argv[2]);
@@ -72,7 +75,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 	   printf("Usage:  cszb [-a anion \033[1mGA\033[0m][-c cation \033[1mAS\033[0m]\n");
 	   printf("             [-x # cells along x-axis \033[1m1\033[0m][-y # cells \033[1m1\033[0m][-z # cells \033[1m1\033[0m]\n");
 	   printf("             [-A lattice constant (\033[1m5.65\033[0mA)]\n");
-	   exit(0);
+	   exit(EXIT_SUCCESS);
  }
  argv++;
  argv++;
@@ -107,10 +110,10 @@ static void write_ap(double A0,
                      int    n_x,
                      int    n_y,
                      int    n_z,
-                     vector a[],
-                     vector T[],
-                     char   anion[],
-                     char   cation[])
+                     const std::array<vector,n_lattice> &a,
+                     const std::array<vector,n_basis>   &T,
+                     const std::string &anion,
+                     const std::string &cation)
 {
  int    i_a;    /* index across primitive vectors `a' */
  int    i_n_x;  /* index to n_x */
@@ -133,13 +136,14 @@ static void write_ap(double A0,
       t.x=i_n_x+a[i_a].x+T[0].x;
       t.y=i_n_y+a[i_a].y+T[0].y;
       t.z=i_n_z+a[i_a].z+T[0].z;
-      fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation,t.x*A0,t.y*A0,t.z*A0);
+      fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation.c_str(),t.x*A0,t.y*A0,t.z*A0);
       t.x=i_n_x+a[i_a].x+T[1].x;
       t.y=i_n_y+a[i_a].y+T[1].y;
       t.z=i_n_z+a[i_a].z+T[1].z;
-      fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion,t.x*A0,t.y*A0,t.z*A0);
+      fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion.c_str(),t.x*A0,t.y*A0,t.z*A0);
      }
 
  fclose(Fap);
 }
 
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

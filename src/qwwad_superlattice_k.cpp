@@ -16,7 +16,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <strings.h>
-#include "struct.h"
 
 int main(int argc,char *argv[])
 {

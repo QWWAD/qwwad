@@ -20,7 +20,7 @@ using namespace constants;
 /**
  * \brief Configure command-line options for the program
  */
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -72,13 +72,13 @@ int main(int argc, char *argv[])
     const auto solutions = se.get_solutions(true);
 
     // Dump to file
-    char energy_filename[9];
-    sprintf(energy_filename,"E%c.r",p);
+    std::ostringstream energy_filename;
+    energy_filename << "E" << p << ".r";
 
-    char wf_prefix[9];
-    sprintf(wf_prefix,"wf_%c",p);
-    Eigenstate::write_to_file(energy_filename,
-                              wf_prefix,
+    std::ostringstream wf_prefix;
+    wf_prefix << "wf_" << p;
+    Eigenstate::write_to_file(energy_filename.str(),
+                              wf_prefix.str(),
                               ".r",
                               solutions,
                               true);

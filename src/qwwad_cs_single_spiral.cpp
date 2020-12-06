@@ -9,33 +9,34 @@
  *          XYZ format to the file zb.xyz
  */
 
+#include <array>
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
 #include "struct.h"
 
+const static unsigned int n_basis = 4; // Number of basis vectors
+
 static void write_ap(const double A0,
                      const int    n_z,
                      vector       a,
-                     vector       T[],
-                     char         anion[],
-                     char         cation[]);
+                     const std::array<vector, n_basis> &T,
+                     const std::string                 &anion,
+                     const std::string                 &cation);
 
 int main(int argc,char *argv[])
 {
-double	A0;		/* the lattice constant				*/
-int	n_z;		/* number of lattice points along z-axis of cell*/
-char	cation[12];	/* cation species				*/
-char	anion[12];	/* anion species				*/
-vector	a;		/* lattice vectors 				*/
-vector	T[4];		/* basis vectors				*/
+double	A0;		       /* the lattice constant				*/
+int	n_z;		       /* number of lattice points along z-axis of cell*/
+std::string cation("GA");      /* cation species				*/
+std::string anion("AS");       /* anion species				*/
+vector	a;		       /* lattice vectors 				*/
+std::array<vector, n_basis> T; // basis vectors
 
 /* default values	*/
 
 n_z=1;
 A0=5.65;		/* break all the rules and keep in Angstrom	*/
-sprintf(cation,"GA");
-sprintf(anion,"AS");
 
 while((argc>1)&&(argv[1][0]=='-'))
 {
@@ -45,10 +46,10 @@ while((argc>1)&&(argv[1][0]=='-'))
            A0=atof(argv[2]);
            break;
   case 'a':
-           sprintf(anion,"%s",argv[2]);
+           anion = argv[2];
            break;
   case 'c':
-           sprintf(cation,"%s",argv[2]);
+           cation = argv[2];
            break;
   case 'z':
            n_z=atoi(argv[2]);
@@ -86,9 +87,9 @@ return EXIT_SUCCESS;
 static void write_ap(const double A0,
                      const int    n_z,
                      vector       a,
-                     vector       T[],
-                     char         anion[],
-                     char         cation[])
+                     const std::array<vector,n_basis> &T,
+                     const std::string                &anion,
+                     const std::string                &cation)
 {
  int    i_n_z;  /* index to n_z */
  vector t;      /* general vector representing atom within cell  */
@@ -105,19 +106,19 @@ static void write_ap(const double A0,
   t.x=T[0].x;
   t.y=T[0].y;
   t.z=i_n_z*a.z+T[0].z;
-  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation,t.x*A0,t.y*A0,t.z*A0);
+  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation.c_str(),t.x*A0,t.y*A0,t.z*A0);
   t.x=T[1].x;
   t.y=T[1].y;
   t.z=i_n_z*a.z+T[1].z;
-  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion,t.x*A0,t.y*A0,t.z*A0);
+  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion.c_str(),t.x*A0,t.y*A0,t.z*A0);
   t.x=T[2].x;
   t.y=T[2].y;
   t.z=i_n_z*a.z+T[2].z;
-  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation,t.x*A0,t.y*A0,t.z*A0);
+  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",cation.c_str(),t.x*A0,t.y*A0,t.z*A0);
   t.x=T[3].x;
   t.y=T[3].y;
   t.z=i_n_z*a.z+T[3].z;
-  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion,t.x*A0,t.y*A0,t.z*A0);
+  fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion.c_str(),t.x*A0,t.y*A0,t.z*A0);
  }
 
  fclose(Fap);

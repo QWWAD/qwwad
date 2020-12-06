@@ -44,7 +44,7 @@ static double calc_dist(const double       Emin,
 class SBPOptions : public Options
 {
     public:
-        SBPOptions(int argc, char* argv[])
+        SBPOptions(int argc, char** argv)
         {
             try
             {

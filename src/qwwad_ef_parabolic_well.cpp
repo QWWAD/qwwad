@@ -26,7 +26,7 @@ using namespace QWWAD;
 /**
  * Configure command-line options for the program
  */
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 

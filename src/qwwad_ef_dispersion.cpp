@@ -18,7 +18,7 @@ using namespace constants;
 /**
  * Configure command-line options for the program
  */
-WfOptions configure_options(int argc, char* argv[])
+WfOptions configure_options(int argc, char** argv)
 {
     WfOptions opt;
 

@@ -1,4 +1,6 @@
-Checks: 'modernize-deprecated-headers,
+Checks: 'modernize-avoid-bind,
+         modernize-avoid-c-arrays,
+         modernize-deprecated-headers,
          modernize-loop-convert,
          modernize-pass-by-value,
          modernize-redundant-void-arg,

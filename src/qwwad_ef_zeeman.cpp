@@ -65,7 +65,7 @@ static double Seff(const double N0alpha,
 /**
  * \brief Configure command-line options for the program
  */
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 

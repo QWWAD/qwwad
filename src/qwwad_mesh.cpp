@@ -29,7 +29,7 @@ using namespace QWWAD;
 class MeshOptions : public Options
 {
     public:
-        MeshOptions(int argc, char* argv[]);
+        MeshOptions(int argc, char** argv);
 
         double get_dz_max() const
         {
@@ -59,7 +59,7 @@ class MeshOptions : public Options
  * \param[in] argc Number of command-line arguments
  * \param[in] argv Array of command-line arguments
  */
-MeshOptions::MeshOptions(int argc, char* argv[])
+MeshOptions::MeshOptions(int argc, char** argv)
 {
     std::string description("Generate a mesh of samples of structural data.");
 

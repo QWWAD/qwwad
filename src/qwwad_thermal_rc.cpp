@@ -13,11 +13,11 @@ using namespace QWWAD;
 
 class ThermalRCOptions: public Options
 {
-    double dc; // Duty cycle
-    double f; // Pulse repetition rate [Hz]
+    double dc = 0.02; // Duty cycle
+    double f  = 10e3; // Pulse repetition rate [Hz]
 
     public:
-    ThermalRCOptions(int argc, char* argv[]);
+    ThermalRCOptions(int argc, char** argv);
 
     /** 
      * Electrical power dissipation while QCL is switched on [W]
@@ -50,9 +50,7 @@ class ThermalRCOptions: public Options
 
 
 // Define and parse all user options and return them in a structure
-ThermalRCOptions::ThermalRCOptions(int argc, char *argv[]) :
-    dc(0.02),
-    f(10e3)
+ThermalRCOptions::ThermalRCOptions(int argc, char **argv)
 {
     program_specific_options->add_options()
         ("area", po::value<double>()->default_value(0.85*0.14),

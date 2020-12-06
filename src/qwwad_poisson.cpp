@@ -28,7 +28,7 @@ using namespace constants;
  *
  * \return The user options
  */
-Options get_options(int argc, char* argv[])
+Options get_options(int argc, char** argv)
 {
     Options opt;
 

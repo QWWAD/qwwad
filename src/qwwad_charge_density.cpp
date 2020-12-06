@@ -26,10 +26,10 @@ using namespace constants;
 class ChargeDensityOptions : public WfOptions
 {
 public:
-    ChargeDensityOptions(int argc, char* argv[]);
+    ChargeDensityOptions(int argc, char** argv);
 };
 
-ChargeDensityOptions::ChargeDensityOptions(int argc, char* argv[])
+ChargeDensityOptions::ChargeDensityOptions(int argc, char** argv)
 {
     std::string doc("Find charge density in a 2D heterostructure.");
 

@@ -15,8 +15,8 @@
 
 typedef struct
 {
- char	type[12];
- arma::vec r;
+ char	   *type;
+ arma::vec  r;
 }atom;
 
 double Vf(const double  A0,

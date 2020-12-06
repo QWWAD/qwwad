@@ -45,12 +45,12 @@ static void ff_output(const arma::vec &Kz,
                       unsigned int        i,
                       unsigned int        f)
 {
-    char	filename[9];	/* output filename				*/
-    sprintf(filename,"G%i%i.r",i,f);	
-    write_table(filename, Kz, Gifsqr);
+    std::ostringstream filename;	/* output filename				*/
+    filename << "G" << i << f << ".r";	
+    write_table(filename.str(), Kz, Gifsqr);
 }
 
-Options configure_options(int argc, char* argv[])
+Options configure_options(int argc, char** argv)
 {
     Options opt;
 
@@ -97,7 +97,6 @@ int main(int argc,char *argv[])
     const auto nKz     =  opt.get_option<size_t>("nkz");                  // number of Kz calculations
     const auto ntheta  =  opt.get_option<size_t>("ntheta");               // number of samples over angle
 
-    char	filename[9];	/* character string for output filename		*/
     FILE	*FACa;		/* pointer to absorption output file		*/
     FILE	*FACe;		/* pointer to emission   output file		*/
 
@@ -176,10 +175,13 @@ int main(int argc,char *argv[])
             ff_output(Kz, Gifsqr, i, f);
 
         /* Generate filename for particular mechanism and open file	*/
-        sprintf(filename,"ACa%i%i.r", i, f); // absorption
-        FACa=fopen(filename,"w");			
-        sprintf(filename,"ACe%i%i.r", i, f); // emission
-        FACe=fopen(filename,"w");			
+        std::ostringstream ab_filename; // absorption rate filename
+        ab_filename << "ACa" << i << f << ".r";
+        FACa=fopen(ab_filename.str().c_str(),"w");
+
+        std::ostringstream em_filename; // emission rate filename
+        em_filename << "ACe" << i << f << ".r";
+        FACe=fopen(em_filename.str().c_str(),"w");
 
         // As a zero energy phonon is assumed, no need to 
         // consider emission and absorption processes as in e-LO scattering
