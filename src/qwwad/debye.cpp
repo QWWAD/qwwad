@@ -126,7 +126,7 @@ double DebyeModel::get_cp_approx(const double T) const
  */
 double DebyeModel::find_U(double T, void *params)
 {
-    DebyeModel *dm = reinterpret_cast<DebyeModel *>(params);
+    auto dm = reinterpret_cast<DebyeModel *>(params);
     return dm->get_internal_energy(T);
 }
 } // namespace

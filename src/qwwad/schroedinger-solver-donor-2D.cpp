@@ -85,7 +85,7 @@ struct I_4_integrand_params
  */
 double I_4_integrand(double w, void *params)
 {
-    I_4_integrand_params *p = reinterpret_cast<I_4_integrand_params *>(params);
+    auto p = reinterpret_cast<I_4_integrand_params *>(params);
     return 2*pi*p->z_dash_abs * exp(-p->z_dash_abs * (1/w-w)/p->lambda) *
         (1-w*w)/(2*w*w);
 }
