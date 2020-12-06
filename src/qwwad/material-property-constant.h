@@ -9,7 +9,7 @@ private:
     double _constant; ///< The constant value of the property
 
 public:
-    MaterialPropertyConstant(){}
+    MaterialPropertyConstant() = default;
     MaterialPropertyConstant(xmlpp::Element *elem);
     MaterialPropertyConstant(decltype(_name)        name,
                              decltype(_description) description,

@@ -28,7 +28,7 @@ public:
                          const double             lambda_step,
                          const double             lambda_stop);
 
-    virtual ~DonorEnergyMinimiser() {};
+    virtual ~DonorEnergyMinimiser() = default;
 
     virtual void minimise() = 0;
     void set_zeta_params(const double zeta_start,

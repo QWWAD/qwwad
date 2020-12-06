@@ -26,7 +26,7 @@ private:
     double _xmax; ///< The maximum value of x that can be used in value lookup
 
 public:
-    MaterialPropertyInterp(){}
+    MaterialPropertyInterp() = default;
     MaterialPropertyInterp(xmlpp::Element *elem);
     MaterialPropertyInterp(decltype(_name)        name,
                            decltype(_description) description,

@@ -18,7 +18,7 @@ protected:
     Glib::ustring _reference;   ///< A literature reference
 
 public:
-    MaterialProperty(){}
+    MaterialProperty() = default;
     MaterialProperty(xmlpp::Element *elem);
     MaterialProperty(decltype(_name)        name,
                      decltype(_description) description,

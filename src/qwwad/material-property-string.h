@@ -6,7 +6,7 @@
 namespace QWWAD {
 class MaterialPropertyString : public MaterialProperty {
 public:
-    MaterialPropertyString(){}
+    MaterialPropertyString() = default;
     MaterialPropertyString(xmlpp::Element *elem);
 
     const Glib::ustring & get_text() const;

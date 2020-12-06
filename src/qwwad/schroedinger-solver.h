@@ -53,7 +53,7 @@ public:
     decltype(_V) get_V() const {return _V;}
 
     virtual std::string get_name() = 0;
-    virtual ~SchroedingerSolver() {};
+    virtual ~SchroedingerSolver() = default;
 
     void set_E_min(const double E_min);
     void set_E_max(const double E_max);

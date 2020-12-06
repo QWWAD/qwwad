@@ -15,7 +15,7 @@ protected:
     Glib::ustring _unit; ///< The unit of the property
 
 public:
-    MaterialPropertyNumeric(){}
+    MaterialPropertyNumeric() = default;
     MaterialPropertyNumeric(xmlpp::Element *elem);
     MaterialPropertyNumeric(decltype(_name)        name,
                             decltype(_description) description,
