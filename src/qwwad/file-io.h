@@ -57,11 +57,11 @@ int read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream)
         /* Loop over all expected items on the line and read them to
          * array one by one */
         for(i=0; i<n; i++){
-            if(pch == NULL)
+            if(pch == nullptr)
                 throw std::runtime_error("Data missing on at least one line");
 
             dest[i]=atof(pch); // Copy data to array
-            pch=strtok(NULL, "\t "); // Read next data item
+            pch=strtok(nullptr, "\t "); // Read next data item
         }
 
         scan_result=0;
@@ -100,10 +100,10 @@ void read_line_array_u(Tcontainer<T>& dest, std::istream& stream)
     // Get a pointer to first token on line
     char* pch=strtok(linebuffer, "\t ");
 
-    while(pch != NULL)
+    while(pch != nullptr)
     {
         dest_tmp.push_back(atof(pch)); // Copy data to array
-        pch = strtok(NULL, "\t "); // Try to read next data from line
+        pch = strtok(nullptr, "\t "); // Try to read next data from line
     } 
 
     delete[] linebuffer;

@@ -158,7 +158,7 @@ int main(int argc,char *argv[])
         if(i+j != f+g)
             Deltak0sqr=4*m*(Ei + Ej - Ef - Eg)/(hBar*hBar);	
 
-        gsl_spline *FF = 0;
+        gsl_spline *FF = nullptr;
         double kimax = 0;
         double kjmax = 0;
 
@@ -527,13 +527,12 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const unsigned int  g)
 {
     std::ostringstream filename; // output filename
- FILE	*FA;		/* output file for form factors versus q_perp	*/
 
  /* First generate filename and then open file	*/
 
- filename << "A" << i << j << f << g << ".r";	
- if((FA=fopen(filename.str().c_str(),"w"))==0)
- {
+ filename << "A" << i << j << f << g << ".r";
+ auto FA=fopen(filename.str().c_str(),"w"); // output file for form factors versus q_perp
+ if(!FA) {
      std::cerr << "Error: Cannot open input file '" << filename.str() << "'." << std::endl;
      exit(EXIT_FAILURE);
  }

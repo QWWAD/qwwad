@@ -96,8 +96,8 @@ static void output_plot(const WfOptions               &opt,
     const auto plot_file = opt.get_option<std::string>("plotfile");
 
     // Open plot file
-    FILE* plot_stream = fopen(plot_file.c_str(), "w");
-    if(plot_stream==NULL)
+    auto plot_stream = fopen(plot_file.c_str(), "w");
+    if(!plot_stream)
     {
         std::ostringstream oss;
         oss << "Cannot create plot output file " << plot_file << std::endl;

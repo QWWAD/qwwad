@@ -436,12 +436,11 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const arma::vec    &d)
 {
     std::ostringstream filename;	/* output filename				*/
- FILE	*FA;		/* output file for form factors versus q_perp	*/
 
  /* First generate filename and then open file	*/
  filename << "J" << i << f << ".r";
- if((FA=fopen(filename.str().c_str(),"w"))==0)
- {
+ auto FA=fopen(filename.str().c_str(),"w"); // output file for form factors versus q_perp
+ if(!FA) {
      std::cerr << "Error: Cannot open input file '" << filename.str() << "'." << std::endl;
      exit(EXIT_FAILURE);
  }

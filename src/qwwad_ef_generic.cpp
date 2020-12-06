@@ -230,7 +230,7 @@ int main(int argc, char *argv[]){
                     << dz*1e9 << "nm." << std::endl;
     }
 
-    SchroedingerSolver *se = NULL; // Solver for Schroedinger equation
+    SchroedingerSolver *se = nullptr; // Solver for Schroedinger equation
 
     switch(opt.get_type())
     {

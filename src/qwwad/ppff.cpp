@@ -452,10 +452,8 @@ double Vf(const double  A0,
  */
 std::vector<atom> read_atoms(const char * filename)
 {
- FILE 	*Fatoms;        /* file pointer to wavefunction file       */
-
- if((Fatoms=fopen(filename,"r"))==0)
- {
+ auto Fatoms=fopen(filename,"r"); // file pointer to wavefunction file
+ if(!Fatoms) {
      std::ostringstream oss;
      oss << "Cannot open input file " << filename;
      throw std::runtime_error(oss.str());

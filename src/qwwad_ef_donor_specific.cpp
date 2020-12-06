@@ -87,7 +87,7 @@ int main(int argc,char *argv[])
     auto zeta_0   = zeta_start;   // symmetry parameter
 
     // Create an initial estimate of the Schroedinger solution
-    SchroedingerSolverDonor *se = 0;
+    SchroedingerSolverDonor *se = nullptr;
 
     if(symmetry_string == "2D")
         se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
@@ -102,7 +102,7 @@ int main(int argc,char *argv[])
     }
 
     // Now, use a minimiser to correct the orbital and find the minimum energy solution
-    DonorEnergyMinimiser *minimiser = NULL;
+    DonorEnergyMinimiser *minimiser = nullptr;
 
     if(search_method == "linear")
         minimiser = new DonorEnergyMinimiserLinear(se, lambda_start, lambda_step, lambda_stop);
