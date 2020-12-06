@@ -31,27 +31,30 @@ class MeshOptions : public Options
     public:
         MeshOptions(int argc, char** argv);
 
-        double get_dz_max() const
-        {
-            if(vm.count("dzmax") == 0)
-                throw std::runtime_error("Spatial separation not specified");
-
-            auto result = get_option<double>("dzmax");
-
-            // Override result use spatial resolution setting if specified
-            if (vm.count("zresmin") == 1)
-                result = 1.0 / get_option<double>("zresmin");
-
-            if (result < 0)
-                throw std::domain_error("Spatial separation must be positive.");
-
-            result*=1.0e-10; // Convert from angstrom -> m
-
-            return result;
-        }
+        [[nodiscard]] double get_dz_max() const;
 
         void print() const;
 };
+
+double
+MeshOptions::get_dz_max() const
+{
+    if(vm.count("dzmax") == 0)
+        throw std::runtime_error("Spatial separation not specified");
+
+    auto result = get_option<double>("dzmax");
+
+    // Override result use spatial resolution setting if specified
+    if (vm.count("zresmin") == 1)
+        result = 1.0 / get_option<double>("zresmin");
+
+    if (result < 0)
+        throw std::domain_error("Spatial separation must be positive.");
+
+    result*=1.0e-10; // Convert from angstrom -> m
+
+    return result;
+}
 
 /**
  * \brief Constructor: Define and parse all user options

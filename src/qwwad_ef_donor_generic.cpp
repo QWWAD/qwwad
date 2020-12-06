@@ -68,20 +68,20 @@ public:
     {}
 
 private:
-    double get_Laplacian(double x,
-                         double y,
-                         unsigned int iz) const;
+    [[nodiscard]] double get_Laplacian(double x,
+                                       double y,
+                                       unsigned int iz) const;
 public:
     /**
      * \brief Set the Bohr radius
      */
     void set_lambda(const double lambda) {_lambda = lambda;}
 
-    double get_psi(double x, double y, unsigned int iz) const;
+    [[nodiscard]] double get_psi(double x, double y, unsigned int iz) const;
 
-    double get_energy_integrand(double       x,
-                                double       y,
-                                unsigned int iz) const;
+    [[nodiscard]] double get_energy_integrand(double       x,
+                                              double       y,
+                                              unsigned int iz) const;
 
     static double get_energy_integrand_y(double  y,
                                          void   *params);
@@ -98,7 +98,7 @@ public:
     static double get_energy(double  lambda,
                              void   *params);
 
-    double get_energy() const;
+    [[nodiscard]] double get_energy() const;
 };
 
 /**

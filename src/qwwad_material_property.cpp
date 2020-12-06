@@ -53,7 +53,7 @@ class MatLibOptions : public Options
         /**
          * \returns True if the property is text; false if it's a number
          */
-        bool is_text() const {return vm["text"].as<bool>();}
+        [[nodiscard]] bool is_text() const {return vm["text"].as<bool>();}
 
         /**
          * \returns Dump user-options to screen

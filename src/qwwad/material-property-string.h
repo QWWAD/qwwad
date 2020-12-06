@@ -9,7 +9,7 @@ public:
     MaterialPropertyString() = default;
     MaterialPropertyString(xmlpp::Element *elem);
 
-    const Glib::ustring & get_text() const;
+    [[nodiscard]] const Glib::ustring & get_text() const;
 
 private:
     Glib::ustring _text; ///< The text value of the property

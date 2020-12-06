@@ -21,6 +21,7 @@ Checks: 'modernize-avoid-bind,
          modernize-use-emplace,
          modernize-use-equals-default,
          modernize-use-equals-delete,
+         modernize-use-nodiscard,
          modernize-use-noexcept,
          modernize-use-override'
 HeaderFilterRegex: '.*/src/[^3].*'

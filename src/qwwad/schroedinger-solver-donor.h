@@ -35,8 +35,8 @@ public:
                               arma::vec    &chi) const;
 
     void   set_lambda(const double lambda) {_lambda = lambda; _solutions.clear(); calculate();}
-    double get_lambda() const {return _lambda;}
-    double get_r_d   () const {return _r_d;}
+    [[nodiscard]] double get_lambda() const {return _lambda;}
+    [[nodiscard]] double get_r_d   () const {return _r_d;}
 
 private:
     double _me;     ///< Effective mass at band-edge [kg]
@@ -55,10 +55,10 @@ protected:
 
     void calculate() override;
     virtual void   calculate_psi_from_chi() = 0;
-    virtual double I_1(const double z_dash) const = 0;
-    virtual double I_2(const double z_dash) const = 0;
-    virtual double I_3(const double z_dash) const = 0;
-    virtual double I_4(const double z_dash) const = 0;
+    [[nodiscard]] virtual double I_1(const double z_dash) const = 0;
+    [[nodiscard]] virtual double I_2(const double z_dash) const = 0;
+    [[nodiscard]] virtual double I_3(const double z_dash) const = 0;
+    [[nodiscard]] virtual double I_4(const double z_dash) const = 0;
 };
 } // namespace QWWAD
 #endif

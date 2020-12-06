@@ -50,7 +50,7 @@ public:
     /**
      * Return the value of element i of an eigenvector
      */
-    T psi(const unsigned int i) const
+    [[nodiscard]] T psi(const unsigned int i) const
     {
         if(i >= _psi.size())
         {
@@ -65,18 +65,18 @@ public:
     /**
      * Return the entire eigenvector as an array
      */
-    inline decltype(_psi) psi_array() const
+    [[nodiscard]] inline decltype(_psi) psi_array() const
     {
         return _psi;
     }
 
-    size_t size() const
+    [[nodiscard]] size_t size() const
     {
         return _psi.size();
     }
 
     /** Return the eigenvalue */
-    T get_E() const
+    [[nodiscard]] T get_E() const
     {
         return _E;
     }
@@ -96,7 +96,7 @@ public:
      *
      * \param[in] i The index of the point for which to find eigenvector squared
      */
-    T psi_squared(const unsigned int i) const
+    [[nodiscard]] T psi_squared(const unsigned int i) const
     {
         if(i >= _psi.size())
         {
@@ -111,7 +111,7 @@ public:
     /**
      * Get an array of squared eigenvector values
      */
-    decltype(_psi) psi_squared() const
+    [[nodiscard]] decltype(_psi) psi_squared() const
     {
         return square(_psi);
     }

@@ -87,10 +87,10 @@ public:
     Thermal1DOptions(int argc, char** argv);
 
     /// Return fractional duty cycle (i.e. 0 to 1)
-    double get_duty_cycle() const {return dc;}
+    [[nodiscard]] double get_duty_cycle() const {return dc;}
 
     /// Return pulse repetition rate [Hz]
-    double get_f_rep() const {return f;}
+    [[nodiscard]] double get_f_rep() const {return f;}
 
     void print() const;
 };

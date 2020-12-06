@@ -34,10 +34,11 @@ private:
             _solutions.push_back(st);
         }
     }
-    double I_1(const double z_dash) const override;
-    double I_2(const double z_dash) const override;
-    double I_3(const double z_dash) const override;
-    double I_4(const double z_dash) const override;
+
+    [[nodiscard]] double I_1(const double z_dash) const override;
+    [[nodiscard]] double I_2(const double z_dash) const override;
+    [[nodiscard]] double I_3(const double z_dash) const override;
+    [[nodiscard]] double I_4(const double z_dash) const override;
 };
 } // namespace QWWAD
 #endif

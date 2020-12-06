@@ -76,7 +76,7 @@ class FwfOptions : public WfOptions {
         SolverType type = MATRIX_PARABOLIC; ///< The type of Schroedinger solver to use
 
     public:
-        SolverType get_type() const {return type;}
+        [[nodiscard]] SolverType get_type() const {return type;}
 
         FwfOptions(int argc, char** argv)
         {

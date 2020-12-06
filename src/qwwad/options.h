@@ -44,7 +44,7 @@ class Options
         
         void print_version_then_exit(char* prog_name) const;
 
-        std::string name_mapper(std::string in) const;
+        [[nodiscard]] std::string name_mapper(std::string in) const;
 
     protected:
         /**
@@ -53,7 +53,7 @@ class Options
         po::variables_map vm;
 
     public:
-        bool get_argument_known(const std::string &name) const;
+        [[nodiscard]] bool get_argument_known(const std::string &name) const;
 
         /**
          * \brief Adds an option to the program, with a default argument specified
@@ -97,7 +97,7 @@ class Options
          * \returns The value of the option
          */
         template <typename T>
-        T get_option(const std::string &name) const
+        [[nodiscard]] T get_option(const std::string &name) const
         {
             return vm[name].as<T>();
         }
@@ -127,7 +127,7 @@ class Options
          *
          * \returns \c true if verbose output is wanted
          */
-        bool get_verbose() const {return vm["verbose"].as<bool>();}
+        [[nodiscard]] bool get_verbose() const {return vm["verbose"].as<bool>();}
 };
 
 /**

@@ -67,55 +67,55 @@ public:
                                   const size_t       n_periods);
 
     /** Return the number of cells in one period of the mesh */
-    size_t get_ncell_1per() const {return _ncell_1per;}
+    [[nodiscard]] size_t get_ncell_1per() const {return _ncell_1per;}
 
     /** Return the total number of sampling points in the entire structure */
-    size_t get_ncell() const {return _z.size();}
+    [[nodiscard]] size_t get_ncell() const {return _z.size();}
 
-    std::valarray<double> get_z() const {return _z;}
-    double                get_z(unsigned int iz) const {return _z[iz];}
-    double                get_dz() const {return _dz;}
+    [[nodiscard]] std::valarray<double> get_z() const {return _z;}
+    [[nodiscard]] double                get_z(unsigned int iz) const {return _z[iz];}
+    [[nodiscard]] double                get_dz() const {return _dz;}
 
     /** Return the number of alloy components in the structure */
-    decltype(_n_alloy)    get_n_alloy() const {return _n_alloy;}
+    [[nodiscard]] decltype(_n_alloy)    get_n_alloy() const {return _n_alloy;}
 
-    decltype(_W_layer)    get_layer_widths() const {return _W_layer;}
+    [[nodiscard]] decltype(_W_layer)    get_layer_widths() const {return _W_layer;}
 
-    alloy_vector get_x_array() const {return _x;}
+    [[nodiscard]] alloy_vector get_x_array() const {return _x;}
 
-    double get_n3D_in_layer(const unsigned int iL) const;
-    double get_n3D_at_point(const unsigned int iz) const;
+    [[nodiscard]] double get_n3D_in_layer(const unsigned int iL) const;
+    [[nodiscard]] double get_n3D_at_point(const unsigned int iz) const;
 
     /**
      * Return the entire array of doping at each point
      */
-    std::valarray<double> get_n3D_array() const {return _n3D;}
+    [[nodiscard]] std::valarray<double> get_n3D_array() const {return _n3D;}
 
     /**
      * \brief Return the number of layers in a single period
      *
      * \returns Number of layers in the structure
      */
-    size_t       get_n_layers_per_period() const {return _W_layer.size();}
+    [[nodiscard]] size_t       get_n_layers_per_period() const {return _W_layer.size();}
 
     /// Return the number of layers in the entire structure
-    size_t       get_n_layers_total() const {return _W_layer.size()*_n_periods;}
+    [[nodiscard]] size_t       get_n_layers_total() const {return _W_layer.size()*_n_periods;}
 
-    unsigned int get_layer_from_height(const double z) const;
+    [[nodiscard]] unsigned int get_layer_from_height(const double z) const;
 
-    bool         point_is_in_layer(const double z,
-                                   const unsigned int iL) const;
+    [[nodiscard]] bool         point_is_in_layer(const double z,
+                                                 const unsigned int iL) const;
 
-    double       get_height_at_top_of_layer(const unsigned int iL) const;
+    [[nodiscard]] double       get_height_at_top_of_layer(const unsigned int iL) const;
 
-    unsigned int get_layer_top_index(const unsigned int iL) const;
-    std::valarray<unsigned int> get_layer_top_indices() const {return _layer_top_index;}
+    [[nodiscard]] unsigned int get_layer_top_index(const unsigned int iL) const;
+    [[nodiscard]] std::valarray<unsigned int> get_layer_top_indices() const {return _layer_top_index;}
 
     /// Return the length of a single period of the structure
-    double       get_period_length() const {return sum(_W_layer);}
+    [[nodiscard]] double       get_period_length() const {return sum(_W_layer);}
 
     /// Return the entire length of the structure
-    double       get_total_length() const {return sum(_W_layer)*_n_periods;}
+    [[nodiscard]] double       get_total_length() const {return sum(_W_layer)*_n_periods;}
 };
 } // namespace
 #endif // MESH_H

@@ -24,11 +24,11 @@ public:
                      decltype(_description) description,
                      decltype(_reference)   reference);
 
-    virtual MaterialProperty * clone() const;
+    [[nodiscard]] virtual MaterialProperty * clone() const;
 
-    virtual const decltype(_name)        & get_name()        const;
-    virtual const decltype(_description) & get_description() const;
-    virtual const decltype(_reference)   & get_reference()   const;
+    [[nodiscard]] virtual const decltype(_name)        & get_name()        const;
+    [[nodiscard]] virtual const decltype(_description) & get_description() const;
+    [[nodiscard]] virtual const decltype(_reference)   & get_reference()   const;
 };
 
 inline MaterialProperty * new_clone(const MaterialProperty & mat)

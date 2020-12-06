@@ -35,8 +35,8 @@ public:
     static double test_matching(double v,
                                 void   *params);
 
-    double get_lhs(const double v) const;
-    double get_rhs() const;
+    [[nodiscard]] double get_lhs(const double v) const;
+    [[nodiscard]] double get_rhs() const;
 
 private:
     double _l_w; ///< Width of well [m]
@@ -48,7 +48,7 @@ private:
 
     void calculate() override;
 
-    arma::vec get_wavefunction(const double E) const;
+    [[nodiscard]] arma::vec get_wavefunction(const double E) const;
 };
 } // namespace
 #endif

@@ -36,7 +36,7 @@ public:
                            decltype(_y1)          y1,
                            decltype(_b)           b = 0.0);
 
-    MaterialPropertyInterp * clone() const override;
+    [[nodiscard]] MaterialPropertyInterp * clone() const override;
 
     void set_limits(const decltype(_xmin) xmin,
                     const decltype(_xmax) xmax);
@@ -44,10 +44,10 @@ public:
     void get_limits(decltype(_xmin) &xmin,
                     decltype(_xmax) &xmax);
 
-    inline decltype(_y0) get_interp_y0() const {return _y0;}
-    inline decltype(_y1) get_interp_y1() const {return _y1;}
-    inline decltype(_b)  get_interp_b()  const {return _b;}
-    decltype(_y0) get_val(const double x = 0) const override;
+    [[nodiscard]] inline decltype(_y0) get_interp_y0() const {return _y0;}
+    [[nodiscard]] inline decltype(_y1) get_interp_y1() const {return _y1;}
+    [[nodiscard]] inline decltype(_b)  get_interp_b()  const {return _b;}
+    [[nodiscard]] decltype(_y0) get_val(const double x = 0) const override;
 };
 } // end namespace
 #endif

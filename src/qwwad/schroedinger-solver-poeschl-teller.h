@@ -25,7 +25,7 @@ public:
                                     const unsigned int nst_max = 0);
 
     std::string get_name() override {return "poeschl-teller-potential-hole";}
-    size_t get_n_bound() const;
+    [[nodiscard]] size_t get_n_bound() const;
 private:
     double _alpha;  ///< Width parameter [1/m]
     double _lambda; ///< Depth parameter

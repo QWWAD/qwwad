@@ -34,7 +34,7 @@ public:
     std::string get_name() override {return "donor-variable";}
     void   set_zeta       (const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
     void   set_lambda_zeta(const double lambda, const double zeta) {_lambda = lambda; _zeta = zeta; _solutions.clear(); calculate();}
-    double get_zeta() const {return _zeta;}
+    [[nodiscard]] double get_zeta() const {return _zeta;}
 
 private:
     void calculate_psi_from_chi() override
@@ -51,10 +51,10 @@ private:
         }
     }
 
-    double I_1(const double z_dash) const override;
-    double I_2(const double z_dash) const override;
-    double I_3(const double z_dash) const override;
-    double I_4(const double z_dash) const override;
+    [[nodiscard]] double I_1(const double z_dash) const override;
+    [[nodiscard]] double I_2(const double z_dash) const override;
+    [[nodiscard]] double I_3(const double z_dash) const override;
+    [[nodiscard]] double I_4(const double z_dash) const override;
 
     double _zeta; ///< Symmetry parameter
 };

@@ -67,14 +67,14 @@ public:
                            decltype(_Tl)          Tl,
                            decltype(_is_emission) is_emission);
 
-   double get_Eki_min (const unsigned int isb,
-                       const unsigned int fsb) const;
+   [[nodiscard]] double get_Eki_min (const unsigned int isb,
+                                     const unsigned int fsb) const;
 
-   double get_ki_min (const unsigned int isb,
-                      const unsigned int fsb) const;
+   [[nodiscard]] double get_ki_min (const unsigned int isb,
+                                    const unsigned int fsb) const;
 
-   double get_ki_cutoff(const unsigned int isb,
-                        const unsigned int fsb) const;
+   [[nodiscard]] double get_ki_cutoff(const unsigned int isb,
+                                      const unsigned int fsb) const;
 
    double get_rate_ki(const unsigned int isb,
                       const unsigned int fsb,
@@ -83,7 +83,7 @@ public:
    IntersubbandTransition get_transition(const unsigned int isb,
                                          const unsigned int fsb);
 
-   inline decltype(_lambda_s_sq) get_screening_length() const {return _lambda_s_sq;}
+   [[nodiscard]] inline decltype(_lambda_s_sq) get_screening_length() const {return _lambda_s_sq;}
 
    inline void set_ki_samples(const decltype(_nki) nki) {_nki = nki;}
    void set_phonon_samples(const size_t nKz);
@@ -93,7 +93,7 @@ public:
    inline void enable_screening(const bool enabled) {_enable_screening = enabled;}
    inline void enable_blocking (const bool enabled) {_enable_blocking  = enabled;}
 
-   inline decltype(_prefactor) get_prefactor() const {return _prefactor;}
+   [[nodiscard]] inline decltype(_prefactor) get_prefactor() const {return _prefactor;}
 
    void make_ff_table(const unsigned int i,
                       const unsigned int f);
@@ -102,8 +102,8 @@ public:
                const Subband &isb,
                const Subband &fsb);
 
-   arma::vec get_ff_table(const unsigned int i, const unsigned int f) const;
-   inline decltype(_Kz)  get_Kz_table() const {return _Kz;}
+   [[nodiscard]] arma::vec get_ff_table(const unsigned int i, const unsigned int f) const;
+   [[nodiscard]] inline decltype(_Kz)  get_Kz_table() const {return _Kz;}
 };
 } // namespace
 #endif

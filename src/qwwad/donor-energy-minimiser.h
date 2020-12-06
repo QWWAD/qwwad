@@ -60,9 +60,9 @@ protected:
     static double find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                         void             *params);
 public:
-    decltype(_lambda_history) get_lambda_history() const {return _lambda_history;}
-    decltype(_zeta_history)   get_zeta_history()   const {return _zeta_history;}
-    decltype(_E_history)      get_E_history()      const {return _E_history;}
+    [[nodiscard]] decltype(_lambda_history) get_lambda_history() const {return _lambda_history;}
+    [[nodiscard]] decltype(_zeta_history)   get_zeta_history()   const {return _zeta_history;}
+    [[nodiscard]] decltype(_E_history)      get_E_history()      const {return _E_history;}
 };
 } // namespace
 #endif // QWWAD_DONOR_ENERGY_MINIMISER_H

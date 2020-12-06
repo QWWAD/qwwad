@@ -39,38 +39,38 @@ public:
     void set_distribution_from_Ef_Te(const double Ef,
                                      const double Te);
 
-    inline decltype(_ground_state) get_ground() const {return _ground_state;}
+    [[nodiscard]] inline decltype(_ground_state) get_ground() const {return _ground_state;}
 
-    inline auto z_array() const
+    [[nodiscard]] inline auto z_array() const
         -> decltype(_ground_state.get_position_samples())
     {
         return _ground_state.get_position_samples();
     }
 
-    inline double                      get_dz()     const {return z_array()[1]-z_array()[0];}
-    inline double                      get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
+    [[nodiscard]] inline double get_dz()     const {return z_array()[1]-z_array()[0];}
+    [[nodiscard]] inline double get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
 
     /** Find expectation position for the ground state [m] */
-    inline double                      get_z_av_0() const {return _ground_state.get_expectation_position();}
+    [[nodiscard]] inline double get_z_av_0() const {return _ground_state.get_expectation_position();}
 
-    inline double                      get_Ef()     const {return _Ef;}
+    [[nodiscard]] inline double get_Ef()     const {return _Ef;}
 
     /**
      * \brief Find energy of subband edge
      */
-    inline double                      get_E_min()  const {return _ground_state.get_energy();}
+    [[nodiscard]] inline double get_E_min()  const {return _ground_state.get_energy();}
 
-    double                             get_total_population()    const;
+    [[nodiscard]] double get_total_population()    const;
 
-    inline auto psi_array() const
+    [[nodiscard]] inline auto psi_array() const
         -> decltype(_ground_state.get_wavefunction_samples())
     {
         return _ground_state.get_wavefunction_samples();
     }
 
-    inline double                      get_condband_edge() const {return _V;}
+    [[nodiscard]] inline double get_condband_edge() const {return _V;}
 
-    double                             get_k_fermi() const;
+    [[nodiscard]] double get_k_fermi() const;
 
     static std::vector<Subband> read_from_file(const std::string &energy_input_path,
                                                const std::string &wf_input_prefix,
@@ -96,26 +96,26 @@ public:
                                                const double       alpha,
                                                const double       V);
 
-    double get_Ek_at_k(const double k) const;
-    double get_k_at_Ek(const double Ek) const;
-    double get_k_max(const double Te) const;
+    [[nodiscard]] double get_Ek_at_k(const double k) const;
+    [[nodiscard]] double get_k_at_Ek(const double Ek) const;
+    [[nodiscard]] double get_k_max(const double Te) const;
 
     /// Return total energy of carrier at a given wave-vector
-    inline double get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
+    [[nodiscard]] inline double get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
 
-    decltype(_m) get_effective_mass    (const double E = 0.0) const;
-    decltype(_m) get_effective_mass_dos(const double E = 0.0) const;
+    [[nodiscard]] decltype(_m) get_effective_mass    (const double E = 0.0) const;
+    [[nodiscard]] decltype(_m) get_effective_mass_dos(const double E = 0.0) const;
 
     /// Return nonparabolicity parameter
-    inline double get_alpha() const {return _alpha;}
+    [[nodiscard]] inline double get_alpha() const {return _alpha;}
 
-    double get_density_of_states(const double E = 0.0) const;
+    [[nodiscard]] double get_density_of_states(const double E = 0.0) const;
 
-    double get_occupation_at_E_total(const double E) const;
+    [[nodiscard]] double get_occupation_at_E_total(const double E) const;
        
-    double get_occupation_at_k(const double k) const;
+    [[nodiscard]] double get_occupation_at_k(const double k) const;
 
-    double get_population_at_k(const double k) const;
+    [[nodiscard]] double get_population_at_k(const double k) const;
 };
 } // namespace
 #endif // QCLSIM_SUBBAND_H

@@ -22,7 +22,7 @@ private:
     arma::vec _z;   ///< Spatial sampling positions [m]
     arma::vec _psi; ///< Wave function [m^{-0.5}]
 
-    double get_total_probability() const;
+    [[nodiscard]] double get_total_probability() const;
     void normalise();
 
 public:
@@ -30,11 +30,11 @@ public:
                         decltype(_z)   z,
                         decltype(_psi) psi);
 
-    inline decltype(_E)   get_energy() const {return _E;}
-    inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
-    inline decltype(_psi) get_wavefunction_samples() const {return _psi;}
-    inline decltype(_psi) get_PD() const {return square(_psi);}
-    inline decltype(_z)   get_position_samples() const {return _z;}
+    [[nodiscard]] inline decltype(_E)   get_energy() const {return _E;}
+    [[nodiscard]] inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
+    [[nodiscard]] inline decltype(_psi) get_wavefunction_samples() const {return _psi;}
+    [[nodiscard]] inline decltype(_psi) get_PD() const {return square(_psi);}
+    [[nodiscard]] inline decltype(_z)   get_position_samples() const {return _z;}
 
     static double psi_squared_max(const std::vector<Eigenstate> &EVP);
 
@@ -51,7 +51,7 @@ public:
                               const bool                     with_num=false);
 
     // TODO: Should probably be part of an Operator class
-    double get_expectation_position() const;
+    [[nodiscard]] double get_expectation_position() const;
 
     // TODO: Should probably be part of an Operator class
     static double get_position_matrix_element(const Eigenstate &i,

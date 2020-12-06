@@ -53,7 +53,7 @@ class BandEdgeOptions : public Options
         /**
          * \returns The material identifier
          */
-        char get_material() const {
+        [[nodiscard]] char get_material() const {
             const auto mat_string = get_option<std::string>("material");
             char Material;
             if     (mat_string.compare("gaalas")   == 0) Material='a';

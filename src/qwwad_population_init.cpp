@@ -39,7 +39,7 @@ class DensityinputOptions : public Options
         DensityinputOptions(int argc, char** argv);
 
         // Program options
-        DistributionType get_dist_type() const {return distType;}
+        [[nodiscard]] DistributionType get_dist_type() const {return distType;}
 };
 
 DensityinputOptions::DensityinputOptions(int argc, char** argv)

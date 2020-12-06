@@ -72,10 +72,10 @@ class SBPOptions : public Options
         }
 
         /// \returns the global population [m^{-2}]
-        double get_global_pop() const {return get_option<double>("global-population") * 10000 *1e10;}
+        [[nodiscard]] double get_global_pop() const {return get_option<double>("global-population") * 10000 *1e10;}
 
         /// \returns true if the system is in thermal equilibrium
-        bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
+        [[nodiscard]] bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
 };
 
 int main(int argc,char *argv[])

@@ -23,10 +23,10 @@ class WfOptions : public Options
 public:
     WfOptions();
 
-    std::string get_wf_filename(const int ist) const;
-    std::string get_wf_prefix() const;
-    std::string get_wf_ext() const;
-    std::string get_energy_filename() const;
+    [[nodiscard]] std::string get_wf_filename(const int ist) const;
+    [[nodiscard]] std::string get_wf_prefix() const;
+    [[nodiscard]] std::string get_wf_ext() const;
+    [[nodiscard]] std::string get_energy_filename() const;
 };
 } // end namespace
 #endif // QWWAD_WF_OPTIONS_H

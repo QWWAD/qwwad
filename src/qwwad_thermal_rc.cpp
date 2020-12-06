@@ -24,26 +24,26 @@ class ThermalRCOptions: public Options
      * It is assumed that all power is dissipated in the active
      * region heterostructure (i.e. contacts have zero resistance!)
      */
-    double get_power() const {return vm["power"].as<double>();}
+    [[nodiscard]] double get_power() const {return vm["power"].as<double>();}
 
     /// Return fractional duty cycle (i.e. 0 to 1)
-    double get_duty_cycle() const {return dc;}
+    [[nodiscard]]double get_duty_cycle() const {return dc;}
 
     /// Return pulse repetition rate [Hz]
-    double get_f_rep() const {return f;}
+    [[nodiscard]] double get_f_rep() const {return f;}
 
     /// Return heatsink temperature [K]
-    double get_heatsink_temperature() const {return vm["Tsink"].as<double>();}
+    [[nodiscard]] double get_heatsink_temperature() const {return vm["Tsink"].as<double>();}
 
     /// Return number of pulses to simulate
-    size_t get_n_rep() const {return vm["nrep"].as<size_t>();}
+    [[nodiscard]] size_t get_n_rep() const {return vm["nrep"].as<size_t>();}
 
     /// Return ridge area [m^2]
-    double get_area() const {return vm["area"].as<double>()*1e-6;}
-    double get_R() const {return vm["resistance"].as<double>();}
-    double get_C() const {return vm["capacitance"].as<double>();}
+    [[nodiscard]] double get_area() const {return vm["area"].as<double>()*1e-6;}
+    [[nodiscard]] double get_R() const {return vm["resistance"].as<double>();}
+    [[nodiscard]] double get_C() const {return vm["capacitance"].as<double>();}
 
-    std::string get_infile() const {return vm["infile"].as<std::string>();}
+    [[nodiscard]] std::string get_infile() const {return vm["infile"].as<std::string>();}
 
     void print() const {}
 };

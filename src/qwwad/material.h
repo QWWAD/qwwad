@@ -22,11 +22,11 @@ public:
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
 
-    const Glib::ustring & get_name() const;
-    const Glib::ustring & get_description() const;
+    [[nodiscard]] const Glib::ustring & get_name() const;
+    [[nodiscard]] const Glib::ustring & get_description() const;
 
     MaterialProperty const * get_property(const char          *property_name) const;
-    MaterialProperty const * get_property(const Glib::ustring &property_name) const;
+    [[nodiscard]] MaterialProperty const * get_property(const Glib::ustring &property_name) const;
 
     MaterialPropertyNumeric const * get_numeric_property(const char    *property_name) const;
     MaterialPropertyNumeric const * get_numeric_property(Glib::ustring &property_name) const;

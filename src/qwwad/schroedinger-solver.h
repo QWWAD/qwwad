@@ -45,12 +45,12 @@ public:
     /**
      * \returns the array of spatial positions [m]
      */
-    decltype(_z) get_z() const {return _z;}
+    [[nodiscard]] decltype(_z) get_z() const {return _z;}
 
     /**
      * \returns the potential profile [J]
      */
-    decltype(_V) get_V() const {return _V;}
+    [[nodiscard]] decltype(_V) get_V() const {return _V;}
 
     virtual std::string get_name() = 0;
     virtual ~SchroedingerSolver() = default;
