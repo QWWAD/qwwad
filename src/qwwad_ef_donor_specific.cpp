@@ -41,8 +41,8 @@ Options configure_options(int argc, char** argv)
     opt.add_option<double>     ("zetastart,w",        0.001, "Initial value for symmetry parameter search");
     opt.add_option<double>     ("zetastep,x",          0.01, "Step size for symmetry parameter search");
     opt.add_option<double>     ("zetastop,y",            -1, "Final value for symmetry parameter search");
-    opt.add_option<std::string>("searchmethod",      "fast", "Method to use for locating parameters (\"fast\" or \"linear\")");
-    opt.add_option<std::string>("symmetry",            "2D", "Symmetry of hydrogenic wave function (\"2D\", \"3D\" or \"variable\")");
+    opt.add_option<std::string>("searchmethod",      "fast", R"(Method to use for locating parameters ("fast" or "linear"))");
+    opt.add_option<std::string>("symmetry",            "2D", R"(Symmetry of hydrogenic wave function ("2D", "3D" or "variable"))");
     opt.add_option<std::string>("totalpotentialfile", "v.r", "Filename from which the total potential is read.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
