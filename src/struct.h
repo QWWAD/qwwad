@@ -10,16 +10,16 @@
 # include <complex.h>
 #endif
 
-typedef struct
+struct vector
 {
  double x;
  double y;
  double z;
-}vector;
+};
 
-typedef struct
+struct data11
 {
  double a;
  double b;
-}data11;
+};
 #endif /* STRUCT_H */

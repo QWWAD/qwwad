@@ -14,12 +14,12 @@
 #include <cstdlib>
 #include <string>
 
-typedef struct
+struct vector
 {
  double x;
  double y;
  double z;
-}vector;
+};
 
 static const size_t n_lattice = 4; // Number of lattice vectors
 static const size_t n_basis   = 2; // Number of basis vectors

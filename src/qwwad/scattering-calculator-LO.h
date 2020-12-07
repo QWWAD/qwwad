@@ -43,7 +43,7 @@ private:
     decltype(_Ephonon) _prefactor;   ///< Pre-factor for rates
     decltype(_A0)      _lambda_s_sq; ///< Squared screening length [m^2]
 
-    typedef std::pair<unsigned int, unsigned int> map_key;
+    using map_key = std::pair<unsigned int, unsigned int>;
     arma::vec _Kz; ///< Wave vector samples [1/m]
 
     /**

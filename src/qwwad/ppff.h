@@ -13,11 +13,11 @@
 #include <armadillo>
 #include <vector>
 
-typedef struct
+struct atom
 {
  char	   *type;
  arma::vec  r;
-}atom;
+};
 
 auto Vf(const double  A0,
           const double  m_per_au,

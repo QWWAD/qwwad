@@ -19,7 +19,7 @@
 namespace QWWAD
 {
 /// Convenience wrapper for a list of vector components in each layer
-typedef std::vector< std::valarray<double> > alloy_vector;
+using alloy_vector = std::vector<std::valarray<double>>;
 
 /**
  * \brief A stack of layers making up a quantum heterostructure
