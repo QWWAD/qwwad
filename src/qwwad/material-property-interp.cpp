@@ -103,15 +103,15 @@ MaterialPropertyInterp::MaterialPropertyInterp(decltype(_name)        name,
     _xmax(1.0)
 {}
 
-MaterialPropertyInterp* MaterialPropertyInterp::clone() const
+auto MaterialPropertyInterp::clone() const -> MaterialPropertyInterp*
 {
     auto mat = new MaterialPropertyInterp(_name, _description, _reference, _unit, _y0, _y1, _b);
     mat->set_limits(_xmin, _xmax);
     return mat;
 }
 
-decltype(MaterialPropertyInterp::_y0)
-MaterialPropertyInterp::get_val(const double x) const
+auto
+MaterialPropertyInterp::get_val(const double x) const -> decltype(_y0)
 {
     if (x < _xmin or x > _xmax)
     {

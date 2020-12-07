@@ -50,7 +50,7 @@ public:
     /**
      * Return the value of element i of an eigenvector
      */
-    [[nodiscard]] T psi(const unsigned int i) const
+    [[nodiscard]] auto psi(const unsigned int i) const -> T
     {
         if(i >= _psi.size())
         {
@@ -65,18 +65,18 @@ public:
     /**
      * Return the entire eigenvector as an array
      */
-    [[nodiscard]] inline decltype(_psi) psi_array() const
+    [[nodiscard]] inline auto psi_array() const -> decltype(_psi)
     {
         return _psi;
     }
 
-    [[nodiscard]] size_t size() const
+    [[nodiscard]] auto size() const -> size_t
     {
         return _psi.size();
     }
 
     /** Return the eigenvalue */
-    [[nodiscard]] T get_E() const
+    [[nodiscard]] auto get_E() const -> T
     {
         return _E;
     }
@@ -96,7 +96,7 @@ public:
      *
      * \param[in] i The index of the point for which to find eigenvector squared
      */
-    [[nodiscard]] T psi_squared(const unsigned int i) const
+    [[nodiscard]] auto psi_squared(const unsigned int i) const -> T
     {
         if(i >= _psi.size())
         {
@@ -111,7 +111,7 @@ public:
     /**
      * Get an array of squared eigenvector values
      */
-    [[nodiscard]] decltype(_psi) psi_squared() const
+    [[nodiscard]] auto psi_squared() const -> decltype(_psi)
     {
         return square(_psi);
     }
@@ -119,7 +119,7 @@ public:
     /**
      * Find the largest square-magnitude of any element in a set of eigenvectors
      */
-    static T psi_squared_max(const std::vector<EVP_solution<T>> &EVP)
+    static auto psi_squared_max(const std::vector<EVP_solution<T>> &EVP) -> T
     {
         double PDmax = 0.0;
 
@@ -135,44 +135,38 @@ public:
     }
 };
 
-std::vector< EVP_solution<double> >
-eigen_general(arma::mat    &A,
-              const double VL,
-              const double VU,
-              unsigned int n_max=0);
+auto eigen_general(arma::mat    &A,
+                   const double  VL,
+                   const double  VU,
+                   unsigned int n_max=0) -> std::vector<EVP_solution<double>>;
 
-std::vector< EVP_solution<double> >
-eigen_banded(double       *AB,
-             double       *BB,
-             const double  VL,
-             const double  VU,
-             int           n,
-             unsigned int  n_max = 0);
+auto eigen_banded(double       *AB,
+                  double       *BB,
+                  const double  VL,
+                  const double  VU,
+                  int           n,
+                  unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
 
-std::vector< EVP_solution<double> >
-eigen_tridiag(arma::vec   &D,
-              arma::vec   &E,
-              const double VL,
-              const double VU,
-              unsigned int n_max = 0);
+auto eigen_tridiag(arma::vec    &D,
+                   arma::vec    &E,
+                   const double  VL,
+                   const double  VU,
+                   unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
 
-arma::vec
-multiply_vec_tridiag(arma::vec const &M_sub,
-                     arma::vec const &M_diag,
-                     arma::vec const &M_super,
-                     arma::vec const &x,
-                     arma::vec const &c);
+auto multiply_vec_tridiag(arma::vec const &M_sub,
+                          arma::vec const &M_diag,
+                          arma::vec const &M_super,
+                          arma::vec const &x,
+                          arma::vec const &c) -> arma::vec;
 
-arma::vec
-solve_tridiag(arma::vec const &A_sub,
-              arma::vec const &A_diag,
-              arma::vec const &A_super,
-              arma::vec const &x);
+auto solve_tridiag(arma::vec const &A_sub,
+                   arma::vec const &A_diag,
+                   arma::vec const &A_super,
+                   arma::vec const &x) -> arma::vec;
 
-arma::vec
-solve_tridiag_LDL_T(arma::vec const &D,
-                    arma::vec const &L,
-                    arma::vec const &x);
+auto solve_tridiag_LDL_T(arma::vec const &D,
+                         arma::vec const &L,
+                         arma::vec const &x) -> arma::vec;
 
 void
 factorise_tridiag_LDL_T(arma::vec const &A_diag,
@@ -180,11 +174,10 @@ factorise_tridiag_LDL_T(arma::vec const &A_diag,
                         arma::vec       &D,
                         arma::vec       &L);
 
-arma::vec
-solve_cyclic_matrix(arma::vec A_sub,
-                    arma::vec A_diag,
-                    double    cyclic,
-                    arma::vec  b);
+auto solve_cyclic_matrix(arma::vec A_sub,
+                         arma::vec A_diag,
+                         double    cyclic,
+                         arma::vec  b) -> arma::vec;
 
 void matrixProduct(double*      pB,
                    double*      pA,

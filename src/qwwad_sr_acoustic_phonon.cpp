@@ -50,7 +50,7 @@ static void ff_output(const arma::vec &Kz,
     write_table(filename.str(), Kz, Gifsqr);
 }
 
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
 
@@ -78,7 +78,7 @@ Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 
@@ -315,9 +315,9 @@ int main(int argc,char *argv[])
 /**
  * \brief calculates the overlap integral squared between the two states
  */
-static double Gsqr(const double   Kz,
+static auto Gsqr(const double   Kz,
                    const Subband &isb,
-                   const Subband &fsb)
+                   const Subband &fsb) -> double
 {
  const auto z = isb.z_array();
  const double dz = z[1] - z[0];

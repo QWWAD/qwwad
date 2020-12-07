@@ -39,7 +39,7 @@ SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double        m,
  *            I_1 = 2\pi\frac{\lambda^2}{4}
  *          \f]
  */
-double SchroedingerSolverDonor2D::I_1(const double /* z_dash */) const
+auto SchroedingerSolverDonor2D::I_1(const double /* z_dash */) const -> double
 {
     return 2*pi*gsl_pow_2(_lambda)/4;
 }
@@ -51,7 +51,7 @@ double SchroedingerSolverDonor2D::I_1(const double /* z_dash */) const
  *
  * \details See Eq. 5.42, QWWAD3. The integral evaluates to zero
  */
-double SchroedingerSolverDonor2D::I_2(const double /* z_dash */) const
+auto SchroedingerSolverDonor2D::I_2(const double /* z_dash */) const -> double
 {
     return 0;
 }
@@ -66,7 +66,7 @@ double SchroedingerSolverDonor2D::I_2(const double /* z_dash */) const
  *            I_3 = 2\pi \left(-\frac{1}{4}\right)
  *          \f]
  */
-double SchroedingerSolverDonor2D::I_3(const double /* z_dash */) const
+auto SchroedingerSolverDonor2D::I_3(const double /* z_dash */) const -> double
 {
     return 2*pi*(-0.25);
 }
@@ -83,7 +83,7 @@ struct I_4_integrand_params
 /**
  * \brief Computes the integrand in Eq. 5.59, QWWAD3
  */
-double I_4_integrand(double w, void *params)
+auto I_4_integrand(double w, void *params) -> double
 {
     auto p = reinterpret_cast<I_4_integrand_params *>(params);
     return 2*pi*p->z_dash_abs * exp(-p->z_dash_abs * (1/w-w)/p->lambda) *
@@ -102,7 +102,7 @@ double I_4_integrand(double w, void *params)
  *              I_4=2\pi\int_0^1 \exp{\left[-\frac{\vert z^\prime\vert\left(\frac{1}{w}-w\right) }{\lambda}\right]}\;\;\vert z^\prime\vert \frac{1-w^2}{2w^2}\;\;\text{d}w
  *          \f]
  */
-double SchroedingerSolverDonor2D::I_4(const double z_dash) const
+auto SchroedingerSolverDonor2D::I_4(const double z_dash) const -> double
 {
     const double z_dash_abs = fabs(z_dash); // Magnitude of displacement [m]
 

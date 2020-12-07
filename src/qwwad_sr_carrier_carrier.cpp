@@ -29,7 +29,7 @@ static void output_ff(const double       W,
                       const unsigned int f,
                       const unsigned int g);
 
-gsl_spline * FF_table(const double                 Deltak0sqr,
+auto FF_table(const double                 Deltak0sqr,
                       const double                 epsilon,
                       const Subband               &isb,
                       const Subband               &jsb,
@@ -38,13 +38,13 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
                       const double                 T,
                       const size_t                 nq,
                       const bool                   S_flag,
-                      const double                 E_cutoff = -1);
+                      const double                 E_cutoff = -1) -> gsl_spline *;
 
-double PI(const Subband &isb,
+auto PI(const Subband &isb,
           const size_t   q_perp,
-          const double   T);
+          const double   T) -> double;
 
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
 
@@ -70,7 +70,7 @@ Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 
@@ -284,9 +284,9 @@ return EXIT_SUCCESS;
  *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
  *  for a given wavevector, with respect to position
  */
-arma::vec find_Cif_p(const arma::vec &psi_if, 
+auto find_Cif_p(const arma::vec &psi_if, 
                      const arma::vec &exp_qz,
-                     const arma::vec &z)
+                     const arma::vec &z) -> arma::vec
 {
     const size_t nz = z.size();
     arma::vec Cif_p(nz);
@@ -310,9 +310,9 @@ arma::vec find_Cif_p(const arma::vec &psi_if,
  * Note that the upper limit has to be the point just BEFORE each z'
  * value so that we don't double count
  */
-arma::vec find_Cif_m(const arma::vec &psi_if, 
+auto find_Cif_m(const arma::vec &psi_if, 
                      const arma::vec &exp_qz,
-                     const arma::vec &z)
+                     const arma::vec &z) -> arma::vec
 {
     const size_t nz = z.size();
     arma::vec Cif_m(nz);
@@ -338,7 +338,7 @@ arma::vec find_Cif_m(const arma::vec &psi_if,
  *
  * \todo  This is also useful for e-e scattering. Push into library
  */
-arma::vec find_exp_qz(const double q, const arma::vec &z)
+auto find_exp_qz(const double q, const arma::vec &z) -> arma::vec
 {
     //const double Lp = z.max() - z.min();
 
@@ -360,21 +360,21 @@ arma::vec find_exp_qz(const double q, const arma::vec &z)
  * Therefore, we have separated the z' dependence from the
  * z dependence of the matrix element.
  */
-double Iif(const unsigned int  iz0,
+auto Iif(const unsigned int  iz0,
            const arma::vec    &Cif_p,
            const arma::vec    &Cif_m, 
-           const arma::vec    &exp_qz)
+           const arma::vec    &exp_qz) -> double
 {
     return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
 }
 
 /* This function calculates the overlap integral over all four carrier
    states		*/
-double A(const double   q_perp,
+auto A(const double   q_perp,
          const Subband &isb,
          const Subband &jsb,
          const Subband &fsb,
-         const Subband &gsb)
+         const Subband &gsb) -> double
 {
  const auto z = isb.z_array();
  const size_t nz = z.size();
@@ -411,9 +411,9 @@ double A(const double   q_perp,
 /**
  * \brief returns the screening factor, referred to by Smet as e_sc
  */
-double PI(const Subband &isb,
+auto PI(const Subband &isb,
           const double   q_perp,
-          const double   T)
+          const double   T) -> double
 {
     const double m = isb.get_effective_mass();    // Effective mass at band-edge [kg]
 
@@ -449,7 +449,7 @@ double PI(const Subband &isb,
 /**
  *  \brief Compute the form factor [Aijfg/(esc q)]^2
  */
-gsl_spline * FF_table(const double                 Deltak0sqr,
+auto FF_table(const double                 Deltak0sqr,
                       const double                 epsilon,
                       const Subband               &isb,
                       const Subband               &jsb,
@@ -458,7 +458,7 @@ gsl_spline * FF_table(const double                 Deltak0sqr,
                       const double                 T,
                       const size_t                 nq,
                       const bool                   S_flag,
-                      const double                 E_cutoff)
+                      const double                 E_cutoff) -> gsl_spline *
 {
     // Find maximum wave-vectors for calculation if not specified
     double kimax = 0.0; // Max value of ki [1/m]

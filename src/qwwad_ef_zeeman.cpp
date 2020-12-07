@@ -25,7 +25,7 @@ using namespace constants;
  *           Y.Merle d'Aubigne, R.Romestain and A.Wasiela, Proc. 21st
  *           Int. Conf. Phys. Semiconductors 1936 (1992))
  */
-static double Teff(const double x)
+static auto Teff(const double x) -> double
 {
     const double F = 40.7;
     const double G = 4.6;
@@ -48,9 +48,9 @@ static double Teff(const double x)
  *
  *  Hence <Sz> follows from Gaj's expression
  */
-static double Seff(const double N0alpha,
+static auto Seff(const double N0alpha,
                    const double N0beta,
-                   const double x)
+                   const double x) -> double
 {
     const double A = 2488.0*e*1e-3;
     const double B = -57880.0*e*1e-3;
@@ -65,7 +65,7 @@ static double Seff(const double N0alpha,
 /**
  * \brief Configure command-line options for the program
  */
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
 
@@ -87,7 +87,7 @@ Options configure_options(int argc, char** argv)
 };
 
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 

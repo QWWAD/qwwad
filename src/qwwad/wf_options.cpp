@@ -29,7 +29,7 @@ WfOptions::WfOptions()
  * \details The filename is in the form: <wf_out_prefix>i<wf_out_ext>,
  *          where i is the index of the state
  */
-std::string WfOptions::get_wf_filename(const int ist) const
+auto WfOptions::get_wf_filename(const int ist) const -> std::string
 {
     if(ist<1)
         throw std::runtime_error("Trying to get a wf filename with an index that is less than 1!");
@@ -43,19 +43,19 @@ std::string WfOptions::get_wf_filename(const int ist) const
     return oss.str();
 }
 
-std::string WfOptions::get_wf_prefix() const
+auto WfOptions::get_wf_prefix() const -> std::string
 {
     const auto prefix = get_option<std::string>("wffileprefix");
     return prefix;
 }
         
-std::string WfOptions::get_wf_ext() const
+auto WfOptions::get_wf_ext() const -> std::string
 {
     const auto ext = get_option<std::string>("wffileext");
     return ext;
 }
 
-std::string WfOptions::get_energy_filename() const{
+auto WfOptions::get_energy_filename() const -> std::string{
     const auto filename = get_option<std::string>("energyfile");
     return filename;
 }

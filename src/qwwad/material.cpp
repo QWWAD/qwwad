@@ -12,7 +12,7 @@
 
 namespace QWWAD {
 /** Return the name of the material */
-const Glib::ustring & Material::get_name() const {
+auto Material::get_name() const -> const Glib::ustring & {
     return name;
 }
     
@@ -24,7 +24,7 @@ const Glib::ustring & Material::get_name() const {
  *
  * \returns The description as a string
  */
-const Glib::ustring & Material::get_description() const
+auto Material::get_description() const -> const Glib::ustring &
 {
     return description;
 }
@@ -79,7 +79,7 @@ Material::Material(xmlpp::Element *elem)
         throw std::runtime_error("Invalid XML element");
 }
 
-MaterialProperty const * Material::get_property(const char *name) const
+auto Material::get_property(const char *name) const -> MaterialProperty const *
 {
     Glib::ustring prop_name(name);
     return get_property(prop_name);
@@ -92,7 +92,7 @@ MaterialProperty const * Material::get_property(const char *name) const
  *
  * \return The XML node for this material property
  */
-MaterialProperty const * Material::get_property(const Glib::ustring &property_name) const
+auto Material::get_property(const Glib::ustring &property_name) const -> MaterialProperty const *
 {
     MaterialProperty const * prop;
 
@@ -110,20 +110,20 @@ MaterialProperty const * Material::get_property(const Glib::ustring &property_na
     return prop;
 }
 
-MaterialPropertyNumeric const * Material::get_numeric_property(const char *name) const
+auto Material::get_numeric_property(const char *name) const -> MaterialPropertyNumeric const *
 {
     Glib::ustring prop_name(name);
     return get_numeric_property(prop_name);
 }
 
-MaterialPropertyNumeric const * Material::get_numeric_property(Glib::ustring &name) const
+auto Material::get_numeric_property(Glib::ustring &name) const -> MaterialPropertyNumeric const *
 {
     auto prop = dynamic_cast<MaterialPropertyNumeric const *>(get_property(name));
     return prop;
 }
 
-double Material::get_property_value(const char   *name,
-                                    const double  x) const
+auto Material::get_property_value(const char   *name,
+                                    const double  x) const -> double
 {
     Glib::ustring prop_name(name);
     return get_property_value(prop_name, x);
@@ -132,8 +132,8 @@ double Material::get_property_value(const char   *name,
 /**
  * Get the value of a numerical property
  */
-double Material::get_property_value(Glib::ustring &name,
-                                    const double   x) const
+auto Material::get_property_value(Glib::ustring &name,
+                                    const double   x) const -> double
 {
     auto prop = get_numeric_property(name);
     return prop->get_val(x);

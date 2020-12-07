@@ -25,7 +25,7 @@ using namespace constants;
 /**
  * Configure command-line options for the program
  */
-WfOptions configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> WfOptions
 {
     WfOptions opt;
 
@@ -42,7 +42,7 @@ WfOptions configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 

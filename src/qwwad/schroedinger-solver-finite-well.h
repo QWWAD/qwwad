@@ -25,16 +25,16 @@ public:
                                  const size_t nz,
                                  const unsigned int nst_max = 0);
 
-    std::string get_name() override {return "finite-square-well";}
+    auto get_name() -> std::string override {return "finite-square-well";}
 
-    [[nodiscard]] double get_u0_max() const;
-    [[nodiscard]] size_t get_n_bound() const;
+    [[nodiscard]] auto get_u0_max() const -> double;
+    [[nodiscard]] auto get_n_bound() const -> size_t;
 
-    static double test_matching(double v,
-                                void   *params);
+    static auto test_matching(double v,
+                                void   *params) -> double;
 
-    [[nodiscard]] double get_lhs(const double v) const;
-    [[nodiscard]] double get_rhs(const double v) const;
+    [[nodiscard]] auto get_lhs(const double v) const -> double;
+    [[nodiscard]] auto get_rhs(const double v) const -> double;
 private:
     double _l_w; ///< Width of well [m]
     double _V0;  ///< Well depth [J]
@@ -43,8 +43,8 @@ private:
 
     void calculate() override;
     
-    [[nodiscard]] arma::vec get_wavefunction(const double E,
-                                             const bool   parity_flag) const;
+    [[nodiscard]] auto get_wavefunction(const double E,
+                                             const bool   parity_flag) const -> arma::vec;
 };
 } // namespace
 #endif

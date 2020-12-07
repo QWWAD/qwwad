@@ -44,7 +44,7 @@ class Options
         
         void print_version_then_exit(char* prog_name) const;
 
-        [[nodiscard]] std::string name_mapper(std::string in) const;
+        [[nodiscard]] auto name_mapper(std::string in) const -> std::string;
 
     protected:
         /**
@@ -53,7 +53,7 @@ class Options
         po::variables_map vm;
 
     public:
-        [[nodiscard]] bool get_argument_known(const std::string &name) const;
+        [[nodiscard]] auto get_argument_known(const std::string &name) const -> bool;
 
         /**
          * \brief Adds an option to the program, with a default argument specified
@@ -97,7 +97,7 @@ class Options
          * \returns The value of the option
          */
         template <typename T>
-        [[nodiscard]] T get_option(const std::string &name) const
+        [[nodiscard]] auto get_option(const std::string &name) const -> T
         {
             return vm[name].as<T>();
         }
@@ -119,7 +119,7 @@ class Options
     public:
         Options();
         Options(const Options &options);
-        Options & operator=(const Options &options);
+        auto operator=(const Options &options) -> Options &;
         virtual ~Options();
 
         /**
@@ -127,7 +127,7 @@ class Options
          *
          * \returns \c true if verbose output is wanted
          */
-        [[nodiscard]] bool get_verbose() const {return vm["verbose"].as<bool>();}
+        [[nodiscard]] auto get_verbose() const -> bool {return vm["verbose"].as<bool>();}
 };
 
 /**
@@ -204,7 +204,7 @@ inline void Options::add_option<bool>(const std::string &name,
  *          function converts the variable to a floating-point number on output.
  */
 template <>
-inline double Options::get_option<double>(const std::string &name) const
+inline auto Options::get_option<double>(const std::string &name) const -> double
 {
     const std::string val_str = vm[name].as<std::string>();
     std::istringstream iss(val_str);

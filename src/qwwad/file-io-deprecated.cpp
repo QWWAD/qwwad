@@ -27,7 +27,7 @@ using namespace constants;
  *          COLUMN 1: State index
  *          COLUMN 2: Energy [meV]
  */
-std::valarray<double> read_E(char p)
+auto read_E(char p) -> std::valarray<double>
 {
     std::ostringstream filename; // filename string
 
@@ -49,7 +49,7 @@ std::valarray<double> read_E(char p)
  *          COLUMN 1: Subband index
  *          COLUMN 2: Population [10^10 cm^{-2}]
  */
-std::valarray<double> read_populations(int n)
+auto read_populations(int n) -> std::valarray<double>
 {
     std::valarray<unsigned int> indices(n);
     std::valarray<double>       N(n);
@@ -65,7 +65,7 @@ std::valarray<double> read_populations(int n)
  *
  * \returns Maximum potential [J]
  */
-double Vmax()
+auto Vmax() -> double
 {
     std::valarray<double> z;
     std::valarray<double> V;

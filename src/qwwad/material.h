@@ -22,20 +22,20 @@ public:
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
 
-    [[nodiscard]] const Glib::ustring & get_name() const;
-    [[nodiscard]] const Glib::ustring & get_description() const;
+    [[nodiscard]] auto get_name() const -> const Glib::ustring &;
+    [[nodiscard]] auto get_description() const -> const Glib::ustring &;
 
-    MaterialProperty const * get_property(const char          *property_name) const;
-    [[nodiscard]] MaterialProperty const * get_property(const Glib::ustring &property_name) const;
+    auto get_property(const char          *property_name) const -> MaterialProperty const *;
+    [[nodiscard]] auto get_property(const Glib::ustring &property_name) const -> MaterialProperty const *;
 
-    MaterialPropertyNumeric const * get_numeric_property(const char    *property_name) const;
-    MaterialPropertyNumeric const * get_numeric_property(Glib::ustring &property_name) const;
+    auto get_numeric_property(const char    *property_name) const -> MaterialPropertyNumeric const *;
+    auto get_numeric_property(Glib::ustring &property_name) const -> MaterialPropertyNumeric const *;
 
-    double get_property_value(const char   *property_name,
-                              const double  x = 0) const;
+    auto get_property_value(const char   *property_name,
+                              const double  x = 0) const -> double;
 
-    double get_property_value(Glib::ustring &property_name,
-                              const double   x = 0) const;
+    auto get_property_value(Glib::ustring &property_name,
+                              const double   x = 0) const -> double;
 
 private:
     /// Cached set of material properties

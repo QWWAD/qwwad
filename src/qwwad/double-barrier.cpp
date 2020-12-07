@@ -14,13 +14,13 @@ using namespace arma;
 namespace QWWAD {
 using namespace constants;
 
-double get_transmission_coefficient(const double E,
+auto get_transmission_coefficient(const double E,
                                     const double m_w,
                                     const double m_b,
                                     const double V,
                                     const double L1,
                                     const double L2,
-                                    const double L3)
+                                    const double L3) -> double
 {
     // Calculate interfaces
     const double I2=L1;

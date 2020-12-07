@@ -34,7 +34,7 @@ IntersubbandTransition::IntersubbandTransition(const decltype(_isb) isb,
 /**
  * \brief Return the average scattering rate
  */
-double IntersubbandTransition::get_average_rate() const
+auto IntersubbandTransition::get_average_rate() const -> double
 {
     const auto nki = _ki.size();
     const auto dki = _ki[1] - _ki[0];

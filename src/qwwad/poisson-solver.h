@@ -43,10 +43,10 @@ public:
                   const double          dx,
                   PoissonBoundaryType   bt=DIRICHLET);
     
-    [[nodiscard]] arma::vec solve(const arma::vec &rho) const;
-    [[nodiscard]] arma::vec solve(const arma::vec &rho,
-                                  const double     V_drop) const;
-    [[nodiscard]] arma::vec solve_laplace(const double V_drop) const;
+    [[nodiscard]] auto solve(const arma::vec &rho) const -> arma::vec;
+    [[nodiscard]] auto solve(const arma::vec &rho,
+                                  const double     V_drop) const -> arma::vec;
+    [[nodiscard]] auto solve_laplace(const double V_drop) const -> arma::vec;
 
 private:
     void factorise_dirichlet();

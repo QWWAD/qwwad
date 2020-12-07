@@ -67,43 +67,43 @@ public:
                            decltype(_Tl)          Tl,
                            decltype(_is_emission) is_emission);
 
-   [[nodiscard]] double get_Eki_min (const unsigned int isb,
-                                     const unsigned int fsb) const;
+   [[nodiscard]] auto get_Eki_min (const unsigned int isb,
+                                   const unsigned int fsb) const -> double;
 
-   [[nodiscard]] double get_ki_min (const unsigned int isb,
-                                    const unsigned int fsb) const;
+   [[nodiscard]] auto get_ki_min (const unsigned int isb,
+                                  const unsigned int fsb) const -> double;
 
-   [[nodiscard]] double get_ki_cutoff(const unsigned int isb,
-                                      const unsigned int fsb) const;
+   [[nodiscard]] auto get_ki_cutoff(const unsigned int isb,
+                                    const unsigned int fsb) const -> double;
 
-   double get_rate_ki(const unsigned int isb,
-                      const unsigned int fsb,
-                      const double       ki);
+   auto get_rate_ki(const unsigned int isb,
+                    const unsigned int fsb,
+                    const double       ki) -> double;
 
-   IntersubbandTransition get_transition(const unsigned int isb,
-                                         const unsigned int fsb);
+   auto get_transition(const unsigned int isb,
+                       const unsigned int fsb) -> IntersubbandTransition;
 
-   [[nodiscard]] inline decltype(_lambda_s_sq) get_screening_length() const {return _lambda_s_sq;}
+   [[nodiscard]] inline auto get_screening_length() const {return _lambda_s_sq;}
 
    inline void set_ki_samples(const decltype(_nki) nki) {_nki = nki;}
    void set_phonon_samples(const size_t nKz);
 
-   inline decltype(_dKz) get_dKz() {return _dKz;}
+   [[nodiscard]] inline auto get_dKz() const {return _dKz;}
 
    inline void enable_screening(const bool enabled) {_enable_screening = enabled;}
    inline void enable_blocking (const bool enabled) {_enable_blocking  = enabled;}
 
-   [[nodiscard]] inline decltype(_prefactor) get_prefactor() const {return _prefactor;}
+   [[nodiscard]] inline auto get_prefactor() const {return _prefactor;}
 
    void make_ff_table(const unsigned int i,
                       const unsigned int f);
 
-   double Gsqr(const double   Kz,
-               const Subband &isb,
-               const Subband &fsb);
+   auto Gsqr(const double   Kz,
+             const Subband &isb,
+             const Subband &fsb) -> double;
 
-   [[nodiscard]] arma::vec get_ff_table(const unsigned int i, const unsigned int f) const;
-   [[nodiscard]] inline decltype(_Kz)  get_Kz_table() const {return _Kz;}
+   [[nodiscard]] auto get_ff_table(const unsigned int i, const unsigned int f) const -> arma::vec;
+   [[nodiscard]] inline auto get_Kz_table() const {return _Kz;}
 };
 } // namespace
 #endif

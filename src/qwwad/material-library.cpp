@@ -26,8 +26,8 @@
 namespace QWWAD {
 using namespace constants;
 
-const Glib::ustring & MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
-                                                         Glib::ustring &property_name)
+auto MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
+                                                         Glib::ustring &property_name) -> const Glib::ustring &
 {
     auto property = dynamic_cast<MaterialPropertyNumeric const *>(get_property(mat_name, property_name));
     return property->get_unit();
@@ -88,7 +88,7 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
  *
  * \throws boost::bad_ptr_container_operation if the material could not be found
  */
-Material const * MaterialLibrary::get_material(const Glib::ustring &mat_name) const
+auto MaterialLibrary::get_material(const Glib::ustring &mat_name) const -> Material const *
 {
     Material const * mat;
 
@@ -114,14 +114,14 @@ Material const * MaterialLibrary::get_material(const Glib::ustring &mat_name) co
  *
  * \return The material property object
  */
-MaterialProperty const * MaterialLibrary::get_property(Glib::ustring &mat_name,
-                                                       Glib::ustring &property_name) const
+auto MaterialLibrary::get_property(Glib::ustring &mat_name,
+                                                       Glib::ustring &property_name) const -> MaterialProperty const *
 {
     return materials.at(mat_name).get_property(property_name);
 }
 
-double MaterialLibrary::get_val(Glib::ustring &mat_name,
-                                Glib::ustring &property_name)
+auto MaterialLibrary::get_val(Glib::ustring &mat_name,
+                                Glib::ustring &property_name) -> double
 {
     const auto property = materials.at(mat_name).get_property(property_name);
     const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(property);
@@ -134,7 +134,7 @@ double MaterialLibrary::get_val(Glib::ustring &mat_name,
  *
  * \returns the material with the given name
  */
-Material const * MaterialLibrary::get_material(const char  *mat_name) const
+auto MaterialLibrary::get_material(const char  *mat_name) const -> Material const *
 {
     std::string str(mat_name);
     return &materials.at(str);

@@ -19,7 +19,7 @@ Eigenstate::Eigenstate(decltype(_E)   E,
 /**
  * \brief Find the total probability of the state over all space
  */
-double Eigenstate::get_total_probability() const
+auto Eigenstate::get_total_probability() const -> double
 {
     const auto PD = get_PD();
     const auto dz = _z[1] - _z[0];
@@ -59,12 +59,12 @@ void Eigenstate::normalise()
  *
  * \details Reads in eigenstates from files into a vector
  */
-std::vector<Eigenstate>
+auto
 Eigenstate::read_from_file(const std::string &Eigenval_name,
                            const std::string &Eigenvect_prefix,
                            const std::string &Eigenvect_ext,
                            const double       eigenvalue_scale,
-                           const bool         ignore_first_column)
+                           const bool         ignore_first_column) -> std::vector<Eigenstate>
 {
     std::vector<Eigenstate> states;
 
@@ -164,7 +164,7 @@ void Eigenstate::write_to_file(const std::string             &Eigenval_name,
  *
  * \return Expectation position [m]
  */
-double Eigenstate::get_expectation_position() const
+auto Eigenstate::get_expectation_position() const -> double
 {
     const auto dz = _z[1] - _z[0];
     const decltype(_psi) dz_av = _psi * _psi * _z;
@@ -186,7 +186,7 @@ double Eigenstate::get_expectation_position() const
  *       not too important however, because the matrix element for an
  *       intrasubband transition is never really used!
  */
-double mij(const Eigenstate &i, const Eigenstate &j)
+auto mij(const Eigenstate &i, const Eigenstate &j) -> double
 {
     // FIXME: Currently it is assumed that both states use same spatial grid
     const auto z = i.get_position_samples();
@@ -213,7 +213,7 @@ double mij(const Eigenstate &i, const Eigenstate &j)
 /**
  * \brief Find the largest probability density at any point in a set of eigenstates
  */
-double Eigenstate::psi_squared_max(const std::vector<Eigenstate> &states)
+auto Eigenstate::psi_squared_max(const std::vector<Eigenstate> &states) -> double
 {
     double PDmax = 0.0;
 

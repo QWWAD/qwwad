@@ -24,7 +24,7 @@ static void write_ap(const double A0,
                      const std::string                 &anion,
                      const std::string                 &cation);
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
 double	A0;		       /* the lattice constant				*/
 int	n_z;		       /* number of lattice points along z-axis of cell*/

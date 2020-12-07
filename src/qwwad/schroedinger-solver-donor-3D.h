@@ -26,7 +26,7 @@ public:
                               const double        lambda,
                               const double        dE);
 
-    std::string get_name() override {return "donor-3D";}
+    auto get_name() -> std::string override {return "donor-3D";}
 
 private:
     void calculate_psi_from_chi() override
@@ -45,10 +45,10 @@ private:
         }
     }
 
-    [[nodiscard]] double I_1(const double z_dash) const override;
-    [[nodiscard]] double I_2(const double z_dash) const override;
-    [[nodiscard]] double I_3(const double z_dash) const override;
-    [[nodiscard]] double I_4(const double z_dash) const override;
+    [[nodiscard]] auto I_1(const double z_dash) const -> double override;
+    [[nodiscard]] auto I_2(const double z_dash) const -> double override;
+    [[nodiscard]] auto I_3(const double z_dash) const -> double override;
+    [[nodiscard]] auto I_4(const double z_dash) const -> double override;
 };
 } // namespace
 #endif

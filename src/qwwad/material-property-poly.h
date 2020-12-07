@@ -17,9 +17,9 @@ public:
                          decltype(_unit)        unit,
                          decltype(_poly_coeffs) poly_coeffs);
 
-    [[nodiscard]] MaterialPropertyPoly * clone() const override;
+    [[nodiscard]] auto clone() const -> MaterialPropertyPoly * override;
 
-    [[nodiscard]] double get_val(const double x = 0) const override;
+    [[nodiscard]] auto get_val(const double x = 0) const -> double override;
 };
 } // end namespace
 #endif

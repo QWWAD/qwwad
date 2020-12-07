@@ -24,7 +24,7 @@ void ff_output(const arma::vec &Kz,
                unsigned int     i,
                unsigned int     f);
 
-static Options configure_options(int argc, char** argv)
+static auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
 
@@ -50,7 +50,7 @@ static Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 

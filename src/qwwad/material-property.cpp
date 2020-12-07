@@ -57,7 +57,7 @@ MaterialProperty::MaterialProperty(decltype(_name)        name,
         _name = name;
 }
 
-MaterialProperty* MaterialProperty::clone() const
+auto MaterialProperty::clone() const -> MaterialProperty*
 {
     return new MaterialProperty(_name, _description, _reference);
 }
@@ -67,8 +67,8 @@ MaterialProperty* MaterialProperty::clone() const
  *
  * \return The name as a string
  */
-const decltype(MaterialProperty::_name) &
-MaterialProperty::get_name() const
+auto
+MaterialProperty::get_name() const -> const decltype(MaterialProperty::_name) &
 {
     return _name;
 }
@@ -78,8 +78,8 @@ MaterialProperty::get_name() const
  *
  * \return The description as a string
  */
-const decltype(MaterialProperty::_description) &
-MaterialProperty::get_description() const
+auto
+MaterialProperty::get_description() const -> const decltype(MaterialProperty::_description) &
 {
     return _description;
 }
@@ -89,8 +89,8 @@ MaterialProperty::get_description() const
  *
  * \return The reference as a string
  */
-const decltype(MaterialProperty::_reference) &
-MaterialProperty::get_reference() const
+auto
+MaterialProperty::get_reference() const -> const decltype(MaterialProperty::_reference) &
 {
     return _reference;
 }

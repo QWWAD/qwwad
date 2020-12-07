@@ -11,10 +11,10 @@
 using namespace QWWAD;
 using namespace constants;
 
-double Vf(const double  A0,
+auto Vf(const double  A0,
           const double  m_per_au,
           double        q_sqr,
-          const char   *type);
+          const char   *type) -> double;
 
 /**
  * This function returns the atomic form factor Vf(q) for the appropriate
@@ -25,10 +25,10 @@ double Vf(const double  A0,
  * \param[in] q_sqr    modulus squared of q
  * \param[in]type      atomic species
  */
-double Vf(const double  A0,
+auto Vf(const double  A0,
           const double  m_per_au,
           double        q_sqr,
-          const char   *type)
+          const char   *type) -> double
 {
  double A0_au;	/* lattice constant in atomic units	*/
  double a1,a2,a3,a4,a5,a6;
@@ -450,7 +450,7 @@ double Vf(const double  A0,
 /**
  * \brief Reads the atomic species into memory
  */
-std::vector<atom> read_atoms(const char * filename)
+auto read_atoms(const char * filename) -> std::vector<atom>
 {
  auto Fatoms=fopen(filename,"r"); // file pointer to wavefunction file
  if(!Fatoms) {
@@ -497,8 +497,8 @@ std::vector<atom> read_atoms(const char * filename)
 
 /* This function reads the reciprocal lattice vectors (defined in
    the file G.r) into the array G[] and then converts into SI units */
-std::vector<arma::vec>
-read_rlv(double A0)
+auto
+read_rlv(double A0) -> std::vector<arma::vec>
 {
     arma::vec Gx;
     arma::vec Gy;

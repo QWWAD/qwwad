@@ -30,13 +30,13 @@ public:
                                    const size_t nper = 10,
                                    const unsigned int nst_max = 1);
 
-    std::string get_name() override {return "kronig-penney";}
+    auto get_name() -> std::string override {return "kronig-penney";}
 
-    static double test_matching(double v,
-                                void   *params);
+    static auto test_matching(double v,
+                                void   *params) -> double;
 
-    [[nodiscard]] double get_lhs(const double v) const;
-    [[nodiscard]] double get_rhs() const;
+    [[nodiscard]] auto get_lhs(const double v) const -> double;
+    [[nodiscard]] auto get_rhs() const -> double;
 
 private:
     double _l_w; ///< Width of well [m]
@@ -48,7 +48,7 @@ private:
 
     void calculate() override;
 
-    [[nodiscard]] arma::vec get_wavefunction(const double E) const;
+    [[nodiscard]] auto get_wavefunction(const double E) const -> arma::vec;
 };
 } // namespace
 #endif

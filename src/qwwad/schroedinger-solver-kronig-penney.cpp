@@ -59,7 +59,7 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
  *
  * \returns The right-hand side of the matching equation
  */
-double SchroedingerSolverKronigPenney::get_rhs() const
+auto SchroedingerSolverKronigPenney::get_rhs() const -> double
 {
     const auto L   = _l_w + _l_b; // Total length of period (well + barrier) [m]
     const auto rhs = cos(_k * L); // Right-hand side of matching equation
@@ -73,7 +73,7 @@ double SchroedingerSolverKronigPenney::get_rhs() const
  *
  * \returns the left-hand side of the matching equation
  */
-double SchroedingerSolverKronigPenney::get_lhs(const double E) const
+auto SchroedingerSolverKronigPenney::get_lhs(const double E) const -> double
 {
     // Wave vector inside well [QWWAD3, 2.155]
     const auto k_w = sqrt(2*_m_w*E)/hBar;
@@ -109,7 +109,7 @@ double SchroedingerSolverKronigPenney::get_lhs(const double E) const
  *
  * \param[in] E Energy [J]
  */
-arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
+auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> arma::vec
 {
     const auto nz = _z.size();
     arma::vec psi(nz); // wavefunction
@@ -157,8 +157,8 @@ arma::vec SchroedingerSolverKronigPenney::get_wavefunction(const double E) const
  *
  * \details This gives zero for a perfect match
  */
-double SchroedingerSolverKronigPenney::test_matching(double  energy,
-                                                     void   *params)
+auto SchroedingerSolverKronigPenney::test_matching(double  energy,
+                                                     void   *params) -> double
 {
     const auto *se = reinterpret_cast<SchroedingerSolverKronigPenney *>(params);
 

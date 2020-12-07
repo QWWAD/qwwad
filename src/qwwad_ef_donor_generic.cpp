@@ -68,43 +68,43 @@ public:
     {}
 
 private:
-    [[nodiscard]] double get_Laplacian(double x,
+    [[nodiscard]] auto get_Laplacian(double x,
                                        double y,
-                                       unsigned int iz) const;
+                                       unsigned int iz) const -> double;
 public:
     /**
      * \brief Set the Bohr radius
      */
     void set_lambda(const double lambda) {_lambda = lambda;}
 
-    [[nodiscard]] double get_psi(double x, double y, unsigned int iz) const;
+    [[nodiscard]] auto get_psi(double x, double y, unsigned int iz) const -> double;
 
-    [[nodiscard]] double get_energy_integrand(double       x,
+    [[nodiscard]] auto get_energy_integrand(double       x,
                                               double       y,
-                                              unsigned int iz) const;
+                                              unsigned int iz) const -> double;
 
-    static double get_energy_integrand_y(double  y,
-                                         void   *params);
+    static auto get_energy_integrand_y(double  y,
+                                         void   *params) -> double;
 
-    static double get_PD_integrand_y(double  y,
-                                     void   *params);
+    static auto get_PD_integrand_y(double  y,
+                                     void   *params) -> double;
 
-    static double get_energy_integrand_x(double  x,
-                                         void   *params);
+    static auto get_energy_integrand_x(double  x,
+                                         void   *params) -> double;
     
-    static double get_PD_integrand_x(double  x,
-                                     void   *params);
+    static auto get_PD_integrand_x(double  x,
+                                     void   *params) -> double;
 
-    static double get_energy(double  lambda,
-                             void   *params);
+    static auto get_energy(double  lambda,
+                             void   *params) -> double;
 
-    [[nodiscard]] double get_energy() const;
+    [[nodiscard]] auto get_energy() const -> double;
 };
 
 /**
  * \brief Configure command-line options
  */
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system using a generic search");
@@ -122,7 +122,7 @@ Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 
@@ -250,9 +250,9 @@ int main(int argc,char *argv[])
 }
 
 /// The Laplacian of Psi
-double Wavefunction3D::get_Laplacian(double x,
+auto Wavefunction3D::get_Laplacian(double x,
                                      double y,
-                                     unsigned int iz) const
+                                     unsigned int iz) const -> double
 {
     // For the in-plane derivative, use a very small step, for accuracy
     // For the growth direction, use the sample spacing
@@ -276,9 +276,9 @@ double Wavefunction3D::get_Laplacian(double x,
 }
 
 /// Get the energy integrand
-double Wavefunction3D::get_energy_integrand(double       x,
+auto Wavefunction3D::get_energy_integrand(double       x,
                                             double       y,
-                                            unsigned int iz) const
+                                            unsigned int iz) const -> double
 {
     // Pre-calculate a couple of params
     const auto hBar_sq_by_2m  = hBar*hBar/(2.0*m);
@@ -305,16 +305,16 @@ struct Integrand_y_params
     unsigned int          iz;
 };
 
-double Wavefunction3D::get_energy_integrand_y(double  y,
-                                              void   *params)
+auto Wavefunction3D::get_energy_integrand_y(double  y,
+                                              void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_y_params *>(params);
 
     return p->wf3d->get_energy_integrand(p->x, y, p->iz);
 }
 
-double Wavefunction3D::get_PD_integrand_y(double  y,
-                                          void   *params)
+auto Wavefunction3D::get_PD_integrand_y(double  y,
+                                          void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_y_params *>(params);
     auto psi = p->wf3d->get_psi(p->x, y, p->iz);
@@ -328,8 +328,8 @@ struct Integrand_x_params
     unsigned int          iz;
 };
 
-double Wavefunction3D::get_energy_integrand_x(double  x,
-                                              void   *params)
+auto Wavefunction3D::get_energy_integrand_x(double  x,
+                                              void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_x_params *>(params);
     auto wf3d = p->wf3d;
@@ -348,8 +348,8 @@ double Wavefunction3D::get_energy_integrand_x(double  x,
     return 2.0*result;
 }
 
-double Wavefunction3D::get_PD_integrand_x(double  x,
-                                          void   *params)
+auto Wavefunction3D::get_PD_integrand_x(double  x,
+                                          void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_x_params *>(params);
     auto wf3d = p->wf3d;
@@ -371,8 +371,8 @@ double Wavefunction3D::get_PD_integrand_x(double  x,
 /**
  * \brief Calculates the expectation value (the energy) of the Hamiltonian operator
  */
-double Wavefunction3D::get_energy(double  lambda,
-                                  void   *params)
+auto Wavefunction3D::get_energy(double  lambda,
+                                  void   *params) -> double
 {
     auto *p = reinterpret_cast<Wavefunction3D *>(params);
     p->set_lambda(lambda);
@@ -380,7 +380,7 @@ double Wavefunction3D::get_energy(double  lambda,
     return p->get_energy();
 }
 
-double Wavefunction3D::get_energy() const
+auto Wavefunction3D::get_energy() const -> double
 {
     const auto dz  = _z[1] - _z[0]; // z- (growth) direction step length [m]
     const auto nz  = _z.size();    // Number of spatial samples in z direction
@@ -430,9 +430,9 @@ double Wavefunction3D::get_energy() const
 /**
  * \brief The wave function psi(z)phi(r)
  */
-double Wavefunction3D::get_psi(const double       x,
+auto Wavefunction3D::get_psi(const double       x,
                                const double       y,
-                               const unsigned int iz) const
+                               const unsigned int iz) const -> double
 {
     const double z_dash = std::abs(_z[iz] - r_i);
     const auto r_xy = hypot(x,y);

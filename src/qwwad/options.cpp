@@ -47,7 +47,7 @@ Options::Options(const Options &opt) :
     program_specific_options->add(*opt.program_specific_options);
 }
 
-Options & Options::operator=(const Options &opt)
+auto Options::operator=(const Options &opt) -> Options &
 {
     // Create a temporary copy of other object
     Options tmp(opt);
@@ -220,7 +220,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
  *          Any unrecognised options are simply ignored.  The user needs to
  *          take care of typos!
  */
-std::string Options::name_mapper(std::string environment_variable) const
+auto Options::name_mapper(std::string environment_variable) const -> std::string
 {
     std::string prefix("QWWAD_");
     std::string option_name(""); // output string
@@ -252,7 +252,7 @@ std::string Options::name_mapper(std::string environment_variable) const
  * \details This means that either a default argument was specified when
  *          the option was defined or that the user has set the argument
  */
-bool Options::get_argument_known(const std::string &name) const
+auto Options::get_argument_known(const std::string &name) const -> bool
 {
     auto seen = false;
 

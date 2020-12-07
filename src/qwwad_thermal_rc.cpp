@@ -24,26 +24,26 @@ class ThermalRCOptions: public Options
      * It is assumed that all power is dissipated in the active
      * region heterostructure (i.e. contacts have zero resistance!)
      */
-    [[nodiscard]] double get_power() const {return vm["power"].as<double>();}
+    [[nodiscard]] auto get_power() const -> double {return vm["power"].as<double>();}
 
     /// Return fractional duty cycle (i.e. 0 to 1)
-    [[nodiscard]]double get_duty_cycle() const {return dc;}
+    [[nodiscard]] auto get_duty_cycle() const -> double {return dc;}
 
     /// Return pulse repetition rate [Hz]
-    [[nodiscard]] double get_f_rep() const {return f;}
+    [[nodiscard]] auto get_f_rep() const -> double {return f;}
 
     /// Return heatsink temperature [K]
-    [[nodiscard]] double get_heatsink_temperature() const {return vm["Tsink"].as<double>();}
+    [[nodiscard]] auto get_heatsink_temperature() const -> double {return vm["Tsink"].as<double>();}
 
     /// Return number of pulses to simulate
-    [[nodiscard]] size_t get_n_rep() const {return vm["nrep"].as<size_t>();}
+    [[nodiscard]] auto get_n_rep() const -> size_t {return vm["nrep"].as<size_t>();}
 
     /// Return ridge area [m^2]
-    [[nodiscard]] double get_area() const {return vm["area"].as<double>()*1e-6;}
-    [[nodiscard]] double get_R() const {return vm["resistance"].as<double>();}
-    [[nodiscard]] double get_C() const {return vm["capacitance"].as<double>();}
+    [[nodiscard]] auto get_area() const -> double {return vm["area"].as<double>()*1e-6;}
+    [[nodiscard]] auto get_R() const -> double {return vm["resistance"].as<double>();}
+    [[nodiscard]] auto get_C() const -> double {return vm["capacitance"].as<double>();}
 
-    [[nodiscard]] std::string get_infile() const {return vm["infile"].as<std::string>();}
+    [[nodiscard]] auto get_infile() const -> std::string {return vm["infile"].as<std::string>();}
 
     void print() const {}
 };
@@ -157,7 +157,7 @@ ThermalRCOptions::ThermalRCOptions(int argc, char **argv)
     }
 }
 
-int main(int argc, char *argv[])
+auto main(int argc, char *argv[]) -> int
 {
     // Grab user preferences
     ThermalRCOptions opt(argc, argv);

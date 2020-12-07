@@ -17,9 +17,9 @@ public:
                              decltype(_unit)        unit,
                              decltype(_constant)    value);
 
-    [[nodiscard]] MaterialPropertyConstant * clone() const override;
+    [[nodiscard]] auto clone() const -> MaterialPropertyConstant * override;
 
-    [[nodiscard]] decltype(_constant) get_val(const double x = 0) const override;
+    [[nodiscard]] auto get_val(const double x = 0) const -> decltype(_constant) override;
 };
 } // end namespace
 #endif

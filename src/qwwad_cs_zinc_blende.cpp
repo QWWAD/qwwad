@@ -33,7 +33,7 @@ static void write_ap(double A0,
                      const std::string                  &anion,
                      const std::string                  &cation);
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
 double	A0;		/* the lattice constant				*/
 int	n_x;		/* number of lattice points along x-axis of cell*/

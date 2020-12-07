@@ -55,8 +55,8 @@ ScatteringCalculatorLO::ScatteringCalculatorLO(decltype(_subbands)    subbands,
 /**
  * \brief Find the minimum initial kinetic energy that would allow scattering
  */
-double ScatteringCalculatorLO::get_Eki_min(const unsigned int i,
-                                           const unsigned int f) const
+auto ScatteringCalculatorLO::get_Eki_min(const unsigned int i,
+                                           const unsigned int f) const -> double
 {
     const auto isb = _subbands[i];
     const auto fsb = _subbands[f];
@@ -85,8 +85,8 @@ double ScatteringCalculatorLO::get_Eki_min(const unsigned int i,
 /**
  * \brief Find the minimum initial wave-vector that would allow scattering
  */
-double ScatteringCalculatorLO::get_ki_min(const unsigned int i,
-                                          const unsigned int f) const
+auto ScatteringCalculatorLO::get_ki_min(const unsigned int i,
+                                          const unsigned int f) const -> double
 {
     const auto Eki_min = get_Eki_min(i,f);
     const auto isb = _subbands[i];
@@ -97,8 +97,8 @@ double ScatteringCalculatorLO::get_ki_min(const unsigned int i,
 /**
  * \brief Find a sensible cut-off value for the initial wave vector
  */
-double ScatteringCalculatorLO::get_ki_cutoff(const unsigned int i,
-                                             const unsigned int f) const
+auto ScatteringCalculatorLO::get_ki_cutoff(const unsigned int i,
+                                             const unsigned int f) const -> double
 {
     const auto isb = _subbands[i];
 
@@ -151,9 +151,9 @@ void ScatteringCalculatorLO::set_phonon_samples(const size_t nKz)
  * \details The total scattering rate is computed for all possible
  *          transitions to any permitted state in the final subband
  */
-double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
+auto ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
                                            const unsigned int f,
-                                           const double       ki)
+                                           const double       ki) -> double
 {
     const auto ki_min = get_ki_min(i,f);
 
@@ -225,8 +225,8 @@ double ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
  * \param[in] i Initial subband index
  * \param[in] f Final subband index
  */
-IntersubbandTransition ScatteringCalculatorLO::get_transition(const unsigned int i,
-                                                              const unsigned int f)
+auto ScatteringCalculatorLO::get_transition(const unsigned int i,
+                                                              const unsigned int f) -> IntersubbandTransition
 {
     // Get the minimum and cut-off initial wave-vectors for the transition
     const auto kimin  = get_ki_min(i, f);
@@ -295,9 +295,9 @@ void ScatteringCalculatorLO::make_ff_table(const unsigned int i,
 /**
  * \brief calculates the overlap integral squared between the two states
  */
-double ScatteringCalculatorLO::Gsqr(const double   Kz,
+auto ScatteringCalculatorLO::Gsqr(const double   Kz,
                                     const Subband &isb,
-                                    const Subband &fsb)
+                                    const Subband &fsb) -> double
 {
     const auto     z = isb.z_array();
     const auto    dz = z[1] - z[0];
@@ -318,8 +318,8 @@ double ScatteringCalculatorLO::Gsqr(const double   Kz,
     return norm(G);
 }
 
-arma::vec ScatteringCalculatorLO::get_ff_table(const unsigned int i,
-                                               const unsigned int f) const
+auto ScatteringCalculatorLO::get_ff_table(const unsigned int i,
+                                               const unsigned int f) const -> arma::vec
 {
     const auto idx = std::make_pair(i,f);
     const auto G = ff_table.at(idx);

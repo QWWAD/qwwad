@@ -23,7 +23,7 @@ using namespace constants;
  * \details The solutions are computed on the first call to this function, but
  *          subsequent calls just recall the values and are hence much faster.
  */
-std::vector<Eigenstate> SchroedingerSolver::get_solutions(const bool convert_to_meV)
+auto SchroedingerSolver::get_solutions(const bool convert_to_meV) -> std::vector<Eigenstate>
 {
     // Only calculate if we haven't done so yet
     if(_solutions.empty())

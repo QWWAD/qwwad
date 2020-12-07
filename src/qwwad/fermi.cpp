@@ -26,7 +26,7 @@ using namespace constants;
  *
  * \returns Fermi occupation number
  */
-double f_FD(const double E_F, const double E, const double Te)
+auto f_FD(const double E_F, const double E, const double Te) -> double
 {
     return 1.0/(exp((E-E_F)/(kB*Te)) + 1.0);
 }
@@ -40,7 +40,7 @@ double f_FD(const double E_F, const double E, const double Te)
  *
  * \returns Fermi occupation number
  */
-double f_FD_ionised(const double E_F, const double Ed, const double Te)
+auto f_FD_ionised(const double E_F, const double Ed, const double Te) -> double
 {
     return 1.0/(0.5*exp((Ed-E_F)/(kB*Te)) + 1.0);
 }
@@ -56,12 +56,12 @@ double f_FD_ionised(const double E_F, const double Ed, const double Te)
  *
  * \returns Subband population [m^{-2}]
  */
-double find_pop(const double Esb,
+auto find_pop(const double Esb,
                 const double E_F,
                 const double m0,
                 const double Te,
                 const double alpha,
-                const double V)
+                const double V) -> double
 {
     double N = 0; // Population to output
 
@@ -107,7 +107,7 @@ struct pop_params {
 /**
  * \brief Find the error in population for a given Fermi energy
  */
-double find_pop_error(double E_F, void *params)
+auto find_pop_error(double E_F, void *params) -> double
 {
     const pop_params *p = reinterpret_cast<pop_params *>(params);
     return find_pop(p->Esb, E_F, p->m0, p->Te, p->alpha, p->V) - p->N;
@@ -128,7 +128,7 @@ struct total_pop_params {
 /**
  * \brief Find the error in the total population for multiple subbands
  */
-double find_total_pop_error(double E_F, void *params)
+auto find_total_pop_error(double E_F, void *params) -> double
 {
     const total_pop_params *p = reinterpret_cast<total_pop_params *>(params);
 
@@ -169,12 +169,12 @@ double find_total_pop_error(double E_F, void *params)
  *       In fact, should the fermi functions all just be member functions of that
  *       class?
  */
-double find_fermi(const double Esb,
+auto find_fermi(const double Esb,
                   const double m,
                   const double N,
                   const double Te,
                   const double alpha,
-                  const double V)
+                  const double V) -> double
 {
     double E_F = 0;
 
@@ -246,12 +246,12 @@ double find_fermi(const double Esb,
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const std::vector<Eigenstate> &states,
+auto find_fermi_global(const std::vector<Eigenstate> &states,
                          const double                   m0,
                          const double                   N,
                          const double                   Te,
                          const double                   alpha,
-                         const double                   V)
+                         const double                   V) -> double
 {
     std::vector<double> E(states.size());
 
@@ -273,12 +273,12 @@ double find_fermi_global(const std::vector<Eigenstate> &states,
  *
  * \returns The Fermi energy for the entire system [J]
  */
-double find_fermi_global(const arma::vec &Esb,
+auto find_fermi_global(const arma::vec &Esb,
                          const double     m0,
                          const double     N,
                          const double     Te,
                          const double     alpha,
-                         const double     V)
+                         const double     V) -> double
 {
     const size_t nst = Esb.size();
 

@@ -27,15 +27,15 @@ static void output_ff(const double        W, // Arbitrary well width to generate
                       const unsigned int  f,
                       const arma::vec    &d);
 
-gsl_spline * FF_table(const double     epsilon,
+auto FF_table(const double     epsilon,
                       const Subband   &isb,
                       const Subband   &fsb,
                       const arma::vec &d,
                       const size_t     nq,
                       const bool       S_flag,
-                      const double     E_cutoff);
+                      const double     E_cutoff) -> gsl_spline *;
 
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
 
@@ -60,7 +60,7 @@ Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 
@@ -253,9 +253,9 @@ return EXIT_SUCCESS;
  *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
  *  for a given wavevector, with respect to position
  */
-arma::vec find_Cif_p(const arma::vec &psi_if, 
+auto find_Cif_p(const arma::vec &psi_if, 
                      const arma::vec &exp_qz,
-                     const arma::vec &z)
+                     const arma::vec &z) -> arma::vec
 {
     const size_t nz = z.size();
     arma::vec Cif_p(nz);
@@ -279,9 +279,9 @@ arma::vec find_Cif_p(const arma::vec &psi_if,
  * Note that the upper limit has to be the point just BEFORE each z'
  * value so that we don't double count
  */
-arma::vec find_Cif_m(const arma::vec &psi_if, 
+auto find_Cif_m(const arma::vec &psi_if, 
                      const arma::vec &exp_qz,
-                     const arma::vec &z)
+                     const arma::vec &z) -> arma::vec
 {
     const size_t nz = z.size();
     arma::vec Cif_m(nz);
@@ -307,7 +307,7 @@ arma::vec find_Cif_m(const arma::vec &psi_if,
  *
  * \todo  This is also useful for e-e scattering. Push into library
  */
-arma::vec find_exp_qz(const double q, const arma::vec &z)
+auto find_exp_qz(const double q, const arma::vec &z) -> arma::vec
 {
     //const double Lp = z.max() - z.min();
 
@@ -329,20 +329,20 @@ arma::vec find_exp_qz(const double q, const arma::vec &z)
  * Therefore, we have separated the z' dependence from the
  * z dependence of the matrix element.
  */
-double Iif(const unsigned int iz0,
+auto Iif(const unsigned int iz0,
            const arma::vec &Cif_p,
            const arma::vec &Cif_m, 
-           const arma::vec &exp_qz)
+           const arma::vec &exp_qz) -> double
 {
     return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
 }
 
 /* This function calculates the overlap integral
  */
-double J(const double     q_perp,
+auto J(const double     q_perp,
          const Subband   &isb,
          const Subband   &fsb,
-         const arma::vec &d)
+         const arma::vec &d) -> double
 {
  const auto z = isb.z_array();
  const auto nz = z.size();
@@ -376,13 +376,13 @@ double J(const double     q_perp,
 /**
  *  \brief Compute the form factor Jif/q^2
  */
-gsl_spline * FF_table(const double     epsilon,
+auto FF_table(const double     epsilon,
                       const Subband   &isb,
                       const Subband   &fsb,
                       const arma::vec &d,
                       const size_t     nq,
                       const bool       S_flag,
-                      const double     E_cutoff)
+                      const double     E_cutoff) -> gsl_spline *
 {
     const double kimax = isb.get_k_at_Ek(E_cutoff*1.1); // Max value of ki [1/m]
     const double Ei = isb.get_E_min();

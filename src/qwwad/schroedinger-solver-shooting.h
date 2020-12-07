@@ -29,15 +29,15 @@ public:
                                const double        dE,
                                const unsigned int  nst_max=0);
 
-    std::string get_name() override {return "shooting";}
+    auto get_name() -> std::string override {return "shooting";}
 
-    std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
+    auto get_solutions_chi(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
-    static double psi_at_inf(double  E,
-                             void   *params);
+    static auto psi_at_inf(double  E,
+                             void   *params) -> double;
 
-    double shoot_wavefunction(arma::vec    &wf,
-                              const double  E) const;
+    auto shoot_wavefunction(arma::vec    &wf,
+                              const double  E) const -> double;
 
 private:
     void calculate() override;

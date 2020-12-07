@@ -36,8 +36,8 @@ DonorEnergyMinimiser::DonorEnergyMinimiser(SchroedingerSolverDonor *se,
 /**
  * \brief Find the energy of a carrier using a given Bohr radius
  */
-double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
-                                              void   *params)
+auto DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
+                                              void   *params) -> double
 {
     auto se = reinterpret_cast<SchroedingerSolverDonor *>(params);
     se->set_lambda(lambda); // Recalculate at given Bohr radius
@@ -49,8 +49,8 @@ double DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 /**
  * \brief Find the energy of a carrier using a given Bohr radius and symmetry
  */
-double DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
-                                                   void             *params)
+auto DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
+                                                   void             *params) -> double
 {
     auto se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
     const double lambda = gsl_vector_get(lambda_zeta, 0);

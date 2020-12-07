@@ -39,7 +39,7 @@ public:
     void set_distribution_from_Ef_Te(const double Ef,
                                      const double Te);
 
-    [[nodiscard]] inline decltype(_ground_state) get_ground() const {return _ground_state;}
+    [[nodiscard]] inline auto get_ground() const {return _ground_state;}
 
     [[nodiscard]] inline auto z_array() const
         -> decltype(_ground_state.get_position_samples())
@@ -47,20 +47,20 @@ public:
         return _ground_state.get_position_samples();
     }
 
-    [[nodiscard]] inline double get_dz()     const {return z_array()[1]-z_array()[0];}
-    [[nodiscard]] inline double get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
+    [[nodiscard]] inline auto get_dz()     const {return z_array()[1]-z_array()[0];}
+    [[nodiscard]] inline auto get_length() const {const auto _z = z_array(); return _z[_z.size()-1]-_z[0];}
 
     /** Find expectation position for the ground state [m] */
-    [[nodiscard]] inline double get_z_av_0() const {return _ground_state.get_expectation_position();}
+    [[nodiscard]] inline auto get_z_av_0() const {return _ground_state.get_expectation_position();}
 
-    [[nodiscard]] inline double get_Ef()     const {return _Ef;}
+    [[nodiscard]] inline auto get_Ef()     const {return _Ef;}
 
     /**
      * \brief Find energy of subband edge
      */
-    [[nodiscard]] inline double get_E_min()  const {return _ground_state.get_energy();}
+    [[nodiscard]] inline auto get_E_min() const {return _ground_state.get_energy();}
 
-    [[nodiscard]] double get_total_population()    const;
+    [[nodiscard]] auto get_total_population() const -> double;
 
     [[nodiscard]] inline auto psi_array() const
         -> decltype(_ground_state.get_wavefunction_samples())
@@ -68,54 +68,54 @@ public:
         return _ground_state.get_wavefunction_samples();
     }
 
-    [[nodiscard]] inline double get_condband_edge() const {return _V;}
+    [[nodiscard]] inline auto get_condband_edge() const {return _V;}
 
-    [[nodiscard]] double get_k_fermi() const;
+    [[nodiscard]] auto get_k_fermi() const -> double;
 
-    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                               const std::string &wf_input_prefix,
-                                               const std::string &wf_input_ext,
-                                               const std::string &m_filename);
+    static auto read_from_file(const std::string &energy_input_path,
+                               const std::string &wf_input_prefix,
+                               const std::string &wf_input_ext,
+                               const std::string &m_filename) -> std::vector<Subband>;
 
-    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                               const std::string &wf_input_prefix,
-                                               const std::string &wf_input_ext,
-                                               const double       m);
+    static auto read_from_file(const std::string &energy_input_path,
+                               const std::string &wf_input_prefix,
+                               const std::string &wf_input_ext,
+                               const double       m) -> std::vector<Subband>;
 
-    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                               const std::string &wf_input_prefix,
-                                               const std::string &wf_input_ext,
-                                               const std::string &m_filename,
-                                               const std::string &alpha_filename,
-                                               const std::string &potential_filename);
+    static auto read_from_file(const std::string &energy_input_path,
+                               const std::string &wf_input_prefix,
+                               const std::string &wf_input_ext,
+                               const std::string &m_filename,
+                               const std::string &alpha_filename,
+                               const std::string &potential_filename) -> std::vector<Subband>;
 
-    static std::vector<Subband> read_from_file(const std::string &energy_input_path,
-                                               const std::string &wf_input_prefix,
-                                               const std::string &wf_input_ext,
-                                               const double       m,
-                                               const double       alpha,
-                                               const double       V);
+    static auto read_from_file(const std::string &energy_input_path,
+                               const std::string &wf_input_prefix,
+                               const std::string &wf_input_ext,
+                               const double       m,
+                               const double       alpha,
+                               const double       V) -> std::vector<Subband>;
 
-    [[nodiscard]] double get_Ek_at_k(const double k) const;
-    [[nodiscard]] double get_k_at_Ek(const double Ek) const;
-    [[nodiscard]] double get_k_max(const double Te) const;
+    [[nodiscard]] auto get_Ek_at_k(const double k) const -> double;
+    [[nodiscard]] auto get_k_at_Ek(const double Ek) const -> double;
+    [[nodiscard]] auto get_k_max(const double Te) const -> double;
 
     /// Return total energy of carrier at a given wave-vector
-    [[nodiscard]] inline double get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
+    [[nodiscard]] inline auto get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
 
-    [[nodiscard]] decltype(_m) get_effective_mass    (const double E = 0.0) const;
-    [[nodiscard]] decltype(_m) get_effective_mass_dos(const double E = 0.0) const;
+    [[nodiscard]] auto get_effective_mass(const double E = 0.0) const -> decltype(_m);
+    [[nodiscard]] auto get_effective_mass_dos(const double E = 0.0) const -> decltype(_m);
 
     /// Return nonparabolicity parameter
-    [[nodiscard]] inline double get_alpha() const {return _alpha;}
+    [[nodiscard]] inline auto get_alpha() const {return _alpha;}
 
-    [[nodiscard]] double get_density_of_states(const double E = 0.0) const;
+    [[nodiscard]] auto get_density_of_states(const double E = 0.0) const -> double;
 
-    [[nodiscard]] double get_occupation_at_E_total(const double E) const;
+    [[nodiscard]] auto get_occupation_at_E_total(const double E) const -> double;
        
-    [[nodiscard]] double get_occupation_at_k(const double k) const;
+    [[nodiscard]] auto get_occupation_at_k(const double k) const -> double;
 
-    [[nodiscard]] double get_population_at_k(const double k) const;
+    [[nodiscard]] auto get_population_at_k(const double k) const -> double;
 };
 } // namespace
 #endif // QCLSIM_SUBBAND_H

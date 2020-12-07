@@ -38,14 +38,14 @@ public:
                            const decltype(_ki)     ki,
                            const decltype(_Wif) Wif_ki);
 
-    [[nodiscard]] inline decltype(_ki)  get_ki_table        () const {return _ki;}
-    [[nodiscard]] inline decltype(_Eki) get_Eki_table       () const {return _Eki;}
-    [[nodiscard]] inline decltype(_Eki) get_Ei_total_table  () const {return _Eki + _isb.get_E_min();}
-    [[nodiscard]] inline decltype(_Wif) get_rate_table () const {return _Wif;}
-    [[nodiscard]] inline double get_ki_by_index        (unsigned int ik) const {return _ki[ik];}
-    [[nodiscard]] inline double get_rate_at_ki_by_index(unsigned int ik) const {return _Wif[ik];}
+    [[nodiscard]] inline auto get_ki_table           ()                const {return _ki;}
+    [[nodiscard]] inline auto get_Eki_table          ()                const {return _Eki;}
+    [[nodiscard]] inline auto get_Ei_total_table     ()                const -> decltype(_Eki){return _Eki + _isb.get_E_min();}
+    [[nodiscard]] inline auto get_rate_table         ()                const {return _Wif;}
+    [[nodiscard]] inline auto get_ki_by_index        (unsigned int ik) const {return _ki[ik];}
+    [[nodiscard]] inline auto get_rate_at_ki_by_index(unsigned int ik) const {return _Wif[ik];}
 
-    [[nodiscard]] double get_average_rate() const;
+    [[nodiscard]] auto get_average_rate() const -> double;
 };
 } // namespace
 #endif

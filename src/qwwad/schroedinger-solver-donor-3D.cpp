@@ -47,7 +47,7 @@ SchroedingerSolverDonor3D::SchroedingerSolverDonor3D(const double        m,
  *             e^{-\frac{2\vert z^{\prime}\vert}{\lambda}}\label{I13D2}
  *          \f]
  */
-double SchroedingerSolverDonor3D::I_1(const double z_dash) const
+auto SchroedingerSolverDonor3D::I_1(const double z_dash) const -> double
 {
     return 2*pi*(fabs(z_dash)*_lambda/2 + _lambda*_lambda/4) * exp(-2*fabs(z_dash)/_lambda);
 }
@@ -63,7 +63,7 @@ double SchroedingerSolverDonor3D::I_1(const double z_dash) const
  *             {\lambda}}\right)
  *          \f]
  */
-double SchroedingerSolverDonor3D::I_2(const double z_dash) const
+auto SchroedingerSolverDonor3D::I_2(const double z_dash) const -> double
 {
     return 2*pi*(-z_dash/2)*exp(-2*fabs(z_dash)/_lambda);
 }
@@ -79,7 +79,7 @@ double SchroedingerSolverDonor3D::I_2(const double z_dash) const
  *            \mbox{e}^{-\frac{2\vert z^\prime\vert}{\lambda}}\label{I33D3}
  *          \f]
  */
-double SchroedingerSolverDonor3D::I_3(const double z_dash) const
+auto SchroedingerSolverDonor3D::I_3(const double z_dash) const -> double
 {
     return 2*pi*(fabs(z_dash)/(2*_lambda)-0.75)*exp(-2*fabs(z_dash)/_lambda);
 }
@@ -96,7 +96,7 @@ double SchroedingerSolverDonor3D::I_3(const double z_dash) const
  *             I_4=2\pi\left(\frac{\lambda}{2}\mbox{e}^{-\frac{2\vert z^\prime\vert}{\lambda}}
  *          \f]
  */
-double SchroedingerSolverDonor3D::I_4(const double z_dash) const
+auto SchroedingerSolverDonor3D::I_4(const double z_dash) const -> double
 {
     return 2*pi*(_lambda/2)*exp(-2*fabs(z_dash)/_lambda);
 }

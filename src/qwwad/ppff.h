@@ -19,13 +19,13 @@ typedef struct
  arma::vec  r;
 }atom;
 
-double Vf(const double  A0,
+auto Vf(const double  A0,
           const double  m_per_au,
           double        q_sqr,
-          const char   *type);
+          const char   *type) -> double;
 
-std::vector<atom> read_atoms(const char * filename);
+auto read_atoms(const char * filename) -> std::vector<atom>;
 
-std::vector<arma::vec> read_rlv(double A0);
+auto read_rlv(double A0) -> std::vector<arma::vec>;
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

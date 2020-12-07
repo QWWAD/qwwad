@@ -26,7 +26,7 @@ public:
 
     void set_padding_width(const double Lb);
 
-    std::string get_name() override {return "infinite-square-well";}
+    auto get_name() -> std::string override {return "infinite-square-well";}
 
 private:
     double _me;    ///< Effective mass at band-edge (constant) [kg]

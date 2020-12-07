@@ -46,8 +46,8 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double        m,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-double SchroedingerSolverDonor::shoot_wavefunction(const double  E,
-                                                   arma::vec    &chi) const
+auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
+                                                   arma::vec    &chi) const -> double
 {
     const size_t nz = _z.size();
     const double dz = _z[1] - _z[0];
@@ -108,8 +108,8 @@ double SchroedingerSolverDonor::shoot_wavefunction(const double  E,
  *
  * \returns The wavefunction at \f$\chi(\infty)\f$
  */
-double SchroedingerSolverDonor::chi_at_inf (double  E,
-                                            void   *params)
+auto SchroedingerSolverDonor::chi_at_inf (double  E,
+                                            void   *params) -> double
 {
     const SchroedingerSolverDonor *se = reinterpret_cast<SchroedingerSolverDonor *>(params);
     arma::vec chi(se->get_z().size()); // Wavefunction envelope amplitude
@@ -192,7 +192,7 @@ void SchroedingerSolverDonor::calculate()
  * \details The solutions are computed on the first call to this function, but
  *          subsequent calls just recall the values and are hence much faster.
  */
-std::vector<Eigenstate> SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV)
+auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> std::vector<Eigenstate>
 {
     // Only calculate if we haven't done so yet
     if(_solutions_chi.empty())

@@ -20,18 +20,18 @@ public:
                const double M,
                const size_t natoms);
 
-    [[nodiscard]] double get_internal_energy(const double T) const;
-    [[nodiscard]] double get_cp(const double T) const;
-    [[nodiscard]] double get_cp_approx(const double T) const;
-    [[nodiscard]] double get_cp_low_T(const double T) const;
-    [[nodiscard]] double get_cp_high_T() const;
+    [[nodiscard]] auto get_internal_energy(const double T) const -> double;
+    [[nodiscard]] auto get_cp(const double T) const -> double;
+    [[nodiscard]] auto get_cp_approx(const double T) const -> double;
+    [[nodiscard]] auto get_cp_low_T(const double T) const -> double;
+    [[nodiscard]] auto get_cp_high_T() const -> double;
 
 private:
     double _T_D;    ///< Debye temperature [K]
     double _M;      ///< Molar mass [kg/mol]
     size_t _natoms; ///< Number of atoms per molecular unit
 
-    static double find_U(double T, void *params);
+    static auto find_U(double T, void *params) -> double;
 };
 } // namespace
 #endif

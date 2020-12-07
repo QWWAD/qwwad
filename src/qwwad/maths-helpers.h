@@ -28,7 +28,7 @@ namespace QWWAD
  * \returns The integral
  */
 template <class complex_type, class real_type>
-complex_type simps(const arma::Col<complex_type>& y, const real_type dx)
+auto simps(const arma::Col<complex_type>& y, const real_type dx) -> complex_type
 {
     const size_t n = y.size();
 
@@ -61,7 +61,7 @@ complex_type simps(const arma::Col<complex_type>& y, const real_type dx)
  * \returns The integral
  */
 template <class complex_type, class real_type>
-complex_type trapz(const arma::Col<complex_type>& y, const real_type dx)
+auto trapz(const arma::Col<complex_type>& y, const real_type dx) -> complex_type
 {
     const size_t n = y.size();
 
@@ -96,7 +96,7 @@ complex_type trapz(const arma::Col<complex_type>& y, const real_type dx)
  * \todo Replace with arma::trapz when available in all distros (Armadillo >= 6.5)
  */
 template <class complex_type, class real_type>
-complex_type integral(const arma::Col<complex_type>& y, const real_type dx)
+auto integral(const arma::Col<complex_type>& y, const real_type dx) -> complex_type
 {
     const size_t n = y.size();
 
@@ -109,23 +109,23 @@ complex_type integral(const arma::Col<complex_type>& y, const real_type dx)
         return trapz(y, dx);
 }
 
-double lookup_y_from_x(const arma::vec &x_values,
+auto lookup_y_from_x(const arma::vec &x_values,
                        const arma::vec &y_values,
-                       const double     x0);
+                       const double     x0) -> double;
 
-double lin_interp(const double y0,
+auto lin_interp(const double y0,
                   const double y1,
                   const double x,
-                  const double b=0);
+                  const double b=0) -> double;
 
-double cot(const double x);
+auto cot(const double x) -> double;
 
-double coth(const double x);
+auto coth(const double x) -> double;
 
-unsigned int Theta(const double x);
+auto Theta(const double x) -> unsigned int;
 
-double sf_brillouin(const double J,
-                    const double x);
+auto sf_brillouin(const double J,
+                    const double x) -> double;
 } // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

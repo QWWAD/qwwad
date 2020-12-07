@@ -26,7 +26,7 @@ using namespace constants;
 /**
  * \brief Configure command-line options
  */
-Options configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> Options
 {
     Options opt;
     std::string doc("Find state of electron attached to a donor in a 2D system");
@@ -50,7 +50,7 @@ Options configure_options(int argc, char** argv)
     return opt;
 }
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 

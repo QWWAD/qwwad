@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <strings.h>
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
 float	kxi;		/* the set of electron k-points `kxi'		*/
 float	g;		/* superlattice reciprocal lattice vector	*/

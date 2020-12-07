@@ -36,7 +36,7 @@ namespace QWWAD
  */
 template <template<typename, typename...> class Tcontainer,
           class T>
-int read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream)
+auto read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream) -> int
 {
     std::streamsize nbytes = 100; // Initial size of buffer
     int scan_result=1; // Flag to show whether scan was successful [1=error]
@@ -154,8 +154,8 @@ void parse_items(std::istream  &stream,
  * \return 0 if successful, 1 if not
  */
 template <class... Targs>
-int read_line(std::istream &stream,
-              Targs        &...destinations)
+auto read_line(std::istream &stream,
+               Targs        &...destinations) -> int
 {
     int scan_result = 1; // Flag showing whether scan successful
 

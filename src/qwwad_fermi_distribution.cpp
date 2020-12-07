@@ -29,14 +29,14 @@
 using namespace QWWAD;
 using namespace constants;
 
-static double calc_dist(const double       Emin,
+static auto calc_dist(const double       Emin,
                         const double       Ef,
                         const double       m,
                         const double       T,
                         const size_t       nE,
                         const unsigned int s,
                         const double       alpha,
-                        const double       V);
+                        const double       V) -> double;
 
 /**
  * Handler for command-line options
@@ -72,13 +72,13 @@ class SBPOptions : public Options
         }
 
         /// \returns the global population [m^{-2}]
-        [[nodiscard]] double get_global_pop() const {return get_option<double>("global-population") * 10000 *1e10;}
+        [[nodiscard]] auto get_global_pop() const -> double {return get_option<double>("global-population") * 10000 *1e10;}
 
         /// \returns true if the system is in thermal equilibrium
-        [[nodiscard]] bool equilibrium() const {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
+        [[nodiscard]] auto equilibrium() const -> bool {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
 };
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     SBPOptions opt(argc, argv);
 
@@ -162,14 +162,14 @@ int main(int argc,char *argv[])
  *
  * \returns Total population of the subband [m^{-2}]
  */
-static double calc_dist(const double       Emin,
+static auto calc_dist(const double       Emin,
                         const double       Ef,
                         const double       m,
                         const double       T,
                         const size_t       nE,
                         const unsigned int s,
                         const double       alpha,
-                        const double       V)
+                        const double       V) -> double
 {
     // output filename for FD distribs
     std::ostringstream filename_stream;

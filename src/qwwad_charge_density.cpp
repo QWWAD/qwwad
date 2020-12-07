@@ -97,7 +97,7 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     }
 }
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     const ChargeDensityOptions opt(argc, argv);
     const ChargeDensityData data(opt);

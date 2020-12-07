@@ -35,11 +35,11 @@ namespace QWWAD
  *             executing to return results.  If n_max=0, then all
  *             eigenvalues in the range [VL,VU] will be found.
  */
-std::vector< EVP_solution<double> >
+auto
 eigen_general(arma::mat    &A,
               const double  VL,
               const double  VU,
-              unsigned int  n_max)
+              unsigned int  n_max) -> std::vector< EVP_solution<double> >
 {
     const int N = sqrt(A.size());
 
@@ -133,13 +133,13 @@ eigen_general(arma::mat    &A,
  *             executing to return results.  If n_max=0, then all
  *             eigenvalues in the range [VL,VU] will be found.
  */
-std::vector< EVP_solution<double> >
+auto
 eigen_banded(double       *AB,
              double       *BB,
              double        VL,
              double        VU,
              int           n,
-             unsigned int  n_max)
+             unsigned int  n_max) -> std::vector< EVP_solution<double> >
 {
     // Workspace to normalise eigenproblem
     arma::vec Q(n*n);
@@ -203,12 +203,12 @@ eigen_banded(double       *AB,
  *             executing to return results.  If n_max=0, then all
  *             eigenvalues in the range [VL,VU] will be found.
  */
-std::vector< EVP_solution<double> >
+auto
 eigen_tridiag(arma::vec    &diag,
               arma::vec    &subdiag,
               double        VL,
               double        VU,
-              unsigned int  n_max)
+              unsigned int  n_max) -> std::vector< EVP_solution<double> >
 {
     const int N    = diag.size();
     const int Nsub = subdiag.size();
@@ -300,10 +300,10 @@ eigen_tridiag(arma::vec    &diag,
  *             boundaries to a discretised PDE problem. For more details of this optimised
  *             algorithm (probably) see Jonathan Cooper's thesis.
  */
-arma::vec solve_cyclic_matrix(arma::vec A_sub,
+auto solve_cyclic_matrix(arma::vec A_sub,
                               arma::vec A_diag,
                               double cyclic,
-                              arma::vec b)
+                              arma::vec b) -> arma::vec
 {
     unsigned int ni = A_diag.size();
     arma::vec z(ni);
@@ -354,12 +354,12 @@ arma::vec solve_cyclic_matrix(arma::vec A_sub,
  *
  * \return Vector y
  */
-arma::vec
+auto
 multiply_vec_tridiag(arma::vec const &M_sub,
                      arma::vec const &M_diag,
                      arma::vec const &M_super,
                      arma::vec const &x,
-                     arma::vec const &c)
+                     arma::vec const &c) -> arma::vec
 {
     int N = M_diag.size(); // Order of matrix
 
@@ -403,11 +403,11 @@ multiply_vec_tridiag(arma::vec const &M_sub,
  *
  * \return The vector x
  */
-arma::vec
+auto
 solve_tridiag(arma::vec const &A_sub,
               arma::vec const &A_diag,
               arma::vec const &A_super,
-              arma::vec const &b)
+              arma::vec const &b) -> arma::vec
 {
     int N    = A_diag.size();
     int NRHS = 1; // Solve for 1 RHS vector only
@@ -445,10 +445,10 @@ solve_tridiag(arma::vec const &A_sub,
  *
  * \return The vector x
  */
-arma::vec
+auto
 solve_tridiag_LDL_T(arma::vec const &D,
                     arma::vec const &L,
-                    arma::vec const &b)
+                    arma::vec const &b) -> arma::vec
 {
     int N    = D.size();
     int NRHS = 1; // Solve for 1 RHS vector only

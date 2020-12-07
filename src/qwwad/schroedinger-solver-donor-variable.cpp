@@ -38,7 +38,7 @@ SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double   
  *             \mbox{e}^{-\frac{2\zeta\vert z^\prime\vert}{\lambda}}
  *          \f]
  */
-double SchroedingerSolverDonorVariable::I_1(const double z_dash) const
+auto SchroedingerSolverDonorVariable::I_1(const double z_dash) const -> double
 {
     return 2*pi*(_zeta*fabs(z_dash)*_lambda/2+ _lambda*_lambda/4)*
            exp(-2*_zeta*fabs(z_dash)/_lambda);
@@ -55,7 +55,7 @@ double SchroedingerSolverDonorVariable::I_1(const double z_dash) const
  *             \mbox{e}^{-\frac{2\zeta\vert z^\prime\vert}{\lambda}}
  *          \f]
  */
-double SchroedingerSolverDonorVariable::I_2(const double z_dash) const
+auto SchroedingerSolverDonorVariable::I_2(const double z_dash) const -> double
 {
     return 2*pi*(-_zeta*_zeta*z_dash/2)*exp(-2*_zeta*fabs(z_dash)/_lambda);
 }
@@ -68,7 +68,7 @@ struct integral_params
 };
 
 /* Eq. 5.116, QWWAD3 */
-double I_33_integrand(double w, void *params)
+auto I_33_integrand(double w, void *params) -> double
 {
     auto p = reinterpret_cast<integral_params *>(params);
     double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/gsl_pow_2(1+w*w);
@@ -76,7 +76,7 @@ double I_33_integrand(double w, void *params)
 }
 
 /* Eq. 5.117, QWWAD3 */
-double I_34_integrand(double w, void *params)
+auto I_34_integrand(double w, void *params) -> double
 {
     auto p = reinterpret_cast<integral_params *>(params);
     double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/(w*(1+w*w));
@@ -90,7 +90,7 @@ double I_34_integrand(double w, void *params)
  *
  * \details See Eq. 5.112, QWWAD3.
  */
-double SchroedingerSolverDonorVariable::I_3(const double z_dash) const
+auto SchroedingerSolverDonorVariable::I_3(const double z_dash) const -> double
 {
     const double z_dash_abs = fabs(z_dash);
 
@@ -127,7 +127,7 @@ double SchroedingerSolverDonorVariable::I_3(const double z_dash) const
 }
 
 /* Eq. 5.118, QWWAD3 */
-static double I_4_integrand(double w, void *params)
+static auto I_4_integrand(double w, void *params) -> double
 {
     auto p = reinterpret_cast<integral_params *>(params);
     double result = exp(-2*p->z_dash_abs*sqrt(gsl_pow_2((1-w*w)/(2*w))+gsl_pow_2(p->zeta))/p->lambda)
@@ -150,7 +150,7 @@ static double I_4_integrand(double w, void *params)
  *             \vert z^\prime\vert \frac{1-w^2}{2w^2}\;\;\text{d}w
  *          \f]
  */
-double SchroedingerSolverDonorVariable::I_4(const double z_dash) const
+auto SchroedingerSolverDonorVariable::I_4(const double z_dash) const -> double
 {
     const double z_dash_abs = fabs(z_dash);
     integral_params p = {_lambda, _zeta, z_dash_abs};

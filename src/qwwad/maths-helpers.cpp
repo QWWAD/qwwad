@@ -23,10 +23,10 @@ namespace QWWAD
  *
  * \return y = f(x)
  */
-double lin_interp(const double y0,
+auto lin_interp(const double y0,
                   const double y1,
                   const double x,
-                  const double b){
+                  const double b) -> double{
     if(x < 0 or x > 1)
         throw std::domain_error("x value out of range");
 
@@ -46,9 +46,9 @@ double lin_interp(const double y0,
  *
  * \todo This is a very inefficient way of doing it.  Use splines!
  */
-double lookup_y_from_x(const arma::vec &x_values,
+auto lookup_y_from_x(const arma::vec &x_values,
                        const arma::vec &y_values,
-                       const double x0)
+                       const double x0) -> double
 {
     if (x0 > x_values.max() or x0 < x_values.min())
     {
@@ -74,7 +74,7 @@ double lookup_y_from_x(const arma::vec &x_values,
  *
  * \return The cotangent
  */
-double cot(const double x)
+auto cot(const double x) -> double
 {
     return 1.0/tan(x);
 }
@@ -86,7 +86,7 @@ double cot(const double x)
  *
  * \return The hyperbolic cotangent
  */
-double coth(const double x)
+auto coth(const double x) -> double
 {
     return 1.0/tanh(x);
 }
@@ -98,7 +98,7 @@ double coth(const double x)
  *
  * \return 1 if \f$x > 0\r$, 0 otherwise
  */
-unsigned int Theta(const double x)
+auto Theta(const double x) -> unsigned int
 {
     if(x > 0) return 1;
     else      return 0;
@@ -112,8 +112,8 @@ unsigned int Theta(const double x)
  *
  * \return The value of the function, y
  */
-double sf_brillouin(const double J,
-                    const double x)
+auto sf_brillouin(const double J,
+                    const double x) -> double
 {
     const auto tJ   = 2.0*J;
     const auto tJp1 = tJ + 1.0;

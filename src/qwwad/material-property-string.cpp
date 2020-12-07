@@ -40,7 +40,7 @@ MaterialPropertyString::MaterialPropertyString(xmlpp::Element *elem) :
  *
  * \return the property value as a raw string
  */
-const Glib::ustring & MaterialPropertyString::get_text() const
+auto MaterialPropertyString::get_text() const -> const Glib::ustring &
 {
     return _text;
 }

@@ -29,9 +29,9 @@ using namespace QWWAD;
  * \todo These values only work for a limited range of
  *       temperatures. Restrict the domain accordingly?
  */
-static double thermal_cond(const Material &mat,
+static auto thermal_cond(const Material &mat,
                            const double    x,
-                           const double    T)
+                           const double    T) -> double
 {
     double k = 0.0;
 
@@ -87,10 +87,10 @@ public:
     Thermal1DOptions(int argc, char** argv);
 
     /// Return fractional duty cycle (i.e. 0 to 1)
-    [[nodiscard]] double get_duty_cycle() const {return dc;}
+    [[nodiscard]] auto get_duty_cycle() const -> double {return dc;}
 
     /// Return pulse repetition rate [Hz]
-    [[nodiscard]] double get_f_rep() const {return f;}
+    [[nodiscard]] auto get_f_rep() const -> double {return f;}
 
     void print() const;
 };
@@ -216,10 +216,10 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
     }
 }
 
-static double calctave(const arma::vec &g,
-                       const arma::vec &T);
+static auto calctave(const arma::vec &g,
+                       const arma::vec &T) -> double;
 
-static arma::vec calctemp(double dt,
+static auto calctemp(double dt,
                           arma::vec        &Told,
                           arma::vec  const &q_old,
                           arma::vec  const &q_new,
@@ -228,9 +228,9 @@ static arma::vec calctemp(double dt,
                           const arma::vec   &x,
                           const std::vector<DebyeModel> &dm_layer,
                           const arma::vec   &rho_layer,
-                          Thermal1DOptions& opt);
+                          Thermal1DOptions& opt) -> arma::vec;
 
-int main(int argc, char *argv[])
+auto main(int argc, char *argv[]) -> int
 {
     // Grab user preferences
     MaterialLibrary material_library("");
@@ -488,7 +488,7 @@ int main(int argc, char *argv[])
 
 // Calculate the spatial temperature profile across the device at the
 // next time step in the sequence.
-static arma::vec calctemp(double dt,
+static auto calctemp(double dt,
                           arma::vec  &Told,
                           arma::vec  const &q_old,
                           arma::vec  const &q_new,
@@ -497,7 +497,7 @@ static arma::vec calctemp(double dt,
                           const arma::vec &x,
                           const std::vector<DebyeModel> &dm_layer,
                           const arma::vec &rho_layer,
-                          Thermal1DOptions& opt)
+                          Thermal1DOptions& opt) -> arma::vec
 {
     const auto ny = iLayer.size();
     const auto dy = opt.get_option<double>("dy");
@@ -603,8 +603,8 @@ static arma::vec calctemp(double dt,
  *          such that heating in the contacts etc can be modelled without
  *          affecting this function.
  */
-static double calctave(const arma::vec &g,
-                       const arma::vec &T)
+static auto calctave(const arma::vec &g,
+                       const arma::vec &T) -> double
 {
     double T_AR_cumulative=0;
     unsigned int n_AR=0;

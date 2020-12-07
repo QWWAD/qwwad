@@ -24,19 +24,19 @@ public:
                             const double        lambda,
                             const double        dE);
 
-    std::string get_name() override = 0;
+    auto get_name() -> std::string override = 0;
 
-    std::vector<Eigenstate> get_solutions_chi(const bool convert_to_meV=false);
+    auto get_solutions_chi(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
-    static double chi_at_inf(double  E,
-                             void   *params);
+    static auto chi_at_inf(double  E,
+                             void   *params) -> double;
 
-    double shoot_wavefunction(const double  E,
-                              arma::vec    &chi) const;
+    auto shoot_wavefunction(const double  E,
+                              arma::vec    &chi) const -> double;
 
     void   set_lambda(const double lambda) {_lambda = lambda; _solutions.clear(); calculate();}
-    [[nodiscard]] double get_lambda() const {return _lambda;}
-    [[nodiscard]] double get_r_d   () const {return _r_d;}
+    [[nodiscard]] auto get_lambda() const -> double {return _lambda;}
+    [[nodiscard]] auto get_r_d   () const -> double {return _r_d;}
 
 private:
     double _me;     ///< Effective mass at band-edge [kg]
@@ -55,10 +55,10 @@ protected:
 
     void calculate() override;
     virtual void   calculate_psi_from_chi() = 0;
-    [[nodiscard]] virtual double I_1(const double z_dash) const = 0;
-    [[nodiscard]] virtual double I_2(const double z_dash) const = 0;
-    [[nodiscard]] virtual double I_3(const double z_dash) const = 0;
-    [[nodiscard]] virtual double I_4(const double z_dash) const = 0;
+    [[nodiscard]] virtual auto I_1(const double z_dash) const -> double = 0;
+    [[nodiscard]] virtual auto I_2(const double z_dash) const -> double = 0;
+    [[nodiscard]] virtual auto I_3(const double z_dash) const -> double = 0;
+    [[nodiscard]] virtual auto I_4(const double z_dash) const -> double = 0;
 };
 } // namespace QWWAD
 #endif

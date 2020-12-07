@@ -9,5 +9,5 @@
 
 #ifndef PPSOP_H
 #define PPSOP_H
-double lambda(const char *type);
+auto lambda(const char *type) -> double;
 #endif //PPSOP_H

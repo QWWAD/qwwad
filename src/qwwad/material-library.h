@@ -30,17 +30,17 @@ class MaterialLibrary {
 public:
     MaterialLibrary(const Glib::ustring &filename);
 
-    Material const * get_material(const char          *mat_name) const;
-    [[nodiscard]] Material const * get_material(const Glib::ustring &mat_name) const;
+    auto get_material(const char          *mat_name) const -> Material const *;
+    [[nodiscard]] auto get_material(const Glib::ustring &mat_name) const -> Material const *;
 
-    MaterialProperty const * get_property(Glib::ustring &mat_name,
-                                          Glib::ustring &property_name) const;
+    auto get_property(Glib::ustring &mat_name,
+                                          Glib::ustring &property_name) const -> MaterialProperty const *;
 
-    double get_val(Glib::ustring &mat_name,
-                   Glib::ustring &property_name);
+    auto get_val(Glib::ustring &mat_name,
+                   Glib::ustring &property_name) -> double;
 
-    const Glib::ustring & get_property_unit(Glib::ustring &mat_name,
-                                            Glib::ustring &property_name);
+    auto get_property_unit(Glib::ustring &mat_name,
+                                            Glib::ustring &property_name) -> const Glib::ustring &;
 private:
     boost::ptr_map<Glib::ustring, Material>  materials;
 };

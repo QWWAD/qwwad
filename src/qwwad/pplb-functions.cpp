@@ -40,10 +40,10 @@ write_ank(arma::cx_mat &ank,
  * \param[in] atoms    atomic definitions
  * \param[in] q        a reciprocal lattice vector, G'-G
  */
-std::complex<double> V(double                   A0,
+auto V(double                   A0,
                        double                   m_per_au,
                        std::vector<atom> const &atoms,
-                       arma::vec const         &q)
+                       arma::vec const         &q) -> std::complex<double>
 {
     std::complex<double> v = 0.0; // potential
     const double q_dot_q = dot(q,q);

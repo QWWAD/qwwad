@@ -24,5 +24,6 @@ Checks: 'modernize-avoid-bind,
          modernize-use-nodiscard,
          modernize-use-noexcept,
          modernize-use-nullptr,
-         modernize-use-override'
+         modernize-use-override,
+         modernize-use-trailing-return-type'
 HeaderFilterRegex: '.*/src/[^3].*'

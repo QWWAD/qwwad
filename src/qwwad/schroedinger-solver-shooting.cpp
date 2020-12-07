@@ -141,8 +141,8 @@ void SchroedingerSolverShooting::calculate()
  *
  * \returns The wavefunction amplitude immediately to the right of the structure
  */
-double SchroedingerSolverShooting::psi_at_inf(double  E,
-                                              void   *params)
+auto SchroedingerSolverShooting::psi_at_inf(double  E,
+                                              void   *params) -> double
 {
     const auto se = reinterpret_cast<SchroedingerSolverShooting *>(params);
     arma::vec psi = arma::zeros(se->get_z().size());
@@ -163,8 +163,8 @@ double SchroedingerSolverShooting::psi_at_inf(double  E,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-double SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
-                                                      const double  E) const
+auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
+                                                      const double  E) const -> double
 {
     const size_t nz = _z.size();
     wf.resize(nz);

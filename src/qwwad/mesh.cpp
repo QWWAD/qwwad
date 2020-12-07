@@ -170,9 +170,9 @@ void Mesh::read_layers_from_file(const std::string &filename,
  *
  * \return A new Mesh object for the system.  Remember to delete it after use!
  */
-Mesh* Mesh::create_from_file_auto_nz(const std::string &layer_filename,
+auto Mesh::create_from_file_auto_nz(const std::string &layer_filename,
                                      const size_t       n_periods,
-                                     const double       dz_max)
+                                     const double       dz_max) -> Mesh*
 {
     alloy_vector x_layer;   // Alloy fraction for each layer
     arma::vec    W_layer;   // Thickness of each layer
@@ -198,9 +198,9 @@ Mesh* Mesh::create_from_file_auto_nz(const std::string &layer_filename,
  *
  * \return A new Mesh object for the system.  Remember to delete it after use!
  */
-Mesh* Mesh::create_from_file(const std::string &layer_filename,
+auto Mesh::create_from_file(const std::string &layer_filename,
                              const size_t       ncell_1per,
-                             const size_t       n_periods)
+                             const size_t       n_periods) -> Mesh*
 {
     alloy_vector x_layer;   // Alloy fraction for each layer
     arma::vec    W_layer;   // Thickness of each layer
@@ -219,7 +219,7 @@ Mesh* Mesh::create_from_file(const std::string &layer_filename,
  * 
  * \return The doping density [m\f$^{-3}\f$]
  */
-double Mesh::get_n3D_in_layer(const unsigned int iL) const
+auto Mesh::get_n3D_in_layer(const unsigned int iL) const -> double
 {
     if(iL > _n3D_layer.size() * _n_periods)
         throw std::domain_error("Tried to access the doping concentration in a layer outside the heterostructure.");
@@ -228,7 +228,7 @@ double Mesh::get_n3D_in_layer(const unsigned int iL) const
 }
 
 /** Get the doping concentration at a given point in the structure */
-double Mesh::get_n3D_at_point(const unsigned int iz) const
+auto Mesh::get_n3D_at_point(const unsigned int iz) const -> double
 {
     if(iz > _n3D.size())
         throw std::domain_error("Tried to access the doping concentration at a point outside the heterostructure.");
@@ -249,7 +249,7 @@ double Mesh::get_n3D_at_point(const unsigned int iz) const
  *          of the point, assuming that the structure is infinitely long and
  *          periodic.
  */
-unsigned int Mesh::get_layer_top_index(const unsigned int iL) const
+auto Mesh::get_layer_top_index(const unsigned int iL) const -> unsigned int
 {
     // First figure out how many complete periods precede this layer
     const auto previous_periods = iL / _W_layer.size(); // Integer division
@@ -279,7 +279,7 @@ unsigned int Mesh::get_layer_top_index(const unsigned int iL) const
  * \details If the heterostructure is periodic, then the specified layer index
  *          can be greater than the number in the heterostructure.
  */
-double Mesh::get_height_at_top_of_layer(const unsigned int iL) const
+auto Mesh::get_height_at_top_of_layer(const unsigned int iL) const -> double
 {
     const arma::vec layer_tops = cumsum(_W_layer);
 
@@ -307,8 +307,8 @@ double Mesh::get_height_at_top_of_layer(const unsigned int iL) const
  * \details The point is considered to be within the layer
  *          if z_top[iL-1] <= z < z_top[iL]
  */
-bool Mesh::point_is_in_layer(const double       z,
-                             const unsigned int iL) const
+auto Mesh::point_is_in_layer(const double       z,
+                             const unsigned int iL) const -> bool
 {
     double       top_of_previous_layer = 0;
     const double top_of_this_layer     = get_height_at_top_of_layer(iL);
@@ -340,7 +340,7 @@ bool Mesh::point_is_in_layer(const double       z,
  *
  * \details A point lies within layer i if z_(i-1) <= z < z_i. 
  */
-unsigned int Mesh::get_layer_from_height(const double z) const
+auto Mesh::get_layer_from_height(const double z) const -> unsigned int
 {
     if (z > get_period_length()*_n_periods)
     {

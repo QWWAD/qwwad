@@ -22,9 +22,9 @@ public:
                             decltype(_reference)   reference,
                             decltype(_unit)        unit);
 
-    [[nodiscard]] const decltype(_unit) & get_unit() const;
+    [[nodiscard]] auto get_unit() const -> const decltype(_unit) &;
 
-    [[nodiscard]] virtual double get_val(const double x = 0) const = 0;
+    [[nodiscard]] virtual auto get_val(const double x = 0) const -> double = 0;
 };
 } // end namespace
 #endif

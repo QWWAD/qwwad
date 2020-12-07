@@ -27,10 +27,10 @@ using namespace constants;
  *          m^*(E) = m_0[1 + \alpha(E-V)]
  *          \f]
  */
-double calculate_dos_3D(const double mass,
+auto calculate_dos_3D(const double mass,
                         const double energy,
                         const double V,
-                        const double alpha)
+                        const double alpha) -> double
 {
     double rho = 0.0;
 
@@ -65,11 +65,11 @@ double calculate_dos_3D(const double mass,
  *          m^*(E) = m_0[1 + \alpha(E-V)]
  *          \f]
  */
-double calculate_dos_2D(const double                 mass,
+auto calculate_dos_2D(const double                 mass,
                         const double                 E_carrier,
                         const std::valarray<double> &E_subbands,
                         const double                 V,
-                        const double                 alpha)
+                        const double                 alpha) -> double
 {
     // Density of states in a single subband [QWWAD3, Eq. 2.46]
     const double m_d = mass * (1 + 2*alpha*(E_carrier-V));
@@ -101,9 +101,9 @@ double calculate_dos_2D(const double                 mass,
  *
  * \details It is assumed that carriers have a parabolic dispersion
  */
-double calculate_dos_1D(const double                 mass,
+auto calculate_dos_1D(const double                 mass,
                         const double                 E_carrier,
-                        const std::valarray<double> &E_subbands)
+                        const std::valarray<double> &E_subbands) -> double
 {
     double dos_total = 0; // Total dos over all occupied subbands
     const size_t nsb = E_subbands.size();

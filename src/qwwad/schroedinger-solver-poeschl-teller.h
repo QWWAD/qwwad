@@ -24,8 +24,8 @@ public:
                                     const size_t nz,
                                     const unsigned int nst_max = 0);
 
-    std::string get_name() override {return "poeschl-teller-potential-hole";}
-    [[nodiscard]] size_t get_n_bound() const;
+    auto get_name() -> std::string override {return "poeschl-teller-potential-hole";}
+    [[nodiscard]] auto get_n_bound() const -> size_t;
 private:
     double _alpha;  ///< Width parameter [1/m]
     double _lambda; ///< Depth parameter

@@ -60,7 +60,7 @@ MaterialPropertyConstant::MaterialPropertyConstant(decltype(_name)        name,
 /**
  * \returns a copy of the current object
  */
-MaterialPropertyConstant * MaterialPropertyConstant::clone() const
+auto MaterialPropertyConstant::clone() const -> MaterialPropertyConstant *
 {
     return new MaterialPropertyConstant(_name, _description, _reference, _unit, _constant);
 }
@@ -72,8 +72,8 @@ MaterialPropertyConstant * MaterialPropertyConstant::clone() const
  *
  * \returns The parameter value
  */
-decltype(MaterialPropertyConstant::_constant)
-MaterialPropertyConstant::get_val(const double /* x */) const
+auto
+MaterialPropertyConstant::get_val(const double /* x */) const -> decltype(_constant)
 {
     return _constant;
 }

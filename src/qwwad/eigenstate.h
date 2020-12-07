@@ -22,7 +22,7 @@ private:
     arma::vec _z;   ///< Spatial sampling positions [m]
     arma::vec _psi; ///< Wave function [m^{-0.5}]
 
-    [[nodiscard]] double get_total_probability() const;
+    [[nodiscard]] auto get_total_probability() const -> double;
     void normalise();
 
 public:
@@ -30,19 +30,19 @@ public:
                         decltype(_z)   z,
                         decltype(_psi) psi);
 
-    [[nodiscard]] inline decltype(_E)   get_energy() const {return _E;}
-    [[nodiscard]] inline double get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
-    [[nodiscard]] inline decltype(_psi) get_wavefunction_samples() const {return _psi;}
-    [[nodiscard]] inline decltype(_psi) get_PD() const {return square(_psi);}
-    [[nodiscard]] inline decltype(_z)   get_position_samples() const {return _z;}
+    [[nodiscard]] inline auto get_energy()                                     const {return _E;}
+    [[nodiscard]] inline auto get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
+    [[nodiscard]] inline auto get_wavefunction_samples()                       const {return _psi;}
+    [[nodiscard]] inline auto get_position_samples()                           const {return _z;}
+    [[nodiscard]] inline auto get_PD()                                         const -> decltype(_psi) {return square(_psi);}
 
-    static double psi_squared_max(const std::vector<Eigenstate> &EVP);
+    static auto psi_squared_max(const std::vector<Eigenstate> &EVP) -> double;
 
-    static std::vector<Eigenstate> read_from_file(const std::string &Eigenval_name,
-                                                  const std::string &Eigenvect_prefix,
-                                                  const std::string &Eigenvect_ext,
-                                                  const double       eigenvalue_scale    = 1.0,
-                                                  const bool         ignore_first_column = false);
+    static auto read_from_file(const std::string &Eigenval_name,
+                               const std::string &Eigenvect_prefix,
+                               const std::string &Eigenvect_ext,
+                               const double       eigenvalue_scale    = 1.0,
+                               const bool         ignore_first_column = false) -> std::vector<Eigenstate>;
 
     static void write_to_file(const std::string             &Eigenval_name,
                               const std::string             &Eigenvect_prefix,
@@ -51,11 +51,11 @@ public:
                               const bool                     with_num=false);
 
     // TODO: Should probably be part of an Operator class
-    [[nodiscard]] double get_expectation_position() const;
+    [[nodiscard]] auto get_expectation_position() const -> double;
 
     // TODO: Should probably be part of an Operator class
-    static double get_position_matrix_element(const Eigenstate &i,
-                                              const Eigenstate &j);
+    static auto get_position_matrix_element(const Eigenstate &i,
+                                            const Eigenstate &j) -> double;
 };
 } // namespace
 #endif

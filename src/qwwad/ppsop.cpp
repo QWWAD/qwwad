@@ -15,8 +15,8 @@ using namespace constants;
  *
  * \return The lambda parameter
  */
-double
-lambda(const char *type)
+auto
+lambda(const char *type) -> double
 {
     // TODO: Make this a switch-case over an enum?
     if(!strcmp(type,"SI"))  return(0.000106*h*c*Rinf);

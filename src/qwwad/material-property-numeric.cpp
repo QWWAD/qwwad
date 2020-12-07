@@ -45,8 +45,8 @@ MaterialPropertyNumeric::MaterialPropertyNumeric(decltype(_name)        name,
 {}
 
 /// Return the unit for the property
-const decltype(MaterialPropertyNumeric::_unit) &
-MaterialPropertyNumeric::get_unit() const
+auto
+MaterialPropertyNumeric::get_unit() const -> const decltype(MaterialPropertyNumeric::_unit) &
 {
     return _unit;
 }

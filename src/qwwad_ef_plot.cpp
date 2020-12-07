@@ -25,7 +25,7 @@ using namespace constants;
 /**
  * Configure command-line options for the program
  */
-WfOptions configure_options(int argc, char** argv)
+auto configure_options(int argc, char** argv) -> WfOptions
 {
     WfOptions opt;
 
@@ -55,9 +55,9 @@ WfOptions configure_options(int argc, char** argv)
  *          i.e., the range of potentials in the plot, divided by the
  *          number of states and the maximum probability density.
  */
-static double scaling_factor(const std::vector<Eigenstate> &states,
+static auto scaling_factor(const std::vector<Eigenstate> &states,
                              const arma::vec               &V,
-                             const bool                     scalebynstates)
+                             const bool                     scalebynstates) -> double
 {
     double scale = V.max() - V.min();
 
@@ -155,7 +155,7 @@ static void output_plot(const WfOptions               &opt,
     fclose(plot_stream);
 }
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     const auto opt = configure_options(argc, argv);
 

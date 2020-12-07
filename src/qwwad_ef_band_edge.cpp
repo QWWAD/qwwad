@@ -53,7 +53,7 @@ class BandEdgeOptions : public Options
         /**
          * \returns The material identifier
          */
-        [[nodiscard]] char get_material() const {
+        [[nodiscard]] auto get_material() const -> char {
             const auto mat_string = get_option<std::string>("material");
             char Material;
             if     (mat_string.compare("gaalas")   == 0) Material='a';
@@ -96,7 +96,7 @@ static double const m_lh_GaAs = 0.082;
 static double const m_lh_AlAs = 0.15;
 static double const m_lh_InAs = 0.026;
 
-int main(int argc,char *argv[])
+auto main(int argc,char *argv[]) -> int
 {
     const BandEdgeOptions opt(argc, argv);
 

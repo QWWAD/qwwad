@@ -31,13 +31,13 @@ class MeshOptions : public Options
     public:
         MeshOptions(int argc, char** argv);
 
-        [[nodiscard]] double get_dz_max() const;
+        [[nodiscard]] auto get_dz_max() const -> double;
 
         void print() const;
 };
 
-double
-MeshOptions::get_dz_max() const
+auto
+MeshOptions::get_dz_max() const -> double
 {
     if(vm.count("dzmax") == 0)
         throw std::runtime_error("Spatial separation not specified");
@@ -102,7 +102,7 @@ void MeshOptions::print() const
     std::cout << std::endl;
 }
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     // Read command-line options
     const MeshOptions opt(argc,argv);

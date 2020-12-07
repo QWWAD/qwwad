@@ -40,19 +40,19 @@ public:
                        decltype (_z)             z,
                        const decltype(_nst_max)  nst_max=0);
 
-    std::vector<Eigenstate> get_solutions(const bool convert_to_meV=false);
+    auto get_solutions(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
     /**
      * \returns the array of spatial positions [m]
      */
-    [[nodiscard]] decltype(_z) get_z() const {return _z;}
+    [[nodiscard]] auto get_z() const {return _z;}
 
     /**
      * \returns the potential profile [J]
      */
-    [[nodiscard]] decltype(_V) get_V() const {return _V;}
+    [[nodiscard]] auto get_V() const {return _V;}
 
-    virtual std::string get_name() = 0;
+    virtual auto get_name() -> std::string = 0;
     virtual ~SchroedingerSolver() = default;
 
     void set_E_min(const double E_min);

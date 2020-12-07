@@ -76,12 +76,12 @@ MaterialPropertyPoly::MaterialPropertyPoly(decltype(_name)        name,
 /**
  * \return a clone of the current object
  */
-MaterialPropertyPoly * MaterialPropertyPoly::clone() const
+auto MaterialPropertyPoly::clone() const -> MaterialPropertyPoly *
 {
     return new MaterialPropertyPoly(_name, _description, _reference, _unit, _poly_coeffs);
 }
 
-double MaterialPropertyPoly::get_val(const double x) const
+auto MaterialPropertyPoly::get_val(const double x) const -> double
 {
     double val = 0; // Output value
 

@@ -28,7 +28,7 @@ public:
                               const decltype(_z) &z,
                               const unsigned int  nst_max=0);
 
-    std::string get_name() override {return "tridiagonal";}
+    auto get_name() -> std::string override {return "tridiagonal";}
 private:
     void calculate() override;
 };

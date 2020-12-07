@@ -50,7 +50,7 @@ SchroedingerSolverPoeschlTeller::SchroedingerSolverPoeschlTeller(const double al
 /**
  * \brief Find number of bound states in the well
  */
-size_t SchroedingerSolverPoeschlTeller::get_n_bound() const
+auto SchroedingerSolverPoeschlTeller::get_n_bound() const -> size_t
 {
     return ceil(_lambda-1);
 }

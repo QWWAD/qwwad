@@ -48,7 +48,7 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
  *
  * \returns The right-hand side of the matching equation
  */
-double SchroedingerSolverFiniteWell::get_rhs(const double v) const
+auto SchroedingerSolverFiniteWell::get_rhs(const double v) const -> double
 {
     double result = 0;
 
@@ -73,7 +73,7 @@ double SchroedingerSolverFiniteWell::get_rhs(const double v) const
  *
  * \returns the left-hand side of the matching equation
  */
-double SchroedingerSolverFiniteWell::get_lhs(const double v) const
+auto SchroedingerSolverFiniteWell::get_lhs(const double v) const -> double
 {
     const double k = 2.0*v/_l_w;
     const double E = hBar*hBar*k*k/(2.0*_m_w);
@@ -107,8 +107,8 @@ double SchroedingerSolverFiniteWell::get_lhs(const double v) const
  * \returns The value of the characteristic equation for the well.
  *          This is zero when the energy equals the an eigenvalue.
  */
-double SchroedingerSolverFiniteWell::test_matching(double  v,
-                                                   void   *params)
+auto SchroedingerSolverFiniteWell::test_matching(double  v,
+                                                   void   *params) -> double
 {
     const SchroedingerSolverFiniteWell *se = reinterpret_cast<SchroedingerSolverFiniteWell *>(params);
 
@@ -123,8 +123,8 @@ double SchroedingerSolverFiniteWell::test_matching(double  v,
  * \param[in] E           local energy
  * \param[in] odd_parity  true for odd states, false for even
  */
-arma::vec SchroedingerSolverFiniteWell::get_wavefunction(const double E,
-                                                         const bool   odd_parity) const
+auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
+                                                         const bool   odd_parity) const -> arma::vec
 {
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
@@ -181,7 +181,7 @@ arma::vec SchroedingerSolverFiniteWell::get_wavefunction(const double E,
     return psi;
 }
 
-double SchroedingerSolverFiniteWell::get_u0_max() const
+auto SchroedingerSolverFiniteWell::get_u0_max() const -> double
 {
     return sqrt(_V0*_l_w*_l_w*_m_w/(2.0*hBar*hBar));
 }
@@ -189,7 +189,7 @@ double SchroedingerSolverFiniteWell::get_u0_max() const
 /**
  * \brief Find number of bound states in the well
  */
-size_t SchroedingerSolverFiniteWell::get_n_bound() const
+auto SchroedingerSolverFiniteWell::get_n_bound() const -> size_t
 {
     // Calculate number of bound states in well
     const double u_0_max = get_u0_max();

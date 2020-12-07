@@ -68,7 +68,7 @@ void dlagtm_(const char   *TRANS,
              int          *LDB);
 
 /** Determine double-precision machine parameters */
-double dlamch_(const char* returnValue);
+auto dlamch_(const char* returnValue) -> double;
 
 /**
  * Factorise real symmetric positive definate tridagonal matrix

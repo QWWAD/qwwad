@@ -53,7 +53,7 @@ class MatLibOptions : public Options
         /**
          * \returns True if the property is text; false if it's a number
          */
-        [[nodiscard]] bool is_text() const {return vm["text"].as<bool>();}
+        [[nodiscard]] auto is_text() const -> bool {return vm["text"].as<bool>();}
 
         /**
          * \returns Dump user-options to screen
@@ -66,7 +66,7 @@ class MatLibOptions : public Options
         }
 };
 
-int main(int argc, char* argv[])
+auto main(int argc, char* argv[]) -> int
 {
     MatLibOptions opt(argc, argv);
     const auto filename = opt.get_option<std::string>("filename");

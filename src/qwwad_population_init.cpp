@@ -39,7 +39,7 @@ class DensityinputOptions : public Options
         DensityinputOptions(int argc, char** argv);
 
         // Program options
-        [[nodiscard]] DistributionType get_dist_type() const {return distType;}
+        [[nodiscard]] auto get_dist_type() const -> DistributionType {return distType;}
 };
 
 DensityinputOptions::DensityinputOptions(int argc, char** argv)
@@ -85,7 +85,7 @@ DensityinputOptions::DensityinputOptions(int argc, char** argv)
     }
 }
 
-int main(int argc, char *argv[])
+auto main(int argc, char *argv[]) -> int
 {
     DensityinputOptions opt(argc, argv);
     const auto nval = opt.get_option<size_t>("nval"); // Number of equivalent valleys

@@ -161,7 +161,7 @@ void PoissonSolver::factorise_zerofield()
  *
  * \return The potential profile [J]
  */
-arma::vec PoissonSolver::solve(const arma::vec &rho) const
+auto PoissonSolver::solve(const arma::vec &rho) const -> arma::vec
 {
     const auto n = _eps.size();
 
@@ -196,8 +196,8 @@ arma::vec PoissonSolver::solve(const arma::vec &rho) const
  *
  * \return The potential profile [J]
  */
-arma::vec PoissonSolver::solve(const arma::vec &rho,
-                               const double     V_drop) const
+auto PoissonSolver::solve(const arma::vec &rho,
+                               const double     V_drop) const -> arma::vec
 {
     const auto n = _eps.size();
 
@@ -244,7 +244,7 @@ arma::vec PoissonSolver::solve(const arma::vec &rho,
  *
  * \return The potential profile [J]
  */
-arma::vec PoissonSolver::solve_laplace(const double V_drop) const
+auto PoissonSolver::solve_laplace(const double V_drop) const -> arma::vec
 {
     const size_t n = _eps.size();
 

@@ -20,7 +20,7 @@
 using namespace QWWAD;
 using namespace constants;
 
-int main(int argc, char **argv)
+auto main(int argc, char **argv) -> int
 {
     Options opt;
 

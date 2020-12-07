@@ -30,7 +30,7 @@ public:
                              const decltype(_z)     &z,
                              const unsigned int      nst_max=0);
     
-    std::string get_name() override {return "Taylor";}
+    auto get_name() -> std::string override {return "Taylor";}
 private:
     void calculate() override;
 };

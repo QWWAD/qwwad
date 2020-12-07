@@ -76,7 +76,7 @@ class FwfOptions : public WfOptions {
         SolverType type = MATRIX_PARABOLIC; ///< The type of Schroedinger solver to use
 
     public:
-        [[nodiscard]] SolverType get_type() const {return type;}
+        [[nodiscard]] auto get_type() const -> SolverType {return type;}
 
         FwfOptions(int argc, char** argv)
         {
@@ -166,7 +166,7 @@ static void output(const std::vector<Eigenstate> &solutions,
     }
 }
 
-int main(int argc, char *argv[]){
+auto main(int argc, char *argv[]) -> int{
     const FwfOptions opt(argc, argv);
 
     // Read data from file
