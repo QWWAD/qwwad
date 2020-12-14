@@ -147,7 +147,7 @@ auto main(int argc,char *argv[]) -> int
                 break;
             case 'l': 
                 if(spinup) V_zeeman[iz] = B;
-                else       V_zeeman[iz] = B;
+                else       V_zeeman[iz] = -B;
                 break;
         }
     }

@@ -35,12 +35,8 @@ auto SchroedingerSolver::get_solutions(const bool convert_to_meV) -> std::vector
         // range!
         for(auto it = _solutions.begin(); it != _solutions.end(); ++it)
         {
-            if (_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) == 1)
-            {
-                _solutions.erase(it);
-            }
-            else if (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)
-            {
+            if ((_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) ==  1) ||
+                (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)) {
                 _solutions.erase(it);
             }
         }

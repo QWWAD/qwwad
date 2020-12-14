@@ -204,12 +204,8 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
         // range!
         for(auto it = _solutions_chi.begin(); it != _solutions_chi.end(); ++it)
         {
-            if (_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) == 1)
-            {
-                _solutions_chi.erase(it);
-            }
-            else if (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)
-            {
+            if ((_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) ==  1) ||
+                (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)) {
                 _solutions_chi.erase(it);
             }
         }

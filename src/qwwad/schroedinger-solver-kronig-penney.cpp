@@ -139,11 +139,11 @@ auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> a
         const auto C = _m_b*k_w / (_m_w*k_b) * A;
 #endif
 
-        if (_V[i_z] > 0) { // In barriers
+//        if (_V[i_z] > 0) { // In barriers
             psi[i_z] = 1; //real(C*sin(k_b*z) + D*cos(k_b*z));
-        } else { // In wells
-            psi[i_z] = 1; //real(A*sin(k_w*z) + B*cos(k_w*z));
-        }
+//        } else { // In wells
+//            psi[i_z] = 1; //real(A*sin(k_w*z) + B*cos(k_w*z));
+//        }
     }
 
     return psi;
