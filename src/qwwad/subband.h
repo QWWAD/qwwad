@@ -18,14 +18,13 @@ private:
     Eigenstate  _ground_state;      ///< State at bottom of subband
 
     double _m;                ///< Effective mass at subband minimum (for dispersion) [kg]
-    double _alpha;            ///< In-plane nonparabolicity parameter [1/J]
-    double _V;                ///< Conduction band edge [J]
+    double _alpha = 0.0;      ///< In-plane nonparabolicity parameter [1/J]
+    double V_ = 0.0;          ///< Conduction band edge [J]
 
     // Carrier distribution parameters
-    bool   _dist_known;       ///< True if the carrier distribution is set
-    double _Ef;               ///< Quasi-Fermi energy [J]
-    double _Te;               ///< Temperature of carrier distribution [K]
-    double _N;                ///< TOTAL sheet-density of carriers [m^{-2}]
+    bool   _dist_known = false; ///< True if the carrier distribution is set
+    double Ef_;                 ///< Quasi-Fermi energy [J]
+    double Te_ = 0.0;           ///< Temperature of carrier distribution [K]
 
 public:
     Subband(const Eigenstate &ground_state,
@@ -53,12 +52,12 @@ public:
     /** Find expectation position for the ground state [m] */
     [[nodiscard]] inline auto get_z_av_0() const {return _ground_state.get_expectation_position();}
 
-    [[nodiscard]] inline auto get_Ef()     const {return _Ef;}
+    [[nodiscard]] inline auto get_Ef()     const {return Ef_;}
 
     /**
      * \brief Find energy of subband edge
      */
-    [[nodiscard]] inline auto get_E_min() const {return _ground_state.get_energy();}
+    [[nodiscard]] inline auto get_E_min() const noexcept {return _ground_state.get_energy();}
 
     [[nodiscard]] auto get_total_population() const -> double;
 
@@ -68,7 +67,7 @@ public:
         return _ground_state.get_wavefunction_samples();
     }
 
-    [[nodiscard]] inline auto get_condband_edge() const {return _V;}
+    [[nodiscard]] inline auto get_condband_edge() const {return V_;}
 
     [[nodiscard]] auto get_k_fermi() const -> double;
 

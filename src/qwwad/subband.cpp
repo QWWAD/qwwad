@@ -24,12 +24,7 @@ Subband::Subband(const Eigenstate &ground_state,
                  const double      m) :
     _ground_state(ground_state),
     _m(m),
-    _alpha(0.0),
-    _V(0.0),
-    _dist_known(false),
-    _Ef(ground_state.get_energy()),
-    _Te(0.0),
-    _N(0.0)
+    Ef_(ground_state.get_energy())
 {}
 
 /**
@@ -47,11 +42,8 @@ Subband::Subband(const Eigenstate &ground_state,
     _ground_state(ground_state),
     _m(m),
     _alpha(alpha),
-    _V(V),
-    _dist_known(false),
-    _Ef(ground_state.get_energy()),
-    _Te(0.0),
-    _N(0.0)
+    V_(V),
+    Ef_(ground_state.get_energy())
 {}
 
 /**
@@ -69,8 +61,8 @@ void Subband::set_distribution_from_Ef_Te(const double Ef,
         throw "Carrier temperature must be positive";
 
     _dist_known = true;
-    _Ef         = Ef;
-    _Te         = Te;
+    Ef_         = Ef;
+    Te_         = Te;
 }
 
 /**
@@ -304,7 +296,7 @@ auto Subband::get_Ek_at_k(double k) const -> double
     else
     {
         const auto En = get_E_min();
-        const auto b       = 1.0 + _alpha*(En - _V);
+        const auto b       = 1.0 + _alpha*(En - V_);
         const auto four_ac = 4.0*_alpha*(-hBar*hBar*k*k)/(2.0*_m);
 
         // Check solveable
@@ -389,7 +381,7 @@ auto Subband::get_occupation_at_E_total(const double E) const -> double
     if(!_dist_known)
         throw std::runtime_error("Distribution has not been set");
 
-    return f_FD(_Ef, E, _Te);
+    return f_FD(Ef_, E, Te_);
 }
 
 /**
@@ -417,7 +409,7 @@ auto Subband::get_total_population() const -> double
         throw std::runtime_error("Distribution has not been set");
 
     const auto E = get_E_min();
-    const auto N = find_pop(E, _Ef, _m, _Te, _alpha, _V);
+    const auto N = find_pop(E, Ef_, _m, Te_, _alpha, V_);
     return N;
 }
 
@@ -452,7 +444,7 @@ auto Subband::get_k_max(const double Te) const -> double
  */
 auto Subband::get_effective_mass(const double E) const -> double
 {
-    const auto m = _m*(1.0 + _alpha*(E-_V));
+    const auto m = _m*(1.0 + _alpha*(E-V_));
 
     return m;
 }
@@ -469,7 +461,7 @@ auto Subband::get_effective_mass(const double E) const -> double
 auto Subband::get_effective_mass_dos(const double E) const -> double
 {
     // QWWAD 4, Eq. 2.65
-    const auto m = _m*(1.0 + 2.0*_alpha*(E-_V));
+    const auto m = _m*(1.0 + 2.0*_alpha*(E-V_));
 
     return m;
 }

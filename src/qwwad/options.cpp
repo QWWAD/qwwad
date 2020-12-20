@@ -56,6 +56,24 @@ void Options::print_version_then_exit(char* prog_name) const
 }
 
 /**
+ * \brief Return whether or not verbose output is desired
+ *
+ * \returns \c true if verbose output is wanted
+ */
+auto Options::get_verbose() const noexcept -> bool
+{
+    bool val = false;
+    try {
+        val = vm_["verbose"].as<bool>();
+    } catch (boost::bad_any_cast &e) {
+        std::cerr << e.what() << std::endl
+            << "Failed to read 'verbose' option setting. Leaving as false." << std::endl;
+    }
+
+    return val;
+}
+
+/**
  * \brief Add program-specific options to the list of options and then parse
  * \param[in] argc    The number of command-line arguments
  * \param[in] argv    The list of command-line arguments

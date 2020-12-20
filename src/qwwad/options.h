@@ -128,12 +128,7 @@ class Options
                                                  char ** const argv,
                                                  std::string   summary);
 
-        /**
-         * \brief Return whether or not verbose output is desired
-         *
-         * \returns \c true if verbose output is wanted
-         */
-        [[nodiscard]] auto get_verbose() const -> bool {return vm_["verbose"].as<bool>();}
+        [[nodiscard]] auto get_verbose() const noexcept -> bool;
 };
 
 /**
