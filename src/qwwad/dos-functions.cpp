@@ -30,7 +30,7 @@ using namespace constants;
 auto calculate_dos_3D(const double mass,
                         const double energy,
                         const double V,
-                        const double alpha) -> double
+                        const double alpha) noexcept -> double
 {
     double rho = 0.0;
 
@@ -69,7 +69,7 @@ auto calculate_dos_2D(const double                 mass,
                         const double                 E_carrier,
                         const std::valarray<double> &E_subbands,
                         const double                 V,
-                        const double                 alpha) -> double
+                        const double                 alpha) noexcept -> double
 {
     // Density of states in a single subband [QWWAD3, Eq. 2.46]
     const double m_d = mass * (1 + 2*alpha*(E_carrier-V));
@@ -103,7 +103,7 @@ auto calculate_dos_2D(const double                 mass,
  */
 auto calculate_dos_1D(const double                 mass,
                         const double                 E_carrier,
-                        const std::valarray<double> &E_subbands) -> double
+                        const std::valarray<double> &E_subbands) noexcept -> double
 {
     double dos_total = 0; // Total dos over all occupied subbands
     const size_t nsb = E_subbands.size();

@@ -25,17 +25,19 @@ using namespace constants;
 /**
  * Configure command-line options for the program
  */
-auto configure_options(int argc, char** argv) -> Options
+auto configure_options(int argc, char** argv) noexcept -> Options
 {
     Options opt;
 
     std::string summary("Find density of states for bulk (3D), quantum wells (2D) and quantum wires (1D).");
 
-    opt.add_option<double>      ("mass,m",     0.067, "Effective mass (relative to free electron).");
-    opt.add_option<double>      ("vcb",        0.00,  "Band-edge potential [eV]");
-    opt.add_option<double>      ("alpha",      0.00,  "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_option<char>        ("particle,p", 'e',   "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
-    opt.add_option<unsigned int>("ndim",         2,   "Dimensionality of the system (1, 2 or 3)");
+    const double m_GaAs = 0.067; // GaAs electron effective mass (rel. to free electron)
+
+    opt.add_option<double>      ("mass,m",     m_GaAs, "Effective mass (relative to free electron).");
+    opt.add_option<double>      ("vcb",        0.00,   "Band-edge potential [eV]");
+    opt.add_option<double>      ("alpha",      0.00,   "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_option<char>        ("particle,p", 'e',    "ID of particle to be used: 'e', 'h' or 'l', for electrons, heavy holes or light holes respectively.");
+    opt.add_option<unsigned int>("ndim",         2,    "Dimensionality of the system (1, 2 or 3)");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -63,9 +65,11 @@ auto main(int argc,char *argv[]) -> int
     std::valarray<double> energy(n+1); // Energies at which dos is calculated [J]
     std::valarray<double> dos(n+1);    // Density of states [J^{-1}m^{-n}]
 
+    const double meV_to_J = 1e-3*e;
+
     for(unsigned int ie=0;ie<=n;ie++)
     {
-        energy[ie] = ie*1e-3*e; // convert meV-> J
+        energy[ie] = ie*meV_to_J; // convert meV-> J
 
         switch(ndim)
         {
@@ -85,7 +89,12 @@ auto main(int argc,char *argv[]) -> int
     }
 
     const std::valarray<double> E_out = 1000.0*energy/e;
-    write_table("rho.r", E_out, dos);
+
+    try {
+        write_table("rho.r", E_out, dos);
+    } catch (std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 } /* end main */
