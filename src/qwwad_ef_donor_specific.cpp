@@ -87,14 +87,14 @@ auto main(int argc,char *argv[]) -> int
     auto zeta_0   = zeta_start;   // symmetry parameter
 
     // Create an initial estimate of the Schroedinger solution
-    SchroedingerSolverDonor *se = nullptr;
+    std::shared_ptr<SchroedingerSolverDonor> se;
 
     if(symmetry_string == "2D")
-        se = new SchroedingerSolverDonor2D(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
+        se = std::make_shared<SchroedingerSolverDonor2D>(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
     else if(symmetry_string == "3D")
-        se = new SchroedingerSolverDonor3D(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
+        se = std::make_shared<SchroedingerSolverDonor3D>(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
     else if(symmetry_string == "variable")
-        se = new SchroedingerSolverDonorVariable(mstar, V, z, epsilon, r_d, lambda_0, zeta_0, delta_E);
+        se = std::make_shared<SchroedingerSolverDonorVariable>(mstar, V, z, epsilon, r_d, lambda_0, zeta_0, delta_E);
     else
     {
         std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
@@ -124,7 +124,7 @@ auto main(int argc,char *argv[]) -> int
     lambda_0             = se->get_lambda();
 
     if(opt.get_option<std::string>("symmetry") == "variable")
-        zeta_0 = dynamic_cast<SchroedingerSolverDonorVariable *>(se)->get_zeta();
+        zeta_0 = std::dynamic_pointer_cast<SchroedingerSolverDonorVariable>(se)->get_zeta();
 
     // Get the complete wavefunction
     const auto psi = solutions[0].get_wavefunction_samples();
@@ -146,7 +146,6 @@ auto main(int argc,char *argv[]) -> int
                 minimiser->get_E_history());
 
     delete minimiser;
-    delete se;
 
     // Output neutral dopant binding energies (E) and 
     // Bohr radii (lambda) in meV and Angstrom respectively

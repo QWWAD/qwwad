@@ -17,10 +17,10 @@
 
 namespace QWWAD
 {
-DonorEnergyMinimiser::DonorEnergyMinimiser(SchroedingerSolverDonor *se,
-                                           const double             lambda_start,
-                                           const double             lambda_step,
-                                           const double             lambda_stop) :
+DonorEnergyMinimiser::DonorEnergyMinimiser(std::shared_ptr<SchroedingerSolverDonor> &se,
+                                           const double                              lambda_start,
+                                           const double                              lambda_step,
+                                           const double                              lambda_stop) :
     _se(se),
     _lambda_start(lambda_start),
     _lambda_step(lambda_step),

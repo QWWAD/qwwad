@@ -24,7 +24,7 @@ void DonorEnergyMinimiserLinear::minimise()
         double E = 10e6*e; // Energy of current solution [J]
 
         // See if we're using a variable symmetry form-factor
-        auto se_variable = dynamic_cast<SchroedingerSolverDonorVariable *>(_se);
+        auto se_variable = std::dynamic_pointer_cast<SchroedingerSolverDonorVariable>(_se);
         if(se_variable) // If it's variable symmetry, try a range of symmetry parameters
         {
             double zeta = _zeta_start; // Initial symmetry parameter value
@@ -39,7 +39,7 @@ void DonorEnergyMinimiserLinear::minimise()
             do
             {
                 gsl_vector_set(lambda_zeta, 1, zeta);
-                E = find_E_at_lambda_zeta(lambda_zeta, se_variable);
+                E = find_E_at_lambda_zeta(lambda_zeta, se_variable.get());
 
                 // Save search history
                 _lambda_history.push_back(_se->get_lambda());
@@ -64,7 +64,7 @@ void DonorEnergyMinimiserLinear::minimise()
             se_variable->set_lambda_zeta(lambda, zeta_min);
             gsl_vector_free(lambda_zeta);
         } else if (_se) { // If it's a fixed-symmetry solution, just use this Bohr radius
-            E = find_E_at_lambda(lambda, _se);
+            E = find_E_at_lambda(lambda, _se.get());
 
             // Save search history
             _lambda_history.push_back(_se->get_lambda());

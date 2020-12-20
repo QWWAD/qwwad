@@ -10,6 +10,7 @@
 #ifndef QWWAD_DONOR_ENERGY_MINIMISER_H
 #define QWWAD_DONOR_ENERGY_MINIMISER_H
 
+#include <memory>
 #include <vector>
 #include <gsl/gsl_vector.h>
 
@@ -23,10 +24,10 @@ class SchroedingerSolverDonor;
 class DonorEnergyMinimiser
 {
 public:
-    DonorEnergyMinimiser(SchroedingerSolverDonor *se,
-                         const double             lambda_start,
-                         const double             lambda_step,
-                         const double             lambda_stop);
+    DonorEnergyMinimiser(std::shared_ptr<SchroedingerSolverDonor> &se,
+                         const double                              lambda_start,
+                         const double                              lambda_step,
+                         const double                              lambda_stop);
 
     virtual ~DonorEnergyMinimiser() = default;
 
@@ -41,7 +42,7 @@ public:
     };
 
 protected:
-    SchroedingerSolverDonor *_se; ///< The solver to be minimised
+    std::shared_ptr<SchroedingerSolverDonor> _se; ///< The solver to be minimised
 
     double _lambda_start;
     double _lambda_step;

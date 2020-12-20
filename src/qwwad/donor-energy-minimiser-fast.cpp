@@ -19,13 +19,13 @@ void DonorEnergyMinimiserFast::minimise()
     unsigned int iter=0;   // The number of iterations attempted so far
 
     // See if we're using a variable symmetry form-factor
-    auto se_variable = dynamic_cast<SchroedingerSolverDonorVariable *>(_se);
+    auto se_variable = std::dynamic_pointer_cast<SchroedingerSolverDonorVariable>(_se);
     if(se_variable) // If it's variable symmetry, try a range of symmetry parameters
     {
         gsl_multimin_function f;
         f.f = &find_E_at_lambda_zeta; // Function to minimise
         f.n = 2; // Number of parameters (lambda, zeta)
-        f.params = se_variable;
+        f.params = se_variable.get();
 
         gsl_vector *lambda_zeta = gsl_vector_alloc(2); // Parameters to pass to the function
         gsl_vector *step_size   = gsl_vector_alloc(2); // Step size for parameters
@@ -66,7 +66,7 @@ void DonorEnergyMinimiserFast::minimise()
         // Set up the numerical solver using GSL
         gsl_function f;
         f.function = &find_E_at_lambda;
-        f.params   = _se;
+        f.params   = _se.get();
 
         // First perform a very coarse search for a suitable estimate of a starting point
         const double Elo = GSL_FN_EVAL(&f, __lambda_start);

@@ -8,10 +8,10 @@ namespace QWWAD
 class DonorEnergyMinimiserFast : public DonorEnergyMinimiser
 {
 public:
-    DonorEnergyMinimiserFast(SchroedingerSolverDonor *se,
-                             const double             lambda_start,
-                             const double             lambda_step,
-                             const double             lambda_stop) :
+    DonorEnergyMinimiserFast(std::shared_ptr<SchroedingerSolverDonor> &se,
+                             const double                              lambda_start,
+                             const double                              lambda_step,
+                             const double                              lambda_stop) :
         DonorEnergyMinimiser(se, lambda_start, lambda_step, lambda_stop)
     {};
 

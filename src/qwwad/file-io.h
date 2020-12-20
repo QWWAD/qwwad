@@ -38,7 +38,7 @@ template <template<typename, typename...> class Tcontainer,
           class T>
 auto read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream) -> int
 {
-    std::streamsize nbytes = 100; // Initial size of buffer
+    const std::streamsize nbytes = 100; // Initial size of buffer
     int scan_result=1; // Flag to show whether scan was successful [1=error]
 
     if(!stream.good())
