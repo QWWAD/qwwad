@@ -29,22 +29,26 @@ SchroedingerSolverPoeschlTeller::SchroedingerSolverPoeschlTeller(const double al
                                                                  const double mass,
                                                                  const size_t nz,
                                                                  const unsigned int nst_max) :
-    SchroedingerSolver(arma::zeros(nz),
-                       arma::zeros(nz),
-                       nst_max),
     _alpha(alpha),
     _lambda(lambda),
     _length(length),
     _mass(mass)
 {
+    arma::vec V(nz);
+    arma::vec z(nz);
+    set_nst_max(nst_max);
+
     // Compute potential profile [QWWAD4, 3.59]
     const double dz = _length / (nz - 1); // Size of each spatial cell [m]
 
     for (unsigned int iz=0; iz<nz; iz++)
     {
-        _z[iz] = iz*dz - _length/2.0;
-        _V[iz] = -gsl_pow_2(hBar*_alpha/cosh(_alpha*_z[iz]))*_lambda*(_lambda-1)/(2*mass);
+        z[iz] = iz*dz - _length/2.0;
+        V[iz] = -gsl_pow_2(hBar*_alpha/cosh(_alpha*z[iz]))*_lambda*(_lambda-1)/(2*mass);
     }
+
+    set_z(z);
+    set_V(V);
 }
 
 /**
@@ -55,15 +59,20 @@ auto SchroedingerSolverPoeschlTeller::get_n_bound() const -> size_t
     return ceil(_lambda-1);
 }
 
-void SchroedingerSolverPoeschlTeller::calculate()
+auto
+SchroedingerSolverPoeschlTeller::calculate() -> std::vector<Eigenstate>
 {
+    std::vector<Eigenstate> solutions;
+    const auto z = get_z();
     const size_t nst = get_n_bound();
-    const size_t nz  = _z.size();
+    const size_t nz  = z.size();
 
-    const arma::vec sinh_alpha_z = sinh(_alpha*_z);
+    const arma::vec sinh_alpha_z = sinh(_alpha*z);
     const arma::vec _x = -arma::square(sinh_alpha_z);
 
-    for (unsigned int ist=0; (_nst_max == 0 || ist < _nst_max) && ist < nst; ++ist)
+    const auto nst_max = get_nst_max();
+
+    for (unsigned int ist=0; (nst_max == 0 || ist < nst_max) && ist < nst; ++ist)
     {
         // Energy is found using [QWWAD4, 3.60]
         const double kappa = _alpha * (_lambda-1-ist);
@@ -86,7 +95,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
             arg1 = a+0.5;
             arg2 = b+0.5;
             arg3 = 1.5;
-            fact = pow(cosh(_alpha*_z),_lambda) % sinh_alpha_z;
+            fact = pow(cosh(_alpha*z),_lambda) % sinh_alpha_z;
         }
         else // Even-parity states
         {
@@ -94,7 +103,7 @@ void SchroedingerSolverPoeschlTeller::calculate()
             arg1 = a;
             arg2 = b;
             arg3 = 0.5;
-            fact = pow(cosh(_alpha*_z),_lambda);
+            fact = pow(cosh(_alpha*z),_lambda);
         }
 
         arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
@@ -126,8 +135,10 @@ void SchroedingerSolverPoeschlTeller::calculate()
             }
         }
 
-        _solutions.emplace_back(E, _z, psi);
+        solutions.emplace_back(E, z, psi);
     }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

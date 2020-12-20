@@ -22,34 +22,22 @@ namespace QWWAD
 class SchroedingerSolverDonorVariable : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonorVariable(const double        m,
-                                    const decltype(_V) &V,
-                                    const decltype(_z) &z,
-                                    const double        eps,
-                                    const double        r_d,
-                                    const double        lambda,
-                                    const double        zeta,
-                                    const double        dE);
+    SchroedingerSolverDonorVariable(const double     m,
+                                    const arma::vec &V,
+                                    const arma::vec &z,
+                                    const double     eps,
+                                    const double     r_d,
+                                    const double     lambda,
+                                    const double     zeta,
+                                    const double     dE);
 
     auto get_name() -> std::string override {return "donor-variable";}
-    void   set_zeta       (const double zeta) {_zeta = zeta; _solutions.clear(); calculate();}
-    void   set_lambda_zeta(const double lambda, const double zeta) {_lambda = lambda; _zeta = zeta; _solutions.clear(); calculate();}
+    void   set_zeta       (const double zeta) {_zeta = zeta; refresh_solutions();}
+    void   set_lambda_zeta(const double lambda, const double zeta) {_lambda = lambda; _zeta = zeta; refresh_solutions();}
     [[nodiscard]] auto get_zeta() const -> double {return _zeta;}
 
 private:
-    void calculate_psi_from_chi() override
-    {
-        _solutions.clear();
-
-        for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
-        {
-            const auto chi = _solutions_chi[0].get_wavefunction_samples();
-            const double E = _solutions_chi[0].get_energy();
-
-            auto const psi = chi*exp(-_zeta*abs(_z - _r_d)/_lambda);
-            _solutions.emplace_back(E,_z,psi);
-        }
-    }
+    auto calculate_psi_from_chi() -> std::vector<Eigenstate> override;
 
     [[nodiscard]] auto I_1(const double z_dash) const -> double override;
     [[nodiscard]] auto I_2(const double z_dash) const -> double override;

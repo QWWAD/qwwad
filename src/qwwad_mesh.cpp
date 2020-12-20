@@ -39,13 +39,14 @@ class MeshOptions : public Options
 auto
 MeshOptions::get_dz_max() const -> double
 {
-    if(vm.count("dzmax") == 0)
+    if(!get_argument_known("dzmax")) {
         throw std::runtime_error("Spatial separation not specified");
+    }
 
     auto result = get_option<double>("dzmax");
 
     // Override result use spatial resolution setting if specified
-    if (vm.count("zresmin") == 1)
+    if (get_argument_known("zresmin"))
         result = 1.0 / get_option<double>("zresmin");
 
     if (result < 0)

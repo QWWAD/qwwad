@@ -41,7 +41,7 @@ private:
     double _m_w; ///< Effective mass in well [kg]
     double _m_b; ///< Effective mass in barriers [kg]
 
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
     
     [[nodiscard]] auto get_wavefunction(const double E,
                                              const bool   parity_flag) const -> arma::vec;

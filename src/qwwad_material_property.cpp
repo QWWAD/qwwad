@@ -31,7 +31,6 @@ class MatLibOptions : public Options
                                                            "the default material library for the system will be used.");
                 add_option<std::string>("property,p",  "", "Name of property to look up.");
                 add_option<std::string>("material",    "", "Name of material to look up.");
-                add_option<bool>       ("text,t",          "Use this flag if the property is a string of text");
                 add_option<bool>       ("show-unit,u",     "Show the unit for the property rather than just its value");
                 add_option<double>     ("variable,x",   0, "Optional input parameter for properties of the form y=f(x)");
 
@@ -49,11 +48,6 @@ class MatLibOptions : public Options
             if(get_verbose())
                 print();
         }
-
-        /**
-         * \returns True if the property is text; false if it's a number
-         */
-        [[nodiscard]] auto is_text() const -> bool {return vm["text"].as<bool>();}
 
         /**
          * \returns Dump user-options to screen

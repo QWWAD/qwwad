@@ -26,13 +26,13 @@ private:
 public:
     SchroedingerSolverTaylor(const decltype(_m)     &me,
                              const decltype(_alpha) &alpha,
-                             const decltype(_V)     &V,
-                             const decltype(_z)     &z,
+                             const arma::vec        &V,
+                             const arma::vec        &z,
                              const unsigned int      nst_max=0);
     
     auto get_name() -> std::string override {return "Taylor";}
 private:
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
 };
 } // namespace
 #endif

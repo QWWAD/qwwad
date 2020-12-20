@@ -6,6 +6,8 @@
 #ifndef QWWAD_OPTIONS_H
 #define QWWAD_OPTIONS_H
 
+#include <iostream>
+
 #include <boost/program_options.hpp>
 
 namespace po = boost::program_options;
@@ -28,7 +30,7 @@ class Options
          * but don't have any effect on the configuration of programs.
          * These are only suitable for specification on the command-line.
          */
-        po::options_description* generic_options_commandline;
+        std::unique_ptr<po::options_description> generic_options_commandline;
 
         /**
          * Generic options that are common to all (or most) programs.
@@ -36,9 +38,19 @@ class Options
          * precision parameters.  They can be given on the 
          * command-line, in config files or as environment variables.
          */
-        po::options_description *generic_options_any;
+        std::unique_ptr<po::options_description> generic_options_any;
 
         po::options_description config_options;
+
+        /**
+         * \brief The additional options for a specific program
+         *
+         * \details This should be defined for each subclass of 
+         *          \c Options.  It should then be appended to the
+         *          generic options and run through the parser using
+         *          \c add_prog_specific_options_and_parse(...)
+         */
+        std::unique_ptr<po::options_description> program_specific_options_;
 
         std::string              config_filename; ///< Configuration filename
         
@@ -46,13 +58,14 @@ class Options
 
         [[nodiscard]] auto name_mapper(std::string in) const -> std::string;
 
-    protected:
         /**
          * Storage for the (raw) values entered on the command-line
          */
-        po::variables_map vm;
+        po::variables_map vm_;
 
     public:
+        Options();
+
         [[nodiscard]] auto get_argument_known(const std::string &name) const -> bool;
 
         /**
@@ -65,9 +78,9 @@ class Options
         template <typename T>
         void add_option(const std::string &name,
                         const T            default_value,
-                        const std::string &description)
+                        const std::string &description) noexcept
         {
-            program_specific_options->add_options()
+            program_specific_options_->add_options()
                 (name.c_str(),
                  po::value<T>()->default_value(default_value),
                  description.c_str());
@@ -81,9 +94,9 @@ class Options
          */
         template <typename T>
         void add_option(const std::string &name,
-                        const std::string &description)
+                        const std::string &description) noexcept
         {
-            program_specific_options->add_options()
+            program_specific_options_->add_options()
                 (name.c_str(),
                  po::value<T>(),
                  description.c_str());
@@ -97,37 +110,30 @@ class Options
          * \returns The value of the option
          */
         template <typename T>
-        [[nodiscard]] auto get_option(const std::string &name) const -> T
+        [[nodiscard]] auto get_option(const std::string &name) const noexcept -> T
         {
-            return vm[name].as<T>();
+            T val;
+            try {
+                val = vm_[name].as<T>();
+            } catch(boost::bad_any_cast &e) {
+                std::ostringstream oss;
+                oss << "Failed cast of option: " << name << ". Leaving as default value.";
+                std::cerr << oss.str() << std::endl;
+            }
+
+            return val;
         }
 
         void add_prog_specific_options_and_parse(const int     argc,
                                                  char ** const argv,
                                                  std::string   summary);
-    protected:
-        /**
-         * \brief The additional options for a specific program
-         *
-         * \details This should be defined for each subclass of 
-         *          \c Options.  It should then be appended to the
-         *          generic options and run through the parser using
-         *          \c add_prog_specific_options_and_parse(...)
-         */
-        po::options_description* program_specific_options;
-
-    public:
-        Options();
-        Options(const Options &options);
-        auto operator=(const Options &options) -> Options &;
-        virtual ~Options();
 
         /**
          * \brief Return whether or not verbose output is desired
          *
          * \returns \c true if verbose output is wanted
          */
-        [[nodiscard]] auto get_verbose() const -> bool {return vm["verbose"].as<bool>();}
+        [[nodiscard]] auto get_verbose() const -> bool {return vm_["verbose"].as<bool>();}
 };
 
 /**
@@ -142,9 +148,9 @@ class Options
  */
 template <>
 inline void Options::add_option<double>(const std::string &name,
-                                        const std::string &description)
+                                        const std::string &description) noexcept
 {
-    program_specific_options->add_options()
+    program_specific_options_->add_options()
         (name.c_str(),
          po::value<std::string>(),
          description.c_str());
@@ -164,12 +170,12 @@ inline void Options::add_option<double>(const std::string &name,
 template <>
 inline void Options::add_option<double>(const std::string &name,
                                         const double       default_value,
-                                        const std::string &description)
+                                        const std::string &description) noexcept
 {
     std::ostringstream oss;
     oss << default_value;
 
-    program_specific_options->add_options()
+    program_specific_options_->add_options()
         (name.c_str(),
          po::value<std::string>()->default_value(oss.str()),
          description.c_str());
@@ -183,9 +189,9 @@ inline void Options::add_option<double>(const std::string &name,
  */
 template <>
 inline void Options::add_option<bool>(const std::string &name,
-                                      const std::string &description)
+                                      const std::string &description) noexcept
 {
-    program_specific_options->add_options()
+    program_specific_options_->add_options()
         (name.c_str(),
          po::bool_switch()->default_value(false),
          description.c_str());
@@ -204,20 +210,29 @@ inline void Options::add_option<bool>(const std::string &name,
  *          function converts the variable to a floating-point number on output.
  */
 template <>
-inline auto Options::get_option<double>(const std::string &name) const -> double
+inline auto Options::get_option<double>(const std::string &name) const noexcept -> double
 {
-    const std::string val_str = vm[name].as<std::string>();
-    std::istringstream iss(val_str);
-    double val;
+    std::string val_str;
 
-    if (!(iss >> val))
-    {
-        std::ostringstream oss("Can't read ");
-        oss << name;
-        throw oss.str();
+    try {
+        val_str = vm_[name].as<std::string>();
+    } catch (boost::bad_any_cast &e) {
+        std::ostringstream oss;
+        oss << "Failed cast of option: " << name << ".  Leaving as default value";
+        std::cerr << oss.str() << std::endl;
+        return 0.0;
     }
-    else
-        return val;
+
+    std::istringstream iss(val_str);
+    double val = 0.0;
+
+    if (!(iss >> val)) {
+        std::ostringstream oss;
+        oss << "Can't read " << name << " option.  Setting to default";
+        std::cerr << oss.str() << std::endl;
+    }
+
+    return val;
 }
 } // end namespace
 #endif // QWWAD_OPTIONS_H

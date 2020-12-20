@@ -6,10 +6,10 @@
 #include "file-io.h"
 
 namespace QWWAD {
-Eigenstate::Eigenstate(decltype(_E)   E,
+Eigenstate::Eigenstate(decltype(E_)   E,
                        decltype(_z)   z,
                        decltype(_psi) psi) :
-    _E(E),
+    E_(E),
     _z(std::move(z)),
     _psi(std::move(psi))
 {

@@ -22,13 +22,16 @@ using namespace constants;
  *          that lie within the range of the input potential profile
  */
 SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
-                                                     const decltype(_V) &V,
-                                                     const decltype(_z) &z,
+                                                     const arma::vec    &V,
+                                                     const arma::vec    &z,
                                                      const unsigned int  nst_max) :
-    SchroedingerSolver(V,z,nst_max),
     diag(arma::zeros(z.size())),
     sub(arma::zeros(z.size()-1))
 {
+    set_V(V);
+    set_z(z);
+    set_nst_max(nst_max);
+
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
@@ -56,26 +59,31 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
 /**
  * Find solution to eigenvalue problem
  */
-void SchroedingerSolverTridiag::calculate()
+auto
+SchroedingerSolverTridiag::calculate() -> std::vector<Eigenstate>
 {
+    std::vector<Eigenstate> solutions;
+
+    const auto z = get_z();
+
     // Get limits for search
-    const double E_min = _E_min_set ? _E_min : _V.min();
-    const double E_max = _E_max_set ? _E_max : _V.max();
+    const double E_min = get_E_search_min();
+    const double E_max = get_E_search_max();
 
     // Set number of states only if energy limits haven't been specified
     // Note that '0' means that we should find all states in range
-    const double nst_max = (_E_min_set || _E_max_set) ? 0 : _nst_max;
+    const double nst_max = (get_E_min_set() || get_E_max_set()) ? 0 : get_nst_max();
 
     const auto EVP_solutions = eigen_tridiag(diag, sub, E_min, E_max, nst_max);
-
-    _solutions.clear();
 
     for (auto st : EVP_solutions)
     {
         const auto E   = st.get_E();
         const auto psi = st.psi_array();
-        _solutions.emplace_back(E, _z, psi);
+        solutions.emplace_back(E, z, psi);
     }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

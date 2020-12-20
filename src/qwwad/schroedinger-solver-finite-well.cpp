@@ -23,22 +23,26 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
                                                            const double m_b,
                                                            const size_t nz,
                                                            const unsigned int nst_max) :
-    SchroedingerSolver(arma::vec(nz),
-                       arma::vec(nz),
-                       nst_max),
     _l_w(l_w),
     _V0(V0),
     _m_w(m_w),
     _m_b(m_b)
 {
+    arma::vec V(nz);
+    arma::vec z(nz);
+    set_nst_max(nst_max);
+
     // Generate potential profile
     for (unsigned int iz=0; iz<nz; iz++)
     {
-        _z[iz]=iz*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
+        z[iz]=iz*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
 
-        if(_z[iz] < -l_w/2 || _z[iz] >= l_w/2)
-            _V[iz] = _V0;
+        if(z[iz] < -l_w/2 || z[iz] >= l_w/2)
+            V[iz] = _V0;
     }
+
+    set_V(V);
+    set_z(z);
 }
 
 /**
@@ -124,15 +128,17 @@ auto SchroedingerSolverFiniteWell::test_matching(double  v,
  * \param[in] odd_parity  true for odd states, false for even
  */
 auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
-                                                         const bool   odd_parity) const -> arma::vec
+                                                    const bool   odd_parity) const -> arma::vec
 {
+    const auto z = get_z();
+
     // Define k and K
     const double k=sqrt(2*_m_w/hBar*E/hBar); // wave vector in the well
     const double K=sqrt(2*_m_b/hBar*(_V0-E)/hBar); // decay constant in barrier
 
-    const size_t N = _z.size();
+    const size_t N = z.size();
     arma::vec psi(N); // wavefunction
-    const double dz = _z[1] - _z[0];
+    const double dz = z[1] - z[0];
     const double epsilon = dz/1000;
 
     // Compute the normalisation constants
@@ -157,24 +163,24 @@ auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
     for (unsigned int i_z=0;i_z<N;i_z++)
     {
         // Left barrier
-        if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon)==-1)
+        if (gsl_fcmp(z[i_z], -_l_w/2, epsilon)==-1)
         {
             if(odd_parity)
-                psi[i_z]=-B*exp(-K*fabs(_z[i_z]));
+                psi[i_z]=-B*exp(-K*fabs(z[i_z]));
             else
-                psi[i_z]=B*exp(-K*fabs(_z[i_z]));
+                psi[i_z]=B*exp(-K*fabs(z[i_z]));
         }
         // Right barrier
-        else if (gsl_fcmp(_z[i_z], _l_w/2, epsilon)>=0)
-            psi[i_z]=B*exp(-K*_z[i_z]);
+        else if (gsl_fcmp(z[i_z], _l_w/2, epsilon)>=0)
+            psi[i_z]=B*exp(-K*z[i_z]);
 
         // Find wavefunction within well region
-        else if (gsl_fcmp(_z[i_z], -_l_w/2, epsilon) >= 0 && (_z[i_z]<(_l_w/2)))
+        else if (gsl_fcmp(z[i_z], -_l_w/2, epsilon) >= 0 && (z[i_z]<(_l_w/2)))
         {
             if(odd_parity)
-                psi[i_z]=A*sin(k*_z[i_z]);
+                psi[i_z]=A*sin(k*z[i_z]);
             else
-                psi[i_z]=A*cos(k*_z[i_z]);
+                psi[i_z]=A*cos(k*z[i_z]);
         }
     }
 
@@ -197,12 +203,16 @@ auto SchroedingerSolverFiniteWell::get_n_bound() const -> size_t
     return nst;
 }
 
-void SchroedingerSolverFiniteWell::calculate()
+auto
+SchroedingerSolverFiniteWell::calculate() -> std::vector<Eigenstate>
 {
+    std::vector<Eigenstate> solutions;
     const double u_0_max = get_u0_max();
     const size_t nst = get_n_bound();
+    const auto nst_max = get_nst_max();
+    const auto z = get_z();
 
-    for (unsigned int ist=0; ist < _nst_max && ist < nst; ++ist)
+    for (unsigned int ist=0; ist < nst_max && ist < nst; ++ist)
     {
         // deduce parity: false if even parity
         const bool parity_flag = (ist%2 == 1);
@@ -249,21 +259,17 @@ void SchroedingerSolverFiniteWell::calculate()
         const double E = hBar*hBar*k*k/(2.0*_m_w);
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
-        {
-            break;
-        }
+        if(energy_above_range(E)) break;
 
         const auto psi = get_wavefunction(E,parity_flag);
 
         // Don't store the solution if it's below the minimum energy 
-        if(!(_E_min_set && gsl_fcmp(E, _E_min, e*1e-12) == -1))
-        {
-            _solutions.emplace_back(E, _z, psi);
-        }
+        if(!energy_below_range(E)) solutions.emplace_back(E, z, psi);
 
         gsl_root_fsolver_free(solver);
     }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

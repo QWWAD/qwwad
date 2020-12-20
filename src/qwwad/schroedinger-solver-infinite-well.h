@@ -29,15 +29,15 @@ public:
     auto get_name() -> std::string override {return "infinite-square-well";}
 
 private:
-    double _me;    ///< Effective mass at band-edge (constant) [kg]
-    double _L;     ///< Width of quantum well [m]
-    double _alpha; ///< Nonparabolicity [1/J]
-    double _V0;    ///< Potential at bottom of well [J]
-    size_t _nz;    ///< Number of spatial points
-    double _Lb;    ///< Width of padding regions [m]
+    double _me;       ///< Effective mass at band-edge (constant) [kg]
+    double L_;        ///< Width of quantum well [m]
+    double _alpha;    ///< Nonparabolicity [1/J]
+    double V0_;       ///< Potential at bottom of well [J]
+    size_t _nz;       ///< Number of spatial points
+    double Lb_ = 0.0; ///< Width of padding regions [m]
 
     void make_z_array();
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
 };
 } // namespace
 #endif

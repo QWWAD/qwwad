@@ -24,8 +24,8 @@ private:
 public:
     SchroedingerSolverShooting(decltype(_me)       me,
                                decltype(_alpha)    alpha,
-                               const decltype(_V) &V,
-                               const decltype(_z) &z,
+                               const arma::vec    &V,
+                               const arma::vec    &z,
                                const double        dE,
                                const unsigned int  nst_max=0);
 
@@ -40,7 +40,7 @@ public:
                               const double  E) const -> double;
 
 private:
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
 };
 } // namespace
 #endif

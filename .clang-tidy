@@ -1,8 +1,5 @@
-Checks: 'bugprone-argument-comment,
-         bugprone-assert-side-effect,
-         bugprone-bad-signal-to-kill-thread,
-         bugprone-bool-pointer-implicit-conversion,
-         bugprone-branch-clone,
-         bugprone-copy-constructor-init,
+Checks: 'boost-*,
+         bugprone-*,
+         cppcoreguidelines-*,
          modernize-*'
 HeaderFilterRegex: '.*/src/[^3].*'

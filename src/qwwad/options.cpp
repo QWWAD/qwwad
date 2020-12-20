@@ -13,11 +13,11 @@
 
 namespace QWWAD {
 Options::Options() :
-    generic_options_commandline(new po::options_description("Generic options")),
-    generic_options_any(new po::options_description("Configuration options")),
+    generic_options_commandline(std::make_unique<po::options_description>("Generic options")),
+    generic_options_any(std::make_unique<po::options_description>("Configuration options")),
     config_filename("qwwad.cfg"),
-    vm(),
-    program_specific_options(new po::options_description("Program-specific options"))
+    vm_(),
+    program_specific_options_(std::make_unique<po::options_description>("Program-specific options"))
 {
     generic_options_commandline->add_options()
         ("help,h",    "display a help message")
@@ -32,41 +32,6 @@ Options::Options() :
         ("verbose,V", po::bool_switch(),
          "display lots of information about calculation")
         ;
-}
-
-/** Copy constructor */
-Options::Options(const Options &opt) :
-    generic_options_commandline(new po::options_description()),
-    generic_options_any(new po::options_description()),
-    config_filename(opt.config_filename),
-    vm(opt.vm),
-    program_specific_options(new po::options_description())
-{
-    generic_options_commandline->add(*opt.generic_options_commandline);
-    generic_options_any->add(*opt.generic_options_any);
-    program_specific_options->add(*opt.program_specific_options);
-}
-
-auto Options::operator=(const Options &opt) -> Options &
-{
-    // Create a temporary copy of other object
-    Options tmp(opt);
-
-    // Swap data with the temporary object
-    std::swap(generic_options_commandline, tmp.generic_options_commandline);
-    std::swap(generic_options_any,         tmp.generic_options_any);
-    std::swap(config_filename,             tmp.config_filename);
-    std::swap(vm,                          tmp.vm);
-    std::swap(program_specific_options,    tmp.program_specific_options);
-
-    return *this;
-}
-
-Options::~Options()
-{
-    delete generic_options_any;
-    delete generic_options_commandline;
-    delete program_specific_options;
 }
 
 /**
@@ -146,18 +111,18 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         // Allow all options to be given on the command-line
         po::options_description command_line_options;
         command_line_options.add(*generic_options_commandline);
-        command_line_options.add(*program_specific_options);
+        command_line_options.add(*program_specific_options_);
         command_line_options.add(*generic_options_any);
 
         // First read everything specified on the command-line
-        po::store(po::parse_command_line(argc, argv, command_line_options), vm);
-        po::notify(vm);
+        po::store(po::parse_command_line(argc, argv, command_line_options), vm_);
+        po::notify(vm_);
 
         // Now, read from config file (if available)
         std::ifstream config_filestream(config_filename.c_str(), std::ifstream::in);
 
         config_options.add(*generic_options_any);
-        config_options.add(*program_specific_options);
+        config_options.add(*program_specific_options_);
 
         if (config_filestream)
         {
@@ -167,8 +132,8 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
                           << config_filename << std::endl;
             }
 
-            po::store(po::parse_config_file(config_filestream, config_options, true), vm);
-            po::notify(vm);
+            po::store(po::parse_config_file(config_filestream, config_options, true), vm_);
+            po::notify(vm_);
         }
         else
         {
@@ -178,15 +143,15 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
 
         // Finally, look for any suitable-looking environment variables
         const auto mapper = std::bind1st(std::mem_fun(&Options::name_mapper), this);
-        po::store(po::parse_environment(config_options, mapper), vm);
-        po::notify(vm);
+        po::store(po::parse_environment(config_options, mapper), vm_);
+        po::notify(vm_);
 
         // TODO: Make this configurable
         std::ostringstream oss;
         oss << "Usage: " << argv[0] << " [OPTION]...";
 
         // Post-processing for default options...
-        if(vm.count("help"))
+        if(vm_.count("help"))
         {
             std::cout << oss.str() << std::endl
                       << summary << std::endl
@@ -199,7 +164,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
             exit(EXIT_SUCCESS);
         }
         // Display the version number and copyright notice
-        if (vm.count ("version")) 
+        if (vm_.count ("version")) 
             print_version_then_exit(argv[0]);
     }
     catch(std::exception& e)
@@ -256,7 +221,7 @@ auto Options::get_argument_known(const std::string &name) const -> bool
 {
     auto seen = false;
 
-    if(vm.count(name) > 0)
+    if(vm_.count(name) > 0)
         seen = true;
 
     return seen;

@@ -32,7 +32,7 @@ private:
     double _length; ///< Length of potential profile [m]
     double _mass;   ///< Effective mass in well [kg]
 
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
 };
 } // namespace
 #endif

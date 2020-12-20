@@ -25,13 +25,13 @@ using namespace constants;
  * \param[in] lambda Bohr radius [m]
  * \param[in] dE     Energy separation to use in eigenvalue search [J]
  */
-SchroedingerSolverDonor3D::SchroedingerSolverDonor3D(const double        m,
-                                                     const decltype(_V) &V,
-                                                     const decltype(_z) &z,
-                                                     const double        eps,
-                                                     const double        r_d,
-                                                     const double        lambda,
-                                                     const double        dE) :
+SchroedingerSolverDonor3D::SchroedingerSolverDonor3D(const double     m,
+                                                     const arma::vec &V,
+                                                     const arma::vec &z,
+                                                     const double     eps,
+                                                     const double     r_d,
+                                                     const double     lambda,
+                                                     const double     dE) :
     SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE)
 {}
 
@@ -99,6 +99,27 @@ auto SchroedingerSolverDonor3D::I_3(const double z_dash) const -> double
 auto SchroedingerSolverDonor3D::I_4(const double z_dash) const -> double
 {
     return 2*pi*(_lambda/2)*exp(-2*fabs(z_dash)/_lambda);
+}
+
+auto
+SchroedingerSolverDonor3D::calculate_psi_from_chi() -> std::vector<Eigenstate>
+{
+    std::vector<Eigenstate> solutions;
+
+    auto z = get_z();
+
+    for (auto ist : _solutions_chi)
+    {
+        const auto E   = ist.get_energy();
+        const auto chi = ist.get_wavefunction_samples();
+        const auto psi = exp(-abs(z - _r_d)/_lambda) * chi;
+
+        const auto psi_state = Eigenstate(E,z,psi);
+
+        solutions.push_back(psi_state);
+    }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

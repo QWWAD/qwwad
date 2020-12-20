@@ -24,13 +24,13 @@ private:
     arma::vec sub;  ///< Sub-diagonal elements of matrix
 public:
     SchroedingerSolverTridiag(const decltype(_m) &me,
-                              const decltype(_V) &V,
-                              const decltype(_z) &z,
+                              const arma::vec    &V,
+                              const arma::vec    &z,
                               const unsigned int  nst_max=0);
 
     auto get_name() -> std::string override {return "tridiagonal";}
 private:
-    void calculate() override;
+    auto calculate() -> std::vector<Eigenstate> override;
 };
 }
 #endif

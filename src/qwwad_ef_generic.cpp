@@ -230,38 +230,38 @@ auto main(int argc, char *argv[]) -> int{
                     << dz*1e9 << "nm." << std::endl;
     }
 
-    SchroedingerSolver *se = nullptr; // Solver for Schroedinger equation
+    std::shared_ptr<SchroedingerSolver> se; // Solver for Schroedinger equation
 
     switch(opt.get_type())
     {
         case MATRIX_PARABOLIC:
-            se = new SchroedingerSolverTridiag(m,
-                                               V,
-                                               z,
-                                               nst_max);
+            se = std::make_shared<SchroedingerSolverTridiag>(m,
+                                                             V,
+                                                             z,
+                                                             nst_max);
             break;
         case MATRIX_FULL_NONPARABOLIC:
-            se = new SchroedingerSolverFull(m,
-                                            alpha,
-                                            V,
-                                            z,
-                                            nst_max);
+            se = std::make_shared<SchroedingerSolverFull>(m,
+                                                          alpha,
+                                                          V,
+                                                          z,
+                                                          nst_max);
             break;
         case MATRIX_TAYLOR_NONPARABOLIC:
-            se = new SchroedingerSolverTaylor(m,
-                                              alpha,
-                                              V,
-                                              z,
-                                              nst_max);
+            se = std::make_shared<SchroedingerSolverTaylor>(m,
+                                                            alpha,
+                                                            V,
+                                                            z,
+                                                            nst_max);
             break;
         case SHOOTING_PARABOLIC:
         case SHOOTING_NONPARABOLIC:
-            se = new SchroedingerSolverShooting(m,
-                                                alpha,
-                                                V,
-                                                z,
-                                                opt.get_option<double>("dE") * e/1000,
-                                                nst_max);
+            se = std::make_shared<SchroedingerSolverShooting>(m,
+                                                              alpha,
+                                                              V,
+                                                              z,
+                                                              opt.get_option<double>("dE") * e/1000,
+                                                              nst_max);
     }
 
     // Set cut-off energies if desired
@@ -280,7 +280,7 @@ auto main(int argc, char *argv[]) -> int{
     {
         const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
         arma::vec psi;
-        const double psi_inf = dynamic_cast<SchroedingerSolverShooting *>(se)->shoot_wavefunction(psi, E_trial);
+        const double psi_inf = std::dynamic_pointer_cast<SchroedingerSolverShooting>(se)->shoot_wavefunction(psi, E_trial);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
@@ -296,8 +296,6 @@ auto main(int argc, char *argv[]) -> int{
         const auto solutions = se->get_solutions(true);
         output(solutions, opt);
     }
-
-    delete se;
 
     return EXIT_SUCCESS;
 }

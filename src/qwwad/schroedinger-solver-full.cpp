@@ -27,14 +27,17 @@ using namespace constants;
  */
 SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
                                                decltype(_alpha)    alpha,
-                                               const decltype(_V) &V,
-                                               const decltype(_z) &z,
+                                               const arma::vec    &V,
+                                               const arma::vec    &z,
                                                const unsigned int  nst_max) :
-    SchroedingerSolver(V,z,nst_max),
     _m(std::move(m)),
     _alpha(std::move(alpha)),
     _A(arma::mat(3*z.size(), 3*z.size()))
 {
+    set_nst_max(nst_max);
+    set_V(V);
+    set_z(z);
+
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
     arma::vec B(3*nz*nz);
@@ -62,15 +65,15 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
         {
             m_minus = m_plus = _m[i];
             alpha_minus = alpha_plus = _alpha[i];
-            V_minus = V_plus = _V[i];
+            V_minus = V_plus = V[i];
         }
         else{
             m_minus = (_m[i]   + _m[i-1])/2;
             m_plus  = (_m[i+1] + _m[i])/2;
             alpha_minus = (_alpha[i]   + _alpha[i-1])/2;
             alpha_plus  = (_alpha[i+1] + _alpha[i])/2;
-            V_minus = (_V[i]   + _V[i-1])/2;
-            V_plus  = (_V[i+1] + _V[i])/2;
+            V_minus = (V[i]   + V[i-1])/2;
+            V_plus  = (V[i+1] + V[i])/2;
         }
 
         // Calculate a points
@@ -129,17 +132,22 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
 /**
  * Find solution to eigenvalue problem
  */
-void SchroedingerSolverFull::calculate()
+auto
+SchroedingerSolverFull::calculate() -> std::vector<Eigenstate>
 {
+    const auto z = get_z();
+    const auto V = get_V();
+    const auto nst_max = get_nst_max();
+
     // Find solutions, including all the unwanted "padding" in the eigenvector
     // that comes from the cubic EVP.  See J. Cooper et al., APL 2010
-    const auto solutions_tmp = eigen_general(_A, _V.min(), _V.max(), _nst_max);
+    const auto solutions_tmp = eigen_general(_A, V.min(), V.max(), nst_max);
 
     // Now chop off the padding from the eigenvector
     const size_t nst = solutions_tmp.size();
-    const size_t nz  = _z.size();
+    const size_t nz  = z.size();
 
-    _solutions.clear();
+    std::vector<Eigenstate> solutions;
     
     for(unsigned int ist = 0; ist < nst; ist++)
     {
@@ -150,8 +158,10 @@ void SchroedingerSolverFull::calculate()
         const std::vector<double> psi(psi_full.begin(),
                                       psi_full.begin() + nz);
 
-        _solutions.emplace_back(E, _z, psi);
+        solutions.emplace_back(E, z, psi);
     }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

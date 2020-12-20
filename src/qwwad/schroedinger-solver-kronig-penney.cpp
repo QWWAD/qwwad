@@ -27,9 +27,6 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
                                                                const size_t nz,
                                                                const size_t nper,
                                                                const unsigned int nst_max) :
-    SchroedingerSolver(arma::zeros(nz*nper),
-                       arma::zeros(nz*nper),
-                       nst_max),
     _l_w(l_w),
     _l_b(l_b),
     _V0(V0),
@@ -37,6 +34,10 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
     _m_b(m_b),
     _k(k)
 {
+    set_nst_max(nst_max);
+    arma::vec V(nz*nper);
+    arma::vec z(nz*nper);
+
     const auto L  = l_b + l_w;
     const auto dz = L*nper/(nz*nper+1);
 
@@ -45,13 +46,16 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
     {
         for (unsigned int iz=0; iz<nz; iz++)
         {
-            _z(iz + iper*nz) = iz*dz + iper*L;
+            z(iz + iper*nz) = iz*dz + iper*L;
 
             // Fill in barrier potential
-            if(_z(iz) > l_w)
-                _V(iz + iper*nz) = _V0;
+            if(z(iz) > l_w)
+                V(iz + iper*nz) = _V0;
         }
     }
+
+    set_V(V);
+    set_z(z);
 }
 
 /**
@@ -111,7 +115,8 @@ auto SchroedingerSolverKronigPenney::get_lhs(const double E) const -> double
  */
 auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> arma::vec
 {
-    const auto nz = _z.size();
+    const auto z = get_z();
+    const auto nz = z.size();
     arma::vec psi(nz); // wavefunction
 
 #if 0
@@ -171,8 +176,12 @@ auto SchroedingerSolverKronigPenney::test_matching(double  energy,
     return match;
 }
 
-void SchroedingerSolverKronigPenney::calculate()
+auto
+SchroedingerSolverKronigPenney::calculate() -> std::vector<Eigenstate>
 {
+    std::vector<Eigenstate> solutions;
+
+    const auto z = get_z();
     gsl_function F;
     F.function  = &test_matching;
     F.params    = this;
@@ -182,11 +191,13 @@ void SchroedingerSolverKronigPenney::calculate()
 
     auto Elo=dx;    // first energy estimate
 
-    for (unsigned int ist=0; ist < _nst_max; ++ist)
+    auto nst_max = get_nst_max();
+
+    for (unsigned int ist=0; ist < nst_max; ++ist)
     {
         // Shift the lower estimate up past the last state we found
         if(ist > 0)
-            Elo = _solutions[ist-1].get_energy() + dx;
+            Elo = solutions[ist-1].get_energy() + dx;
 
         // Value for y=f(x) at bottom of search range
         const double y1 = GSL_FN_EVAL(&F,Elo);
@@ -231,8 +242,7 @@ void SchroedingerSolverKronigPenney::calculate()
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
-        {
+        if(energy_above_range(E)) {
             std::cerr << "Solver hit cut-off energy" << std::endl;
             break;
         }
@@ -240,13 +250,14 @@ void SchroedingerSolverKronigPenney::calculate()
         const auto psi = get_wavefunction(E);
 
         // Don't store the solution if it's below the minimum energy
-        if(!(_E_min_set && gsl_fcmp(E, _E_min, e*1e-12) == -1))
-        {
-            _solutions.emplace_back(E, _z, psi);
+        if(!energy_below_range(E)) {
+            solutions.emplace_back(E, z, psi);
         }
     }
 
     gsl_root_fsolver_free(solver);
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

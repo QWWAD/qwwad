@@ -14,14 +14,14 @@
 namespace QWWAD
 {
 using namespace constants;
-SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double        m,
-                                                                 const decltype(_V) &V,
-                                                                 const decltype(_z) &z,
-                                                                 const double        eps,
-                                                                 const double        r_d,
-                                                                 const double        lambda,
-                                                                 const double        zeta,
-                                                                 const double        dE) :
+SchroedingerSolverDonorVariable::SchroedingerSolverDonorVariable(const double    m,
+                                                                 const arma::vec &V,
+                                                                 const arma::vec &z,
+                                                                 const double     eps,
+                                                                 const double     r_d,
+                                                                 const double     lambda,
+                                                                 const double     zeta,
+                                                                 const double     dE) :
     SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE),
     _zeta(zeta)
 {}
@@ -173,5 +173,25 @@ auto SchroedingerSolverDonorVariable::I_4(const double z_dash) const -> double
 
     return 2*pi*I_4;
 }
+
+auto
+SchroedingerSolverDonorVariable::calculate_psi_from_chi() -> std::vector<Eigenstate>
+{
+    std::vector<Eigenstate> solutions;
+
+    const auto z = get_z();
+
+    for (unsigned int ist = 0; ist < _solutions_chi.size(); ++ist)
+    {
+        const auto chi = _solutions_chi[0].get_wavefunction_samples();
+        const double E = _solutions_chi[0].get_energy();
+
+        auto const psi = chi*exp(-_zeta*abs(z - _r_d)/_lambda);
+        solutions.emplace_back(E,z,psi);
+    }
+
+    return solutions;
+}
+
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

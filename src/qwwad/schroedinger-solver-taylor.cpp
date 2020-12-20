@@ -26,13 +26,16 @@ using namespace constants;
  */
 SchroedingerSolverTaylor::SchroedingerSolverTaylor(const decltype(_m)     &me,
                                                    const decltype(_alpha) &alpha,
-                                                   const decltype(_V)     &V,
-                                                   const decltype(_z)     &z,
-                                                   const unsigned int           nst_max) :
-    SchroedingerSolver(V,z,nst_max),
+                                                   const arma::vec        &V,
+                                                   const arma::vec        &z,
+                                                   const unsigned int      nst_max) :
     AB(arma::vec(2*z.size())),
     BB(arma::vec(2*z.size()))
 {
+    set_V(V);
+    set_z(z);
+    set_nst_max(nst_max);
+
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
@@ -81,18 +84,26 @@ SchroedingerSolverTaylor::SchroedingerSolverTaylor(const decltype(_m)     &me,
 /**
  * Find solutions to Schroedinger's equation for this Hamiltonian
  */
-void SchroedingerSolverTaylor::calculate()
+auto
+SchroedingerSolverTaylor::calculate() -> std::vector<Eigenstate>
 {
+    std::vector<Eigenstate> solutions;
+    auto V = get_V();
+    auto z = get_z();
+    auto nst_max = get_nst_max();
+
     // Solve eigenvalue problem
-    const auto EVP_solutions = eigen_banded(&AB[0], &BB[0], _V.min(), _V.max(), _V.size(), _nst_max);
+    const auto EVP_solutions = eigen_banded(&AB[0], &BB[0], V.min(), V.max(), V.size(), nst_max);
 
     // Now save solutions
     for(auto st : EVP_solutions)
     {
         const auto E   = st.get_E();
         const auto psi = st.psi_array();
-        _solutions.emplace_back(E, _z, psi);
+        solutions.emplace_back(E, z, psi);
     }
+
+    return solutions;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

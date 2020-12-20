@@ -16,24 +16,18 @@ namespace QWWAD {
 class SchroedingerSolverDonor2D : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonor2D(const double        m,
-                              const decltype(_V) &V,
-                              const decltype(_z) &z,
-                              const double        eps,
-                              const double        r_d,
-                              const double        lambda,
-                              const double        dE);
+    SchroedingerSolverDonor2D(const double     m,
+                              const arma::vec &V,
+                              const arma::vec &z,
+                              const double     eps,
+                              const double     r_d,
+                              const double     lambda,
+                              const double     dE);
 
     auto get_name() -> std::string override {return "donor-2D";}
 
 private:
-    void calculate_psi_from_chi() override {
-        _solutions.clear();
-
-        for (auto & st : _solutions_chi) {
-            _solutions.push_back(st);
-        }
-    }
+    auto calculate_psi_from_chi() -> std::vector<Eigenstate> override;
 
     [[nodiscard]] auto I_1(const double z_dash) const -> double override;
     [[nodiscard]] auto I_2(const double z_dash) const -> double override;

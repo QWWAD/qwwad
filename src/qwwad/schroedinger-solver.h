@@ -19,41 +19,76 @@ namespace QWWAD
  */
 class SchroedingerSolver
 {
-protected:
-    virtual void calculate() = 0;
-
-    arma::vec    _V;       ///< Confining potential [J]
-    arma::vec    _z;       ///< Spatial points [m]
-    unsigned int _nst_max; ///< Maximum number of states to find
-
+private:
     // Options for specifying cut-off energy
-    double _E_min;        ///< Lower cut-off energy for solutions [J]
-    double _E_max;        ///< Upper cut-off energy for solutions [J]
-    bool   _E_min_set;    ///< True if lower cut-off energy has been set
-    bool   _E_max_set;    ///< True if upper cut-off energy has been set
+    double E_min_ = 0.0;       ///< Lower cut-off energy for solutions [J]
+    double E_max_ = 0.0;       ///< Upper cut-off energy for solutions [J]
+    bool   E_min_set_ = false; ///< True if lower cut-off energy has been set
+    bool   E_max_set_ = false; ///< True if upper cut-off energy has been set
+
+    size_t _nst_max = 0; ///< Maximum number of states to find (0 means all states)
 
     ///< Set of solutions to the Schroedinger equation
     std::vector<Eigenstate> _solutions;
 
-public:
-    SchroedingerSolver(decltype (_V)             V,
-                       decltype (_z)             z,
-                       const decltype(_nst_max)  nst_max=0);
+    arma::vec    _z; ///< Spatial points [m]
+    arma::vec    V_; ///< Confining potential [J]
 
+protected:
+    [[nodiscard]] auto get_E_min_set() const -> bool {return E_min_set_;}
+    [[nodiscard]] auto get_E_max_set() const -> bool {return E_max_set_;}
+
+    inline void set_nst_max(const size_t nst_max) {_nst_max = nst_max;}
+    [[nodiscard]] auto get_nst_max() const -> decltype(_nst_max) {return _nst_max;}
+
+    [[nodiscard]] auto get_E_search_min() const -> double;
+    [[nodiscard]] auto get_E_search_max() const -> double;
+
+    [[nodiscard]] auto energy_above_range(const double E) const -> bool;
+    [[nodiscard]] auto energy_below_range(const double E) const -> bool;
+
+    /**
+     * \brief Calculate all eigenstates
+     *
+     * \details This needs to be implemented by any derived classes
+     *
+     * \return A set of all the eigenstates in the system
+     */
+    virtual auto calculate() -> decltype(_solutions) = 0;
+
+    /**
+     * \brief Set the potential at each point
+     *
+     * \details Subclasses should always call this in their constructor
+     *
+     * \todo Make sub-classes define a vfunc to populate the V & z
+     *       vectors
+     *
+     * \param[in] V The potential at each point [J]
+     */
+    inline void set_V(const decltype(V_) &V) {V_ = V;}
+
+    /**
+     * \brief Set the position at each point
+     *
+     * \details Subclasses should always call this in their constructor
+     *
+     * \todo Make sub-classes define a vfunc to populate the V & z
+     *       vectors
+     *
+     * \param[in] z The position at each point [z]
+     */
+    inline void set_z(const decltype(_z) &z) {_z = z;}
+
+    void refresh_solutions();
+
+public:
     auto get_solutions(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
-    /**
-     * \returns the array of spatial positions [m]
-     */
-    [[nodiscard]] auto get_z() const {return _z;}
-
-    /**
-     * \returns the potential profile [J]
-     */
-    [[nodiscard]] auto get_V() const {return _V;}
+    [[nodiscard]] auto get_z() const -> decltype(_z);
+    [[nodiscard]] auto get_V() const -> decltype(V_);
 
     virtual auto get_name() -> std::string = 0;
-    virtual ~SchroedingerSolver() = default;
 
     void set_E_min(const double E_min);
     void set_E_max(const double E_max);
@@ -63,8 +98,8 @@ public:
      */
     inline void unset_E_cutoff()
     {
-        _E_min_set = false;
-        _E_max_set = false;
+        E_min_set_ = false;
+        E_max_set_ = false;
     }
 };
 } // namespace QWWAD

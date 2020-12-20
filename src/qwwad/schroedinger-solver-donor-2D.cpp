@@ -19,13 +19,13 @@ namespace QWWAD
 {
 using namespace constants;
 
-SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double        m,
-                                                     const decltype(_V) &V,
-                                                     const decltype(_z) &z,
-                                                     const double        eps,
-                                                     const double        r_d,
-                                                     const double        lambda,
-                                                     const double        dE) :
+SchroedingerSolverDonor2D::SchroedingerSolverDonor2D(const double     m,
+                                                     const arma::vec &V,
+                                                     const arma::vec &z,
+                                                     const double     eps,
+                                                     const double     r_d,
+                                                     const double     lambda,
+                                                     const double     dE) :
     SchroedingerSolverDonor(m, V, z, eps, r_d, lambda, dE)
 {}
 
@@ -126,5 +126,18 @@ auto SchroedingerSolverDonor2D::I_4(const double z_dash) const -> double
 
     return I4;
 }
+
+auto
+SchroedingerSolverDonor2D::calculate_psi_from_chi() -> std::vector<Eigenstate>
+{
+    std::vector<Eigenstate> solutions;
+
+    for (auto & st : _solutions_chi) {
+        solutions.push_back(st);
+    }
+
+    return solutions;
+}
+
 } // namespace QWWAD
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

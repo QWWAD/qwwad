@@ -16,13 +16,13 @@ namespace QWWAD {
 class SchroedingerSolverDonor : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverDonor(const double        m,
-                            const decltype(_V) &V,
-                            const decltype(_z) &z,
-                            const double        eps,
-                            const double        r_d,
-                            const double        lambda,
-                            const double        dE);
+    SchroedingerSolverDonor(const double     m,
+                            const arma::vec &V,
+                            const arma::vec &z,
+                            const double     eps,
+                            const double     r_d,
+                            const double     lambda,
+                            const double     dE);
 
     auto get_name() -> std::string override = 0;
 
@@ -34,7 +34,7 @@ public:
     auto shoot_wavefunction(const double  E,
                               arma::vec    &chi) const -> double;
 
-    void   set_lambda(const double lambda) {_lambda = lambda; _solutions.clear(); calculate();}
+    void set_lambda(const double lambda) {_lambda = lambda; refresh_solutions();}
     [[nodiscard]] auto get_lambda() const -> double {return _lambda;}
     [[nodiscard]] auto get_r_d   () const -> double {return _r_d;}
 
@@ -53,8 +53,8 @@ protected:
     ///< Set of solutions to the Schroedinger equation excluding hydrogenic component
     std::vector<Eigenstate> _solutions_chi;
 
-    void calculate() override;
-    virtual void   calculate_psi_from_chi() = 0;
+    auto calculate() -> std::vector<Eigenstate> override;
+    virtual auto calculate_psi_from_chi() -> std::vector<Eigenstate> = 0;
     [[nodiscard]] virtual auto I_1(const double z_dash) const -> double = 0;
     [[nodiscard]] virtual auto I_2(const double z_dash) const -> double = 0;
     [[nodiscard]] virtual auto I_3(const double z_dash) const -> double = 0;

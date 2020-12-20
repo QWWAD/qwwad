@@ -19,31 +19,11 @@ class ThermalRCOptions: public Options
     public:
     ThermalRCOptions(int argc, char** argv);
 
-    /** 
-     * Electrical power dissipation while QCL is switched on [W]
-     * It is assumed that all power is dissipated in the active
-     * region heterostructure (i.e. contacts have zero resistance!)
-     */
-    [[nodiscard]] auto get_power() const -> double {return vm["power"].as<double>();}
-
     /// Return fractional duty cycle (i.e. 0 to 1)
     [[nodiscard]] auto get_duty_cycle() const -> double {return dc;}
 
     /// Return pulse repetition rate [Hz]
     [[nodiscard]] auto get_f_rep() const -> double {return f;}
-
-    /// Return heatsink temperature [K]
-    [[nodiscard]] auto get_heatsink_temperature() const -> double {return vm["Tsink"].as<double>();}
-
-    /// Return number of pulses to simulate
-    [[nodiscard]] auto get_n_rep() const -> size_t {return vm["nrep"].as<size_t>();}
-
-    /// Return ridge area [m^2]
-    [[nodiscard]] auto get_area() const -> double {return vm["area"].as<double>()*1e-6;}
-    [[nodiscard]] auto get_R() const -> double {return vm["resistance"].as<double>();}
-    [[nodiscard]] auto get_C() const -> double {return vm["capacitance"].as<double>();}
-
-    [[nodiscard]] auto get_infile() const -> std::string {return vm["infile"].as<std::string>();}
 
     void print() const {}
 };
@@ -52,53 +32,33 @@ class ThermalRCOptions: public Options
 // Define and parse all user options and return them in a structure
 ThermalRCOptions::ThermalRCOptions(int argc, char **argv)
 {
-    program_specific_options->add_options()
-        ("area", po::value<double>()->default_value(0.85*0.14),
-         "QCL ridge area [mm^2]")
-
-        ("infile", po::value<std::string>()->default_value("thermal_layers.dat"),
-         "Waveguide layers data file")
-
-        ("Tsink,T", po::value<double>()->default_value(80.0), 
-         "set heatsink temperature [K]")
-
-        ("dc,d", po::value<double>()->default_value(2), 
-         "set duty cycle for pulse train [%]")
-
-        ("frequency,f", po::value<double>()->default_value(10), 
-         "set pulse repetition rate [kHz]")
-
-        ("power,P", po::value<double>()->default_value(17.65),
-         "set pulse power [W]")
-
-        ("nrep", po::value<size_t>()->default_value(1), 
-         "set number of pulse periods to simulate")
-
-	("resistance,R", po::value<double>()->default_value(18),
-	 "set thermal resistance [K/W]")
-
-	("capacitance,C", po::value<double>()->default_value(1e-6),
-	 "set thermal capacitance [J/K]")
-        ;
+    add_option<double>("Tsink,T",       80.0,   "set heatsink temperature [K]");
+    add_option<double>("dc,d",           2.9,   "set duty cycle for pulse train [%]");
+    add_option<double>("frequency,f",   10.0,   "set pulse repetition rate [kHz]");
+    add_option<double>("power,P",       17.65,  "set pulse power [W]");
+    add_option<size_t>("nrep",           1,     "set number of pulse periods to simulate");
+    add_option<double>("resistance,R",  18.0,   "set thermal resistance [K/W]");
+    add_option<double>("capacitance,C", 1.0e-6, "set thermal capacitance [J/K]");
 
     std::string doc = "Calculate temperature variation in active region over time";
     add_prog_specific_options_and_parse(argc,argv,doc);
 
     // Check that heatsink temperature is positive
-    if (vm["Tsink"].as<double>() <= 0.0)
+    auto Tsink = get_option<double>("Tsink");
+    if (Tsink <= 0.0)
     {
         std::ostringstream oss;
         oss << "Heatsink temperature, "
-            << vm["Tsink"].as<double>()
+            << Tsink
             << " is not positive.";
         throw std::domain_error(oss.str());
     }
 
     // Check that duty cycle is positive and
     // rescale to a decimal value
-    if(vm.count("dc"))
+    if(get_argument_known("dc"))
     {
-        dc = vm["dc"].as<double>() * 0.01;
+        dc = get_option<double>("dc") * 0.01;
 
         if(dc <= 0.0 or dc >= 1.0)
         {
@@ -110,48 +70,45 @@ ThermalRCOptions::ThermalRCOptions(int argc, char **argv)
 
     // Check that frequency is positive and
     // rescale to Hz
-    if(vm.count("frequency"))
+    if(get_argument_known("frequency"))
     {
-        f = vm["frequency"].as<double>() * 1.0e3;
+        f = get_option<double>("frequency") * 1.0e3;
 
         if(f <= 0)
             throw std::domain_error ("Pulse repetition rate must "
                     "be positive.");
     }
 
+    auto power = get_option<double>("power");
+
     // Check that power is positive
-    if(vm["power"].as<double>() <= 0.0)
+    if(power <= 0.0)
     {
         std::ostringstream oss;
         oss << "Electrical power dissipation, "
-            << vm["power"].as<double>()
+            << power
             << "is not positive.";
         throw std::domain_error(oss.str());
     }
 
-    if(vm["area"].as<double>() <= 0.0)
-    {
-        std::ostringstream oss;
-        oss << "Ridge area, "
-            << vm["area"].as<double>()
-            << "is not positive.";
-        throw std::domain_error(oss.str());
-    }
-    
-    if(vm["resistance"].as<double>() <= 0.0)
+    auto resistance = get_option<double>("resistance");
+
+    if(resistance <= 0.0)
     {
         std::ostringstream oss;
         oss << "Thermal resistance, "
-            << vm["resistance"].as<double>()
+            << resistance
             << "is not positive.";
         throw std::domain_error(oss.str());
     }
-    
-    if(vm["capacitance"].as<double>() <= 0.0)
+
+    auto capacitance = get_option<double>("capacitance");
+
+    if(capacitance <= 0.0)
     {
         std::ostringstream oss;
         oss << "Thermal capacitance, "
-            << vm["capacitance"].as<double>()
+            << capacitance
             << "is not positive.";
         throw std::domain_error(oss.str());
     }
@@ -173,11 +130,11 @@ auto main(int argc, char *argv[]) -> int
     if(opt.get_verbose())
         printf("dt=%.4f ns.\n",dt*1e9);
 
-    size_t _n_rep = opt.get_n_rep(); // Number of pulse repetitions
+    auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
     unsigned int i=0;
 
-    double R = opt.get_R(); // K/W
-    double C = opt.get_C();
+    auto R = opt.get_option<double>("resistance"); // K/W
+    auto C = opt.get_option<double>("capacitance");
 
     std::vector<double> _q;
     std::vector<double> _t;
@@ -187,6 +144,13 @@ auto main(int argc, char *argv[]) -> int
     std::valarray<double> t_mid(_n_rep); // Time at middle of each pulse
     std::valarray<double> T_mid(_n_rep); // Temperature at middle of each pulse
    
+    /**
+     * Electrical power dissipation while QCL is switched on [W]
+     * It is assumed that all power is dissipated in the active
+     * region heterostructure (i.e. contacts have zero resistance!)
+     */
+    auto power = opt.get_option<double>("power");
+
     // Generate power pulse train
     for(unsigned int iper=0; iper<_n_rep; iper++)
     {
@@ -200,9 +164,11 @@ auto main(int argc, char *argv[]) -> int
 
 	    // If this time-step is within the pulse, then "switch on" the
 	    // electrical power
-	    if (dt*it <= pw)
-		    _q.push_back(opt.get_power());
-	    else _q.push_back(0);
+	    if (dt*it <= pw) {
+		    _q.push_back(power);
+            } else {
+                _q.push_back(0);
+            }
 
 	    // Find the middle of the pulse
 	    if(dt*it <= pw/2.0)
@@ -238,7 +204,8 @@ auto main(int argc, char *argv[]) -> int
 
     std::valarray<double> t(&_t[0], nt);
     std::valarray<double> q(&_q[0], nt);
-    std::valarray<double> T = B + opt.get_heatsink_temperature();
+    auto T_H = opt.get_option<double>("Tsink"); // Heat-sink temperature [K]
+    std::valarray<double> T = B + T_H;
 
     write_table("T-t.dat", std::valarray<double>(1e6*t), T);
 

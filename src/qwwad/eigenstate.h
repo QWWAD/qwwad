@@ -17,7 +17,7 @@ namespace QWWAD {
  */
 class Eigenstate {
 private:
-    double _E; ///< The energy of the state [J]
+    double E_; ///< The energy of the state [J]
 
     arma::vec _z;   ///< Spatial sampling positions [m]
     arma::vec _psi; ///< Wave function [m^{-0.5}]
@@ -26,11 +26,11 @@ private:
     void normalise();
 
 public:
-    explicit Eigenstate(decltype(_E)   E,
+    explicit Eigenstate(decltype(E_)   E,
                         decltype(_z)   z,
                         decltype(_psi) psi);
 
-    [[nodiscard]] inline auto get_energy()                                     const {return _E;}
+    [[nodiscard]] inline auto get_energy()                                     const {return E_;}
     [[nodiscard]] inline auto get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
     [[nodiscard]] inline auto get_wavefunction_samples()                       const {return _psi;}
     [[nodiscard]] inline auto get_position_samples()                           const {return _z;}

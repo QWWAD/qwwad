@@ -18,21 +18,24 @@
 namespace QWWAD
 {
 using namespace constants;
-SchroedingerSolverDonor::SchroedingerSolverDonor(const double        m,
-                                                 const decltype(_V) &V,
-                                                 const decltype(_z) &z,
-                                                 const double        eps,
-                                                 const double        r_d,
-                                                 const double        lambda,
-                                                 const double        dE) :
-    SchroedingerSolver(V, z, 1),
+SchroedingerSolverDonor::SchroedingerSolverDonor(const double     m,
+                                                 const arma::vec &V,
+                                                 const arma::vec &z,
+                                                 const double     eps,
+                                                 const double     r_d,
+                                                 const double     lambda,
+                                                 const double     dE) :
     _me(m),
     _eps(eps),
     _r_d(r_d),
     _lambda(lambda),
     _dE(dE),
     _solutions_chi()
-{}
+{
+    set_V(V);
+    set_z(z);
+    set_nst_max(1);
+}
 
 /**
  * \brief Calculates a wavefunction iteratively from left to right of structure
@@ -49,8 +52,11 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double        m,
 auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
                                                    arma::vec    &chi) const -> double
 {
-    const size_t nz = _z.size();
-    const double dz = _z[1] - _z[0];
+    const auto z = get_z();
+    const size_t nz = z.size();
+    const double dz = z[1] - z[0];
+
+    const auto V = get_V();
 
     chi.resize(nz);
 
@@ -68,7 +74,7 @@ auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
         if(iz != 0)
             chi_prev = chi[iz-1];
 
-        const double z_dash = _z[iz] - _r_d;
+        const double z_dash = z[iz] - _r_d;
 
         const double I1=I_1(z_dash);
         const double I2=I_2(z_dash);
@@ -80,7 +86,7 @@ auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
 
         // Coefficient of function
         const double gamma = I3 + _me*e*e*I4/(2.0*pi*_eps*hBar*hBar)
-                             - 2.0*_me*(_V[iz]-E)*I1/(hBar*hBar);
+                             - 2.0*_me*(V[iz]-E)*I1/(hBar*hBar);
 
         chi_next = ((-1.0+beta*dz/(2.0*alpha))*chi_prev
                     +(2.0-dz*dz*gamma/alpha)*chi[iz]
@@ -116,8 +122,12 @@ auto SchroedingerSolverDonor::chi_at_inf (double  E,
     return se->shoot_wavefunction(E, chi);
 }
 
-void SchroedingerSolverDonor::calculate()
+auto
+SchroedingerSolverDonor::calculate() -> std::vector<Eigenstate>
 {
+    const auto z = get_z();
+    const auto V = get_V();
+
     _solutions_chi.clear();
     gsl_function f;
     f.function = &chi_at_inf;
@@ -126,7 +136,7 @@ void SchroedingerSolverDonor::calculate()
 
     /* initial energy estimate=minimum potential-binding energy
        of particle to free ionised dopant */
-    double Elo = _V.min() - e*e/(4*pi*_eps*_lambda);
+    double Elo = V.min() - e*e/(4*pi*_eps*_lambda);
 
     // Value for y=f(x) at bottom of search range
     const double y1 = GSL_FN_EVAL(&f,Elo);
@@ -171,19 +181,21 @@ void SchroedingerSolverDonor::calculate()
     }while(status == GSL_CONTINUE);
 
     // Stop if we've exceeded the cut-off energy
-    if(gsl_fcmp(E, _V.max()+e, e*1e-12) == 1)
+    if(gsl_fcmp(E, V.max()+e, e*1e-12) == 1)
         throw std::runtime_error("Energy exceeded Vmax");
 
-    arma::vec chi(_z.size());
+    arma::vec chi(z.size());
     const auto chi_inf = shoot_wavefunction(E, chi);
-    _solutions_chi.emplace_back(E, _z, chi);
+    _solutions_chi.emplace_back(E, z, chi);
 
-    calculate_psi_from_chi(); // Finally, compute the complete solution
+    auto solutions = calculate_psi_from_chi(); // Finally, compute the complete solution
 
     // Check that wavefunction is tightly bound
     // TODO: Implement a better check
     if(gsl_fcmp(fabs(chi_inf), 0, 1) == 1)
         throw "Warning: Wavefunction is not tightly bound";
+
+    return solutions;
 }
 
 /**
@@ -204,8 +216,9 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
         // range!
         for(auto it = _solutions_chi.begin(); it != _solutions_chi.end(); ++it)
         {
-            if ((_E_max_set && gsl_fcmp(it->get_energy(), _E_max, e*1e-12) ==  1) ||
-                (_E_min_set && gsl_fcmp(it->get_energy(), _E_min, e*1e-12) == -1)) {
+            auto E = it->get_energy();
+
+            if (energy_above_range(E) || energy_below_range(E)) {
                 _solutions_chi.erase(it);
             }
         }

@@ -20,23 +20,26 @@ using namespace constants;
 /**
  * \brief Configure command-line options for the program
  */
-auto configure_options(int argc, char** argv) -> Options
+auto configure_options(int argc, char** argv) noexcept -> Options
 {
     Options opt;
 
     std::string doc("Find the eigenstates of an infinite quantum well.");
 
-    opt.add_option<double>("wellwidth,L",   100, "Width of quantum well [angstrom].");
-    opt.add_option<double>("mass,m",      0.067, "Effective mass (relative to free electron).");
-    opt.add_option<size_t>("nz,N",          100, "Number of spatial points for output file.");
-    opt.add_option<size_t>("nst,s",           1, "Number of states to find.");
-    opt.add_option<char>  ("particle,p",    'e', "ID of particle to be used: 'e', 'h' or 'l', for "
-                                                 "electrons, heavy holes or light holes respectively.");
-    opt.add_option<double>("vcb",          0.00, "Band-edge potential [eV]");
-    opt.add_option<double>("alpha",        0.00, "Non-parabolicity parameter [eV^{-1}]");
-    opt.add_option<double>("Emin",               "Lower cut-off energy for solutions [meV]");
-    opt.add_option<double>("Emax",               "Upper cut-off energy for solutions [meV]");
-    opt.add_option<double>("barrierwidth", 0.00, "Width of barriers [angstrom]");
+    constexpr double m_GaAs = 0.067; // Default to GaAs effective mass
+    constexpr size_t nz_def = 100;   // Default to 100 spatial points
+
+    opt.add_option<double>("wellwidth,L", 100.0,  "Width of quantum well [angstrom].");
+    opt.add_option<double>("mass,m",      m_GaAs, "Effective mass (relative to free electron).");
+    opt.add_option<size_t>("nz,N",        nz_def, "Number of spatial points for output file.");
+    opt.add_option<size_t>("nst,s",         1,    "Number of states to find.");
+    opt.add_option<char>  ("particle,p",  'e',    "ID of particle to be used: 'e', 'h' or 'l', for "
+                                                  "electrons, heavy holes or light holes respectively.");
+    opt.add_option<double>("vcb",           0.00, "Band-edge potential [eV]");
+    opt.add_option<double>("alpha",         0.00, "Non-parabolicity parameter [eV^{-1}]");
+    opt.add_option<double>("Emin",                "Lower cut-off energy for solutions [meV]");
+    opt.add_option<double>("Emax",                "Upper cut-off energy for solutions [meV]");
+    opt.add_option<double>("barrierwidth",  0.00, "Width of barriers [angstrom]");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -59,14 +62,16 @@ auto main(int argc, char *argv[]) -> int
     SchroedingerSolverInfWell se(m, L, N, alpha, V, s);
     se.set_padding_width(Lb);
 
+    const double meV_to_J = e / 1000.0;
+
     // Set cut-off energies if desired
     if(opt.get_argument_known("Emin"))
     {
-        se.set_E_min(opt.get_option<double>("Emin") * e/1000);
+        se.set_E_min(opt.get_option<double>("Emin") * meV_to_J);
     }
     if(opt.get_argument_known("Emax"))
     {
-        se.set_E_max(opt.get_option<double>("Emax") * e/1000);
+        se.set_E_max(opt.get_option<double>("Emax") * meV_to_J);
     }
 
     const auto solutions = se.get_solutions(true);

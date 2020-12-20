@@ -33,38 +33,47 @@ using namespace constants;
  */
 SchroedingerSolverShooting::SchroedingerSolverShooting(decltype(_me)       me,
                                                        decltype(_alpha)    alpha,
-                                                       const decltype(_V) &V,
-                                                       const decltype(_z) &z,
+                                                       const arma::vec    &V,
+                                                       const arma::vec    &z,
                                                        const double        dE,
                                                        const unsigned int  nst_max) :
-    SchroedingerSolver(V,z,nst_max),
     _me(std::move(me)),
     _alpha(std::move(alpha)),
     _dE(dE)
 {
+    set_V(V);
+    set_z(z);
+    set_nst_max(nst_max);
 }
 
 /**
  * Find solution to eigenvalue problem
  */
-void SchroedingerSolverShooting::calculate()
+auto
+SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
 {
-    double Elo=_V.min() + _dE;    // first energy estimate
+    const auto z = get_z();
+    const auto V = get_V();
+    double Elo=V.min() + _dE;    // first energy estimate
 
     gsl_function f;
     f.function  = &psi_at_inf;
     f.params    = this;
     auto solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
+    auto nst_max = get_nst_max();
+
+    std::vector<Eigenstate> solutions;
+
     for(unsigned int ist=0;
-            (_nst_max > 0  && ist < _nst_max) || // Continue if max. states is specified & not exceeded
-            (_nst_max == 0 && gsl_fcmp(Elo, _V.max(), e/1e12) == -1); // Or if max. states is NOT specified and we're below the max potential
-    ++ist)
+            (nst_max > 0  && ist < nst_max) || // Continue if max. states is specified & not exceeded
+            (nst_max == 0 && gsl_fcmp(Elo, V.max(), e/1e12) == -1); // Or if max. states is NOT specified and we're below the max potential
+            ++ist)
     {
         // Shift the lower estimate up past the last state we found
         if(ist > 0)
         {
-            const auto E_last = _solutions[ist-1].get_energy();
+            const auto E_last = solutions[ist-1].get_energy();
             Elo = E_last + _dE;
         }
 
@@ -112,21 +121,20 @@ void SchroedingerSolverShooting::calculate()
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
-        if(_E_max_set && gsl_fcmp(E, _E_max, e*1e-12) == 1)
-        {
-            break;
-        }
+        if(energy_above_range(E)) break;
 
-        arma::vec psi(_z.size());
+        arma::vec psi(z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);
 
-        _solutions.emplace_back(E,_z,psi);
+        solutions.emplace_back(E,z,psi);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
         if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
             throw "Warning: Wavefunction is not tightly bound";
     }
+
+    return solutions;
 }
 
 /**
@@ -142,7 +150,7 @@ void SchroedingerSolverShooting::calculate()
  * \returns The wavefunction amplitude immediately to the right of the structure
  */
 auto SchroedingerSolverShooting::psi_at_inf(double  E,
-                                              void   *params) -> double
+                                            void   *params) -> double
 {
     const auto se = reinterpret_cast<SchroedingerSolverShooting *>(params);
     arma::vec psi = arma::zeros(se->get_z().size());
@@ -166,12 +174,14 @@ auto SchroedingerSolverShooting::psi_at_inf(double  E,
 auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
                                                       const double  E) const -> double
 {
-    const size_t nz = _z.size();
+    const auto z = get_z();
+    const auto V = get_V();
+    const size_t nz = z.size();
     wf.resize(nz);
-    const double dz = _z(1) - _z(0);
+    const double dz = z(1) - z(0);
 
     // Recalculate effective mass with non-parabolicity at this energy
-    const arma::vec m = _me%(1.0+_alpha%(E-_V));
+    const arma::vec m = _me%(1.0+_alpha%(E-V));
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf(0) = 1.0;
@@ -198,7 +208,7 @@ auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
             m_next = m(i);
         }
 
-        wf_next = (2*m_next*dz*dz/hBar/hBar*(_V(i)-E)+
+        wf_next = (2*m_next*dz*dz/hBar/hBar*(V(i)-E)+
                 1.0 + m_next/m_prev)*wf(i)
                 - wf_prev * m_next/m_prev;
 

@@ -58,24 +58,24 @@ DensityinputOptions::DensityinputOptions(int argc, char** argv)
     add_prog_specific_options_and_parse(argc, argv, doc);
 
     // Parse the distribution type parameter
-    if(vm.count("type"))
+    if(get_argument_known("type"))
     {
-        const char* arg = vm["type"].as<std::string>().c_str();
+        auto arg = get_option<std::string>("type");
 
-        if(!strcmp(arg, "fermi") ||
-                !strcmp(arg, "Fermi") ||
-                !strcmp(arg, "thermal") ||
-                !strcmp(arg, "Thermal"))
+        if(arg == "fermi"   ||
+           arg == "Fermi"   ||
+           arg == "thermal" ||
+           arg == "Thermal")
             distType = DIST_FERMI;
-        else if(!strcmp(arg, "ground") ||
-                !strcmp(arg, "Ground") ||
-                !strcmp(arg, "cold") ||
-                !strcmp(arg, "Cold"))
+        else if(arg == "ground" ||
+                arg == "Ground" ||
+                arg == "cold"   ||
+                arg == "Cold")
             distType = DIST_GROUND;
-        else if(!strcmp(arg, "even") ||
-                !strcmp(arg, "Even") ||
-                !strcmp(arg, "equal") ||
-                !strcmp(arg, "Equal"))
+        else if(arg == "even"  ||
+                arg == "Even"  ||
+                arg == "equal" ||
+                arg == "Equal")
             distType = DIST_EVEN;
         else
         {

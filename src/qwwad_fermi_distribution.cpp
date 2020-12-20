@@ -75,7 +75,7 @@ class SBPOptions : public Options
         [[nodiscard]] auto get_global_pop() const -> double {return get_option<double>("global-population") * 10000 *1e10;}
 
         /// \returns true if the system is in thermal equilibrium
-        [[nodiscard]] auto equilibrium() const -> bool {return (vm.count("global-population") > 0 and gsl_fcmp(get_global_pop(),0,1e-6));}
+        [[nodiscard]] auto equilibrium() const -> bool {return (get_argument_known("global-population") && gsl_fcmp(get_global_pop(),0,1e-6));}
 };
 
 auto main(int argc,char *argv[]) -> int
