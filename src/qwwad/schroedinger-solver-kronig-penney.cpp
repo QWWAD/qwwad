@@ -32,13 +32,17 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
     _V0(V0),
     _m_w(m_w),
     _m_b(m_b),
-    _k(k)
+    _k(k),
+    _nz(nz)
 {
     set_nst_max(nst_max);
+
+    // The potential & spatial points need to be long enough to hold the required
+    // number of periods of the structure
     arma::vec V(nz*nper);
     arma::vec z(nz*nper);
 
-    const auto L  = l_b + l_w;
+    const auto L  = l_b + l_w; // Total length of a period [m]
     const auto dz = L*nper/(nz*nper+1);
 
     // Generate potential profile (well, then barrier)
@@ -46,11 +50,14 @@ SchroedingerSolverKronigPenney::SchroedingerSolverKronigPenney(const double l_w,
     {
         for (unsigned int iz=0; iz<nz; iz++)
         {
-            z(iz + iper*nz) = iz*dz + iper*L;
+            z(iz + iper*nz) = iz*dz + iper*L - l_w;
 
             // Fill in barrier potential
-            if(z(iz) > l_w)
+            if(z(iz) > 0) {
                 V(iz + iper*nz) = _V0;
+            } else {
+                V(iz + iper*nz) = 0.0;
+            }
         }
     }
 
@@ -116,11 +123,11 @@ auto SchroedingerSolverKronigPenney::get_lhs(const double E) const -> double
 auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> arma::vec
 {
     const auto z = get_z();
-    const auto nz = z.size();
-    arma::vec psi(nz); // wavefunction
+    const auto nz_total = z.size(); // Total number of spatial data points in the system
+    const auto V = get_V();
+    arma::vec psi(nz_total);  // wavefunction
+    arma::cx_vec u(nz_total); // Periodic part of wave function
 
-#if 0
-    // Temporarily disabled because this calculation doesn't work!
     // Imaginary unit
     const auto I = std::complex<double>(0,1);
 
@@ -129,26 +136,21 @@ auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> a
     const auto k_b = sqrt(2.0*_m_b*std::complex<double>(E-_V0,0))/hBar; // Wave vector in barrier
 
     const auto L   = _l_w + _l_b; // Period length
-#endif
 
-    for (unsigned int i_z=0; i_z<nz; ++i_z)
+    const auto B = std::complex<double>(1,0);
+    const auto D = std::complex<double>(1,0);
+    const auto A = (exp(I*_k*L)*cos(k_w*_l_w) - cos(k_b*_l_b) ) / (exp(I*_k*L) * sin(k_w*_l_w) + _m_b*k_w/(_m_w*k_b)*sin(k_b*_l_b));
+    const auto C = _m_b*k_w / (_m_w * k_b) * A;
+
+    for (unsigned int i_z=0; i_z<nz_total; ++i_z)
     {
-        // Temporarily disabled because this calculation doesn't work!
-#if 0
-        const auto z = _z[i_z];
+        if (V[i_z] > 0) { // In barriers
+            u[i_z] = (C*sin(k_b*z[i_z%_nz]) + D*cos(k_b*z[i_z%_nz]))/exp(I*_k*z[i_z%_nz]);
+        } else { // In wells
+            u[i_z] = (A*sin(k_w*z[i_z%_nz]) + B*cos(k_w*z[i_z%_nz]))/exp(I*_k*z[i_z%_nz]);
+        }
 
-        const auto A = std::complex<double>(1,0);
-        const auto B = A * (sin(k_w*_l_w) + _m_b*k_w/(_m_w*k_b)*sin(k_b*_l_b)) /
-            (exp(I*_k*L) * cos(k_b*_l_b) - cos(k_w*_l_w));
-        const auto D = B;
-        const auto C = _m_b*k_w / (_m_w*k_b) * A;
-#endif
-
-//        if (_V[i_z] > 0) { // In barriers
-            psi[i_z] = 1; //real(C*sin(k_b*z) + D*cos(k_b*z));
-//        } else { // In wells
-//            psi[i_z] = 1; //real(A*sin(k_w*z) + B*cos(k_w*z));
-//        }
+        psi[i_z] = abs(u[i_z]*exp(I*_k*z[i_z]));
     }
 
     return psi;

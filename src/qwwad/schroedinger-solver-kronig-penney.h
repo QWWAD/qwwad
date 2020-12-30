@@ -45,6 +45,7 @@ private:
     double _m_w; ///< Effective mass in well [kg]
     double _m_b; ///< Effective mass in barriers [kg]
     double _k;   ///< Wave vector [1/m]
+    size_t _nz;  ///< Number of spatial points in 1 period
 
     auto calculate() -> std::vector<Eigenstate> override;
 

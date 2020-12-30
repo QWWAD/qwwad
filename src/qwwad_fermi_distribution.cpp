@@ -29,6 +29,9 @@
 using namespace QWWAD;
 using namespace constants;
 
+// Conversion factor for 1e10 cm^{-2} to m^{-2}
+constexpr double pop_unit_conv = 10000*1e10;
+
 static auto calc_dist(const double       Emin,
                         const double       Ef,
                         const double       m,
@@ -46,36 +49,39 @@ class SBPOptions : public Options
     public:
         SBPOptions(int argc, char** argv)
         {
-            try
-            {
-                std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
+            std::string summary("Find the Fermi-Dirac distribution functions for a set of subbands.");
 
-                add_option<bool>  ("fd,f",                      "Output Fermi-Dirac distribution.");
-                add_option<double>("mass,m",             0.067, "Effective mass (relative to free electron)");
-                add_option<double>("vcb",                 0.00, "Band-edge potential [eV]");
-                add_option<double>("alpha",               0.00, "Non-parabolicity parameter [eV^{-1}]");
-                add_option<char>  ("particle,p",          'e',  "ID of particle to be used: 'e', 'h' or 'l', for "
-                                                                "electrons, heavy holes or light holes respectively.");
-                add_option<double>("Te",                  300,  "Carrier temperature [K].");
-                add_option<size_t>("nenergy,n",           1000, "Number of energy samples to print out");
-                add_option<double>("global-population,N", 0.0,  "Use equilibrium population for the entire system "
-                                                                "instead of reading subband "
-                                                                "populations from file [x1e10 cm^{-2}]");
+            const double m_GaAs = 0.067;
+            const double Te_def = 300;
+            const double nE_def = 1000;
 
-                add_prog_specific_options_and_parse(argc, argv, summary);
-            }
-            catch(std::exception &e)
-            {
-                std::cerr << e.what() << std::endl;
-                exit(EXIT_FAILURE);
-            }
+            add_option<bool>  ("fd,f",                        "Output Fermi-Dirac distribution.");
+            add_option<double>("mass,m",              m_GaAs, "Effective mass (relative to free electron)");
+            add_option<double>("vcb",                 0.00,   "Band-edge potential [eV]");
+            add_option<double>("alpha",               0.00,   "Non-parabolicity parameter [eV^{-1}]");
+            add_option<char>  ("particle,p",          'e',    "ID of particle to be used: 'e', 'h' or 'l', for "
+                    "electrons, heavy holes or light holes respectively.");
+            add_option<double>("Te",                  Te_def, "Carrier temperature [K].");
+            add_option<size_t>("nenergy,n",           nE_def, "Number of energy samples to print out");
+            add_option<double>("global-population,N", 0.0,    "Use equilibrium population for the entire system "
+                    "instead of reading subband "
+                    "populations from file [x1e10 cm^{-2}]");
+
+            add_prog_specific_options_and_parse(argc, argv, summary);
         }
 
         /// \returns the global population [m^{-2}]
-        [[nodiscard]] auto get_global_pop() const -> double {return get_option<double>("global-population") * 10000 *1e10;}
+        [[nodiscard]] auto get_global_pop() const -> double
+        {
+            return get_option<double>("global-population") * pop_unit_conv;
+        }
 
         /// \returns true if the system is in thermal equilibrium
-        [[nodiscard]] auto equilibrium() const -> bool {return (get_argument_known("global-population") && gsl_fcmp(get_global_pop(),0,1e-6));}
+        [[nodiscard]] auto equilibrium() const -> bool
+        {
+            const double epsilon = 1e-6; // Small number for comparison
+            return get_argument_known("global-population") && gsl_fcmp(get_global_pop(),0,epsilon);
+        }
 };
 
 auto main(int argc,char *argv[]) -> int
@@ -114,7 +120,7 @@ auto main(int argc,char *argv[]) -> int
             N[i]  = find_pop(E[i], Ef[i], m, T, alpha, V);
         }
 
-        N /= 1e14; // Rescale to 1e10 cm^{-2}
+        N /= pop_unit_conv; // Rescale to 1e10 cm^{-2}
         write_table("N-out.r", N, true, 17);
     }
     else
@@ -137,8 +143,9 @@ auto main(int argc,char *argv[]) -> int
         {
             const auto subband_pop = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
 
-            if(opt.get_verbose())
-                printf("Ne=%20.17le\n", subband_pop/1e+14);
+            if(opt.get_verbose()) {
+                std::cout << "Ne = " << subband_pop/pop_unit_conv << std::endl;
+            }
         }
     }
 
