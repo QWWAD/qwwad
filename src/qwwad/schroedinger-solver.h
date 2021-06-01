@@ -44,8 +44,8 @@ protected:
     [[nodiscard]] auto get_E_search_min() const -> double;
     [[nodiscard]] auto get_E_search_max() const -> double;
 
-    [[nodiscard]] auto energy_above_range(const double E) const -> bool;
-    [[nodiscard]] auto energy_below_range(const double E) const -> bool;
+    [[nodiscard]] auto energy_above_range(double E) const -> bool;
+    [[nodiscard]] auto energy_below_range(double E) const -> bool;
 
     /**
      * \brief Calculate all eigenstates
@@ -83,15 +83,15 @@ protected:
     void refresh_solutions();
 
 public:
-    auto get_solutions(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
+    auto get_solutions(bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
     [[nodiscard]] auto get_z() const -> decltype(_z);
     [[nodiscard]] auto get_V() const -> decltype(V_);
 
     virtual auto get_name() -> std::string = 0;
 
-    void set_E_min(const double E_min);
-    void set_E_max(const double E_max);
+    void set_E_min(double E_min);
+    void set_E_max(double E_max);
 
     /**
      * \brief Turn off filtering of solutions by energy

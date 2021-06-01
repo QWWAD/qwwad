@@ -100,9 +100,11 @@ auto SchroedingerSolverDonorVariable::I_3(const double z_dash) const -> double
 
     integral_params p = {_lambda, _zeta, z_dash_abs};
 
-    gsl_function f_33, f_34;
+    gsl_function f_33;
     f_33.function = &I_33_integrand;
     f_33.params = &p;
+
+    gsl_function f_34;
     f_34.function = &I_34_integrand;
     f_34.params = &p;
 

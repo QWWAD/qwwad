@@ -48,7 +48,7 @@ SchroedingerSolver::refresh_solutions()
  *
  * \returns The set of eigenstates for this Hamiltonian
  */
-auto SchroedingerSolver::get_solutions(const bool convert_to_meV) -> std::vector<Eigenstate>
+auto SchroedingerSolver::get_solutions(bool convert_to_meV) -> std::vector<Eigenstate>
 {
     // Only calculate if we haven't done so yet
     if(_solutions.empty()) {

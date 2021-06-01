@@ -22,14 +22,14 @@ namespace QWWAD
 class SchroedingerSolverDonorVariable : public SchroedingerSolverDonor
 {
 public:
-    SchroedingerSolverDonorVariable(const double     m,
+    SchroedingerSolverDonorVariable(double           m,
                                     const arma::vec &V,
                                     const arma::vec &z,
-                                    const double     eps,
-                                    const double     r_d,
-                                    const double     lambda,
-                                    const double     zeta,
-                                    const double     dE);
+                                    double           eps,
+                                    double           r_d,
+                                    double           lambda,
+                                    double           zeta,
+                                    double           dE);
 
     auto get_name() -> std::string override {return "donor-variable";}
     void   set_zeta       (const double zeta) {_zeta = zeta; refresh_solutions();}
@@ -39,10 +39,10 @@ public:
 private:
     auto calculate_psi_from_chi() -> std::vector<Eigenstate> override;
 
-    [[nodiscard]] auto I_1(const double z_dash) const -> double override;
-    [[nodiscard]] auto I_2(const double z_dash) const -> double override;
-    [[nodiscard]] auto I_3(const double z_dash) const -> double override;
-    [[nodiscard]] auto I_4(const double z_dash) const -> double override;
+    [[nodiscard]] auto I_1(double z_dash) const -> double override;
+    [[nodiscard]] auto I_2(double z_dash) const -> double override;
+    [[nodiscard]] auto I_3(double z_dash) const -> double override;
+    [[nodiscard]] auto I_4(double z_dash) const -> double override;
 
     double _zeta; ///< Symmetry parameter
 };

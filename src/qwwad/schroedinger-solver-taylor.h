@@ -28,7 +28,7 @@ public:
                              const decltype(_alpha) &alpha,
                              const arma::vec        &V,
                              const arma::vec        &z,
-                             const unsigned int      nst_max=0);
+                             unsigned int            nst_max=0);
     
     auto get_name() -> std::string override {return "Taylor";}
 private:

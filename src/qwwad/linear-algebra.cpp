@@ -37,8 +37,8 @@ namespace QWWAD
  */
 auto
 eigen_general(arma::mat    &A,
-              const double  VL,
-              const double  VU,
+              double        VL,
+              double        VU,
               unsigned int  n_max) -> std::vector< EVP_solution<double> >
 {
     const int N = sqrt(A.size());

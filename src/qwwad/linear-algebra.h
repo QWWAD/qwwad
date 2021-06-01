@@ -136,21 +136,21 @@ public:
 };
 
 auto eigen_general(arma::mat    &A,
-                   const double  VL,
-                   const double  VU,
-                   unsigned int n_max=0) -> std::vector<EVP_solution<double>>;
+                   double        VL,
+                   double        VU,
+                   unsigned int  n_max=0) -> std::vector<EVP_solution<double>>;
 
 auto eigen_banded(double       *AB,
                   double       *BB,
-                  const double  VL,
-                  const double  VU,
+                  double        VL,
+                  double        VU,
                   int           n,
                   unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
 
 auto eigen_tridiag(arma::vec    &D,
                    arma::vec    &E,
-                   const double  VL,
-                   const double  VU,
+                   double        VL,
+                   double        VU,
                    unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
 
 auto multiply_vec_tridiag(arma::vec const &M_sub,
@@ -179,9 +179,9 @@ auto solve_cyclic_matrix(arma::vec A_sub,
                          double    cyclic,
                          arma::vec  b) -> arma::vec;
 
-void matrixProduct(double*      pB,
-                   double*      pA,
-                   const size_t N);
+void matrixProduct(double* pB,
+                   double* pA,
+                   size_t  N);
 } // namespace
 #endif //QWWAD_LINEAR_ALGEBRA_H
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

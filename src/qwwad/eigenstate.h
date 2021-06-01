@@ -41,14 +41,14 @@ public:
     static auto read_from_file(const std::string &Eigenval_name,
                                const std::string &Eigenvect_prefix,
                                const std::string &Eigenvect_ext,
-                               const double       eigenvalue_scale    = 1.0,
-                               const bool         ignore_first_column = false) -> std::vector<Eigenstate>;
+                               double             eigenvalue_scale    = 1.0,
+                               bool               ignore_first_column = false) -> std::vector<Eigenstate>;
 
     static void write_to_file(const std::string             &Eigenval_name,
                               const std::string             &Eigenvect_prefix,
                               const std::string             &Eigenvect_ext,
                               const std::vector<Eigenstate> &states,
-                              const bool                     with_num=false);
+                              bool                           with_num=false);
 
     // TODO: Should probably be part of an Operator class
     [[nodiscard]] auto get_expectation_position() const -> double;

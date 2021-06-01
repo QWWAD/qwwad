@@ -199,17 +199,16 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
 
     d *= 1e-6; // Rescale thickness to metres
 
-    for(auto name : mat_name)
-    {
+    for(auto name : mat_name) {
         auto material = material_library.get_material(name);
         mat_layer.push_back(*material);
     }
 
-    if(opt.get_verbose())
+    if(opt.get_verbose()) {
         std::cout << "Read " << d.size() << " layers from " << infile << std::endl;
+    }
 
-    if(d.empty())
-    {
+    if(d.empty()) {
         std::ostringstream oss;
         oss << "Could not read any layers from " << infile;
         throw std::runtime_error(oss.str());
@@ -232,6 +231,9 @@ static auto calctemp(double dt,
 
 auto main(int argc, char *argv[]) -> int
 {
+    constexpr float CM2_TO_M2 = 1e-6;
+    constexpr float S_TO_NS   = 1e9;
+
     // Grab user preferences
     MaterialLibrary material_library("");
     Thermal1DOptions opt(argc, argv);
@@ -241,15 +243,14 @@ auto main(int argc, char *argv[]) -> int
     const auto L  = sum(data.d); // Length of structure [m]
     const size_t ny = ceil(L/dy);   // Find number of points in structure
 
-    if(opt.get_verbose())
-    {
+    if(opt.get_verbose()) {
         std::cout << "ny = " << ny << std::endl;
     }
 
     // Thickness of active region [m]
     const auto iAR    = opt.get_option<size_t>("active");
     const auto L_AR   = data.d[iAR];
-    const auto area   = opt.get_option<double>("area")*1e-6; // [m^2]
+    const auto area   = opt.get_option<double>("area")*CM2_TO_M2;
     const auto volume = L_AR * area;  // Active region volume (L x h x w) [m^3]
 
     // Power density in active region [W/m^3]
@@ -259,7 +260,7 @@ auto main(int argc, char *argv[]) -> int
     if(opt.get_verbose())
     {
         printf("Power density = %5.2e W/m3.\n", power_density);
-        printf("Pulse width = %5.1f ns.\n",pw*1e9);
+        printf("Pulse width = %5.1f ns.\n",pw*S_TO_NS);
     }
 
     auto const y = arma::linspace(0, L, ny);                // Spatial coordinates [m]
@@ -285,8 +286,9 @@ auto main(int argc, char *argv[]) -> int
             iLayer(iy) = iL;    // Note the layer containing this point
 
             // Assume that only the active-region is heated
-            if (iL == iAR)
+            if (iL == iAR) {
                 g(iy) = power_density;
+            }
 
             iy++;
         }
@@ -295,15 +297,12 @@ auto main(int argc, char *argv[]) -> int
         double M   = 0.0;
         unsigned int natoms = 0;
 
-        try
-        {
+        try {
             T_D = data.mat_layer[iL].get_property_value("debye-temperature", data.x[iL]);
             M   = data.mat_layer[iL].get_property_value("molar-mass", data.x[iL]);
             natoms = data.mat_layer[iL].get_property_value("natoms");
             rho_layer[iL] = data.mat_layer[iL].get_property_value("density", data.x[iL]);
-        }
-        catch (std::exception &e)
-        {
+        } catch (std::exception &e) {
             std::cerr << "Could not find material parameters for "
                       << data.mat_layer[iL].get_description() << std::endl;
             exit(EXIT_FAILURE);
@@ -402,12 +401,14 @@ auto main(int argc, char *argv[]) -> int
 
             // If this time-step is within the pulse, then
             // "switch on" the electrical power
-            if (dt*it <= pw)
+            if (dt*it <= pw) {
                 q_now = g;
+            }
 
             // Likewise for the previous time-step
-            if (it > 0 and dt*(it-1) <= pw)
+            if (it > 0 and dt*(it-1) <= pw) {
                 q_old = g;
+            }
 
             // Calculate the spatial temperature profile at this 
             // timestep
@@ -417,24 +418,24 @@ auto main(int argc, char *argv[]) -> int
             T_avg(it_total) = calctave(g, T);
             
             // Find T_AR at middle of the pulse
-	    if(dt*it <= pw/2.0)
-            {
+	    if(dt*it <= pw/2.0) {
                 t_mid(iper) = t(it_total);
                 T_mid(iper) = T_avg(it_total);
             }
 
             // Copy temperatures to old time step 
-            for(unsigned int iy=0; iy<ny; iy++)
+            for(unsigned int iy=0; iy<ny; iy++) {
                 Told(iy) = T(iy);
+            }
 
             // Find maximum AR temperature
-            if(T_avg(it_total) > T_max(iper))
-            {
+            if(T_avg(it_total) > T_max(iper)) {
                 T_max(iper) = T_avg(it_total);
                 t_max(iper) = t(it_total);
 
-                for(unsigned int iy = 0; iy < ny; ++iy)
+                for(unsigned int iy = 0; iy < ny; ++iy) {
                     T_y_max(iy) = T(iy);
+                }
             }
 
             // Find minimum AR temperature

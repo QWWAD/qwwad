@@ -41,8 +41,9 @@ auto read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream) 
     const std::streamsize nbytes = 100; // Initial size of buffer
     int scan_result=1; // Flag to show whether scan was successful [1=error]
 
-    if(!stream.good())
+    if(!stream.good()) {
         throw std::runtime_error("Could not read stream");
+    }
 
     // Buffer for line data
     auto linebuffer = new char[nbytes+1];
@@ -56,9 +57,10 @@ auto read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream) 
 
         /* Loop over all expected items on the line and read them to
          * array one by one */
-        for(i=0; i<n; i++){
-            if(pch == nullptr)
+        for(i=0; i<n; i++) {
+            if(pch == nullptr) {
                 throw std::runtime_error("Data missing on at least one line");
+	    }
 
             dest[i]=atof(pch); // Copy data to array
             pch=strtok(nullptr, "\t "); // Read next data item
@@ -80,19 +82,20 @@ template <template<typename, typename...> class Tcontainer,
           class T>
 void read_line_array_u(Tcontainer<T>& dest, std::istream& stream)
 {
-    std::streamsize nbytes=10000; // Initial size of buffer
+    constexpr size_t INITIAL_BUFFER_SIZE=10000;
+    std::streamsize nbytes=INITIAL_BUFFER_SIZE;
 
     std::vector<T> dest_tmp; // Temp storage for output data
 
-    if(!stream)
+    if(!stream) {
         throw std::runtime_error("Could not read stream");
+    }
     
     // Buffer for line data
     char* linebuffer = new char[nbytes+1];
 
     // Read line from stream into input buffer
-    if(!stream.getline(linebuffer, nbytes) or linebuffer[0] == '\0')
-    {
+    if(!stream.getline(linebuffer, nbytes) or linebuffer[0] == '\0') {
         delete[] linebuffer;
         throw std::runtime_error("Blank input line detected");
     }
@@ -213,8 +216,9 @@ void read_table(const Tstring fname, Tcontainer<T>& x)
         T buffer = 0; // Buffer for input data
 
         // If data is valid, stick it into temp vector
-        if(!read_line(stream, buffer))
+        if(!read_line(stream, buffer)) {
             x_temp.push_back(buffer);
+	}
     }
     
     stream.close();	
@@ -252,12 +256,13 @@ void write_table(const Tstring        fname,
     }
 
     stream << std::setprecision(precision) << std::scientific;
-    for(unsigned int i=0; i<nx; i++)
-    {
-        if(with_num)
+
+    for(unsigned int i=0; i<nx; i++) {
+        if(with_num) {
             stream << i+1 << std::setprecision(precision) << std::scientific << "\t" << x[i] << std::endl;
-        else
+	} else {
             stream << std::setprecision(precision) << std::scientific << x[i] << std::endl;
+	} // end if
     }
 
     stream.close();	
@@ -609,12 +614,12 @@ void write_table(const Tstring                       fname,
         throw std::runtime_error(oss.str());
     }
 
-    for(unsigned int i=0; i<nx; i++)
-    {
-        if(with_num)
+    for(unsigned int i=0; i<nx; i++) {
+        if(with_num) {
             stream << i+1 << "\t" << x[i] << "\t" << y[i] << "\t" << z[i] << std::endl;
-        else
+	} else {
             stream << x[i] << "\t" << y[i] << "\t" << z[i] << std::endl;
+	} // end if
     }
 
     stream.close();	
@@ -666,12 +671,12 @@ void write_table(const Tstring          fname,
         throw std::runtime_error(oss.str());
     }
 
-    for(unsigned int i=0; i<nx; i++)
-    {
-        if(with_num)
+    for(unsigned int i=0; i<nx; i++) {
+        if(with_num) {
             stream << i+1 << "\t" << x[i] << "\t" << y[i] << "\t" << z[i] << "\t" << u[i] << std::endl;
-        else
+	} else {
             stream << x[i] << "\t" << y[i] << "\t" << z[i] << "\t" << u[i] << std::endl;
+	} // end if
     }
 
     stream.close();	

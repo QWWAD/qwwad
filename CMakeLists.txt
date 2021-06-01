@@ -1,4 +1,4 @@
-cmake_minimum_required( VERSION 3.1 )
+cmake_minimum_required( VERSION 3.6 )
 
 include(CMakeScripts/ConfigEnv.cmake)
 include(FindPkgConfig)
@@ -17,6 +17,8 @@ cmake_policy(SET CMP0048 NEW)
 project(qwwad
 	VERSION 1.6
        )
+
+set( CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-* )
 
 message("-- Building ${PROJECT_NAME} version: ${qwwad_VERSION}")
 set( QWWAD_URL "https://launchpad.net/qwwad" )
