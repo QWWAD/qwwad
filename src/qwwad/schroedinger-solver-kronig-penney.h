@@ -20,22 +20,22 @@ namespace QWWAD
 class SchroedingerSolverKronigPenney : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverKronigPenney(const double l_w,
-                                   const double l_b,
-                                   const double V,
-                                   const double m_w,
-                                   const double m_b,
-                                   const double k,
-                                   const size_t nz,
-                                   const size_t nper = 10,
-                                   const unsigned int nst_max = 1);
+    SchroedingerSolverKronigPenney(double l_w,
+                                   double l_b,
+                                   double V,
+                                   double m_w,
+                                   double m_b,
+                                   double k,
+                                   size_t nz,
+                                   size_t nper = 10,
+                                   unsigned int nst_max = 1);
 
     auto get_name() -> std::string override {return "kronig-penney";}
 
-    static auto test_matching(double v,
-                                void   *params) -> double;
+    static auto test_matching(double  energy,
+                              void   *params) -> double;
 
-    [[nodiscard]] auto get_lhs(const double v) const -> double;
+    [[nodiscard]] auto get_lhs(double E) const -> double;
     [[nodiscard]] auto get_rhs() const -> double;
 
 private:
@@ -49,7 +49,7 @@ private:
 
     auto calculate() -> std::vector<Eigenstate> override;
 
-    [[nodiscard]] auto get_wavefunction(const double E) const -> arma::vec;
+    [[nodiscard]] auto get_wavefunction(double E) const -> arma::vec;
 };
 } // namespace
 #endif

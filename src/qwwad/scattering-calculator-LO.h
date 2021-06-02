@@ -67,26 +67,26 @@ public:
                            decltype(_Tl)          Tl,
                            decltype(_is_emission) is_emission);
 
-   [[nodiscard]] auto get_Eki_min (const unsigned int isb,
-                                   const unsigned int fsb) const -> double;
+   [[nodiscard]] auto get_Eki_min (unsigned int isb,
+                                   unsigned int fsb) const -> double;
 
-   [[nodiscard]] auto get_ki_min (const unsigned int isb,
-                                  const unsigned int fsb) const -> double;
+   [[nodiscard]] auto get_ki_min (unsigned int isb,
+                                  unsigned int fsb) const -> double;
 
-   [[nodiscard]] auto get_ki_cutoff(const unsigned int isb,
-                                    const unsigned int fsb) const -> double;
+   [[nodiscard]] auto get_ki_cutoff(unsigned int isb,
+                                    unsigned int fsb) const -> double;
 
-   auto get_rate_ki(const unsigned int isb,
-                    const unsigned int fsb,
-                    const double       ki) -> double;
+   auto get_rate_ki(unsigned int isb,
+                    unsigned int fsb,
+                    double       ki) -> double;
 
-   auto get_transition(const unsigned int isb,
-                       const unsigned int fsb) -> IntersubbandTransition;
+   auto get_transition(unsigned int isb,
+                       unsigned int fsb) -> IntersubbandTransition;
 
    [[nodiscard]] inline auto get_screening_length() const {return _lambda_s_sq;}
 
    inline void set_ki_samples(const decltype(_nki) nki) {_nki = nki;}
-   void set_phonon_samples(const size_t nKz);
+   void set_phonon_samples(size_t nKz);
 
    [[nodiscard]] inline auto get_dKz() const {return _dKz;}
 
@@ -95,14 +95,15 @@ public:
 
    [[nodiscard]] inline auto get_prefactor() const {return _prefactor;}
 
-   void make_ff_table(const unsigned int i,
-                      const unsigned int f);
+   void make_ff_table(unsigned int i,
+                      unsigned int f);
 
-   auto Gsqr(const double   Kz,
+   auto Gsqr(double   Kz,
              const Subband &isb,
              const Subband &fsb) -> double;
 
-   [[nodiscard]] auto get_ff_table(const unsigned int i, const unsigned int f) const -> arma::vec;
+   [[nodiscard]] auto get_ff_table(unsigned int i,
+                                   unsigned int f) const -> arma::vec;
    [[nodiscard]] inline auto get_Kz_table() const {return _Kz;}
 };
 } // namespace

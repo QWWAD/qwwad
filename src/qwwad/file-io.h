@@ -46,7 +46,7 @@ auto read_line_array(Tcontainer<T> &dest, const size_t n, std::istream& stream) 
     }
 
     // Buffer for line data
-    auto linebuffer = new char[nbytes+1];
+    auto * linebuffer = new char[nbytes+1];
 
     if(stream.getline(linebuffer, nbytes) && linebuffer[0] != '\0')
     {

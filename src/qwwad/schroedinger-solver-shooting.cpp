@@ -59,7 +59,7 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
     gsl_function f;
     f.function  = &psi_at_inf;
     f.params    = this;
-    auto solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+    auto *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
     auto nst_max = get_nst_max();
 
@@ -109,7 +109,7 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
         {
             status = gsl_root_fsolver_iterate(solver);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in SchroedingerSolverShooting: " << std::endl
                           << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
             }
@@ -121,7 +121,9 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
         }while(status == GSL_CONTINUE);
 
         // Stop if we've exceeded the cut-off energy
-        if(energy_above_range(E)) break;
+        if(energy_above_range(E)) {
+            break;
+        }
 
         arma::vec psi(z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);
@@ -130,8 +132,9 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
-        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
+        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1) {
             throw "Warning: Wavefunction is not tightly bound";
+        }
     }
 
     return solutions;
@@ -152,7 +155,7 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
 auto SchroedingerSolverShooting::psi_at_inf(double  E,
                                             void   *params) -> double
 {
-    const auto se = reinterpret_cast<SchroedingerSolverShooting *>(params);
+    auto * const se = reinterpret_cast<SchroedingerSolverShooting *>(params);
     arma::vec psi = arma::zeros(se->get_z().size());
 
     const double psi_inf = se->shoot_wavefunction(psi, E);
@@ -213,7 +216,9 @@ auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
                 - wf_prev * m_next/m_prev;
 
         // Now copy calculated wave function to array
-        if(i != nz-1) wf(i+1) = wf_next;
+        if(i != nz-1) {
+            wf(i+1) = wf_next;
+        }
     }
 
     // Normalise the stored wave function

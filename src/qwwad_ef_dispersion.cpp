@@ -104,8 +104,9 @@ auto main (int argc, char* argv[]) -> int
 
         // If absolute energies are required then offset energies by the energy of the subband
         // minima
-        if(!opt.get_option<bool>("relative"))
+        if(!opt.get_option<bool>("relative")) {
             Ek += sb.get_E_min();
+        }
 
         Ek /= J_to_meV; // Rescale to meV
 

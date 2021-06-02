@@ -32,21 +32,24 @@ auto simps(const arma::Col<complex_type>& y, const real_type dx) -> complex_type
 {
     const size_t n = y.size();
 
-    if(n < 3)
+    if(n < 3) {
         throw std::runtime_error("Not enough points for Simpson's rule");
+    }
 
-    if(GSL_IS_EVEN(n))
-    {
+    if(GSL_IS_EVEN(n)) {
         std::ostringstream oss;
         oss << "Simpson's rule needs odd number of points: " << n << " received.";
         throw std::length_error(oss.str());
     }
 
     complex_type ans=0;
-    for(unsigned int i=0; i<n-2; i+=2)
+
+    for(unsigned int i=0; i<n-2; i+=2) {
         ans += y[i] + 4.0*y[i+1] + y[i+2];
+    }
 
     ans *= dx/3.0;
+
     return ans;
 }
 
@@ -65,13 +68,15 @@ auto trapz(const arma::Col<complex_type>& y, const real_type dx) -> complex_type
 {
     const size_t n = y.size();
 
-    if(n < 2)
+    if(n < 2) {
         throw std::runtime_error("Need at least two points for trapezium rule");
+    }
 
     complex_type ans=0;
 
-    for(unsigned int i=0; i<n-1; i++)
+    for(unsigned int i=0; i<n-1; i++) {
         ans += (y[i] + y[i+1])/2.0;
+    }
 
     ans *= dx;
 
@@ -100,32 +105,35 @@ auto integral(const arma::Col<complex_type>& y, const real_type dx) -> complex_t
 {
     const size_t n = y.size();
 
-    if(n < 2)
+    if(n < 2) {
         throw std::runtime_error("Need at least two points for numerical integration.");
+    }
 
-    if(GSL_IS_ODD(n) && n >= 3)
+    // Use Simpson's rule if we have an odd number of points
+    if(GSL_IS_ODD(n) && n >= 3) {
         return simps(y, dx);
-    else
-        return trapz(y, dx);
+    }
+
+    return trapz(y, dx);
 }
 
 auto lookup_y_from_x(const arma::vec &x_values,
-                       const arma::vec &y_values,
-                       const double     x0) -> double;
+                     const arma::vec &y_values,
+                     double           x0) -> double;
 
-auto lin_interp(const double y0,
-                  const double y1,
-                  const double x,
-                  const double b=0) -> double;
+auto lin_interp(double y0,
+                double y1,
+                double x,
+                double b=0) -> double;
 
-auto cot(const double x) -> double;
+auto cot(double x) -> double;
 
-auto coth(const double x) -> double;
+auto coth(double x) -> double;
 
-auto Theta(const double x) -> unsigned int;
+auto Theta(double x) -> unsigned int;
 
-auto sf_brillouin(const double J,
-                    const double x) -> double;
+auto sf_brillouin(double J,
+                  double x) -> double;
 } // namespace
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

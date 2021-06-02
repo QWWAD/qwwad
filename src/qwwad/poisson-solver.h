@@ -40,13 +40,13 @@ private:
 
 public:
     PoissonSolver(const decltype(_eps) &eps,
-                  const double          dx,
+                  double                dx,
                   PoissonBoundaryType   bt=DIRICHLET);
     
     [[nodiscard]] auto solve(const arma::vec &rho) const -> arma::vec;
     [[nodiscard]] auto solve(const arma::vec &rho,
-                                  const double     V_drop) const -> arma::vec;
-    [[nodiscard]] auto solve_laplace(const double V_drop) const -> arma::vec;
+                             double           V_drop) const -> arma::vec;
+    [[nodiscard]] auto solve_laplace(double V_drop) const -> arma::vec;
 
 private:
     void factorise_dirichlet();

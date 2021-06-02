@@ -56,6 +56,22 @@ const double Rinf = 1.097373156854e7;
 
 /** Bohr magneton */
 const double mu_b = GSL_CONST_MKSA_BOHR_MAGNETON;
+
+/** Conversion factor for giga-unit to unit **/
+const double GIGA = 1.0e9;
+
+/** Conversion factor for kilo-unit to unit **/
+const double KILO = 1.0e3;
+
+/** Conversion factor for centi-unit to unit **/
+const double CENTI = 1.0e-2;
+
+/** Conversion factor for milli-unit to unit **/
+const double MILLI = 1.0e-3;
+
+/** Conversion factor for nano-unit to unit **/
+const double NANO = 1.0e-9;
+
 #if __cplusplus
 }// namespace constants
 }// namespace QWWAD

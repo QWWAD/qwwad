@@ -124,8 +124,8 @@ class Options
             return val;
         }
 
-        void add_prog_specific_options_and_parse(const int     argc,
-                                                 char ** const argv,
+        void add_prog_specific_options_and_parse(int           argc,
+                                                 char        **argv,
                                                  std::string   summary);
 
         [[nodiscard]] auto get_verbose() const noexcept -> bool;

@@ -165,7 +165,7 @@ auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> a
  * \details This gives zero for a perfect match
  */
 auto SchroedingerSolverKronigPenney::test_matching(double  energy,
-                                                     void   *params) -> double
+                                                   void   *params) -> double
 {
     const auto *se = reinterpret_cast<SchroedingerSolverKronigPenney *>(params);
 
@@ -187,7 +187,7 @@ SchroedingerSolverKronigPenney::calculate() -> std::vector<Eigenstate>
     gsl_function F;
     F.function  = &test_matching;
     F.params    = this;
-    auto solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
+    auto *solver = gsl_root_fsolver_alloc(gsl_root_fsolver_brent);
 
     const auto dx=1e-3*e; // arbitrarily small energy increment---0.1meV
 
@@ -198,8 +198,9 @@ SchroedingerSolverKronigPenney::calculate() -> std::vector<Eigenstate>
     for (unsigned int ist=0; ist < nst_max; ++ist)
     {
         // Shift the lower estimate up past the last state we found
-        if(ist > 0)
+        if(ist > 0) {
             Elo = solutions[ist-1].get_energy() + dx;
+        }
 
         // Value for y=f(x) at bottom of search range
         const double y1 = GSL_FN_EVAL(&F,Elo);
@@ -232,7 +233,7 @@ SchroedingerSolverKronigPenney::calculate() -> std::vector<Eigenstate>
         {
             status = gsl_root_fsolver_iterate(solver);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in SchroedingerKronigPenney: " << std::endl
                           << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
             }

@@ -23,7 +23,7 @@ class WfOptions : public Options
 public:
     WfOptions();
 
-    [[nodiscard]] auto get_wf_filename(const int ist) const -> std::string;
+    [[nodiscard]] auto get_wf_filename(int ist) const -> std::string;
     [[nodiscard]] auto get_wf_prefix() const -> std::string;
     [[nodiscard]] auto get_wf_ext() const -> std::string;
     [[nodiscard]] auto get_energy_filename() const -> std::string;

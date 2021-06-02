@@ -23,11 +23,11 @@ private:
     arma::mat _A;     ///< Hamiltonian matrix
 
 public:
-    SchroedingerSolverFull(decltype(_m)        m,
-                           decltype(_alpha)    alpha,
-                           const arma::vec    &V,
-                           const arma::vec    &z,
-                           const unsigned int  nst_max=0);
+    SchroedingerSolverFull(decltype(_m)      m,
+                           decltype(_alpha)  alpha,
+                           const arma::vec  &V,
+                           const arma::vec  &z,
+                           unsigned int      nst_max=0);
 
     auto get_name() -> std::string override {return "full";}
 

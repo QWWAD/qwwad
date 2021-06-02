@@ -33,10 +33,10 @@ private:
     arma::vec _Eki; ///< Array of initial kinetic energies [1/m]
 
 public:
-    IntersubbandTransition(const decltype(_isb)    isb,
-                           const decltype(_fsb)    fsb,
-                           const decltype(_ki)     ki,
-                           const decltype(_Wif) Wif_ki);
+    IntersubbandTransition(decltype(_isb) isb,
+                           decltype(_fsb) fsb,
+                           decltype(_ki)  ki,
+                           decltype(_Wif) Wif_ki);
 
     [[nodiscard]] inline auto get_ki_table           ()                const {return _ki;}
     [[nodiscard]] inline auto get_Eki_table          ()                const {return _Eki;}

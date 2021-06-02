@@ -96,7 +96,7 @@ auto main(int argc, char* argv[]) -> int
 
     if(opt.get_argument_known("field"))
     {
-        field  = opt.get_option<double>("field") * 1000 * 100.0;
+        field  = opt.get_option<double>("field") * KILO / CENTI;
         V_drop = field * e * length;
     }
 
@@ -148,7 +148,7 @@ auto main(int argc, char* argv[]) -> int
 
     // Subtract the desired potential offset (if specified)
     // Note that we do this here, before we invert the potential
-    phi -= opt.get_option<double>("offset") * e/1000;
+    phi -= opt.get_option<double>("offset") * e * MILLI;
 
     if(opt.get_verbose())
     {
@@ -162,7 +162,7 @@ auto main(int argc, char* argv[]) -> int
         // However, remember that the first sample location in the system is at z = dz/2
         // (i.e., in the MIDDLE of a sampling cell)
         // Therefore the potential at the first sample is V_drop/2.0 - field*e*dz/2
-        phi -= (phi(0) + V_drop/2.0 - field*e*dz/2);
+        phi -= (phi(0) + V_drop/2 - field*e*dz/2);
     }
 
     // Invert potential as we output in electron potential instead of absolute potential.

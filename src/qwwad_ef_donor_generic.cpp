@@ -175,7 +175,9 @@ auto main(int argc,char *argv[]) -> int
     // Double the estimate of Bohr radius if we're in a second orbital
     // This isn't correct for 2pz, but it's still better than the 1s
     // estimate!
-    if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ))lambda*=2;
+    if((S==STATE_2S)||(S==STATE_2PX)||(S==STATE_2PZ)) {
+        lambda*=2;
+    }
 
     // The 3D wavefunction calculator for the system
     Wavefunction3D wf3d(wf, V, z, epsilon, m, r_d, S);
@@ -204,7 +206,7 @@ auto main(int argc,char *argv[]) -> int
         ++iter;
         status  = gsl_min_fminimizer_iterate(s);
 
-        if(status) {
+        if(status != 0) {
             std::cerr << "GSL error in qwwad_ef_donor_generic: " << std::endl;
         }
 
@@ -332,16 +334,17 @@ auto Wavefunction3D::get_energy_integrand_x(double  x,
                                               void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_x_params *>(params);
-    auto wf3d = p->wf3d;
+    const auto *wf3d = p->wf3d;
 
     // Perform integration over y, noting that a factor of 2 is included
     // to account for even symmetry
     gsl_function F;
     Integrand_y_params integrand_y_params = {wf3d, x, p->iz};
-    auto w = gsl_integration_workspace_alloc(1000);
+    auto *w = gsl_integration_workspace_alloc(1000);
     F.function = &Wavefunction3D::get_energy_integrand_y;
     F.params   = &integrand_y_params;
-    double result, error;
+    double result;
+    double error;
     gsl_integration_qags(&F, 0, 5*wf3d->_lambda, 0, 1e-3, 1000, w, &result, &error);
     gsl_integration_workspace_free(w);
 
@@ -352,16 +355,17 @@ auto Wavefunction3D::get_PD_integrand_x(double  x,
                                           void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_x_params *>(params);
-    auto wf3d = p->wf3d;
+    const auto *wf3d = p->wf3d;
 
     // Perform integration over y, noting that a factor of 2 is included
     // to account for even symmetry
     gsl_function F;
     Integrand_y_params integrand_y_params = {wf3d, x, p->iz};
-    auto w = gsl_integration_workspace_alloc(1000);
+    auto *w = gsl_integration_workspace_alloc(1000);
     F.function = &Wavefunction3D::get_PD_integrand_y;
     F.params   = &integrand_y_params;
-    double result, error;
+    double result;
+    double error;
     gsl_integration_qags(&F, 0, 5*wf3d->_lambda, 0, 1e-3, 1000, w, &result, &error);
     gsl_integration_workspace_free(w);
 
@@ -392,7 +396,7 @@ auto Wavefunction3D::get_energy() const -> double
     // and Hamiltonian
     arma::vec PD_integrand_z(nz);
     arma::vec H_integrand_z(nz);
-    auto w = gsl_integration_workspace_alloc(nslice);
+    auto *w = gsl_integration_workspace_alloc(nslice);
 
     // Compute integrand over the z-axis, skipping both end-points since we
     // need the 2nd derivatives

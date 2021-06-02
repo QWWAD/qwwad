@@ -80,13 +80,15 @@ class FwfOptions : public WfOptions {
 
         FwfOptions(int argc, char** argv)
         {
+            constexpr double DE_DEFAULT = 1e-3;
+
             // No default can be set here... we want the confining potential to be used
             // by default rather than a manually-specified number!
             add_option<double>     ("Emin",                  "Lower cut-off energy for solutions [meV]");
             add_option<double>     ("Emax",                  "Upper cut-off energy for solutions [meV]");
             add_option<double>     ("mass",                  "The constant effective mass to use across the entire structure. "
                                                              "If unspecified, the mass profile will be read from file.");
-            add_option<double>     ("dE,d",       1e-3,      "Minimum separation (in energy) between states [meV]. "
+            add_option<double>     ("dE,d",      DE_DEFAULT, "Minimum separation (in energy) between states [meV]. "
                                                              "This is only used with the shooting-method solvers.");
             add_option<std::string>("massfile",  "m.r",      "Filename from which effective mass profile is read. "
                                                              "This is only needed if you are not using constant effective "
@@ -110,18 +112,17 @@ class FwfOptions : public WfOptions {
             // Parse the calculation type
             const auto solver_arg = get_option<std::string>("solver");
 
-            if     (!strcmp(solver_arg.c_str(), "matrix"))
+            if     (strcmp(solver_arg.c_str(), "matrix") == 0) {
                 type = MATRIX_PARABOLIC;
-            else if(!strcmp(solver_arg.c_str(), "matrix-full-nonparabolic"))
+            } else if(strcmp(solver_arg.c_str(), "matrix-full-nonparabolic") == 0) {
                 type = MATRIX_FULL_NONPARABOLIC;
-            else if(!strcmp(solver_arg.c_str(), "matrix-taylor-nonparabolic"))
+            } else if(strcmp(solver_arg.c_str(), "matrix-taylor-nonparabolic") == 0) {
                 type = MATRIX_TAYLOR_NONPARABOLIC;
-            else if(!strcmp(solver_arg.c_str(), "shooting"))
+            } else if(strcmp(solver_arg.c_str(), "shooting") == 0) {
                 type = SHOOTING_PARABOLIC;
-            else if(!strcmp(solver_arg.c_str(), "shooting-nonparabolic"))
+            } else if(strcmp(solver_arg.c_str(), "shooting-nonparabolic") == 0) {
                 type = SHOOTING_NONPARABOLIC;
-            else
-            {
+            } else {
                 std::ostringstream oss;
                 oss << "Cannot parse solver type: " << solver_arg;
                 throw std::runtime_error(oss.str());
@@ -217,17 +218,17 @@ auto main(int argc, char *argv[]) -> int{
     }
 
     // Print out some information about the calculation if requested
-    if(opt.get_verbose())
-    {
-        if (nst_max == 0)
-            std::cout << "Searching for solutions between " << V.min()/(e*1e-3)
-                      << " meV and " << V.max()/(e*1e-3) << std::endl;
-        else
+    if(opt.get_verbose()) {
+        if (nst_max == 0) {
+            std::cout << "Searching for solutions between " << V.min()/(e*MILLI)
+                      << " meV and " << V.max()/(e*MILLI) << std::endl;
+        } else {
             std::cout << "Searching for " << nst_max
                       << " solutions above the band-edge." << std::endl;
+        }
 
         std::cout << nz << " points in spatial profile with spatial step of "
-                    << dz*1e9 << "nm." << std::endl;
+                  << dz/NANO << " nm." << std::endl;
     }
 
     std::shared_ptr<SchroedingerSolver> se; // Solver for Schroedinger equation
@@ -267,32 +268,29 @@ auto main(int argc, char *argv[]) -> int{
     // Set cut-off energies if desired
     if(opt.get_argument_known("Emax"))
     {
-        se->set_E_max(opt.get_option<double>("Emax") * e/1000);
+        se->set_E_max(opt.get_option<double>("Emax") * e * MILLI);
     }
 
-    if(opt.get_argument_known("Emin"))
-    {
-        se->set_E_min(opt.get_option<double>("Emin") * e/1000);
+    if(opt.get_argument_known("Emin")) {
+        se->set_E_min(opt.get_option<double>("Emin") * e * MILLI);
     }
 
     // Output a single trial wavefunction
-    if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC))
-    {
+    if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC)) {
         const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
         arma::vec psi;
         const double psi_inf = std::dynamic_pointer_cast<SchroedingerSolverShooting>(se)->shoot_wavefunction(psi, E_trial);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check
-        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1)
+        if(gsl_fcmp(fabs(psi_inf), 0, 1) == 1) {
             std::cerr << "Warning: Wavefunction is not tightly bound" << std::endl;
+        }
 
         std::ostringstream wf_filename;
         wf_filename << opt.get_wf_prefix() << "E.r";
         write_table(wf_filename.str().c_str(), z, psi);
-    }
-    else // Output all wavefunctions
-    {
+    } else { // Output all wavefunctions
         const auto solutions = se->get_solutions(true);
         output(solutions, opt);
     }

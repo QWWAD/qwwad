@@ -32,11 +32,16 @@ auto configure_options(int argc, char** argv) -> Options
 
     std::string doc("Generate a parabolic alloy profile surrounded by thick barriers.");
 
-    opt.add_option<double>("wellwidth,a",    100, "Width at top of quantum well [angstrom].");
-    opt.add_option<double>("barrierwidth,b", 100, "Width of barriers [angstrom].");
-    opt.add_option<size_t>("nz,N",           301, "Number of spatial points for output file.");
-    opt.add_option<double>("xmin,x",         0,   "Minimum alloy fraction.");
-    opt.add_option<double>("xmax,y",         0.1, "Maximum alloy fraction.");
+    constexpr double W_DEFAULT = 100.0;
+    constexpr size_t N_DEFAULT = 301;
+    constexpr double X_DEFAULT = 0;
+    constexpr double Y_DEFAULT = 0.1;
+
+    opt.add_option<double>("wellwidth,a",    W_DEFAULT, "Width at top of quantum well [angstrom].");
+    opt.add_option<double>("barrierwidth,b", W_DEFAULT, "Width of barriers [angstrom].");
+    opt.add_option<size_t>("nz,N",           N_DEFAULT, "Number of spatial points for output file.");
+    opt.add_option<double>("xmin,x",         X_DEFAULT,   "Minimum alloy fraction.");
+    opt.add_option<double>("xmax,y",         Y_DEFAULT, "Maximum alloy fraction.");
 
     opt.add_prog_specific_options_and_parse(argc, argv, doc);
 
@@ -63,10 +68,11 @@ auto main(int argc,char *argv[]) -> int
     {
         z[iz] = iz*dz;
 
-        if(gsl_fcmp(z[iz], b, dz/10) == -1 || gsl_fcmp(z[iz], b+a, dz/10) == 1) // Barriers
+        if(gsl_fcmp(z[iz], b, dz/10) == -1 || gsl_fcmp(z[iz], b+a, dz/10) == 1) { // Barriers
             x[iz] = x_max;
-        else
+	} else {
             x[iz] = x_min+gsl_pow_2(z[iz]-(b+a/2))*(x_max-x_min)/gsl_pow_2(a/2);
+	}
     }
 
     write_table("x.r", z, x);

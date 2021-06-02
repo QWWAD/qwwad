@@ -22,22 +22,22 @@ private:
     double    _dE;    ///< Minimum energy separation between states [J]
 
 public:
-    SchroedingerSolverShooting(decltype(_me)       me,
-                               decltype(_alpha)    alpha,
-                               const arma::vec    &V,
-                               const arma::vec    &z,
-                               const double        dE,
-                               const unsigned int  nst_max=0);
+    SchroedingerSolverShooting(decltype(_me)     me,
+                               decltype(_alpha)  alpha,
+                               const arma::vec  &V,
+                               const arma::vec  &z,
+                               double            dE,
+                               unsigned int      nst_max=0);
 
     auto get_name() -> std::string override {return "shooting";}
 
-    auto get_solutions_chi(const bool convert_to_meV=false) -> std::vector<Eigenstate>;
+    auto get_solutions_chi(bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
     static auto psi_at_inf(double  E,
-                             void   *params) -> double;
+                           void   *params) -> double;
 
-    auto shoot_wavefunction(arma::vec    &wf,
-                              const double  E) const -> double;
+    auto shoot_wavefunction(arma::vec &wf,
+                            double     E) const -> double;
 
 private:
     auto calculate() -> std::vector<Eigenstate> override;

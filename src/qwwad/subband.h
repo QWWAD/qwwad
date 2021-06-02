@@ -28,15 +28,15 @@ private:
 
 public:
     Subband(const Eigenstate &ground_state,
-            const double      m);
+            double            m);
         
     Subband(const Eigenstate &ground_state,
-            const double      m,
-            const double      alpha,
-            const double      V);
+            double            m,
+            double            alpha,
+            double            V);
 
-    void set_distribution_from_Ef_Te(const double Ef,
-                                     const double Te);
+    void set_distribution_from_Ef_Te(double Ef,
+                                     double Te);
 
     [[nodiscard]] inline auto get_ground() const {return _ground_state;}
 
@@ -79,7 +79,7 @@ public:
     static auto read_from_file(const std::string &energy_input_path,
                                const std::string &wf_input_prefix,
                                const std::string &wf_input_ext,
-                               const double       m) -> std::vector<Subband>;
+                               double             m) -> std::vector<Subband>;
 
     static auto read_from_file(const std::string &energy_input_path,
                                const std::string &wf_input_prefix,
@@ -91,30 +91,30 @@ public:
     static auto read_from_file(const std::string &energy_input_path,
                                const std::string &wf_input_prefix,
                                const std::string &wf_input_ext,
-                               const double       m,
-                               const double       alpha,
-                               const double       V) -> std::vector<Subband>;
+                               double             m,
+                               double             alpha,
+                               double             V) -> std::vector<Subband>;
 
-    [[nodiscard]] auto get_Ek_at_k(const double k) const -> double;
-    [[nodiscard]] auto get_k_at_Ek(const double Ek) const -> double;
-    [[nodiscard]] auto get_k_max(const double Te) const -> double;
+    [[nodiscard]] auto get_Ek_at_k(double k) const -> double;
+    [[nodiscard]] auto get_k_at_Ek(double Ek) const -> double;
+    [[nodiscard]] auto get_k_max(double Te) const -> double;
 
     /// Return total energy of carrier at a given wave-vector
-    [[nodiscard]] inline auto get_E_total_at_k(const double k) const {return get_E_min() + get_Ek_at_k(k);}
+    [[nodiscard]] inline auto get_E_total_at_k(double k) const {return get_E_min() + get_Ek_at_k(k);}
 
-    [[nodiscard]] auto get_effective_mass(const double E = 0.0) const -> decltype(_m);
-    [[nodiscard]] auto get_effective_mass_dos(const double E = 0.0) const -> decltype(_m);
+    [[nodiscard]] auto get_effective_mass(double E = 0.0) const -> decltype(_m);
+    [[nodiscard]] auto get_effective_mass_dos(double E = 0.0) const -> decltype(_m);
 
     /// Return nonparabolicity parameter
     [[nodiscard]] inline auto get_alpha() const {return _alpha;}
 
-    [[nodiscard]] auto get_density_of_states(const double E = 0.0) const -> double;
+    [[nodiscard]] auto get_density_of_states(double E = 0.0) const -> double;
 
-    [[nodiscard]] auto get_occupation_at_E_total(const double E) const -> double;
+    [[nodiscard]] auto get_occupation_at_E_total(double E) const -> double;
        
-    [[nodiscard]] auto get_occupation_at_k(const double k) const -> double;
+    [[nodiscard]] auto get_occupation_at_k(double k) const -> double;
 
-    [[nodiscard]] auto get_population_at_k(const double k) const -> double;
+    [[nodiscard]] auto get_population_at_k(double k) const -> double;
 };
 } // namespace
 #endif // QCLSIM_SUBBAND_H
