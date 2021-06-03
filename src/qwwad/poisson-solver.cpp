@@ -67,30 +67,24 @@ void PoissonSolver::compute_half_index_permittivity()
 {
     const size_t ni = _eps.size();
 
-    if (_eps_minus.size() != ni && _eps_plus.size() != ni)
+    if (_eps_minus.size() != ni && _eps_plus.size() != ni) {
         throw std::runtime_error("Permittivity array not initialized");
+    }
 
-    for(unsigned int i=0; i < ni; i++)
-    {
+    for(unsigned int i=0; i < ni; i++) {
         // Assume that start and end values of permittivity are identical
         // (i.e., a periodic structure). This might not be ideal for structures
         // e.g., contained within a cladding material.
-        if(i==0)
-        {
-            _eps_minus(i) = (_eps(i)   + _eps(ni-1)) / 2.0;
-        }
-        else
-        {
-            _eps_minus(i) = (_eps(i)   + _eps(i-1) ) / 2.0;
+        if(i==0) {
+            _eps_minus(i) = (_eps(i)   + _eps(ni-1)) / 2;
+        } else {
+            _eps_minus(i) = (_eps(i)   + _eps(i-1) ) / 2;
         }
 
-        if(i==ni-1)
-        {
-            _eps_plus(i)  = (_eps(0)   + _eps(i)   ) / 2.0;
-        }
-        else
-        {
-            _eps_plus(i)  = (_eps(i+1) + _eps(i)   ) / 2.0;
+        if(i==ni-1) {
+            _eps_plus(i)  = (_eps(0)   + _eps(i)   ) / 2;
+        } else {
+            _eps_plus(i)  = (_eps(i+1) + _eps(i)   ) / 2;
         }
     }
 }
