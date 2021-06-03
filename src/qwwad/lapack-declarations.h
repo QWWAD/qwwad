@@ -11,22 +11,6 @@
 
 extern "C" {
 
-/** Solve general eigenproblem */
-void dgeev_(const char *JOBVL,
-            const char *JOBVR,
-            const int  *N,
-            double      A[],
-            const int  *LDA,
-            double      WR[],
-            double      WI[],
-            double      VL[],
-            const int  *LDVL,
-            double      VR[],
-            const int  *LDVR,
-            double      WORK[],
-            int        *LWORK,
-            int        *INFO);
-
 /**
  * Factorise general matrix
  */
@@ -103,12 +87,6 @@ void dstevx_(const char* JOBZ, const char* RANGE, const int* N, double D[],
              const int* IL, const int* IU, const double* ABSTOL, int* M, 
              double W[], double Z[], const int* LDZ, double WORK[], int IWORK[], 
              int IFAIL[], int* INFO);
-
-/**
- * \brief Solve eigenvalue problem for complex matrix
- */
-void zheev_(const char *JOBZ, const char *UPLO, const int* N, std::complex<double> ank[],
-            const int *LDA, double E[], std::complex<double> WORK[], int *LWORK, double RWORK[], int *INFO);
 
 } // extern
 #endif //QWWAD_LAPACK_DECLARATIONS_H

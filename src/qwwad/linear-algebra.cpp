@@ -31,7 +31,7 @@ namespace QWWAD
  * \param[in]  N  Order of matrix
  * \param[in]  n_max Max number of eigenvalues to find
  *
- * \details    Creates standard inputs for dgeev func. before
+ * \details    Creates standard inputs for Armadillo eigensolver before
  *             executing to return results.  If n_max=0, then all
  *             eigenvalues in the range [VL,VU] will be found.
  */
@@ -43,45 +43,35 @@ eigen_general(arma::mat    &A,
 {
     const int N = sqrt(A.size());
 
-    // Real and imaginary parts of the computed eigenvalues
-    arma::vec WR(N);
-    arma::vec WI(N);
+    arma::cx_vec eigval;
+    arma::cx_mat V_right; // Right eigenvalues
 
-    // Computed left and right eigenvectors
-    arma::mat V_left(N,N);
-    arma::mat V_right(N,N);
+    auto complete = arma::eig_gen(eigval, V_right, A, "balance");
 
-    // Run LAPACK function to solve eigenproblem
-    int  info  = 0;   // Output code from LAPACK
-    char jobvl = 'N'; // Specify range of solutions by value
-    char jobvr = 'V';
-    int  lwork = 4*N;
-    arma::vec work(4*N); // LAPACK workspace
-
-    dgeev_(&jobvl, &jobvr, &N, &A(0), &N, &WR[0], &WI[0], &V_left[0], &N, &V_right[0], &N,
-            &work[0], &lwork, &info);
-
-    if(info!=0)
+    if (!complete) {
         throw std::runtime_error("Could not solve "
                 "eigenproblem. Check all input parameters!");
+    }
 
     // Create buffer for output data (Should never have more than N 'real' solutions since
     // 2*N solutions correspond to psi*E and psi*E^2!)
     std::vector< EVP_solution<double> > solutions(N, EVP_solution<double>(N) );
 
+    // Real and imaginary parts of the computed eigenvalues
+    arma::vec WR = real(eigval);
+    arma::vec WI = imag(eigval);
+
     unsigned int nst = 0; // Number of real solutions in the desired range
 
-    // Loop through all possible solutions in LAPACK output
+    // Loop through all possible solutions in solver output
     // and find the real solutions in the desired range
-    for(int i=0; i<N; i++)
-    {
+    for(int i=0; i<N; i++) {
         // Only allow real eigenvalues above the lower search limit
-        if(WR[i]!=0 and WI[i]==0 and WR[i] > VL)
-        {
+        if(WR[i]!=0 and WI[i]==0 and WR[i] > VL) {
             // If we specify a range of eigenvalues, filter the
             // solutions by that range, otherwise keep all of them
             if((n_max > 0) or (WR[i] < VU)){
-                arma::vec const psi = V_right.col(i);
+                arma::vec const psi = real(V_right.col(i));
                 solutions[nst] = EVP_solution<double>(WR[i], psi);
 
                 nst++; // Register solution found
