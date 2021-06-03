@@ -44,7 +44,7 @@ qwwad_ef_band_edge # generate potential data
 # Loop over electric field 
 for F in 0 1 2 3 4 5 6 7 8 9 10 12 15 20 25 30 40 50 60 70; do
  # Add electric field to potential
- qwwad_poisson --uncharged --field $F --centred
+ qwwad_poisson --field $F --centred
 
  qwwad_ef_generic
 

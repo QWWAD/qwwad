@@ -29,7 +29,7 @@ namespace QWWAD
 template <class T>
 class EVP_solution {
 protected:
-    T _E;              ///< Eigenvalue
+    T E_;              ///< Eigenvalue
     arma::Col<T> _psi; ///< Eigenvector
 
 public:
@@ -39,11 +39,11 @@ public:
      */
     EVP_solution(const T        E,
                  decltype(_psi) psi)
-        : _E(E), _psi(std::move(psi))
+        : E_(E), _psi(std::move(psi))
     {}
 
     EVP_solution(const size_t n) : 
-        _E(0),
+        E_(0),
         _psi(arma::Col<T>(n))
     {}
 
@@ -78,7 +78,7 @@ public:
     /** Return the eigenvalue */
     [[nodiscard]] auto get_E() const -> T
     {
-        return _E;
+        return E_;
     }
 
     /** 

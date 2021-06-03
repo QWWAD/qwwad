@@ -1,3 +1,13 @@
+2021-06-03 (QWWAD 1.6):
+        * This preview release brings improved code quality and packaging
+          improvements, along with a range of minor fixes
+        * The CMake build system is now used instead of Automake
+        * qwwad_poisson no longer needs the --uncharged option.  It will deduce
+          this automatically if no charge density file is found.
+        * clang-tidy is now used to detect code quality issues
+        * New requirements: C++17 and CMake >= 1.6
+        * Kronig-Penney wavefunctions are now calculated correctly
+
 2016-08-26 (QWWAD 1.5.1):
         * This preview release adds a first version of the libqwwad API, allowing
           you to incorporate QWWAD functionality into your own C++ programs.

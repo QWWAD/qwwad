@@ -34,7 +34,6 @@ auto get_options(int argc, char** argv) -> Options
 
     const std::string doc("Find the Poisson potential induced by a given charge profile");
 
-    opt.add_option<bool>       ("uncharged",                         "True if there is no charge in the structure");
     opt.add_option<bool>       ("centred",                           "True if the potential should be pivoted "
                                                                      "around the centre of the structure");
     opt.add_option<bool>       ("mixed",                             "Use mixed boundary conditions.  By default, "
@@ -69,13 +68,15 @@ auto main(int argc, char* argv[]) -> int
 
     const size_t nz = z.size();
 
-    arma::vec z2  = arma::zeros(nz);
+    arma::vec z2  = arma::zeros(nz); // Spatial points in charge profile (not used)
+    // TODO: Check that spatial points match those in permittivity profile
     arma::vec rho = arma::zeros(nz); // Charge-profile [C/m^2]
 
-    // Read space-charge profile, or just leave it as zero if desired
-    if(!opt.get_option<bool>("uncharged"))
-    {
-        read_table(opt.get_option<std::string>("chargefile").c_str(), z2, rho);
+    // Read space-charge profile, or just leave it as zero if not specified
+    auto chargefile = opt.get_option<std::string>("chargefile");
+
+    try {
+        read_table(chargefile, z2, rho);
 
         // Convert charge density into S.I. units
         rho *= e;
@@ -85,6 +86,10 @@ auto main(int argc, char* argv[]) -> int
         if(opt.get_option<bool>("ptype"))
         {
             rho *= -1;
+        }
+    } catch (std::runtime_error &e) {
+        if (opt.get_verbose()) {
+            std::cerr << "Could not open " << chargefile << ". Assuming uncharged structure." << std::endl;
         }
     }
 
@@ -112,8 +117,7 @@ auto main(int argc, char* argv[]) -> int
 
         // Only fix the voltage across the structure if an applied field is specified.
         // (Otherwise just return the zero-field cyclic solution!)
-        if(opt.get_argument_known("field"))
-        {
+        if(opt.get_argument_known("field")) {
             // Subtract the potential drop caused by space-charge effects from the
             // externally applied potential.
             //
@@ -126,37 +130,28 @@ auto main(int argc, char* argv[]) -> int
             PoissonSolver laplace(_eps, dz, DIRICHLET);
             phi += laplace.solve_laplace(V_drop);
         }
-    }
-    else
-    {
-        PoissonSolver *poisson;
+    } else {
+        std::shared_ptr<PoissonSolver> poisson;
 
         // If a bias is specified, then pin the potential at each end
-        if(opt.get_argument_known("field"))
-        {
-            poisson = new PoissonSolver(_eps, dz, DIRICHLET);
-        }
-        else
-        {
-            poisson = new PoissonSolver(_eps, dz, ZERO_FIELD);
+        if(opt.get_argument_known("field")) {
+            poisson = std::make_shared<PoissonSolver>(_eps, dz, DIRICHLET);
+        } else {
+            poisson = std::make_shared<PoissonSolver>(_eps, dz, ZERO_FIELD);
         }
 
         phi = poisson->solve(rho, V_drop);
-
-        delete poisson;
     }
 
     // Subtract the desired potential offset (if specified)
     // Note that we do this here, before we invert the potential
     phi -= opt.get_option<double>("offset") * e * MILLI;
 
-    if(opt.get_verbose())
-    {
+    if(opt.get_verbose()) {
         std::cout << "Voltage drop: " << V_drop / e << " V" << std::endl;
     }
 
-    if(opt.get_option<bool>("centred"))
-    {
+    if(opt.get_option<bool>("centred")) {
         // We want the potential to equal the specified value at z=0
         //   i.e., V(0) = V_drop/2
         // However, remember that the first sample location in the system is at z = dz/2
@@ -172,8 +167,7 @@ auto main(int argc, char* argv[]) -> int
     // Get field profile [V/m]
     arma::vec F = arma::zeros(z.size());
 
-    for(unsigned int iz = 1; iz < nz-1; ++iz)
-    {
+    for(unsigned int iz = 1; iz < nz-1; ++iz) {
         F(iz) = (phi(iz+1) - phi(iz-1))/(2*dz)/e;
     }
 
@@ -182,14 +176,12 @@ auto main(int argc, char* argv[]) -> int
     // Baseline potential (assume zero unless provided by user):
     arma::vec Vbase = arma::zeros(phi.size());
 
-    if (opt.get_argument_known("bandedgepotentialfile"))
-    {
+    if (opt.get_argument_known("bandedgepotentialfile")) {
         arma::vec zbase(phi.size());
         read_table(opt.get_option<std::string>("bandedgepotentialfile"), zbase, Vbase);
 
         // TODO: Add more robust checking of z, zbase identicality here
-        if(zbase.size() != z.size())
-        {
+        if(zbase.size() != z.size()) {
             std::ostringstream oss;
             oss << "Baseline and Poisson potential profiles have different lengths "
                    "(" << zbase.size() << ") and (" << z.size() << ") "

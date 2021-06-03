@@ -50,7 +50,7 @@ else
     print $1, 10*eps0;
 }' < x.r > eps_dc.r
 
-qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_5.r
+qwwad_poisson --centred --field 10 --poissonpotentialfile v_10_5.r
 
 # 10 eps0 in barrier; 10 eps0 in well
 awk '{
@@ -62,7 +62,7 @@ else
     print $1, 10*eps0;
 }' < x.r > eps_dc.r
 
-qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_10.r
+qwwad_poisson --centred --field 10 --poissonpotentialfile v_10_10.r
 
 # 15 eps0 in barrier; 10 eps0 in well
 awk '{
@@ -74,7 +74,7 @@ else
     print $1, 10*eps0;
 }' < x.r > eps_dc.r
 
-qwwad_poisson --centred --uncharged --field 10 --poissonpotentialfile v_10_15.r
+qwwad_poisson --centred --field 10 --poissonpotentialfile v_10_15.r
 
 awk '{print $1*1e10, $2*1000/1.6021766e-19}' v_10_5.r >> $outfile
 printf "\n" >> $outfile

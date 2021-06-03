@@ -28,12 +28,11 @@ PoissonSolver::PoissonSolver(const decltype(_eps) &eps,
     _eps_minus(eps), // Set the half-index permittivities
     _eps_plus(eps),  // to a default for now
     _dx(dx), // Size of cells in mesh
-    _L(_eps.size() * _dx), // Samples are at CENTRE of each cell so total length of structure is nx dx
+    L_(_eps.size() * _dx), // Samples are at CENTRE of each cell so total length of structure is nx dx
     _diag(arma::zeros(_eps.size())),
     _sub_diag(arma::zeros(_eps.size()-1)),
-    _corner_point(0.0),
-    _D_diag(arma::zeros(_eps.size())),
-    _L_sub(arma::zeros(_eps.size()-1)),
+    D_diag_(arma::zeros(_eps.size())),
+    L_sub_(arma::zeros(_eps.size()-1)),
     _boundary_type(bt)
 {
     compute_half_index_permittivity();
@@ -101,7 +100,7 @@ void PoissonSolver::factorise_dirichlet()
     }
 
     // Factorise matrix
-    factorise_tridiag_LDL_T(_diag, _sub_diag, _D_diag, _L_sub);
+    factorise_tridiag_LDL_T(_diag, _sub_diag, D_diag_, L_sub_);
 }
 
 void PoissonSolver::factorise_mixed()
@@ -111,12 +110,9 @@ void PoissonSolver::factorise_mixed()
     for(unsigned int i=0; i < ni; i++)
     {
         // Diagonal elements
-        if(i<ni-1)
-        {
+        if(i<ni-1) {
             _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
-        }
-        else
-        {
+        } else {
             _diag(i) = _eps_minus(i) / (_dx * _dx);
             _corner_point = _eps_plus(i) / (_dx * _dx);
         }
@@ -130,22 +126,17 @@ void PoissonSolver::factorise_zerofield()
     for(unsigned int i=0; i < ni; i++)
     {
         // Diagonal elements
-        if(i==0)
-        {
+        if(i==0) {
             _diag(i) = _eps_plus(i) / (_dx * _dx);
-        }
-        else if(i==ni-1)
-        {
+        } else if(i==ni-1) {
             _diag(i) = _eps_minus(i) / (_dx * _dx);
-        }
-        else
-        {
+        } else {
             _diag(i) = (_eps_plus(i) + _eps_minus(i)) / (_dx * _dx);
         }
     }
 
     // Factorise matrix
-    factorise_tridiag_LDL_T(_diag, _sub_diag, _D_diag, _L_sub);
+    factorise_tridiag_LDL_T(_diag, _sub_diag, D_diag_, L_sub_);
 }
 
 /**
@@ -159,8 +150,7 @@ auto PoissonSolver::solve(const arma::vec &rho) const -> arma::vec
 {
     const auto n = _eps.size();
 
-    if (rho.size() != n)
-    {
+    if (rho.size() != n) {
         throw std::runtime_error("Permittivity and charge density arrays have different sizes");
     }
 
@@ -170,7 +160,7 @@ auto PoissonSolver::solve(const arma::vec &rho) const -> arma::vec
     switch(_boundary_type)
     {
         case DIRICHLET:
-            phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
+            phi = solve_tridiag_LDL_T(D_diag_, L_sub_, rhs);
             break;
         case MIXED:
         case ZERO_FIELD:
@@ -221,11 +211,11 @@ auto PoissonSolver::solve(const arma::vec &rho,
                                  "equation and sum the result.");
     }
 
-    auto phi = solve_tridiag_LDL_T(_D_diag, _L_sub, rhs);
+    auto phi = solve_tridiag_LDL_T(D_diag_, L_sub_, rhs);
 
     // TODO: This is a horrible hack... for some reason, there's an unwanted factor of 2 in the
     // calculation
-    //phi /= 2;
+    phi /= 2;
 
     phi = phi - phi(0);
     return phi;

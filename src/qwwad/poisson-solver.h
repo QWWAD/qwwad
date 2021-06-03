@@ -19,6 +19,8 @@ namespace QWWAD
 {
 /**
  * Boundary condition to use for the Poisson equation solver
+ *
+ * TODO: Reimplement as sub-classes
  */
 enum PoissonBoundaryType
 {
@@ -58,15 +60,15 @@ private:
     arma::vec _eps_plus;  ///< Permittivity half a point to right [F/m]
 
     double _dx;    ///< Spatial step size [m]
-    double _L;     ///< Total length of structure [m]
+    double L_;     ///< Total length of structure [m]
         
     arma::vec _diag;     ///< Diagonal of Poisson matrix
     arma::vec _sub_diag; ///< Sub-diagonal of Poisson matrix
 
-    double _corner_point; ///< Corner point in matrix resulting from mixed boundary conditions
+    double _corner_point = 0.0; ///< Corner point in matrix resulting from mixed boundary conditions
 
-    arma::vec _D_diag; ///< Diagonal of factorisation matrix, D
-    arma::vec _L_sub;  ///< Subdiagonal of factorisation matrix, L
+    arma::vec D_diag_; ///< Diagonal of factorisation matrix, D
+    arma::vec L_sub_;  ///< Subdiagonal of factorisation matrix, L
 
     PoissonBoundaryType _boundary_type; ///< Boundary condition type for Poisson solver
 };

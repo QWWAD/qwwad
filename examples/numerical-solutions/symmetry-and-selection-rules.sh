@@ -46,7 +46,7 @@ for F in 0 1 2 3 4 5 6 7 8 `seq 9 0.1 12` 14 16 18 20 25 30 40; do
  printf "\rSolving for field = %.2f kV/cm" $F
 
  # Add electric field to potential
- qwwad_poisson --field $F --centred --uncharged
+ qwwad_poisson --field $F --centred
 
  qwwad_ef_generic --nstmax 2 # calculate ground and first excited states
 

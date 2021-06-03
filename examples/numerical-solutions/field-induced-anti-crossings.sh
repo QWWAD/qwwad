@@ -43,7 +43,7 @@ qwwad_ef_band_edge # generate potential data
 # Loop over electric field
 for F in 0 1 2 3 4 5 6 7 8 9 10 11 12 15 20 25 30 40; do
  # Add electric field to potential
- qwwad_poisson --centred --field $F --uncharged
+ qwwad_poisson --centred --field $F
 
  qwwad_ef_generic --nstmax 2 # calculate ground and first excited states
 
