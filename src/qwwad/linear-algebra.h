@@ -147,8 +147,8 @@ auto eigen_banded(double       *AB,
                   int           n,
                   unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
 
-auto eigen_tridiag(arma::vec    &D,
-                   arma::vec    &E,
+auto eigen_tridiag(arma::vec    &diag,
+                   arma::vec    &subdiag,
                    double        VL,
                    double        VU,
                    unsigned int  n_max = 0) -> std::vector<EVP_solution<double>>;
@@ -159,9 +159,9 @@ auto multiply_vec_tridiag(arma::vec const &M_sub,
                           arma::vec const &x,
                           arma::vec const &c) -> arma::vec;
 
-auto solve_tridiag(arma::vec const &A_sub,
-                   arma::vec const &A_diag,
-                   arma::vec const &A_super,
+auto solve_tridiag(arma::vec &A_sub,
+                   arma::vec &A_diag,
+                   arma::vec &A_super,
                    arma::vec const &x) -> arma::vec;
 
 auto solve_tridiag_LDL_T(arma::vec const &D,

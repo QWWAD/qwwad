@@ -4,10 +4,12 @@
 
 #include <iostream>
 #include <valarray>
+
 #include "qwwad/options.h"
 #include "qwwad/file-io.h"
-#include "qwwad/lapack-declarations.h"
 #include "qwwad/linear-algebra.h"
+
+#include <lapack.h>
 
 using namespace QWWAD;
 

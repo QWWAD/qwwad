@@ -20,6 +20,8 @@
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_sort.h>
 
+#include <lapack.h>
+
 namespace QWWAD
 {
 /**
@@ -394,9 +396,9 @@ multiply_vec_tridiag(arma::vec const &M_sub,
  * \return The vector x
  */
 auto
-solve_tridiag(arma::vec const &A_sub,
-              arma::vec const &A_diag,
-              arma::vec const &A_super,
+solve_tridiag(arma::vec &A_sub,
+              arma::vec &A_diag,
+              arma::vec &A_super,
               arma::vec const &b) -> arma::vec
 {
     int N    = A_diag.size();
