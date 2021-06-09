@@ -68,17 +68,15 @@ auto main(int argc,char *argv[]) -> int
     SchroedingerSolverFiniteWell se(a, b, V, m_w, m_b, N, state);
 
     // Set cut-off energies if desired
-    if(opt.get_argument_known("Emin"))
-    {
+    if(opt.get_argument_known("Emin")) {
         se.set_E_min(opt.get_option<double>("Emin") * e/1000);
     }
-    if(opt.get_argument_known("Emax"))
-    {
+
+    if(opt.get_argument_known("Emax")) {
         se.set_E_max(opt.get_option<double>("Emax") * e/1000);
     }
 
-    if(opt.get_option<bool>("outputequations"))
-    {
+    if(opt.get_option<bool>("outputequations")) {
         const auto nst    = se.get_n_bound();
         const auto v_max  = (nst+1)*pi/2;
 
@@ -88,8 +86,7 @@ auto main(int argc,char *argv[]) -> int
         std::valarray<double> lhs(nv);
 
         // Output lhs data in a single contiguous chunk
-        for (unsigned int iv = 0; iv < nv; ++iv)
-        {
+        for (unsigned int iv = 0; iv < nv; ++iv) {
             v[iv]   = iv*dv;
             lhs[iv] = se.get_lhs(v[iv]);
         }
@@ -97,8 +94,7 @@ auto main(int argc,char *argv[]) -> int
         write_table("lhs.r", v, lhs);
 
         // Output a separate file for each rhs branch
-        for (unsigned int ibranch = 0; ibranch < nst+1; ++ibranch)
-        {
+        for (unsigned int ibranch = 0; ibranch < nst+1; ++ibranch) {
             const size_t nv_branch = 1000;
 
             std::valarray<double> v_branch(nv_branch);
@@ -108,10 +104,9 @@ auto main(int argc,char *argv[]) -> int
             // asymptote at the "end" of the branch
             const auto dv_branch = (pi/2.0*0.999999)/(nv_branch-1);
 
-            for (unsigned int iv_branch = 0; iv_branch < nv_branch; ++iv_branch)
-            {
+            for (unsigned int iv_branch = 0; iv_branch < nv_branch; ++iv_branch) {
                 v_branch[iv_branch] = pi/2.0 * ibranch  + iv_branch*dv_branch;
-                rhs[iv_branch]      = se.get_rhs(v_branch[iv_branch]);
+                rhs[iv_branch]      = SchroedingerSolverFiniteWell::get_rhs(v_branch[iv_branch]);
             }
 
             // Set filename
@@ -134,8 +129,9 @@ auto main(int argc,char *argv[]) -> int
                               true);
 
     // Write potential profile to file if wanted
-    if(opt.get_option<bool>("outputpotential"))
+    if(opt.get_option<bool>("outputpotential")) {
         write_table("v.r", se.get_z(), se.get_V());
+    }
 
     return EXIT_SUCCESS;
 }

@@ -39,7 +39,7 @@ DonorEnergyMinimiser::DonorEnergyMinimiser(std::shared_ptr<SchroedingerSolverDon
 auto DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
                                               void   *params) -> double
 {
-    auto se = reinterpret_cast<SchroedingerSolverDonor *>(params);
+    auto * se = reinterpret_cast<SchroedingerSolverDonor *>(params);
     se->set_lambda(lambda); // Recalculate at given Bohr radius
     const auto solutions = se->get_solutions();
 
@@ -52,7 +52,7 @@ auto DonorEnergyMinimiser::find_E_at_lambda(double  lambda,
 auto DonorEnergyMinimiser::find_E_at_lambda_zeta(const gsl_vector *lambda_zeta,
                                                    void             *params) -> double
 {
-    auto se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
+    auto * se = reinterpret_cast<SchroedingerSolverDonorVariable *>(params);
     const double lambda = gsl_vector_get(lambda_zeta, 0);
     const double zeta   = gsl_vector_get(lambda_zeta, 1);
 

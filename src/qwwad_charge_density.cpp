@@ -46,8 +46,9 @@ ChargeDensityOptions::ChargeDensityOptions(int argc, char** argv)
 
     add_prog_specific_options_and_parse(argc, argv, doc);
 
-    if(get_option<size_t>("nper") < 1)
+    if(get_option<size_t>("nper") < 1) {
         throw std::domain_error("Number of periods must be one or more.");
+    }
 }
 
 /** Holds standard-input data */
@@ -58,7 +59,6 @@ class ChargeDensityData
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
         std::vector<Eigenstate> states;  ///< Wf and energy data
-    public:
         arma::vec  pop;  ///< Subband population [m^{-2}]
         arma::uvec nval; ///< Degeneracy of subbands
 };
@@ -143,8 +143,9 @@ auto main(int argc, char* argv[]) -> int
     arma::vec rho_1per = e*(d - carrier_density_1per);
 
     // Invert charge profile if it's a p-type system
-    if (opt.get_option<bool>("ptype"))
+    if (opt.get_option<bool>("ptype")) {
         rho_1per *= -1;
+    }
 
     // Output position, charge density [Cm^{-3}] and carrier density [m^{-3}] for a single period
     write_table(opt.get_option<std::string>("chargefile").c_str(), z_1per, rho_1per);

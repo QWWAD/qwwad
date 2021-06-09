@@ -85,14 +85,14 @@ SchroedingerSolverInfWell::calculate() -> std::vector<Eigenstate>
             break;
         }
 
-        arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::cx_vec psi(nz); // Wavefunction amplitude at each point [m^{-0.5}]
 
         // Loop over spatial locations and find wavefunction
         // amplitude at each point (QWWAD3, 2.15)
-        for(unsigned int iz=0; iz<nz; ++iz)
-        {
-            if(z[iz] > Lb_ && z[iz] < Lb_ + L_)
+        for(unsigned int iz=0; iz<nz; ++iz) {
+            if(z[iz] > Lb_ && z[iz] < Lb_ + L_) {
                 psi[iz]=sqrt(2/L_)*sin(is*pi*(z[iz]-Lb_)/L_); // Wavefunction [m^{-0.5}]
+            }
         }
 
         // Don't store the solution if it's below the minimum energy
@@ -111,8 +111,9 @@ SchroedingerSolverInfWell::calculate() -> std::vector<Eigenstate>
  */
 void SchroedingerSolverInfWell::set_padding_width(const double Lb)
 {
-    if(Lb_ < 0)
+    if(Lb_ < 0) {
         throw std::domain_error("Padding width must be positive");
+    }
 
     Lb_ = Lb;
 

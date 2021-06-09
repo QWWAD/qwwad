@@ -38,8 +38,8 @@ public:
 
     [[nodiscard]] auto clone() const -> MaterialPropertyInterp * override;
 
-    void set_limits(const decltype(_xmin) xmin,
-                    const decltype(_xmax) xmax);
+    void set_limits(decltype(_xmin) xmin,
+                    decltype(_xmax) xmax);
 
     void get_limits(decltype(_xmin) &xmin,
                     decltype(_xmax) &xmax);
@@ -48,7 +48,7 @@ public:
     [[nodiscard]] inline auto get_interp_y1() const {return _y1;}
     [[nodiscard]] inline auto get_interp_b()  const {return _b;}
 
-    [[nodiscard]] auto get_val(const double x = 0) const -> decltype(_y0) override;
+    [[nodiscard]] auto get_val(double x = 0) const -> decltype(_y0) override;
 };
 } // end namespace
 #endif

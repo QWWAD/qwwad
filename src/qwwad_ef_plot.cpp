@@ -34,7 +34,9 @@ auto configure_options(int argc, char** argv) -> WfOptions
     opt.add_option<std::string>("totalpotentialfile", "v.r",   "Name of file containing the total confining potential.");
     opt.add_option<std::string>("plotfile",           "vwf.r", "Name of file to which plottable data will be written.");
     opt.add_option<size_t>     ("nstmax",                10,   "Maximum number of states to plot.");
-    opt.add_option<std::string>("style",                "pd",  "Style of plot: 'pd' = probability density, 'wf' = wave functions.");
+    opt.add_option<std::string>("style",                "pd",  "Style of plot: 'pd' = probability density, "
+                                                               "'real' = real part of wave functions, "
+                                                               "'imag' = imaginary part of wave functions.");
     opt.add_option<bool>       ("scalebynstates",              "Scale the wavefunctions by the number of states");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
@@ -96,8 +98,8 @@ static void output_plot(const WfOptions               &opt,
     const auto plot_file = opt.get_option<std::string>("plotfile");
 
     // Open plot file
-    auto plot_stream = fopen(plot_file.c_str(), "w");
-    if(!plot_stream)
+    auto * plot_stream = fopen(plot_file.c_str(), "w");
+    if(plot_stream == nullptr)
     {
         std::ostringstream oss;
         oss << "Cannot create plot output file " << plot_file << std::endl;
@@ -105,8 +107,9 @@ static void output_plot(const WfOptions               &opt,
     }
 
     // Output conduction band profile
-    for(unsigned int iz=0; iz < nz; iz++)
+    for(unsigned int iz=0; iz < nz; iz++) {
         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10, V[iz]/(1e-3*e));
+    }
 
     unsigned int nst_plotted=0; // Counter to limit number of plotted states
 
@@ -120,7 +123,10 @@ static void output_plot(const WfOptions               &opt,
         {
             fprintf(plot_stream, "\n"); // Separate each PD plot by a blank line
             const auto PD  = st.get_PD(); // Probability density at each point
-            const auto psi = st.get_wavefunction_samples(); // Wavefunction
+
+            // Real and imaginary parts of wavefunction at each point
+            const arma::vec psi_real = real(st.get_wavefunction_samples());
+            const arma::vec psi_imag = imag(st.get_wavefunction_samples());
 
             double P_left = 0.0; // probability of electron being found on left of a point
 
@@ -136,15 +142,24 @@ static void output_plot(const WfOptions               &opt,
                 {
                     const auto E = st.get_energy();
 
-                    if (style == "wf")
+                    if (style == "real")
                     {
-                        double scale_wf = (V.max()-V.min())/((psi.max() - psi.min()) * states.size() * 2);
+                        double scale_wf = (V.max()-V.min())/((psi_real.max() - psi_real.min()) * states.size() * 2);
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (psi[iz]*scale_wf + E)/(1e-3*e));
-                    }
-                    else
+                                (psi_real[iz]*scale_wf + E)/(1e-3*e));
+                    } else if (style == "imag")
+                    {
+                        double scale_wf = (V.max()-V.min())/((psi_imag.max() - psi_imag.min()) * states.size() * 2);
+                        fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
+                                (psi_imag[iz]*scale_wf + E)/(1e-3*e));
+                    } else if (style == "pd") {
                         fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
                                 (PD[iz]*scale + E)/(1e-3*e));
+                    } else {
+                        std::ostringstream msg;
+                        msg << "Unrecognised plot style: " << style;
+                        throw std::runtime_error(msg.str());
+                    }
                 }
             }
 
@@ -165,8 +180,9 @@ auto main(int argc, char* argv[]) -> int
                                                    1000.0/e,
                                                    true);
 
-    if(opt.get_verbose())
+    if(opt.get_verbose()) {
         std::cout << "Read data for " << states.size() << " wave functions" << std::endl;
+    }
 
     arma::vec V;
     arma::vec z;

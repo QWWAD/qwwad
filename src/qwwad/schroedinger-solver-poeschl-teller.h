@@ -17,12 +17,12 @@ namespace QWWAD
 class SchroedingerSolverPoeschlTeller : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverPoeschlTeller(const double alpha,
-                                    const double lambda,
-                                    const double length,
-                                    const double mass,
-                                    const size_t nz,
-                                    const unsigned int nst_max = 0);
+    SchroedingerSolverPoeschlTeller(double alpha,
+                                    double lambda,
+                                    double length,
+                                    double mass,
+                                    size_t nz,
+                                    unsigned int nst_max = 0);
 
     auto get_name() -> std::string override {return "poeschl-teller-potential-hole";}
     [[nodiscard]] auto get_n_bound() const -> size_t;

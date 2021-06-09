@@ -24,7 +24,7 @@ public:
 
     [[nodiscard]] auto get_unit() const -> const decltype(_unit) &;
 
-    [[nodiscard]] virtual auto get_val(const double x = 0) const -> double = 0;
+    [[nodiscard]] virtual auto get_val(double x = 0) const -> double = 0;
 };
 } // end namespace
 #endif

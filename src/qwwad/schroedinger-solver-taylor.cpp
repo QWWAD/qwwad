@@ -64,8 +64,7 @@ SchroedingerSolverTaylor::SchroedingerSolverTaylor(const decltype(_m)     &me,
             V_plus      = (V[i+1] + V[i])/2;
         }
 
-        if(i!=nz-1)
-        {
+        if(i!=nz-1) {
             // Calculate a points
             AB[2*(i+1)] = -0.5*gsl_pow_2(hBar/dz)*(1+alpha_plus*V_plus)/m_plus;
 
@@ -96,10 +95,10 @@ SchroedingerSolverTaylor::calculate() -> std::vector<Eigenstate>
     const auto EVP_solutions = eigen_banded(&AB[0], &BB[0], V.min(), V.max(), V.size(), nst_max);
 
     // Now save solutions
-    for(auto st : EVP_solutions)
-    {
+    for(auto st : EVP_solutions) {
         const auto E   = st.get_E();
-        const auto psi = st.psi_array();
+        arma::cx_vec psi;
+        psi.set_real(st.psi_array());
         solutions.emplace_back(E, z, psi);
     }
 

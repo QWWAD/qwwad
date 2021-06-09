@@ -17,8 +17,8 @@
 
 const static unsigned int n_basis = 4; // Number of basis vectors
 
-static void write_ap(const double A0,
-                     const int    n_z,
+static void write_ap(double A0,
+                     int    n_z,
                      vector       a,
                      const std::array<vector, n_basis> &T,
                      const std::string                 &anion,

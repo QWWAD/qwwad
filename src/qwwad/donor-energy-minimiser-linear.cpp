@@ -46,17 +46,16 @@ void DonorEnergyMinimiserLinear::minimise()
                 _zeta_history.push_back(se_variable->get_zeta());
                 _E_history.push_back(_se->get_solutions()[0].get_energy());
 
-                if (E > E_min_zeta)
+                if (E > E_min_zeta) {
                     E_min_zeta_passed = true; // Stop looping if we've passed the minimum
-                else
-                {
+                } else {
                     // Otherwise, record the new minimum energy and corresponding zeta value
                     E_min_zeta = E;
                     zeta_min   = zeta;
                 }
 
                 zeta+=_zeta_step; // increments symmetry parameter
-            }while((zeta_stop_auto && !E_min_zeta_passed) // Carry on looping if we haven't found the minimum yet (in auto mode)
+            } while((zeta_stop_auto && !E_min_zeta_passed) // Carry on looping if we haven't found the minimum yet (in auto mode)
                     ||
                     (!zeta_stop_auto && (zeta < _zeta_stop)) // or the symmetry parameter is lower than the stop point, and we're not in auto mode
                   );
@@ -72,10 +71,9 @@ void DonorEnergyMinimiserLinear::minimise()
             _E_history.push_back(_se->get_solutions()[0].get_energy());
         }
 
-        if (E > E_min)
+        if (E > E_min) {
             E_min_passed = true; // Stop looping if we've passed the minimum
-        else
-        {
+        } else {
             // Otherwise, record the new minimum energy and corresponding lambda value
             E_min      = E;
             lambda_min = lambda;

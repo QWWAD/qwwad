@@ -32,14 +32,14 @@ using namespace constants;
 // Conversion factor for 1e10 cm^{-2} to m^{-2}
 constexpr double pop_unit_conv = 10000*1e10;
 
-static auto calc_dist(const double       Emin,
-                        const double       Ef,
-                        const double       m,
-                        const double       T,
-                        const size_t       nE,
-                        const unsigned int s,
-                        const double       alpha,
-                        const double       V) -> double;
+static auto calc_dist(double       Emin,
+                      double       Ef,
+                      double       m,
+                      double       T,
+                      size_t       nE,
+                      unsigned int s,
+                      double       alpha,
+                      double       V) -> double;
 
 /**
  * Handler for command-line options
@@ -80,7 +80,7 @@ class SBPOptions : public Options
         [[nodiscard]] auto equilibrium() const -> bool
         {
             const double epsilon = 1e-6; // Small number for comparison
-            return get_argument_known("global-population") && gsl_fcmp(get_global_pop(),0,epsilon);
+            return get_argument_known("global-population") && (gsl_fcmp(get_global_pop(),0,epsilon) != 0);
         }
 };
 
@@ -128,19 +128,18 @@ auto main(int argc,char *argv[]) -> int
         // reads subband populations file
         read_table("N.r", idx, N);
 
-        if(N.size() != nst)
-        {
+        if(N.size() != nst) {
             std::cerr << "Populations file, N.r contains data for " << N.size() << " states but " << Efile.str() << " has " << nst << std::endl;
             exit(EXIT_FAILURE);
         }
 
-        for(unsigned int i=0; i<nst; ++i) // i=0 => ground state
+        for(unsigned int i=0; i<nst; ++i) { // i=0 => ground state
             Ef[i] = find_fermi(E[i],m,N[i],T,alpha,V);
+        }
     }
 
     if(FD_flag) {
-        for(unsigned int i=0; i<nst; ++i)
-        {
+        for(unsigned int i=0; i<nst; ++i) {
             const auto subband_pop = calc_dist(E[i],Ef[i],m,T,nE,i, alpha,V);
 
             if(opt.get_verbose()) {
@@ -184,14 +183,15 @@ static auto calc_dist(const double       Emin,
 
     auto Emax=Ef+10*kB*T; // Cut-off energy for plot [J]
 
-    if(Emax<Emin) Emax=Emin+10*kB*T;
+    if(Emax<Emin) {
+        Emax=Emin+10*kB*T;
+    }
 
     arma::vec E(nE); // Array of energies for plot
     arma::vec f(nE); // Occupation probabilities
 
     const auto dE=(Emax-Emin)/(nE-1); // Energy increment for integration
-    for(unsigned int i=0; i<nE; i++)
-    {
+    for(unsigned int i=0; i<nE; i++) {
         E[i] = Emin + i*dE;
         f[i] = f_FD(Ef, E[i], T);
     }

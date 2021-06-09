@@ -125,7 +125,7 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
             break;
         }
 
-        arma::vec psi(z.size());
+        arma::cx_vec psi(z.size());
         const auto psi_inf = shoot_wavefunction(psi, E);
 
         solutions.emplace_back(E,z,psi);
@@ -141,24 +141,24 @@ SchroedingerSolverShooting::calculate() -> std::vector<Eigenstate>
 }
 
 /**
- * \brief Find the wavefunction just beyond the right-hand side of the system
+ * \brief Find the real part of the wavefunction just beyond the right-hand side of the system
  *
- * \details This function returns the value of the wavefunction (psi)
+ * \details This function returns the real part of the wavefunction (psi)
  *          at +infinity for a given value of the energy.  The solution
  *          to the energy occurs for psi(+infinity)=0.
- *
+ 
  * \param[in] E      Energy [J]
  * \param[in] params SchroedingerSolverShooting object for which to solve
  *
- * \returns The wavefunction amplitude immediately to the right of the structure
+ * \returns The real part of the wavefunction immediately to the right of the structure
  */
 auto SchroedingerSolverShooting::psi_at_inf(double  E,
                                             void   *params) -> double
 {
     auto * const se = reinterpret_cast<SchroedingerSolverShooting *>(params);
-    arma::vec psi = arma::zeros(se->get_z().size());
+    arma::cx_vec psi(se->get_z().size());
 
-    const double psi_inf = se->shoot_wavefunction(psi, E);
+    const double psi_inf = se->shoot_wavefunction(psi, E).real();
     return psi_inf;
 }
 
@@ -174,8 +174,8 @@ auto SchroedingerSolverShooting::psi_at_inf(double  E,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
-                                                      const double  E) const -> double
+auto SchroedingerSolverShooting::shoot_wavefunction(arma::cx_vec &wf,
+                                                    double        E) const -> std::complex<double>
 {
     const auto z = get_z();
     const auto V = get_V();
@@ -188,11 +188,11 @@ auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
 
     // boundary conditions (psi[-1] = psi[n] = 0)
     wf(0) = 1.0;
-    double wf_next = 1.0;
+    std::complex<double> wf_next = 1.0;
 
     for(unsigned int i=0; i < nz; i++) // last potential not used
     {
-        double wf_prev = 0;
+        std::complex<double> wf_prev = 0;
 
         // Compute m(z + dz/2)
         double m_prev = 0.0;
@@ -216,13 +216,13 @@ auto SchroedingerSolverShooting::shoot_wavefunction(arma::vec    &wf,
                 - wf_prev * m_next/m_prev;
 
         // Now copy calculated wave function to array
-        if(i != nz-1) {
+        if (i != nz-1) {
             wf(i+1) = wf_next;
         }
     }
 
     // Normalise the stored wave function
-    const arma::vec PD = square(wf);
+    const arma::vec PD = square(abs(wf));
     const auto PD_integral = integral(PD, dz);
 
     wf /= sqrt(PD_integral);

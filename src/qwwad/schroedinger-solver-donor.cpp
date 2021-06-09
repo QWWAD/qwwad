@@ -29,8 +29,7 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double     m,
     _eps(eps),
     _r_d(r_d),
     _lambda(lambda),
-    _dE(dE),
-    _solutions_chi()
+    _dE(dE)
 {
     set_V(V);
     set_z(z);
@@ -49,8 +48,8 @@ SchroedingerSolverDonor::SchroedingerSolverDonor(const double     m,
  *
  * \returns The wavefunction amplitude at the point immediately to the right of the structure
  */
-auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
-                                                   arma::vec    &chi) const -> double
+auto SchroedingerSolverDonor::shoot_wavefunction(double        E,
+                                                 arma::cx_vec &chi) const -> std::complex<double>
 {
     const auto z = get_z();
     const size_t nz = z.size();
@@ -62,17 +61,17 @@ auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
 
     // boundary conditions
     chi[0] = 1;
-    double chi_next = 1.0; 
+    std::complex<double> chi_next = 1.0; 
 
     // calculate unnormalised wavefunction
     // Note that points 0 and 1 were already defined before the loop
-    for(unsigned int iz = 0; iz<nz; ++iz)
-    {
+    for(unsigned int iz = 0; iz<nz; ++iz) {
         // Wave function amplitude at previous point
-        double chi_prev = 0.0;
+        std::complex<double> chi_prev = 0.0;
 
-        if(iz != 0)
+        if(iz != 0) {
             chi_prev = chi[iz-1];
+        }
 
         const double z_dash = z[iz] - _r_d;
 
@@ -92,12 +91,13 @@ auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
                     +(2.0-dz*dz*gamma/alpha)*chi[iz]
                    )/(1.0+beta*dz/(2.0*alpha));
 
-        if (iz != nz - 1)
+        if (iz != nz - 1) {
             chi[iz+1] = chi_next;
+        }
     }
 
     // calculate normalisation integral
-    const arma::vec chi_sqr = square(chi);
+    const arma::vec chi_sqr = square(abs(chi));
     double Nchi=integral(chi_sqr,dz); // normalisation integral for chi
 
     /* divide unnormalised wavefunction by square root
@@ -108,18 +108,18 @@ auto SchroedingerSolverDonor::shoot_wavefunction(const double  E,
 }
 
 /**
- * \brief Finds the value of the wavefunction at +infinity for a given energy.
+ * \brief Finds the value of the real part of the wavefunction at +infinity for a given energy.
  *
  * \details The solution to the energy occurs for chi(+infinity)=0.
  *
  * \returns The wavefunction at \f$\chi(\infty)\f$
  */
-auto SchroedingerSolverDonor::chi_at_inf (double  E,
-                                            void   *params) -> double
+auto SchroedingerSolverDonor::chi_at_inf(double  E,
+                                         void   *params) -> double
 {
     const SchroedingerSolverDonor *se = reinterpret_cast<SchroedingerSolverDonor *>(params);
-    arma::vec chi(se->get_z().size()); // Wavefunction envelope amplitude
-    return se->shoot_wavefunction(E, chi);
+    arma::cx_vec chi(se->get_z().size()); // Wavefunction envelope amplitude
+    return se->shoot_wavefunction(E, chi).real();
 }
 
 auto
@@ -169,7 +169,7 @@ SchroedingerSolverDonor::calculate() -> std::vector<Eigenstate>
     {
         status = gsl_root_fsolver_iterate(solver);
 
-        if(status) {
+        if(status != 0) {
                 std::cerr << "GSL error in SchroedingerSolverDonor: " << std::endl
                           << "   Singularity in range (" << Elo << "," << Ehi << ")" << std::endl;
         }
@@ -178,13 +178,14 @@ SchroedingerSolverDonor::calculate() -> std::vector<Eigenstate>
         Elo = gsl_root_fsolver_x_lower(solver);
         Ehi = gsl_root_fsolver_x_upper(solver);
         status = gsl_root_test_interval(Elo, Ehi, 1e-12*e, 0);
-    }while(status == GSL_CONTINUE);
+    } while(status == GSL_CONTINUE);
 
     // Stop if we've exceeded the cut-off energy
-    if(gsl_fcmp(E, V.max()+e, e*1e-12) == 1)
+    if(gsl_fcmp(E, V.max()+e, e*1e-12) == 1) {
         throw std::runtime_error("Energy exceeded Vmax");
+    }
 
-    arma::vec chi(z.size());
+    arma::cx_vec chi(z.size());
     const auto chi_inf = shoot_wavefunction(E, chi);
     _solutions_chi.emplace_back(E, z, chi);
 
@@ -192,8 +193,9 @@ SchroedingerSolverDonor::calculate() -> std::vector<Eigenstate>
 
     // Check that wavefunction is tightly bound
     // TODO: Implement a better check
-    if(gsl_fcmp(fabs(chi_inf), 0, 1) == 1)
+    if(gsl_fcmp(fabs(chi_inf), 0, 1) == 1) {
         throw "Warning: Wavefunction is not tightly bound";
+    }
 
     return solutions;
 }
@@ -214,8 +216,7 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
         // Delete any states that are out of the desired energy range
         // Ideally, sub-classes should never compute anything outside this
         // range!
-        for(auto it = _solutions_chi.begin(); it != _solutions_chi.end(); ++it)
-        {
+        for(auto it = _solutions_chi.begin(); it != _solutions_chi.end(); ++it) {
             auto E = it->get_energy();
 
             if (energy_above_range(E) || energy_below_range(E)) {
@@ -224,12 +225,10 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
         }
     }
 
-    if(convert_to_meV)
-    {
+    if(convert_to_meV) {
         std::vector<Eigenstate> sol_meV;
 
-        for(auto sol_J : _solutions_chi)
-        {
+        for(auto sol_J : _solutions_chi) {
             const auto E   = sol_J.get_energy();
             const auto z   = sol_J.get_position_samples();
             const auto psi = sol_J.get_wavefunction_samples();
@@ -238,8 +237,8 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
 
         return sol_meV;
     }
-    else
-        return _solutions_chi;
+
+    return _solutions_chi;
 }
 } // namespace
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

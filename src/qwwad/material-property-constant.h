@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] auto clone() const -> MaterialPropertyConstant * override;
 
-    [[nodiscard]] auto get_val(const double x = 0) const -> decltype(_constant) override;
+    [[nodiscard]] auto get_val(double x = 0) const -> decltype(_constant) override;
 };
 } // end namespace
 #endif

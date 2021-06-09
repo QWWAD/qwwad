@@ -110,8 +110,9 @@ auto ScatteringCalculatorLO::get_ki_cutoff(const unsigned int i,
     const auto Ei   = isb.get_E_min(); // Subband edge [J]
 
     // If the Fermi energy is above the subband minimum, then add that on for good measure!
-    if(Ei < Ei_F)
+    if(Ei < Ei_F) {
         Eki_max += Ei_F;
+    }
 
     return isb.get_k_at_Ek(Eki_max);
 }
@@ -159,8 +160,7 @@ auto ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
 
     double Wif_ki = 0.0;
 
-    if(ki >= ki_min)
-    {
+    if(ki >= ki_min) {
         const auto nKz = _Kz.size();
         arma::vec Wif_integrand_dKz(nKz); // Integrand for scattering rate
 
@@ -171,15 +171,17 @@ auto ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
 
         auto Delta = Ef - Ei;
 
-        if(_is_emission)
+        if(_is_emission) {
             Delta += _Ephonon;
-        else
+        } else {
             Delta -= _Ephonon;
+        }
 
         auto idx = std::make_pair(i,f);
 
-        if(ff_table.count(idx) == 0)
+        if(ff_table.count(idx) == 0) {
             make_ff_table(i,f);
+        }
 
         auto Gifsqr = ff_table[idx];
 
@@ -189,8 +191,9 @@ auto ScatteringCalculatorLO::get_rate_ki(const unsigned int i,
             auto Kz_2 = _Kz[iKz] * _Kz[iKz];
 
             // Apply screening if wanted
-            if(_enable_screening && iKz != 0)
+            if(_enable_screening && iKz != 0) {
                 Kz_2 *= (1.0 + 2*_lambda_s_sq/Kz_2 + _lambda_s_sq*_lambda_s_sq/(Kz_2*Kz_2));
+            }
 
             const auto Kz_4 = Kz_2 * Kz_2;
 
@@ -310,8 +313,9 @@ auto ScatteringCalculatorLO::Gsqr(const double   Kz,
     // Find form-factor integral
     arma::cx_vec G_integrand_dz(nz);
 
-    for(unsigned int iz=0; iz<nz; ++iz)
+    for(unsigned int iz=0; iz<nz; ++iz) {
         G_integrand_dz[iz] = exp(Kz*z[iz]*I) * psi_i[iz] * psi_f[iz];
+    }
 
     auto G = integral(G_integrand_dz, dz);
 

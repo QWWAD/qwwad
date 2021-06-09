@@ -128,11 +128,10 @@ static void write_ap(double A0,
 
  fprintf(Fap,"%i\n\n",8*n_x*n_y*n_z);
 
- for(i_n_x=0;i_n_x<n_x;i_n_x++)
-  for(i_n_y=0;i_n_y<n_y;i_n_y++)
-   for(i_n_z=0;i_n_z<n_z;i_n_z++)
-    for(i_a=0;i_a<=3;i_a++)
-     {
+ for(i_n_x=0;i_n_x<n_x;i_n_x++) {
+  for(i_n_y=0;i_n_y<n_y;i_n_y++) {
+   for(i_n_z=0;i_n_z<n_z;i_n_z++) {
+    for(i_a=0;i_a<=3;i_a++) {
       t.x=i_n_x+a[i_a].x+T[0].x;
       t.y=i_n_y+a[i_a].y+T[0].y;
       t.z=i_n_z+a[i_a].z+T[0].z;
@@ -142,6 +141,9 @@ static void write_ap(double A0,
       t.z=i_n_z+a[i_a].z+T[1].z;
       fprintf(Fap,"%s %9.3f %9.3f %9.3f\n",anion.c_str(),t.x*A0,t.y*A0,t.z*A0);
      }
+   }
+  }
+ }
 
  fclose(Fap);
 }

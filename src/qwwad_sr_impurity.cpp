@@ -21,19 +21,19 @@
 using namespace QWWAD;
 using namespace constants;
 
-static void output_ff(const double        W, // Arbitrary well width to generate q
+static void output_ff(double                      W, // Arbitrary well width to generate q
                       const std::vector<Subband> &subbands,
-                      const unsigned int  i,
-                      const unsigned int  f,
-                      const arma::vec    &d);
+                      unsigned int                i,
+                      unsigned int                f,
+                      const arma::vec            &d);
 
-auto FF_table(const double     epsilon,
-                      const Subband   &isb,
-                      const Subband   &fsb,
-                      const arma::vec &d,
-                      const size_t     nq,
-                      const bool       S_flag,
-                      const double     E_cutoff) -> gsl_spline *;
+auto FF_table(double           epsilon,
+              const Subband   &isb,
+              const Subband   &fsb,
+              const arma::vec &d,
+              size_t           nq,
+              bool             S_flag,
+              double           E_cutoff) -> gsl_spline *;
 
 auto configure_options(int argc, char** argv) -> Options
 {
@@ -82,8 +82,9 @@ auto main(int argc,char *argv[]) -> int
     // Can save a bit of time by calculating cosines in advance
     arma::vec cos_theta(ntheta);
 
-    for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
+    for(unsigned int itheta = 0; itheta < ntheta; ++itheta) {
         cos_theta[itheta] = cos(itheta*dtheta);
+    }
 
     std::ostringstream E_filename; // Energy filename string
     E_filename << "E" << p << ".r";
@@ -107,8 +108,9 @@ auto main(int argc,char *argv[]) -> int
     arma::vec d;   // Volume doping [m^{-3}]
     read_table("d.r", z_d, d);
 
-    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb) {
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
+    }
 
     // Read list of wanted transitions
     arma::uvec i_indices;
@@ -116,7 +118,7 @@ auto main(int argc,char *argv[]) -> int
 
     read_table("rrp.r", i_indices, f_indices);
 
-    auto Favg=fopen("imp-avg.dat","w");	/* open file for output of weighted means */
+    auto *Favg=fopen("imp-avg.dat","w");	/* open file for output of weighted means */
 
     // Loop over all desired transitions
     for(unsigned int itx = 0; itx < i_indices.size(); ++itx)
@@ -134,14 +136,17 @@ auto main(int argc,char *argv[]) -> int
         const double Ef = fsb.get_E_min();
 
         // Output form-factors if desired
-        if(ff_flag)
+        if(ff_flag) {
             output_ff(W,subbands,i,f,d);
+        }
 
         // Find minimum initial wave-vector that allows scattering
         const double Efi = Ef - Ei;
         double kimin = 0.0;
-        if(Efi > 0)
+
+        if(Efi > 0) {
             kimin = sqrt(2*m*Efi)/hBar;
+        }
 
         double kimax = 0;
         double Ecutoff = 0.0; // Maximum kinetic energy in initial subband
@@ -164,8 +169,9 @@ auto main(int argc,char *argv[]) -> int
             kimax   = isb.get_k_max(T);
             Ecutoff = hBar*hBar*kimax*kimax/(2*m);
 
-            if(Ecutoff+Ei < Ef)
+            if(Ecutoff+Ei < Ef) {
                 Ecutoff += Ef;
+            }
         }
 
         kimax = isb.get_k_at_Ek(Ecutoff);
@@ -219,8 +225,9 @@ auto main(int argc,char *argv[]) -> int
             Wif[iki] *= m*e*e*e*e / (4*pi*hBar*hBar*hBar*epsilon*epsilon);
 
             // Include final-state blocking factor
-            if (b_flag)
+            if (b_flag) {
                 Wif[iki] *= (1 - fsb.get_occupation_at_k(kf));
+            }
 
             Ei_t[iki] = isb.get_E_total_at_k(ki) * 1000/e;
 
@@ -253,18 +260,19 @@ return EXIT_SUCCESS;
  *    C_if⁺(q,z') = ∫_{z'}^∞ dz ψ_i(z) ψ_f(z)/exp(qz)]
  *  for a given wavevector, with respect to position
  */
-auto find_Cif_p(const arma::vec &psi_if, 
-                     const arma::vec &exp_qz,
-                     const arma::vec &z) -> arma::vec
+auto find_Cif_p(const arma::cx_vec &psi_if, 
+                const arma::vec    &exp_qz,
+                const arma::vec    &z) -> arma::cx_vec
 {
     const size_t nz = z.size();
-    arma::vec Cif_p(nz);
+    arma::cx_vec Cif_p(nz);
     const double dz=z[1]-z[0];
 
     Cif_p[nz-1] = psi_if[nz-1] / exp_qz[nz-1] * dz;
 
-    for(int iz = nz-2; iz >=0; iz--)
+    for(int iz = nz-2; iz >=0; iz--) {
         Cif_p[iz] = Cif_p[iz+1] + psi_if[iz] / exp_qz[iz] * dz;
+    }
 
     return Cif_p;
 }
@@ -279,12 +287,12 @@ auto find_Cif_p(const arma::vec &psi_if,
  * Note that the upper limit has to be the point just BEFORE each z'
  * value so that we don't double count
  */
-auto find_Cif_m(const arma::vec &psi_if, 
-                     const arma::vec &exp_qz,
-                     const arma::vec &z) -> arma::vec
+auto find_Cif_m(const arma::cx_vec &psi_if, 
+                const arma::vec    &exp_qz,
+                const arma::vec    &z) -> arma::cx_vec
 {
     const size_t nz = z.size();
-    arma::vec Cif_m(nz);
+    arma::cx_vec Cif_m(nz);
     const double dz = z[1]-z[0];
 
     // Seed the first value as zero
@@ -292,8 +300,9 @@ auto find_Cif_m(const arma::vec &psi_if,
 
     // Now, perform a block integration by summing on top of the previous
     // value in the array
-    for(unsigned int iz = 1; iz < nz; iz++)
+    for(unsigned int iz = 1; iz < nz; iz++) {
         Cif_m[iz] = Cif_m[iz-1] + psi_if[iz-1] * exp_qz[iz-1] * dz;
+    }
 
     return Cif_m;
 }
@@ -329,10 +338,10 @@ auto find_exp_qz(const double q, const arma::vec &z) -> arma::vec
  * Therefore, we have separated the z' dependence from the
  * z dependence of the matrix element.
  */
-auto Iif(const unsigned int iz0,
-           const arma::vec &Cif_p,
-           const arma::vec &Cif_m, 
-           const arma::vec &exp_qz) -> double
+auto Iif(unsigned int iz0,
+         const arma::cx_vec &Cif_p,
+         const arma::cx_vec &Cif_m, 
+         const arma::vec    &exp_qz) -> std::complex<double>
 {
     return Cif_m[iz0]/exp_qz[iz0] + Cif_p[iz0]*exp_qz[iz0];
 }
@@ -362,10 +371,10 @@ auto J(const double     q_perp,
  arma::vec Jif_integrand(nz);
 
  // Integral of i(=0) and f(=2) over z
- for(unsigned int iz=0;iz<nz;iz++)
- {
-     const double _Iif = Iif(iz, Cif_plus, Cif_minus, expTerm);
-     Jif_integrand[iz] = _Iif * _Iif * d[iz];
+ for(unsigned int iz=0;iz<nz;iz++) {
+     const auto _Iif = Iif(iz, Cif_plus, Cif_minus, expTerm);
+     const auto abs_Iif = abs(_Iif);
+     Jif_integrand[iz] = abs_Iif * abs_Iif * d[iz];
  }
 
  const double Jif = integral(Jif_integrand, dz);
@@ -409,8 +418,9 @@ auto FF_table(const double     epsilon,
         double q_TF = 0.0;
 
         // Allow screening to be turned off
-        if(S_flag)
+        if(S_flag) {
             q_TF = m*e*e/(2*pi*epsilon*hBar*hBar);
+        }
 
         // Screening permittivity * wave vector
         // Note that the pole at q_perp=0 is avoided as long as screening is included
@@ -418,8 +428,9 @@ auto FF_table(const double     epsilon,
     }
 
     // Fix singularity by "clipping" the top off it:
-    if(!S_flag)
+    if(!S_flag) {
         FF[0] = FF[1];
+    }
 
     // Pack the table of FF vs q into a cubic spline
     gsl_spline *q_FF = gsl_spline_alloc(gsl_interp_cspline, nq);
@@ -439,8 +450,8 @@ static void output_ff(const double        W, // Arbitrary well width to generate
 
  /* First generate filename and then open file	*/
  filename << "J" << i << f << ".r";
- auto FA=fopen(filename.str().c_str(),"w"); // output file for form factors versus q_perp
- if(!FA) {
+ auto *FA=fopen(filename.str().c_str(),"w"); // output file for form factors versus q_perp
+ if(FA == nullptr) {
      std::cerr << "Error: Cannot open input file '" << filename.str() << "'." << std::endl;
      exit(EXIT_FAILURE);
  }

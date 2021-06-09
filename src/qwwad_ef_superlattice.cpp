@@ -77,8 +77,9 @@ auto main(int argc,char *argv[]) -> int
                               true);
 
     // Write potential profile to file if wanted
-    if(opt.get_option<bool>("outputpotential"))
+    if(opt.get_option<bool>("outputpotential")) {
         write_table("v.r", se.get_z(), se.get_V());
+    }
 
     return EXIT_SUCCESS;
 }

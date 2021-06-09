@@ -72,8 +72,7 @@ SchroedingerSolverPoeschlTeller::calculate() -> std::vector<Eigenstate>
 
     const auto nst_max = get_nst_max();
 
-    for (unsigned int ist=0; (nst_max == 0 || ist < nst_max) && ist < nst; ++ist)
-    {
+    for (unsigned int ist=0; (nst_max == 0 || ist < nst_max) && ist < nst; ++ist) {
         // Energy is found using [QWWAD4, 3.60]
         const double kappa = _alpha * (_lambda-1-ist);
         const double E = -gsl_pow_2(hBar * kappa) / (2.0*_mass);
@@ -82,23 +81,23 @@ SchroedingerSolverPoeschlTeller::calculate() -> std::vector<Eigenstate>
         // The solution is a hypergeometric function, whose arguments and scaling
         // factor depend on whether the state has odd or even parity.
         
-        double arg1, arg2, arg3;    // Arguments for hypergeometric function
+        // Arguments for hypergeometric function
+        double arg1;
+        double arg2;
+        double arg3;
         arma::vec fact; // Prefactor for hypergeometric function
 
         // Flugge, 39.24
         const double a = 0.5 * (_lambda - kappa/_alpha);
         const double b = 0.5 * (_lambda + kappa/_alpha);
 
-        if(ist % 2) // Odd-parity states
-        {
+        if(ist % 2 != 0) { // Odd-parity states
             // From Flugge, 39.10b
             arg1 = a+0.5;
             arg2 = b+0.5;
             arg3 = 1.5;
             fact = pow(cosh(_alpha*z),_lambda) % sinh_alpha_z;
-        }
-        else // Even-parity states
-        {
+        } else { // Even-parity states
             // From Flugge, 39.10a
             arg1 = a;
             arg2 = b;
@@ -106,29 +105,24 @@ SchroedingerSolverPoeschlTeller::calculate() -> std::vector<Eigenstate>
             fact = pow(cosh(_alpha*z),_lambda);
         }
 
-        arma::vec psi = arma::zeros(nz); // Wavefunction amplitude at each point [m^{-0.5}]
+        // Wavefunction amplitude at each point [m^{-0.5}]
+        arma::cx_vec psi;
 
-        for(unsigned int iz = 0; iz < nz; ++iz)
-        {
-            if(std::abs(_x(iz)) < 1)
-            {
+        for(unsigned int iz = 0; iz < nz; ++iz) {
+            if(std::abs(_x(iz)) < 1) {
                 psi(iz) = fact(iz) *
                           gsl_sf_hyperg_2F1(arg1, arg2, arg3, _x(iz));
-            }
+            } else if(gsl_fcmp(_x[iz]/(_x[iz]-1), 1, 0.0025) == -1) {
             // If the argument is too large, we need to apply a linear
             // transformation such that |_x| < 1
-            else if(gsl_fcmp(_x[iz]/(_x[iz]-1), 1, 0.0025) == -1)
-            {
                 psi[iz] = fact[iz] *
                           pow(1-_x[iz],-arg2) *
                           gsl_sf_hyperg_2F1(arg2, arg3-arg1, arg3, _x[iz]/(_x[iz]-1));
-            }
+            } else {
             // In case we're *very* close to _x = 1, GSL can't cope, so we
             // need to simplify things further, and just pass a large number
             // as the argument.
             // This seems to be OK, but might need a little investigation
-            else
-            {
                 psi[iz] = fact[iz] *
                           pow(1-_x[iz],-arg2) *
                           gsl_sf_hyperg_2F1(arg2, arg3-arg1, arg3, 0.99);

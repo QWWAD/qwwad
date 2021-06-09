@@ -32,7 +32,7 @@
 using namespace QWWAD;
 using namespace constants;
 
-static void ff_table(const double   dKz,
+static void ff_table(double         dKz,
                      const Subband &isb,
                      const Subband &fsb,
                      unsigned int   nKz,
@@ -108,8 +108,9 @@ auto main(int argc,char *argv[]) -> int
     // Can save a bit of time by calculating cosines in advance
     arma::vec cos_theta(ntheta);
 
-    for(unsigned int itheta = 0; itheta < ntheta; ++itheta)
+    for(unsigned int itheta = 0; itheta < ntheta; ++itheta) {
         cos_theta[itheta]     = cos(itheta*dtheta);
+    }
 
     // calculate often used constants
     const double N0=1/(exp(Ephonon/(kB*Tl))-1); // Bose-Einstein factor
@@ -135,8 +136,9 @@ auto main(int argc,char *argv[]) -> int
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
-    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb) {
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], Te);
+    }
 
     // Read list of wanted transitions
     arma::uvec i_indices;
@@ -167,12 +169,14 @@ auto main(int argc,char *argv[]) -> int
         ff_table(dKz,isb,fsb,nKz,Kz,Gifsqr);		/* generates formfactor table	*/
         arma::vec Kz_sqr(nKz);
 
-        for(unsigned int iKz = 0; iKz < nKz; ++iKz)
+        for(unsigned int iKz = 0; iKz < nKz; ++iKz) {
             Kz_sqr[iKz] = Kz[iKz]*Kz[iKz];
+        }
 
         // Output formfactors if desired
-        if(ff_flag)
+        if(ff_flag) {
             ff_output(Kz, Gifsqr, i, f);
+        }
 
         /* Generate filename for particular mechanism and open file	*/
         std::ostringstream ab_filename; // absorption rate filename
@@ -315,9 +319,9 @@ auto main(int argc,char *argv[]) -> int
 /**
  * \brief calculates the overlap integral squared between the two states
  */
-static auto Gsqr(const double   Kz,
-                   const Subband &isb,
-                   const Subband &fsb) -> double
+static auto Gsqr(double   Kz,
+                 const Subband &isb,
+                 const Subband &fsb) -> double
 {
  const auto z = isb.z_array();
  const double dz = z[1] - z[0];
@@ -330,8 +334,9 @@ static auto Gsqr(const double   Kz,
  // Find form-factor integral
  arma::cx_vec G_integrand_dz(nz);
 
- for(unsigned int iz=0; iz<nz; ++iz)
+ for(unsigned int iz=0; iz<nz; ++iz) {
      G_integrand_dz[iz] = exp(Kz*z[iz]*I) * psi_i[iz] * psi_f[iz];
+ }
 
  auto G = integral(G_integrand_dz, dz);
 

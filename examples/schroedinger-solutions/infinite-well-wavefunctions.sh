@@ -35,11 +35,11 @@ rm -f $outfile
 qwwad_ef_infinite_well --wellwidth 100 --nz 1000 --nst 3
 
 # Shift wavefunctions and scale positions to angstrom
-awk '{printf("%3.5f    %.12e\n", $1*1e10, $2)}' wf_e1.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{printf("%3.5f    %.12e\n", $1*1e10, $2)}' wf_e1.r >> $outfile
 printf "\n" >> $outfile
-awk '{printf("%3.5f    %.12e\n", $1*1e10, $2 + 30000)}' wf_e2.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{printf("%3.5f    %.12e\n", $1*1e10, $2 + 30000)}' wf_e2.r >> $outfile
 printf "\n" >> $outfile
-awk '{printf("%3.5f    %.12e\n", $1*1e10, $2 + 60000)}' wf_e3.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{printf("%3.5f    %.12e\n", $1*1e10, $2 + 60000)}' wf_e3.r >> $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:

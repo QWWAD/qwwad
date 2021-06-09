@@ -85,8 +85,9 @@ auto main(int argc,char *argv[]) -> int
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
-    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb) {
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], Te);
+    }
 
     // Initialise scattering calculators and set parameters
     ScatteringCalculatorLO em_calculator(subbands, A0, Ephonon, epsilon_s, epsilon_inf, m, Te, Tl, true);
@@ -119,8 +120,7 @@ auto main(int argc,char *argv[]) -> int
         unsigned int f = f_indices[itx] - 1;
 
         // Output form-factors if desired
-        if(ff_flag)
-        {
+        if(ff_flag) {
             const auto Kz     = em_calculator.get_Kz_table();
             const auto Gifsqr = em_calculator.get_ff_table(i,f);
             ff_output(Kz, Gifsqr, i,f);

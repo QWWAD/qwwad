@@ -42,7 +42,7 @@ void DonorEnergyMinimiserFast::minimise()
             ++iter;
             status  = gsl_multimin_fminimizer_iterate(s);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in DonorEnergyMinimiserFast: " << std::endl;
             }
 
@@ -81,13 +81,14 @@ void DonorEnergyMinimiserFast::minimise()
         // Search for a suitable lambda value until we find which quadrant the mimimum lies in
         do
         {
-            if(_se->get_lambda() >= _lambda_stop)
+            if(_se->get_lambda() >= _lambda_stop) {
                 throw std::domain_error("Can't find a minimum in this range of Bohr radii");
+            }
 
             _se->set_lambda(_se->get_lambda() + dlambda); // Increment the Bohr radius
             E0 = _se->get_solutions()[0].get_energy();
-        }
-        while((E0 > Elo) || (E0 > Ehi));
+        } while((E0 > Elo) || (E0 > Ehi));
+
         __lambda_start = _se->get_lambda() - dlambda;
 
         gsl_min_fminimizer *s = gsl_min_fminimizer_alloc(gsl_min_fminimizer_brent);
@@ -99,7 +100,7 @@ void DonorEnergyMinimiserFast::minimise()
             ++iter;
             status  = gsl_min_fminimizer_iterate(s);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in DonorEnergyMinimiserFast." << std::endl;
             }
 

@@ -74,7 +74,7 @@ public:
     static auto read_from_file(const std::string &energy_input_path,
                                const std::string &wf_input_prefix,
                                const std::string &wf_input_ext,
-                               const std::string &m_filename) -> std::vector<Subband>;
+                               const std::string &m_d_filename) -> std::vector<Subband>;
 
     static auto read_from_file(const std::string &energy_input_path,
                                const std::string &wf_input_prefix,

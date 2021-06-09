@@ -18,7 +18,7 @@ project(qwwad
 	VERSION 1.6
        )
 
-set( CMAKE_CXX_CLANG_TIDY clang-tidy -checks=readability-* )
+set( CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*,-readability-magic-numbers )
 
 message("-- Building ${PROJECT_NAME} version: ${qwwad_VERSION}")
 set( QWWAD_URL "https://launchpad.net/qwwad" )

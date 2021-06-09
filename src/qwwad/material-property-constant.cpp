@@ -22,7 +22,7 @@ MaterialPropertyConstant::MaterialPropertyConstant(xmlpp::Element *elem) :
 {
     if(elem->has_child_text()) // Parse a constant value
     {
-        auto val_node = elem->get_child_text();
+        auto *val_node = elem->get_child_text();
 
         // Read raw text value
         auto _text = val_node->get_content().raw();

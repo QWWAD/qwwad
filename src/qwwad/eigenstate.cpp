@@ -71,20 +71,19 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
     // Read eigenvalues into tempory memory
     arma::vec E_temp;
 
-    if(ignore_first_column)
-    {
+    if(ignore_first_column) {
         arma::vec indices;
         read_table(Eigenval_name.c_str(), indices, E_temp);
-    }
-    else
+    } else {
         read_table(Eigenval_name.c_str(), E_temp);
+    }
 
     E_temp /= eigenvalue_scale;
 
     // Set number of states
     const size_t nst = E_temp.size();
-    if(nst==0)
-    {
+
+    if(nst==0) {
         std::ostringstream oss;
         oss << Eigenval_name << " appears to be empty. Is this the correct eigenvalue input file?.";
         throw std::runtime_error(oss.str());
@@ -92,12 +91,11 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
 
     // Read first eigenvector into tempory memory to get size of vectors
     arma::vec z_temp;
-    arma::vec psi_temp;
+    arma::cx_vec psi_temp;
     std::string Eigenvect_name = Eigenvect_prefix + "1" + Eigenvect_ext;
     read_table(Eigenvect_name.c_str(), z_temp, psi_temp);
 
-    if(z_temp.size() == 0)
-    {
+    if(z_temp.empty()) {
         std::ostringstream oss;
         oss << "No data found in " << Eigenvect_name << ". Is this the correct eigenvector input file?";
         throw std::runtime_error(oss.str());
@@ -108,7 +106,7 @@ Eigenstate::read_from_file(const std::string &Eigenval_name,
     states.emplace_back(E_temp[0], z_temp, psi_temp);
 
     // Read in remaining eigenvectors and copy into permanent store
-    for(unsigned int ist=1; ist<nst; ist++){
+    for(unsigned int ist=1; ist<nst; ist++) {
         std::stringstream Eigenvect_name_sstream;
         Eigenvect_name_sstream << Eigenvect_prefix << ist+1 << Eigenvect_ext;
         Eigenvect_name = Eigenvect_name_sstream.str();
@@ -135,18 +133,19 @@ void Eigenstate::write_to_file(const std::string             &Eigenval_name,
                                const std::string             &Eigenvect_prefix,
                                const std::string             &Eigenvect_ext,
                                const std::vector<Eigenstate> &states,
-                               const bool                     with_num)
+                               bool                           with_num)
 {
     // Output eigenvalues
     arma::vec E_temp(states.size());
-    for(unsigned int ist=0; ist < states.size(); ist++)
+
+    for(unsigned int ist=0; ist < states.size(); ist++) {
         E_temp[ist] = states[ist].get_energy();
+    }
 
     write_table(Eigenval_name.c_str(), E_temp, with_num, 17);
 
     // Output eigenvectors
-    for(unsigned int ist=0; ist < states.size(); ist++)
-    {
+    for(unsigned int ist=0; ist < states.size(); ist++) {
         std::stringstream Eigenvect_name_sstream;
         Eigenvect_name_sstream << Eigenvect_prefix << ist+1 << Eigenvect_ext;
         std::string Eigenvect_name = Eigenvect_name_sstream.str();
@@ -157,17 +156,14 @@ void Eigenstate::write_to_file(const std::string             &Eigenval_name,
 }
 
 /**
- * \brief Find the expectation position for a given state
- *
- * \param[in] i State
- * \param[in] z Spatial coordinates [m]
+ * \brief Find the expectation position for this eigenstate
  *
  * \return Expectation position [m]
  */
 auto Eigenstate::get_expectation_position() const -> double
 {
     const auto dz = _z[1] - _z[0];
-    const decltype(_psi) dz_av = _psi * _psi * _z;
+    const arma::vec dz_av = square(abs(_psi)) * _z;
 
     return integral(dz_av, dz);
 }
@@ -205,9 +201,9 @@ auto mij(const Eigenstate &i, const Eigenstate &j) -> double
     const auto psi_i = i.get_wavefunction_samples();
     const auto psi_j = j.get_wavefunction_samples();
 
-    const arma::vec dmij = psi_i * (z - z0) * psi_j;
+    const arma::cx_vec dmij = conj(psi_i) * (z - z0) * psi_j;
 
-    return integral(dmij, dz);
+    return integral(dmij, dz).real();
 }
 
 /**
@@ -218,8 +214,7 @@ auto Eigenstate::psi_squared_max(const std::vector<Eigenstate> &states) -> doubl
     double PDmax = 0.0;
 
     // Loop through all states
-    for(auto st : states)
-    {
+    for(auto st : states) {
         // If this state has highest probability so far, store its value
         const auto PD = st.get_PD();
         PDmax = GSL_MAX_DBL(PDmax, PD.max());

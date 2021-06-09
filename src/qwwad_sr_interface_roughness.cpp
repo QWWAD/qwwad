@@ -70,8 +70,9 @@ auto main(int argc,char *argv[]) -> int
     read_table("Ef.r", indices, Ef);
     Ef *= e/1000.0; // Rescale to J
 
-    for(unsigned int isb = 0; isb < subbands.size(); ++isb)
+    for(unsigned int isb = 0; isb < subbands.size(); ++isb) {
         subbands[isb].set_distribution_from_Ef_Te(Ef[isb], T);
+    }
 
     // Read potential profile
     arma::vec z;
@@ -108,8 +109,10 @@ auto main(int argc,char *argv[]) -> int
         // Find minimum initial wave-vector that allows scattering
         const double Efi = Ef - Ei;
         double kimin = 0.0;
-        if(Efi > 0)
+
+        if(Efi > 0) {
             kimin = sqrt(2*m*Efi)/hBar;
+        }
 
         double kimax = 0;
         double Ecutoff = 0.0; // Maximum kinetic energy in initial subband
@@ -132,8 +135,9 @@ auto main(int argc,char *argv[]) -> int
             kimax   = isb.get_k_max(T);
             Ecutoff = hBar*hBar*kimax*kimax/(2*m);
 
-            if(Ecutoff+Ei < Ef)
+            if(Ecutoff+Ei < Ef) {
                 Ecutoff += Ef;
+            }
         }
 
         kimax = isb.get_k_at_Ek(Ecutoff);
@@ -149,8 +153,9 @@ auto main(int argc,char *argv[]) -> int
         const size_t nz = z.size();
         arma::vec dV_dz(nz); // Derivative of potential profile [J/m]
 
-        for (unsigned int iz = 1; iz < nz-1; ++iz)
+        for (unsigned int iz = 1; iz < nz-1; ++iz) {
             dV_dz[iz] = (V[iz+1] - V[iz-1])/dz;
+        }
 
         // Assume periodic boundary conditions
         dV_dz[0]    = (V[1] - V[nz-1])/dz;
@@ -158,7 +163,7 @@ auto main(int argc,char *argv[]) -> int
 
         const auto psi_i  = isb.psi_array();
         const auto psi_f  = fsb.psi_array();
-        const arma::vec psi_if = psi_i%psi_f;
+        const arma::cx_vec psi_if = psi_i%psi_f;
         double F_if_sq = 0.0;
 
         // Get contributions from each interface
@@ -169,19 +174,23 @@ auto main(int argc,char *argv[]) -> int
             unsigned int iz_L = 0; // Lower bound of interface
             unsigned int iz_U = 0; // Upper bound of interface
 
-            if(I != 0)
+            if(I != 0) {
                 iz_L = (iz_I[I] + iz_I[I-1])/2;
-            else
+            } else {
                 iz_L = iz_I[0]/2;
+            }
 
             iz_U = (iz_I[I] + iz_I[I+1])/2;
 
-            arma::vec F_integrand_dz(iz_U-iz_L);
-            for (unsigned int iz = iz_L; iz < iz_U; ++iz)
-                F_integrand_dz[iz-iz_L] = psi_if[iz]*dV_dz[iz];
+            arma::cx_vec F_integrand_dz(iz_U-iz_L);
 
-            const double F_if = integral(F_integrand_dz, dz);
-            F_if_sq = F_if*F_if;
+            for (unsigned int iz = iz_L; iz < iz_U; ++iz) {
+                F_integrand_dz[iz-iz_L] = psi_if[iz]*dV_dz[iz];
+            }
+
+            const auto F_if = integral(F_integrand_dz, dz);
+            const auto abs_F_if = abs(F_if);
+            F_if_sq = abs_F_if * abs_F_if;
         }
 
         // calculate scattering rate for all ki
@@ -201,8 +210,9 @@ auto main(int argc,char *argv[]) -> int
             Wif[iki] = pi*m*Delta*Delta*Lambda*Lambda/(hBar*hBar*hBar) * beta * F_if_sq;
 
             // Include final-state blocking factor
-            if (b_flag)
+            if (b_flag) {
                 Wif[iki] *= (1 - fsb.get_occupation_at_k(kf));
+            }
 
             Ei_t[iki] = isb.get_E_total_at_k(ki) * 1000/e;
 

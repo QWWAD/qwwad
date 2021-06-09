@@ -33,12 +33,12 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
     set_nst_max(nst_max);
 
     // Generate potential profile
-    for (unsigned int iz=0; iz<nz; iz++)
-    {
+    for (unsigned int iz=0; iz<nz; iz++) {
         z[iz]=iz*(l_w+2*l_b)/(nz-1)-(l_b+l_w/2);
 
-        if(z[iz] < -l_w/2 || z[iz] >= l_w/2)
+        if(z[iz] < -l_w/2 || z[iz] >= l_w/2) {
             V[iz] = _V0;
+        }
     }
 
     set_V(V);
@@ -50,9 +50,14 @@ SchroedingerSolverFiniteWell::SchroedingerSolverFiniteWell(const double l_w,
  *
  * \param[in] v          Normalised wave-vector for well region
  *
- * \returns The right-hand side of the matching equation
+ * \returns The right-hand side of the matching equation.
+ *
+ * \details This is independent of the geometry/properties of the well -
+ *          i.e., purely a function of wave-vector.  As such, the method
+ *          is defined statically, and can be used without instantiating
+ *          a SchroedingerSolverFiniteWell object.
  */
-auto SchroedingerSolverFiniteWell::get_rhs(const double v) const -> double
+auto SchroedingerSolverFiniteWell::get_rhs(double v) -> double
 {
     double result = 0;
 
@@ -62,10 +67,11 @@ auto SchroedingerSolverFiniteWell::get_rhs(const double v) const -> double
 
     const bool odd_parity = (branch % 2 == 0);
 
-    if(odd_parity)
+    if(odd_parity) {
         result = -v*cot(v);
-    else
+    } else {
         result = v*tan(v);
+    }
 
     return result;
 }
@@ -85,8 +91,9 @@ auto SchroedingerSolverFiniteWell::get_lhs(const double v) const -> double
 
     double result = 0.0;
 
-    if(gsl_fcmp(v*v, u_0_sq, 1e-12) == -1)
+    if(gsl_fcmp(v*v, u_0_sq, 1e-12) == -1) {
         result = sqrt(u_0_sq - v*v);
+    }
 
     return result;
 }
@@ -112,7 +119,7 @@ auto SchroedingerSolverFiniteWell::get_lhs(const double v) const -> double
  *          This is zero when the energy equals the an eigenvalue.
  */
 auto SchroedingerSolverFiniteWell::test_matching(double  v,
-                                                   void   *params) -> double
+                                                 void   *params) -> double
 {
     const SchroedingerSolverFiniteWell *se = reinterpret_cast<SchroedingerSolverFiniteWell *>(params);
 
@@ -128,7 +135,7 @@ auto SchroedingerSolverFiniteWell::test_matching(double  v,
  * \param[in] odd_parity  true for odd states, false for even
  */
 auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
-                                                    const bool   odd_parity) const -> arma::vec
+                                                    const bool   odd_parity) const -> arma::cx_vec
 {
     const auto z = get_z();
 
@@ -137,7 +144,7 @@ auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
     const double K=sqrt(2*_m_b/hBar*(_V0-E)/hBar); // decay constant in barrier
 
     const size_t N = z.size();
-    arma::vec psi(N); // wavefunction
+    arma::cx_vec psi(N); // wavefunction
     const double dz = z[1] - z[0];
     const double epsilon = dz/1000;
 
@@ -145,42 +152,36 @@ auto SchroedingerSolverFiniteWell::get_wavefunction(const double E,
     double A = 0; // Amplitude in well
     double B = 0; // Amplitude in barriers
 
-    if(odd_parity)
-    {
+    if(odd_parity) {
         A = 1.0/sqrt(
                 _l_w/2.0 - sin(k*_l_w)/(2.0*k) + gsl_pow_2(sin(k*_l_w/2.0))/K
                 );
         B = A * exp(K*_l_w/2.0) * sin(k*_l_w/2.0);
-    }
-    else
-    {
+    } else {
         A = 1.0/sqrt(
                 _l_w/2.0 + sin(k*_l_w)/(2.0*k) + gsl_pow_2(cos(k*_l_w/2.0))/K
                 );
         B = A * exp(K*_l_w/2.0) * cos(k*_l_w/2.0);
     }
 
-    for (unsigned int i_z=0;i_z<N;i_z++)
-    {
+    for (unsigned int i_z=0;i_z<N;i_z++) {
         // Left barrier
-        if (gsl_fcmp(z[i_z], -_l_w/2, epsilon)==-1)
-        {
-            if(odd_parity)
+        if (gsl_fcmp(z[i_z], -_l_w/2, epsilon)==-1) {
+            if(odd_parity) {
                 psi[i_z]=-B*exp(-K*fabs(z[i_z]));
-            else
+            } else {
                 psi[i_z]=B*exp(-K*fabs(z[i_z]));
-        }
+            }
+        } else if (gsl_fcmp(z[i_z], _l_w/2, epsilon)>=0) {
         // Right barrier
-        else if (gsl_fcmp(z[i_z], _l_w/2, epsilon)>=0)
             psi[i_z]=B*exp(-K*z[i_z]);
-
+        } else if (gsl_fcmp(z[i_z], -_l_w/2, epsilon) >= 0 && (z[i_z]<(_l_w/2))) {
         // Find wavefunction within well region
-        else if (gsl_fcmp(z[i_z], -_l_w/2, epsilon) >= 0 && (z[i_z]<(_l_w/2)))
-        {
-            if(odd_parity)
+            if(odd_parity) {
                 psi[i_z]=A*sin(k*z[i_z]);
-            else
+            } else {
                 psi[i_z]=A*cos(k*z[i_z]);
+            }
         }
     }
 
@@ -212,8 +213,7 @@ SchroedingerSolverFiniteWell::calculate() -> std::vector<Eigenstate>
     const auto nst_max = get_nst_max();
     const auto z = get_z();
 
-    for (unsigned int ist=0; ist < nst_max && ist < nst; ++ist)
-    {
+    for (unsigned int ist=0; ist < nst_max && ist < nst; ++ist) {
         // deduce parity: false if even parity
         const bool parity_flag = (ist%2 == 1);
 
@@ -231,8 +231,9 @@ SchroedingerSolverFiniteWell::calculate() -> std::vector<Eigenstate>
         // If this is the highest state in the well, then we need to
         // reduce the range so that the energy doesn't go over the
         // top of the well.
-        if (ist == nst - 1)
+        if (ist == nst - 1) {
            vhi = u_0_max;
+        }
 
         double v; // Best estimate of solution
         gsl_root_fsolver_set(solver, &F, vlo, vhi);
@@ -240,11 +241,10 @@ SchroedingerSolverFiniteWell::calculate() -> std::vector<Eigenstate>
 
         // Improve the estimate of solution using the Brent algorithm
         // until we hit a desired level of precision
-        do
-        {
+        do {
             status = gsl_root_fsolver_iterate(solver);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in SchroedingerSolverFiniteWell: " << std::endl
                           << "   Singularity in range (" << vlo << "," << vhi << ")" << std::endl;
             }
@@ -259,12 +259,16 @@ SchroedingerSolverFiniteWell::calculate() -> std::vector<Eigenstate>
         const double E = hBar*hBar*k*k/(2.0*_m_w);
 
         // Stop if we've exceeded the cut-off energy
-        if(energy_above_range(E)) break;
+        if(energy_above_range(E)) {
+            break;
+        }
 
-        const auto psi = get_wavefunction(E,parity_flag);
+        const arma::cx_vec psi = get_wavefunction(E,parity_flag);
 
         // Don't store the solution if it's below the minimum energy 
-        if(!energy_below_range(E)) solutions.emplace_back(E, z, psi);
+        if(!energy_below_range(E)) {
+            solutions.emplace_back(E, z, psi);
+        }
 
         gsl_root_fsolver_free(solver);
     }

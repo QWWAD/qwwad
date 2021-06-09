@@ -79,12 +79,12 @@ auto calculate_dos_2D(const double                 mass,
     const size_t nsb = E_subbands.size();
 
     // Loop over subbands
-    for(unsigned int isb = 0; isb < nsb; ++isb)
-    {
+    for(unsigned int isb = 0; isb < nsb; ++isb) {
         // Increment dos whenever we enter a new subband
         // [QWWAD3, Eq. 2.47]
-        if(E_carrier > E_subbands[isb])
+        if(E_carrier > E_subbands[isb]) {
             dos_total += dos_1sb;
+        }
     }
 
     return dos_total;
@@ -109,11 +109,11 @@ auto calculate_dos_1D(const double                 mass,
     const size_t nsb = E_subbands.size();
 
     // Loop over subbands
-    for(unsigned int isb = 0; isb < nsb; ++isb)
-    {
+    for(unsigned int isb = 0; isb < nsb; ++isb) {
         // Increment dos whenever we enter a new subband
-        if(E_carrier > E_subbands[isb])
+        if(E_carrier > E_subbands[isb]) {
             dos_total += sqrt(2*mass)/hBar/(pi*sqrt(E_carrier - E_subbands[isb]));
+        }
     }
 
     return dos_total;

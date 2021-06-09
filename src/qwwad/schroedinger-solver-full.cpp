@@ -52,7 +52,7 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
 
     double const hBar_dz_sq = hBar*hBar/(dz*dz);
 
-    for(unsigned int i=0; i < nz; i++){
+    for(unsigned int i=0; i < nz; i++) {
         double m_minus;
         double m_plus;
         double alpha_minus;
@@ -61,13 +61,11 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
         double V_plus;
 
         // Calculate mass midpoints for +1/2 and -1/2 avoiding outside addressing if neccessary
-        if (i==0 or i==nz-1)
-        {
+        if (i==0 or i==nz-1) {
             m_minus = m_plus = _m[i];
             alpha_minus = alpha_plus = _alpha[i];
             V_minus = V_plus = V[i];
-        }
-        else{
+        } else {
             m_minus = (_m[i]   + _m[i-1])/2;
             m_plus  = (_m[i+1] + _m[i])/2;
             alpha_minus = (_alpha[i]   + _alpha[i-1])/2;
@@ -77,9 +75,10 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
         }
 
         // Calculate a points
-        if(i!=0)
+        if(i!=0) {
             a_elem(i-1) = -0.5*hBar_dz_sq*\
                                        (1-alpha_plus*V_plus)/(m_minus*alpha_plus*alpha_minus);
+        }
 
         // Calculate b points
         b_elem(i) = 0.5*hBar_dz_sq/(alpha_plus*alpha_minus)*
@@ -88,13 +87,15 @@ SchroedingerSolverFull::SchroedingerSolverFull(decltype(_m)        m,
                     alpha_plus*alpha_minus*V_plus*V_minus)/(alpha_plus*alpha_minus);
 
         // Calculate c points
-        if(i!=nz-1)
+        if(i!=nz-1) {
            c_elem(i) = -0.5*hBar_dz_sq*\
                                        (1-alpha_minus*V_minus)/(m_plus*alpha_plus*alpha_minus);
+        }
 
         // Calculate d points
-        if(i!=0)
+        if(i!=0) {
             d_elem(i-1) = -0.5*hBar_dz_sq/(m_minus*alpha_minus);
+        }
 
         // Calculate e points
         e_elem(i) = 0.5*hBar_dz_sq*
@@ -155,8 +156,8 @@ SchroedingerSolverFull::calculate() -> std::vector<Eigenstate>
 
         // We just want the first nz elements of the eigenvector
         const auto psi_full = solutions_tmp[ist].psi_array();
-        const std::vector<double> psi(psi_full.begin(),
-                                      psi_full.begin() + nz);
+        const std::vector<std::complex<double>> psi(psi_full.begin(),
+                                                    psi_full.begin() + nz);
 
         solutions.emplace_back(E, z, psi);
     }

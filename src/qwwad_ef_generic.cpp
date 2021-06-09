@@ -146,17 +146,16 @@ static void output(const std::vector<Eigenstate> &solutions,
                    const FwfOptions              &opt)
 {
     // Check solutions were found
-    if(solutions.empty())
+    if(solutions.empty()) {
         std::cerr << "No solutions found!" << std::endl;
-    else
-    {
-        if(opt.get_verbose())
-        {
+    } else {
+        if(opt.get_verbose()) {
             std::cout << "Energy solutions:" << std::endl;
 
             // Output all solutions to screen
-            for(unsigned int ist=0; ist < solutions.size(); ist++)
+            for(unsigned int ist=0; ist < solutions.size(); ist++) {
                 std::cout << ist << "\t" << std::fixed << solutions[ist].get_energy() * 1000/e << " meV" << std::endl;
+            }
         }
 
         Eigenstate::write_to_file(opt.get_energy_filename(),
@@ -278,8 +277,8 @@ auto main(int argc, char *argv[]) -> int{
     // Output a single trial wavefunction
     if (opt.get_argument_known("tryenergy") && (opt.get_type() == SHOOTING_PARABOLIC || opt.get_type() == SHOOTING_NONPARABOLIC)) {
         const double E_trial = opt.get_option<double>("tryenergy") * e/1000;
-        arma::vec psi;
-        const double psi_inf = std::dynamic_pointer_cast<SchroedingerSolverShooting>(se)->shoot_wavefunction(psi, E_trial);
+        arma::cx_vec psi;
+        const auto psi_inf = std::dynamic_pointer_cast<SchroedingerSolverShooting>(se)->shoot_wavefunction(psi, E_trial);
 
         // Check that wavefunction is tightly bound
         // TODO: Implement a better check

@@ -35,21 +35,22 @@ SchroedingerSolverTridiag::SchroedingerSolverTridiag(const decltype(_m) &me,
     const size_t nz = z.size();
     const double dz = z[1] - z[0];
 
-    for(unsigned int i=0; i<nz; i++){
+    for(unsigned int i=0; i<nz; i++) {
         double m_minus;
         double m_plus;
 
         // Calculate mass midpoints for +1/2 and -1/2 avoiding outside addressing
-        if(i==0 || i==nz-1){
+        if(i==0 || i==nz-1) {
             m_minus = m_plus = me[i];
-        }
-        else{
+        } else {
             m_minus = (me[i] + me[i-1])/2;
             m_plus = (me[i+1] + me[i])/2;
         }
 
         // Calculate a points
-        if(i!=nz-1) sub[i] = -gsl_pow_2(hBar/dz)/(2*m_plus);
+        if(i!=nz-1) {
+            sub[i] = -gsl_pow_2(hBar/dz)/(2*m_plus);
+        }
 
         // Calculate b points
         diag[i] = 0.5*gsl_pow_2(hBar/dz)*(m_plus+m_minus)/(m_plus*m_minus) + V[i];
@@ -76,10 +77,10 @@ SchroedingerSolverTridiag::calculate() -> std::vector<Eigenstate>
 
     const auto EVP_solutions = eigen_tridiag(diag, sub, E_min, E_max, nst_max);
 
-    for (auto st : EVP_solutions)
-    {
+    for (auto st : EVP_solutions) {
         const auto E   = st.get_E();
-        const auto psi = st.psi_array();
+        arma::cx_vec psi;
+        psi.set_real(st.psi_array());
         solutions.emplace_back(E, z, psi);
     }
 

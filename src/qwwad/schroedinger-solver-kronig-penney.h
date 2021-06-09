@@ -49,7 +49,7 @@ private:
 
     auto calculate() -> std::vector<Eigenstate> override;
 
-    [[nodiscard]] auto get_wavefunction(double E) const -> arma::vec;
+    [[nodiscard]] auto get_wavefunction(double E) const -> arma::cx_vec;
 };
 } // namespace
 #endif

@@ -25,16 +25,16 @@ class DonorEnergyMinimiser
 {
 public:
     DonorEnergyMinimiser(std::shared_ptr<SchroedingerSolverDonor> &se,
-                         const double                              lambda_start,
-                         const double                              lambda_step,
-                         const double                              lambda_stop);
+                         double                                    lambda_start,
+                         double                                    lambda_step,
+                         double                                    lambda_stop);
 
     virtual ~DonorEnergyMinimiser() = default;
 
     virtual void minimise() = 0;
-    void set_zeta_params(const double zeta_start,
-                         const double zeta_step,
-                         const double zeta_stop)
+    void set_zeta_params(double zeta_start,
+                         double zeta_step,
+                         double zeta_stop)
     {
         _zeta_start = zeta_start;
         _zeta_step  = zeta_step;

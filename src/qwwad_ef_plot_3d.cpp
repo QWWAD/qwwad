@@ -53,8 +53,9 @@ auto main(int argc, char* argv[]) -> int
                                                    1000.0/e,
                                                    true);
 
-    if(opt.get_verbose())
+    if(opt.get_verbose()) {
         std::cout << "Read data for " << states.size() << " wave functions" << std::endl;
+    }
 
     // Read the potential profile
     arma::vec V;
@@ -64,8 +65,7 @@ auto main(int argc, char* argv[]) -> int
 
     const auto nz_st = states[0].get_position_samples().size();
 
-    if(V.size() != nz_st)
-    {
+    if(V.size() != nz_st) {
         std::ostringstream oss;
         oss << "Different number of data points in " << totalpotentialfile
             << " (" << V.size() << " lines) and " << opt.get_wf_filename(1)
@@ -75,10 +75,17 @@ auto main(int argc, char* argv[]) -> int
 
     // Find minimum and maximum energies for plot
     auto E_min = states.front().get_energy();
-    if(V.min() < E_min) E_min = V.min();
+
+    if(V.min() < E_min) {
+        E_min = V.min();
+    }
     
     auto E_max = states.back().get_energy();
-    if(V.max() > E_max) E_max = V.max();
+
+    if(V.max() > E_max) {
+        E_max = V.max();
+    }
+
     E_min -= 0.1*(E_max - E_min);
     E_max += 0.1*(E_max - E_min);
 
@@ -98,8 +105,7 @@ auto main(int argc, char* argv[]) -> int
         plotdata.row(index_E) += PD.t();
     }
 
-    for (unsigned iz = 0; iz != z.size(); ++iz)
-    {
+    for (unsigned iz = 0; iz != z.size(); ++iz) {
         const auto E = V(iz);
         const auto index_E = int((E-E_min)/dE);
         plotdata(index_E, iz) = 1.5;

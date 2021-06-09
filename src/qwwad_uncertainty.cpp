@@ -59,32 +59,34 @@ auto main(int argc, char *argv[]) -> int
 
     const auto psi = all_states.at(state-1).get_wavefunction_samples();
 
-    arma::vec d_psi_dz   = arma::zeros(nz);   // Derivative of wavefunction
-    arma::vec d2_psi_dz2 = arma::zeros(nz); // 2nd Derivative of wavefunction
+    arma::cx_vec d_psi_dz(nz);   // Derivative of wavefunction
+    arma::cx_vec d2_psi_dz2(nz); // 2nd Derivative of wavefunction
 
     // Note that we can take the end points as zero, since this is
     // guaranteed for any valid wavefunction
     for(unsigned int i=1;i<nz-1;i++)
     {
         d_psi_dz[i]   = (psi(i+1) - psi(i-1))/(2*dz);
-        d2_psi_dz2[i] = (psi(i+1) - 2*psi(i) + psi(i-1))/(dz*dz);
+        d2_psi_dz2[i] = (psi(i+1) - 2.0*psi(i) + psi(i-1))/(dz*dz);
     }
 
-    const arma::vec ev_z_integrand_dz = square(psi)%z;
+    const arma::vec ev_z_integrand_dz = square(abs(psi))%z;
     const auto ev_z = integral(ev_z_integrand_dz, dz);       // Expectation position [m]
 
-    const arma::vec ev_zsqr_integrand_dz = square(psi%z);
+    const arma::vec ev_zsqr_integrand_dz = square(abs(psi%z));
     const auto ev_zsqr = integral(ev_zsqr_integrand_dz, dz); // Expectation for z*z [m^2]
 
-    const arma::vec ev_p_integrand_dz = -psi%d_psi_dz;
-    const double ev_p    = integral(ev_p_integrand_dz, dz);   // Expectation momentum [relative to i hBar]
+    // Find uncertainty in position
+    const auto Delta_z=sqrt(ev_zsqr-gsl_pow_2(ev_z));
 
-    const arma::vec ev_psqr_integrand_dz = -psi%d2_psi_dz2;
-    const double ev_psqr = integral(ev_psqr_integrand_dz, dz); // Expectation for p*p [relative to hBar^2]
+    const arma::cx_vec ev_p_integrand_dz = -conj(psi)%d_psi_dz;
+    const auto ev_p    = abs(integral(ev_p_integrand_dz, dz));   // Expectation momentum [relative to i hBar]
 
-    // Find uncertainty in position and momentum
-    const double Delta_z=sqrt(ev_zsqr-gsl_pow_2(ev_z));
-    const double Delta_p=sqrt(ev_psqr-gsl_pow_2(ev_p));
+    const arma::cx_vec ev_psqr_integrand_dz = -conj(psi)%d2_psi_dz2;
+    const auto ev_psqr = abs(integral(ev_psqr_integrand_dz, dz)); // Expectation for p*p [relative to hBar^2]
+
+    // Find uncertainty in momentum
+    const auto Delta_p=sqrt(ev_psqr-gsl_pow_2(ev_p));
 
     printf("<z>\t\t\t\t\t%20.17le\n",ev_z);
     printf("<z^2>\t\t\t\t\t%20.17le\n",ev_zsqr);

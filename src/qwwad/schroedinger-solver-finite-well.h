@@ -17,13 +17,13 @@ namespace QWWAD
 class SchroedingerSolverFiniteWell : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverFiniteWell(const double l_w,
-                                 const double l_b,
-                                 const double V,
-                                 const double m_w,
-                                 const double m_b,
-                                 const size_t nz,
-                                 const unsigned int nst_max = 0);
+    SchroedingerSolverFiniteWell(double l_w,
+                                 double l_b,
+                                 double V,
+                                 double m_w,
+                                 double m_b,
+                                 size_t nz,
+                                 unsigned int nst_max = 0);
 
     auto get_name() -> std::string override {return "finite-square-well";}
 
@@ -31,10 +31,10 @@ public:
     [[nodiscard]] auto get_n_bound() const -> size_t;
 
     static auto test_matching(double v,
-                                void   *params) -> double;
+                              void   *params) -> double;
 
-    [[nodiscard]] auto get_lhs(const double v) const -> double;
-    [[nodiscard]] auto get_rhs(const double v) const -> double;
+    [[nodiscard]] auto get_lhs(double v) const -> double;
+    static auto get_rhs(double v) -> double;
 private:
     double _l_w; ///< Width of well [m]
     double _V0;  ///< Well depth [J]
@@ -43,8 +43,8 @@ private:
 
     auto calculate() -> std::vector<Eigenstate> override;
     
-    [[nodiscard]] auto get_wavefunction(const double E,
-                                             const bool   parity_flag) const -> arma::vec;
+    [[nodiscard]] auto get_wavefunction(double E,
+                                        bool   parity_flag) const -> arma::cx_vec;
 };
 } // namespace
 #endif

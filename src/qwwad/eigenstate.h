@@ -19,8 +19,8 @@ class Eigenstate {
 private:
     double E_; ///< The energy of the state [J]
 
-    arma::vec _z;   ///< Spatial sampling positions [m]
-    arma::vec _psi; ///< Wave function [m^{-0.5}]
+    arma::vec _z;      ///< Spatial sampling positions [m]
+    arma::cx_vec _psi; ///< Wave function [m^{-0.5}]
 
     [[nodiscard]] auto get_total_probability() const -> double;
     void normalise();
@@ -34,9 +34,9 @@ public:
     [[nodiscard]] inline auto get_wavefunction_at_index(const unsigned int iz) const {return _psi[iz];}
     [[nodiscard]] inline auto get_wavefunction_samples()                       const {return _psi;}
     [[nodiscard]] inline auto get_position_samples()                           const {return _z;}
-    [[nodiscard]] inline auto get_PD()                                         const -> decltype(_psi) {return square(_psi);}
+    [[nodiscard]] inline auto get_PD()                                         const -> arma::vec {return square(abs(_psi));}
 
-    static auto psi_squared_max(const std::vector<Eigenstate> &EVP) -> double;
+    static auto psi_squared_max(const std::vector<Eigenstate> &states) -> double;
 
     static auto read_from_file(const std::string &Eigenval_name,
                                const std::string &Eigenvect_prefix,

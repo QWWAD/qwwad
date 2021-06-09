@@ -45,8 +45,9 @@ class MatLibOptions : public Options
                 exit(EXIT_FAILURE);
             }
 
-            if(get_verbose())
+            if(get_verbose()) {
                 print();
+            }
         }
 
         /**
@@ -72,24 +73,20 @@ auto main(int argc, char* argv[]) -> int
 
     MaterialProperty const * prop;
 
-    try
-    {
-        const auto mat  = lib.get_material(material_name);
+    try {
+        const auto *mat  = lib.get_material(material_name);
         prop = mat->get_property(property_name);
-    }
-    catch(std::exception &e)
-    {
+    } catch(std::exception &e) {
         std::cerr << e.what() << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    const auto text_property = dynamic_cast<MaterialPropertyString const *>(prop);
+    auto * const text_property = dynamic_cast<MaterialPropertyString const *>(prop);
 
-    if(text_property)
+    if(text_property != nullptr) {
         std::cout << text_property->get_text() << std::endl;
-    else
-    {
-        const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
+    } else {
+        auto * const numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
 
         const auto x = opt.get_option<double>("variable");
         std::cout << numeric_property->get_val(x);

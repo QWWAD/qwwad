@@ -65,20 +65,19 @@ DensityinputOptions::DensityinputOptions(int argc, char** argv)
         if(arg == "fermi"   ||
            arg == "Fermi"   ||
            arg == "thermal" ||
-           arg == "Thermal")
+           arg == "Thermal") {
             distType = DIST_FERMI;
-        else if(arg == "ground" ||
-                arg == "Ground" ||
-                arg == "cold"   ||
-                arg == "Cold")
+        } else if(arg == "ground" ||
+                  arg == "Ground" ||
+                  arg == "cold"   ||
+                  arg == "Cold") {
             distType = DIST_GROUND;
-        else if(arg == "even"  ||
-                arg == "Even"  ||
-                arg == "equal" ||
-                arg == "Equal")
+        } else if(arg == "even"  ||
+                  arg == "Even"  ||
+                  arg == "equal" ||
+                  arg == "Equal") {
             distType = DIST_EVEN;
-        else
-        {
+        } else {
             std::cerr << "Unrecognised distribution type: " << arg << std::endl;
             exit(EXIT_FAILURE);
         }
@@ -108,12 +107,12 @@ auto main(int argc, char *argv[]) -> int
     arma::vec pop(nst); // Population of each subband
 
     // Generate distribution depending on the user-specified type
-    switch(opt.get_dist_type())
-    {
+    switch(opt.get_dist_type()) {
         // Split sheet density evenly over subbands
         case DIST_EVEN:
-            for(unsigned int i=0; i < nst; i++)
+            for(unsigned int i=0; i < nst; i++) {
                 pop[i] = n2D/(nst*nval);
+            }
             break;
 
         // Thermal distribution of subband populations
@@ -125,11 +124,13 @@ auto main(int argc, char *argv[]) -> int
                 // Fermi energy for entire system [J]
                 double Ef = find_fermi_global(E, _md, n2D, T);
 
-                if(opt.get_verbose())
+                if(opt.get_verbose()) {
                     std::cout << "Fermi energy = " << Ef << " J (" << Ef *1000/e << " meV)." << std::endl;
+                }
 
-                for(unsigned int i=0; i<nst; i++)
+                for(unsigned int i=0; i<nst; i++) {
                     pop[i] = find_pop(E[i], Ef, _md, T) / nval;
+                }
             }
             break;
 
@@ -140,8 +141,10 @@ auto main(int argc, char *argv[]) -> int
             // i.e. a ridiculously low value.  This prevents the
             // physically-impossible zero population states from breaking
             // later calculations of Fermi energy etc
-            for(unsigned int i=1;i<nst;i++)
+            for(unsigned int i=1;i<nst;i++) {
                 pop[i] = 1.0;
+            }
+
             break;
     }
 

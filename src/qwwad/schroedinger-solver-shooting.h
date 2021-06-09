@@ -36,8 +36,8 @@ public:
     static auto psi_at_inf(double  E,
                            void   *params) -> double;
 
-    auto shoot_wavefunction(arma::vec &wf,
-                            double     E) const -> double;
+    auto shoot_wavefunction(arma::cx_vec &wf,
+                            double        E) const -> std::complex<double>;
 
 private:
     auto calculate() -> std::vector<Eigenstate> override;

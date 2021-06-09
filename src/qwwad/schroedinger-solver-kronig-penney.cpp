@@ -120,13 +120,13 @@ auto SchroedingerSolverKronigPenney::get_lhs(const double E) const -> double
  *
  * \param[in] E Energy [J]
  */
-auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> arma::vec
+auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> arma::cx_vec
 {
     const auto z = get_z();
     const auto nz_total = z.size(); // Total number of spatial data points in the system
     const auto V = get_V();
-    arma::vec psi(nz_total);  // wavefunction
-    arma::cx_vec u(nz_total); // Periodic part of wave function
+    arma::cx_vec psi(nz_total); // wavefunction
+    arma::cx_vec u(nz_total);   // Periodic part of wave function
 
     // Imaginary unit
     const auto I = std::complex<double>(0,1);
@@ -142,15 +142,14 @@ auto SchroedingerSolverKronigPenney::get_wavefunction(const double E) const -> a
     const auto A = (exp(I*_k*L)*cos(k_w*_l_w) - cos(k_b*_l_b) ) / (exp(I*_k*L) * sin(k_w*_l_w) + _m_b*k_w/(_m_w*k_b)*sin(k_b*_l_b));
     const auto C = _m_b*k_w / (_m_w * k_b) * A;
 
-    for (unsigned int i_z=0; i_z<nz_total; ++i_z)
-    {
+    for (unsigned int i_z=0; i_z<nz_total; ++i_z) {
         if (V[i_z] > 0) { // In barriers
             u[i_z] = (C*sin(k_b*z[i_z%_nz]) + D*cos(k_b*z[i_z%_nz]))/exp(I*_k*z[i_z%_nz]);
         } else { // In wells
             u[i_z] = (A*sin(k_w*z[i_z%_nz]) + B*cos(k_w*z[i_z%_nz]))/exp(I*_k*z[i_z%_nz]);
         }
 
-        psi[i_z] = abs(u[i_z]*exp(I*_k*z[i_z]));
+        psi[i_z] = u[i_z]*exp(I*_k*z[i_z]);
     }
 
     return psi;

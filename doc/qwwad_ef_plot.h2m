@@ -21,8 +21,9 @@ In each case, the '*' is replaced by the particle ID and the 'i' is replaced by 
 The plottable functions in the output file are contained in distinct
 data sets, each being separated by a blank line.  The first set
 contains the confining potential in meV.  Subsequent sets contain
-either the probability density (default) or wavefunction amplitude
-(if --plot-wf is specified).  These sets are placed in ascending
+either the probability density (default) or the real/imaginary parts
+of the wavefunction (if --style = real or --style = imag is specified).
+These sets are placed in ascending
 order, such that state |1> data is in data set 2, state |2> in
 set 3, state |3> in set 4 and so on.
 
@@ -35,7 +36,7 @@ Generate plottable data for all states in the input files:
    qwwad_ef_plot
 
 Generate plottable data, using wavefunctions instead of probability densities:
-   qwwad_ef_plot --style wf
+   qwwad_ef_plot --style real
 
 Generate plottable data, using only the first three states in the input files:
    qwwad_ef_plot --nstmax 3

@@ -77,10 +77,11 @@ auto main(int argc,char *argv[]) -> int
     // Get donor location [m].  If unspecified, assume it's in the middle
     auto r_d = 0.0;
 
-    if (opt.get_argument_known("donorposition") > 0)
+    if (opt.get_argument_known("donorposition") > 0) {
         r_d = opt.get_option<double>("donorposition") * 1e-10;
-    else
+    } else {
         r_d = (z[z.size()-1] + z[0])/2.0;
+    }
 
     // Initial estimates of the orbital geometry
     auto lambda_0 = lambda_start; // Bohr radius [m]
@@ -89,14 +90,13 @@ auto main(int argc,char *argv[]) -> int
     // Create an initial estimate of the Schroedinger solution
     std::shared_ptr<SchroedingerSolverDonor> se;
 
-    if(symmetry_string == "2D")
+    if(symmetry_string == "2D") {
         se = std::make_shared<SchroedingerSolverDonor2D>(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
-    else if(symmetry_string == "3D")
+    } else if(symmetry_string == "3D") {
         se = std::make_shared<SchroedingerSolverDonor3D>(mstar, V, z, epsilon, r_d, lambda_0, delta_E);
-    else if(symmetry_string == "variable")
+    } else if(symmetry_string == "variable") {
         se = std::make_shared<SchroedingerSolverDonorVariable>(mstar, V, z, epsilon, r_d, lambda_0, zeta_0, delta_E);
-    else
-    {
+    } else {
         std::cerr << "Unrecognised symmetry type: " << opt.get_option<std::string>("symmetry") << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -104,12 +104,11 @@ auto main(int argc,char *argv[]) -> int
     // Now, use a minimiser to correct the orbital and find the minimum energy solution
     DonorEnergyMinimiser *minimiser = nullptr;
 
-    if(search_method == "linear")
+    if(search_method == "linear") {
         minimiser = new DonorEnergyMinimiserLinear(se, lambda_start, lambda_step, lambda_stop);
-    else if (search_method == "fast")
+    } else if (search_method == "fast") {
         minimiser = new DonorEnergyMinimiserFast(se, lambda_start, lambda_step, lambda_stop);
-    else
-    {
+    } else {
         std::cerr << "Unrecognised search type: " << search_method << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -123,8 +122,9 @@ auto main(int argc,char *argv[]) -> int
     const auto E0        = solutions[0].get_energy();
     lambda_0             = se->get_lambda();
 
-    if(opt.get_option<std::string>("symmetry") == "variable")
+    if(opt.get_option<std::string>("symmetry") == "variable") {
         zeta_0 = std::dynamic_pointer_cast<SchroedingerSolverDonorVariable>(se)->get_zeta();
+    }
 
     // Get the complete wavefunction
     const auto psi = solutions[0].get_wavefunction_samples();

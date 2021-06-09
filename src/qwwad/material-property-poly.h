@@ -19,7 +19,7 @@ public:
 
     [[nodiscard]] auto clone() const -> MaterialPropertyPoly * override;
 
-    [[nodiscard]] auto get_val(const double x = 0) const -> double override;
+    [[nodiscard]] auto get_val(double x = 0) const -> double override;
 };
 } // end namespace
 #endif

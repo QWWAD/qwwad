@@ -31,8 +31,8 @@ public:
     static auto chi_at_inf(double  E,
                            void   *params) -> double;
 
-    auto shoot_wavefunction(double     E,
-                            arma::vec &chi) const -> double;
+    auto shoot_wavefunction(double        E,
+                            arma::cx_vec &chi) const -> std::complex<double>;
 
     void set_lambda(double lambda) {_lambda = lambda; refresh_solutions();}
     [[nodiscard]] auto get_lambda() const -> double {return _lambda;}

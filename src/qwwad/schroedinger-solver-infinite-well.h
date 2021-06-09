@@ -17,14 +17,14 @@ namespace QWWAD
 class SchroedingerSolverInfWell : public SchroedingerSolver
 {
 public:
-    SchroedingerSolverInfWell(const double       me,
-                              const double       L,
-                              const size_t       nz,
-                              const double       alpha   = 0,
-                              const double       V0      = 0,
-                              const unsigned int nst_max = 1);
+    SchroedingerSolverInfWell(double       me,
+                              double       L,
+                              size_t       nz,
+                              double       alpha   = 0,
+                              double       V0      = 0,
+                              unsigned int nst_max = 1);
 
-    void set_padding_width(const double Lb);
+    void set_padding_width(double Lb);
 
     auto get_name() -> std::string override {return "infinite-square-well";}
 

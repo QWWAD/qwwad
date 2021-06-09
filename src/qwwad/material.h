@@ -32,10 +32,10 @@ public:
     auto get_numeric_property(Glib::ustring &property_name) const -> MaterialPropertyNumeric const *;
 
     auto get_property_value(const char   *property_name,
-                              const double  x = 0) const -> double;
+                            double        x = 0) const -> double;
 
     auto get_property_value(Glib::ustring &property_name,
-                              const double   x = 0) const -> double;
+                            double         x = 0) const -> double;
 
 private:
     /// Cached set of material properties

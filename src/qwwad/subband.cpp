@@ -21,7 +21,7 @@ using namespace constants;
  * \param[in] m            The effective mass for the subband [kg]
  */
 Subband::Subband(const Eigenstate &ground_state,
-                 const double      m) :
+                 double      m) :
     _ground_state(ground_state),
     _m(m),
     Ef_(ground_state.get_energy())
@@ -36,9 +36,9 @@ Subband::Subband(const Eigenstate &ground_state,
  * \param[in] V            The edge of the bulk band that contains this subband [J]
  */
 Subband::Subband(const Eigenstate &ground_state,
-                 const double      m,
-                 const double      alpha,
-                 const double      V) :
+                 double            m,
+                 double            alpha,
+                 double            V) :
     _ground_state(ground_state),
     _m(m),
     _alpha(alpha),
@@ -54,11 +54,12 @@ Subband::Subband(const Eigenstate &ground_state,
  *
  * \details A Fermi-Dirac distribution is assumed
  */
-void Subband::set_distribution_from_Ef_Te(const double Ef,
-                                          const double Te)
+void Subband::set_distribution_from_Ef_Te(double Ef,
+                                          double Te)
 {
-    if(Te <= 0.0)
+    if(Te <= 0.0) {
         throw "Carrier temperature must be positive";
+    }
 
     _dist_known = true;
     Ef_         = Ef;
@@ -75,8 +76,9 @@ void Subband::set_distribution_from_Ef_Te(const double Ef,
  */
 auto Subband::get_k_fermi() const -> double
 {
-    if(!_dist_known)
+    if(!_dist_known) {
         throw std::runtime_error("Distribution has not been set");
+    }
 
     const auto N = get_total_population();
 
@@ -93,9 +95,9 @@ auto Subband::get_k_fermi() const -> double
  *                                  effective mass.
  */
 auto Subband::read_from_file(const std::string& energy_input_path,
-                                             const std::string& wf_input_prefix,
-                                             const std::string& wf_input_ext,
-                                             const std::string& m_d_filename) -> std::vector<Subband>
+                             const std::string& wf_input_prefix,
+                             const std::string& wf_input_ext,
+                             const std::string& m_d_filename) -> std::vector<Subband>
 {
     // Read ground state data
     const auto ground_state = Eigenstate::read_from_file(energy_input_path,
@@ -106,8 +108,9 @@ auto Subband::read_from_file(const std::string& energy_input_path,
     
     const size_t nst = ground_state.size();
 
-    if(nst == 0)
+    if(nst == 0) {
         throw std::runtime_error("No states found in file");
+    }
 
     // Read effective mass table
     arma::vec z; // m
@@ -117,8 +120,7 @@ auto Subband::read_from_file(const std::string& energy_input_path,
     // Copy subband data to vector
     std::vector<Subband> subbands;
 
-    for(unsigned int ist = 0; ist < nst; ist++)
-    {
+    for(unsigned int ist = 0; ist < nst; ist++) {
         // Find the expectation-value of in-plane effective mass using QWWAD 4, 12.22
         // TODO: Note that the value used for transitions between a PAIR of subbands
         //       should use the inverse-mass matrix element; not this expectation value
@@ -142,10 +144,10 @@ auto Subband::read_from_file(const std::string& energy_input_path,
  * \param[in] wf_input_ext          Extension for wavefunction filenames
  * \param[in] m_d                   Density-of-states effective mass [kg]
  */
-auto Subband::read_from_file(const std::string& energy_input_path,
-                                             const std::string& wf_input_prefix,
-                                             const std::string& wf_input_ext,
-                                             const double       m_d) -> std::vector<Subband>
+auto Subband::read_from_file(const std::string &energy_input_path,
+                             const std::string &wf_input_prefix,
+                             const std::string &wf_input_ext,
+                             double             m_d) -> std::vector<Subband>
 {
     const auto ground_state = Eigenstate::read_from_file(energy_input_path,
                                                          wf_input_prefix,
@@ -155,14 +157,16 @@ auto Subband::read_from_file(const std::string& energy_input_path,
 
     const size_t nst = ground_state.size();
 
-    if(nst == 0)
+    if(nst == 0) {
         throw std::runtime_error("No states found in file");
+    }
 
     // Copy subband data to vector
     std::vector<Subband> subbands;
 
-    for (unsigned int ist = 0; ist < nst; ist++)
+    for (unsigned int ist = 0; ist < nst; ist++) {
         subbands.emplace_back(ground_state[ist], m_d);
+    }
 
     return subbands;
 }
@@ -178,11 +182,11 @@ auto Subband::read_from_file(const std::string& energy_input_path,
  * \param[in] potential_filename    Name of data file containing band edge potential.
  */
 auto Subband::read_from_file(const std::string& energy_input_path,
-                                             const std::string& wf_input_prefix,
-                                             const std::string& wf_input_ext,
-                                             const std::string& m_filename,
-                                             const std::string& alpha_filename,
-                                             const std::string& potential_filename) -> std::vector<Subband>
+                             const std::string& wf_input_prefix,
+                             const std::string& wf_input_ext,
+                             const std::string& m_filename,
+                             const std::string& alpha_filename,
+                             const std::string& potential_filename) -> std::vector<Subband>
 {
     // Read ground state data
     const auto ground_state = Eigenstate::read_from_file(energy_input_path,
@@ -193,8 +197,9 @@ auto Subband::read_from_file(const std::string& energy_input_path,
 
     const size_t nst = ground_state.size();
 
-    if(nst == 0)
+    if(nst == 0) {
         throw std::runtime_error("No states found in file");
+    }
 
     // Read effective mass table
     arma::vec z; // m
@@ -212,8 +217,7 @@ auto Subband::read_from_file(const std::string& energy_input_path,
     // Copy subband data to vector
     std::vector<Subband> subbands;
 
-    for(unsigned int ist = 0; ist < nst; ist++)
-    {
+    for(unsigned int ist = 0; ist < nst; ist++) {
         // Find the expectation-value of in-plane effective mass using QWWAD 4, 12.22
         // TODO: Note that the value used for transitions between a PAIR of subbands
         //       should use the inverse-mass matrix element; not this expectation value
@@ -252,12 +256,12 @@ auto Subband::read_from_file(const std::string& energy_input_path,
  * \param[in] alphad                Dispersion nonparabolicity profile [1/J]
  * \param[in] V                     Band edge potential [J]
  */
-auto Subband::read_from_file(const std::string& energy_input_path,
-                                             const std::string& wf_input_prefix,
-                                             const std::string& wf_input_ext,
-                                             const double       m_d,
-                                             const double       alphad,
-                                             const double       V) -> std::vector<Subband>
+auto Subband::read_from_file(const std::string &energy_input_path,
+                             const std::string &wf_input_prefix,
+                             const std::string &wf_input_ext,
+                             double             m_d,
+                             double             alphad,
+                             double             V) -> std::vector<Subband>
 {
     // Read ground-state data
     const auto ground_state = Eigenstate::read_from_file(energy_input_path,
@@ -268,13 +272,15 @@ auto Subband::read_from_file(const std::string& energy_input_path,
 
     const size_t nst = ground_state.size();
 
-    if(nst == 0)
+    if(nst == 0) {
         throw std::runtime_error("No states found in file");
+    }
 
     // Copy subband data to vector
     std::vector<Subband> subbands; // Output structure
-    for (unsigned int ist = 0; ist < nst; ist++)
+    for (unsigned int ist = 0; ist < nst; ist++) {
         subbands.emplace_back(ground_state[ist], m_d, alphad, V);
+    }
 
     return subbands;
 }
@@ -291,27 +297,24 @@ auto Subband::get_Ek_at_k(double k) const -> double
     double Ek;
 
     // Check if subband is initialised as being nonparabolic
-    if(_alpha == 0.0)
+    if(_alpha == 0.0) {
         Ek = hBar*hBar*k*k/(2.0*_m);
-    else
-    {
+    } else {
         const auto En = get_E_min();
         const auto b       = 1.0 + _alpha*(En - V_);
         const auto four_ac = 4.0*_alpha*(-hBar*hBar*k*k)/(2.0*_m);
 
         // Check solveable
-        if(four_ac > b*b)
-        {
+        if(four_ac > b*b) {
             std::ostringstream oss;
             oss << "No real energy solution exists at wavevector k = " << k*1.0e-9 << " nm^{-1}.";
             throw std::domain_error(oss.str());
         }
 
         const auto root = sqrt(b*b - four_ac);
-        if(root >= b)
+        if(root >= b) {
             Ek = (-b + root)/(2.0*_alpha);
-        else
-        {
+        } else {
             std::ostringstream oss;
             oss << "Negative energy found at wavevector k = " << k*1.0e-9 << " nm^{-1}.";
             throw std::domain_error(oss.str());
@@ -330,8 +333,7 @@ auto Subband::get_Ek_at_k(double k) const -> double
  */
 auto Subband::get_k_at_Ek(const double Ek) const -> double
 {
-    if(Ek < 0.0)
-    {
+    if(Ek < 0.0) {
         std::ostringstream oss;
         oss << "Cannot find wavevector at negative kinetic energy, Ek = " << Ek/e*1000 << " meV.";
         throw std::domain_error(oss.str());
@@ -357,8 +359,7 @@ auto Subband::get_density_of_states(const double E) const -> double
 
     // Density of states is zero unless we're above the
     // subband edge
-    if(E > get_E_min())
-    {
+    if(E > get_E_min()) {
         const auto m = get_effective_mass_dos(E);
 
         // QWWAD 4, Eq. 2.63
@@ -378,8 +379,9 @@ auto Subband::get_density_of_states(const double E) const -> double
  */
 auto Subband::get_occupation_at_E_total(const double E) const -> double
 {
-    if(!_dist_known)
+    if(!_dist_known) {
         throw std::runtime_error("Distribution has not been set");
+    }
 
     return f_FD(Ef_, E, Te_);
 }
@@ -391,8 +393,9 @@ auto Subband::get_occupation_at_E_total(const double E) const -> double
  */
 auto Subband::get_occupation_at_k(const double k) const -> double
 {
-    if(!_dist_known)
+    if(!_dist_known) {
         throw std::runtime_error("Distribution has not been set");
+    }
 
     const auto E = get_E_total_at_k(k);
     return get_occupation_at_E_total(E);
@@ -405,8 +408,9 @@ auto Subband::get_occupation_at_k(const double k) const -> double
  */
 auto Subband::get_total_population() const -> double
 {
-    if(!_dist_known)
+    if(!_dist_known) {
         throw std::runtime_error("Distribution has not been set");
+    }
 
     const auto E = get_E_min();
     const auto N = find_pop(E, Ef_, _m, Te_, _alpha, V_);
@@ -422,13 +426,15 @@ auto Subband::get_total_population() const -> double
  */
 auto Subband::get_k_max(const double Te) const -> double
 {
-    if(!_dist_known)
+    if(!_dist_known) {
         throw std::runtime_error("Distribution has not been set");
+    }
 
     double Ek_max = 5.0*kB*Te;
 
-    if(get_E_min() < get_Ef())
+    if(get_E_min() < get_Ef()) {
         Ek_max += get_Ef();
+    }
 
     return get_k_at_Ek(Ek_max);
 }
