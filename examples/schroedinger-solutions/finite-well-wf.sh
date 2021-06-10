@@ -33,7 +33,7 @@ outfile=finite-well-wf.dat
 qwwad_ef_square_well --wellwidth 200 --barrierpotential 100 --nst 3 --outputpotential
 
 # Generate plot file
-qwwad_ef_plot --style wf --plotfile $outfile
+qwwad_ef_plot --style real --plotfile $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:

@@ -81,18 +81,19 @@ auto main(int argc, char* argv[]) -> int
         exit(EXIT_FAILURE);
     }
 
-    auto * const text_property = dynamic_cast<MaterialPropertyString const *>(prop);
+    const auto * const text_property = dynamic_cast<MaterialPropertyString const *>(prop);
 
     if(text_property != nullptr) {
         std::cout << text_property->get_text() << std::endl;
     } else {
-        auto * const numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
+        const auto * const numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(prop);
 
         const auto x = opt.get_option<double>("variable");
         std::cout << numeric_property->get_val(x);
 
-        if(opt.get_option<bool>("show-unit"))
+        if(opt.get_option<bool>("show-unit")) {
             std::cout << " " << numeric_property->get_unit();
+        }
 
         std::cout << std::endl;
     }

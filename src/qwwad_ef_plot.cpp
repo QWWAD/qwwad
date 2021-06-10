@@ -38,6 +38,7 @@ auto configure_options(int argc, char** argv) -> WfOptions
                                                                "'real' = real part of wave functions, "
                                                                "'imag' = imaginary part of wave functions.");
     opt.add_option<bool>       ("scalebynstates",              "Scale the wavefunctions by the number of states");
+    opt.add_option<bool>       ("showbaseline",                "Show an extra baseline at the energy of the state");
 
     opt.add_prog_specific_options_and_parse(argc, argv, summary);
 
@@ -49,6 +50,8 @@ auto configure_options(int argc, char** argv) -> WfOptions
  *
  * \param[in] states The set of states in the system
  * \param[in] V      The potential profile
+ * \param[in] style  The type of plot to generate (PD, real, imag)
+ * \param[in] scalebynstates Scale by the number of states if true
  *
  * \returns The factor by which to scale probability densities in plot
  *
@@ -58,23 +61,27 @@ auto configure_options(int argc, char** argv) -> WfOptions
  *          number of states and the maximum probability density.
  */
 static auto scaling_factor(const std::vector<Eigenstate> &states,
-                             const arma::vec               &V,
-                             const bool                     scalebynstates) -> double
+                           const arma::vec               &V,
+                           const std::string             &style,
+                           bool                           scalebynstates) -> double
 {
     double scale = V.max() - V.min();
 
     // If the potential range is zero, use the state energy range instead
-    if (scale <= 0)
-    {
+    if (scale <= 0) {
         scale = states[states.size()-1].get_energy() - states[0].get_energy();
     }
 
-    // Scale by the maximum probability density
-    scale /= (Eigenstate::psi_squared_max(states) * 5);
+    if (style == "pd") {
+        // Scale by the maximum probability density
+        scale /= (Eigenstate::psi_squared_max(states) * 5);
+    } else if (style == "real" || style == "imag") {
+        // Scale by the square root of this
+        scale /= (sqrt(Eigenstate::psi_squared_max(states)) * 10);
+    }
 
     // Scale by number of states if desired
-    if(scalebynstates)
-    {
+    if(scalebynstates) {
         scale /= states.size();
     }
 
@@ -91,16 +98,21 @@ static void output_plot(const WfOptions               &opt,
                         const arma::vec               &V,
                         const arma::vec               &z)
 {
-    const auto dz    = z[1] - z[0];
     const auto scalebynstates = opt.get_option<bool>("scalebynstates");
-    const auto scale = scaling_factor(states, V, scalebynstates);
-    const auto nz    = V.size();
+    const auto showbaseline = opt.get_option<bool>("showbaseline");
+    const auto nst_max = opt.get_option<size_t>     ("nstmax");
+    const auto style   = opt.get_option<std::string>("style");
     const auto plot_file = opt.get_option<std::string>("plotfile");
 
+    const auto dz    = z[1] - z[0];
+    const auto nz    = V.size();
+
+    const auto scale = scaling_factor(states, V, style, scalebynstates);
+
     // Open plot file
-    auto * plot_stream = fopen(plot_file.c_str(), "w");
-    if(plot_stream == nullptr)
-    {
+    std::ofstream plot_stream(plot_file);
+
+    if(!plot_stream) {
         std::ostringstream oss;
         oss << "Cannot create plot output file " << plot_file << std::endl;
         exit(EXIT_FAILURE);
@@ -108,66 +120,62 @@ static void output_plot(const WfOptions               &opt,
 
     // Output conduction band profile
     for(unsigned int iz=0; iz < nz; iz++) {
-        fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10, V[iz]/(1e-3*e));
+        plot_stream << z[iz]*1e10 << "\t" << V[iz]/(1e-3*e) << std::endl;
     }
 
     unsigned int nst_plotted=0; // Counter to limit number of plotted states
 
-    const auto nst_max = opt.get_option<size_t>     ("nstmax");
-    const auto style   = opt.get_option<std::string>("style");
-
     // Output the probability densities
-    for(const auto st : states)
-    {
-        if(nst_plotted < nst_max)
-        {
-            fprintf(plot_stream, "\n"); // Separate each PD plot by a blank line
-            const auto PD  = st.get_PD(); // Probability density at each point
+    for(const auto st : states) {
+        const auto PD  = st.get_PD(); // Probability density at each point
 
-            // Real and imaginary parts of wavefunction at each point
-            const arma::vec psi_real = real(st.get_wavefunction_samples());
-            const arma::vec psi_imag = imag(st.get_wavefunction_samples());
+        // Real and imaginary parts of wavefunction at each point
+        const arma::vec psi_real = real(st.get_wavefunction_samples());
+        const arma::vec psi_imag = imag(st.get_wavefunction_samples());
+
+        arma::vec plot_data; // The function to be plotted (either PD, real or imag part)
+
+        if(style == "pd") {
+            plot_data = PD;
+        } else if (style == "real") {
+            plot_data = psi_real;
+        } else if (style == "imag") {
+            plot_data = psi_imag;
+        } else {
+            std::ostringstream oss;
+            oss << "Unrecognised plot style: " << style << std::endl;
+            throw std::runtime_error(oss.str());
+        }
+
+        if(nst_plotted < nst_max) {
+            plot_stream << std::endl; // Separate each PD plot by a blank line
+            const auto E = st.get_energy();
 
             double P_left = 0.0; // probability of electron being found on left of a point
 
+            if (showbaseline) {
+                for(unsigned int iz = 0; iz < nz; iz++) {
+                    plot_stream << z[iz]*1e10 << "\t" << E/(1e-3*e) << std::endl;
+                }
+
+                plot_stream << std::endl;
+            }
+
             // Plot scaled probability density
-            for(unsigned int iz = 0; iz < nz; iz++)
-            {
+            for(unsigned int iz = 0; iz < nz; iz++) {
                 P_left += PD[iz]*dz;
 
                 // Only plot the bits of the wavefunction with appreciable
                 // amplitude
                 // TODO: Make this configurable
-                if(P_left>0.0001 && P_left<0.9999)
-                {
-                    const auto E = st.get_energy();
-
-                    if (style == "real")
-                    {
-                        double scale_wf = (V.max()-V.min())/((psi_real.max() - psi_real.min()) * states.size() * 2);
-                        fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (psi_real[iz]*scale_wf + E)/(1e-3*e));
-                    } else if (style == "imag")
-                    {
-                        double scale_wf = (V.max()-V.min())/((psi_imag.max() - psi_imag.min()) * states.size() * 2);
-                        fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (psi_imag[iz]*scale_wf + E)/(1e-3*e));
-                    } else if (style == "pd") {
-                        fprintf(plot_stream, "%e\t%e\n", z[iz]*1e10,
-                                (PD[iz]*scale + E)/(1e-3*e));
-                    } else {
-                        std::ostringstream msg;
-                        msg << "Unrecognised plot style: " << style;
-                        throw std::runtime_error(msg.str());
-                    }
+                if(P_left>0.0001 && P_left<0.9999) {
+                    plot_stream << z[iz]*1e10 << "\t" << (plot_data[iz]*scale + E)/(1e-3*e) << std::endl;
                 }
             }
 
             ++nst_plotted;
         }
     }
-
-    fclose(plot_stream);
 }
 
 auto main(int argc, char* argv[]) -> int

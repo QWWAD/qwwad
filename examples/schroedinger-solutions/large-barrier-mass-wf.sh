@@ -45,13 +45,13 @@ for MB in 0.1002 1 10 100; do
     mv wf_e1.r wf_e1-${MB}.r
 done
 
-awk '{print $1*1e10, $2}' wf_e1-0.1002.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{print $1*1e10, $2}' wf_e1-0.1002.r >> $outfile
 printf "\n" >> $outfile
-awk '{print $1*1e10, $2 + 20000}' wf_e1-1.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{print $1*1e10, $2 + 20000}' wf_e1-1.r >> $outfile
 printf "\n" >> $outfile
-awk '{print $1*1e10, $2 + 40000}' wf_e1-10.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{print $1*1e10, $2 + 40000}' wf_e1-10.r >> $outfile
 printf "\n" >> $outfile
-awk '{print $1*1e10, $2 + 60000}' wf_e1-100.r >> $outfile
+awk 'BEGIN {FS="[(,]"}{print $1*1e10, $2 + 60000}' wf_e1-100.r >> $outfile
 
 cat << EOF
 Results have been written to $outfile in the format:
