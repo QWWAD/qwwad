@@ -76,9 +76,10 @@ ThermalRCOptions::ThermalRCOptions(int argc, char **argv)
     {
         f = get_option<double>("frequency") * 1.0e3;
 
-        if(f <= 0)
+        if(f <= 0) {
             throw std::domain_error ("Pulse repetition rate must "
                     "be positive.");
+        }
     }
 
     auto power = get_option<double>("power");
@@ -129,8 +130,9 @@ auto main(int argc, char *argv[]) -> int
     size_t nt_per = ceil(t_period/dt_max); // Divide period into steps
     double dt = t_period/float(nt_per); // Time-increment to use
     
-    if(opt.get_verbose())
+    if(opt.get_verbose()) {
         printf("dt=%.4f ns.\n",dt*1e9);
+    }
 
     auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
     unsigned int i=0;
@@ -173,8 +175,9 @@ auto main(int argc, char *argv[]) -> int
             }
 
 	    // Find the middle of the pulse
-	    if(dt*it <= pw/2.0)
-		    _it_mid[iper] = i;
+	    if(dt*it <= pw/2.0) {
+                _it_mid[iper] = i;
+            }
 
 	}
     }

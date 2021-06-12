@@ -16,14 +16,14 @@ namespace QWWAD
 class DebyeModel
 {
 public:
-    DebyeModel(const double T_D,
-               const double M,
-               const size_t natoms);
+    DebyeModel(double T_D,
+               double M,
+               size_t natoms);
 
-    [[nodiscard]] auto get_internal_energy(const double T) const -> double;
-    [[nodiscard]] auto get_cp(const double T) const -> double;
-    [[nodiscard]] auto get_cp_approx(const double T) const -> double;
-    [[nodiscard]] auto get_cp_low_T(const double T) const -> double;
+    [[nodiscard]] auto get_internal_energy(double T) const -> double;
+    [[nodiscard]] auto get_cp(double T) const -> double;
+    [[nodiscard]] auto get_cp_approx(double T) const -> double;
+    [[nodiscard]] auto get_cp_low_T(double T) const -> double;
     [[nodiscard]] auto get_cp_high_T() const -> double;
 
 private:

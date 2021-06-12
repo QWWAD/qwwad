@@ -19,10 +19,10 @@ struct atom
  arma::vec  r;
 };
 
-auto Vf(const double  A0,
-          const double  m_per_au,
-          double        q_sqr,
-          const char   *type) -> double;
+auto Vf(double        A0,
+        double        m_per_au,
+        double        q_sqr,
+        const char   *type) -> double;
 
 auto read_atoms(const char * filename) -> std::vector<atom>;
 

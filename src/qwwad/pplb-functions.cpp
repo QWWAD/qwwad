@@ -24,8 +24,10 @@ write_ank(arma::cx_mat &ank,
 
     for(iG=0;iG<N;iG++)
     {
-        for(in=n_min;in<=n_max && in < N;in++)
+        for(in=n_min;in<=n_max && in < N;in++) {
             fprintf(Fank,"%20.16le %20.16le ",ank(iG,in).real(), ank(iG,in).imag());
+	}
+
         fprintf(Fank,"\n");
     }
 

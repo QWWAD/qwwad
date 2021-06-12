@@ -124,8 +124,9 @@ Thermal1DOptions::Thermal1DOptions(int argc, char ** argv)
 
     // Check that spatial step is positive
     const auto dy = get_option<double>("dy");
-    if(dy <= 0.0)
+    if(dy <= 0.0) {
         throw std::domain_error ("Spatial resolution must be positive");
+    }
 
     // Check that duty cycle is positive and
     // rescale to a decimal value
@@ -142,9 +143,10 @@ Thermal1DOptions::Thermal1DOptions(int argc, char ** argv)
     // rescale to Hz
     f = get_option<double>("frequency") * 1.0e3;
 
-    if(f <= 0)
+    if(f <= 0) {
         throw std::domain_error ("Pulse repetition rate must "
-                "be positive.");
+                                 "be positive.");
+    }
 
     // Check that power is positive
     const auto power = get_option<double>("power");
@@ -164,7 +166,9 @@ Thermal1DOptions::Thermal1DOptions(int argc, char ** argv)
         throw std::domain_error(oss.str());
     }
 
-    if(get_verbose()) print();
+    if(get_verbose()) {
+        print();
+    }
 }
 
 
@@ -183,7 +187,7 @@ void Thermal1DOptions::print() const
 class Thermal1DData {
 public:
     Thermal1DData(const Thermal1DOptions &opt,
-                  const MaterialLibrary  &lib);
+                  const MaterialLibrary  &material_library);
     std::vector<Material> mat_layer; ///< Material in each layer
     arma::vec x;         ///< Alloy composition in each layer
     arma::vec d;         ///< Layer thickness [m]
@@ -200,7 +204,7 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
     d *= 1e-6; // Rescale thickness to metres
 
     for(auto name : mat_name) {
-        auto material = material_library.get_material(name);
+        const auto *material = material_library.get_material(name);
         mat_layer.push_back(*material);
     }
 
@@ -346,8 +350,9 @@ auto main(int argc, char *argv[]) -> int
     size_t nt_per = ceil(time_period/dt_max); // Divide period into steps
     double dt = time_period/float(nt_per); // Time-increment to use
 
-    if(opt.get_verbose())
+    if(opt.get_verbose()) {
         printf("dt=%.4f ns.\n",dt*1e9);
+    }
 
     const auto _n_rep = opt.get_option<size_t>("nrep"); // Number of pulse repetitions
    

@@ -77,7 +77,7 @@ auto main(int argc,char *argv[]) -> int
     // Get donor location [m].  If unspecified, assume it's in the middle
     auto r_d = 0.0;
 
-    if (opt.get_argument_known("donorposition") > 0) {
+    if (opt.get_argument_known("donorposition")) {
         r_d = opt.get_option<double>("donorposition") * 1e-10;
     } else {
         r_d = (z[z.size()-1] + z[0])/2.0;

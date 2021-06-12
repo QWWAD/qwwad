@@ -135,16 +135,15 @@ auto main(int argc,char *argv[]) -> int
 
     const auto impuritystate_string = opt.get_option<std::string>("impuritystate");
 
-    if (impuritystate_string == "1s")
+    if (impuritystate_string == "1s") {
         S = STATE_1S;
-    else if (impuritystate_string == "2s")
+    } else if (impuritystate_string == "2s") {
         S = STATE_2S;
-    else if (impuritystate_string == "2px")
+    } else if (impuritystate_string == "2px") {
         S = STATE_2PX;
-    else if (impuritystate_string == "2pz")
+    } else if (impuritystate_string == "2pz") {
         S = STATE_2PZ;
-    else
-    {
+    } else {
         std::cerr << "Unknown impurity state ID: " << impuritystate_string << std::endl;
         exit(EXIT_FAILURE);
     }
@@ -166,8 +165,9 @@ auto main(int argc,char *argv[]) -> int
     const auto nz = z.size();
     auto r_d = (z[nz-1] + z[0])/2.0;
 
-    if (opt.get_argument_known("donorposition") > 0)
+    if (opt.get_argument_known("donorposition")) {
         r_d = opt.get_option<double>("donorposition") * 1e-10;
+    }
 
     // Perform variational calculation for each donor/acceptor position
     double lambda=lambda_0;	// initial lambda guess
@@ -403,7 +403,8 @@ auto Wavefunction3D::get_energy() const -> double
     for(unsigned int iz=1; iz < nz-1; ++iz)
     {
         Integrand_x_params integrand_x_params = {this, iz};
-        double result, error;
+        double result;
+        double error;
         
         gsl_function F_energy;
         F_energy.function = &Wavefunction3D::get_energy_integrand_x;

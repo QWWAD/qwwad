@@ -56,15 +56,18 @@ class BandEdgeOptions : public Options
         [[nodiscard]] auto get_material() const -> char {
             const auto mat_string = get_option<std::string>("material");
             char Material;
-            if     (mat_string.compare("gaalas")   == 0) Material='a';
-            else if(mat_string.compare("cdmnte")   == 0) Material='b';
-            else if(mat_string.compare("inalgaas") == 0) Material='c';
-            else
-            {
+            if (mat_string == "gaalas") {
+                Material='a';
+            } else if(mat_string == "cdmnte") {
+                Material='b';
+            } else if(mat_string == "inalgaas") {
+                Material='c';
+            } else {
                 std::cerr << "The only materials defined in the database are "
                              "Ga(1-x)Al(x)As, Cd(1-x)Mn(x)Te and In(1-x-y)Al(x)Ga(y)As" << std::endl;
                 exit(EXIT_FAILURE);
             }
+
             return Material;
         }
 };
@@ -122,8 +125,9 @@ auto main(int argc,char *argv[]) -> int
     // Flag whether effective mass needs computing or setting manually
     bool compute_mass = true;
 
-    if (opt.get_argument_known("mass"))
+    if (opt.get_argument_known("mass")) {
         compute_mass = false;
+    }
 
     const auto alloyfile = opt.get_option<std::string>("alloyfile");
 

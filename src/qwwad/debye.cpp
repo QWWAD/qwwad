@@ -113,10 +113,11 @@ auto DebyeModel::get_cp_approx(const double T) const -> double
     // Temperature at which high and low-temperature models meet
     const double T_match = _T_D * std::cbrt(1.25/(pi_sq*pi_sq));
 
-    if (T > T_match)
+    if (T > T_match) {
         cp = get_cp_high_T();
-    else
+    } else {
         cp = get_cp_low_T(T);
+    }
 
     return cp;
 }
@@ -126,7 +127,7 @@ auto DebyeModel::get_cp_approx(const double T) const -> double
  */
 auto DebyeModel::find_U(double T, void *params) -> double
 {
-    auto dm = reinterpret_cast<DebyeModel *>(params);
+    auto *dm = reinterpret_cast<DebyeModel *>(params);
     return dm->get_internal_energy(T);
 }
 } // namespace

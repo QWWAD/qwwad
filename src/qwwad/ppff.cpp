@@ -11,11 +11,6 @@
 using namespace QWWAD;
 using namespace constants;
 
-auto Vf(const double  A0,
-          const double  m_per_au,
-          double        q_sqr,
-          const char   *type) -> double;
-
 /**
  * This function returns the atomic form factor Vf(q) for the appropriate
  * atomic species
@@ -26,12 +21,17 @@ auto Vf(const double  A0,
  * \param[in]type      atomic species
  */
 auto Vf(const double  A0,
-          const double  m_per_au,
-          double        q_sqr,
-          const char   *type) -> double
+        const double  m_per_au,
+        double        q_sqr,
+        const char   *type) -> double
 {
  double A0_au;	/* lattice constant in atomic units	*/
- double a1,a2,a3,a4,a5,a6;
+ double a1;
+ double a2;
+ double a3;
+ double a4;
+ double a5;
+ double a6;
  double Omega;	/* atomic volume, i.e. fcc cube/4	*/
  double Va;	/* the atomic potential			*/
  double	x;	/* an alloy concentration		*/
@@ -39,7 +39,7 @@ auto Vf(const double  A0,
  /* The Freidel et al. potentials for Si-Ge heterostructures, 
    Phys. Rev. B39 p7974 (1989)					*/
 
- if(!strcmp(type,"SI"))
+ if(strcmp(type,"SI") == 0)
  {
   q_sqr *= A0*A0/(4*pi*pi);		/* convert q from SI into units of (2*pi/A0) */
   A0_au  = A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -59,7 +59,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI  */
  }
 
- if(!strcmp(type,"GE"))
+ if(strcmp(type,"GE") == 0)
  {
   q_sqr *= A0*A0/(4*pi*pi);		/* convert q from SI into units of (2*pi/A0) */
   A0_au  = A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -82,7 +82,7 @@ auto Vf(const double  A0,
  /* The continuous potentials of Mader and Zunger, Phys. Rev. B.50
     17393 (1994), for GaAs/AlAs heterostructures		*/
 
- if(!strcmp(type,"GAASmz"))
+ if(strcmp(type,"GAASmz") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -97,7 +97,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
- if(!strcmp(type,"ASGAmz"))
+ if(strcmp(type,"ASGAmz") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -112,7 +112,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
- if(!strcmp(type,"ALASmz"))
+ if(strcmp(type,"ALASmz") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -128,7 +128,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);		/* factor converts Rydberg --> SI */
  }
 
- if(!strcmp(type,"ASALmz"))
+ if(strcmp(type,"ASALmz") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -147,14 +147,14 @@ auto Vf(const double  A0,
     potentials, deduces the alloy concentration x from the 7th and 8th 
     characters in the atom type string					*/ 
 
- if(!strncmp(type,"ALGAAS",6))
+ if(strncmp(type,"ALGAAS",6) == 0)
  {
   x=(10*(double)(*(type+6)-48)+(double)(*(type+7)-48))/100;
   
   return(x*Vf(A0,m_per_au,q_sqr,"ALASmz")+(1-x)*Vf(A0,m_per_au,q_sqr,"GAASmz"));
  }
 
- if(!strncmp(type,"ASALGA",6))
+ if(strncmp(type,"ASALGA",6) == 0)
  {
   x=(10*(double)(*(type+6)-48)+(double)(*(type+7)-48))/100;
   
@@ -169,7 +169,7 @@ auto Vf(const double  A0,
     Note have to divide the Williamson potentials by a factor of
     2 due to a difference in the definition of the problem	*/
 
- if(!strcmp(type,"GAASw"))
+ if(strcmp(type,"GAASw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -183,7 +183,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI */
  }
 
- if(!strcmp(type,"ASGAw"))
+ if(strcmp(type,"ASGAw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -197,7 +197,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI */
  }
  
-  if(!strcmp(type,"ALASw"))
+  if(strcmp(type,"ALASw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -211,7 +211,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI */
  }
 
- if(!strcmp(type,"ASALw"))
+ if(strcmp(type,"ASALw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -225,7 +225,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI */
  }
 
- if(!strcmp(type,"INASw"))
+ if(strcmp(type,"INASw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -239,7 +239,7 @@ auto Vf(const double  A0,
 				/* second factor Rydberg --> SI */
  }
 
- if(!strcmp(type,"ASINw"))
+ if(strcmp(type,"ASINw") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   A0_au=A0/m_per_au;		/* convert A0 from S.I.-->a.u.	*/
@@ -257,7 +257,7 @@ auto Vf(const double  A0,
  /* The Cohen and Bergstresser potentials (in eV) for bulk fcc crystals,
     Phys. Rev. 141 p789 (1966)						*/
 
- if(!strcmp(type,"SIcb"))
+ if(strcmp(type,"SIcb") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.43*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -267,7 +267,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"GEcb"))
+ if(strcmp(type,"GEcb") == 0)
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.57*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -283,7 +283,7 @@ auto Vf(const double  A0,
     q=sqrt(8)---these are necessary in the `large basis' method and have
     been deduced by linear interpolation(!) from the existing data.	*/
 
- if(!strcmp(type,"GAAScb"))	/* Ga in GaAs	*/
+ if(strcmp(type,"GAAScb") == 0)	/* Ga in GaAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -294,7 +294,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"ASGAcb"))	/* As in GaAs	*/
+ if(strcmp(type,"ASGAcb") == 0)	/* As in GaAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -305,7 +305,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"INAScb"))	/* In in InAs	*/
+ if(strcmp(type,"INAScb") == 0)	/* In in InAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -316,7 +316,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"ASINcb"))	/* As in InAs	*/
+ if(strcmp(type,"ASINcb") == 0)	/* As in InAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.95*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -327,7 +327,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"GAPcb"))	/* Ga in GaP	*/
+ if(strcmp(type,"GAPcb") == 0)	/* Ga in GaP	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.31*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -338,7 +338,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"PGAcb"))	/* P in GaP	*/
+ if(strcmp(type,"PGAcb") == 0)	/* P in GaP	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.68*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -349,7 +349,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"INPcb"))	/* In in InP	*/
+ if(strcmp(type,"INPcb") == 0)	/* In in InP	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -360,7 +360,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"PINcb"))	/* P in InP	*/
+ if(strcmp(type,"PINcb") == 0)	/* P in InP	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -371,7 +371,7 @@ auto Vf(const double  A0,
   return(Va*e);	/* Convert eV --> SI	*/
  }
 
- if(!strcmp(type,"CDTEcb"))	/* Cd in CdTe	*/
+ if(strcmp(type,"CDTEcb") == 0)	/* Cd in CdTe	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.175*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -382,7 +382,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
  }
 
- if(!strcmp(type,"TECDcb"))	/* Te in CdTe	*/
+ if(strcmp(type,"TECDcb") == 0)	/* Te in CdTe	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.025*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -395,7 +395,7 @@ auto Vf(const double  A0,
 
  /* Chelikowsky and Cohen, Phys. Rev. B14 p556 (1976)	*/
 
- if(!strcmp(type,"GAAScc"))	/* Ga in GaAs	*/
+ if(strcmp(type,"GAAScc") == 0)	/* Ga in GaAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.135*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -406,7 +406,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);	/* Convert Rydberg --> SI	*/
  }
 
- if(!strcmp(type,"ASGAcc"))	/* As in GaAs	*/
+ if(strcmp(type,"ASGAcc") == 0)	/* As in GaAs	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.080*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -420,7 +420,7 @@ auto Vf(const double  A0,
  /* Cd(1-x)Mn(x)Te potentials from Fei Long et al., J. Appl. Phys. 79,
   * p6939 (1996)							*/
 
- if(!strcmp(type,"CDTE"))	/* Cd in CdTe	*/
+ if(strcmp(type,"CDTE") == 0)	/* Cd in CdTe	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.175*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -431,7 +431,7 @@ auto Vf(const double  A0,
   return(Va*h*c*Rinf);	/* Convert Rydberg --> SI */
  }
 
- if(!strcmp(type,"TECD"))	/* Te in CdTe	*/
+ if(strcmp(type,"TECD") == 0)	/* Te in CdTe	*/
  {
   q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
   Va=-0.055*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -443,8 +443,8 @@ auto Vf(const double  A0,
  }
 
 
- printf("Error atom type '%s' undefined!\n",type);exit(0);
-
+ printf("Error atom type '%s' undefined!\n",type);
+ exit(EXIT_FAILURE);
 }
  
 /**
@@ -452,8 +452,8 @@ auto Vf(const double  A0,
  */
 auto read_atoms(const char * filename) -> std::vector<atom>
 {
- auto Fatoms=fopen(filename,"r"); // file pointer to wavefunction file
- if(!Fatoms) {
+ auto *Fatoms=fopen(filename,"r"); // file pointer to wavefunction file
+ if(Fatoms == nullptr) {
      std::ostringstream oss;
      oss << "Cannot open input file " << filename;
      throw std::runtime_error(oss.str());

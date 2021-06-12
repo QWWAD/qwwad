@@ -64,10 +64,11 @@ auto main(int argc,char *argv[]) -> int
     {
         T[iT]  = Tmin + iT*dT;
 
-        if(approx)
+        if(approx) {
             cp[iT] = dm.get_cp_approx(T[iT]);
-        else
+        } else {
             cp[iT] = dm.get_cp(T[iT]);
+        }
     }
 
     write_table(opt.get_option<std::string>("filename").c_str(), T, cp);
