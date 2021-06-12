@@ -34,6 +34,7 @@ auto configure_options(int argc, char** argv) -> Options
                                                      "electrons, heavy holes or light holes respectively.");
     opt.add_option<size_t>("nz,N",             1000, "Number of spatial points for output file.");
     opt.add_option<size_t>("nst,s",              1,  "Number of states to find");
+    opt.add_option<size_t>("nper",               4,  "Number of periods of the wavefunction to plot");
     opt.add_option<double>("barrierpotential", 100,  "Barrier potential [meV]");
     opt.add_option<double>("Ecutoff",                "Cut-off energy for solutions [meV]");
     
@@ -55,12 +56,12 @@ auto main(int argc,char *argv[]) -> int
     const auto nst  = opt.get_option<size_t>("nst");
     const auto k    = opt.get_option<double>("wavevector") * pi/(a+b);   // [1/m]
     const auto N    = opt.get_option<size_t>("nz");               // number of spatial steps
+    const auto nper = opt.get_option<size_t>("nper");
 
-    SchroedingerSolverKronigPenney se(a, b, V, m_w, m_b, k, N, 4, nst);
+    SchroedingerSolverKronigPenney se(a, b, V, m_w, m_b, k, N, nper, nst);
 
     // Set cut-off energy if desired
-    if(opt.get_argument_known("Emax"))
-    {
+    if(opt.get_argument_known("Emax")) {
         se.set_E_max(opt.get_option<double>("Emax") * e/1000);
     }
 
