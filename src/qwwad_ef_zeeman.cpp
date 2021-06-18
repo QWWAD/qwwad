@@ -138,16 +138,25 @@ auto main(int argc,char *argv[]) -> int
         switch(p)
         {
             case 'e': 
-                if(spinup) V_zeeman[iz] =  3*A;
-                else       V_zeeman[iz] = -3*A;
+                if(spinup) {
+                    V_zeeman[iz] =  3*A;
+                } else {
+                    V_zeeman[iz] = -3*A;
+                }
                 break;
             case 'h':
-                if(spinup) V_zeeman[iz] =  3*B;
-                else       V_zeeman[iz] = -3*B;
+                if(spinup) {
+                    V_zeeman[iz] =  3*B;
+                } else {
+                    V_zeeman[iz] = -3*B;
+                }
                 break;
             case 'l': 
-                if(spinup) V_zeeman[iz] = B;
-                else       V_zeeman[iz] = -B;
+                if(spinup) {
+                    V_zeeman[iz] = B;
+                } else {
+                    V_zeeman[iz] = -B;
+                }
                 break;
         }
     }

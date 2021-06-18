@@ -71,7 +71,7 @@ auto main (int argc, char* argv[]) -> int
 
     // Loop over subbands
     unsigned int ist = 1;
-    for(auto const sb : subbands)
+    for(auto const &sb : subbands)
     {
         std::valarray<double> k(nk);
         std::valarray<double> Ek(nk);

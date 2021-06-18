@@ -16,19 +16,16 @@ MaterialPropertyString::MaterialPropertyString(xmlpp::Element *elem) :
 
     if(string_nodes.size() == 1) // Parse a constant value
     {
-        auto node = dynamic_cast<xmlpp::Element *>(*string_nodes.begin());
+        auto *node = dynamic_cast<xmlpp::Element *>(*string_nodes.begin());
 
-        if(node->has_child_text())
+        if(node->has_child_text()) {
             _text = node->get_child_text()->get_content();
-        else
-        {
+        } else {
             std::ostringstream oss;
             oss << "Couldn't find text for " << _name << "." << std::endl;
             throw std::runtime_error(oss.str());
         }
-    }
-    else
-    {
+    } else {
         std::ostringstream oss;
         oss << "Couldn't parse text string for " << _name << "." << std::endl;
         throw std::runtime_error(oss.str());

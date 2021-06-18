@@ -46,11 +46,13 @@ MeshOptions::get_dz_max() const -> double
     auto result = get_option<double>("dzmax");
 
     // Override result use spatial resolution setting if specified
-    if (get_argument_known("zresmin"))
+    if (get_argument_known("zresmin")) {
         result = 1.0 / get_option<double>("zresmin");
+    }
 
-    if (result < 0)
+    if (result < 0) {
         throw std::domain_error("Spatial separation must be positive.");
+    }
 
     result*=1.0e-10; // Convert from angstrom -> m
 
@@ -80,11 +82,13 @@ MeshOptions::MeshOptions(int argc, char** argv)
 
     add_prog_specific_options_and_parse(argc, argv, description);
 
-    if (get_option<size_t>("nper") == 0)
+    if (get_option<size_t>("nper") == 0) {
         throw std::domain_error("Number of periods must be positive.");
+    }
 
-    if(get_verbose())
+    if(get_verbose()) {
         print();
+    }
 }
 
 /**
@@ -110,7 +114,7 @@ auto main(int argc, char* argv[]) -> int
 
     // Create a new Mesh using input data
     const auto nz_1per = opt.get_option<size_t>("nz1per");
-    const auto het = (nz_1per != 0) ?  // Force the number of points per period if specified
+    auto * const het = (nz_1per != 0) ?  // Force the number of points per period if specified
                      Mesh::create_from_file(opt.get_option<std::string>("layerfile"),
                                                        opt.get_option<size_t>("nz1per"),
                                                        opt.get_option<size_t>("nper"))
@@ -125,8 +129,9 @@ auto main(int argc, char* argv[]) -> int
                   << "Number of mesh-cells per period: " << het->get_ncell_1per()    << std::endl
                   << "Actual spatial resolution:       " << het->get_dz() << " m"    << std::endl;
 
-        for(unsigned int iL = 0; iL < het->get_n_layers_total(); iL++)
+        for(unsigned int iL = 0; iL < het->get_n_layers_total(); iL++) {
             printf("Top of layer %u is %e\n", iL, het->get_height_at_top_of_layer(iL));
+        }
     }
     
     // Output the index of each interface to file
@@ -145,8 +150,9 @@ auto main(int argc, char* argv[]) -> int
     {
         stream << std::setprecision(20) << std::scientific << z[iz] << "\t";
 
-        for(unsigned int ialloy = 0; ialloy < nalloy; ++ialloy)
+        for(unsigned int ialloy = 0; ialloy < nalloy; ++ialloy) {
             stream << std::setprecision(20) << std::scientific << alloy.at(iz)[ialloy] << "\t";
+        }
 
         stream << std::endl;
     }

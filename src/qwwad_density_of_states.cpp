@@ -59,8 +59,9 @@ auto main(int argc,char *argv[]) -> int
     // Read in the subband energies if we're solving for a quantised system
     std::valarray<double> E;
 
-    if(ndim == 1 || ndim == 2)
+    if(ndim == 1 || ndim == 2) {
         E = read_E(p); // read in subband minima [J]
+    }
 
     std::valarray<double> energy(n+1); // Energies at which dos is calculated [J]
     std::valarray<double> dos(n+1);    // Density of states [J^{-1}m^{-n}]

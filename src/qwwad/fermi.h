@@ -22,7 +22,7 @@ auto f_FD_ionised(double E_F,
 
 auto find_pop(double Esb,
               double E_F,
-              double md,
+              double m0,
               double Te,
               double alpha=0,
               double V=0) -> double;

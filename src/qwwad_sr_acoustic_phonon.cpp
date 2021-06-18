@@ -211,8 +211,9 @@ auto main(int argc,char *argv[]) -> int
             kimax   = isb.get_k_max(Te);
             Ecutoff = hBar*hBar*kimax*kimax/(2*m);
 
-            if(Ecutoff+Ei < Ef)
+            if(Ecutoff+Ei < Ef) {
                 Ecutoff += Ef;
+            }
         }
 
         kimax = isb.get_k_at_Ek(Ecutoff);

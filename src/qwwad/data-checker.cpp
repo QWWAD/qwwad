@@ -67,7 +67,7 @@ void DataChecker::check_not_negative(const arma::vec &data)
  *
  * \todo Move this into the class
  */
-void check_c_interval_0_1(double* px)
+void check_c_interval_0_1(const double *px)
 {
     if(*px < 0.0 or *px > 1.0)
     {

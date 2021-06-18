@@ -16,7 +16,6 @@ Options::Options() :
     generic_options_commandline(std::make_unique<po::options_description>("Generic options")),
     generic_options_any(std::make_unique<po::options_description>("Configuration options")),
     config_filename("qwwad.cfg"),
-    vm_(),
     program_specific_options_(std::make_unique<po::options_description>("Program-specific options"))
 {
     generic_options_commandline->add_options()
@@ -39,7 +38,7 @@ Options::Options() :
  *
  * \param prog_name The name of the program
  */
-void Options::print_version_then_exit(char* prog_name) const
+void Options::print_version_then_exit(char* prog_name)
 {
     std::cout << prog_name << " (" << PACKAGE_NAME << ") " << PACKAGE_VERSION << std::endl
               << "Copyright (c) 2016 Paul Harrison and Alex Valavanis." << std::endl
@@ -155,8 +154,9 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         }
         else
         {
-            if (get_verbose())
+            if (get_verbose()) {
                 std::cout << "No configuration file found" << std::endl;
+            }
         }
 
         // Finally, look for any suitable-looking environment variables
@@ -169,7 +169,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         oss << "Usage: " << argv[0] << " [OPTION]...";
 
         // Post-processing for default options...
-        if(vm_.count("help"))
+        if(vm_.count("help") != 0u)
         {
             std::cout << oss.str() << std::endl
                       << summary << std::endl
@@ -182,8 +182,9 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
             exit(EXIT_SUCCESS);
         }
         // Display the version number and copyright notice
-        if (vm_.count ("version")) 
+        if (vm_.count ("version") != 0u) {
             print_version_then_exit(argv[0]);
+        }
     }
     catch(std::exception& e)
     {
@@ -206,7 +207,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
 auto Options::name_mapper(std::string environment_variable) const -> std::string
 {
     std::string prefix("QWWAD_");
-    std::string option_name(""); // output string
+    std::string option_name; // output string
 
     // Only inspect variables that start with the QWWAD_ prefix
     if(environment_variable.compare(0, prefix.length(), prefix) == 0)
@@ -239,8 +240,9 @@ auto Options::get_argument_known(const std::string &name) const -> bool
 {
     auto seen = false;
 
-    if(vm_.count(name) > 0)
+    if(vm_.count(name) > 0) {
         seen = true;
+    }
 
     return seen;
 }

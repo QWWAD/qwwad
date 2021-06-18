@@ -71,8 +71,9 @@ auto find_pop(const double Esb,
     const double x = (E_F - Esb)/(kB*Te); // Substitution to simplify the expression
 
     // In case of underflow, return a tiny value
-    if(gsl_fcmp(x,-700,1e-6) == -1)
-            return 1;
+    if(gsl_fcmp(x,-700,1e-6) == -1) {
+        return 1;
+    }
 
     // Use the parabolic (simple) solution if possible
     if(gsl_fcmp(alpha,0,1e-6) == 0)
@@ -137,8 +138,9 @@ auto find_total_pop_error(double E_F, void *params) -> double
     double N_total = 0.0;
     const size_t nst = p->Esb.size();
 
-    for(unsigned int ist = 0; ist < nst; ist++)
+    for(unsigned int ist = 0; ist < nst; ist++) {
         N_total += find_pop(p->Esb[ist], E_F, p->m0, p->Te, p->alpha, p->V);
+    }
 
     return N_total - p->N;
 }
@@ -215,7 +217,7 @@ auto find_fermi(const double Esb,
             {
                 status = gsl_root_fsolver_iterate(solver);
 
-                if(status) {
+                if(status != 0) {
                     std::cerr << "GSL error in find_fermi: " << std::endl
                               << "   Singularity in range (" << E_min << "," << E_max << ")" << std::endl;
                 }
@@ -227,8 +229,9 @@ auto find_fermi(const double Esb,
             }while(status == GSL_CONTINUE);
 
             gsl_root_fsolver_free(solver);
+        } else {
+            throw std::runtime_error("No quasi-Fermi energy in range.");
         }
-        else throw std::runtime_error("No quasi-Fermi energy in range.");
     }
 
     return E_F;
@@ -255,8 +258,9 @@ auto find_fermi_global(const std::vector<Eigenstate> &states,
 {
     std::vector<double> E(states.size());
 
-    for(unsigned int ist = 0; ist < E.size(); ++ist)
+    for(unsigned int ist = 0; ist < E.size(); ++ist) {
         E[ist] = states[ist].get_energy();
+    }
 
     return find_fermi_global(E, m0, N, Te, alpha, V);
 }
@@ -313,7 +317,7 @@ auto find_fermi_global(const arma::vec &Esb,
         {
             status = gsl_root_fsolver_iterate(solver);
 
-            if(status) {
+            if(status != 0) {
                 std::cerr << "GSL error in find_fermi_global: " << std::endl
                           << "   Singularity in range (" << E_min << "," << E_max << ")" << std::endl;
             }
@@ -325,8 +329,9 @@ auto find_fermi_global(const arma::vec &Esb,
         }while(status == GSL_CONTINUE);
 
         gsl_root_fsolver_free(solver);
+    } else {
+        throw std::runtime_error("No quasi-Fermi energy in range.");
     }
-    else throw std::runtime_error("No quasi-Fermi energy in range.");
 
     return E_F;
 }

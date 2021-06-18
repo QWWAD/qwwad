@@ -83,6 +83,8 @@ protected:
     void refresh_solutions();
 
 public:
+    virtual ~SchroedingerSolver() = default;
+
     auto get_solutions(bool convert_to_meV=false) -> std::vector<Eigenstate>;
 
     [[nodiscard]] auto get_z() const -> decltype(_z);

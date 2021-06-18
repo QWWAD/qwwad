@@ -19,18 +19,16 @@ MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
 
     if(poly_nodes.size() == 1) // Parse a polynomial value
     {
-        auto polynomial_node  = dynamic_cast<xmlpp::Element *>(poly_nodes.front());
+        auto *polynomial_node = dynamic_cast<xmlpp::Element *>(poly_nodes.front());
 
-        if(polynomial_node)
-        {
+        if(polynomial_node != nullptr) {
             auto poly_terms = polynomial_node->get_children("ai");
 
             // Loop through all terms of the polynomial
-            for(auto term : poly_terms)
-            {
+            for(auto *term : poly_terms) {
                 // TODO: Probably need some error checking in here
 
-                auto ai_elem = dynamic_cast<xmlpp::Element *>(term);
+                auto *ai_elem = dynamic_cast<xmlpp::Element *>(term);
                 std::stringstream i_str(ai_elem->get_attribute_value("i").raw());
                 std::stringstream ai_str(ai_elem->get_child_text()->get_content().raw());
 
