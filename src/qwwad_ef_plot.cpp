@@ -126,7 +126,7 @@ static void output_plot(const WfOptions               &opt,
     unsigned int nst_plotted=0; // Counter to limit number of plotted states
 
     // Output the probability densities
-    for(const auto st : states) {
+    for(const auto &st : states) {
         const auto PD  = st.get_PD(); // Probability density at each point
 
         // Real and imaginary parts of wavefunction at each point

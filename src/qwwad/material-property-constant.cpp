@@ -53,7 +53,7 @@ MaterialPropertyConstant::MaterialPropertyConstant(decltype(_name)        name,
                                                    decltype(_reference)   reference,
                                                    decltype(_unit)        unit,
                                                    decltype(_constant)    value) :
-    MaterialPropertyNumeric(name, description, reference, unit),
+    MaterialPropertyNumeric(std::move(name), std::move(description), std::move(reference), std::move(unit)),
     _constant(value)
 {}
 

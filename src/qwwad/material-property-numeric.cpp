@@ -40,7 +40,7 @@ MaterialPropertyNumeric::MaterialPropertyNumeric(decltype(_name)        name,
                                                  decltype(_description) description,
                                                  decltype(_reference)   reference,
                                                  decltype(_unit)        unit) :
-    MaterialProperty(name, description, reference),
+    MaterialProperty(std::move(name), std::move(description), std::move(reference)),
     _unit(std::move(unit))
 {}
 

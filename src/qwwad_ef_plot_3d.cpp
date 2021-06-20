@@ -96,7 +96,7 @@ auto main(int argc, char* argv[]) -> int
     arma::mat plotdata = arma::zeros(nE, nz_st);
 
     // Add probability densities to the plot
-    for (auto state : states) {
+    for (auto const &state : states) {
         const auto E = state.get_energy();
         const auto index_E = int((E-E_min)/dE);
         auto PD = state.get_PD();

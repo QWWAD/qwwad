@@ -203,7 +203,7 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
 
     d *= 1e-6; // Rescale thickness to metres
 
-    for(auto name : mat_name) {
+    for(auto const &name : mat_name) {
         const auto *material = material_library.get_material(name);
         mat_layer.push_back(*material);
     }
