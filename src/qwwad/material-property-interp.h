@@ -42,7 +42,7 @@ public:
                     decltype(_xmax) xmax);
 
     void get_limits(decltype(_xmin) &xmin,
-                    decltype(_xmax) &xmax);
+                    decltype(_xmax) &xmax) const;
 
     [[nodiscard]] inline auto get_interp_y0() const {return _y0;}
     [[nodiscard]] inline auto get_interp_y1() const {return _y1;}

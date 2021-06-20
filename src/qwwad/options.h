@@ -41,6 +41,7 @@ class Options
         std::unique_ptr<po::options_description> generic_options_any;
 
         po::options_description config_options;
+        std::string             config_filename; ///< Configuration filename
 
         /**
          * \brief The additional options for a specific program
@@ -51,8 +52,6 @@ class Options
          *          \c add_prog_specific_options_and_parse(...)
          */
         std::unique_ptr<po::options_description> program_specific_options_;
-
-        std::string              config_filename; ///< Configuration filename
         
         static void print_version_then_exit(char* prog_name);
 

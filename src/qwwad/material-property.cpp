@@ -28,8 +28,9 @@ MaterialProperty::MaterialProperty(xmlpp::Element *elem)
     // Read the name of the parameter
     auto name_str = elem->get_attribute_value("name");
 
-    if(name_str == "")
+    if(name_str.empty()) {
         throw std::runtime_error("Material property found with no name");
+    }
 
     _name = name_str;
 
@@ -51,10 +52,11 @@ MaterialProperty::MaterialProperty(decltype(_name)        name,
         _description(std::move(description)),
         _reference(std::move(reference))
 {
-    if(name == "")
+    if(name.empty()) {
         throw std::runtime_error("Material property must have a name");
-    else
-        _name = name;
+    }
+
+    _name = name;
 }
 
 auto MaterialProperty::clone() const -> MaterialProperty*

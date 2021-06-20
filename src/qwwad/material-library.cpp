@@ -27,9 +27,9 @@ namespace QWWAD {
 using namespace constants;
 
 auto MaterialLibrary::get_property_unit(Glib::ustring &mat_name,
-                                                         Glib::ustring &property_name) -> const Glib::ustring &
+                                        Glib::ustring &property_name) const -> const Glib::ustring &
 {
-    auto property = dynamic_cast<MaterialPropertyNumeric const *>(get_property(mat_name, property_name));
+    const auto *property = dynamic_cast<MaterialPropertyNumeric const *>(get_property(mat_name, property_name));
     return property->get_unit();
 }
 
@@ -42,7 +42,7 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
 {
     std::string fname(filename);
     // If no filename was specified, read from default data file
-    if(fname == "")
+    if(fname.empty())
     {
         std::stringstream fname_str;
         fname_str << QWWAD_PKGDATADIR << "/material-library.xml";
@@ -51,21 +51,21 @@ MaterialLibrary::MaterialLibrary(const Glib::ustring &filename)
 
     xmlpp::DomParser parser(fname, true);
 
-    auto doc          = parser.get_document();
-    auto root_element = doc->get_root_node();
+    auto *doc          = parser.get_document();
+    auto *root_element = doc->get_root_node();
 
-    if(root_element)
+    if(root_element != nullptr)
     {
         // Get a list of all known materials from the XML file
         auto material_nodes = root_element->get_children("material");
 
         // Iterate through all material nodes and add materials to the list
-        for(auto node : material_nodes)
+        for(auto *node : material_nodes)
         {
             // Check that the node is really an element
-            auto elem = dynamic_cast<xmlpp::Element *>(node);
+            auto *elem = dynamic_cast<xmlpp::Element *>(node);
 
-            if(elem)
+            if(elem != nullptr)
             {
                 // Add the material to the list
                 auto name = elem->get_attribute_value("name");
@@ -123,8 +123,8 @@ auto MaterialLibrary::get_property(Glib::ustring &mat_name,
 auto MaterialLibrary::get_val(Glib::ustring &mat_name,
                                 Glib::ustring &property_name) -> double
 {
-    const auto property = materials.at(mat_name).get_property(property_name);
-    const auto numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(property);
+    const auto * const property = materials.at(mat_name).get_property(property_name);
+    const auto * const numeric_property = dynamic_cast<MaterialPropertyNumeric const *>(property);
 
     return numeric_property->get_val();
 }

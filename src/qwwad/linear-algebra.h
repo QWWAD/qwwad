@@ -162,11 +162,11 @@ auto multiply_vec_tridiag(arma::vec const &M_sub,
 auto solve_tridiag(arma::vec &A_sub,
                    arma::vec &A_diag,
                    arma::vec &A_super,
-                   arma::vec const &x) -> arma::vec;
+                   arma::vec const &b) -> arma::vec;
 
 auto solve_tridiag_LDL_T(arma::vec const &D,
                          arma::vec const &L,
-                         arma::vec const &x) -> arma::vec;
+                         arma::vec const &b) -> arma::vec;
 
 void
 factorise_tridiag_LDL_T(arma::vec const &A_diag,

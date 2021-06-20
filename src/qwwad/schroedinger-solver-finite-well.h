@@ -44,7 +44,7 @@ private:
     auto calculate() -> std::vector<Eigenstate> override;
     
     [[nodiscard]] auto get_wavefunction(double E,
-                                        bool   parity_flag) const -> arma::cx_vec;
+                                        bool   odd_parity) const -> arma::cx_vec;
 };
 } // namespace
 #endif

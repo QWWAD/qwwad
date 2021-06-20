@@ -25,19 +25,19 @@ MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
     // Check for interpolated values
     if(all_interp_nodes.size() == 1)
     {
-        auto interp_node = dynamic_cast<xmlpp::Element *>(all_interp_nodes.front());
+        auto *interp_node = dynamic_cast<xmlpp::Element *>(all_interp_nodes.front());
 
-        if(interp_node)
+        if(interp_node != nullptr)
         {
             auto y0_nodes = interp_node->get_children("y0");
             auto y1_nodes = interp_node->get_children("y1");
-            auto y0_node  = dynamic_cast<xmlpp::Element *>(y0_nodes.front());
-            auto y1_node  = dynamic_cast<xmlpp::Element *>(y1_nodes.front());
+            auto *y0_node  = dynamic_cast<xmlpp::Element *>(y0_nodes.front());
+            auto *y1_node  = dynamic_cast<xmlpp::Element *>(y1_nodes.front());
 
-            if(y0_node && y1_node)
+            if(y0_node != nullptr && y1_node != nullptr)
             {
-                auto y0_txtnode = y0_node->get_child_text();
-                auto y1_txtnode = y1_node->get_child_text();
+                auto *y0_txtnode = y0_node->get_child_text();
+                auto *y1_txtnode = y1_node->get_child_text();
                 std::stringstream y0_str(y0_txtnode->get_content().raw());
                 std::stringstream y1_str(y1_txtnode->get_content().raw());
 
@@ -49,13 +49,14 @@ MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
 
                 if(!b_nodes.empty())
                 {
-                    auto b_node = dynamic_cast<xmlpp::Element *>(b_nodes.front());
-                    auto b_txtnode = b_node->get_child_text();
+                    auto *b_node = dynamic_cast<xmlpp::Element *>(b_nodes.front());
+                    auto *b_txtnode = b_node->get_child_text();
                     std::stringstream b_str(b_txtnode->get_content().raw());
                     b_str >> _b;
                 }
-                else
+                else {
                     _b = 0.0;
+                }
 
                 // Read validity limits
                 std::stringstream xmin_str(interp_node->get_attribute_value("xmin").raw());
@@ -105,7 +106,7 @@ MaterialPropertyInterp::MaterialPropertyInterp(decltype(_name)        name,
 
 auto MaterialPropertyInterp::clone() const -> MaterialPropertyInterp*
 {
-    auto mat = new MaterialPropertyInterp(_name, _description, _reference, _unit, _y0, _y1, _b);
+    auto *mat = new MaterialPropertyInterp(_name, _description, _reference, _unit, _y0, _y1, _b);
     mat->set_limits(_xmin, _xmax);
     return mat;
 }
@@ -150,7 +151,7 @@ void MaterialPropertyInterp::set_limits(const decltype(_xmin) xmin,
  * \param[out] xmax The upper limit for interpolation
  */
 void MaterialPropertyInterp::get_limits(decltype(_xmin) &xmin,
-                                        decltype(_xmax) &xmax)
+                                        decltype(_xmax) &xmax) const
 {
     xmin = _xmin;
     xmax = _xmax;

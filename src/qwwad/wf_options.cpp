@@ -31,8 +31,9 @@ WfOptions::WfOptions()
  */
 auto WfOptions::get_wf_filename(const int ist) const -> std::string
 {
-    if(ist<1)
+    if(ist<1) {
         throw std::runtime_error("Trying to get a wf filename with an index that is less than 1!");
+    }
 
     const auto prefix = get_wf_prefix();
     const auto ext    = get_wf_ext();

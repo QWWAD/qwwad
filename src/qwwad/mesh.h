@@ -63,7 +63,7 @@ public:
                                          const double       dz_max = 1e-10) -> Mesh*;
 
     static auto create_from_file(const std::string &layer_filename,
-                                 const size_t       nz_1per,
+                                 const size_t       ncell_1per,
                                  const size_t       n_periods) -> Mesh*;
 
     /** Return the number of cells in one period of the mesh */

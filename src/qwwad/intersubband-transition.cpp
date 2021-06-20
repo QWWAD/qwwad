@@ -27,8 +27,9 @@ IntersubbandTransition::IntersubbandTransition(const decltype(_isb) isb,
     // Tabulate the initial kinetic energy for each initial state in table
     _Eki.resize(nki);
 
-    for(unsigned int iki = 0; iki < nki; ++iki)
+    for(unsigned int iki = 0; iki < nki; ++iki) {
         _Eki[iki] = isb.get_Ek_at_k(_ki[iki]);
+    }
 }
 
 /**

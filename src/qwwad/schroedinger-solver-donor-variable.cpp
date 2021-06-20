@@ -70,7 +70,7 @@ struct integral_params
 /* Eq. 5.116, QWWAD3 */
 auto I_33_integrand(double w, void *params) -> double
 {
-    auto p = reinterpret_cast<integral_params *>(params);
+    auto *p = reinterpret_cast<integral_params *>(params);
     double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/gsl_pow_2(1+w*w);
     return result;
 }
@@ -78,7 +78,7 @@ auto I_33_integrand(double w, void *params) -> double
 /* Eq. 5.117, QWWAD3 */
 auto I_34_integrand(double w, void *params) -> double
 {
-    auto p = reinterpret_cast<integral_params *>(params);
+    auto *p = reinterpret_cast<integral_params *>(params);
     double result = exp(-p->zeta*p->z_dash_abs*(1/w+w)/p->lambda)*(1-w*w)/(w*(1+w*w));
     return result;
 }
@@ -131,7 +131,7 @@ auto SchroedingerSolverDonorVariable::I_3(const double z_dash) const -> double
 /* Eq. 5.118, QWWAD3 */
 static auto I_4_integrand(double w, void *params) -> double
 {
-    auto p = reinterpret_cast<integral_params *>(params);
+    auto *p = reinterpret_cast<integral_params *>(params);
     double result = exp(-2*p->z_dash_abs*sqrt(gsl_pow_2((1-w*w)/(2*w))+gsl_pow_2(p->zeta))/p->lambda)
             *p->z_dash_abs*(1-w*w)/(2*w*w);
     return result;

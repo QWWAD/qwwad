@@ -65,7 +65,9 @@ Mesh::Mesh(const decltype(_x_layer)    &x_layer,
 
         unsigned int _previous_layer_top_index = 0;
 
-        if (iL > 0) _previous_layer_top_index = _layer_top_index[iL-1];
+        if (iL > 0) {
+            _previous_layer_top_index = _layer_top_index[iL-1];
+        }
 
         // Now fill in the properties for each cell within the layer
         for (unsigned int icell = _previous_layer_top_index;
@@ -76,8 +78,9 @@ Mesh::Mesh(const decltype(_x_layer)    &x_layer,
             _n3D[icell] = get_n3D_in_layer(iL);
 
             // Copy all the alloy fractions for this layer
-            for(unsigned int ialloy = 0; ialloy < _n_alloy; ++ialloy)
+            for(unsigned int ialloy = 0; ialloy < _n_alloy; ++ialloy) {
                 _x.at(icell)[ialloy] = _x_layer.at(iL%n_layer_1per)[ialloy];
+            }
         }
     }
 }
@@ -122,8 +125,9 @@ void Mesh::read_layers_from_file(const std::string &filename,
         }
         else
         {
-            if(!stream)
+            if(!stream) {
                 throw std::runtime_error("Could not read stream");
+            }
 
             result = read_line_array(rowtemp, n_alloy + 2, stream); 
         }
@@ -132,13 +136,14 @@ void Mesh::read_layers_from_file(const std::string &filename,
         {
             W_layer[i] = rowtemp[0];
 
-            for(unsigned int j = 0; j < n_alloy; ++j)
+            for(unsigned int j = 0; j < n_alloy; ++j) {
                 x_layer.at(i)[j] = rowtemp[1+j];
+            }
 
             n3D_layer(i) = rowtemp[n_alloy+1];
-        }
-        else
+        } else {
             throw std::runtime_error("Could not read stream");
+        }
     }
 
     stream.close();
@@ -150,8 +155,9 @@ void Mesh::read_layers_from_file(const std::string &filename,
     // Check data integrity
     for(unsigned int iL = 0; iL < nL; iL++)
     {
-        for(unsigned int ialloy = 0; ialloy < n_alloy; ++ialloy)
+        for(unsigned int ialloy = 0; ialloy < n_alloy; ++ialloy) {
             check_c_interval_0_1(&x_layer.at(iL)[ialloy]);
+        }
     }
 
     // Scale layer widths angstrom -> metre
@@ -221,8 +227,9 @@ auto Mesh::create_from_file(const std::string &layer_filename,
  */
 auto Mesh::get_n3D_in_layer(const unsigned int iL) const -> double
 {
-    if(iL > _n3D_layer.size() * _n_periods)
+    if(iL > _n3D_layer.size() * _n_periods) {
         throw std::domain_error("Tried to access the doping concentration in a layer outside the heterostructure.");
+    }
 
     return _n3D_layer[iL%_n3D_layer.size()];
 }
@@ -230,8 +237,9 @@ auto Mesh::get_n3D_in_layer(const unsigned int iL) const -> double
 /** Get the doping concentration at a given point in the structure */
 auto Mesh::get_n3D_at_point(const unsigned int iz) const -> double
 {
-    if(iz > _n3D.size())
+    if(iz > _n3D.size()) {
         throw std::domain_error("Tried to access the doping concentration at a point outside the heterostructure.");
+    }
 
     return _n3D[iz];
 }
@@ -263,8 +271,9 @@ auto Mesh::get_layer_top_index(const unsigned int iL) const -> unsigned int
     unsigned int iz_at_top = round(z_at_top / _dz); // Round to nearest layer
 
     // Fix possible rounding error at top of period
-    if(iz_at_top > _ncell_1per)
+    if(iz_at_top > _ncell_1per) {
         iz_at_top = _ncell_1per;
+    }
 
     return iz_at_top + previous_period_cells;
 }
@@ -313,8 +322,9 @@ auto Mesh::point_is_in_layer(const double       z,
     double       top_of_previous_layer = 0;
     const double top_of_this_layer     = get_height_at_top_of_layer(iL);
 
-    if(iL > 0)
+    if(iL > 0) {
         top_of_previous_layer = get_height_at_top_of_layer(iL-1);
+    }
 
 #ifdef DEBUG
     std::cout << z*1e9 << " nm.  Layer = " << iL << "." << std::endl
@@ -352,8 +362,9 @@ auto Mesh::get_layer_from_height(const double z) const -> unsigned int
 
     unsigned int iL = 0; // index of layer
 
-    while(!point_is_in_layer(z,iL))
+    while(!point_is_in_layer(z,iL)) {
         iL++;
+    }
 
     return iL;
 }

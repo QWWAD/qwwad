@@ -98,9 +98,9 @@ public:
    void make_ff_table(unsigned int i,
                       unsigned int f);
 
-   auto Gsqr(double   Kz,
-             const Subband &isb,
-             const Subband &fsb) -> double;
+   static auto Gsqr(double         Kz,
+                    const Subband &isb,
+                    const Subband &fsb) -> double;
 
    [[nodiscard]] auto get_ff_table(unsigned int i,
                                    unsigned int f) const -> arma::vec;

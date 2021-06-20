@@ -70,8 +70,8 @@ auto SchroedingerSolver::get_solutions(bool convert_to_meV) -> std::vector<Eigen
 
         return sol_meV;
     }
-    else
-        return _solutions;
+
+    return _solutions;
 }
 
 /**
@@ -203,8 +203,11 @@ SchroedingerSolver::get_E_search_min() const -> double
 {
     double E_search_min;
 
-    if(E_min_set_) E_search_min = E_min_;
-    else           E_search_min = get_V().min();
+    if(E_min_set_) {
+        E_search_min = E_min_;
+    } else {
+        E_search_min = get_V().min();
+    }
 
     return E_search_min;
 }
@@ -224,8 +227,11 @@ SchroedingerSolver::get_E_search_max() const -> double
 {
     double E_search_max;
 
-    if(E_max_set_) E_search_max = E_max_;
-    else           E_search_max = get_V().max();
+    if(E_max_set_) {
+        E_search_max = E_max_;
+    } else {
+        E_search_max = get_V().max();
+    }
 
     return E_search_max;
 }

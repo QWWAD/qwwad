@@ -169,7 +169,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
         oss << "Usage: " << argv[0] << " [OPTION]...";
 
         // Post-processing for default options...
-        if(vm_.count("help") != 0u)
+        if(vm_.count("help") != 0U)
         {
             std::cout << oss.str() << std::endl
                       << summary << std::endl
@@ -182,7 +182,7 @@ void Options::add_prog_specific_options_and_parse(const int     argc,
             exit(EXIT_SUCCESS);
         }
         // Display the version number and copyright notice
-        if (vm_.count ("version") != 0u) {
+        if (vm_.count ("version") != 0U) {
             print_version_then_exit(argv[0]);
         }
     }

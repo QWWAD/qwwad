@@ -40,7 +40,7 @@ public:
                    Glib::ustring &property_name) -> double;
 
     auto get_property_unit(Glib::ustring &mat_name,
-                                            Glib::ustring &property_name) -> const Glib::ustring &;
+                           Glib::ustring &property_name) const -> const Glib::ustring &;
 private:
     boost::ptr_map<Glib::ustring, Material>  materials;
 };

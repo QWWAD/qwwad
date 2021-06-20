@@ -135,8 +135,9 @@ void ScatteringCalculatorLO::set_phonon_samples(const size_t nKz)
         _Kz.resize(nKz);
         _dKz = 2.0/(_A0*nKz);
 
-        for(unsigned int iKz = 0; iKz < nKz; ++iKz)
+        for(unsigned int iKz = 0; iKz < nKz; ++iKz) {
             _Kz[iKz] = iKz * _dKz;
+        }
 
         ff_table.clear();
     }
@@ -299,8 +300,8 @@ void ScatteringCalculatorLO::make_ff_table(const unsigned int i,
  * \brief calculates the overlap integral squared between the two states
  */
 auto ScatteringCalculatorLO::Gsqr(const double   Kz,
-                                    const Subband &isb,
-                                    const Subband &fsb) -> double
+                                  const Subband &isb,
+                                  const Subband &fsb) -> double
 {
     const auto     z = isb.z_array();
     const auto    dz = z[1] - z[0];

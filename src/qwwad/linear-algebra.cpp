@@ -78,8 +78,9 @@ eigen_general(arma::mat    &A,
 
                 nst++; // Register solution found
 
-                if(nst > (unsigned int)N)
+                if(nst > (unsigned int)N) {
                     throw std::runtime_error("More solutions found than nz!");
+                }
             }
         }
     }
@@ -90,8 +91,9 @@ eigen_general(arma::mat    &A,
     // Create temporary storage for sorting the eigenvalues
     arma::vec E_tmp(nst);
 
-    for(unsigned int ist=0; ist < nst; ist++)
+    for(unsigned int ist=0; ist < nst; ist++) {
         E_tmp[ist] = solutions[ist].get_E();
+    }
 
     // Indices of the eigenvalues after sorting
     arma::uvec sorted_E_indices = sort_index(E_tmp);
@@ -104,8 +106,9 @@ eigen_general(arma::mat    &A,
         solutions_sorted.push_back(solutions[idx]);
 
         // Stop if we reach the maximum permitted number of states
-        if(n_max > 0 and solutions_sorted.size() == n_max)
+        if(n_max > 0 and solutions_sorted.size() == n_max) {
             break;
+        }
     }
 
     return solutions_sorted;
@@ -166,9 +169,10 @@ eigen_banded(double       *AB,
     dsbgvx_(&jobz, &range, &uplo, &n, &KA, &KB, AB, &LD, BB, &LD, &Q[0], &n, &VL,
             &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork(0), &ifail[0], &info);
 
-    if(info!=0)
+    if(info!=0) {
         throw std::runtime_error("Could not solve "
                 "eigenproblem. Check all input parameters!");
+    }
 
     // Extract solutions from LAPACK output
     std::vector< EVP_solution<double> > solutions(M, EVP_solution<double>(n) );
@@ -327,8 +331,9 @@ auto solve_cyclic_matrix(arma::vec A_sub,
 
     // Again no need to initialise first element of 
     // b[ni-1] = b[ni-1]
-    for(int i=ni-2; i>-1; i--)
+    for(int i=ni-2; i>-1; i--) {
         b[i] = b[i]-(A_super[i]*b[i+1])/A_diag[i+1];
+    }
 
     return b/A_diag;
 }

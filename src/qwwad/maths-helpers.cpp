@@ -27,8 +27,9 @@ auto lin_interp(const double y0,
                   const double y1,
                   const double x,
                   const double b) -> double{
-    if(x < 0 or x > 1)
+    if(x < 0 or x > 1) {
         throw std::domain_error("x value out of range");
+    }
 
     return y0*(1.0-x) + y1*x + b*x*(1.0-x);
 }
@@ -58,13 +59,16 @@ auto lookup_y_from_x(const arma::vec &x_values,
     }
 
     unsigned int ix=0;
-    while (x0 >= x_values[ix])
-        ix++;
 
-    if (ix==0)
+    while (x0 >= x_values[ix]) {
+        ix++;
+    }
+
+    if (ix==0) {
         return y_values[0];
-    else
-        return y_values[ix-1] + (y_values[ix] - y_values[ix-1]) * (x0 - x_values[ix-1])/(x_values[ix] - x_values[ix-1]);
+    }
+
+    return y_values[ix-1] + (y_values[ix] - y_values[ix-1]) * (x0 - x_values[ix-1])/(x_values[ix] - x_values[ix-1]);
 }
 
 /**
@@ -100,8 +104,11 @@ auto coth(const double x) -> double
  */
 auto Theta(const double x) -> unsigned int
 {
-    if(x > 0) return 1;
-    else      return 0;
+    if(x > 0) {
+        return 1;
+    }
+
+    return 0;
 }
 
 /**

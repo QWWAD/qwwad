@@ -31,7 +31,7 @@ public:
     static void check_not_negative(const arma::vec &data);
 };
 
-void check_c_interval_0_1(double*);
+void check_c_interval_0_1(const double *px);
 } // namespace QWWAD 
 #endif
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :
