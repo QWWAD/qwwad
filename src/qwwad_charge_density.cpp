@@ -56,42 +56,47 @@ class ChargeDensityData
 {
     private:
         size_t _nper;   ///< Number of periods crossed by wavefunction
+        std::vector<Eigenstate> states_;  ///< Wf and energy data
+        arma::vec  pop_;  ///< Subband population [m^{-2}]
+        arma::uvec nval_; ///< Degeneracy of subbands
+
     public:
         ChargeDensityData(const ChargeDensityOptions& opt);
-        std::vector<Eigenstate> states;  ///< Wf and energy data
-        arma::vec  pop;  ///< Subband population [m^{-2}]
-        arma::uvec nval; ///< Degeneracy of subbands
+
+        [[nodiscard]] inline auto get_states() const -> decltype(states_) {return states_;}
+        [[nodiscard]] inline auto get_pop()    const -> decltype(pop_)    {return pop_;}
+        [[nodiscard]] inline auto get_nval()   const -> decltype(nval_)   {return nval_;}
 };
 
 ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
     _nper(opt.get_option<size_t>("nper")),
-    states(Eigenstate::read_from_file(opt.get_energy_filename(),
-                                      opt.get_wf_prefix(),
-                                      opt.get_wf_ext())),
-    pop(arma::zeros(states.size())),
-    nval(arma::ones<arma::uvec>(states.size()))
+    states_(Eigenstate::read_from_file(opt.get_energy_filename(),
+                                       opt.get_wf_prefix(),
+                                       opt.get_wf_ext())),
+    pop_(arma::zeros(states_.size())),
+    nval_(arma::ones<arma::uvec>(states_.size()))
 {
     // Read population of each subband
     const auto population_file = opt.get_option<std::string>("populationfile");
-    read_table(population_file.c_str(), pop);
-    const size_t nst = pop.size();
+    read_table(population_file.c_str(), pop_);
+    const size_t nst = pop_.size();
 
     // Check that populations are all positive
-    DataChecker::check_positive(pop);
+    DataChecker::check_positive(pop_);
     
     // Read state degeneracy if specified
     if(opt.get_argument_known("degeneracyfile"))
     {
         const auto degeneracy_file = opt.get_option<std::string>("degeneracyfile");
-        read_table(degeneracy_file.c_str(), nval);
+        read_table(degeneracy_file.c_str(), nval_);
 
         // Check that all input files have same size
-        if(nval.size() != nst)
+        if(nval_.size() != nst)
         {
             std::ostringstream oss;
             oss << "Different lengths of data were read from " << population_file
                 << " (" << nst << " lines) and " << degeneracy_file
-                << " (" << nval.size() << " lines).";
+                << " (" << nval_.size() << " lines).";
             throw std::length_error(oss.str());
         }
     }
@@ -100,10 +105,15 @@ ChargeDensityData::ChargeDensityData(const ChargeDensityOptions& opt) :
 auto main(int argc, char* argv[]) -> int
 {
     const ChargeDensityOptions opt(argc, argv);
-    const ChargeDensityData data(opt);
 
     const auto nper = opt.get_option<size_t>("nper"); // Number of periods over which wavefunction spreads
-    const auto nst  = data.states.size();          // Number of states localised in one period
+
+    const ChargeDensityData data(opt);
+    const auto states = data.get_states();
+    const auto pop    = data.get_pop();
+    const auto nval   = data.get_nval();
+ 
+    const auto nst  = states.size();          // Number of states localised in one period
 
     // Read doping profile (for entire multi-period structure)
     arma::vec z; // Spatial location [m]
@@ -128,13 +138,13 @@ auto main(int argc, char* argv[]) -> int
         for(unsigned int ist = 0; ist < nst; ist++)
         {
             // Find probability density function for carrier over the entire structure
-            const auto PD     = data.states[ist].get_PD();
+            const auto PD     = states[ist].get_PD();
 
             // Grab the part of the PDF that lies in this period
             const arma::vec PD_per = PD.subvec(iper*nz_1per, (iper+1)*nz_1per-1);
 
             // Add this into the total carrier density profile
-            carrier_density_1per += data.pop[ist] * data.nval[ist] * PD_per;
+            carrier_density_1per += pop[ist] * nval[ist] * PD_per;
         }
     }
 
