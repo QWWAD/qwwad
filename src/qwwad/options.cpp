@@ -204,7 +204,7 @@ void Options::add_prog_specific_options_and_parse(const int          argc,
  *          Any unrecognised options are simply ignored.  The user needs to
  *          take care of typos!
  */
-auto Options::name_mapper(const std::string &environment_variable) const -> std::string
+auto Options::name_mapper(std::string environment_variable) const -> std::string
 {
     std::string prefix("QWWAD_");
     std::string option_name; // output string

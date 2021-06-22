@@ -11,9 +11,9 @@ private:
 public:
     MaterialPropertyConstant() = default;
     MaterialPropertyConstant(xmlpp::Element *elem);
-    MaterialPropertyConstant(decltype(_name)        name,
-                             decltype(_description) description,
-                             decltype(_reference)   reference,
+    MaterialPropertyConstant(const decltype(_name)        &name,
+                             const decltype(_description) &description,
+                             const decltype(_reference)   &reference,
                              decltype(_unit)        unit,
                              decltype(_constant)    value);
 

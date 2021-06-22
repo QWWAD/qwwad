@@ -44,9 +44,9 @@ MaterialProperty::MaterialProperty(xmlpp::Element *elem)
  * \param[in] description A description of the property
  * \param[in] reference   A literature reference for the property
  */
-MaterialProperty::MaterialProperty(decltype(_name)        name,
-                                   decltype(_description) description,
-                                   decltype(_reference)   reference)
+MaterialProperty::MaterialProperty(const decltype(_name)  &name,
+                                   decltype(_description)  description,
+                                   decltype(_reference)    reference)
     :
         _name(""),
         _description(std::move(description)),

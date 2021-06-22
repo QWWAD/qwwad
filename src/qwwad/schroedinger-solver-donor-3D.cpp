@@ -108,7 +108,7 @@ SchroedingerSolverDonor3D::calculate_psi_from_chi() -> std::vector<Eigenstate>
 
     auto z = get_z();
 
-    for (auto ist : _solutions_chi)
+    for (const auto &ist : _solutions_chi)
     {
         const auto E   = ist.get_energy();
         const auto chi = ist.get_wavefunction_samples();

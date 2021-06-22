@@ -18,10 +18,13 @@ project(qwwad
 	VERSION 1.6
        )
 
+# Define user-configurable build options
+option(VERBOSE              "Show information about CMake build configuration.")
+option(CMAKE_RUN_CLANG_TIDY "Run clang-tidy with the compiler." OFF)
+option(BUILD_MANPAGES       "Build the Linux manual pages from source." OFF)
+
 # Clang-tidy handling snipped from Horishi Miura
 # http://gitlab.kitware.com/cmake/cmake/-/issues/18926/
-option(CMAKE_RUN_CLANG_TIDY "Run clang-tidy with the compiler." OFF)
-
 if(CMAKE_RUN_CLANG_TIDY)
   message("Trying to configure clang-tidy")
 
@@ -70,9 +73,6 @@ if(EXISTS ${gtest_inc_path})
 else()
 	message(WARNING "Cannot find Googletest folder")
 endif()
-
-# Define user-configurable build options
-option( VERBOSE "Show information about CMake build configuration." )
 
 # Enable C++11 builds
 set(CMAKE_CXX_STANDARD 17)

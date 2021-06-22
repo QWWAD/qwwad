@@ -266,7 +266,7 @@ void ScatteringCalculatorLO::calculate_screening_length()
     if(_enable_screening)
     {
         // Sum over all subbands
-        for(const auto jsb : _subbands)
+        for(const auto &jsb : _subbands)
         {
             const auto Ej   = jsb.get_E_min();
             const auto f_FD = jsb.get_occupation_at_E_total(Ej);

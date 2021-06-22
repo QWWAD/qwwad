@@ -62,12 +62,12 @@ MaterialPropertyPoly::MaterialPropertyPoly(xmlpp::Element *elem) :
  * \details The coefficients are stored in a map, with the index being used to specify the
  *          order of the polynomial term, and the value being used to store the coefficient.
  */
-MaterialPropertyPoly::MaterialPropertyPoly(decltype(_name)        name,
-                                           decltype(_description) description,
-                                           decltype(_reference)   reference,
+MaterialPropertyPoly::MaterialPropertyPoly(const decltype(_name)        &name,
+                                           const decltype(_description) &description,
+                                           const decltype(_reference)   &reference,
                                            decltype(_unit)        unit,
                                            decltype(_poly_coeffs) poly_coeffs) :
-    MaterialPropertyNumeric(std::move(name), std::move(description), std::move(reference), std::move(unit)),
+    MaterialPropertyNumeric(name, description, reference, std::move(unit)),
     _poly_coeffs(std::move(poly_coeffs))
 {}
 

@@ -88,15 +88,15 @@ MaterialPropertyInterp::MaterialPropertyInterp(xmlpp::Element *elem) :
  *
  * \details The limits for interpolation are set as \f$x = (0.0, 1.0)\f$
  */
-MaterialPropertyInterp::MaterialPropertyInterp(decltype(_name)        name,
-                                               decltype(_description) description,
-                                               decltype(_reference)   reference,
-                                               decltype(_unit)        unit,
-                                               decltype(_y0)          y0,
-                                               decltype(_y1)          y1,
-                                               decltype(_b)           b)
+MaterialPropertyInterp::MaterialPropertyInterp(const decltype(_name)        &name,
+                                               const decltype(_description) &description,
+                                               const decltype(_reference)   &reference,
+                                               decltype(_unit)               unit,
+                                               decltype(_y0)                 y0,
+                                               decltype(_y1)                 y1,
+                                               decltype(_b)                  b)
     :
-    MaterialPropertyNumeric(name, description, reference, unit),
+    MaterialPropertyNumeric(name, description, reference, std::move(unit)),
     _y0(y0),
     _y1(y1),
     _b(b),

@@ -17,10 +17,10 @@ protected:
 public:
     MaterialPropertyNumeric() = default;
     MaterialPropertyNumeric(xmlpp::Element *elem);
-    MaterialPropertyNumeric(decltype(_name)        name,
-                            decltype(_description) description,
-                            decltype(_reference)   reference,
-                            decltype(_unit)        unit);
+    MaterialPropertyNumeric(const decltype(_name)        &name,
+                            const decltype(_description) &description,
+                            const decltype(_reference)   &reference,
+                            decltype(_unit)               unit);
 
     [[nodiscard]] auto get_unit() const -> const decltype(_unit) &;
 

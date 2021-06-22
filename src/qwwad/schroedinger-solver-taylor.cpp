@@ -95,7 +95,7 @@ SchroedingerSolverTaylor::calculate() -> std::vector<Eigenstate>
     const auto EVP_solutions = eigen_banded(&AB[0], &BB[0], V.min(), V.max(), V.size(), nst_max);
 
     // Now save solutions
-    for(auto st : EVP_solutions) {
+    for(const auto &st : EVP_solutions) {
         const auto E   = st.get_E();
         arma::cx_vec psi;
         psi.set_real(st.psi_array());

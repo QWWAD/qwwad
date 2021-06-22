@@ -46,18 +46,18 @@ auto WfOptions::get_wf_filename(const int ist) const -> std::string
 
 auto WfOptions::get_wf_prefix() const -> std::string
 {
-    const auto prefix = get_option<std::string>("wffileprefix");
+    auto prefix = get_option<std::string>("wffileprefix");
     return prefix;
 }
         
 auto WfOptions::get_wf_ext() const -> std::string
 {
-    const auto ext = get_option<std::string>("wffileext");
+    auto ext = get_option<std::string>("wffileext");
     return ext;
 }
 
 auto WfOptions::get_energy_filename() const -> std::string{
-    const auto filename = get_option<std::string>("energyfile");
+    auto filename = get_option<std::string>("energyfile");
     return filename;
 }
 } // end namespace

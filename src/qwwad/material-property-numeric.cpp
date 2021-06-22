@@ -36,11 +36,11 @@ MaterialPropertyNumeric::MaterialPropertyNumeric(xmlpp::Element *elem) :
  * \param[in] reference   A literature reference for the property
  * \param[in] unit        The unit associated with the property
  */
-MaterialPropertyNumeric::MaterialPropertyNumeric(decltype(_name)        name,
-                                                 decltype(_description) description,
-                                                 decltype(_reference)   reference,
-                                                 decltype(_unit)        unit) :
-    MaterialProperty(std::move(name), std::move(description), std::move(reference)),
+MaterialPropertyNumeric::MaterialPropertyNumeric(const decltype(_name)        &name,
+                                                 const decltype(_description) &description,
+                                                 const decltype(_reference)   &reference,
+                                                 decltype(_unit)               unit) :
+    MaterialProperty(name, description, reference),
     _unit(std::move(unit))
 {}
 

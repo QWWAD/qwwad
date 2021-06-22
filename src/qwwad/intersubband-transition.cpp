@@ -13,14 +13,14 @@ using namespace constants;
  * \param[in] ki  Initial wave-vector samples [1/m]
  * \param[in] Wif Scattering rate at each wave-vector [1/s]
  */
-IntersubbandTransition::IntersubbandTransition(const decltype(_isb) isb,
-                                               const decltype(_fsb) fsb,
-                                               const decltype(_ki)  ki,
-                                               const decltype(_Wif) Wif) :
+IntersubbandTransition::IntersubbandTransition(const decltype(_isb) &isb,
+                                               decltype(_fsb)        fsb,
+                                               decltype(_ki)         ki,
+                                               decltype(_Wif)        Wif) :
     _isb(isb),
-    _fsb(fsb),
-    _ki(ki),
-    _Wif(Wif)
+    _fsb(std::move(fsb)),
+    _ki(std::move(ki)),
+    _Wif(std::move(Wif))
 {
     const auto nki = _ki.size();
 

@@ -228,7 +228,7 @@ auto SchroedingerSolverDonor::get_solutions_chi(const bool convert_to_meV) -> st
     if(convert_to_meV) {
         std::vector<Eigenstate> sol_meV;
 
-        for(auto sol_J : _solutions_chi) {
+        for(const auto &sol_J : _solutions_chi) {
             const auto E   = sol_J.get_energy();
             const auto z   = sol_J.get_position_samples();
             const auto psi = sol_J.get_wavefunction_samples();

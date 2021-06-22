@@ -21,9 +21,9 @@ public:
     MaterialProperty()  = default;
     virtual ~MaterialProperty() = default;
     MaterialProperty(xmlpp::Element *elem);
-    MaterialProperty(decltype(_name)        name,
-                     decltype(_description) description,
-                     decltype(_reference)   reference);
+    MaterialProperty(const decltype(_name)  &name,
+                     decltype(_description)  description,
+                     decltype(_reference)    reference);
 
     [[nodiscard]] virtual auto clone() const -> MaterialProperty *;
 

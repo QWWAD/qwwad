@@ -51,7 +51,7 @@ auto V(double                   A0,
     const double q_dot_q = dot(q,q);
 
     // Loop over all atoms in the set and add contribution from each
-    for(auto const atom : atoms)
+    for(auto const &atom : atoms)
     {
         const double q_dot_t = dot(q, atom.r);
         const double vf = Vf(A0,m_per_au,q_dot_q, atom.type);

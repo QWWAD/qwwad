@@ -77,7 +77,7 @@ SchroedingerSolverTridiag::calculate() -> std::vector<Eigenstate>
 
     const auto EVP_solutions = eigen_tridiag(diag, sub, E_min, E_max, nst_max);
 
-    for (auto st : EVP_solutions) {
+    for (const auto &st : EVP_solutions) {
         const auto E   = st.get_E();
         arma::cx_vec psi;
         psi.set_real(st.psi_array());

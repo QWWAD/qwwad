@@ -154,7 +154,7 @@ auto PoissonSolver::solve(const arma::vec &rho) const -> arma::vec
         throw std::runtime_error("Permittivity and charge density arrays have different sizes");
     }
 
-    auto rhs = rho; // Set right-hand-side to the charge-density
+    auto const &rhs = rho; // Set right-hand-side to the charge-density
     auto phi = rhs; // Array in which to output the potential [J]
 
     switch(_boundary_type)

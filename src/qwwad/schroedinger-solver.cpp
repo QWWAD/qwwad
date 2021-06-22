@@ -59,7 +59,7 @@ auto SchroedingerSolver::get_solutions(bool convert_to_meV) -> std::vector<Eigen
     {
         std::vector<Eigenstate> sol_meV;
 
-        for(auto sol_J : _solutions)
+        for(const auto &sol_J : _solutions)
         {
             const auto E   = sol_J.get_energy();
             const auto z   = sol_J.get_position_samples();

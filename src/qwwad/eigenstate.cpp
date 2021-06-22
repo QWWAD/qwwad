@@ -214,7 +214,7 @@ auto Eigenstate::psi_squared_max(const std::vector<Eigenstate> &states) -> doubl
     double PDmax = 0.0;
 
     // Loop through all states
-    for(auto st : states) {
+    for(auto const &st : states) {
         // If this state has highest probability so far, store its value
         const auto PD = st.get_PD();
         PDmax = GSL_MAX_DBL(PDmax, PD.max());

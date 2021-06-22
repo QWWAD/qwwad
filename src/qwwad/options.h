@@ -55,7 +55,7 @@ class Options
         
         static void print_version_then_exit(char* prog_name);
 
-        [[nodiscard]] auto name_mapper(const std::string &environment_variable) const -> std::string;
+        [[nodiscard]] auto name_mapper(std::string environment_variable) const -> std::string;
 
         /**
          * Storage for the (raw) values entered on the command-line

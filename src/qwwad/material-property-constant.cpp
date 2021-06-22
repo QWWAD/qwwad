@@ -48,12 +48,12 @@ MaterialPropertyConstant::MaterialPropertyConstant(xmlpp::Element *elem) :
  * \param[in] unit        The unit associated with the property
  * \param[in] value       The constant value of the property
  */
-MaterialPropertyConstant::MaterialPropertyConstant(decltype(_name)        name,
-                                                   decltype(_description) description,
-                                                   decltype(_reference)   reference,
+MaterialPropertyConstant::MaterialPropertyConstant(const decltype(_name)        &name,
+                                                   const decltype(_description) &description,
+                                                   const decltype(_reference)   &reference,
                                                    decltype(_unit)        unit,
                                                    decltype(_constant)    value) :
-    MaterialPropertyNumeric(std::move(name), std::move(description), std::move(reference), std::move(unit)),
+    MaterialPropertyNumeric(name, description, reference, std::move(unit)),
     _constant(value)
 {}
 

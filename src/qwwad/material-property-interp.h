@@ -28,13 +28,13 @@ private:
 public:
     MaterialPropertyInterp() = default;
     MaterialPropertyInterp(xmlpp::Element *elem);
-    MaterialPropertyInterp(decltype(_name)        name,
-                           decltype(_description) description,
-                           decltype(_reference)   reference,
-                           decltype(_unit)        unit,
-                           decltype(_y0)          y0,
-                           decltype(_y1)          y1,
-                           decltype(_b)           b = 0.0);
+    MaterialPropertyInterp(const decltype(_name)        &name,
+                           const decltype(_description) &description,
+                           const decltype(_reference)   &reference,
+                           decltype(_unit)               unit,
+                           decltype(_y0)                 y0,
+                           decltype(_y1)                 y1,
+                           decltype(_b)                  b = 0.0);
 
     [[nodiscard]] auto clone() const -> MaterialPropertyInterp * override;
 
