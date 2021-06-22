@@ -44,12 +44,12 @@ private:
     arma::vec _V;      ///< Potential profile
     arma::vec _z;      ///< Spatial samples in z
 
-public:
-    double    epsilon; ///< Permittivity
-    double    m;       ///< Effective mass
-    double    r_i;     ///< z-position of dopant
-    StateID   S;       ///< State ID
+    double    epsilon_; ///< Permittivity
+    double    m_;       ///< Effective mass
+    double    r_i_;     ///< z-position of dopant
+    StateID   S_;       ///< State ID
 
+public:
     Wavefunction3D(decltype(_wf) wf,
                    decltype(_V)  V,
                    decltype(_z)  z,
@@ -61,10 +61,10 @@ public:
             _wf(std::move(wf)),
             _V(std::move(V)),
             _z(std::move(z)),
-            epsilon(epsilon),
-            m(m),
-            r_i(r_i),
-            S(S)
+            epsilon_(epsilon),
+            m_(m),
+            r_i_(r_i),
+            S_(S)
     {}
 
 private:
@@ -77,7 +77,9 @@ public:
      */
     void set_lambda(const double lambda) {_lambda = lambda;}
 
-    [[nodiscard]] auto get_psi(double x, double y, unsigned int iz) const -> double;
+    [[nodiscard]] auto get_psi(double       x,
+                               double       y,
+                               unsigned int iz) const -> double;
 
     [[nodiscard]] auto get_energy_integrand(double       x,
                                               double       y,
@@ -279,14 +281,14 @@ auto Wavefunction3D::get_Laplacian(double x,
 
 /// Get the energy integrand
 auto Wavefunction3D::get_energy_integrand(double       x,
-                                            double       y,
-                                            unsigned int iz) const -> double
+                                          double       y,
+                                          unsigned int iz) const -> double
 {
     // Pre-calculate a couple of params
-    const auto hBar_sq_by_2m  = hBar*hBar/(2.0*m);
-    const auto e_sq_by_4pieps = e*e/(4.0*pi*epsilon);
+    const auto hBar_sq_by_2m  = hBar*hBar/(2.0*m_);
+    const auto e_sq_by_4pieps = e*e/(4.0*pi*epsilon_);
 
-    const auto z_dash = _z[iz] - r_i; // Separation from donor in z-direction [m]
+    const auto z_dash = _z[iz] - r_i_; // Separation from donor in z-direction [m]
     const auto r_xz   = hypot(x, z_dash);
     const auto r      = hypot(y, r_xz);
 
@@ -308,7 +310,7 @@ struct Integrand_y_params
 };
 
 auto Wavefunction3D::get_energy_integrand_y(double  y,
-                                              void   *params) -> double
+                                            void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_y_params *>(params);
 
@@ -316,7 +318,7 @@ auto Wavefunction3D::get_energy_integrand_y(double  y,
 }
 
 auto Wavefunction3D::get_PD_integrand_y(double  y,
-                                          void   *params) -> double
+                                        void   *params) -> double
 {
     auto *p = reinterpret_cast<Integrand_y_params *>(params);
     auto psi = p->wf3d->get_psi(p->x, y, p->iz);
@@ -435,17 +437,17 @@ auto Wavefunction3D::get_energy() const -> double
 /**
  * \brief The wave function psi(z)phi(r)
  */
-auto Wavefunction3D::get_psi(const double       x,
-                               const double       y,
-                               const unsigned int iz) const -> double
+auto Wavefunction3D::get_psi(double       x,
+                             double       y,
+                             unsigned int iz) const -> double
 {
-    const double z_dash = std::abs(_z[iz] - r_i);
+    const double z_dash = std::abs(_z[iz] - r_i_);
     const auto r_xy = hypot(x,y);
     const auto r    = hypot(r_xy,z_dash);
 
     double result = 0.0;
 
-    switch(S)
+    switch(S_)
     {
         case STATE_1S:
             result = _wf[iz]*exp(-r/_lambda);

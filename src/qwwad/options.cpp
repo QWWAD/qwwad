@@ -209,6 +209,12 @@ auto Options::name_mapper(std::string environment_variable) const -> std::string
     std::string prefix("QWWAD_");
     std::string option_name; // output string
 
+    // This line doesn't do anything.  It's just there to stop clang-tidy from
+    // complaining that environment_variable is passed by value rather than
+    // reference.  Boost needs the function to have this form so we can't do
+    // much about it.
+    environment_variable = environment_variable + "";
+
     // Only inspect variables that start with the QWWAD_ prefix
     if(environment_variable.compare(0, prefix.length(), prefix) == 0)
     {

@@ -185,12 +185,19 @@ void Thermal1DOptions::print() const
 }
 
 class Thermal1DData {
+private:
+    std::vector<Material> mat_layer_; ///< Material in each layer
+    arma::vec             x_;         ///< Alloy composition in each layer
+    arma::vec             d_;         ///< Layer thickness [m]
+
 public:
     Thermal1DData(const Thermal1DOptions &opt,
                   const MaterialLibrary  &material_library);
-    std::vector<Material> mat_layer; ///< Material in each layer
-    arma::vec x;         ///< Alloy composition in each layer
-    arma::vec d;         ///< Layer thickness [m]
+
+    [[nodiscard]] auto get_mat_layer() const -> decltype(mat_layer_) {return mat_layer_;}
+
+    [[nodiscard]] auto get_x() const -> decltype(x_) {return x_;}
+    [[nodiscard]] auto get_d() const -> decltype(d_) {return d_;}
 };
 
 Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
@@ -199,20 +206,20 @@ Thermal1DData::Thermal1DData(const Thermal1DOptions &opt,
     arma::vec doping; // Unused doping data
     std::vector<std::string> mat_name; // Materialname
     auto infile = opt.get_option<std::string>("infile");
-    read_table(infile, d, x, doping, mat_name);
+    read_table(infile, d_, x_, doping, mat_name);
 
-    d *= 1e-6; // Rescale thickness to metres
+    d_ *= 1e-6; // Rescale thickness to metres
 
     for(auto const &name : mat_name) {
         const auto *material = material_library.get_material(name);
-        mat_layer.push_back(*material);
+        mat_layer_.push_back(*material);
     }
 
     if(opt.get_verbose()) {
-        std::cout << "Read " << d.size() << " layers from " << infile << std::endl;
+        std::cout << "Read " << d_.size() << " layers from " << infile << std::endl;
     }
 
-    if(d.empty()) {
+    if(d_.empty()) {
         std::ostringstream oss;
         oss << "Could not read any layers from " << infile;
         throw std::runtime_error(oss.str());
@@ -241,10 +248,15 @@ auto main(int argc, char *argv[]) -> int
     // Grab user preferences
     MaterialLibrary material_library("");
     Thermal1DOptions opt(argc, argv);
+
+    // Read input data
     const Thermal1DData data(opt, material_library);
+    const auto d = data.get_d();
+    const auto mat_layer = data.get_mat_layer();
+    const auto x = data.get_x();
 
     const auto dy = opt.get_option<double>("dy");
-    const auto L  = sum(data.d); // Length of structure [m]
+    const auto L  = sum(d); // Length of structure [m]
     const size_t ny = ceil(L/dy);   // Find number of points in structure
 
     if(opt.get_verbose()) {
@@ -253,7 +265,7 @@ auto main(int argc, char *argv[]) -> int
 
     // Thickness of active region [m]
     const auto iAR    = opt.get_option<size_t>("active");
-    const auto L_AR   = data.d[iAR];
+    const auto L_AR   = d[iAR];
     const auto area   = opt.get_option<double>("area")*CM2_TO_M2;
     const auto volume = L_AR * area;  // Active region volume (L x h x w) [m^3]
 
@@ -276,12 +288,12 @@ auto main(int argc, char *argv[]) -> int
     unsigned int iy=1;
 
     std::vector<DebyeModel> dm_layer;
-    const size_t nL = data.d.size();
+    const size_t nL = d.size();
     arma::vec rho_layer = arma::zeros(nL);
 
     // Loop through each layer and figure out which points it contains
     for(unsigned int iL=0; iL < nL; iL++){
-        bottom_of_layer += data.d[iL];
+        bottom_of_layer += d[iL];
 
         // Check that we haven't finished filling the array and that
         // the next point is still in this layer
@@ -302,13 +314,13 @@ auto main(int argc, char *argv[]) -> int
         unsigned int natoms = 0;
 
         try {
-            T_D = data.mat_layer[iL].get_property_value("debye-temperature", data.x[iL]);
-            M   = data.mat_layer[iL].get_property_value("molar-mass", data.x[iL]);
-            natoms = data.mat_layer[iL].get_property_value("natoms");
-            rho_layer[iL] = data.mat_layer[iL].get_property_value("density", data.x[iL]);
+            T_D = mat_layer[iL].get_property_value("debye-temperature", x[iL]);
+            M   = mat_layer[iL].get_property_value("molar-mass", x[iL]);
+            natoms = mat_layer[iL].get_property_value("natoms");
+            rho_layer[iL] = mat_layer[iL].get_property_value("density", x[iL]);
         } catch (std::exception &e) {
             std::cerr << "Could not find material parameters for "
-                      << data.mat_layer[iL].get_description() << std::endl;
+                      << mat_layer[iL].get_description() << std::endl;
             exit(EXIT_FAILURE);
         }
 
@@ -330,7 +342,7 @@ auto main(int argc, char *argv[]) -> int
     for(unsigned int iy=0; iy<ny; iy++)
     {
         auto const iL = iLayer(iy); // Look up layer containing this point
-        auto const mat = data.mat_layer[iL]; // Get the material in the layer
+        auto const mat = mat_layer[iL]; // Get the material in the layer
 
         // Now save the material to file
         FT << iy*dy*1e6 << "\t" << mat.get_description() << std::endl;
@@ -417,7 +429,7 @@ auto main(int argc, char *argv[]) -> int
 
             // Calculate the spatial temperature profile at this 
             // timestep
-            T = calctemp(dt, Told, q_old, q_now, iLayer, data.mat_layer, data.x, dm_layer, rho_layer, opt);
+            T = calctemp(dt, Told, q_old, q_now, iLayer, mat_layer, x, dm_layer, rho_layer, opt);
 
             // Find spatial average of T_AR
             T_avg(it_total) = calctave(g, T);
