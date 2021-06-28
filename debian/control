@@ -16,7 +16,7 @@ Build-Depends: cmake (>= 3.1),
                liblapacke-dev,
                libxml++2.6-dev,
                pkg-config
-Standards-Version: 3.9.5
+Standards-Version: 4.5.1
 
 Package: qwwad
 Architecture: any
