@@ -13,6 +13,7 @@ Build-Depends: cmake (>= 3.1),
                libboost-program-options-dev,
                libgsl0-dev,
                liblapack-dev,
+               liblapacke-dev,
                libxml++2.6-dev,
                pkg-config
 Standards-Version: 3.9.5
