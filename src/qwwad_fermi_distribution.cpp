@@ -62,7 +62,7 @@ class SBPOptions : public Options
             add_option<char>  ("particle,p",          'e',    "ID of particle to be used: 'e', 'h' or 'l', for "
                     "electrons, heavy holes or light holes respectively.");
             add_option<double>("Te",                  Te_def, "Carrier temperature [K].");
-            add_option<size_t>("nenergy,n",           nE_def, "Number of energy samples to print out");
+            add_option<size_t>("nenergy,n",           static_cast<size_t>(nE_def), "Number of energy samples to print out");
             add_option<double>("global-population,N", 0.0,    "Use equilibrium population for the entire system "
                     "instead of reading subband "
                     "populations from file [x1e10 cm^{-2}]");
@@ -149,7 +149,13 @@ auto main(int argc,char *argv[]) -> int
     }
 
     Ef *= 1000.0/e; // Rescale to meV
-    write_table("Ef.r", Ef, true, 17);
+
+    try {
+        write_table("Ef.r", Ef, true, 17);
+    } catch (std::runtime_exception &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }
@@ -190,7 +196,7 @@ static auto calc_dist(const double       Emin,
     arma::vec E(nE); // Array of energies for plot
     arma::vec f(nE); // Occupation probabilities
 
-    const auto dE=(Emax-Emin)/(nE-1); // Energy increment for integration
+    const auto dE=(Emax-Emin)/static_cast<double>(nE-1); // Energy increment for integration
     for(unsigned int i=0; i<nE; i++) {
         E[i] = Emin + i*dE;
         f[i] = f_FD(Ef, E[i], T);

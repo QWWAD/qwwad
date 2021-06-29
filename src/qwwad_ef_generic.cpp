@@ -288,7 +288,13 @@ auto main(int argc, char *argv[]) -> int{
 
         std::ostringstream wf_filename;
         wf_filename << opt.get_wf_prefix() << "E.r";
-        write_table(wf_filename.str().c_str(), z, psi);
+
+        try {
+            write_table(wf_filename.str().c_str(), z, psi);
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing to file" << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
     } else { // Output all wavefunctions
         const auto solutions = se->get_solutions(true);
         output(solutions, opt);

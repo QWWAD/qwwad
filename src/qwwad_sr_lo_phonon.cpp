@@ -140,8 +140,20 @@ auto main(int argc,char *argv[]) -> int
         filename_em << "LOe" << i << f << ".r";	/* emission	*/
         std::ostringstream filename_ab;
         filename_ab << "LOa" << i << f << ".r";	/* absorption	*/
-        write_table(filename_em.str(), Ei_em, Weif);
-        write_table(filename_ab.str(), Ei_ab, Waif);
+
+        try {
+            write_table(filename_em.str(), Ei_em, Weif);
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing to file" << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
+
+        try {
+            write_table(filename_ab.str(), Ei_ab, Waif);
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing to file" << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
 
         // Average rates over entire subband
         Wabar[itx] = tx_ab.get_average_rate();

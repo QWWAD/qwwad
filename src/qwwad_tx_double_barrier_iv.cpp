@@ -103,7 +103,12 @@ auto main(int argc,char *argv[]) -> int
         }
     }
 
-    write_table("IV.r", V, current);
+    try {
+        write_table("IV.r", V, current);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

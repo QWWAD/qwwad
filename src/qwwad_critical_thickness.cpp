@@ -73,7 +73,14 @@ auto main(int argc,char *argv[]) -> int
         hc[ix] = -A * gsl_sf_lambert_Wm1(-1/(A*B));
     }
 
-    write_table("hc.r", x, hc);
+    std::string outfile("hc.r");
+
+    try {
+        write_table(outfile, x, hc);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Could not write to " << outfile << std::endl;
+        std::cerr << e.what();
+    }
 
     return EXIT_SUCCESS;
 }

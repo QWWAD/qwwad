@@ -273,7 +273,8 @@ auto Vf(const double  A0,
        q=sqrt(8)---these are necessary in the `large basis' method and have
        been deduced by linear interpolation(!) from the existing data.	*/
 
-    else if(strcmp(type,"GAAScb") == 0) {	/* Ga in GaAs	*/
+    else if(strcmp(type,"GAAScb") == 0 || strcmp(type, "INPcb") == 0) {	/* Ga in GaAs	*/
+        // TODO: Check why same values are used for GaAs and InP conduction band
         q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
         Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
             -1.51*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
@@ -281,7 +282,8 @@ auto Vf(const double  A0,
             +0.34*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
         value = Va*e;	/* Convert eV --> SI	*/
-    } else if(strcmp(type,"ASGAcb") == 0) { /* As in GaAs	*/
+    } else if(strcmp(type,"ASGAcb") == 0 || strcmp(type, "PINcb") == 0) { /* As in GaAs	*/
+        // TODO: Check why same values are used for ASGAcb and PINcb
         q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
         Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
             -0.83*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
@@ -321,22 +323,6 @@ auto Vf(const double  A0,
             +0.61*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
 
         value = Va*e; /* Convert eV --> SI	*/
-    } else if(strcmp(type,"INPcb") == 0) { /* In in InP	*/
-        q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
-        Va=-2.04*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
-            -1.51*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
-            -0.10*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
-            +0.34*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
-
-        value = Va*e;	/* Convert eV --> SI	*/
-    } else if(strcmp(type,"PINcb") == 0) {/* P in InP	*/
-        q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
-        Va=-1.09*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
-            -0.83*(Theta(q_sqr-3.9)-Theta(q_sqr-4.1))		/* Vf(sqrt(4))	*/
-            +0.24*(Theta(q_sqr-7.9)-Theta(q_sqr-8.1))		/* Vf(sqrt(8))	*/
-            +0.48*(Theta(q_sqr-10.9)-Theta(q_sqr-11.1));	/* Vf(sqrt(11))	*/
-
-        value = Va*e;	/* Convert eV --> SI	*/
     } else if(strcmp(type,"CDTEcb") == 0) { /* Cd in CdTe	*/
         q_sqr/=gsl_pow_2(2*pi/A0);		/* convert q from SI into units of (2*pi/A0) */
         Va=-0.175*(Theta(q_sqr-2.9)-Theta(q_sqr-3.1))		/* Vf(sqrt(3))	*/
@@ -465,12 +451,12 @@ read_rlv(double A0) -> std::vector<arma::vec>
     size_t N = Gx.size();
     for(unsigned int iG = 0; iG < N; ++iG)
     {
-        arma::vec _G(3);
-        _G(0) = Gx[iG];
-        _G(1) = Gy[iG];
-        _G(2) = Gz[iG];
-        _G *= 2.0*pi/A0;
-        G.push_back(_G);
+        arma::vec G_(3);
+        G_(0) = Gx[iG];
+        G_(1) = Gy[iG];
+        G_(2) = Gz[iG];
+        G_ *= 2.0*pi/A0;
+        G.push_back(G_);
     }
 
     return G;

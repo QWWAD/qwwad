@@ -87,7 +87,7 @@ auto main (int argc, char* argv[]) -> int
         }
 
         // Calculate wavevector spacing
-        const auto dk = k_max/nk;
+        const auto dk = k_max/static_cast<double>(nk);
 
         // Loop over wavevectors and find corresponding energies
         for(unsigned int ik=0; ik<nk; ik++)

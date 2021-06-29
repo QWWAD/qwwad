@@ -61,7 +61,13 @@ auto main(int argc, char* argv[]) -> int
     arma::vec V;
     arma::vec z;
     const auto totalpotentialfile = opt.get_option<std::string>("totalpotentialfile");
-    read_table(totalpotentialfile.c_str(), z, V);
+
+    try {
+        read_table(totalpotentialfile.c_str(), z, V);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error reading file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     const auto nz_st = states[0].get_position_samples().size();
 

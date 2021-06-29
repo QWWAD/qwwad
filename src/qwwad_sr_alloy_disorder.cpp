@@ -180,7 +180,13 @@ auto main(int argc,char ** argv) -> int
            kinetic energy						*/
         std::ostringstream filename;	/* character string for output filename		*/
         filename << "ado" << i << f << ".r";
-        write_table(filename.str(), Ei_t, Wif);
+
+        try {
+            write_table(filename.str(), Ei_t, Wif);
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing to file." << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 

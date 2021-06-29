@@ -241,7 +241,13 @@ auto main(int argc,char *argv[]) -> int
            kinetic energy						*/
         std::ostringstream filename;	/* character string for output filename		*/
         filename << "imp" << i << f << ".r";
-        write_table(filename.str(), Ei_t, Wif);
+
+        try {
+            write_table(filename.str(), Ei_t, Wif);
+        } catch (std::runtime_error &e) {
+            std::cerr << "Error writing file" << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
 
         const double Wbar = integral(Wbar_integrand_ki, dki)/(pi*isb.get_total_population());
 
@@ -249,11 +255,11 @@ auto main(int argc,char *argv[]) -> int
 
         gsl_spline_free(FF);
         gsl_interp_accel_free(acc);
-} /* end while over states */
+    } /* end while over states */
 
-fclose(Favg);	/* close weighted mean output file	*/
+    fclose(Favg);	/* close weighted mean output file	*/
 
-return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 } /* end main */
 
 /** Tabulate the matrix element defined as 
@@ -372,8 +378,8 @@ auto J(const double     q_perp,
 
  // Integral of i(=0) and f(=2) over z
  for(unsigned int iz=0;iz<nz;iz++) {
-     const auto _Iif = Iif(iz, Cif_plus, Cif_minus, expTerm);
-     const auto abs_Iif = abs(_Iif);
+     const auto Iif_ = Iif(iz, Cif_plus, Cif_minus, expTerm);
+     const auto abs_Iif = abs(Iif_);
      Jif_integrand[iz] = abs_Iif * abs_Iif * d[iz];
  }
 

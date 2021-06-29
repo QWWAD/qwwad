@@ -49,7 +49,7 @@ auto DebyeModel::get_internal_energy(const double T) const -> double
 
     auto const D_3 = gsl_sf_debye_3(_T_D/T);
 
-    return 3.0 * Na * kB * T * D_3 * _natoms/_M;
+    return 3.0 * Na * kB * T * D_3 * static_cast<double>(_natoms)/_M;
 }
 
 // Find the molar specific heat capacity by differentiating
@@ -83,7 +83,7 @@ auto DebyeModel::get_cp(const double T) const -> double
 auto DebyeModel::get_cp_low_T(const double T) const -> double
 {
     const double pi_sq = pi*pi;
-    return 12*pi_sq*pi_sq*Na*kB*T*T*T/(_T_D*_T_D*_T_D*5)*_natoms/_M;
+    return 12*pi_sq*pi_sq*Na*kB*T*T*T/(_T_D*_T_D*_T_D*5)*static_cast<double>(_natoms)/_M;
 }
 
 /**
@@ -91,7 +91,7 @@ auto DebyeModel::get_cp_low_T(const double T) const -> double
  */
 auto DebyeModel::get_cp_high_T() const -> double
 {
-    return 3*Na*kB*_natoms/_M;
+    return 3*Na*kB*static_cast<double>(_natoms)/_M;
 }
 
 /**

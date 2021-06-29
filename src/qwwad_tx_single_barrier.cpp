@@ -75,7 +75,13 @@ auto main(int argc,char *argv[]) -> int
 
     // Rescale to meV for output
     E/=(1e-3*e);
-    write_table("T.r", E, T);
+
+    try {
+        write_table("T.r", E, T);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing to file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

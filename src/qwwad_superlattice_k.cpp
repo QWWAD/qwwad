@@ -36,7 +36,7 @@ while((argc>1)&&(argv[1][0]=='-'))
  switch(argv[1][1])
  {
   case 'k':
-	   k=atof(argv[2]);
+	   k=static_cast<float>(atof(argv[2]));
 	   break;
   case 'z':
            n_z=atoi(argv[2]);
@@ -54,7 +54,7 @@ while((argc>1)&&(argv[1][0]=='-'))
 /* Can only now convert kbar (the k-point within the minizone) from units
    of (pi/(n_z*A0) to bulk wavevector units, i.e., units of (2*pi/A0)	*/
 
-k/=((float)2*n_z);
+k/=static_cast<float>(2*n_z);
 
 /* Calculate primitive reciprocal lattice vector of the superlattice	*/
 

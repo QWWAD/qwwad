@@ -144,7 +144,7 @@ auto main(int argc, char* argv[]) -> int
             const arma::vec PD_per = PD.subvec(iper*nz_1per, (iper+1)*nz_1per-1);
 
             // Add this into the total carrier density profile
-            carrier_density_1per += pop[ist] * nval[ist] * PD_per;
+            carrier_density_1per += pop[ist] * static_cast<double>(nval[ist]) * PD_per;
         }
     }
 
@@ -158,8 +158,20 @@ auto main(int argc, char* argv[]) -> int
     }
 
     // Output position, charge density [Cm^{-3}] and carrier density [m^{-3}] for a single period
-    write_table(opt.get_option<std::string>("chargefile").c_str(), z_1per, rho_1per);
-    write_table(opt.get_option<std::string>("carrierdensityfile").c_str(), z_1per, carrier_density_1per);
+
+    try {
+        write_table(opt.get_option<std::string>("chargefile").c_str(), z_1per, rho_1per);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
+
+    try {
+        write_table(opt.get_option<std::string>("carrierdensityfile").c_str(), z_1per, carrier_density_1per);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

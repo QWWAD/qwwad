@@ -58,7 +58,7 @@ auto main(int argc,char *argv[]) -> int
     const auto x_min = opt.get_option<double>("xmin"); // Minimum alloy fraction
     const auto x_max = opt.get_option<double>("xmax"); // Maximum alloy fraction
 
-    const auto dz = (a+2*b)/(nz-1); // Find width of each spatial interval [m]
+    const auto dz = (a+2*b)/static_cast<double>(nz-1); // Find width of each spatial interval [m]
 
     std::vector<double> z(nz); // array of spatial points [m]
     std::vector<double> x(nz); // alloy concentration at each point
@@ -75,7 +75,14 @@ auto main(int argc,char *argv[]) -> int
 	}
     }
 
-    write_table("x.r", z, x);
+    try {
+        write_table("x.r", z, x);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Could not write file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }
+
+// vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

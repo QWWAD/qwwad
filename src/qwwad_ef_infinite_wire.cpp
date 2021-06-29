@@ -62,8 +62,8 @@ auto main(int argc, char **argv) -> int
             std::vector<double> z(N*N);
             std::vector<double> psi(N*N);
 
-            const double dy = Ly/(N-1);
-            const double dz = Ly/(N-1);
+            const double dy = Ly/static_cast<double>(N-1);
+            const double dz = Ly/static_cast<double>(N-1);
 
             unsigned int izy = 0;
 
@@ -85,7 +85,13 @@ auto main(int argc, char **argv) -> int
 
             std::ostringstream cd_filename;
             cd_filename << "cd" << in_y << in_z << ".r";
-            write_table(cd_filename.str(), y, z, psi);
+            
+            try {
+                write_table(cd_filename.str(), y, z, psi);
+            } catch(std::runtime_error &e) {
+                std::cerr << "Error writing to file" << std::endl;
+                std::cerr << e.what() << std::endl;
+            }
 
             ++ist; // Increment the overall state index
         } // end in_z
@@ -93,7 +99,13 @@ auto main(int argc, char **argv) -> int
 
     std::ostringstream E_filename;
     E_filename << "E" << p << ".r";
-    write_table(E_filename.str(), y_index, z_index, E);
+
+    try {
+        write_table(E_filename.str(), y_index, z_index, E);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }

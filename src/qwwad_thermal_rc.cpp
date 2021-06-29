@@ -212,7 +212,12 @@ auto main(int argc, char *argv[]) -> int
     auto T_H = opt.get_option<double>("Tsink"); // Heat-sink temperature [K]
     std::valarray<double> T = B + T_H;
 
-    write_table("T-t.dat", std::valarray<double>(1e6*t), T);
+    try {
+        write_table("T-t.dat", std::valarray<double>(1e6*t), T);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     for(unsigned int irep = 0; irep < _n_rep; irep++)
     {
@@ -220,7 +225,20 @@ auto main(int argc, char *argv[]) -> int
 	    T_mid[irep] = T[_it_mid[irep]];
     }
 
-    write_table("T-mid_t.dat", t_mid, T_mid);
-    write_table("q-t.dat",     t, q);
+    try {
+        write_table("T-mid_t.dat", t_mid, T_mid);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
+
+    try {
+        write_table("q-t.dat",     t, q);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
+
+    return EXIT_SUCCESS;
 }
 // vim: filetype=cpp:expandtab:shiftwidth=4:tabstop=8:softtabstop=4:fileencoding=utf-8:textwidth=99 :

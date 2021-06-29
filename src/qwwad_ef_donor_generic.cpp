@@ -41,7 +41,7 @@ class Wavefunction3D
 private:
     double    _lambda; ///< Bohr radius
     arma::vec _wf;     ///< Wavefunction
-    arma::vec _V;      ///< Potential profile
+    arma::vec V_;      ///< Potential profile
     arma::vec _z;      ///< Spatial samples in z
 
     double    epsilon_; ///< Permittivity
@@ -51,7 +51,7 @@ private:
 
 public:
     Wavefunction3D(decltype(_wf) wf,
-                   decltype(_V)  V,
+                   decltype(V_)  V,
                    decltype(_z)  z,
                    double        epsilon,
                    double        m,
@@ -59,7 +59,7 @@ public:
                    StateID       S)
         :
             _wf(std::move(wf)),
-            _V(std::move(V)),
+            V_(std::move(V)),
             _z(std::move(z)),
             epsilon_(epsilon),
             m_(m),
@@ -152,7 +152,13 @@ auto main(int argc,char *argv[]) -> int
 
     arma::vec z; // Spatial location [m]
     arma::vec V; // Confining potential [J]
-    read_table("v.r", z, V);
+
+    try {
+        read_table("v.r", z, V);
+    } catch (std::runtime_error &e) {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 
     std::ostringstream filename; // input filename
     filename << "wf_" << p << subband << ".r";
@@ -299,7 +305,7 @@ auto Wavefunction3D::get_energy_integrand(double       x,
     const auto Psixyz = get_psi(x, y, iz);
 
     return Psixyz*(-hBar_sq_by_2m*laplace_Psi
-                   + (_V[iz]-e_sq_by_4pieps/r)*Psixyz);
+                   + (V_[iz]-e_sq_by_4pieps/r)*Psixyz);
 }
 
 struct Integrand_y_params

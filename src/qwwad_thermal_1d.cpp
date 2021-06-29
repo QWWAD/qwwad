@@ -316,7 +316,7 @@ auto main(int argc, char *argv[]) -> int
         try {
             T_D = mat_layer[iL].get_property_value("debye-temperature", x[iL]);
             M   = mat_layer[iL].get_property_value("molar-mass", x[iL]);
-            natoms = mat_layer[iL].get_property_value("natoms");
+            natoms = static_cast<unsigned int>(mat_layer[iL].get_property_value("natoms"));
             rho_layer[iL] = mat_layer[iL].get_property_value("density", x[iL]);
         } catch (std::exception &e) {
             std::cerr << "Could not find material parameters for "
@@ -327,15 +327,15 @@ auto main(int argc, char *argv[]) -> int
         dm_layer.emplace_back(T_D, M, natoms);
     }
 
-    const auto _Tsink = opt.get_option<double>("Tsink");
+    const auto Tsink_ = opt.get_option<double>("Tsink");
     
     // Spatial temperature profile through structure [K].
     // Assume that initially all points are in thermal equilibrium with heat sink.
     arma::vec T = arma::zeros(ny);
-    T.fill(_Tsink);
+    T.fill(Tsink_);
     
     arma::vec Told = arma::zeros(ny);
-    Told.fill(_Tsink);
+    Told.fill(Tsink_);
 
     std::ofstream FT("struct.dat");
 
@@ -394,9 +394,9 @@ auto main(int argc, char *argv[]) -> int
 
     // Rising and falling edge of final pulse in temperature profile
     std::vector<double> _t_rise;
-    std::vector<double> _T_rise;
+    std::vector<double> T_rise_;
     std::vector<double> _t_fall;
-    std::vector<double> _T_fall;
+    std::vector<double> T_fall_;
 
     for(unsigned int iper=0; iper<_n_rep; iper++)
     {
@@ -468,12 +468,12 @@ auto main(int argc, char *argv[]) -> int
                 if(fmod(t(it_total), time_period) <= pw) // if during pulse
                 {
                     _t_rise.push_back(t(it_total)*1e6);
-                    _T_rise.push_back(T_avg(it_total));
+                    T_rise_.push_back(T_avg(it_total));
                 }
                 else
                 {
                     _t_fall.push_back(t(it_total)*1e6);
-                    _T_fall.push_back(T_avg(it_total));
+                    T_fall_.push_back(T_avg(it_total));
                 }
 
                 t_period(it) = t(it_total)*1e6;
@@ -491,15 +491,20 @@ auto main(int argc, char *argv[]) -> int
         }
     }// end period loop
 
-    write_table("T_t.dat",    arma::vec(1e6*t), T_avg);
-    write_table("T-mid_t.dat",arma::vec(1e6*t_mid), T_mid);
-    write_table("Tmax_t.dat", arma::vec(1e6*t_max), T_max);
-    write_table("Tmin_t.dat", arma::vec(1e6*t_min), T_min);
-    write_table("Trise_t.dat", _t_rise, _T_rise);
-    write_table("Tfall_t.dat", _t_fall, _T_fall);
-    write_table("T_y.dat", y, T);
-    write_table("T_y_max.dat", y, T_y_max);
-    write_table("T-period_t.dat", t_period, T_period);
+    try {
+        write_table("T_t.dat",    arma::vec(1e6*t), T_avg);
+        write_table("T-mid_t.dat",arma::vec(1e6*t_mid), T_mid);
+        write_table("Tmax_t.dat", arma::vec(1e6*t_max), T_max);
+        write_table("Tmin_t.dat", arma::vec(1e6*t_min), T_min);
+        write_table("Trise_t.dat", _t_rise, T_rise_);
+        write_table("Tfall_t.dat", _t_fall, T_fall_);
+        write_table("T_y.dat", y, T);
+        write_table("T_y_max.dat", y, T_y_max);
+        write_table("T-period_t.dat", t_period, T_period);
+    } catch (std::runtime_error &e) {
+        std::cerr << "Error writing file" << std::endl;
+        std::cerr << e.what() << std::endl;
+    }
 
     return EXIT_SUCCESS;
 }
