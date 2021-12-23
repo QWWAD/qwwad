@@ -152,7 +152,7 @@ auto main(int argc,char *argv[]) -> int
 
     try {
         write_table("Ef.r", Ef, true, 17);
-    } catch (std::runtime_exception &e) {
+    } catch (std::runtime_error &e) {
         std::cerr << "Error writing file" << std::endl;
         std::cerr << e.what() << std::endl;
     }
