@@ -150,7 +150,11 @@ eigen_banded(double       *AB,
 
     // Find error tolerance
     char   retval = 'S';   // Return value for LAPACK
-    double abstol = 2.0 * dlamch_(&retval); // Error tolerance
+    double abstol = 2.0 * dlamch_(&retval
+#ifdef LAPACK_FORTRAN_STRLEN_END
+            ,1
+#endif
+            );
 
     // LAPACK workspace
     arma::vec  work(7*(size_t)n);
@@ -167,7 +171,11 @@ eigen_banded(double       *AB,
     int  info  = 0;     // Output code from LAPACK
 
     dsbgvx_(&jobz, &range, &uplo, &n, &KA, &KB, AB, &LD, BB, &LD, &Q[0], &n, &VL,
-            &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork(0), &ifail[0], &info);
+            &VU, &IL, &IU, &abstol, &M, &W[0], &Z[0], &n, &work[0], &iwork(0), &ifail[0], &info
+#ifdef LAPACK_FORTRAN_STRLEN_END
+            ,1, 1, 1
+#endif
+            );
 
     if(info!=0) {
         throw std::runtime_error("Could not solve "
@@ -245,7 +253,11 @@ eigen_tridiag(arma::vec    &diag,
 
     // Find error tolerance
     char retval='S'; // Return value for LAPACK
-    double abstol = 2.0 * dlamch_(&retval); // Error tolerance
+    double abstol = 2.0 * dlamch_(&retval
+#ifdef LAPACK_FORTRAN_STRLEN_END
+            ,1
+#endif
+            );
 
     // Run LAPACK function to solve eigenproblem
     dstevx_(&jobz,
@@ -263,7 +275,11 @@ eigen_tridiag(arma::vec    &diag,
             work.memptr(),
             iwork.memptr(),
             ifail.memptr(),
-            &info);
+            &info
+#ifdef LAPACK_FORTRAN_STRLEN_END
+            , 1, 1
+#endif
+            );
 
     if(info!=0)
     {
