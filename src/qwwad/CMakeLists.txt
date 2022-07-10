@@ -56,9 +56,10 @@ add_libqwwad_module(wf_options)
 add_library( libqwwad SHARED ${qwwad_src} ${qwwad_h} )
 set_target_properties( libqwwad
 	               PROPERTIES
-		       OUTPUT_NAME ${PROJECT_NAME}
-		       SOVERSION   1
-		       VERSION     ${qwwad_VERSION}
+		       OUTPUT_NAME   ${PROJECT_NAME}
+		       SOVERSION     1
+		       VERSION       ${qwwad_VERSION}
+		       PUBLIC_HEADER "${qwwad_h}"
 		     )
 
 target_link_libraries( libqwwad
@@ -71,8 +72,5 @@ target_link_libraries( libqwwad
 # Install the shared QWWAD library
 install(TARGETS libqwwad
 	ARCHIVE DESTINATION lib
-	LIBRARY DESTINATION lib)
-
-# Install the QWWAD API headers in the "qwwad" subfolder
-install(FILES ${qwwad_h}
-	DESTINATION ${INSTALL_INC_DIR}/qwwad)
+	LIBRARY DESTINATION lib
+	PUBLIC_HEADER DESTINATION include/qwwad)
