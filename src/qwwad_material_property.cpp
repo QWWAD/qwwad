@@ -29,10 +29,13 @@ class MatLibOptions : public Options
             {
                 add_option<std::string>("filename",    "", "Material library file to read. If this is not specified, "
                                                            "the default material library for the system will be used.");
-                add_option<std::string>("property,p",  "", "Name of property to look up.");
-                add_option<std::string>("material",    "", "Name of material to look up.");
+                add_option<std::string>("property,p",      "Name of property to look up.");
+                add_option<std::string>("material",        "Name of material to look up.");
                 add_option<bool>       ("show-unit,u",     "Show the unit for the property rather than just its value");
                 add_option<double>     ("variable,x",   0, "Optional input parameter for properties of the form y=f(x)");
+
+                make_option_positional("material");
+                make_option_positional("property");
 
                 std::string doc = "Queries the value of a property from the material "
                                   "database.";
@@ -67,6 +70,12 @@ auto main(int argc, char* argv[]) -> int
     const auto filename = opt.get_option<std::string>("filename");
 
     MaterialLibrary lib(filename);
+
+    if(!opt.get_argument_known("material")) {
+        std::cerr << "Material was not specified" << std::endl;
+        std::cerr << "Usage: " << argv[0] << " material_name property_name" << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
     const auto material_name = opt.get_option<std::string>("material");
     const auto property_name = opt.get_option<std::string>("property");
