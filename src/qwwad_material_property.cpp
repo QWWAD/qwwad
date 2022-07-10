@@ -33,6 +33,7 @@ class MatLibOptions : public Options
                 add_option<std::string>("material",        "Name of material to look up.");
                 add_option<bool>       ("show-unit,u",     "Show the unit for the property rather than just its value");
                 add_option<double>     ("variable,x",   0, "Optional input parameter for properties of the form y=f(x)");
+                add_option<bool>       ("list-properties", "List all known property names for material, and then exit");
 
                 make_option_positional("material");
                 make_option_positional("property");
@@ -77,13 +78,34 @@ auto main(int argc, char* argv[]) -> int
         exit(EXIT_FAILURE);
     }
 
+    // Read the desired material from the library
     const auto material_name = opt.get_option<std::string>("material");
+    const Material *mat;
+
+    try {
+        mat = lib.get_material(material_name);
+    } catch(std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if(opt.get_option<bool>("list-properties")) {
+        auto properties = mat->get_all_properties();
+
+        for(auto property : properties) {
+            std::cout << property.first << ":" << std::endl
+                                               << "\t|-->\t" << property.second->get_description() << std::endl
+                                               << "\t|-->\t" << property.second->get_reference() << std::endl;
+        }
+
+        exit(EXIT_SUCCESS);
+    }
+
     const auto property_name = opt.get_option<std::string>("property");
 
     MaterialProperty const * prop;
 
     try {
-        const auto *mat  = lib.get_material(material_name);
         prop = mat->get_property(property_name);
     } catch(std::exception &e) {
         std::cerr << e.what() << std::endl;

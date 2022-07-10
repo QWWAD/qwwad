@@ -18,6 +18,13 @@ class MaterialPropertyNumeric;
 
 /** Wrapper for XML data for a material */
 class Material {
+private:
+    /// Cached set of material properties
+    boost::ptr_map<Glib::ustring, MaterialProperty> properties;
+
+    Glib::ustring          name;           ///< The name of the material
+    Glib::ustring          description;    ///< The description of the material
+
 public:
     Material(const Material *mat);
     Material(xmlpp::Element *elem);
@@ -37,12 +44,8 @@ public:
     auto get_property_value(Glib::ustring &property_name,
                             double         x = 0) const -> double;
 
-private:
-    /// Cached set of material properties
-    boost::ptr_map<Glib::ustring, MaterialProperty> properties;
+    inline auto get_all_properties() const -> decltype(properties) {return properties;}
 
-    Glib::ustring          name;           ///< The name of the material
-    Glib::ustring          description;    ///< The description of the material
 };
 } // end namespace
 #endif
