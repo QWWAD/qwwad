@@ -131,8 +131,11 @@ void Options::add_prog_specific_options_and_parse(const int          argc,
         command_line_options.add(*program_specific_options_);
         command_line_options.add(*generic_options_any);
 
+        po::command_line_parser parser(argc, argv);
+        parser.options(command_line_options);
+
         // First read everything specified on the command-line
-        po::store(po::parse_command_line(argc, argv, command_line_options), vm_);
+        po::store(parser.run(), vm_);
         po::notify(vm_);
 
         // Now, read from config file (if available)
