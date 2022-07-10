@@ -16,7 +16,8 @@ Options::Options() :
     generic_options_commandline(std::make_unique<po::options_description>("Generic options")),
     generic_options_any(std::make_unique<po::options_description>("Configuration options")),
     config_filename("qwwad.cfg"),
-    program_specific_options_(std::make_unique<po::options_description>("Program-specific options"))
+    program_specific_options_(std::make_unique<po::options_description>("Program-specific options")),
+    positional_option_names_(std::make_unique<po::positional_options_description>())
 {
     generic_options_commandline->add_options()
         ("help,h",    "display a help message")
@@ -31,6 +32,11 @@ Options::Options() :
         ("verbose,V", po::bool_switch(),
          "display lots of information about calculation")
         ;
+}
+
+void Options::make_option_positional(const std::string &name)
+{
+    positional_option_names_->add(name.c_str(), 1);
 }
 
 /**
@@ -133,6 +139,7 @@ void Options::add_prog_specific_options_and_parse(const int          argc,
 
         po::command_line_parser parser(argc, argv);
         parser.options(command_line_options);
+        parser.positional(*positional_option_names_);
 
         // First read everything specified on the command-line
         po::store(parser.run(), vm_);

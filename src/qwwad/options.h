@@ -52,7 +52,16 @@ class Options
          *          \c add_prog_specific_options_and_parse(...)
          */
         std::unique_ptr<po::options_description> program_specific_options_;
-        
+
+        /**
+         * \brief Positional options for a specific program
+         *
+         * \details Note that this is really just a list of names of
+         *          things that were already defined in other descriptions.
+         *          These can be used without specifying a name though.
+         */
+        std::unique_ptr<po::positional_options_description> positional_option_names_;
+
         static void print_version_then_exit(char* prog_name);
 
         [[nodiscard]] auto name_mapper(std::string environment_variable) const -> std::string;
@@ -100,6 +109,19 @@ class Options
                  po::value<T>(),
                  description.c_str());
         }
+
+        /**
+         * \brief Makes the specified option positional
+         *
+         * \param[in] name The name of the option
+         *
+         * \details This means that the user can specify the option on the
+         *          command-line by just typing its value after the program
+         *          name.  For example `my_program 0.05' rather than using
+         *          the option name explicitly, for example
+         *          `my program --option=0.05'.
+         */
+        void make_option_positional(const std::string &name);
 
         /**
          * \brief Get the value of an option
